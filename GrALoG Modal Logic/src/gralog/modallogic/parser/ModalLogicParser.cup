@@ -1,0 +1,102 @@
+package gralog.modallogic.parser;
+
+import java_cup.runtime.*;
+import gralog.modallogic.formula.*;
+import java.io.ByteArrayInputStream;
+
+
+parser code {:
+
+    String errorMsg = null;
+
+    public Boolean hasError()
+    {
+        return errorMsg == null;
+    }
+    
+    public String getErrorMsg()
+    {
+        if(errorMsg == null)
+            return "no error";
+        else
+            return errorMsg;
+    }
+    
+    public void syntax_error(Symbol cur_token)
+    {
+        if(errorMsg == null)
+            errorMsg = "Syntax Error: " + cur_token.toString();
+    }
+
+    public void report_fatal_error(String message, Object info) throws Exception
+    {
+        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+    }
+
+    public ModalLogicFormula parseString(String str) throws Exception
+    {
+        String charset = "UTF8";
+        byte[] bytes = str.getBytes(charset);
+        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
+                
+        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
+        ModalLogicScanner scanner = new ModalLogicScanner(stringstream, symbolfactory);
+        this.setScanner(scanner);
+        
+        Symbol parserresult = this.parse();
+        return (ModalLogicFormula) parserresult.value;
+    }
+
+:}
+
+
+
+
+terminal LT, GT, BRACKETLEFT, BRACKETRIGHT;                              // "<", ">","[", "]"
+terminal BOT, TOP, WEDGE, VEE, NEG, PARENTHESISLEFT, PARENTHESISRIGHT;   // \bot, \top, \wedge, \vee, \neg, (, )
+terminal String STRING;
+
+
+non terminal ModalLogicFormula formula, booleanlist, veelist, wedgelist;
+
+
+                      
+formula ::= STRING:s                                            // a proposition
+                {: RESULT = new ModalLogicProposition(s); :}
+          | PARENTHESISLEFT booleanlist:f PARENTHESISRIGHT
+                {: RESULT = f; :}
+          | BOT
+                {: RESULT = new ModalLogicBottom(); :} 
+          | TOP
+                {: RESULT = new ModalLogicTop(); :} 
+          | NEG formula:f
+                {: RESULT = new ModalLogicNot(f); :}
+          | LT GT formula:f
+                {: RESULT = new ModalLogicDiamond(f); :}
+          | LT STRING:s GT formula:f
+                {: RESULT = new ModalLogicDiamond(s, f); :}
+          | BRACKETLEFT BRACKETRIGHT formula:f
+                {: RESULT = new ModalLogicBox(f); :}
+          | BRACKETLEFT STRING:s BRACKETRIGHT formula:f
+                {: RESULT = new ModalLogicBox(s, f); :}
+          ;
+            
+booleanlist ::= formula:f
+                    {: RESULT = f; :}
+              | formula:left WEDGE wedgelist:right
+                    {: RESULT = new ModalLogicAnd(left, right); :}
+              | formula:left VEE veelist:right
+                    {: RESULT = new ModalLogicOr(left, right); :}
+              ;
+
+wedgelist ::= formula:left WEDGE wedgelist:right
+                  {: RESULT = new ModalLogicAnd(left, right); :}
+            | formula:f
+                  {: RESULT = f; :}
+            ;
+
+veelist ::= formula:left VEE veelist:right
+                {: RESULT = new ModalLogicOr(left, right); :}
+          | formula:f
+                {: RESULT = f; :}
+          ;

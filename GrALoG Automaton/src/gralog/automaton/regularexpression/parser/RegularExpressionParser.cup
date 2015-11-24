@@ -1,0 +1,77 @@
+package gralog.automaton.regularexpression.parser;
+
+import java_cup.runtime.*;
+import gralog.automaton.regularexpression.*;
+import java.io.ByteArrayInputStream;
+
+
+parser code {:
+
+    String errorMsg = null;
+
+    public Boolean hasError()
+    {
+        return errorMsg == null;
+    }
+    
+    public String getErrorMsg()
+    {
+        if(errorMsg == null)
+            return "no error";
+        else
+            return errorMsg;
+    }
+    
+    public void syntax_error(Symbol cur_token)
+    {
+        if(errorMsg == null)
+            errorMsg = "Syntax Error: " + cur_token.toString();
+    }
+
+    public void report_fatal_error(String message, Object info) throws Exception
+    {
+        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+    }
+
+    public RegularExpression parseString(String str) throws Exception
+    {
+        String charset = "UTF8";
+        byte[] bytes = str.getBytes(charset);
+        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
+                
+        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
+        RegularExpressionScanner scanner = new RegularExpressionScanner(stringstream, symbolfactory);
+        this.setScanner(scanner);
+        
+        Symbol parserresult = this.parse();
+        return (RegularExpression) parserresult.value;
+    }
+
+:}
+
+
+
+terminal PARENTHESISLEFT, PARENTHESISRIGHT, KLEENESTAR, ALTERNATION;   // (, ), *, |
+terminal String STRING;
+non terminal RegularExpression regexp, regexps;
+
+precedence left ALTERNATION;
+precedence nonassoc KLEENESTAR;
+
+
+regexps ::= regexp:r
+                {: RESULT = r; :}
+          | regexps:l regexp:r
+                {: RESULT = new RegularExpressionConcatenation(l,r); :} 
+          ;
+                      
+regexp ::= STRING:s
+                {: RESULT = new RegularExpressionString(s); :}
+          | regexp:f KLEENESTAR
+                {: RESULT = new RegularExpressionKleeneStar(f); :} 
+          | regexp:l ALTERNATION regexp:r
+                {: RESULT = new RegularExpressionAlternation(l,r); :}
+          | PARENTHESISLEFT regexps:f PARENTHESISRIGHT
+                {: RESULT = f; :}
+          ;
+
