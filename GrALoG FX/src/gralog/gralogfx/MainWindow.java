@@ -268,15 +268,13 @@ public class MainWindow extends Application {
         Tab t = new Tab(text);
         StructurePane structurePane = new StructurePane(structure);
         t.setContent(structurePane);
-        
-        
-        
+
         tabPane.getTabs().add(t);
         tabPane.getSelectionModel().select(t);
         structurePane.draw();
         structurePane.setOnSelectionChanged(e -> updateSelection(structurePane));
-        
-        
+
+
         /*
         JGraphPane jgraphpane = new JGraphPane();
         t.setContent(jgraphpane);
@@ -371,6 +369,8 @@ public class MainWindow extends Application {
     public void menuFileGeneratorActivated(String str) {
         try {
             
+            // prepare
+            
             Generator gen  = (Generator)PluginManager.InstantiateClass(str);
             GeneratorParameters params = gen.GetParameters();
             if(params != null)
@@ -379,6 +379,8 @@ public class MainWindow extends Application {
                 if(!genstage.ShowAndWait())
                     return;
             }
+
+            // run
             
             Structure genResult = gen.Generate(params);
             if(genResult == null)

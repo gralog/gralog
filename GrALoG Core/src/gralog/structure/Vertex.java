@@ -39,15 +39,15 @@ public class Vertex extends XmlMarshallable {
             Coordinates.set(i, Coordinates.get(i) + offset.get(i));
     }
     
-    protected final double diameter = 5d;
+    protected final double radius = 0.5d;
     public void Render(GralogGraphicsContext gc) {
-        gc.Circle(Coordinates.get(0), Coordinates.get(1), diameter);
+        gc.Circle(Coordinates.get(0), Coordinates.get(1), radius);
     }
     
     public boolean ContainsCoordinate(Double x, Double y) {
         Double tx = Coordinates.get(0);
         Double ty = Coordinates.get(1);
-        if( (x-tx)*(x-tx) + (y-ty)*(y-ty) < diameter*diameter )
+        if( (x-tx)*(x-tx) + (y-ty)*(y-ty) < radius*radius )
             return true;
         return false;
     }
@@ -79,10 +79,5 @@ public class Vertex extends XmlMarshallable {
     public void removeVertexListener(VertexListener listener) {
         listeners.remove(listener);
     }
-    
-    
-    @Override
-    public String toString() {
-        return "";
-    }
+
 }
