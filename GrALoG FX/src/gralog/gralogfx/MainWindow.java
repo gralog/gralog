@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -65,6 +66,8 @@ public class MainWindow extends Application {
         Menu menuHelp;
             MenuItem menuHelpAbout;
             MenuItem menuHelpInfo;
+    VBox topPane;
+        HBox buttonBar;
     TabPane tabPane;
     ObjectInspector objectInspector;
     HBox statusBar;
@@ -140,6 +143,31 @@ public class MainWindow extends Application {
             
         menu.getMenus().addAll(menuFile, menuEdit, menuAlgo, menuHelp);
 
+        // Button Bar
+        buttonBar = new HBox();
+        Button x = new Button();
+        x.setText("S");
+        x.setOnAction( e -> {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if(tab == null)
+                return;
+            StructurePane structurePane = (StructurePane)tab.getContent();
+            structurePane.SetSelectMode();
+        });
+        Button y = new Button();
+        y.setText("V");
+        y.setOnAction(e -> {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if(tab == null)
+                return;
+            StructurePane structurePane = (StructurePane)tab.getContent();
+            structurePane.SetVertexCreationMode();
+        });
+        buttonBar.getChildren().addAll(x,y);
+        topPane = new VBox();
+        topPane.getChildren().addAll(menu,buttonBar);
+                
+        
         // Object Inspector
         objectInspector = new ObjectInspector();
 
@@ -150,7 +178,7 @@ public class MainWindow extends Application {
         
         // 
         root = new BorderPane();
-        root.setTop(menu);
+        root.setTop(topPane);
         root.setCenter(tabPane);
         root.setRight(objectInspector);
         root.setBottom(statusBar);
