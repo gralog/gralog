@@ -29,10 +29,10 @@ public class RegularExpressionConcatenation extends RegularExpression {
     }
 
     @Override
-    public Automaton ThompsonConstruction() {
+    public Automaton ThompsonConstruction(Double scale) {
         
-        Automaton a = regexp1.ThompsonConstruction();
-        Automaton b = regexp2.ThompsonConstruction();
+        Automaton a = regexp1.ThompsonConstruction(scale);
+        Automaton b = regexp2.ThompsonConstruction(scale);
 
         // Determine new positions for the states
         Double aMaxX = a.MaximumCoordinate(0);
@@ -46,7 +46,7 @@ public class RegularExpressionConcatenation extends RegularExpression {
         a.Move(aOffset);
         
         Vector<Double> bOffset = new Vector<Double>();
-        bOffset.add(aMaxX + 50d);
+        bOffset.add(aMaxX + scale);
         bOffset.add(aMaxY > bMaxY ? (aMaxY - bMaxY)/2d : 0d);
         b.Move(bOffset);
         

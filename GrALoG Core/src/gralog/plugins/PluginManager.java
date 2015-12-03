@@ -9,6 +9,8 @@ package gralog.plugins;
 import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.generator.*;
+import gralog.exportfilter.*;
+import gralog.importfilter.*;
 
 import java.io.File;
 import java.net.URLClassLoader;
@@ -30,7 +32,10 @@ public class PluginManager {
     private final static HashMap<String, Constructor> ClassRegister = new HashMap<String,Constructor>();
     private final static HashMap<String, Constructor> StructureClasses = new HashMap<String,Constructor>();
     private final static HashMap<String, Constructor> GeneratorClasses = new HashMap<String,Constructor>();
+    private final static HashMap<String, Constructor> ImportFilterClasses = new HashMap<String,Constructor>();
+    
     private final static HashMap<Class, Vector<String> > AlgorithmClasses = new HashMap<Class, Vector<String> >();
+    private final static HashMap<Class, Vector<String> > ExportFilterClasses = new HashMap<Class, Vector<String> >();
     
     
     public static Object InstantiateClass(String className) throws Exception {
@@ -62,7 +67,7 @@ public class PluginManager {
     
     public static void RegisterClass(String name, Class aClass) throws Exception
     {
-        name = name.toLowerCase();
+        // name = name.toLowerCase();
         if(ClassRegister.containsKey(name))
             throw new Exception("class name \"" + name + "\" already exists!");
         Constructor ctor = null;
@@ -77,6 +82,10 @@ public class PluginManager {
                 
                 if(sup == Generator.class)
                     GeneratorClasses.put(name, ctor);
+
+                if(sup == ImportFilter.class)
+                    ImportFilterClasses.put(name, ctor);
+                
                 
                 if(sup == Algorithm.class) {
                     Method[] methods = aClass.getMethods();
@@ -91,10 +100,35 @@ public class PluginManager {
                         applicableToClass = params[0];
                     }
                     
+                    if(applicableToClass == null)
+                        throw new Exception("class " + aClass.getName() + " is derived from Algorithm, but has no valid Run-method!");
+                    
                     if(!AlgorithmClasses.containsKey(applicableToClass))
                         AlgorithmClasses.put(applicableToClass, new Vector<String>());
                     AlgorithmClasses.get(applicableToClass).add(name);
                 }
+                
+                if(sup == ExportFilter.class) {
+                    Method[] methods = aClass.getMethods();
+                    Class applicableToClass = null;
+                    for(Method method : methods)
+                    {
+                        if(!method.getName().equals("Export"))
+                            continue;
+                        Class[] params = method.getParameterTypes();
+                        if(params.length < 1)
+                            continue;
+                        applicableToClass = params[0];
+                    }
+                    
+                    // must have a method Export(FOO x) where FOO is derived from Structure!
+                    if(applicableToClass == null)
+                        throw new Exception("class " + aClass.getName() + " is derived from ExportFilter, but has no valid Export-method!");
+                    
+                    if(!ExportFilterClasses.containsKey(applicableToClass))
+                        ExportFilterClasses.put(applicableToClass, new Vector<String>());
+                    ExportFilterClasses.get(applicableToClass).add(name);
+                }                
             }
             
         } catch(NoSuchMethodException e)
@@ -108,6 +142,10 @@ public class PluginManager {
 
     public static Set<String> getGeneratorClasses() {
         return GeneratorClasses.keySet();
+    }
+
+    public static Set<String> getImportFilterClasses() {
+        return ImportFilterClasses.keySet();
     }    
     
     public static Vector<String> getAlgorithms(Class<?> forClass) {
@@ -118,11 +156,20 @@ public class PluginManager {
         return result;
     }
 
+    public static Vector<String> getExportFilters(Class<?> forClass) {
+        Vector<String> result = new Vector<String>();
+        for(Class i = forClass; i != null; i = i.getSuperclass())
+            if(ExportFilterClasses.containsKey(i))
+                result.addAll(ExportFilterClasses.get(i));
+        return result;
+    }    
+    
 
     public static void Initialize() throws Exception {
         RegisterClass(DirectedGraph.class);
         RegisterClass(Vertex.class);
         RegisterClass(Edge.class);
+        RegisterClass(TrivialGraphFormatImport.class);
     }
 
     

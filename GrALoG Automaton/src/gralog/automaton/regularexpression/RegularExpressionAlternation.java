@@ -29,9 +29,9 @@ public class RegularExpressionAlternation extends RegularExpression {
     }
     
     @Override
-    public Automaton ThompsonConstruction() {
-        Automaton a = regexp1.ThompsonConstruction();
-        Automaton b = regexp2.ThompsonConstruction();
+    public Automaton ThompsonConstruction(Double scale) {
+        Automaton a = regexp1.ThompsonConstruction(scale);
+        Automaton b = regexp2.ThompsonConstruction(scale);
         
         // Determine new positions for the states
         Double aMaxX = a.MaximumCoordinate(0);
@@ -41,12 +41,12 @@ public class RegularExpressionAlternation extends RegularExpression {
         
         // Set the new positions of the states
         Vector<Double> aOffset = new Vector<Double>();
-        aOffset.add((bMaxX > aMaxX ? (bMaxX - aMaxX)/2d : 0d) + 50d);
+        aOffset.add((bMaxX > aMaxX ? (bMaxX - aMaxX)/2d : 0d) + scale);
         a.Move(aOffset);
         
         Vector<Double> bOffset = new Vector<Double>();
-        bOffset.add((aMaxX > bMaxX ? (aMaxX - bMaxX)/2d : 0d) + 50d);
-        bOffset.add((aMaxY > bMaxY ? (2*aMaxY - bMaxY) : bMaxY) + 50d);
+        bOffset.add((aMaxX > bMaxX ? (aMaxX - bMaxX)/2d : 0d) + scale);
+        bOffset.add((aMaxY > bMaxY ? (2*aMaxY - bMaxY) : bMaxY) + scale);
         b.Move(bOffset);
 
         
@@ -54,12 +54,12 @@ public class RegularExpressionAlternation extends RegularExpression {
         State s = a.CreateVertex();
         s.StartState = true;
         s.Coordinates.add(0d);
-        s.Coordinates.add(Math.max(aMaxY, bMaxY) + 25d);
+        s.Coordinates.add(Math.max(aMaxY, bMaxY) + scale/2.0d);
         
         State t = a.CreateVertex();
         t.FinalState = true;
-        t.Coordinates.add(Math.max(aMaxX, bMaxX) + 100d);
-        t.Coordinates.add(Math.max(aMaxY, bMaxY) + 25d);
+        t.Coordinates.add(Math.max(aMaxX, bMaxX) + scale*2d);
+        t.Coordinates.add(Math.max(aMaxY, bMaxY) + scale/2d);
 
         
         // make a the union of a and b

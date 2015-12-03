@@ -29,9 +29,9 @@ public class RegularExpressionKleeneStar extends RegularExpression {
     }
 
     @Override
-    public Automaton ThompsonConstruction() {
+    public Automaton ThompsonConstruction(Double scale) {
         
-        Automaton a = regexp.ThompsonConstruction();
+        Automaton a = regexp.ThompsonConstruction(scale);
         
         // Determine new positions for the states
         Double aMaxX = a.MaximumCoordinate(0);
@@ -39,8 +39,8 @@ public class RegularExpressionKleeneStar extends RegularExpression {
 
         // set new positions
         Vector<Double> aOffset = new Vector<Double>();
-        aOffset.add(50d);
-        aOffset.add(50d);
+        aOffset.add(scale);
+        aOffset.add(scale);
         a.Move(aOffset);
 
         
@@ -48,12 +48,12 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         State s = a.CreateVertex();
         s.StartState = true;
         s.Coordinates.add(0d);
-        s.Coordinates.add(aMaxY/2d + 50d);
+        s.Coordinates.add(aMaxY/2d + scale);
         
         State t = a.CreateVertex();
         t.FinalState = true;
-        t.Coordinates.add(aMaxX + 100d);
-        t.Coordinates.add(aMaxY/2d + 50d);
+        t.Coordinates.add(aMaxX + 2d*scale);
+        t.Coordinates.add(aMaxY/2d + scale);
 
         // Connect the new start and final states with epsilon transitions
         Transition st = a.CreateEdge();
@@ -62,10 +62,10 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         st.target = t;
         a.AddEdge(st);
         Vector<Double> st1 = new Vector<Double>();
-        st1.add(50d);
+        st1.add(scale);
         st1.add(0d);
         Vector<Double> st2 = new Vector<Double>();
-        st2.add(aMaxX + 50d);
+        st2.add(aMaxX + scale);
         st2.add(0d);
         st.Coordinates.add(st1);
         st.Coordinates.add(st2);
@@ -76,11 +76,11 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         ts.target = s;
         a.AddEdge(ts);        
         Vector<Double> ts1 = new Vector<Double>();
-        ts1.add(aMaxX + 50d);
-        ts1.add(aMaxY + 100d);
+        ts1.add(aMaxX + scale);
+        ts1.add(aMaxY + 2d*scale);
         Vector<Double> ts2 = new Vector<Double>();
-        ts2.add(50d);
-        ts2.add(aMaxY + 100d);
+        ts2.add(scale);
+        ts2.add(aMaxY + 2d*scale);
         ts.Coordinates.add(ts1);
         ts.Coordinates.add(ts2);        
         

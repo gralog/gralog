@@ -13,6 +13,9 @@ import gralog.automaton.*;
  */
 abstract public class RegularExpression {
 
-    abstract public Automaton ThompsonConstruction();
+    abstract public Automaton ThompsonConstruction(Double scale);
+    public Automaton ThompsonConstruction() {
+        return ThompsonConstruction(2.0d);
+    }
     
 }

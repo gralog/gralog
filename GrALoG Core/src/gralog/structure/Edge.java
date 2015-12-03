@@ -64,6 +64,45 @@ public class Edge extends XmlMarshallable {
     }
     
     
+    protected Double DistancePointToLine(Double px, Double py, Double l1x, Double l1y, Double l2x, Double l2y)
+    {
+        Double lx = l2x - l1x;
+        Double ly = l2y - l1y;
+        // normal-vector
+        Double nx = lx;
+        Double ny = -ly;
+        
+        // lotfuß-punkt
+        Double k = Math.abs((l1x-px)*nx + (l1y-py)*ny)
+                   /
+                   (nx*nx + ny*ny);
+        Double qx = px + k*nx;
+        Double qy = py + k*ny;
+        
+        return
+            Math.abs((l1x-px)*nx + (l1y-py)*ny)
+            /
+            Math.sqrt(nx*nx + ny*ny)
+            ;
+        
+    }
+    
+    public boolean ContainsCoordinate(Double x, Double y) {
+        Vector<Double> from = source.Coordinates;
+        Vector<Double> nextfrom = from;
+
+        for(Vector<Double> between : Coordinates)
+        {
+            from = nextfrom;
+            nextfrom = between;
+            if(DistancePointToLine(x, y, from.get(0), from.get(1), nextfrom.get(0), nextfrom.get(1)) < 0.3)
+                return true;
+        }
+        
+        Vector<Double> to = target.Coordinates;
+        return DistancePointToLine(x, y, nextfrom.get(0), nextfrom.get(1), to.get(0), to.get(1)) < 0.3;
+    }
+    
     
     public Element ToXml(Document doc, HashMap<Vertex,String> ids) throws Exception {
         Element enode = super.ToXml(doc);

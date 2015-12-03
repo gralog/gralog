@@ -88,6 +88,9 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         for(Vertex v : Vertices)
             if(v.ContainsCoordinate(x,y))
                 return v;
+        for(Edge e : Edges)
+            if(e.ContainsCoordinate(x,y))
+                return e;
         return null;
     }
     

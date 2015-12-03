@@ -26,7 +26,7 @@ public class RegularExpressionString extends RegularExpression {
     }
 
     @Override
-    public Automaton ThompsonConstruction() {
+    public Automaton ThompsonConstruction(Double scale) {
         Automaton a = new Automaton();
         
         State s = a.CreateVertex();
@@ -42,7 +42,7 @@ public class RegularExpressionString extends RegularExpression {
             s = t;
             
             t = a.CreateVertex();
-            t.Coordinates.add(50d * i + 50d);
+            t.Coordinates.add(scale*i + scale);
             t.Coordinates.add(0d);
             a.AddVertex(t);
         

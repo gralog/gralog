@@ -241,6 +241,7 @@ public class MainWindow extends Application {
                 new FileChooser.ExtensionFilter("All (*.*)", "*.*"),
                 new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
+            
             fileChooser.setInitialFileName("*.graphml");
             fileChooser.setTitle("Save File");
             File file = fileChooser.showSaveDialog(stage);
@@ -261,6 +262,13 @@ public class MainWindow extends Application {
             new FileChooser.ExtensionFilter("All (*.*)", "*.*"),
             new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
         );
+        
+        for(String format : PluginManager.getImportFilterClasses()){
+            fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("All (*.*)", "*.*")
+            );
+        }
+            
         fileChooser.setInitialFileName("*.graphml");
         fileChooser.setTitle("Open File");
         List<File> list = fileChooser.showOpenMultipleDialog(stage);
