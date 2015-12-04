@@ -1,0 +1,15 @@
+
+*/dist/
+*/build/
+
+# OS-specific files (add lines accordingly)
+
+# Linux + KDE
+.directory
+
+# Windows
+[Tt]humbs.db
+
+# Mac OS-X
+*.DS_Store
+
