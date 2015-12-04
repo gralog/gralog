@@ -6,7 +6,6 @@
 package gralog.exportfilter;
 
 import gralog.importfilter.*;
-import gralog.plugins.FileFormatDescription;
 import gralog.structure.*;
 
 import java.util.HashMap;
@@ -21,7 +20,7 @@ import java.util.StringTokenizer;
  *
  * @author viktor
  */
-@FileFormatDescription(
+@ExportFilterDescription(
   name="Trivial Graph Format",
   text="",
   url="https://en.wikipedia.org/wiki/Trivial_Graph_Format",
@@ -29,7 +28,7 @@ import java.util.StringTokenizer;
 )
 public class TrivialGraphFormatExport extends ExportFilter {
     
-    public void Export(OutputStreamWriter stream, Structure structure, ExportParameters params) throws Exception
+    public void Export(Structure structure, OutputStreamWriter stream, ExportFilterParameters params) throws Exception
     {
         HashMap<Vertex, Integer> NodeIndex = new HashMap<Vertex,Integer>();
         Integer i = 1;
@@ -38,8 +37,8 @@ public class TrivialGraphFormatExport extends ExportFilter {
         Set<Vertex> V = structure.getVertices();
         for(Vertex v : V){
             NodeIndex.put(v, i);
-            i++;
             stream.write(i + linefeed);
+            i++;
         }
         
         stream.write("#" + linefeed);

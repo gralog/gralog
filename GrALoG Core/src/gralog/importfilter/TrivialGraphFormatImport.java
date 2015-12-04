@@ -5,7 +5,6 @@
  */
 package gralog.importfilter;
 
-import gralog.plugins.FileFormatDescription;
 import gralog.structure.*;
 
 import java.util.HashMap;
@@ -18,16 +17,16 @@ import java.util.StringTokenizer;
  *
  * @author viktor
  */
-@FileFormatDescription(
+@ImportFilterDescription(
   name="Trivial Graph Format",
   text="",
   url="https://en.wikipedia.org/wiki/Trivial_Graph_Format",
   fileextension="tgf"
 )
 public class TrivialGraphFormatImport extends ImportFilter {
-    
+
     @Override
-    public Structure Import(String FileName, ImportParameters params) throws Exception {
+    public Structure Import(String FileName, ImportFilterParameters params) throws Exception {
         
         DirectedGraph result = new DirectedGraph();
         BufferedReader br = new BufferedReader(new FileReader(FileName));

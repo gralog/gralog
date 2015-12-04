@@ -37,7 +37,7 @@ public class AlgorithmStage extends Stage {
     Structure structure;
     boolean DialogResult;
     
-    public AlgorithmStage(Algorithm algo, Structure structure, AlgorithmParameters params, Application app)
+    public AlgorithmStage(Algorithm algo, Structure structure, AlgorithmParameters params, Application app) throws Exception
     {
         this.algo = algo;
         this.structure = structure;
@@ -56,16 +56,13 @@ public class AlgorithmStage extends Stage {
         hBox = new HBox();
         hBox.getChildren().addAll(cancelButton,runButton);
         infoButton = null;
-        if(algo.getClass().isAnnotationPresent(Description.class))
+        AlgorithmDescription descr = algo.getDescription();
+        String url = descr.url();
+        if(url != null && !url.trim().equals(""))
         {
-            Description descr = algo.getClass().getAnnotation(Description.class);
-            String url = descr.url();
-            if(url != null && !url.trim().equals(""))
-            {
-                infoButton = new Button("Info");
-                infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
-                hBox.getChildren().add(infoButton);
-            }
+            infoButton = new Button("Info");
+            infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
+            hBox.getChildren().add(infoButton);
         }
         
         root = new BorderPane();

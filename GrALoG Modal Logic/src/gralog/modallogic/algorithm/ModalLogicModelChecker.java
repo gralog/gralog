@@ -10,7 +10,6 @@ import gralog.modallogic.formula.*;
 import gralog.modallogic.parser.*;
 
 import gralog.algorithm.*;
-import gralog.plugins.Description;
 import gralog.structure.*;
 
 import java.util.HashSet;
@@ -20,7 +19,7 @@ import java.util.HashSet;
  *
  * @author viktor
  */
-@Description(
+@AlgorithmDescription(
   name="Modal Logic Model-Checking",
   text="",
   url="https://en.wikipedia.org/wiki/Modal_logic"

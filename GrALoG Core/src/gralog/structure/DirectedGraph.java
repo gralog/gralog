@@ -5,14 +5,13 @@
  */
 package gralog.structure;
 
-import gralog.plugins.Description;
 import gralog.plugins.XmlName;
 
 /**
  *
  * @author viktor
  */
-@Description(
+@StructureDescription(
   name="Directed Graph",
   text="",
   url="https://en.wikipedia.org/wiki/Directed_graph"

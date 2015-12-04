@@ -12,7 +12,7 @@ import gralog.plugins.*;
  *
  * @author viktor
  */
-@Description(
+@StructureDescription(
     name="Kripke Structure",
     text="",
     url="https://en.wikipedia.org/wiki/Kripke_structure_(model_checking)"

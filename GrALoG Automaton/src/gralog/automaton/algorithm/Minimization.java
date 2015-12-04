@@ -8,7 +8,6 @@ package gralog.automaton.algorithm;
 import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.automaton.*;
-import gralog.plugins.Description;
 
 import java.util.*;
 
@@ -17,7 +16,7 @@ import java.util.*;
  * @author viktor
  */
 
-@Description(
+@AlgorithmDescription(
   name="Minimization",
   text="",
   url="https://en.wikipedia.org/wiki/DFA_minimization"

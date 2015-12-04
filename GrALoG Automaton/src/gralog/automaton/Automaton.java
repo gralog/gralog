@@ -14,7 +14,7 @@ import java.util.HashSet;
  *
  * @author viktor
  */
-@Description(
+@StructureDescription(
     name="Automaton",
     text="",
     url="https://en.wikipedia.org/wiki/Automata_theory"

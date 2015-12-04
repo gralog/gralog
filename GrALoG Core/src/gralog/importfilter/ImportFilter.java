@@ -16,19 +16,26 @@ import java.io.FileInputStream;
 public class ImportFilter {
     
     // null means it has no parameters
-    public ImportParameters GetParameters() {
+    public ImportFilterParameters GetParameters() {
         return null;
     }
     
-    public Structure Import(String FileName, ImportParameters params) throws Exception
+    public Structure Import(String FileName, ImportFilterParameters params) throws Exception
     {
         FileInputStream stream = new FileInputStream(FileName);
         return Import(stream, params);
     }
     
-    public Structure Import(InputStream stream, ImportParameters params) throws Exception
+    public Structure Import(InputStream stream, ImportFilterParameters params) throws Exception
     {
         throw new Exception("class " + this.getClass().getName() + " has no Stream-based Import Method");
+    }
+    
+    
+    public ImportFilterDescription getDescription() throws Exception {
+        if(!this.getClass().isAnnotationPresent(ImportFilterDescription.class))
+            throw new Exception("class " + this.getClass().getName() + " has no @ImportFilterDescription Annotation");
+        return this.getClass().getAnnotation(ImportFilterDescription.class);
     }
     
 }

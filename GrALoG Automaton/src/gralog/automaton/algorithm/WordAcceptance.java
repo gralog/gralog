@@ -7,7 +7,6 @@ package gralog.automaton.algorithm;
 
 import gralog.algorithm.*;
 import gralog.automaton.*;
-import gralog.plugins.Description;
 import gralog.structure.*;
 import java.util.HashSet;
 
@@ -15,7 +14,7 @@ import java.util.HashSet;
  *
  * @author viktor
  */
-@Description(
+@AlgorithmDescription(
   name="Word Acceptance",
   text="",
   url="https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton#Example"

@@ -9,14 +9,13 @@ import gralog.generator.*;
 import gralog.automaton.*;
 import gralog.automaton.regularexpression.*;
 import gralog.automaton.regularexpression.parser.*;
-import gralog.plugins.Description;
 import gralog.structure.Structure;
 
 /**
  *
  * @author viktor
  */
-@Description(
+@GeneratorDescription(
   name="Thompson's Construction",
   text="",
   url="https://en.wikipedia.org/wiki/Thompson%27s_construction"

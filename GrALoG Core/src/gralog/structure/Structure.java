@@ -226,5 +226,13 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
     public void removeStructureListener(StructureListener listener) {
         listeners.remove(listener);
     }
+    
+    
+    public StructureDescription getDescription() throws Exception {
+        if(!this.getClass().isAnnotationPresent(StructureDescription.class))
+            throw new Exception("class " + this.getClass().getName() + " has no @StructureDescription Annotation");
+        return this.getClass().getAnnotation(StructureDescription.class);
+    }
+    
 }
 

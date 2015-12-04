@@ -36,7 +36,7 @@ public class GeneratorStage extends Stage {
     GeneratorParameters params;
     boolean DialogResult;
     
-    public GeneratorStage(Generator gen, GeneratorParameters params, Application app)
+    public GeneratorStage(Generator gen, GeneratorParameters params, Application app) throws Exception
     {
         this.gen = gen;
         this.params = params;
@@ -54,16 +54,13 @@ public class GeneratorStage extends Stage {
         hBox = new HBox();
         hBox.getChildren().addAll(cancelButton,runButton);
         infoButton = null;
-        if(gen.getClass().isAnnotationPresent(Description.class))
+        GeneratorDescription descr = gen.getDescription();
+        String url = descr.url();
+        if(url != null && !url.trim().equals(""))
         {
-            Description descr = gen.getClass().getAnnotation(Description.class);
-            String url = descr.url();
-            if(url != null && !url.trim().equals(""))
-            {
-                infoButton = new Button("Info");
-                infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
-                hBox.getChildren().add(infoButton);
-            }
+            infoButton = new Button("Info");
+            infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
+            hBox.getChildren().add(infoButton);
         }
         
         root = new BorderPane();

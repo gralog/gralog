@@ -19,5 +19,11 @@ public abstract class Generator {
     }
     
     public abstract Structure Generate(GeneratorParameters p) throws Exception;
+ 
     
+    public GeneratorDescription getDescription() throws Exception {
+        if(!this.getClass().isAnnotationPresent(GeneratorDescription.class))
+            throw new Exception("class " + this.getClass().getName() + " has no @GeneratorDescription Annotation");
+        return this.getClass().getAnnotation(GeneratorDescription.class);
+    }
 }

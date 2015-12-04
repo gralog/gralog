@@ -8,6 +8,8 @@ package gralog.gralogfx;
 
 import gralog.plugins.*;
 import gralog.structure.*;
+import gralog.importfilter.*;
+import gralog.exportfilter.*;
 import gralog.generator.*;
 import gralog.algorithm.*;
 import gralog.events.VertexEvent;
@@ -15,6 +17,7 @@ import gralog.events.VertexEvent;
 import java.util.List;
 import java.util.Vector;
 import java.util.Set;
+import java.util.HashMap;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.*;
@@ -28,6 +31,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.Alert.AlertType;
@@ -132,12 +136,15 @@ public class MainWindow extends Application {
                         return;
                     StructurePane structurePane = (StructurePane)tab.getContent();
                     Structure structure = structurePane.structure;
-                    if(!structure.getClass().isAnnotationPresent(Description.class))
-                        return;
-                    Description descr = structure.getClass().getAnnotation(Description.class);
-                    String url = descr.url();
-                    if(url != null && !url.trim().equals(""))
-                        this.getHostServices().showDocument(url);
+                    try {
+                        StructureDescription descr = structure.getDescription();
+                        String url = descr.url();
+                        if(url != null && !url.trim().equals(""))
+                            this.getHostServices().showDocument(url);
+                    } catch(Exception ex) {
+                        ExceptionBox exbox = new ExceptionBox();
+                        exbox.showAndWait(ex);
+                    }
                 });
             menuHelp.getItems().addAll(menuHelpAbout, menuHelpInfo);
             
@@ -238,15 +245,44 @@ public class MainWindow extends Application {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All (*.*)", "*.*"),
+                new FileChooser.ExtensionFilter("All Files (*.*)", "*.*"),
                 new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
             
-            fileChooser.setInitialFileName("*.graphml");
+            // add export-filters to list of extensions
+            for(String format : PluginManager.getExportFilters(structure.getClass())){
+                ExportFilterDescription descr = PluginManager.getExportFilterDescription(structure.getClass(),format);
+                ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileextension() + ")", "*." + descr.fileextension());
+                fileChooser.getExtensionFilters().add(filter);
+            }
+            
+            fileChooser.setInitialFileName("*.*");
             fileChooser.setTitle("Save File");
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
-                structure.WriteToFile(file.getAbsolutePath());
+                
+                // has the user selected the native file-type or an export-filter?
+                ExportFilter exportFilter = null;
+                String extension = file.getName(); // unclean way of getting file extension
+                int idx = extension.lastIndexOf(".");
+                extension = idx > 0 ? extension.substring(idx+1) : "";
+                
+                exportFilter = PluginManager.InstantiateExportFilterByExtension(structure.getClass(), extension);
+                if(exportFilter != null) {
+                    // configure export filter
+                    ExportFilterParameters params = exportFilter.GetParameters(structure);
+                    if(params != null) {
+                        ExportFilterStage stage = new ExportFilterStage(exportFilter,params,this);
+                        if(!stage.ShowAndWait())
+                            return;
+                    }
+                    
+                    exportFilter.DoExport(structure, file.getAbsolutePath(), params);
+                    
+                } else {
+                    structure.WriteToFile(file.getAbsolutePath());
+                }
+                    
             }
             
         } catch(Exception ex) {
@@ -263,25 +299,51 @@ public class MainWindow extends Application {
             new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
         );
         
+        // add export-filters to list of extensions
         for(String format : PluginManager.getImportFilterClasses()){
-            fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("All (*.*)", "*.*")
-            );
+            ImportFilterDescription descr = PluginManager.getImportFilterDescription(format);
+            ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileextension() + ")", "*." + descr.fileextension());
+            fileChooser.getExtensionFilters().add(filter);
         }
             
-        fileChooser.setInitialFileName("*.graphml");
+        fileChooser.setInitialFileName("*.*");
         fileChooser.setTitle("Open File");
         List<File> list = fileChooser.showOpenMultipleDialog(stage);
         if (list != null)
             for (File file : list)
-                doOpenFile(file.getAbsolutePath());
+                doOpenFile(file);
     }
     
-    public void doOpenFile(String filename)
+    public void doOpenFile(File file)
     {
         try {
-            this.setStatus("Loading File " + filename + "...");
-            addTab("", Structure.LoadFromFile(filename));
+            String extension = ""; // unclean way of getting file extension
+            int idx = file.getName().lastIndexOf(".");
+            extension = idx > 0 ? file.getName().substring(idx+1) : "";
+
+            ImportFilter importFilter = PluginManager.InstantiateImportFilterByExtension(extension);            
+            this.setStatus("Loading File " + file.getAbsolutePath() + "...");
+            Structure structure = null;
+            
+            if(importFilter != null)
+            {
+                ImportFilterParameters params = importFilter.GetParameters();
+                if(params != null)
+                {
+                    ImportFilterStage stage = new ImportFilterStage(importFilter, params, this);
+                    if(!stage.ShowAndWait())
+                    {
+                        this.setStatus("");
+                        return;
+                    }
+                }
+                structure = importFilter.Import(file.getAbsolutePath(), params);
+            }
+            else
+                structure = Structure.LoadFromFile(file.getAbsolutePath());
+            
+            if(structure != null)
+                addTab("", structure);
         } catch(Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -407,7 +469,7 @@ public class MainWindow extends Application {
             
             // prepare
             
-            Generator gen  = (Generator)PluginManager.InstantiateClass(str);
+            Generator gen  = (Generator)PluginManager.InstantiateGenerator(str);
             GeneratorParameters params = gen.GetParameters();
             if(params != null)
             {
@@ -432,14 +494,13 @@ public class MainWindow extends Application {
     
     public void menuAlgorithmActivated(String str) {
         try {
-            
-            
+
             // Prepare
             
-            Algorithm algo  = (Algorithm)PluginManager.InstantiateClass(str);
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             StructurePane structurePane = (StructurePane)tab.getContent();
             Structure structure = structurePane.structure;
+            Algorithm algo  = PluginManager.InstantiateAlgorithm(structure.getClass(), str);
             
             AlgorithmParameters params = algo.GetParameters(structure);
             if(params != null)
@@ -449,30 +510,12 @@ public class MainWindow extends Application {
                     return;
             }
             
-            
-            
             // Run
-            
             this.setStatus("Running Algorithm \"" + str + "\"...");
-            Object algoResult = null;
-            Method[] methods = algo.getClass().getMethods();
-            for(Method method : methods)
-            {
-                if(!method.getName().equals("Run"))
-                    continue;
-                Class[] paramTypes = method.getParameterTypes();
-                if(paramTypes.length != 2)
-                    continue;
-                
-                algoResult = method.invoke(algo, new Object[]{structure, params});
-                break;
-            }
+            Object algoResult = algo.DoRun(structure, params);
             this.setStatus("");
             
-            
-            
             // Show Result
-            
             if(algoResult == null)
                 return;
 
@@ -572,13 +615,13 @@ public class MainWindow extends Application {
                 if(!child.getTagName().equals("file"))
                     continue;
 
-                doOpenFile(child.getAttribute("location"));
+                doOpenFile(new File(child.getAttribute("location")));
             }
 
         // Open Files from Parameters
         for(String s : params.getUnnamed())
             if(!s.endsWith(".jar"))
-                doOpenFile(s);
+                doOpenFile(new File(s));
     }
     
 }
