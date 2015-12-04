@@ -250,8 +250,8 @@ public class MainWindow extends Application {
             );
             
             // add export-filters to list of extensions
-            for(String format : PluginManager.getExportFilters(structure.getClass())){
-                ExportFilterDescription descr = PluginManager.getExportFilterDescription(structure.getClass(),format);
+            for(String format : ExportFilterManager.getExportFilters(structure.getClass())){
+                ExportFilterDescription descr = ExportFilterManager.getExportFilterDescription(structure.getClass(),format);
                 ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileextension() + ")", "*." + descr.fileextension());
                 fileChooser.getExtensionFilters().add(filter);
             }
@@ -267,7 +267,7 @@ public class MainWindow extends Application {
                 int idx = extension.lastIndexOf(".");
                 extension = idx > 0 ? extension.substring(idx+1) : "";
                 
-                exportFilter = PluginManager.InstantiateExportFilterByExtension(structure.getClass(), extension);
+                exportFilter = ExportFilterManager.InstantiateExportFilterByExtension(structure.getClass(), extension);
                 if(exportFilter != null) {
                     // configure export filter
                     ExportFilterParameters params = exportFilter.GetParameters(structure);
@@ -300,8 +300,8 @@ public class MainWindow extends Application {
         );
         
         // add export-filters to list of extensions
-        for(String format : PluginManager.getImportFilterClasses()){
-            ImportFilterDescription descr = PluginManager.getImportFilterDescription(format);
+        for(String format : ImportFilterManager.getImportFilterClasses()){
+            ImportFilterDescription descr = ImportFilterManager.getImportFilterDescription(format);
             ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileextension() + ")", "*." + descr.fileextension());
             fileChooser.getExtensionFilters().add(filter);
         }
@@ -321,7 +321,7 @@ public class MainWindow extends Application {
             int idx = file.getName().lastIndexOf(".");
             extension = idx > 0 ? file.getName().substring(idx+1) : "";
 
-            ImportFilter importFilter = PluginManager.InstantiateImportFilterByExtension(extension);            
+            ImportFilter importFilter = ImportFilterManager.InstantiateImportFilterByExtension(extension);            
             this.setStatus("Loading File " + file.getAbsolutePath() + "...");
             Structure structure = null;
             
@@ -400,7 +400,7 @@ public class MainWindow extends Application {
 
     protected void updateStructures() {
         menuFileNew.getItems().clear();
-        for(String str : PluginManager.getStructureClasses())
+        for(String str : StructureManager.getStructureClasses())
         {
             MenuItem item = new MenuItem(str);
             item.setOnAction(e -> menuFileNewActivated(str));
@@ -410,7 +410,7 @@ public class MainWindow extends Application {
 
     protected void updateGenerators() {
         menuFileGenerators.getItems().clear();
-        for(String str : PluginManager.getGeneratorClasses())
+        for(String str : GeneratorManager.getGeneratorClasses())
         {
             MenuItem item = new MenuItem(str);
             item.setOnAction(e -> menuFileGeneratorActivated(str));
@@ -428,7 +428,7 @@ public class MainWindow extends Application {
         StructurePane structurePane = (StructurePane)tab.getContent();
         Structure structure = structurePane.structure;
         
-        for(String str : PluginManager.getAlgorithms(structure.getClass()))
+        for(String str : AlgorithmManager.getAlgorithms(structure.getClass()))
         {
             MenuItem item = new MenuItem(str);
             item.setOnAction(e -> menuAlgorithmActivated(str));
@@ -469,7 +469,7 @@ public class MainWindow extends Application {
             
             // prepare
             
-            Generator gen  = (Generator)PluginManager.InstantiateGenerator(str);
+            Generator gen  = GeneratorManager.InstantiateGenerator(str);
             GeneratorParameters params = gen.GetParameters();
             if(params != null)
             {
@@ -500,7 +500,7 @@ public class MainWindow extends Application {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             StructurePane structurePane = (StructurePane)tab.getContent();
             Structure structure = structurePane.structure;
-            Algorithm algo  = PluginManager.InstantiateAlgorithm(structure.getClass(), str);
+            Algorithm algo  = AlgorithmManager.InstantiateAlgorithm(structure.getClass(), str);
             
             AlgorithmParameters params = algo.GetParameters(structure);
             if(params != null)
