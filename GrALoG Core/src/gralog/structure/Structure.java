@@ -201,6 +201,7 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
             if (childNode.getNodeType() != childNode.ELEMENT_NODE)
                 continue;
             Element child = (Element)childNode;
+            
             Object result = PluginManager.InstantiateClass(child.getTagName());
             if(result == null)
                 continue;

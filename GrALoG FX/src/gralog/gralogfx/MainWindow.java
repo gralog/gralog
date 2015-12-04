@@ -227,7 +227,7 @@ public class MainWindow extends Application {
     
     public void menuFileNewActivated(String str) {
         try {
-            Structure structure = (Structure)PluginManager.InstantiateClass(str);
+            Structure structure = StructureManager.InstantiateStructure(str);
             addTab(str, structure);
             setStatus("created a " + str + "...");
         } catch(Exception ex) {

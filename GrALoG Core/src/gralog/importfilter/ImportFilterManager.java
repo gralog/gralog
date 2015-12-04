@@ -39,6 +39,8 @@ public class ImportFilterManager {
     }
     
     public static ImportFilter InstantiateImportFilterByExtension(String identifier) throws Exception {
+        if(!ImportFilterExtensions.containsKey(identifier))
+            return null;
         String classname = ImportFilterExtensions.get(identifier);
         return (ImportFilter)InstantiateClass(classname);
     }
