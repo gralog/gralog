@@ -152,25 +152,34 @@ public class MainWindow extends Application {
 
         // Button Bar
         buttonBar = new HBox();
-        Button x = new Button();
-        x.setText("S");
-        x.setOnAction( e -> {
+        Button buttonSelectMode = new Button();
+        buttonSelectMode.setText("S");
+        buttonSelectMode.setOnAction( e -> {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if(tab == null)
                 return;
             StructurePane structurePane = (StructurePane)tab.getContent();
             structurePane.SetSelectMode();
         });
-        Button y = new Button();
-        y.setText("V");
-        y.setOnAction(e -> {
+        Button buttonVertexMode = new Button();
+        buttonVertexMode.setText("V");
+        buttonVertexMode.setOnAction(e -> {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if(tab == null)
                 return;
             StructurePane structurePane = (StructurePane)tab.getContent();
             structurePane.SetVertexCreationMode();
         });
-        buttonBar.getChildren().addAll(x,y);
+        Button buttonEdgeMode = new Button();
+        buttonEdgeMode.setText("E");
+        buttonEdgeMode.setOnAction(e -> {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if(tab == null)
+                return;
+            StructurePane structurePane = (StructurePane)tab.getContent();
+            structurePane.SetEdgeCreationMode();
+        });
+        buttonBar.getChildren().addAll(buttonSelectMode,buttonVertexMode,buttonEdgeMode);
         topPane = new VBox();
         topPane.getChildren().addAll(menu,buttonBar);
                 
