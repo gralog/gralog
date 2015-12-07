@@ -103,6 +103,19 @@ public class Edge extends XmlMarshallable {
         return DistancePointToLine(x, y, nextfrom.get(0), nextfrom.get(1), to.get(0), to.get(1)) < 0.3;
     }
     
+    public Double Length() {
+        Vector2D from = new Vector2D(this.source.Coordinates);
+        Vector2D to = new Vector2D(this.target.Coordinates);
+        
+        Double result = 0.0;
+        for(Vector<Double> between : this.Coordinates)
+        {
+            Vector2D betw = new Vector2D(between);
+            result += betw.Minus(from).length();
+            from = betw;
+        }
+        return result + to.Minus(from).length();
+    }
     
     public Element ToXml(Document doc, HashMap<Vertex,String> ids) throws Exception {
         Element enode = super.ToXml(doc);

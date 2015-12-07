@@ -9,10 +9,12 @@ import gralog.automaton.*;
 import gralog.structure.Edge;
 import gralog.structure.Vertex;
 import gralog.exportfilter.*;
+import gralog.rendering.Vector2D;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  *
@@ -54,9 +56,9 @@ public class TikZExport extends ExportFilter {
                 stream.write(",accepting");
             if(s.StartState)
                 stream.write(",initial");
-            stream.write("] (q" + i + ") at (" + s.Coordinates.get(0) + "," + s.Coordinates.get(1) + ") {$q_" + i + "$};" + linefeed);
+            stream.write("] (q" + i + ") at (" + s.Coordinates.get(0) + "cm," + s.Coordinates.get(1) + "cm) {$q_{" + i + "}$};" + linefeed);
             i++;
-        }        
+        }
 
         
         
@@ -67,10 +69,31 @@ public class TikZExport extends ExportFilter {
         Set<Edge> E = structure.getEdges();
         for(Edge e : E){
             Transition t = (Transition)e;
+
+            Double halfLength = t.Length()/2.0;
+            Vector2D from = new Vector2D(t.source.Coordinates);
+            Vector2D to = new Vector2D(t.target.Coordinates);
+            Double distance = 0.0;
             
-            stream.write("        \\path (q" + NodeIndex.get(e.source).toString() + ") "
-                                + "edge node {$" + (t.Symbol.equals("") ? "\\varepsilon" : t.Symbol) + "$} "
-                                + "(q" + NodeIndex.get(e.target).toString() + ");" + linefeed);
+            stream.write("        \\draw (q" + NodeIndex.get(e.source) + ")" );
+            for(Vector<Double> c : e.Coordinates)
+            {
+                Vector2D betw = new Vector2D(c);
+                Double segmentlength = betw.Minus(from).length();
+                
+                stream.write(" --");
+                if(distance < halfLength && halfLength <= distance + segmentlength)
+                    stream.write(" node[above] {$" + (t.Symbol.equals("") ? "\\varepsilon" : t.Symbol) + "$}");
+                stream.write(" (" + c.get(0) + "cm," + c.get(1) + "cm)");
+                
+                distance += segmentlength;
+                from = betw;
+            }
+            
+            stream.write(" --");
+            if(distance < halfLength)
+                stream.write(" node[above] {$" + (t.Symbol.equals("") ? "\\varepsilon" : t.Symbol) + "$}");
+            stream.write(" (q" + NodeIndex.get(e.target) + ");" + linefeed);
         }
 
         
