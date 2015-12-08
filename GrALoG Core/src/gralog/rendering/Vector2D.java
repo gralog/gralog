@@ -27,6 +27,11 @@ public class Vector2D {
         this.y = vect.size() > 1 ? vect.get(1) : 0.0;
     }
     
+
+    public Vector2D Orthogonal()
+    {
+        return new Vector2D(-this.y, this.x);
+    }
     
     public Vector2D Plus(Vector2D other)
     {

@@ -66,24 +66,24 @@ public class Edge extends XmlMarshallable {
     
     protected Double DistancePointToLine(Double px, Double py, Double l1x, Double l1y, Double l2x, Double l2y)
     {
-        Double lx = l2x - l1x;
-        Double ly = l2y - l1y;
+        Vector2D p = new Vector2D(px,py);
+        Vector2D l1 = new Vector2D(l1x,l1y);
+        Vector2D l2 = new Vector2D(l2x,l2y);
+        Vector2D l = l2.Minus(l1);
+        
         // normal-vector
-        Double nx = lx;
-        Double ny = -ly;
+        Vector2D n = l.Orthogonal();
         
         // lotfuß-punkt
-        Double k = Math.abs((l1x-px)*nx + (l1y-py)*ny)
+        Double k = Math.abs(l1.Minus(p).Multiply(n))
                    /
-                   (nx*nx + ny*ny);
-        Double qx = px + k*nx;
-        Double qy = py + k*ny;
+                   (n.Multiply(n));
+        Vector2D q = p.Plus(n.Multiply(k));
         
         return
-            Math.abs((l1x-px)*nx + (l1y-py)*ny)
+            Math.abs(l1.Minus(p).Multiply(n))
             /
-            Math.sqrt(nx*nx + ny*ny)
-            ;
+            n.length();
         
     }
     

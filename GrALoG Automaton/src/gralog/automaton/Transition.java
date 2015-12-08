@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 @XmlName(name="transition")
 public class Transition extends Edge {
     
-    public String Symbol;
+    public String Symbol = "";
     
     @Override
     public Element ToXml(Document doc, HashMap<Vertex,String> ids) throws Exception {
