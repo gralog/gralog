@@ -64,7 +64,8 @@ public class Edge extends XmlMarshallable {
     }
     
     
-    protected Double DistancePointToLine(Double px, Double py, Double l1x, Double l1y, Double l2x, Double l2y)
+    
+    public Vector2D ClosestPointOnLine(Double px, Double py, Double l1x, Double l1y, Double l2x, Double l2y)
     {
         Vector2D p = new Vector2D(px,py);
         Vector2D l1 = new Vector2D(l1x,l1y);
@@ -80,11 +81,50 @@ public class Edge extends XmlMarshallable {
                    (n.Multiply(n));
         Vector2D q = p.Plus(n.Multiply(k));
         
+        return q;
+    }
+    
+    protected Double DistancePointToLine(Double px, Double py, Double l1x, Double l1y, Double l2x, Double l2y)
+    {
+        Vector2D p = new Vector2D(px,py);
+        Vector2D l1 = new Vector2D(l1x,l1y);
+        Vector2D l2 = new Vector2D(l2x,l2y);
+        Vector2D l = l2.Minus(l1);
+
+        if(l.getX() == 0 && l.getY() == 0) // (*)
+            return l1.Minus(p).length(); // l1==l2 so "the line" is actually just the point l1
+
+        
+        Vector2D perpendicular = ClosestPointOnLine(px,py,l1x,l1y,l2x,l2y);
+        Double lScaleToPerpendicular = 0.0;
+        if(l.getX() != 0)
+            lScaleToPerpendicular = (perpendicular.getX() - l1.getX())/l.getX();
+        else // if(l.getY() != 0) // true, because of (*)
+            lScaleToPerpendicular = (perpendicular.getY() - l1.getY())/l.getY();
+        
+        
+        if(lScaleToPerpendicular < 0)
+            return l1.Minus(p).length();
+        if(lScaleToPerpendicular > 1)
+            return l2.Minus(p).length();
+        return perpendicular.Minus(p).length();
+        
+        
+        /*
+        // normal-vector
+        Vector2D n = l.Orthogonal();
+        
+        // perpendicular
+        Double k = Math.abs(l1.Minus(p).Multiply(n))
+                   /
+                   (n.Multiply(n));
+        Vector2D q = p.Plus(n.Multiply(k));
+        
         return
             Math.abs(l1.Minus(p).Multiply(n))
             /
             n.length();
-        
+        */
     }
     
     public boolean ContainsCoordinate(Double x, Double y) {

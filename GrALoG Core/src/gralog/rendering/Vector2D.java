@@ -21,6 +21,15 @@ public class Vector2D {
         this.y = y;
     }
     
+    public Double getX()
+    {
+        return x;
+    }
+    public Double getY()
+    {
+        return y;
+    }
+    
     public Vector2D(Vector<Double> vect)
     {
         this.x = vect.size() > 0 ? vect.get(0) : 0.0;

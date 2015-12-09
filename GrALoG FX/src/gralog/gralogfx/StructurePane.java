@@ -93,7 +93,7 @@ public class StructurePane extends StackPane implements StructureListener {
         canvas.setOnMouseDragged(e -> {
             MouseEvent me = (MouseEvent)e;
             Point2D mousePositionModel = ScreenToModel(new Point2D(me.getX(), me.getY()));
-            if(Dragging != null)
+            if(Dragging != null && (Dragging instanceof Vertex))
             {
                 Vector<Double> coords = ((Vertex)Dragging).Coordinates;
                 coords.set(0, coords.get(0) + mousePositionModel.getX() - LastMouseX);
@@ -160,16 +160,16 @@ public class StructurePane extends StackPane implements StructureListener {
             LastMouseY = (Double)mousePositionModel.getY();
             
             Object releasedOver = structure.FindObject((Double)LastMouseX, (Double)LastMouseY);
-            if(releasedOver == null || !(releasedOver instanceof Vertex))
-                return;
+            if(releasedOver != null && (releasedOver instanceof Vertex))
+            {
+                Edge edge = structure.CreateEdge();
+                edge.source = (Vertex)Selection;
+                edge.target = (Vertex)releasedOver;
+                structure.AddEdge(edge);
             
-            Edge edge = structure.CreateEdge();
-            edge.source = (Vertex)Selection;
-            edge.target = (Vertex)releasedOver;
-            structure.AddEdge(edge);
-            
-            Selection = null;
-            this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+                Selection = null;
+                this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+            }
             this.draw();
         });
         canvas.setOnMouseDragged(e -> {

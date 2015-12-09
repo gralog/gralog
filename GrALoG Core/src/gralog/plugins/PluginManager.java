@@ -38,6 +38,7 @@ public class PluginManager {
         RegisterClass(Edge.class);
         RegisterClass(TrivialGraphFormatImport.class);
         RegisterClass(TrivialGraphFormatExport.class);
+        RegisterClass(TikZExport.class);
     }    
     
 

@@ -100,7 +100,6 @@ public class TikZExport extends ExportFilter {
         
         stream.write("    \\end{tikzpicture}" + linefeed);
         stream.write("%\\end{document}" + linefeed);
-        stream.write(" " + linefeed);
 
     }    
     
