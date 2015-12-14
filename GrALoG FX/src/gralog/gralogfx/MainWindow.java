@@ -87,6 +87,8 @@ public class MainWindow extends Application {
             updateAlgorithms();
             updateSelection();
         });
+        //tabPane.setFocusTraversable(true);
+
         
         // Menu
         menu = new MenuBar();
@@ -194,6 +196,7 @@ public class MainWindow extends Application {
         
         // 
         root = new BorderPane();
+        //root.setFocusTraversable(true);
         root.setTop(topPane);
         root.setCenter(tabPane);
         root.setRight(objectInspector);

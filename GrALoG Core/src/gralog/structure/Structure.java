@@ -75,10 +75,23 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
     public void AddVertex(V v) {
         Vertices.add(v);
     }
+    public void RemoveVertex(Vertex v) {
+        Set<Edge> deletedEdges = new HashSet<Edge>();
+        for(Edge e : Edges)
+            if(e.ContainsVertex(v))
+                deletedEdges.add(e);
+        for(Edge e : deletedEdges)
+            RemoveEdge(e);
+        
+        Vertices.remove(v);
+    }
     abstract public V CreateVertex();
 
     public void AddEdge(E e) {
         Edges.add(e);
+    }
+    public void RemoveEdge(Edge e) {
+        Edges.remove(e);
     }
     abstract public E CreateEdge();
     

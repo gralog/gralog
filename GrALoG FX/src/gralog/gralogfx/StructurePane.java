@@ -23,6 +23,8 @@ import javafx.event.EventHandler;
 import javafx.event.Event;
 import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
 
 
@@ -70,6 +72,9 @@ public class StructurePane extends StackPane implements StructureListener {
             draw();
         });
         
+        canvas.setFocusTraversable(true);
+        canvas.addEventFilter(MouseEvent.ANY, (e) -> canvas.requestFocus());
+
         SetSelectMode();
     }
     
@@ -112,7 +117,31 @@ public class StructurePane extends StackPane implements StructureListener {
             
             
             this.draw();
-            //this.requestLayout();
+        });
+        canvas.setOnKeyPressed(e -> {
+            KeyEvent ke = (KeyEvent)e;
+            switch(ke.getCode())
+            {
+                case DELETE:
+                    if(Selection == null)
+                        return;
+                
+                    if(Selection instanceof Vertex)
+                    {
+                        structure.RemoveVertex((Vertex)Selection);
+                        Selection = null;
+                        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+                    }
+                    else if(Selection instanceof Edge)
+                    {
+                        structure.RemoveEdge((Edge)Selection);
+                        Selection = null;
+                        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+                    }
+                    
+                    this.draw();
+                    break;
+            }
         });
     }
 
@@ -134,6 +163,8 @@ public class StructurePane extends StackPane implements StructureListener {
         });
         canvas.setOnMouseReleased(e -> {});
         canvas.setOnMouseDragged(e -> {});
+        canvas.setOnKeyReleased(e -> {});
+
     }    
     
     public void SetEdgeCreationMode()
@@ -178,7 +209,8 @@ public class StructurePane extends StackPane implements StructureListener {
                 MouseEvent me = (MouseEvent)e;
                 draw(me.getX(), me.getY());
             }
-        });        
+        });
+        canvas.setOnKeyReleased(e -> {});
     }
     
     

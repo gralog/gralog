@@ -143,6 +143,10 @@ public class Edge extends XmlMarshallable {
         return DistancePointToLine(x, y, nextfrom.get(0), nextfrom.get(1), to.get(0), to.get(1)) < 0.3;
     }
     
+    public boolean ContainsVertex(Vertex v) {
+        return source == v || target == v;
+    }
+    
     public Double Length() {
         Vector2D from = new Vector2D(this.source.Coordinates);
         Vector2D to = new Vector2D(this.target.Coordinates);
