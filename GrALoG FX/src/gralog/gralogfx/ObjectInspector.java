@@ -9,6 +9,7 @@ import gralog.gralogfx.views.View;
 import gralog.gralogfx.views.ReflectedView;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.lang.reflect.Constructor;
 import javafx.scene.layout.Pane;
 import javafx.scene.Node;
@@ -35,6 +36,13 @@ public class ObjectInspector extends Pane {
     
     public void AddSkin(Class forClass, Class skinClass) {
         SkinFactory.put(forClass, skinClass);
+    }
+    
+    public void SetObjects(Set<Object> objects) throws Exception {
+        SetObject(null);
+        if(objects.size() == 1)
+            for(Object o : objects)
+                SetObject(o);
     }
     
     public void SetObject(Object obj) throws Exception {

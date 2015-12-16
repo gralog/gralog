@@ -460,10 +460,10 @@ public class MainWindow extends Application {
     
     protected void updateSelection(StructurePane sender) {
         try {
-            Object selection = null;
+            Set<Object> selection = null;
             if(sender != null)
                 selection = sender.Selection;
-            objectInspector.SetObject(selection);
+            objectInspector.SetObjects(selection);
         } catch(Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);            

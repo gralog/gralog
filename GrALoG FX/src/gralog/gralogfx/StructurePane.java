@@ -11,6 +11,7 @@ import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 
 import java.util.Set;
+import java.util.HashSet;
 import java.util.Vector;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -44,8 +45,8 @@ public class StructurePane extends StackPane implements StructureListener {
     Structure structure;
     Canvas canvas;
     
-    Object Selection = null;
-    Object Dragging = null;
+    Set<Object> Selection = new HashSet<Object>();
+    Set<Object> Dragging = null;
     Double LastMouseX = -1d;
     Double LastMouseY = -1d;
     
@@ -57,8 +58,8 @@ public class StructurePane extends StackPane implements StructureListener {
         // resize canvas with surrounding StructurePane
         canvas.widthProperty().bind(this.widthProperty());
         canvas.heightProperty().bind(this.heightProperty());
-        canvas.widthProperty().addListener(e -> draw());
-        canvas.heightProperty().addListener(e -> draw());
+        canvas.widthProperty().addListener(e -> this.RequestRedraw());
+        canvas.heightProperty().addListener(e -> this.RequestRedraw());
         
         canvas.setOnScroll(e->{
             ScrollEvent se = (ScrollEvent)e;
@@ -69,7 +70,7 @@ public class StructurePane extends StackPane implements StructureListener {
             
             OffsetX += oldMousePos.getX() - newMousePos.getX(); // sweet :-)
             OffsetY += oldMousePos.getY() - newMousePos.getY();
-            draw();
+            this.RequestRedraw();
         });
         
         canvas.setFocusTraversable(true);
@@ -78,6 +79,15 @@ public class StructurePane extends StackPane implements StructureListener {
         SetSelectMode();
     }
     
+    
+    public void RequestRedraw()
+    {
+        this.draw(); // quick n dirty
+    }
+    public void RequestRedraw(Double screenX, Double screenY)
+    {
+        this.draw(screenX,screenY); // quick n dirty
+    }
     
     
     public void SetSelectMode()
@@ -88,8 +98,19 @@ public class StructurePane extends StackPane implements StructureListener {
             LastMouseX = (Double)mousePositionModel.getX();
             LastMouseY = (Double)mousePositionModel.getY();
             
-            Selection = structure.FindObject((Double)LastMouseX, (Double)LastMouseY);
-            Dragging = Selection;
+            if(!e.isControlDown())
+                Selection.clear();
+            
+            Object selected = structure.FindObject((Double)LastMouseX, (Double)LastMouseY);
+            if(selected != null)
+            {
+                //if(!Selection.contains(selected))
+                    Selection.add(selected);
+                //else
+                //    Selection.remove(selected);
+                
+                Dragging = Selection;
+            }
             this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
         });
         canvas.setOnMouseReleased(e -> {
@@ -98,48 +119,45 @@ public class StructurePane extends StackPane implements StructureListener {
         canvas.setOnMouseDragged(e -> {
             MouseEvent me = (MouseEvent)e;
             Point2D mousePositionModel = ScreenToModel(new Point2D(me.getX(), me.getY()));
-            if(Dragging != null && (Dragging instanceof Vertex))
+            if(Dragging != null)
             {
-                Vector<Double> coords = ((Vertex)Dragging).Coordinates;
-                coords.set(0, coords.get(0) + mousePositionModel.getX() - LastMouseX);
-                coords.set(1, coords.get(1) + mousePositionModel.getY() - LastMouseY);
-                ((Vertex)Dragging).Coordinates = coords;
-                //((Vertex)Dragging).notifyVertexListeners();
-    
-                // this must not be done in the screen-draging!!!
+                for(Object o : Dragging)
+                {
+                    if(o instanceof Vertex)
+                    {
+                        Vector<Double> coords = ((Vertex)o).Coordinates;
+                        coords.set(0, coords.get(0) + mousePositionModel.getX() - LastMouseX);
+                        coords.set(1, coords.get(1) + mousePositionModel.getY() - LastMouseY);
+                        ((Vertex)o).Coordinates = coords;
+                        //((Vertex)o).notifyVertexListeners();
+                    }
+                }
+                // this must not be done when we are dragging the screen!!!!!
                 LastMouseX = (Double)mousePositionModel.getX();
                 LastMouseY = (Double)mousePositionModel.getY();
-
             } else {                                                 // draging the screen
                 OffsetX -= (mousePositionModel.getX() - LastMouseX);
                 OffsetY -= (mousePositionModel.getY() - LastMouseY);
             }
             
-            
-            this.draw();
+            this.RequestRedraw();
         });
         canvas.setOnKeyPressed(e -> {
             KeyEvent ke = (KeyEvent)e;
             switch(ke.getCode())
             {
                 case DELETE:
-                    if(Selection == null)
-                        return;
-                
-                    if(Selection instanceof Vertex)
+                    for(Object o : Selection)
                     {
-                        structure.RemoveVertex((Vertex)Selection);
-                        Selection = null;
-                        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
-                    }
-                    else if(Selection instanceof Edge)
-                    {
-                        structure.RemoveEdge((Edge)Selection);
-                        Selection = null;
-                        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+                        if(o instanceof Vertex)
+                            structure.RemoveVertex((Vertex)o);
+                        else if(Selection instanceof Edge)
+                            structure.RemoveEdge((Edge)Selection);
                     }
                     
-                    this.draw();
+                    Selection.clear();
+                    this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+                    this.RequestRedraw();
                     break;
             }
         });
@@ -157,9 +175,11 @@ public class StructurePane extends StackPane implements StructureListener {
             v.Coordinates.add(mousePositionModel.getX());
             v.Coordinates.add(mousePositionModel.getY());
             structure.AddVertex(v);
+            Selection.clear();
+            Selection.add(v);
             
             this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
-            this.draw();
+            this.RequestRedraw();
         });
         canvas.setOnMouseReleased(e -> {});
         canvas.setOnMouseDragged(e -> {});
@@ -178,11 +198,12 @@ public class StructurePane extends StackPane implements StructureListener {
             Object SelectionTemp = structure.FindObject(LastMouseX, LastMouseY);
             if(SelectionTemp == null || !(SelectionTemp instanceof Vertex))
                 return;
-            Selection = SelectionTemp;
+            Selection.clear();
+            Selection.add(SelectionTemp);
             Dragging = null;
             
             this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
-            draw();
+            this.RequestRedraw();
         });
         canvas.setOnMouseReleased(e -> {
             MouseEvent me = (MouseEvent)e;
@@ -193,21 +214,25 @@ public class StructurePane extends StackPane implements StructureListener {
             Object releasedOver = structure.FindObject((Double)LastMouseX, (Double)LastMouseY);
             if(releasedOver != null && (releasedOver instanceof Vertex))
             {
-                Edge edge = structure.CreateEdge();
-                edge.source = (Vertex)Selection;
-                edge.target = (Vertex)releasedOver;
-                structure.AddEdge(edge);
-            
-                Selection = null;
+                for(Object o : Selection)
+                {
+                    if(!(o instanceof Vertex))
+                        continue;
+                    Edge edge = structure.CreateEdge();
+                    edge.source = (Vertex)o;
+                    edge.target = (Vertex)releasedOver;
+                    structure.AddEdge(edge);
+                }
+                Selection.clear();
                 this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
             }
-            this.draw();
+            this.RequestRedraw();
         });
         canvas.setOnMouseDragged(e -> {
             if(Selection != null)
             {
                 MouseEvent me = (MouseEvent)e;
-                draw(me.getX(), me.getY());
+                this.RequestRedraw(me.getX(), me.getY());
             }
         });
         canvas.setOnKeyReleased(e -> {});
@@ -248,11 +273,14 @@ public class StructurePane extends StackPane implements StructureListener {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         draw(gc);
 
-        if(Selection == null || !(Selection instanceof Vertex))
-            return;
-        Vertex v = (Vertex)Selection;
-        Point2D selectionScreen = ModelToScreen(new Point2D(v.Coordinates.get(0), v.Coordinates.get(1)));
-        gc.strokeLine(selectionScreen.getX(),selectionScreen.getY(),MouseScreenX, MouseScreenY);
+        for(Object o : Selection)
+        {
+            if(!(o instanceof Vertex))
+                continue;
+            Vertex v = (Vertex)o;
+            Point2D selectionScreen = ModelToScreen(new Point2D(v.Coordinates.get(0), v.Coordinates.get(1)));
+            gc.strokeLine(selectionScreen.getX(),selectionScreen.getY(),MouseScreenX, MouseScreenY);
+        }
     }
     
     public void draw() {
@@ -260,7 +288,6 @@ public class StructurePane extends StackPane implements StructureListener {
     }
     
     protected void draw(GraphicsContext gc) {
-
         gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
         gc.setFill(Color.rgb(0xFA, 0xFB, 0xFF));
         gc.fillRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
@@ -276,7 +303,7 @@ public class StructurePane extends StackPane implements StructureListener {
     
     
     public void StructureChanged(StructureEvent e) {
-        draw();
+        this.RequestRedraw();
     }
     
     public void VertexChanged(VertexEvent e) {
