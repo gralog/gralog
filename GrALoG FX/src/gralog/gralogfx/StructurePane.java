@@ -151,8 +151,8 @@ public class StructurePane extends StackPane implements StructureListener {
                     {
                         if(o instanceof Vertex)
                             structure.RemoveVertex((Vertex)o);
-                        else if(Selection instanceof Edge)
-                            structure.RemoveEdge((Edge)Selection);
+                        else if(o instanceof Edge)
+                            structure.RemoveEdge((Edge)o);
                     }
                     
                     Selection.clear();
