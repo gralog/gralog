@@ -288,15 +288,36 @@ public class StructurePane extends StackPane implements StructureListener {
     }
     
     protected void draw(GraphicsContext gc) {
-        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+        // clear
+        Double w = gc.getCanvas().getWidth();
+        Double h = gc.getCanvas().getHeight();
+        gc.clearRect(0, 0, w, h);
         gc.setFill(Color.rgb(0xFA, 0xFB, 0xFF));
-        gc.fillRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
+        gc.fillRect(0, 0, w, h);
 
-        Point2D center = ModelToScreen(new Point2D(0d,0d));
-        gc.strokeLine(center.getX(), 0, center.getX(), gc.getCanvas().getHeight());
-        gc.strokeLine(center.getX(), 0, center.getX(), gc.getCanvas().getHeight());
-        gc.strokeLine(0, center.getY(), gc.getCanvas().getWidth(), center.getY());
         
+        
+        // grid
+        gc.setStroke(Color.rgb(0xcc,0xcc,0xcc));
+        Point2D leftupper = ScreenToModel(new Point2D(0d,0d));
+        Point2D rightlower = ScreenToModel(new Point2D(w, h));
+        Double GridSize = 1.0; // cm
+        for(Double x = leftupper.getX() - (leftupper.getX() % GridSize); x <= rightlower.getX(); x += GridSize) {
+            Point2D lineScreen = ModelToScreen(new Point2D(x, 0));
+            gc.strokeLine(lineScreen.getX(), 0, lineScreen.getX(), h);
+        }
+        for(Double y = leftupper.getY() - (leftupper.getY() % GridSize); y <= rightlower.getY(); y += GridSize) {
+            Point2D lineScreen = ModelToScreen(new Point2D(0, y));
+            gc.strokeLine(0, lineScreen.getY(), w, lineScreen.getY());
+        }
+
+        // origin
+        gc.setStroke(Color.BLACK);
+        Point2D center = ModelToScreen(new Point2D(0d,0d));
+        gc.strokeLine(center.getX(), 0, center.getX(), h);
+        gc.strokeLine(0, center.getY(), w, center.getY());
+        
+        // draw the graph
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
         structure.Render(ggc);
     }
