@@ -193,11 +193,15 @@ public class StructurePane extends StackPane implements StructureListener {
             LastMouseY = (Double)mousePositionModel.getY();
             
             Object SelectionTemp = structure.FindObject(LastMouseX, LastMouseY);
-            if(SelectionTemp == null || !(SelectionTemp instanceof Vertex))
+            if(SelectionTemp == null)
                 return;
+            
             Selection.clear();
-            Selection.add(SelectionTemp);
             Dragging = null;
+            if(SelectionTemp instanceof Vertex)
+                Selection.add(SelectionTemp);
+            else if(SelectionTemp instanceof Edge)
+                ((Edge)SelectionTemp).addIntermediatePoint(LastMouseX, LastMouseY);
             
             this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
             this.RequestRedraw();

@@ -45,7 +45,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             between.Move(offset);
     }
 
-    IMovable FindObject(Double x, Double y) {
+    public IMovable FindObject(Double x, Double y) {
         for(EdgeIntermediatePoint p : intermediatePoints)
             if(p.ContainsCoordinate(x,y))
                 return p;
@@ -98,6 +98,45 @@ public class Edge extends XmlMarshallable implements IMovable {
         Double toY = target.Coordinates.get(1);
         return Vector2D.DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < 0.3;
     }
+
+    public void addIntermediatePoint(Double x, Double y)
+    {
+        Double fromX = source.Coordinates.get(0);
+        Double fromY = source.Coordinates.get(1);
+        Double nextfromX = fromX;
+        Double nextfromY = fromY;
+        
+        int i = 0, insertionIndex = 0;
+        Double MinDistance = 0d;
+
+        for(EdgeIntermediatePoint between : intermediatePoints)
+        {
+            fromX = nextfromX;
+            fromY = nextfromY;
+            nextfromX = between.get(0);
+            nextfromY = between.get(1);
+            
+            Double distanceTemp = Vector2D.DistancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY);
+            if( distanceTemp < MinDistance )
+            {
+                insertionIndex = i;
+                MinDistance = distanceTemp;
+            }
+            i++;
+        }
+        
+        Double toX = target.Coordinates.get(0);
+        Double toY = target.Coordinates.get(1);
+
+        Double distanceTemp = Vector2D.DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY);
+        if( distanceTemp < MinDistance )
+        {
+            insertionIndex = i;
+            MinDistance = distanceTemp;
+        }
+        
+        intermediatePoints.insertElementAt(new EdgeIntermediatePoint(x,y), i);
+    }    
     
     public boolean ContainsVertex(Vertex v) {
         return source == v || target == v;
