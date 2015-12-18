@@ -56,11 +56,13 @@ public class Edge extends XmlMarshallable implements IMovable {
         return null;
     }
     
-    public void Render(GralogGraphicsContext gc) {
+    public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
         Double fromX = source.Coordinates.get(0);
         Double fromY = source.Coordinates.get(1);
         Double tempX = fromX;
         Double tempY = fromY;
+
+        GralogColor color = new GralogColor( highlights != null && highlights.contains(this) ? 0xFF0000 : 0x000000 );
         
         for(EdgeIntermediatePoint between : intermediatePoints)
         {
@@ -68,7 +70,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             fromY = tempY;
             tempX = between.get(0);
             tempY = between.get(1);
-            gc.Line(fromX, fromY, tempX, tempY);
+            gc.Line(fromX, fromY, tempX, tempY, color);
         }
 
         Double toX = target.Coordinates.get(0);

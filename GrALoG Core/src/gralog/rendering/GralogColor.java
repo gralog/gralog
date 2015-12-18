@@ -11,9 +11,9 @@ package gralog.rendering;
  */
 public class GralogColor {
     
-    short r;
-    short g;
-    short b;
+    public short r;
+    public short g;
+    public short b;
     
     public GralogColor(short red, short green, short blue)
     {

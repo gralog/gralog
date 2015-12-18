@@ -40,8 +40,9 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     protected final double radius = 0.5d;
-    public void Render(GralogGraphicsContext gc) {
-        gc.Circle(Coordinates.get(0), Coordinates.get(1), radius);
+    public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
+        GralogColor color = new GralogColor( highlights != null && highlights.contains(this) ? 0xFF0000 : 0x000000 );
+        gc.Circle(Coordinates.get(0), Coordinates.get(1), radius, color);
     }
     
     public boolean ContainsCoordinate(Double x, Double y) {

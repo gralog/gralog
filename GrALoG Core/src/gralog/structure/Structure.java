@@ -47,11 +47,11 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
     }            
     
     
-    public void Render(GralogGraphicsContext gc) {
+    public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
         for(Edge e : Edges)
-            e.Render(gc);
+            e.Render(gc, highlights);
         for(Vertex v : Vertices)
-            v.Render(gc);
+            v.Render(gc, highlights);
     }
     
     

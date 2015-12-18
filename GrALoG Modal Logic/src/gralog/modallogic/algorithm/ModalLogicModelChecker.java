@@ -39,7 +39,7 @@ public class ModalLogicModelChecker extends Algorithm {
         ModalLogicFormula phi = parser.parseString(sp.parameter);
         HashSet<World> result = phi.Interpretation(s);
         
-        return "" + result.size() + " worlds";
+        return result;
     }
     
     

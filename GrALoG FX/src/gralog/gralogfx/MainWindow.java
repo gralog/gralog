@@ -14,10 +14,7 @@ import gralog.generator.*;
 import gralog.algorithm.*;
 import gralog.events.VertexEvent;
 
-import java.util.List;
-import java.util.Vector;
-import java.util.Set;
-import java.util.HashMap;
+import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.*;
@@ -463,7 +460,10 @@ public class MainWindow extends Application {
         try {
             Set<Object> selection = null;
             if(sender != null)
+            {
                 selection = sender.Selection;
+                sender.RequestRedraw();
+            }
             objectInspector.SetObjects(selection);
         } catch(Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
@@ -533,7 +533,23 @@ public class MainWindow extends Application {
                 return;
 
             if(algoResult instanceof Structure)
+            {
                 this.addTab("", (Structure)algoResult);
+            }
+            else if(algoResult instanceof Set)
+            {
+                boolean isSelection = true;
+                for(Object o : (Set)algoResult)
+                    if( !(o instanceof Vertex)
+                    &&  !(o instanceof Edge)
+                    &&  !(o instanceof EdgeIntermediatePoint))
+                        isSelection = false;
+                if(isSelection)
+                {
+                    structurePane.Selection = (Set)algoResult;
+                    structurePane.RequestRedraw();
+                }
+            }
             else if(algoResult instanceof String)
             {
                 Alert alert = new Alert(AlertType.INFORMATION);

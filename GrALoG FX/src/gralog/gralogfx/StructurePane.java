@@ -292,8 +292,6 @@ public class StructurePane extends StackPane implements StructureListener {
         gc.setFill(Color.rgb(0xFA, 0xFB, 0xFF));
         gc.fillRect(0, 0, w, h);
 
-        
-        
         // grid
         gc.setStroke(Color.rgb(0xcc,0xcc,0xcc));
         Point2D leftupper = ScreenToModel(new Point2D(0d,0d));
@@ -316,7 +314,7 @@ public class StructurePane extends StackPane implements StructureListener {
         
         // draw the graph
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
-        structure.Render(ggc);
+        structure.Render(ggc, this.Selection);
     }
     
     

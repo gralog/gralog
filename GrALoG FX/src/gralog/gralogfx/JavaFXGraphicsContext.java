@@ -31,8 +31,9 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         Point2D p1 = pane.ModelToScreen(new Point2D(x1,y1));
         Point2D p2 = pane.ModelToScreen(new Point2D(x2,y2));
         
-        gc.setFill(Color.BLACK);
-        gc.setStroke(Color.BLACK);
+        
+        gc.setFill(Color.rgb(c.r, c.g, c.b));
+        gc.setStroke(Color.rgb(c.r, c.g, c.b));
         gc.setLineWidth(1);        
         
         gc.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
@@ -44,8 +45,8 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         Point2D p1 = pane.ModelToScreen(new Point2D(centerx-radius,centery-radius));
         Point2D p2 = pane.ModelToScreen(new Point2D(centerx+radius,centery+radius));
 
-        gc.setFill(Color.BLACK);
-        gc.setStroke(Color.BLACK);
+        gc.setFill(Color.rgb(c.r, c.g, c.b));
+        gc.setStroke(Color.rgb(c.r, c.g, c.b));
         gc.setLineWidth(1);
         
         gc.fillOval(p1.getX(), p1.getY(), p2.getX()-p1.getX(), p2.getY() - p1.getY());
