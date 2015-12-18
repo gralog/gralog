@@ -96,15 +96,22 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
     abstract public E CreateEdge();
     
     
-    public Object FindObject(Double x, Double y)
+    public IMovable FindObject(Double x, Double y)
     {
+        IMovable result = null;
+
+        for(Edge e : Edges)
+        {
+            IMovable temp = e.FindObject(x,y);
+            if(temp != null)
+                result = temp;
+        }
+        
         for(Vertex v : Vertices)
             if(v.ContainsCoordinate(x,y))
-                return v;
-        for(Edge e : Edges)
-            if(e.ContainsCoordinate(x,y))
-                return e;
-        return null;
+                result = v;
+
+        return result;
     }
     
     

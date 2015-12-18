@@ -455,6 +455,7 @@ public class MainWindow extends Application {
         if(tab != null)
             if(tab.getContent() instanceof StructurePane)
                 structurePane = (StructurePane)tab.getContent();
+        
         updateSelection(structurePane);
     }
     

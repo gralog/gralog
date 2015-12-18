@@ -101,7 +101,7 @@ public class StructurePane extends StackPane implements StructureListener {
             if(!e.isControlDown())
                 Selection.clear();
             
-            Object selected = structure.FindObject((Double)LastMouseX, (Double)LastMouseY);
+            IMovable selected = structure.FindObject((Double)LastMouseX, (Double)LastMouseY);
             if(selected != null)
             {
                 //if(!Selection.contains(selected))
@@ -122,16 +122,13 @@ public class StructurePane extends StackPane implements StructureListener {
             if(Dragging != null)
             {
                 for(Object o : Dragging)
-                {
-                    if(o instanceof Vertex)
+                    if(o instanceof IMovable)
                     {
-                        Vector<Double> coords = ((Vertex)o).Coordinates;
-                        coords.set(0, coords.get(0) + mousePositionModel.getX() - LastMouseX);
-                        coords.set(1, coords.get(1) + mousePositionModel.getY() - LastMouseY);
-                        ((Vertex)o).Coordinates = coords;
-                        //((Vertex)o).notifyVertexListeners();
+                        Vector<Double> offsets = new Vector<Double>();
+                        offsets.add(mousePositionModel.getX() - LastMouseX);
+                        offsets.add(mousePositionModel.getY() - LastMouseY);
+                        ((IMovable)o).Move(offsets);
                     }
-                }
                 // this must not be done when we are dragging the screen!!!!!
                 LastMouseX = (Double)mousePositionModel.getX();
                 LastMouseY = (Double)mousePositionModel.getY();

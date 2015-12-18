@@ -45,6 +45,16 @@ public class Edge extends XmlMarshallable implements IMovable {
             between.Move(offset);
     }
 
+    IMovable FindObject(Double x, Double y) {
+        for(EdgeIntermediatePoint p : intermediatePoints)
+            if(p.ContainsCoordinate(x,y))
+                return p;
+        
+        if(this.ContainsCoordinate(x, y))
+            return this;
+        
+        return null;
+    }
     
     public void Render(GralogGraphicsContext gc) {
         Double fromX = source.Coordinates.get(0);
@@ -66,53 +76,6 @@ public class Edge extends XmlMarshallable implements IMovable {
         gc.Line(tempX, tempY, toX, toY);
     }
     
-    
-    
-    public Vector2D ClosestPointOnLine(Double px, Double py, Double l1x, Double l1y, Double l2x, Double l2y)
-    {
-        Vector2D p = new Vector2D(px,py);
-        Vector2D l1 = new Vector2D(l1x,l1y);
-        Vector2D l2 = new Vector2D(l2x,l2y);
-        Vector2D l = l2.Minus(l1);
-        
-        // normal-vector
-        Vector2D n = l.Orthogonal();
-        
-        // lotfuß-punkt
-        Double k = Math.abs(l1.Minus(p).Multiply(n))
-                   /
-                   (n.Multiply(n));
-        Vector2D q = p.Plus(n.Multiply(k));
-        
-        return q;
-    }
-    
-    protected Double DistancePointToLine(Double px, Double py, Double l1x, Double l1y, Double l2x, Double l2y)
-    {
-        Vector2D p = new Vector2D(px,py);
-        Vector2D l1 = new Vector2D(l1x,l1y);
-        Vector2D l2 = new Vector2D(l2x,l2y);
-        Vector2D l = l2.Minus(l1);
-
-        if(l.getX() == 0 && l.getY() == 0) // (*)
-            return l1.Minus(p).length(); // l1==l2 so "the line" is actually just the point l1
-
-        
-        Vector2D perpendicular = ClosestPointOnLine(px,py,l1x,l1y,l2x,l2y);
-        Double lScaleToPerpendicular = 0.0;
-        if(l.getX() != 0)
-            lScaleToPerpendicular = (perpendicular.getX() - l1.getX())/l.getX();
-        else // if(l.getY() != 0) // true, because of (*)
-            lScaleToPerpendicular = (perpendicular.getY() - l1.getY())/l.getY();
-        
-        
-        if(lScaleToPerpendicular < 0)
-            return l1.Minus(p).length();
-        if(lScaleToPerpendicular > 1)
-            return l2.Minus(p).length();
-        return perpendicular.Minus(p).length();
-    }
-    
     public boolean ContainsCoordinate(Double x, Double y) {
         Double fromX = source.Coordinates.get(0);
         Double fromY = source.Coordinates.get(1);
@@ -125,13 +88,13 @@ public class Edge extends XmlMarshallable implements IMovable {
             fromY = nextfromY;
             nextfromX = between.get(0);
             nextfromY = between.get(1);
-            if(DistancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY) < 0.3)
+            if(Vector2D.DistancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY) < 0.3)
                 return true;
         }
         
         Double toX = target.Coordinates.get(0);
         Double toY = target.Coordinates.get(1);
-        return DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < 0.3;
+        return Vector2D.DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < 0.3;
     }
     
     public boolean ContainsVertex(Vertex v) {

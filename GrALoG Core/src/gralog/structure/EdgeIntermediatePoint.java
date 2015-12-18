@@ -21,7 +21,6 @@ import org.w3c.dom.Element;
 public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     
     Vector<Double> coordinates = new Vector<Double>();
-
     
     public EdgeIntermediatePoint()
     {
@@ -37,6 +36,13 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     {
         for(Double d : coords)
             this.coordinates.add(d);
+    }
+    
+    public boolean ContainsCoordinate(Double x, Double y)
+    {
+        return  (get(0)-x)*(get(0)-x)
+              + (get(1)-y)*(get(1)-y)
+              < 0.3;
     }
     
     public void Move(Vector<Double> offsets)
@@ -73,5 +79,10 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
         coordinates.clear();
         coordinates.add(Double.parseDouble(enode.getAttribute("x")));
         coordinates.add(Double.parseDouble(enode.getAttribute("y")));
-    }    
+    }
+    
+    @Override
+    public String toString() {
+        return coordinates.toString();
+    }
 }
