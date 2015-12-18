@@ -7,6 +7,7 @@ package gralog.algorithm;
 
 import static gralog.plugins.PluginManager.InstantiateClass;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -21,6 +22,9 @@ public class AlgorithmManager {
     private final static HashMap<Class, HashMap<String, AlgorithmDescription>> AlgorithmDescriptions = new HashMap<Class, HashMap<String, AlgorithmDescription>>();
 
     public static void RegisterAlgorithmClass(Class<?> aClass, String classname) throws Exception {
+        if(Modifier.isAbstract(aClass.getModifiers()))
+            return;
+        
         Method[] methods = aClass.getMethods();
         Class applicableToClass = null;
         for(Method method : methods)

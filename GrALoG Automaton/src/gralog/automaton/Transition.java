@@ -28,7 +28,7 @@ public class Transition extends Edge {
     }
     
     @Override    
-    public void FromXml(Element enode, HashMap<String,Vertex> ids) {
+    public void FromXml(Element enode, HashMap<String,Vertex> ids) throws Exception {
         super.FromXml(enode, ids);
         Symbol = enode.getAttribute("symbol");
     }    

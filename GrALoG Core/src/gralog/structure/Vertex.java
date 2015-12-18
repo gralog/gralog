@@ -19,7 +19,7 @@ import java.util.HashSet;
  * @author viktor
  */
 @XmlName(name="node")
-public class Vertex extends XmlMarshallable {
+public class Vertex extends XmlMarshallable implements IMovable {
  
     
     public Vector<Double> Coordinates = new Vector<Double>();
@@ -38,7 +38,7 @@ public class Vertex extends XmlMarshallable {
         for(int i = 0; i < offset.size(); i++)
             Coordinates.set(i, Coordinates.get(i) + offset.get(i));
     }
-    
+
     protected final double radius = 0.5d;
     public void Render(GralogGraphicsContext gc) {
         gc.Circle(Coordinates.get(0), Coordinates.get(1), radius);

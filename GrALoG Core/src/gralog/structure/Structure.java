@@ -161,9 +161,10 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         
         HashMap<String,Vertex> VertexRegister = new HashMap<>();
         HashMap<Edge, Element> LoadedFrom = new HashMap<>();
+        Vector<Edge> TempEdges = new Vector<Edge>();
         
         NodeList children = gnode.getChildNodes();
-        for(int i = children.getLength()-1; i >= 0; --i)
+        for(int i = 0; i < children.getLength(); ++i)
         {
             Node childNode = children.item(i);
             if (childNode.getNodeType() != childNode.ELEMENT_NODE)
@@ -180,11 +181,12 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
             }
             else if(obj instanceof Edge)
             {
+                TempEdges.add((E)obj);
                 LoadedFrom.put((E)obj, child);
             }
         }
         
-        for(Edge e : LoadedFrom.keySet())
+        for(Edge e : TempEdges)
         {
             e.FromXml(LoadedFrom.get(e), VertexRegister);
             Edges.add(e);

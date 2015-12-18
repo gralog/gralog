@@ -6,6 +6,7 @@
 package gralog.importfilter;
 
 import static gralog.plugins.PluginManager.InstantiateClass;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -21,6 +22,9 @@ public class ImportFilterManager {
     
     public static void RegisterImportFilterClass(Class<?> aClass, String classname) throws Exception
     {
+        if(Modifier.isAbstract(aClass.getModifiers()))
+            return;
+        
         if(!aClass.isAnnotationPresent(ImportFilterDescription.class))
             throw new Exception("class " + aClass.getName() + " has no @ImportFilterDescription annotation");
         ImportFilterDescription descr = aClass.getAnnotation(ImportFilterDescription.class);

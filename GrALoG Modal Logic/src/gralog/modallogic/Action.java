@@ -30,7 +30,7 @@ public class Action extends Edge {
     }
     
     @Override    
-    public void FromXml(Element enode, HashMap<String,Vertex> ids) {
+    public void FromXml(Element enode, HashMap<String,Vertex> ids) throws Exception {
         super.FromXml(enode, ids);
         Name = enode.getAttribute("name");
     }

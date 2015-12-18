@@ -33,13 +33,9 @@ public class PluginManager {
     
     
     public static void Initialize() throws Exception {
-        RegisterClass(DirectedGraph.class);
-        RegisterClass(Vertex.class);
-        RegisterClass(Edge.class);
-        RegisterClass(TrivialGraphFormatImport.class);
-        RegisterClass(TrivialGraphFormatExport.class);
-        RegisterClass(TikZExport.class);
-    }    
+        File f = new File(PluginManager.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        LoadPlugin(f.getAbsolutePath());
+    }
     
 
     public static Object InstantiateClass(String className) throws Exception {
@@ -70,6 +66,9 @@ public class PluginManager {
 
     public static void RegisterClass(String classname, String xmlAlias, Class<?> aClass) throws Exception
     {
+        if(Modifier.isAbstract(aClass.getModifiers()))
+            return;        
+        
         if(ClassRegister.containsKey(classname))
             throw new Exception("class name \"" + classname + "\" already exists!");
         if(xmlAlias != null)

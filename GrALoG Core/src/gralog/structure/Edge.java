@@ -15,52 +15,55 @@ import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  *
  * @author viktor
  */
 @XmlName(name="edge")
-public class Edge extends XmlMarshallable {
+public class Edge extends XmlMarshallable implements IMovable {
     
     Set<EdgeListener> listeners = new HashSet<EdgeListener>();
     
-    public Vector<Vector<Double>> Coordinates = new Vector<Vector<Double>>();
+    public Vector<EdgeIntermediatePoint> intermediatePoints = new Vector<EdgeIntermediatePoint>();
     public Vertex source;
     public Vertex target;
     
 
     public Double MaximumCoordinate(int dimension) {
         Double result = Double.NEGATIVE_INFINITY;
-        for(Vector<Double> between : Coordinates)
+        for(EdgeIntermediatePoint between : intermediatePoints)
             if(between.size() > dimension)
                 result = Math.max(result, between.get(dimension));
         return result;
     }
 
     public void Move(Vector<Double> offset) {
-        for(Vector<Double> between : Coordinates)
-            while(between.size() < offset.size())
-                between.add(0d);
-        for(Vector<Double> between : Coordinates)
-            for(int i = 0; i < offset.size(); i++)
-                between.set(i, between.get(i) + offset.get(i));
+        for(EdgeIntermediatePoint between : intermediatePoints)
+            between.Move(offset);
     }
 
     
     public void Render(GralogGraphicsContext gc) {
-        Vector<Double> from = source.Coordinates;
-        Vector<Double> temp = from;
-
-        for(Vector<Double> between : Coordinates)
+        Double fromX = source.Coordinates.get(0);
+        Double fromY = source.Coordinates.get(1);
+        Double tempX = fromX;
+        Double tempY = fromY;
+        
+        for(EdgeIntermediatePoint between : intermediatePoints)
         {
-            from = temp;
-            temp = between;
-            gc.Line(from.get(0), from.get(1), temp.get(0), temp.get(1));
+            fromX = tempX;
+            fromY = tempY;
+            tempX = between.get(0);
+            tempY = between.get(1);
+            gc.Line(fromX, fromY, tempX, tempY);
         }
 
-        Vector<Double> to = target.Coordinates;
-        gc.Line(temp.get(0), temp.get(1), to.get(0), to.get(1));
+        Double toX = target.Coordinates.get(0);
+        Double toY = target.Coordinates.get(1);
+        gc.Line(tempX, tempY, toX, toY);
     }
     
     
@@ -108,39 +111,27 @@ public class Edge extends XmlMarshallable {
         if(lScaleToPerpendicular > 1)
             return l2.Minus(p).length();
         return perpendicular.Minus(p).length();
-        
-        
-        /*
-        // normal-vector
-        Vector2D n = l.Orthogonal();
-        
-        // perpendicular
-        Double k = Math.abs(l1.Minus(p).Multiply(n))
-                   /
-                   (n.Multiply(n));
-        Vector2D q = p.Plus(n.Multiply(k));
-        
-        return
-            Math.abs(l1.Minus(p).Multiply(n))
-            /
-            n.length();
-        */
     }
     
     public boolean ContainsCoordinate(Double x, Double y) {
-        Vector<Double> from = source.Coordinates;
-        Vector<Double> nextfrom = from;
+        Double fromX = source.Coordinates.get(0);
+        Double fromY = source.Coordinates.get(1);
+        Double nextfromX = fromX;
+        Double nextfromY = fromY;
 
-        for(Vector<Double> between : Coordinates)
+        for(EdgeIntermediatePoint between : intermediatePoints)
         {
-            from = nextfrom;
-            nextfrom = between;
-            if(DistancePointToLine(x, y, from.get(0), from.get(1), nextfrom.get(0), nextfrom.get(1)) < 0.3)
+            fromX = nextfromX;
+            fromY = nextfromY;
+            nextfromX = between.get(0);
+            nextfromY = between.get(1);
+            if(DistancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY) < 0.3)
                 return true;
         }
         
-        Vector<Double> to = target.Coordinates;
-        return DistancePointToLine(x, y, nextfrom.get(0), nextfrom.get(1), to.get(0), to.get(1)) < 0.3;
+        Double toX = target.Coordinates.get(0);
+        Double toY = target.Coordinates.get(1);
+        return DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < 0.3;
     }
     
     public boolean ContainsVertex(Vertex v) {
@@ -152,9 +143,9 @@ public class Edge extends XmlMarshallable {
         Vector2D to = new Vector2D(this.target.Coordinates);
         
         Double result = 0.0;
-        for(Vector<Double> between : this.Coordinates)
+        for(EdgeIntermediatePoint between : this.intermediatePoints)
         {
-            Vector2D betw = new Vector2D(between);
+            Vector2D betw = new Vector2D(between.get(0), between.get(1));
             result += betw.Minus(from).length();
             from = betw;
         }
@@ -165,12 +156,37 @@ public class Edge extends XmlMarshallable {
         Element enode = super.ToXml(doc);
         enode.setAttribute("source", ids.get(source));
         enode.setAttribute("target", ids.get(target));
+        
+        for(EdgeIntermediatePoint p : intermediatePoints)
+        {
+            Element e = p.ToXml(doc);
+            if(e != null)
+                enode.appendChild(e);
+        }
+        
         return enode;
     }
     
-    public void FromXml(Element enode, HashMap<String,Vertex> ids) {
+    public void FromXml(Element enode, HashMap<String,Vertex> ids) throws Exception {
         source = ids.get(enode.getAttribute("source"));
         target = ids.get(enode.getAttribute("target"));
+        
+        NodeList children = enode.getChildNodes(); // load intermediate points
+        for(int i = 0; i < children.getLength(); ++i)
+        {
+            Node childNode = children.item(i);
+            if (childNode.getNodeType() != childNode.ELEMENT_NODE)
+                continue;
+
+            Element child = (Element) childNode;
+            Object obj = PluginManager.InstantiateClass(child.getTagName());
+            if(obj instanceof EdgeIntermediatePoint)
+            {
+                EdgeIntermediatePoint p = (EdgeIntermediatePoint)obj;
+                p.FromXml(child);
+                this.intermediatePoints.add(p);
+            }
+        }
     }
     
     

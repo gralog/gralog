@@ -6,6 +6,7 @@
 package gralog.generator;
 
 import static gralog.plugins.PluginManager.InstantiateClass;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -19,6 +20,9 @@ public class GeneratorManager {
     private final static HashMap<String, GeneratorDescription> GeneratorDescriptions = new HashMap<String,GeneratorDescription>();
     
     public static void RegisterGeneratorClass(Class<?> aClass, String classname) throws Exception {
+        if(Modifier.isAbstract(aClass.getModifiers()))
+            return;
+        
         if(!aClass.isAnnotationPresent(GeneratorDescription.class))
             throw new Exception("class " + aClass.getName() + " has no @GeneratorDescription annotation");
         GeneratorDescription descr = aClass.getAnnotation(GeneratorDescription.class);

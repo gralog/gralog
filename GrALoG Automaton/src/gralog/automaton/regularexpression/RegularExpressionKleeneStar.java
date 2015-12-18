@@ -5,10 +5,8 @@
  */
 package gralog.automaton.regularexpression;
 
-import gralog.automaton.Automaton;
-import gralog.automaton.State;
-import gralog.automaton.Transition;
-import gralog.structure.Vertex;
+import gralog.automaton.*;
+import gralog.structure.*;
 import java.util.Vector;
 
 /**
@@ -61,28 +59,16 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         st.source = s;
         st.target = t;
         a.AddEdge(st);
-        Vector<Double> st1 = new Vector<Double>();
-        st1.add(scale);
-        st1.add(0d);
-        Vector<Double> st2 = new Vector<Double>();
-        st2.add(aMaxX + scale);
-        st2.add(0d);
-        st.Coordinates.add(st1);
-        st.Coordinates.add(st2);
+        st.intermediatePoints.add(new EdgeIntermediatePoint(scale, 0d));
+        st.intermediatePoints.add(new EdgeIntermediatePoint(aMaxX + scale, 0d));
 
         Transition ts = a.CreateEdge();
         ts.Symbol = ""; // epsilon transition
         ts.source = t;
         ts.target = s;
-        a.AddEdge(ts);        
-        Vector<Double> ts1 = new Vector<Double>();
-        ts1.add(aMaxX + scale);
-        ts1.add(aMaxY + 2d*scale);
-        Vector<Double> ts2 = new Vector<Double>();
-        ts2.add(scale);
-        ts2.add(aMaxY + 2d*scale);
-        ts.Coordinates.add(ts1);
-        ts.Coordinates.add(ts2);        
+        a.AddEdge(ts);
+        ts.intermediatePoints.add(new EdgeIntermediatePoint(aMaxX + scale, aMaxY + 2d*scale));
+        ts.intermediatePoints.add(new EdgeIntermediatePoint(scale, aMaxY + 2d*scale));
         
         // Connect the old start and final states to the new start and final states
         for(Vertex v : a.getVertices()) {

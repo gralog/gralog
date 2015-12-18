@@ -13,7 +13,7 @@ import java.io.FileInputStream;
  *
  * @author viktor
  */
-public class ImportFilter {
+abstract public class ImportFilter {
     
     // null means it has no parameters
     public ImportFilterParameters GetParameters() {

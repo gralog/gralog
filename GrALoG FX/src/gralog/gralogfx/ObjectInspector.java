@@ -40,7 +40,7 @@ public class ObjectInspector extends Pane {
     
     public void SetObjects(Set<Object> objects) throws Exception {
         SetObject(null);
-        if(objects.size() == 1)
+        if(objects != null && objects.size() == 1)
             for(Object o : objects)
                 SetObject(o);
     }

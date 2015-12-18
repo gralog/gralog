@@ -5,16 +5,14 @@
  */
 package gralog.automaton.export;
 
+import gralog.structure.*;
 import gralog.automaton.*;
-import gralog.structure.Edge;
-import gralog.structure.Vertex;
 import gralog.exportfilter.*;
 import gralog.rendering.Vector2D;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  *
@@ -76,9 +74,9 @@ public class TikZExport extends ExportFilter {
             Double distance = 0.0;
             
             stream.write("        \\draw (q" + NodeIndex.get(e.source) + ")" );
-            for(Vector<Double> c : e.Coordinates)
+            for(EdgeIntermediatePoint c : e.intermediatePoints)
             {
-                Vector2D betw = new Vector2D(c);
+                Vector2D betw = new Vector2D(c.get(0), c.get(1));
                 Double segmentlength = betw.Minus(from).length();
                 
                 stream.write(" --");

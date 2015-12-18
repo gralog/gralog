@@ -67,7 +67,7 @@ public class TikZExport extends ExportFilter {
             Vector2D to = new Vector2D(e.target.Coordinates);
             
             stream.write("        \\draw (n" + NodeIndex.get(e.source) + ")" );
-            for(Vector<Double> c : e.Coordinates)
+            for(EdgeIntermediatePoint c : e.intermediatePoints)
                 stream.write(" edge[-] (" + c.get(0) + "cm," + c.get(1) + "cm)");
             
             stream.write(" edge[-] (n" + NodeIndex.get(e.target) + ");" + linefeed);

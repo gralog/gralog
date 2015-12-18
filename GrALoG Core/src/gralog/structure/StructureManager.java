@@ -6,6 +6,7 @@
 package gralog.structure;
 
 import static gralog.plugins.PluginManager.InstantiateClass;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -21,6 +22,9 @@ public class StructureManager {
     
     public static void RegisterStructureClass(Class<?> aClass, String classname) throws Exception
     {
+        if(Modifier.isAbstract(aClass.getModifiers()))
+            return;
+        
         if(!aClass.isAnnotationPresent(StructureDescription.class))
             throw new Exception("class " + aClass.getName() + " has no @StructureDescription annotation");
         StructureDescription descr = aClass.getAnnotation(StructureDescription.class);
