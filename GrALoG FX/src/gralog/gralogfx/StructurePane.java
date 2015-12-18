@@ -215,9 +215,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 {
                     if(!(o instanceof Vertex))
                         continue;
-                    Edge edge = structure.CreateEdge();
-                    edge.source = (Vertex)o;
-                    edge.target = (Vertex)releasedOver;
+                    Edge edge = structure.CreateEdge((Vertex)o, (Vertex)releasedOver);
                     structure.AddEdge(edge);
                 }
                 Selection.clear();

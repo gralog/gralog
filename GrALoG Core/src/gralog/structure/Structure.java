@@ -94,6 +94,20 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         Edges.remove(e);
     }
     abstract public E CreateEdge();
+    public E CreateEdge(V source, V target)
+    {
+        E edge = CreateEdge();
+        edge.source = source;
+        edge.target = target;
+        
+        if(source == target && source != null)
+        {
+            edge.intermediatePoints.add(new EdgeIntermediatePoint(source.Coordinates.get(0) + 0.6, source.Coordinates.get(1)-1.5d));
+            edge.intermediatePoints.add(new EdgeIntermediatePoint(source.Coordinates.get(0) - 0.6, source.Coordinates.get(1)-1.5d));
+        }
+        
+        return edge;
+    }
     
     
     public IMovable FindObject(Double x, Double y)

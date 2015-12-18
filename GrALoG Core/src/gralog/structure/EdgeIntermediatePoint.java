@@ -42,7 +42,7 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     {
         return  (get(0)-x)*(get(0)-x)
               + (get(1)-y)*(get(1)-y)
-              < 0.3;
+              < 0.15*0.15;
     }
     
     public void Move(Vector<Double> offsets)

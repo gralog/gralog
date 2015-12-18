@@ -75,7 +75,7 @@ public class Edge extends XmlMarshallable implements IMovable {
 
         Double toX = target.Coordinates.get(0);
         Double toY = target.Coordinates.get(1);
-        gc.Line(tempX, tempY, toX, toY);
+        gc.Line(tempX, tempY, toX, toY, color);
     }
     
     public boolean ContainsCoordinate(Double x, Double y) {
