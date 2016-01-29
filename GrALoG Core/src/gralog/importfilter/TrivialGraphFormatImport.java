@@ -9,7 +9,9 @@ import gralog.structure.*;
 
 import java.util.HashMap;
 import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.util.StringTokenizer;
 
 
@@ -26,10 +28,9 @@ import java.util.StringTokenizer;
 public class TrivialGraphFormatImport extends ImportFilter {
 
     @Override
-    public Structure Import(String FileName, ImportFilterParameters params) throws Exception {
-        
+    public Structure Import(InputStream stream, ImportFilterParameters params) throws Exception {
         DirectedGraph result = new DirectedGraph();
-        BufferedReader br = new BufferedReader(new FileReader(FileName));
+        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
         String s = br.readLine();
 
         HashMap<String, Vertex> NodeIndex = new HashMap<String, Vertex>();
@@ -84,5 +85,7 @@ public class TrivialGraphFormatImport extends ImportFilter {
 
         br.close();
         return result;
+
     }
+    
 }

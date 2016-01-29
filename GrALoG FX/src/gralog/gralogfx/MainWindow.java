@@ -53,6 +53,7 @@ public class MainWindow extends Application {
             Menu menuFileNew;
             Menu menuFileGenerators;
             MenuItem menuFileOpen;
+            MenuItem menuFileDirectInput;
             MenuItem menuFileSave;
             MenuItem menuFileClose;
             MenuItem menuFileExit;
@@ -99,13 +100,15 @@ public class MainWindow extends Application {
                 updateGenerators();
                 menuFileOpen = new MenuItem("Open");
                     menuFileOpen.setOnAction(e -> menuFileOpenActivated());
+                menuFileDirectInput = new MenuItem("Direct Input");
+                    menuFileDirectInput.setOnAction(e -> menuFileDirectInputActivated());
                 menuFileSave = new MenuItem("Save");
                     menuFileSave.setOnAction(e -> menuFileSaveActivated());
                 menuFileClose = new MenuItem("Close");
                 menuFileExit = new MenuItem("Exit");
             menuFile.getItems().addAll(menuFilePlugin, menuFileNew, menuFileGenerators,
-                                       menuFileOpen, menuFileSave, menuFileClose,
-                                       menuFileExit);
+                                       menuFileOpen, menuFileDirectInput, menuFileSave,
+                                       menuFileClose, menuFileExit);
             
             // Edit Menu
             menuEdit = new Menu("Edit");
@@ -322,6 +325,20 @@ public class MainWindow extends Application {
             for (File file : list)
                 doOpenFile(file);
     }
+
+    public void menuFileDirectInputActivated() {
+        try {
+            
+            DirectInputStage directinputstage = new DirectInputStage(this);
+            Structure s = directinputstage.ShowAndWait();
+            if(s != null)
+                this.addTab("", s);
+            
+        }  catch(Exception ex) {
+            ExceptionBox exbox = new ExceptionBox();
+            exbox.showAndWait(ex);
+        }
+    }    
     
     public void doOpenFile(File file)
     {
