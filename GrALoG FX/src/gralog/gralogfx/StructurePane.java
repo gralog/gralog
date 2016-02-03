@@ -272,6 +272,7 @@ public class StructurePane extends StackPane implements StructureListener {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         draw(gc);
 
+        gc.setStroke(Color.BLACK);
         for(Object o : Selection)
         {
             if(!(o instanceof Vertex))

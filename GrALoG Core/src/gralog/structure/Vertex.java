@@ -33,6 +33,12 @@ public class Vertex extends XmlMarshallable implements IMovable {
         return Double.NEGATIVE_INFINITY;
     }
     
+    public Vector2D Intersection(Vector2D p1, Vector2D p2)
+    {
+        return p1.Minus(p2).Normalized().Multiply(this.radius).Plus(p2);
+    }
+    
+    
     public void Move(Vector<Double> offset) {
         while(Coordinates.size() < offset.size())
             Coordinates.add(0d);

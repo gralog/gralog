@@ -28,8 +28,8 @@ public class Edge extends XmlMarshallable implements IMovable {
     Set<EdgeListener> listeners = new HashSet<EdgeListener>();
     
     public boolean isDirected = true;
-    public Double ArrowHeadLength = 1.0d;
-    public Double ArrowHeadAngle = 40d; // degree
+    public Double ArrowHeadLength = 0.5d;
+    public Double ArrowHeadAngle = 45d; // degree
     
     public Vector<EdgeIntermediatePoint> intermediatePoints = new Vector<EdgeIntermediatePoint>();
     public String Label;
@@ -81,7 +81,10 @@ public class Edge extends XmlMarshallable implements IMovable {
         Double toX = target.Coordinates.get(0);
         Double toY = target.Coordinates.get(1);
         if(isDirected)
-            gc.Arrow(tempX, tempY, toX, toY, ArrowHeadAngle, ArrowHeadLength, color);
+        {
+            Vector2D intersection = target.Intersection(new Vector2D(tempX,tempY), new Vector2D(toX,toY));
+            gc.Arrow(tempX, tempY, intersection.getX(), intersection.getY(), ArrowHeadAngle, ArrowHeadLength, color);
+        }
         else
             gc.Line(tempX, tempY, toX, toY, color);
     }
