@@ -7,6 +7,7 @@ package gralog.automaton.algorithm;
 
 import gralog.algorithm.*;
 import gralog.automaton.Automaton;
+import gralog.progresshandler.ProgressHandler;
 
 /**
  *
@@ -19,7 +20,7 @@ import gralog.automaton.Automaton;
 )
 public class PowersetConstruction extends Algorithm {
     
-    public Object Run(Automaton s, AlgorithmParameters p) throws Exception {
+    public Object Run(Automaton s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
         throw new Exception("this algorithm isn't implemented yet.\n"
                 + "it is only a test of the exception-handling of the GUI");
     }    

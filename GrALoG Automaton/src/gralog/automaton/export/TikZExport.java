@@ -77,7 +77,7 @@ public class TikZExport extends ExportFilter {
             for(EdgeIntermediatePoint c : e.intermediatePoints)
             {
                 Vector2D betw = new Vector2D(c.get(0), c.get(1));
-                Double segmentlength = betw.Minus(from).length();
+                Double segmentlength = betw.Minus(from).Length();
                 
                 stream.write(" --");
                 if(distance < halfLength && halfLength <= distance + segmentlength)

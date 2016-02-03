@@ -22,5 +22,8 @@ public abstract class GralogGraphicsContext {
     public void Circle(double centerx, double centery, double radius) {
         Circle(centerx, centery, radius, GralogColor.black);
     }
+    
+    public void PutText(double centerx, double centery, String text, GralogColor color) {
+    }
 
 }

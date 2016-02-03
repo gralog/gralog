@@ -8,6 +8,7 @@ package gralog.automaton.algorithm;
 import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.automaton.*;
+import gralog.progresshandler.*;
 
 import java.util.*;
 
@@ -24,7 +25,7 @@ import java.util.*;
 public class Minimization extends Algorithm {
     
    
-    public Object Run(Automaton s, AlgorithmParameters p) {
+    public Object Run(Automaton s, AlgorithmParameters p, ProgressHandler onprogress) {
         return Minimize((Automaton)s);
     }
     

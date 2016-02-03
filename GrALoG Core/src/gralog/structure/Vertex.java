@@ -22,6 +22,7 @@ import java.util.HashSet;
 public class Vertex extends XmlMarshallable implements IMovable {
  
     
+    public String Label = "";
     public Vector<Double> Coordinates = new Vector<Double>();
     Set<VertexListener> listeners = new HashSet<VertexListener>();
     
@@ -43,6 +44,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
         GralogColor color = new GralogColor( highlights != null && highlights.contains(this) ? 0xFF0000 : 0x000000 );
         gc.Circle(Coordinates.get(0), Coordinates.get(1), radius, color);
+        gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, color.inverse());
     }
     
     public boolean ContainsCoordinate(Double x, Double y) {
@@ -56,6 +58,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public Element ToXml(Document doc, String id) throws Exception {
         Element vnode = super.ToXml(doc);
         vnode.setAttribute("id", id);
+        vnode.setAttribute("label", Label);
         vnode.setAttribute("x", Coordinates.get(0).toString());
         vnode.setAttribute("y", Coordinates.get(1).toString());
         return vnode;
@@ -65,6 +68,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
         Coordinates.clear();
         Coordinates.add(Double.parseDouble(vnode.getAttribute("x")));
         Coordinates.add(Double.parseDouble(vnode.getAttribute("y")));
+        Label = vnode.getAttribute("label");
         return vnode.getAttribute("id");
     }
     

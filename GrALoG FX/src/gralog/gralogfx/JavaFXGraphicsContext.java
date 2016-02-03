@@ -11,6 +11,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 
 
 /**
@@ -50,6 +51,16 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.setLineWidth(1);
         
         gc.fillOval(p1.getX(), p1.getY(), p2.getX()-p1.getX(), p2.getY() - p1.getY());
+    }
+    
+    @Override
+    public void PutText(double centerx, double centery, String text, GralogColor c)
+    {
+        Point2D p1 = pane.ModelToScreen(new Point2D(centerx,centery));
+        
+        gc.setTextAlign(TextAlignment.CENTER);
+        gc.setStroke(Color.rgb(c.r, c.g, c.b));
+        gc.strokeText(text, p1.getX(), p1.getY());
     }
     
 }

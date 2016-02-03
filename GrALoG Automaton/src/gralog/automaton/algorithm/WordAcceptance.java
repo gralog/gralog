@@ -7,6 +7,7 @@ package gralog.automaton.algorithm;
 
 import gralog.algorithm.*;
 import gralog.automaton.*;
+import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
 import java.util.HashSet;
 
@@ -26,7 +27,7 @@ public class WordAcceptance extends Algorithm {
         return new GenericAlgorithmParameter<String>("");
     }
     
-    public Object Run(Automaton s, AlgorithmParameters p) {
+    public Object Run(Automaton s, AlgorithmParameters p, ProgressHandler onprogress) {
         GenericAlgorithmParameter<String> sp = (GenericAlgorithmParameter<String>)(p);
         return Accepts(s, sp.parameter) ? "true" : "false";
     }

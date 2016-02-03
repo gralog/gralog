@@ -14,6 +14,8 @@ import gralog.generator.*;
 import gralog.algorithm.*;
 import gralog.events.VertexEvent;
 
+import gralog.gralogfx.events.RedrawOnProgress;
+
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -542,12 +544,15 @@ public class MainWindow extends Application {
             
             // Run
             this.setStatus("Running Algorithm \"" + str + "\"...");
-            Object algoResult = algo.DoRun(structure, params);
+            Object algoResult = algo.DoRun(structure, params, new RedrawOnProgress(structurePane));
             this.setStatus("");
             
             // Show Result
             if(algoResult == null)
+            {
+                structurePane.RequestRedraw();
                 return;
+            }
 
             if(algoResult instanceof Structure)
             {

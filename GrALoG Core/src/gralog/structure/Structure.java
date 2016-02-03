@@ -108,6 +108,12 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         
         return edge;
     }
+    public boolean Adjacent(V a, V b) {
+        for(Edge e : this.Edges)
+            if(e.ContainsVertex(a) && e.ContainsVertex(b))
+                return true;
+        return false;
+    }
     
     
     public IMovable FindObject(Double x, Double y)

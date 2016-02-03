@@ -62,7 +62,7 @@ public class Vector2D {
         return new Vector2D(this.x * c, this.y * c);
     }
     
-    public Double length()
+    public Double Length()
     {
         return Math.sqrt(x*x + y*y);
     }
@@ -98,7 +98,7 @@ public class Vector2D {
         Vector2D l = l2.Minus(l1);
 
         if(l.getX() == 0 && l.getY() == 0) // (*)
-            return l1.Minus(p).length(); // l1==l2 so "the line" is actually just the point l1
+            return l1.Minus(p).Length(); // l1==l2 so "the line" is actually just the point l1
 
         
         Vector2D perpendicular = ClosestPointOnLine(px,py,l1x,l1y,l2x,l2y);
@@ -110,9 +110,9 @@ public class Vector2D {
         
         
         if(lScaleToPerpendicular < 0)
-            return l1.Minus(p).length();
+            return l1.Minus(p).Length();
         if(lScaleToPerpendicular > 1)
-            return l2.Minus(p).length();
-        return perpendicular.Minus(p).length();
+            return l2.Minus(p).Length();
+        return perpendicular.Minus(p).Length();
     }
 }

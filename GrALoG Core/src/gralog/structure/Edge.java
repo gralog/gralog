@@ -28,6 +28,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     Set<EdgeListener> listeners = new HashSet<EdgeListener>();
     
     public Vector<EdgeIntermediatePoint> intermediatePoints = new Vector<EdgeIntermediatePoint>();
+    public String Label;
     public Vertex source;
     public Vertex target;
     
@@ -150,16 +151,17 @@ public class Edge extends XmlMarshallable implements IMovable {
         for(EdgeIntermediatePoint between : this.intermediatePoints)
         {
             Vector2D betw = new Vector2D(between.get(0), between.get(1));
-            result += betw.Minus(from).length();
+            result += betw.Minus(from).Length();
             from = betw;
         }
-        return result + to.Minus(from).length();
+        return result + to.Minus(from).Length();
     }
     
     public Element ToXml(Document doc, HashMap<Vertex,String> ids) throws Exception {
         Element enode = super.ToXml(doc);
         enode.setAttribute("source", ids.get(source));
         enode.setAttribute("target", ids.get(target));
+        enode.setAttribute("label", Label);
         
         for(EdgeIntermediatePoint p : intermediatePoints)
         {
@@ -174,6 +176,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public void FromXml(Element enode, HashMap<String,Vertex> ids) throws Exception {
         source = ids.get(enode.getAttribute("source"));
         target = ids.get(enode.getAttribute("target"));
+        Label = enode.getAttribute("label");
         
         NodeList children = enode.getChildNodes(); // load intermediate points
         for(int i = 0; i < children.getLength(); ++i)

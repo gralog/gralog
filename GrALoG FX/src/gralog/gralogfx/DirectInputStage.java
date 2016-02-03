@@ -10,7 +10,7 @@ import gralog.structure.*;
 import gralog.importfilter.*;
 
 import java.util.Vector;
-import java.io.StringBufferInputStream;
+import java.io.ByteArrayInputStream;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -90,7 +90,7 @@ public class DirectInputStage extends Stage {
             String filterName = importFilters.elementAt(filterSelection);
             ImportFilter importfilter = ImportFilterManager.InstantiateImportFilter(filterName);
 
-            StringBufferInputStream input = new StringBufferInputStream(inputArea.getText());
+            ByteArrayInputStream input = new ByteArrayInputStream(inputArea.getText().getBytes("UTF-8"));
         
             DialogResult = importfilter.Import(input, null);
         
