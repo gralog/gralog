@@ -41,9 +41,9 @@ public class ReflectedView extends GridPane implements View {
                     TextField valueField = new TextField(valueString);
                     valueField.textProperty().addListener(e -> {
                         try {
-                            if(f.getGenericType() == String.class)
+                            if(f.getType().isAssignableFrom(String.class))
                                 f.set(displayObject, valueField.getText());
-                            else if(f.getGenericType() == Double.class)
+                            else if(f.getType() == Double.class)
                                 f.set(displayObject, Double.parseDouble(valueField.getText()));
                             
                         } catch(Exception ex) {
