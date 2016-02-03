@@ -13,6 +13,7 @@ import gralog.gralogfx.events.*;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Vector;
+import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -82,11 +83,13 @@ public class StructurePane extends StackPane implements StructureListener {
     
     public void RequestRedraw()
     {
-        this.draw(); // quick n dirty
+        Platform.runLater(()->{this.draw();});
+        //this.draw(); // quick n dirty
     }
     public void RequestRedraw(Double screenX, Double screenY)
     {
-        this.draw(screenX,screenY); // quick n dirty
+        Platform.runLater(()->{this.draw(screenX,screenY);});
+        //this.draw(screenX,screenY); // quick n dirty
     }
     
     

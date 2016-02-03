@@ -28,23 +28,15 @@ public class SpringEmbedder extends Algorithm {
         return new GenericAlgorithmParameter<String>("");
     }
     
-    /*
-    Double c_repel                  =    25.0d;
-    Double c_spring                 =    20.0d;
-    Double friction                 =     0.5d; // lower value = more friction (0 = no preservation of momentum)
-    Double unstressed_spring_length =   100.0d;
-    Double delta                    =     0.4d;
-    Double movement_threshold       =     0.5d;
-    int max_iterations              = 10000;
-    */
     
-    Double c_repel                  =     0.7d;
-    Double c_spring                 =     0.5d;
+    Double c_repel                  =     3.0d;
+    Double c_spring                 =     1.0d;
     Double friction                 =     0.5d; // lower value = more friction (0 = no preservation of momentum)
     Double unstressed_spring_length =     3.0d;
-    Double delta                    =     1.0d;
-    Double movement_threshold       =     0.1d; // percentage of unstressed_spring_length
+    Double delta                    =     0.04d;
+    Double movement_threshold       =     0.01d; // percentage of unstressed_spring_length
     int max_iterations              = 10000;
+
     
     protected Vector<Double> dimension_limits = new Vector<Double>();
 
@@ -65,9 +57,9 @@ public class SpringEmbedder extends Algorithm {
 
 
         Double distance = (u.Minus(v)).Length() / unstressed_spring_length;
-        if(distance < 0.00001)
-            return u.Multiply(-1d);
-        VectorND e = (u.Minus(v)).Normalized();
+        if(distance < 0.00001) // to avoid (near) infinite force
+            return u.Normalized().Multiply(unstressed_spring_length);
+        VectorND e = (u.Minus(v)).Normalized().Multiply(unstressed_spring_length);
         
         Double factor = c_repel / (distance*distance);
         return e.Multiply(factor);
@@ -78,14 +70,15 @@ public class SpringEmbedder extends Algorithm {
         // hooke's law:
         // attraction force of a spring is proportional to distance
 
-        Double distance = (u.Minus(v)).Length() / unstressed_spring_length;
+        Double distance = u.Minus(v).Length();
+        if(distance <  unstressed_spring_length)
+            return u.Multiply(0d);
+        distance = (distance / unstressed_spring_length) - 1d;
 
-        VectorND e = (u.Minus(v)).Normalized();
+        VectorND e = (u.Minus(v)).Normalized().Multiply(unstressed_spring_length);
         // e is normalized vector between the two points
 
-        Double factor = distance > 1d ? -c_spring * distance : 0;
-        
-        return e.Multiply(factor);
+        return e.Multiply(-c_spring * distance);
     }
 
 
@@ -169,7 +162,7 @@ public class SpringEmbedder extends Algorithm {
 
             if(++iteration > nextincrease)
             {
-                movement_threshold += 0.1d;
+                movement_threshold += 0.01d;
                 nextincrease *= 4;
             }
             if(iteration > max_iterations)

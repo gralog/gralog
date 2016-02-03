@@ -524,29 +524,16 @@ public class MainWindow extends Application {
         }
     }    
     
-    public void menuAlgorithmActivated(String str) {
+    
+    public void AlgorithmCompleted(StructurePane structurePane, AlgorithmThread algoThread)
+    {
         try {
-
-            // Prepare
+            if(algoThread.exception != null)
+                throw algoThread.exception;
             
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            StructurePane structurePane = (StructurePane)tab.getContent();
-            Structure structure = structurePane.structure;
-            Algorithm algo  = AlgorithmManager.InstantiateAlgorithm(structure.getClass(), str);
-            
-            AlgorithmParameters params = algo.GetParameters(structure);
-            if(params != null)
-            {
-                AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
-                if(!algostage.ShowAndWait())
-                    return;
-            }
-            
-            // Run
-            this.setStatus("Running Algorithm \"" + str + "\"...");
-            Object algoResult = algo.DoRun(structure, params, new RedrawOnProgress(structurePane));
+            Object algoResult = algoThread.result;
             this.setStatus("");
-            
+
             // Show Result
             if(algoResult == null)
             {
@@ -580,6 +567,37 @@ public class MainWindow extends Application {
                 alert.setContentText((String)algoResult);
                 alert.showAndWait();
             }
+        } catch(Exception ex) {
+            this.setStatus("");
+            ExceptionBox exbox = new ExceptionBox();
+            exbox.showAndWait(ex);
+        }
+
+    }
+    public void menuAlgorithmActivated(String str) {
+        try {
+
+            // Prepare
+            
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            StructurePane structurePane = (StructurePane)tab.getContent();
+            Structure structure = structurePane.structure;
+            Algorithm algo  = AlgorithmManager.InstantiateAlgorithm(structure.getClass(), str);
+            
+            AlgorithmParameters params = algo.GetParameters(structure);
+            if(params != null)
+            {
+                AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
+                if(!algostage.ShowAndWait())
+                    return;
+            }
+            
+            // Run
+            AlgorithmThread algoThread = new AlgorithmThread(algo, structure, params, new RedrawOnProgress(structurePane, 1d/60d));
+            algoThread.setOnThreadCompete(t -> AlgorithmCompleted(structurePane, t));
+            this.setStatus("Running Algorithm \"" + str + "\"...");
+            algoThread.start();
+            
         } catch(InvocationTargetException ex) {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
