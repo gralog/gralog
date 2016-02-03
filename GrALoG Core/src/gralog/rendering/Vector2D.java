@@ -57,6 +57,11 @@ public class Vector2D {
         return this.x * other.x + this.y * other.y;
     }
     
+    public Vector2D Normalized()
+    {
+        return this.Multiply(1d / this.Length());
+    }
+    
     public Vector2D Multiply(Double c)
     {
         return new Vector2D(this.x * c, this.y * c);
@@ -67,7 +72,21 @@ public class Vector2D {
         return Math.sqrt(x*x + y*y);
     }
  
-    
+    public Double Theta()
+    {
+        Double alpha = Math.asin( this.Normalized().y );
+        alpha *= 180d / Math.PI; // radian to degrees
+
+        if(x > 0)
+        {
+            if(y > 0)
+                return alpha;
+            else
+                return 360d + alpha; // alpha is negative
+        }
+        else
+            return 180d - alpha;
+    }
     
     
         

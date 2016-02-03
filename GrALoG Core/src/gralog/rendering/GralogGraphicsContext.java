@@ -17,6 +17,27 @@ public abstract class GralogGraphicsContext {
         Line(x1, y1, x2, y2, GralogColor.black);
     }
 
+    public void Arrow(double x1, double y1, double x2, double y2, double HeadAngle, double HeadLength, GralogColor color)
+    {
+        Double ArrowHeadAngle = HeadAngle / 2.0d;
+        Double ArrowHeadLength = HeadLength;
+
+        Vector2D temp = new Vector2D(x2-x1, y2-y1);
+        Double alpha = temp.Theta();
+
+        Double arrowX1 = x2-ArrowHeadLength*Math.cos((alpha-ArrowHeadAngle)*Math.PI/180.0d);
+        Double arrowY1 = y2-ArrowHeadLength*Math.sin((alpha-ArrowHeadAngle)*Math.PI/180.0d);
+        Double arrowX2 = x2-ArrowHeadLength*Math.sin((90d-alpha-ArrowHeadAngle)*Math.PI/180.0d);
+        Double arrowY2 = y2-ArrowHeadLength*Math.cos((90d-alpha-ArrowHeadAngle)*Math.PI/180.0d);
+
+        Line(x1, y1, x2, y2, color);
+        // arrow head
+        Line(arrowX1, arrowY1, x2, y2, color);
+        Line(arrowX2, arrowY2, x2, y2, color);
+        Line(arrowX1, arrowY1, arrowX2, arrowY2, color);
+    }
+    
+    
     abstract public void Circle(double centerx, double centery, double radius, GralogColor color);
 
     public void Circle(double centerx, double centery, double radius) {
