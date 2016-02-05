@@ -9,7 +9,9 @@ import java.lang.reflect.*;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.CheckBox;
 import javafx.scene.layout.GridPane;
+import javafx.scene.control.Control;
 
 /**
  *
@@ -37,23 +39,45 @@ public class ReflectedView extends GridPane implements View {
                     String name = f.getName();
                     Label nameLabel = new Label(name);
                     Object value = f.get(displayObject);
-                    String valueString = value.toString();
-                    TextField valueField = new TextField(valueString);
-                    valueField.textProperty().addListener(e -> {
-                        try {
-                            if(f.getType().isAssignableFrom(String.class))
-                                f.set(displayObject, valueField.getText());
-                            else if(f.getType() == Double.class)
-                                f.set(displayObject, Double.parseDouble(valueField.getText()));
-                            
-                        } catch(Exception ex) {
-                            // dont know how to reset
-                        }
-                    });
+                    Control valueControl = null;
+                    Class<?> type = f.getType();
+                    System.out.print(type.getName());
                     
-                    add(nameLabel, 0, i);
-                    add(valueField, 1, i);
-                    i++;
+                    if(type.equals(Double.class)) {
+                        System.out.println("double " + name);
+                        String valueString = value.toString();
+                        TextField valueField = new TextField(valueString);
+                        valueField.textProperty().addListener(e -> {
+                            try {f.set(displayObject, Double.parseDouble(valueField.getText()));} catch(Exception ex) {} });
+                        valueControl = valueField;
+                    } else if(type.equals(Integer.class)) {
+                        System.out.println("int " + name);
+                        String valueString = value.toString();
+                        TextField valueField = new TextField(valueString);
+                        valueField.textProperty().addListener(e -> {
+                            try {f.set(displayObject, Integer.parseInt(valueField.getText()));} catch(Exception ex) {} });
+                        valueControl = valueField;
+                    } else if(type.equals(Boolean.class)) {
+                        System.out.println("bool " + name);
+                        CheckBox valueField = new CheckBox();
+                        valueField.selectedProperty().addListener(e -> {
+                            try {f.set(displayObject, valueField.isSelected());} catch(Exception ex) {} });
+                        valueControl = valueField;
+                    } else if(type.isAssignableFrom(String.class)) {
+                        System.out.println("string " + name);
+                        String valueString = value.toString();
+                        TextField valueField = new TextField(valueString);
+                        valueField.textProperty().addListener(e -> {
+                            try {f.set(displayObject, valueField.getText());} catch(Exception ex) {} });
+                        valueControl = valueField;
+                    } 
+
+                    if(valueControl != null) 
+                    {
+                        add(nameLabel, 0, i);
+                        add(valueControl, 1, i);
+                        i++;
+                    }
                 }
             }
         } catch(Exception ex) {

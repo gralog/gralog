@@ -25,17 +25,8 @@ public class SpringEmbedder extends Algorithm {
     
     @Override
     public AlgorithmParameters GetParameters(Structure s) {
-        return new GenericAlgorithmParameter<String>("");
+        return new SpringEmbedderParameters();
     }
-    
-    
-    Double c_repel                  =     3.0d;
-    Double c_spring                 =     1.0d;
-    Double friction                 =     0.5d; // lower value = more friction (0 = no preservation of momentum)
-    Double unstressed_spring_length =     3.0d;
-    Double delta                    =     0.04d;
-    Double movement_threshold       =     0.01d; // percentage of unstressed_spring_length
-    int max_iterations              = 10000;
 
     
     protected Vector<Double> dimension_limits = new Vector<Double>();
@@ -48,7 +39,7 @@ public class SpringEmbedder extends Algorithm {
     }
     
     
-    public VectorND Coulomb(VectorND u, VectorND v)
+    public VectorND Coulomb(VectorND u, VectorND v, SpringEmbedderParameters p)
     {
         // coulomb's law:
         //                 u-v    c_repel
@@ -56,41 +47,42 @@ public class SpringEmbedder extends Algorithm {
         //                |u-v|   |u-v|²
 
 
-        Double distance = (u.Minus(v)).Length() / unstressed_spring_length;
+        Double distance = (u.Minus(v)).Length() / p.unstressed_spring_length;
         if(distance < 0.00001) // to avoid (near) infinite force
-            return u.Normalized().Multiply(unstressed_spring_length);
-        VectorND e = (u.Minus(v)).Normalized().Multiply(unstressed_spring_length);
+            return u.Normalized().Multiply(p.unstressed_spring_length);
+        VectorND e = (u.Minus(v)).Normalized().Multiply(p.unstressed_spring_length);
         
-        Double factor = c_repel / (distance*distance);
+        Double factor = p.c_repel / (distance*distance);
         return e.Multiply(factor);
     }
 
-    VectorND Hooke(VectorND u, VectorND v)
+    VectorND Hooke(VectorND u, VectorND v, SpringEmbedderParameters p)
     {
         // hooke's law:
         // attraction force of a spring is proportional to distance
 
         Double distance = u.Minus(v).Length();
-        if(distance <  unstressed_spring_length)
+        if(distance <  p.unstressed_spring_length)
             return u.Multiply(0d);
-        distance = (distance / unstressed_spring_length) - 1d;
+        distance = (distance / p.unstressed_spring_length) - 1d;
 
-        VectorND e = (u.Minus(v)).Normalized().Multiply(unstressed_spring_length);
+        VectorND e = (u.Minus(v)).Normalized().Multiply(p.unstressed_spring_length);
         // e is normalized vector between the two points
 
-        return e.Multiply(-c_spring * distance);
+        return e.Multiply(-p.c_spring * distance);
     }
 
 
-    public Object Run(Structure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
+    public Object Run(Structure s, AlgorithmParameters ap, ProgressHandler onprogress) throws Exception {
+        SpringEmbedderParameters p = (SpringEmbedderParameters)ap;
         Vector<VectorND> tractions = new Vector<VectorND>();
         int dimensions = dimension_limits.size();
 
-        unstressed_spring_length = dimension_limits.elementAt(0);
+        p.unstressed_spring_length = dimension_limits.elementAt(0);
         for(int i = 1; i < dimensions; i++)
-            unstressed_spring_length *= dimension_limits.elementAt(i);
-        unstressed_spring_length /= s.getVertices().size();
-        unstressed_spring_length = Math.pow(unstressed_spring_length, 1.0f/dimensions) / (dimensions * 2);
+            p.unstressed_spring_length *= dimension_limits.elementAt(i);
+        p.unstressed_spring_length /= s.getVertices().size();
+        p.unstressed_spring_length = Math.pow(p.unstressed_spring_length, 1.0f/dimensions) / (dimensions * 2);
 
         // init
         Set<Vertex> vertices = s.getVertices();
@@ -115,7 +107,7 @@ public class SpringEmbedder extends Algorithm {
             int i = 0;
             for(Vertex a : vertices)
             {
-                VectorND traction = tractions.elementAt(i).Multiply(friction);
+                VectorND traction = tractions.elementAt(i).Multiply(p.friction);
 
                 // compute forces on a by the other vertices
                 VectorND aCoordinates = new VectorND(a.Coordinates);
@@ -126,9 +118,9 @@ public class SpringEmbedder extends Algorithm {
 
                     // force on a by vertex b
                     VectorND bCoordinates = new VectorND(b.Coordinates);
-                    traction = traction.Plus(Coulomb(aCoordinates, bCoordinates));
+                    traction = traction.Plus(Coulomb(aCoordinates, bCoordinates, p));
                     if(s.Adjacent(a,b))
-                        traction = traction.Plus(Hooke(aCoordinates, bCoordinates));
+                        traction = traction.Plus(Hooke(aCoordinates, bCoordinates, p));
                 }
 
                 tractions.setElementAt(traction, i);
@@ -146,7 +138,7 @@ public class SpringEmbedder extends Algorithm {
                     NewCoordinates.add(
                             Math.max(0.0d,
                                     Math.min(dimension_limits.elementAt(j),
-                                             OldCoordinates.elementAt(j) + delta * tractions.elementAt(i).toVector().elementAt(j)   )));
+                                             OldCoordinates.elementAt(j) + p.delta * tractions.elementAt(i).toVector().elementAt(j)   )));
                 a.Coordinates = NewCoordinates;
 
                 // for the loop-condition
@@ -162,16 +154,16 @@ public class SpringEmbedder extends Algorithm {
 
             if(++iteration > nextincrease)
             {
-                movement_threshold += 0.01d;
+                p.movement_threshold += 0.01d;
                 nextincrease *= 4;
             }
-            if(iteration > max_iterations)
+            if(iteration > p.max_iterations)
                 break;
             
             if(onprogress != null)
                 onprogress.OnProgress(s);
         }
-        while(max_movement > movement_threshold * unstressed_spring_length);
+        while(max_movement > p.movement_threshold * p.unstressed_spring_length);
 
         return null;
     }

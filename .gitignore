@@ -1,9 +1,10 @@
 
+# netbeans
 */dist/
 */build/
+*/nbproject/private/*
 
 # OS-specific files (add lines accordingly)
-
 # Linux + KDE
 .directory
 

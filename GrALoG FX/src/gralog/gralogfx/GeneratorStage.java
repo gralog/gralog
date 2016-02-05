@@ -69,7 +69,7 @@ public class GeneratorStage extends Stage {
         scene = new Scene(root, 350, 200);
 
         this.setScene(scene);
-        this.setTitle("Run Algorithm");
+        this.setTitle("Generate " + gen.getDescription().name());
         this.initModality(Modality.APPLICATION_MODAL);
     }
     
