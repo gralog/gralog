@@ -27,7 +27,7 @@ public class RedrawOnProgress extends ProgressHandler {
     public void OnProgress(Structure s) throws Exception {
         this.pane.RequestRedraw();
         if(sleepTime > 0)
-            Thread.sleep(sleepTime);
+           Thread.sleep(sleepTime);
     }
     
 }

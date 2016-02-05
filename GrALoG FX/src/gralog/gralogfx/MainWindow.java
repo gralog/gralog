@@ -483,7 +483,7 @@ public class MainWindow extends Application {
                 selection = sender.Selection;
                 sender.RequestRedraw();
             }
-            objectInspector.SetObjects(selection);
+            objectInspector.SetObjects(selection, sender);
         } catch(Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);            

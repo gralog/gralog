@@ -31,9 +31,40 @@ public class GralogColor {
     
     public boolean equals(GralogColor c)
     {
-        return this.r==c.r
+        return this.r == c.r
             && this.g == c.g
             && this.b == c.b;
+    }
+    
+    public String toHtmlString() {
+        final String hex = "0123456789ABCDEF";
+        return "#" + hex.charAt(r>>4&0x0F) + hex.charAt(r&0x0F)
+                   + hex.charAt(g>>4&0x0F) + hex.charAt(g&0x0F)
+                   + hex.charAt(b>>4&0x0F) + hex.charAt(b&0x0F);
+    }
+    
+    public static GralogColor parseColor(String HtmlString) {
+
+        int ColorCode = 0;
+        int i = 0;
+        if(HtmlString.charAt(i) == '#')
+            i++;
+        
+        for(; i < HtmlString.length(); i++)
+        {
+            int temp = 0;
+            char ci = HtmlString.charAt(i);
+            if('0' <= ci && ci <= '9')
+                temp = ci-'0';
+            else if('a' <= ci && ci <= 'f')
+                temp = (ci-'a')+10;
+            else if('A' <= ci && ci <= 'F')
+                temp = (ci-'A')+10;
+            
+            ColorCode = (ColorCode << 4) | temp;
+        }
+            
+        return new GralogColor(ColorCode);
     }
     
     public GralogColor inverse()
@@ -41,9 +72,9 @@ public class GralogColor {
         return new GralogColor((short)(255-r), (short)(255-g), (short)(255-b));
     }
     
-    static final GralogColor black = new GralogColor(0x000000);
-    static final GralogColor red   = new GralogColor(0xFF0000);
-    static final GralogColor green = new GralogColor(0x00FF00);
-    static final GralogColor blue  = new GralogColor(0x0000FF);
-    static final GralogColor white = new GralogColor(0xFFFFFF);
+    public static final GralogColor black = new GralogColor(0x000000);
+    public static final GralogColor red   = new GralogColor(0xFF0000);
+    public static final GralogColor green = new GralogColor(0x00FF00);
+    public static final GralogColor blue  = new GralogColor(0x0000FF);
+    public static final GralogColor white = new GralogColor(0xFFFFFF);
 }

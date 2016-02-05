@@ -27,7 +27,7 @@ public class ObjectInspector extends Pane {
     public ObjectInspector() {
         this.setMinWidth(200.0d);
         try {
-            SetObject(null);
+            SetObject(null, null);
         } catch (Exception ex) {
             // does not happen with null parameter
         }
@@ -38,14 +38,14 @@ public class ObjectInspector extends Pane {
         SkinFactory.put(forClass, skinClass);
     }
     
-    public void SetObjects(Set<Object> objects) throws Exception {
-        SetObject(null);
+    public void SetObjects(Set<Object> objects, StructurePane structurePane) throws Exception {
+        SetObject(null, null);
         if(objects != null && objects.size() == 1)
             for(Object o : objects)
-                SetObject(o);
+                SetObject(o, structurePane);
     }
     
-    public void SetObject(Object obj) throws Exception {
+    public void SetObject(Object obj, StructurePane structurePane) throws Exception {
         this.getChildren().clear();
         if(obj == null)
             return;
@@ -68,6 +68,7 @@ public class ObjectInspector extends Pane {
         
         View v = (View)view;
         v.Update(obj);
+        v.setStructurePane(structurePane);
         this.getChildren().add((Node)view);
     }
     

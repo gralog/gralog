@@ -5,6 +5,10 @@
  */
 package gralog.gralogfx.views;
 
+import gralog.gralogfx.StructurePane;
+
+import gralog.rendering.GralogColor;
+
 import java.lang.reflect.*;
 
 import javafx.scene.control.Label;
@@ -20,7 +24,12 @@ import javafx.scene.control.Control;
 public class ReflectedView extends GridPane implements View {
     
     Object displayObject = null;
+    StructurePane structurePane = null;
     
+    public void setStructurePane(StructurePane structurePane) {
+        this.structurePane = structurePane;
+    }
+
     public void Update(Object newObject) {
         this.displayObject = newObject;
         Update();
@@ -41,34 +50,42 @@ public class ReflectedView extends GridPane implements View {
                     Object value = f.get(displayObject);
                     Control valueControl = null;
                     Class<?> type = f.getType();
-                    System.out.print(type.getName());
                     
                     if(type.equals(Double.class)) {
-                        System.out.println("double " + name);
                         String valueString = value.toString();
                         TextField valueField = new TextField(valueString);
                         valueField.textProperty().addListener(e -> {
-                            try {f.set(displayObject, Double.parseDouble(valueField.getText()));} catch(Exception ex) {} });
+                            try {f.set(displayObject, Double.parseDouble(valueField.getText()));
+                                 if(structurePane != null)structurePane.RequestRedraw();} catch(Exception ex) {} });
                         valueControl = valueField;
                     } else if(type.equals(Integer.class)) {
-                        System.out.println("int " + name);
                         String valueString = value.toString();
                         TextField valueField = new TextField(valueString);
                         valueField.textProperty().addListener(e -> {
-                            try {f.set(displayObject, Integer.parseInt(valueField.getText()));} catch(Exception ex) {} });
+                            try {f.set(displayObject, Integer.parseInt(valueField.getText()));
+                                 if(structurePane != null)structurePane.RequestRedraw();} catch(Exception ex) {} });
+                        valueControl = valueField;
+                    } else if(type.equals(GralogColor.class)) {
+                        String valueString = ((GralogColor)value).toHtmlString();
+                        TextField valueField = new TextField(valueString);
+                        valueField.textProperty().addListener(e -> {
+                            try {f.set(displayObject, GralogColor.parseColor(valueField.getText()));
+                                 if(structurePane != null)structurePane.RequestRedraw();} catch(Exception ex) {} });
                         valueControl = valueField;
                     } else if(type.equals(Boolean.class)) {
-                        System.out.println("bool " + name);
                         CheckBox valueField = new CheckBox();
+                        if((Boolean)value)
+                            valueField.setSelected(true);
                         valueField.selectedProperty().addListener(e -> {
-                            try {f.set(displayObject, valueField.isSelected());} catch(Exception ex) {} });
+                            try {f.set(displayObject, valueField.isSelected());
+                                 if(structurePane != null)structurePane.RequestRedraw();} catch(Exception ex) {} });
                         valueControl = valueField;
                     } else if(type.isAssignableFrom(String.class)) {
-                        System.out.println("string " + name);
                         String valueString = value.toString();
                         TextField valueField = new TextField(valueString);
                         valueField.textProperty().addListener(e -> {
-                            try {f.set(displayObject, valueField.getText());} catch(Exception ex) {} });
+                            try {f.set(displayObject, valueField.getText());
+                                 if(structurePane != null)structurePane.RequestRedraw();} catch(Exception ex) {} });
                         valueControl = valueField;
                     } 
 

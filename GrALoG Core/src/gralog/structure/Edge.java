@@ -27,12 +27,16 @@ public class Edge extends XmlMarshallable implements IMovable {
     
     Set<EdgeListener> listeners = new HashSet<EdgeListener>();
     
-    public boolean isDirected = true;
-    public Double ArrowHeadLength = 0.5d;
-    public Double ArrowHeadAngle = 45d; // degree
+    public String Label = "";
+    
+    public Boolean isDirected = true;
+    
+    public Double ArrowHeadLength = 0.5d; // cm
+    public Double ArrowHeadAngle = 40d; // degrees
+    public Double Width = 0.025; // cm
+    public GralogColor Color = GralogColor.black;
     
     public Vector<EdgeIntermediatePoint> intermediatePoints = new Vector<EdgeIntermediatePoint>();
-    public String Label;
     public Vertex source;
     public Vertex target;
     
@@ -67,7 +71,9 @@ public class Edge extends XmlMarshallable implements IMovable {
         Double tempX = fromX;
         Double tempY = fromY;
 
-        GralogColor color = new GralogColor( highlights != null && highlights.contains(this) ? 0xFF0000 : 0x000000 );
+        GralogColor color = this.Color;
+        if(highlights != null && highlights.contains(this))
+            color = GralogColor.red;
         
         for(EdgeIntermediatePoint between : intermediatePoints)
         {
@@ -75,7 +81,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             fromY = tempY;
             tempX = between.get(0);
             tempY = between.get(1);
-            gc.Line(fromX, fromY, tempX, tempY, color);
+            gc.Line(fromX, fromY, tempX, tempY, color, Width);
         }
 
         Double toX = target.Coordinates.get(0);
@@ -83,10 +89,10 @@ public class Edge extends XmlMarshallable implements IMovable {
         if(isDirected)
         {
             Vector2D intersection = target.Intersection(new Vector2D(tempX,tempY), new Vector2D(toX,toY));
-            gc.Arrow(tempX, tempY, intersection.getX(), intersection.getY(), ArrowHeadAngle, ArrowHeadLength, color);
+            gc.Arrow(tempX, tempY, intersection.getX(), intersection.getY(), ArrowHeadAngle, ArrowHeadLength, color, Width);
         }
         else
-            gc.Line(tempX, tempY, toX, toY, color);
+            gc.Line(tempX, tempY, toX, toY, color, Width);
     }
     
     public boolean ContainsCoordinate(Double x, Double y) {
@@ -167,11 +173,17 @@ public class Edge extends XmlMarshallable implements IMovable {
         return result + to.Minus(from).Length();
     }
     
+    
     public Element ToXml(Document doc, HashMap<Vertex,String> ids) throws Exception {
         Element enode = super.ToXml(doc);
         enode.setAttribute("source", ids.get(source));
         enode.setAttribute("target", ids.get(target));
+        enode.setAttribute("isdirected", isDirected ? "true" : "false");
         enode.setAttribute("label", Label);
+        enode.setAttribute("width", Width.toString());
+        enode.setAttribute("arrowheadlength", ArrowHeadLength.toString());
+        enode.setAttribute("arrowheadangle", ArrowHeadAngle.toString());
+        enode.setAttribute("color", Color.toHtmlString());
         
         for(EdgeIntermediatePoint p : intermediatePoints)
         {
@@ -186,7 +198,20 @@ public class Edge extends XmlMarshallable implements IMovable {
     public void FromXml(Element enode, HashMap<String,Vertex> ids) throws Exception {
         source = ids.get(enode.getAttribute("source"));
         target = ids.get(enode.getAttribute("target"));
+
+        if(enode.hasAttribute("isdirected"))
+            isDirected = enode.getAttribute("isdirected").equals("true");
         Label = enode.getAttribute("label");
+        if(enode.hasAttribute("width"))
+            Width = Double.parseDouble(enode.getAttribute("width"));
+
+        if(enode.hasAttribute("arrowheadlength"))
+            ArrowHeadLength = Double.parseDouble(enode.getAttribute("arrowheadlength"));
+        if(enode.hasAttribute("arrowheadangle"))
+            ArrowHeadAngle = Double.parseDouble(enode.getAttribute("arrowheadangle"));
+        if(enode.hasAttribute("color"))
+            Color = GralogColor.parseColor(enode.getAttribute("color"));
+        
         
         NodeList children = enode.getChildNodes(); // load intermediate points
         for(int i = 0; i < children.getLength(); ++i)

@@ -28,13 +28,13 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
     }
     
     @Override
-    public void Line(double x1, double y1, double x2, double y2, GralogColor c) {
+    public void Line(double x1, double y1, double x2, double y2, GralogColor c, double width) {
         Point2D p1 = pane.ModelToScreen(new Point2D(x1,y1));
         Point2D p2 = pane.ModelToScreen(new Point2D(x2,y2));
         
         gc.setFill(Color.rgb(c.r, c.g, c.b));
         gc.setStroke(Color.rgb(c.r, c.g, c.b));
-        gc.setLineWidth(1);        
+        gc.setLineWidth(width * pane.ZoomFactor * pane.ScreenResolutionX / 2.54);
         
         gc.strokeLine(p1.getX(), p1.getY(), p2.getX(), p2.getY());
     }

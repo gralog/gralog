@@ -5,6 +5,8 @@
  */
 package gralog.gralogfx.views;
 
+import gralog.gralogfx.StructurePane;
+
 /**
  *
  * @author viktor
@@ -12,4 +14,5 @@ package gralog.gralogfx.views;
 public interface View {
     void Update();
     void Update(Object obj);
+    void setStructurePane(StructurePane structurePane);
 }

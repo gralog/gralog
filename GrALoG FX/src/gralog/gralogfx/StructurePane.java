@@ -13,6 +13,9 @@ import gralog.gralogfx.events.*;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Vector;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -36,6 +39,9 @@ import javafx.scene.input.ScrollEvent;
  */
 //public class StructurePane extends ScrollPane implements StructureListener {
 public class StructurePane extends StackPane implements StructureListener {
+    
+    boolean NeedsRepaint = true;
+    Lock NeedsRepaintLock = new ReentrantLock();
     
     static EventType<StructurePaneEvent> ALL_STRUCTUREPANE_EVENTS = new EventType<>("ALL_STRUCTUREPANE_EVENTS");
     static EventType<StructurePaneEvent> STRUCTUREPANE_SELECTIONCHANGED = new EventType<>(ALL_STRUCTUREPANE_EVENTS, "STRUCTUREPANE_SELECTIONCHANGED");
@@ -83,13 +89,21 @@ public class StructurePane extends StackPane implements StructureListener {
     
     public void RequestRedraw()
     {
-        Platform.runLater(()->{this.draw();});
-        //this.draw(); // quick n dirty
+        NeedsRepaintLock.lock();
+        if(!NeedsRepaint) {
+            Platform.runLater(()->{this.draw();});
+            NeedsRepaint = true;
+        }
+        NeedsRepaintLock.unlock();
     }
     public void RequestRedraw(Double screenX, Double screenY)
     {
-        Platform.runLater(()->{this.draw(screenX,screenY);});
-        //this.draw(screenX,screenY); // quick n dirty
+        NeedsRepaintLock.lock();
+        if(!NeedsRepaint) {
+            Platform.runLater(()->{this.draw(screenX,screenY);});
+            NeedsRepaint = true;
+        }
+        NeedsRepaintLock.unlock();
     }
     
     
@@ -272,22 +286,36 @@ public class StructurePane extends StackPane implements StructureListener {
     
 
     public void draw(Double MouseScreenX, Double MouseScreenY) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        draw(gc);
+        
+        this.NeedsRepaintLock.lock();
+        if(NeedsRepaint) {
+            
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            draw(gc);
 
-        gc.setStroke(Color.BLACK);
-        for(Object o : Selection)
-        {
-            if(!(o instanceof Vertex))
-                continue;
-            Vertex v = (Vertex)o;
-            Point2D selectionScreen = ModelToScreen(new Point2D(v.Coordinates.get(0), v.Coordinates.get(1)));
-            gc.strokeLine(selectionScreen.getX(),selectionScreen.getY(),MouseScreenX, MouseScreenY);
+            gc.setStroke(Color.BLACK);
+            for(Object o : Selection)
+            {
+                if(!(o instanceof Vertex))
+                    continue;
+                Vertex v = (Vertex)o;
+                Point2D selectionScreen = ModelToScreen(new Point2D(v.Coordinates.get(0), v.Coordinates.get(1)));
+                gc.strokeLine(selectionScreen.getX(),selectionScreen.getY(),MouseScreenX, MouseScreenY);
+            }
+            
+            NeedsRepaint = false;
         }
+        this.NeedsRepaintLock.unlock();
     }
     
     public void draw() {
-        draw(canvas.getGraphicsContext2D());
+        
+        this.NeedsRepaintLock.lock();
+        if(NeedsRepaint) {
+            draw(canvas.getGraphicsContext2D());
+            NeedsRepaint = false;
+        }
+        this.NeedsRepaintLock.unlock();
     }
     
     protected void draw(GraphicsContext gc) {
@@ -299,17 +327,20 @@ public class StructurePane extends StackPane implements StructureListener {
         gc.fillRect(0, 0, w, h);
 
         // grid
-        gc.setStroke(Color.rgb(0xcc,0xcc,0xcc));
-        Point2D leftupper = ScreenToModel(new Point2D(0d,0d));
-        Point2D rightlower = ScreenToModel(new Point2D(w, h));
-        Double GridSize = 1.0; // cm
-        for(Double x = leftupper.getX() - (leftupper.getX() % GridSize); x <= rightlower.getX(); x += GridSize) {
-            Point2D lineScreen = ModelToScreen(new Point2D(x, 0));
-            gc.strokeLine(lineScreen.getX(), 0, lineScreen.getX(), h);
-        }
-        for(Double y = leftupper.getY() - (leftupper.getY() % GridSize); y <= rightlower.getY(); y += GridSize) {
-            Point2D lineScreen = ModelToScreen(new Point2D(0, y));
-            gc.strokeLine(0, lineScreen.getY(), w, lineScreen.getY());
+        if(ZoomFactor * (ScreenResolutionX / 2.54) >= 10) {
+            
+            gc.setStroke(Color.rgb(0xcc,0xcc,0xcc));
+            Point2D leftupper = ScreenToModel(new Point2D(0d,0d));
+            Point2D rightlower = ScreenToModel(new Point2D(w, h));
+            Double GridSize = 1.0; // cm
+            for(Double x = leftupper.getX() - (leftupper.getX() % GridSize); x <= rightlower.getX(); x += GridSize) {
+                Point2D lineScreen = ModelToScreen(new Point2D(x, 0));
+                gc.strokeLine(lineScreen.getX(), 0, lineScreen.getX(), h);
+            }
+            for(Double y = leftupper.getY() - (leftupper.getY() % GridSize); y <= rightlower.getY(); y += GridSize) {
+                Point2D lineScreen = ModelToScreen(new Point2D(0, y));
+                gc.strokeLine(0, lineScreen.getY(), w, lineScreen.getY());
+            }
         }
 
         // origin

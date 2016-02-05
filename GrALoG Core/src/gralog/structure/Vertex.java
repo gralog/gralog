@@ -23,6 +23,12 @@ public class Vertex extends XmlMarshallable implements IMovable {
  
     
     public String Label = "";
+    public Double Radius = 0.5; // cm
+    public GralogColor FillColor = GralogColor.white;
+    public Double StrokeWidth = 0.025; // cm
+    public GralogColor StrokeColor = GralogColor.black;
+    
+
     public Vector<Double> Coordinates = new Vector<Double>();
     Set<VertexListener> listeners = new HashSet<VertexListener>();
     
@@ -35,7 +41,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     
     public Vector2D Intersection(Vector2D p1, Vector2D p2)
     {
-        return p1.Minus(p2).Normalized().Multiply(this.radius).Plus(p2);
+        return p1.Minus(p2).Normalized().Multiply(this.Radius).Plus(p2);
     }
     
     
@@ -46,17 +52,20 @@ public class Vertex extends XmlMarshallable implements IMovable {
             Coordinates.set(i, Coordinates.get(i) + offset.get(i));
     }
 
-    protected final double radius = 0.5d;
     public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
-        GralogColor color = new GralogColor( highlights != null && highlights.contains(this) ? 0xFF0000 : 0x000000 );
-        gc.Circle(Coordinates.get(0), Coordinates.get(1), radius, color);
-        gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, color.inverse());
+        
+        if(highlights != null && highlights.contains(this))
+            gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius+0.07, GralogColor.red);
+
+        gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius, StrokeColor);
+        gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-StrokeWidth, FillColor);
+        gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, FillColor.inverse());
     }
     
     public boolean ContainsCoordinate(Double x, Double y) {
         Double tx = Coordinates.get(0);
         Double ty = Coordinates.get(1);
-        if( (x-tx)*(x-tx) + (y-ty)*(y-ty) < radius*radius )
+        if( (x-tx)*(x-tx) + (y-ty)*(y-ty) < Radius*Radius )
             return true;
         return false;
     }
@@ -64,9 +73,13 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public Element ToXml(Document doc, String id) throws Exception {
         Element vnode = super.ToXml(doc);
         vnode.setAttribute("id", id);
-        vnode.setAttribute("label", Label);
         vnode.setAttribute("x", Coordinates.get(0).toString());
         vnode.setAttribute("y", Coordinates.get(1).toString());
+        vnode.setAttribute("label", Label);
+        vnode.setAttribute("radius", Radius.toString());
+        vnode.setAttribute("fillcolor", FillColor.toHtmlString());
+        vnode.setAttribute("strokewidth", StrokeWidth.toString());
+        vnode.setAttribute("strokecolor", StrokeColor.toHtmlString());
         return vnode;
     }
     
@@ -74,7 +87,17 @@ public class Vertex extends XmlMarshallable implements IMovable {
         Coordinates.clear();
         Coordinates.add(Double.parseDouble(vnode.getAttribute("x")));
         Coordinates.add(Double.parseDouble(vnode.getAttribute("y")));
-        Label = vnode.getAttribute("label");
+        if(vnode.hasAttribute("label"))
+            Label = vnode.getAttribute("label");
+        if(vnode.hasAttribute("radius"))
+            Radius = Double.parseDouble(vnode.getAttribute("radius"));
+        if(vnode.hasAttribute("fillcolor"))
+            FillColor = GralogColor.parseColor(vnode.getAttribute("fillcolor"));
+        if(vnode.hasAttribute("strokewidth"))
+            StrokeWidth = Double.parseDouble(vnode.getAttribute("strokewidth"));
+        if(vnode.hasAttribute("strokecolor"))
+            FillColor = GralogColor.parseColor(vnode.getAttribute("strokecolor"));
+
         return vnode.getAttribute("id");
     }
     

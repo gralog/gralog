@@ -44,7 +44,7 @@ public class ImportFilterStage extends Stage {
         
         objectInspector = new ObjectInspector();
         try {
-            objectInspector.SetObject(params);
+            objectInspector.SetObject(params, null);
         } catch(Exception ex) {
         }
         cancelButton = new Button("Cancel");
