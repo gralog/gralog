@@ -31,9 +31,9 @@ public class Edge extends XmlMarshallable implements IMovable {
     
     public Boolean isDirected = true;
     
-    public Double ArrowHeadLength = 0.5d; // cm
+    public Double ArrowHeadLength = 0.4d; // cm
     public Double ArrowHeadAngle = 40d; // degrees
-    public Double Width = 0.025; // cm
+    public Double Width = 2.54/96; // cm
     public GralogColor Color = GralogColor.black;
     
     public Vector<EdgeIntermediatePoint> intermediatePoints = new Vector<EdgeIntermediatePoint>();
@@ -116,7 +116,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         return Vector2D.DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < 0.3;
     }
 
-    public void addIntermediatePoint(Double x, Double y)
+    public EdgeIntermediatePoint addIntermediatePoint(Double x, Double y)
     {
         Double fromX = source.Coordinates.get(0);
         Double fromY = source.Coordinates.get(1);
@@ -124,7 +124,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         Double nextfromY = fromY;
         
         int i = 0, insertionIndex = 0;
-        Double MinDistance = 0d;
+        Double MinDistance = Double.MAX_VALUE;
 
         for(EdgeIntermediatePoint between : intermediatePoints)
         {
@@ -148,11 +148,13 @@ public class Edge extends XmlMarshallable implements IMovable {
         Double distanceTemp = Vector2D.DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY);
         if( distanceTemp < MinDistance )
         {
-            insertionIndex = i;
+            insertionIndex = intermediatePoints.size();
             MinDistance = distanceTemp;
         }
         
-        intermediatePoints.insertElementAt(new EdgeIntermediatePoint(x,y), i);
+        EdgeIntermediatePoint result = new EdgeIntermediatePoint(x,y);
+        intermediatePoints.insertElementAt(result, insertionIndex);
+        return result;
     }    
     
     public boolean ContainsVertex(Vertex v) {

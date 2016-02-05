@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
 @XmlName(name="intermediatepoint")
 public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     
-    Vector<Double> coordinates = new Vector<Double>();
+    Vector<Double> Coordinates = new Vector<Double>();
     
     public EdgeIntermediatePoint()
     {
@@ -28,14 +28,14 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     
     public EdgeIntermediatePoint(Double x, Double y)
     {
-        this.coordinates.add(x);
-        this.coordinates.add(y);
+        this.Coordinates.add(x);
+        this.Coordinates.add(y);
     }
     
     public EdgeIntermediatePoint(Vector<Double> coords)
     {
         for(Double d : coords)
-            this.coordinates.add(d);
+            this.Coordinates.add(d);
     }
     
     public boolean ContainsCoordinate(Double x, Double y)
@@ -47,24 +47,24 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     
     public void Move(Vector<Double> offsets)
     {
-        int n = Math.min(offsets.size(), coordinates.size());
+        int n = Math.min(offsets.size(), Coordinates.size());
         
         for(int i = 0; i < n; i++)
-            coordinates.set(i, coordinates.get(i) + offsets.get(i));
+            Coordinates.set(i, Coordinates.get(i) + offsets.get(i));
         
         // if offsets has more elements, treat coordinates as if it had
         // (infinitely many) zeroes behind
         for(int i = n; i < offsets.size(); i++)
-            coordinates.add(offsets.get(i));
+            Coordinates.add(offsets.get(i));
     }
     
     public int size() {
-        return coordinates.size();
+        return Coordinates.size();
     }
     
     public Double get(int dimension) {
-        if(dimension < coordinates.size())
-            return coordinates.get(dimension);
+        if(dimension < Coordinates.size())
+            return Coordinates.get(dimension);
         return 0.0d;
     }
     
@@ -76,13 +76,13 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     }
     
     public void FromXml(Element enode) {
-        coordinates.clear();
-        coordinates.add(Double.parseDouble(enode.getAttribute("x")));
-        coordinates.add(Double.parseDouble(enode.getAttribute("y")));
+        Coordinates.clear();
+        Coordinates.add(Double.parseDouble(enode.getAttribute("x")));
+        Coordinates.add(Double.parseDouble(enode.getAttribute("y")));
     }
     
     @Override
     public String toString() {
-        return coordinates.toString();
+        return Coordinates.toString();
     }
 }

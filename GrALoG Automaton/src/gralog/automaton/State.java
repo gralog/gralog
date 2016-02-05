@@ -24,10 +24,10 @@ public class State extends Vertex {
     public Boolean FinalState = false;
     
     public Double InitialMarkAngle = 0d; // degrees
-    public Double InitialMarkLength = 0.5d; // cm
-    public Double InitialMarkWidth = 0.025d; // cm
+    public Double InitialMarkLength = 0.7d; // cm
+    public Double InitialMarkWidth = 2.54/96; // cm
     public Double InitialMarkHeadAngle = 40d; // degrees
-    public Double InitialMarkHeadLength = 0.7d; // cm
+    public Double InitialMarkHeadLength = 0.4d; // cm
     public GralogColor InitialMarkColor = GralogColor.black;
     
     @Override
@@ -73,8 +73,8 @@ public class State extends Vertex {
         gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius, StrokeColor);
         gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-StrokeWidth, FillColor);
         if(this.FinalState) {
-            gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-StrokeWidth-StrokeWidth, StrokeColor);
-            gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-StrokeWidth-StrokeWidth-StrokeWidth, FillColor);
+            gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-3*StrokeWidth, StrokeColor);
+            gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-4*StrokeWidth, FillColor);
         }
         
         if(StartState) {

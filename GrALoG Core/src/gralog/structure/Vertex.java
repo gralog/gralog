@@ -25,7 +25,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public String Label = "";
     public Double Radius = 0.5; // cm
     public GralogColor FillColor = GralogColor.white;
-    public Double StrokeWidth = 0.025; // cm
+    public Double StrokeWidth = 2.54/96; // cm
     public GralogColor StrokeColor = GralogColor.black;
     
 
