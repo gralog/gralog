@@ -29,12 +29,12 @@ public class ModalLogicModelChecker extends Algorithm {
     
     @Override
     public AlgorithmParameters GetParameters(Structure s) {
-        return new StringAlgorithmParameter<String>("[](P \\wedge Q)");
+        return new StringAlgorithmParameter("[](P \\wedge Q)");
     }
     
     public Object Run(KripkeStructure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
         
-        StringAlgorithmParameter<String> sp = (StringAlgorithmParameter<String>)(p);
+        StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
         
         ModalLogicParser parser = new ModalLogicParser();
         ModalLogicFormula phi = parser.parseString(sp.parameter);
