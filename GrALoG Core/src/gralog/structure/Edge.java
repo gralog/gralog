@@ -82,6 +82,9 @@ public class Edge extends XmlMarshallable implements IMovable {
             tempX = between.get(0);
             tempY = between.get(1);
             gc.Line(fromX, fromY, tempX, tempY, color, Width);
+            
+            if(highlights != null && highlights.contains(this))
+                gc.Rectangle(tempX-0.1, tempY-0.1, tempX+0.1, tempY+0.1, color, 2.54/96);
         }
 
         Double toX = target.Coordinates.get(0);

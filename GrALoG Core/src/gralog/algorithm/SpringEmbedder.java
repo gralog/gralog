@@ -96,6 +96,13 @@ public class SpringEmbedder extends Algorithm {
             
             tractions.add(new VectorND());
         }
+        
+        
+        // remove intermediate points (they cause problems and why would you keep them?)
+        Set<Edge> edges = s.getEdges();
+        for(Edge e : edges)
+            e.intermediatePoints.clear();
+        
 
         Double max_movement = 0d;
         int iteration = 0;

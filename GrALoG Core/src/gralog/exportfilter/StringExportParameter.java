@@ -9,15 +9,15 @@ package gralog.exportfilter;
  *
  * @author viktor
  */
-public class GenericExportParameter<T extends Object> extends ExportParameters {
+public class StringExportParameter extends ExportParameters {
     
-    public T parameter;
+    public String parameter;
     
-    public GenericExportParameter() {
-        this.parameter = null;
+    public StringExportParameter() {
+        this.parameter = "";
     }
 
-    public GenericExportParameter(T parameter) {
+    public StringExportParameter(String parameter) {
         this.parameter = parameter;
     }
 

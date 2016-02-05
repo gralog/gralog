@@ -24,11 +24,11 @@ public class WordAcceptance extends Algorithm {
 
     @Override
     public AlgorithmParameters GetParameters(Structure s) {
-        return new GenericAlgorithmParameter<String>("");
+        return new StringAlgorithmParameter("");
     }
     
     public Object Run(Automaton s, AlgorithmParameters p, ProgressHandler onprogress) {
-        GenericAlgorithmParameter<String> sp = (GenericAlgorithmParameter<String>)(p);
+        StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
         return Accepts(s, sp.parameter) ? "true" : "false";
     }
     

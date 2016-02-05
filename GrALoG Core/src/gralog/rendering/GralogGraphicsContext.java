@@ -35,6 +35,13 @@ public abstract class GralogGraphicsContext {
     
     abstract public void Circle(double centerx, double centery, double radius, GralogColor color);
     
+    public void Rectangle(double x1, double y1, double x2, double y2, GralogColor color, double width) {
+        Line(x1,y1,x2,y1,color,width);
+        Line(x2,y1,x2,y2,color,width);
+        Line(x2,y2,x1,y2,color,width);
+        Line(x1,y2,x1,y1,color,width);
+    }
+    
     public void PutText(double centerx, double centery, String text, GralogColor color) {
     }
 

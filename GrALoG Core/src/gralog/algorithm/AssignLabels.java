@@ -25,11 +25,11 @@ public class AssignLabels extends Algorithm {
     
     @Override
     public AlgorithmParameters GetParameters(Structure s) {
-        return new GenericAlgorithmParameter<String>("");
+        return new StringAlgorithmParameter("");
     }
 
     public Object Run(Structure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
-        GenericAlgorithmParameter<String> stringparam = (GenericAlgorithmParameter<String>)p;
+        StringAlgorithmParameter stringparam = (StringAlgorithmParameter)p;
         int i = 0;
 
         Set<Vertex> vertices = s.getVertices();

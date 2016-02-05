@@ -9,15 +9,15 @@ package gralog.algorithm;
  *
  * @author viktor
  */
-public class GenericAlgorithmParameter<T extends Object> extends AlgorithmParameters {
+public class StringAlgorithmParameter extends AlgorithmParameters {
     
-    public T parameter;
+    public String parameter;
     
-    public GenericAlgorithmParameter() {
-        this.parameter = null;
+    public StringAlgorithmParameter() {
+        this.parameter = "";
     }
 
-    public GenericAlgorithmParameter(T parameter) {
+    public StringAlgorithmParameter(String parameter) {
         this.parameter = parameter;
     }
 

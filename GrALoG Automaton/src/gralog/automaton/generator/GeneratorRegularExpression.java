@@ -24,12 +24,12 @@ public class GeneratorRegularExpression extends Generator {
     
     @Override
     public GeneratorParameters GetParameters() {
-        return new GenericGeneratorParameter<String>("");
+        return new StringGeneratorParameter("");
     }
     
     @Override
     public Structure Generate(GeneratorParameters p) throws Exception {
-        GenericGeneratorParameter<String> sp = (GenericGeneratorParameter<String>)(p);
+        StringGeneratorParameter sp = (StringGeneratorParameter)(p);
         
         RegularExpressionParser parser = new RegularExpressionParser();
         RegularExpression regexp = parser.parseString(sp.parameter);

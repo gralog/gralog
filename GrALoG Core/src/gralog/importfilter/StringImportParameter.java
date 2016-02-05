@@ -3,21 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gralog.generator;
+package gralog.importfilter;
 
 /**
  *
  * @author viktor
  */
-public class GenericGeneratorParameter<T extends Object> extends GeneratorParameters {
+public class StringImportParameter extends ImportParameters {
     
-    public T parameter;
+    public String parameter;
     
-    public GenericGeneratorParameter() {
-        this.parameter = null;
+    public StringImportParameter() {
+        this.parameter = "";
     }
 
-    public GenericGeneratorParameter(T parameter) {
+    public StringImportParameter(String parameter) {
         this.parameter = parameter;
     }
 
