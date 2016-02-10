@@ -8,6 +8,7 @@ package gralog.automaton;
 import gralog.structure.*;
 import gralog.plugins.*;
 
+import java.util.Set;
 import java.util.HashSet;
 
 /**
@@ -33,7 +34,7 @@ public class Automaton extends Structure<State, Transition> {
     }
  
     
-    public HashSet<State> EpsilonHull(HashSet<State> start) {
+    public HashSet<State> EpsilonHull(Set<State> start) {
         HashSet<State> result = new HashSet<State>();
         HashSet<State> lastiteration = new HashSet<State>();
         HashSet<State> currentiteration = new HashSet<State>();

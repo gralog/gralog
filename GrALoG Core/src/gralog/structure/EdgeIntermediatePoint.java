@@ -7,6 +7,7 @@ package gralog.structure;
 
 import gralog.plugins.XmlMarshallable;
 import gralog.plugins.XmlName;
+import gralog.rendering.VectorND;
 
 import java.util.HashMap;
 import java.util.Vector;
@@ -20,7 +21,7 @@ import org.w3c.dom.Element;
 @XmlName(name="intermediatepoint")
 public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     
-    Vector<Double> Coordinates = new Vector<Double>();
+    VectorND Coordinates = new VectorND();
     
     public EdgeIntermediatePoint()
     {
@@ -47,7 +48,7 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     
     public void Move(Vector<Double> offsets)
     {
-        int n = Math.min(offsets.size(), Coordinates.size());
+        int n = Math.min(offsets.size(), Coordinates.Dimensions());
         
         for(int i = 0; i < n; i++)
             Coordinates.set(i, Coordinates.get(i) + offsets.get(i));
@@ -59,11 +60,11 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     }
     
     public int size() {
-        return Coordinates.size();
+        return Coordinates.Dimensions();
     }
     
     public Double get(int dimension) {
-        if(dimension < Coordinates.size())
+        if(dimension < Coordinates.Dimensions())
             return Coordinates.get(dimension);
         return 0.0d;
     }

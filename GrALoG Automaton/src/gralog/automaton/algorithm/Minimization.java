@@ -7,6 +7,7 @@ package gralog.automaton.algorithm;
 
 import gralog.structure.*;
 import gralog.algorithm.*;
+import gralog.rendering.VectorND;
 import gralog.automaton.*;
 import gralog.progresshandler.*;
 
@@ -102,7 +103,7 @@ public class Minimization extends Algorithm {
             {
                 equivalent = (State)result.CreateVertex();
                 result.AddVertex(equivalent);
-                equivalent.Coordinates = new Vector<Double>(); // initial coordinate (0,0)
+                equivalent.Coordinates = new VectorND(); // initial coordinate (0,0)
                 equivalent.Coordinates.add(0.0d);
                 equivalent.Coordinates.add(0.0d);
                 NerodeRelation_EquivalenceClassSize.put(equivalent, 0);

@@ -29,12 +29,13 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public GralogColor StrokeColor = GralogColor.black;
     
 
-    public Vector<Double> Coordinates = new Vector<Double>();
+    //public Vector<Double> Coordinates = new Vector<Double>();
+    public VectorND Coordinates = new VectorND();
     Set<VertexListener> listeners = new HashSet<VertexListener>();
     
 
     public Double MaximumCoordinate(int dimension) {
-        if(Coordinates.size() > dimension)
+        if(Coordinates.Dimensions() > dimension)
             return Coordinates.get(dimension);
         return Double.NEGATIVE_INFINITY;
     }
@@ -46,7 +47,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     
     
     public void Move(Vector<Double> offset) {
-        while(Coordinates.size() < offset.size())
+        while(Coordinates.Dimensions() < offset.size())
             Coordinates.add(0d);
         for(int i = 0; i < offset.size(); i++)
             Coordinates.set(i, Coordinates.get(i) + offset.get(i));

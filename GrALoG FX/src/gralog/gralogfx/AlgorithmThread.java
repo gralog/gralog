@@ -36,7 +36,7 @@ public class AlgorithmThread extends Thread {
         this.onprogress = onprogress;
     }
  
-    public void setOnThreadCompete(ThreadCompleteEvent handler) {
+    public void setOnThreadComplete(ThreadCompleteEvent handler) {
         this.handler = handler;
     }
     

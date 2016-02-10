@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URI;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.WindowEvent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -594,7 +595,7 @@ public class MainWindow extends Application {
             
             // Run
             AlgorithmThread algoThread = new AlgorithmThread(algo, structure, params, new RedrawOnProgress(structurePane, 1d/60d));
-            algoThread.setOnThreadCompete(t -> AlgorithmCompleted(structurePane, t));
+            algoThread.setOnThreadComplete(t -> Platform.runLater( ()->{AlgorithmCompleted(structurePane, t);}));
             this.setStatus("Running Algorithm \"" + str + "\"...");
             algoThread.start();
             

@@ -6,6 +6,7 @@
 package gralog.automaton.regularexpression;
 
 import gralog.automaton.*;
+import gralog.rendering.VectorND;
 import java.util.Vector;
 
 /**
@@ -31,7 +32,7 @@ public class RegularExpressionString extends RegularExpression {
         
         State s = a.CreateVertex();
         s.StartState = true;
-        s.Coordinates = new Vector<Double>();
+        s.Coordinates = new VectorND();
         s.Coordinates.add(0d);
         s.Coordinates.add(0d);
         a.AddVertex(s);

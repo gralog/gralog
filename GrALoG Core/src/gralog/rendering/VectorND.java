@@ -19,6 +19,14 @@ public class VectorND {
     {
         this.vector = new Vector<Double>();
     }
+
+    public VectorND(VectorND vect)
+    {
+        this.vector = new Vector<Double>();
+        for(int i = 0; i < vect.Dimensions(); i++)
+            this.vector.add(vect.get(i));
+    }
+    
     public VectorND(Vector<Double> vect)
     {
         this.vector = (Vector<Double>)vect.clone();
@@ -27,6 +35,25 @@ public class VectorND {
     public Vector<Double> toVector() {
         return this.vector;
     }
+    
+    public int Dimensions() {
+        return this.vector.size();
+    }
+    
+    public void clear() {
+        this.vector.clear();
+    }
+    
+    public Double get(int index) {
+        if(index >= this.vector.size())
+            return 0d;
+        return vector.get(index);
+    }
+    
+    public void set(int index, Double value) {
+        vector.setElementAt(value, index);
+    }
+            
     
     public void add(Double d) {
         vector.add(d);

@@ -91,7 +91,7 @@ public class SpringEmbedder extends Algorithm {
             VectorND coordinates = new VectorND();
             for(int i = 0; i < dimensions; i++)
                 coordinates.add(Math.random() * dimension_limits.elementAt(i));
-            a.Coordinates = coordinates.toVector();
+            a.Coordinates = coordinates;
             // should make sure that no two vertices have the same position
             
             tractions.add(new VectorND());
@@ -139,19 +139,19 @@ public class SpringEmbedder extends Algorithm {
             i = 0;
             for(Vertex a : vertices)
             {
-                Vector<Double> OldCoordinates = a.Coordinates;
-                Vector<Double> NewCoordinates = new Vector<Double>(dimensions);
+                VectorND OldCoordinates = a.Coordinates;
+                VectorND NewCoordinates = new VectorND();
                 for(int j = 0; j < dimensions; j++)
                     NewCoordinates.add(
                             Math.max(0.0d,
                                     Math.min(dimension_limits.elementAt(j),
-                                             OldCoordinates.elementAt(j) + p.delta * tractions.elementAt(i).toVector().elementAt(j)   )));
+                                             OldCoordinates.get(j) + p.delta * tractions.elementAt(i).toVector().elementAt(j)   )));
                 a.Coordinates = NewCoordinates;
 
                 // for the loop-condition
                 Double current_movement = 0.0d;
                 for(int j = 0; j < dimensions; j++)
-                    current_movement += (OldCoordinates.elementAt(j) - NewCoordinates.elementAt(j)) * (OldCoordinates.elementAt(j) - NewCoordinates.elementAt(j));
+                    current_movement += (OldCoordinates.get(j) - NewCoordinates.get(j)) * (OldCoordinates.get(j) - NewCoordinates.get(j));
                 if(Math.sqrt(current_movement) > max_movement)
                     max_movement = Math.sqrt(current_movement);
                 

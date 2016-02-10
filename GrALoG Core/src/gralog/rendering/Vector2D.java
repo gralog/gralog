@@ -21,6 +21,18 @@ public class Vector2D {
         this.y = y;
     }
     
+    public Vector2D(Vector<Double> vect)
+    {
+        this.x = vect.size() > 0 ? vect.get(0) : 0.0d;
+        this.y = vect.size() > 1 ? vect.get(1) : 0.0d;
+    }
+
+    public Vector2D(VectorND vect)
+    {
+        this.x = vect.Dimensions() > 0 ? vect.get(0) : 0.0d;
+        this.y = vect.Dimensions() > 1 ? vect.get(1) : 0.0d;
+    }
+    
     public Double getX()
     {
         return x;
@@ -30,11 +42,6 @@ public class Vector2D {
         return y;
     }
     
-    public Vector2D(Vector<Double> vect)
-    {
-        this.x = vect.size() > 0 ? vect.get(0) : 0.0;
-        this.y = vect.size() > 1 ? vect.get(1) : 0.0;
-    }
     
 
     public Vector2D Orthogonal()
