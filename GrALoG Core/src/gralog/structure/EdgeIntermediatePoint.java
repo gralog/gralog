@@ -59,6 +59,16 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
             Coordinates.add(offsets.get(i));
     }
     
+    public void SnapToGrid(Double GridSize)
+    {
+        for(int i = 0; i < Coordinates.Dimensions(); i++)
+        {
+            Double newCoord = (Coordinates.get(i) + GridSize/2);
+            newCoord = newCoord - (newCoord%GridSize);
+            Coordinates.set(i, newCoord);
+        }
+    }
+    
     public int size() {
         return Coordinates.Dimensions();
     }

@@ -63,6 +63,16 @@ public class Vertex extends XmlMarshallable implements IMovable {
         gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, FillColor.inverse());
     }
     
+    public void SnapToGrid(Double GridSize)
+    {
+        for(int i = 0; i < Coordinates.Dimensions(); i++)
+        {
+            Double newCoord = (Coordinates.get(i) + GridSize/2);
+            newCoord = newCoord - (newCoord%GridSize);
+            Coordinates.set(i, newCoord);
+        }
+    }
+    
     public boolean ContainsCoordinate(Double x, Double y) {
         Double tx = Coordinates.get(0);
         Double ty = Coordinates.get(1);

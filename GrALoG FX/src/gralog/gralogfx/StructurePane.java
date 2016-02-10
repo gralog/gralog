@@ -135,19 +135,12 @@ public class StructurePane extends StackPane implements StructureListener {
             this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
         });
         canvas.setOnMouseReleased(e -> {
-            if(Dragging != null)
+            if(Dragging != null && SnapToGrid)
             {
-                Set<Vertex> V = structure.getVertices();
-                for(Vertex v : V)
-                    for(int i = 0; i < v.Coordinates.Dimensions(); i++)
-                    {
-                        Double newCoord = (v.Coordinates.get(i) + GridSize/2);
-                        newCoord = newCoord - (newCoord%GridSize);
-                        v.Coordinates.set(i, newCoord);
-                    }
+                structure.SnapToGrid(GridSize);
                 this.RequestRedraw();
-                Dragging = null;
             }
+            Dragging = null;
         });
         canvas.setOnMouseDragged(e -> {
             MouseEvent me = (MouseEvent)e;
@@ -203,13 +196,11 @@ public class StructurePane extends StackPane implements StructureListener {
             LastMouseY = (Double)mousePositionModel.getY();
 
             Vertex v = structure.CreateVertex();
-            if(SnapToGrid) {
-                v.Coordinates.add(Math.floor(mousePositionModel.getX() / GridSize + 0.5)*GridSize);
-                v.Coordinates.add(Math.floor(mousePositionModel.getY() / GridSize + 0.5)*GridSize);
-            } else {
-                v.Coordinates.add(mousePositionModel.getX());
-                v.Coordinates.add(mousePositionModel.getY());
-            }
+            v.Coordinates.add(mousePositionModel.getX());
+            v.Coordinates.add(mousePositionModel.getY());
+            if(SnapToGrid)
+                v.SnapToGrid(GridSize);
+            
             structure.AddVertex(v);
             Selection.clear();
             Selection.add(v);

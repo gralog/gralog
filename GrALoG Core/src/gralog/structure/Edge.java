@@ -54,6 +54,11 @@ public class Edge extends XmlMarshallable implements IMovable {
             between.Move(offset);
     }
 
+    public void SnapToGrid(Double GridSize) {
+        for(EdgeIntermediatePoint between : intermediatePoints)
+            between.SnapToGrid(GridSize);
+    }
+    
     public IMovable FindObject(Double x, Double y) {
         for(EdgeIntermediatePoint p : intermediatePoints)
             if(p.ContainsCoordinate(x,y))

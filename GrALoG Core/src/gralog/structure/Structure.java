@@ -53,6 +53,14 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         for(Vertex v : Vertices)
             v.Render(gc, highlights);
     }
+
+    
+    public void SnapToGrid(Double GridSize) {
+        for(Edge e : Edges)
+            e.SnapToGrid(GridSize);
+        for(Vertex v : Vertices)
+            v.SnapToGrid(GridSize);
+    }
     
     
     public Double MaximumCoordinate(int dimension) {
