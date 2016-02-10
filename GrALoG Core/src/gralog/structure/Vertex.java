@@ -97,7 +97,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
         if(vnode.hasAttribute("strokewidth"))
             StrokeWidth = Double.parseDouble(vnode.getAttribute("strokewidth"));
         if(vnode.hasAttribute("strokecolor"))
-            FillColor = GralogColor.parseColor(vnode.getAttribute("strokecolor"));
+            StrokeColor = GralogColor.parseColor(vnode.getAttribute("strokecolor"));
 
         return vnode.getAttribute("id");
     }

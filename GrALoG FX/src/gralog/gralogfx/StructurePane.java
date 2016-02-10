@@ -135,7 +135,19 @@ public class StructurePane extends StackPane implements StructureListener {
             this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
         });
         canvas.setOnMouseReleased(e -> {
-            Dragging = null;
+            if(Dragging != null)
+            {
+                Set<Vertex> V = structure.getVertices();
+                for(Vertex v : V)
+                    for(int i = 0; i < v.Coordinates.Dimensions(); i++)
+                    {
+                        Double newCoord = (v.Coordinates.get(i) + GridSize/2);
+                        newCoord = newCoord - (newCoord%GridSize);
+                        v.Coordinates.set(i, newCoord);
+                    }
+                this.RequestRedraw();
+                Dragging = null;
+            }
         });
         canvas.setOnMouseDragged(e -> {
             MouseEvent me = (MouseEvent)e;
