@@ -45,10 +45,10 @@ public class Minimization extends Algorithm {
 
         
         // Create Initial Table
-        Vector<Vector<Boolean>> Table = new Vector<Vector<Boolean>>(n);
+        Vector<Vector<Boolean>> Table = new Vector<Vector<Boolean>>();
         for(int y = 0; y < n; y++) // iterate over table-rows
         {
-            Table.add(new Vector<Boolean>(n));
+            Table.add(new Vector<Boolean>());
             for(int x = 0; x < n; x++) // iterate over row-cells
                 Table.get(y).add(States.get(y).FinalState != States.get(x).FinalState); // xor
         }
@@ -68,7 +68,7 @@ public class Minimization extends Algorithm {
                             for(Edge ty : automaton.getEdges()) {
                                 if(ty.source != States.get(y))
                                     continue;
-                                if(((Transition)ty).Symbol != ((Transition)tx).Symbol)
+                                if(!((Transition)ty).Symbol.equals(((Transition)tx).Symbol))
                                     continue;
         
                                 // x and y have distinguishable "symbol"-successors

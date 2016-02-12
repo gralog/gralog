@@ -70,9 +70,64 @@ public class Edge extends XmlMarshallable implements IMovable {
         return null;
     }
     
+    
+    protected Double BinomialCoefficients(int n, int k)
+    {
+        double result = 1.0;
+        for (int i = 1; i <= k; i++)
+            result = result * (n + 1 - i) / i;
+        return result;
+    }
+    
+    protected VectorND BezierCurve(Double t) {
+        int n = intermediatePoints.size() + 1;
+        
+        VectorND result = this.source.Coordinates.Multiply( Math.pow(1-t, n) );
+        result = result.Plus(this.target.Coordinates.Multiply( Math.pow(t, n) ));
+
+        int i = 1;
+        for(EdgeIntermediatePoint between : intermediatePoints)
+        {
+            result = result.Plus(between.Coordinates.Multiply(     BinomialCoefficients(n,i) * Math.pow(t,i) * Math.pow(1-t, n-i)  ));
+            i++;
+        }
+
+        return result;
+    }
+    
+    
     public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
+        
         Double fromX = source.Coordinates.get(0);
         Double fromY = source.Coordinates.get(1);
+        Double toX = target.Coordinates.get(0);
+        Double toY = target.Coordinates.get(1);
+
+        /*
+        if(intermediatePoints.size() > 0)
+        {
+            double steps = 1/40d;
+
+            for(double t = steps; t < 1; t += steps) {
+                VectorND next = BezierCurve(t);
+                Double tempX = next.get(0);
+                Double tempY = next.get(1);
+
+                gc.Line(fromX, fromY, tempX, tempY, this.Color, this.Width);
+                fromX = tempX;
+                fromY = tempY;
+            }
+            gc.Line(fromX, fromY, toX, toY, this.Color, this.Width);
+
+            //if(highlights != null && highlights.contains(this))
+                for(EdgeIntermediatePoint between : intermediatePoints)
+                    gc.Rectangle(between.get(0)-0.1, between.get(1)-0.1, between.get(0)+0.1, between.get(1)+0.1, this.Color, 2.54/96);
+                
+        } else {
+            gc.Line(fromX, fromY, toX, toY, this.Color, this.Width);
+        }
+        */
+        
         Double tempX = fromX;
         Double tempY = fromY;
 
@@ -92,8 +147,6 @@ public class Edge extends XmlMarshallable implements IMovable {
                 gc.Rectangle(tempX-0.1, tempY-0.1, tempX+0.1, tempY+0.1, color, 2.54/96);
         }
 
-        Double toX = target.Coordinates.get(0);
-        Double toY = target.Coordinates.get(1);
         if(isDirected)
         {
             Vector2D intersection = target.Intersection(new Vector2D(tempX,tempY), new Vector2D(toX,toY));

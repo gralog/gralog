@@ -34,10 +34,7 @@ public class PowersetConstruction extends Algorithm {
         Automaton result = new Automaton();
         PowersetConstructionTreeNode tree = new PowersetConstructionTreeNode(null,null,null);
         
-        Set<Character> Alphabet = new HashSet<Character>();
-        Alphabet.add('a');
-        Alphabet.add('b');
-        
+       
         Set<State> Q0 = new HashSet<State>();
         Set<Vertex> Q = a.getVertices();
         Set<Edge> delta = a.getEdges();
@@ -48,6 +45,16 @@ public class PowersetConstruction extends Algorithm {
         State q0 = tree.getContentForSet(a, result, Q0);
         q0.StartState = true;
 
+
+        Set<Character> Alphabet = new HashSet<Character>();
+        for(Edge e : delta)
+            if(e instanceof Transition)
+            {
+                String s = ((Transition)e).Symbol;
+                for(int i = 0; i < s.length(); i++)
+                    Alphabet.add(s.charAt(i));
+            }
+        
         
         Queue<Set<State>> queue = new LinkedList<Set<State>>();
         queue.add(Q0);
