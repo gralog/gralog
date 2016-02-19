@@ -17,7 +17,7 @@ import gralog.structure.Structure;
 @GeneratorDescription(
   name="Coset Automaton",
   text="Constructs an Automaton that accepts b-ary representations of numbers divisible by n",
-  url=""
+  url="http://math.stackexchange.com/questions/140283/why-does-this-fsm-accept-binary-numbers-divisible-by-three"
 )
 public class GeneratorCosetAutomaton extends Generator {
     

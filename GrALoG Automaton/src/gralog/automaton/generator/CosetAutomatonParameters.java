@@ -13,7 +13,7 @@ import gralog.generator.GeneratorParameters;
  */
 public class CosetAutomatonParameters extends GeneratorParameters {
 
-    public Integer Number = 7;
+    public Integer Number = 3;
     public Integer Base = 2;
     public String Alphabet = "01";
     
