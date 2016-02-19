@@ -641,9 +641,11 @@ public class MainWindow extends Application {
         
         // Load Config
         NodeList children = null;
+        String configFileDir = null;
         try {
             File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             File configFile = new File(jarFile.getParentFile().getAbsolutePath() + File.separator + "config.xml");
+            configFileDir = configFile.getParent();
         
             if(configFile.exists())
             {
@@ -666,7 +668,7 @@ public class MainWindow extends Application {
                 if(!child.getTagName().equals("plugin"))
                     continue;
 
-                doLoadPlugin(child.getAttribute("location"));
+                doLoadPlugin(configFileDir + File.separator + child.getAttribute("location"));
             }
         
         // Load Plugins from Parameters

@@ -63,8 +63,11 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     {
         for(int i = 0; i < Coordinates.Dimensions(); i++)
         {
-            Double newCoord = (Coordinates.get(i) + GridSize/2);
-            newCoord = newCoord - (newCoord%GridSize);
+            Double newCoord = Coordinates.get(i) + GridSize/2d;
+            Double temp = newCoord % GridSize;
+            if(temp < 0)
+                temp += GridSize;
+            newCoord -= temp;
             Coordinates.set(i, newCoord);
         }
     }
