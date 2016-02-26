@@ -87,6 +87,6 @@ public class State extends Vertex {
             gc.Arrow(headStart.getX(), headStart.getY(), intersection.getX(), intersection.getY(), InitialMarkHeadAngle, InitialMarkHeadLength, InitialMarkColor, InitialMarkWidth);
         }
         
-        gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, FillColor.inverse());
+        gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, TextHeight, FillColor.inverse());
     }
 }

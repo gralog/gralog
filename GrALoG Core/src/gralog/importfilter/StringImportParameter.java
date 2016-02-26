@@ -9,7 +9,7 @@ package gralog.importfilter;
  *
  * @author viktor
  */
-public class StringImportParameter extends ImportParameters {
+public class StringImportParameter extends ImportFilterParameters {
     
     public String parameter;
     

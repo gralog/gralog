@@ -42,7 +42,7 @@ public abstract class GralogGraphicsContext {
         Line(x1,y2,x1,y1,color,width);
     }
     
-    public void PutText(double centerx, double centery, String text, GralogColor color) {
+    public void PutText(double centerx, double centery, String text, double LineHeightCm, GralogColor color) {
     }
 
 }

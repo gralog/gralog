@@ -26,6 +26,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public Double Radius = 0.5; // cm
     public GralogColor FillColor = GralogColor.white;
     public Double StrokeWidth = 2.54/96; // cm
+    public Double TextHeight = 0.4d; // cm
     public GralogColor StrokeColor = GralogColor.black;
     
 
@@ -60,7 +61,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
         gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius, StrokeColor);
         gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-StrokeWidth, FillColor);
-        gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, FillColor.inverse());
+        gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, TextHeight, FillColor.inverse());
     }
     
     public void SnapToGrid(Double GridSize)

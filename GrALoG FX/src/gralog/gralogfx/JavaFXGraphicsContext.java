@@ -7,11 +7,13 @@ package gralog.gralogfx;
 
 import gralog.rendering.*;
 import javafx.geometry.Point2D;
+import javafx.geometry.VPos;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
+import javafx.scene.text.Font;
 
 
 /**
@@ -52,13 +54,21 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
     }
     
     @Override
-    public void PutText(double centerx, double centery, String text, GralogColor c)
+    public void PutText(double centerx, double centery, String text, double LineHeightCM, GralogColor c)
     {
         Point2D p1 = pane.ModelToScreen(new Point2D(centerx,centery));
+
+        Font font = gc.getFont();
+                                   // I have no idea, why this is 1959.5... I hate magic numbers
+        double newSize = 2.54d * LineHeightCM * pane.ZoomFactor * 1959.5
+                       / ( pane.ScreenResolutionY );
+        gc.setFont(new Font(font.getName(), newSize));
         
         gc.setTextAlign(TextAlignment.CENTER);
-        gc.setStroke(Color.rgb(c.r, c.g, c.b));
-        gc.strokeText(text, p1.getX(), p1.getY());
+        gc.setTextBaseline(VPos.CENTER);
+        gc.setFill(Color.rgb(c.r, c.g, c.b));
+        
+        gc.fillText(text, p1.getX(), p1.getY());
     }
     
 }
