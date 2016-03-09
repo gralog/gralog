@@ -77,12 +77,18 @@ public class SpringEmbedder extends Algorithm {
         SpringEmbedderParameters p = (SpringEmbedderParameters)ap;
         Vector<VectorND> tractions = new Vector<VectorND>();
         int dimensions = dimension_limits.size();
+        
+        Double maxDim = s.getVertices().size() * p.unstressed_spring_length;
+        for(int i = 1; i < dimensions; i++)
+            dimension_limits.set(i, maxDim);
 
+        /*
         p.unstressed_spring_length = dimension_limits.elementAt(0);
         for(int i = 1; i < dimensions; i++)
             p.unstressed_spring_length *= dimension_limits.elementAt(i);
         p.unstressed_spring_length /= s.getVertices().size();
         p.unstressed_spring_length = Math.pow(p.unstressed_spring_length, 1.0f/dimensions) / (dimensions * 2);
+        */
 
         // init
         Set<Vertex> vertices = s.getVertices();

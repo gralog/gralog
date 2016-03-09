@@ -58,9 +58,6 @@ public class TrivialGraphFormatImport extends ImportFilter {
             if(to == null)
             {
                 Vertex newnode = result.CreateVertex();
-                newnode.Coordinates.add(Math.random()*15d);
-                newnode.Coordinates.add(Math.random()*10d);
-                result.AddVertex(newnode);
                 if(NodeIndex.containsKey(from))
                     throw new Exception("Vertex-identifier \"" + from + "\" multiply defined");
                 NodeIndex.put(from, newnode);
@@ -83,6 +80,13 @@ public class TrivialGraphFormatImport extends ImportFilter {
             s = br.readLine();
         }
 
+        for(Vertex newnode : NodeIndex.values())
+        {
+            newnode.Coordinates.add(Math.random()*3d*NodeIndex.size());
+            newnode.Coordinates.add(Math.random()*3d*NodeIndex.size());
+            result.AddVertex(newnode);
+        }        
+        
         br.close();
         return result;
 

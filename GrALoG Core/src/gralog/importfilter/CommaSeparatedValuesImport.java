@@ -30,7 +30,6 @@ public class CommaSeparatedValuesImport extends ImportFilter {
     String CellSeparator = ",";
     // char RecordSeparator = '\n'; // cannot be changed in BufferedReader
     
-    
     @Override
     public Structure Import(InputStream stream, ImportFilterParameters params) throws Exception {
         DirectedGraph result = new DirectedGraph();
@@ -64,9 +63,6 @@ public class CommaSeparatedValuesImport extends ImportFilter {
                 if(!NodeIndex.containsKey(vertstring))
                 {
                     Vertex newnode = result.CreateVertex();
-                    newnode.Coordinates.add(Math.random()*15d);
-                    newnode.Coordinates.add(Math.random()*10d);
-                    result.AddVertex(newnode);
                     NodeIndex.put(vertstring, newnode);
                 }
             }
@@ -76,6 +72,13 @@ public class CommaSeparatedValuesImport extends ImportFilter {
             result.AddEdge(result.CreateEdge(vfrom, vto));
             
             s = br.readLine();
+        }
+        
+        for(Vertex newnode : NodeIndex.values())
+        {
+            newnode.Coordinates.add(Math.random()*3d*NodeIndex.size());
+            newnode.Coordinates.add(Math.random()*3d*NodeIndex.size());
+            result.AddVertex(newnode);
         }
 
         br.close();
