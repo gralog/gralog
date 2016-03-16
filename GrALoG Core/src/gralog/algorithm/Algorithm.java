@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  */
 public abstract class Algorithm {
     
-    //public abstract Object Run(Structure structure, AlgorithmParameters params);
+    //public Object Run(Structure structure, AlgorithmParameters params, ProgressHandler onprogress);
     
     // null means it has no parameters
     public AlgorithmParameters GetParameters(Structure structure) {

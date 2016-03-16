@@ -9,6 +9,7 @@ import gralog.structure.*;
 import java.lang.reflect.*;
 import java.io.OutputStreamWriter;
 import java.io.FileOutputStream;
+import java.util.Map;
 
 /**
  *
@@ -47,6 +48,16 @@ public abstract class ExportFilter {
             break;
         }
     }
+    
+    public Map<String, Vertex> GetVertexNames(Structure structure, ExportFilterParameters params) throws Exception
+    {
+        throw new Exception("class " + this.getClass().getName() + " has no method \"GetVertexNames\"");
+    }
+
+    public Map<String, Edge> GetEdgeNames(Structure structure, ExportFilterParameters params) throws Exception
+    {
+        throw new Exception("class " + this.getClass().getName() + " has no method \"GetEdgeNames\"");
+    }    
     
     public ExportFilterDescription getDescription() throws Exception {
         if(!this.getClass().isAnnotationPresent(ExportFilterDescription.class))
