@@ -21,22 +21,7 @@ import gralog.progresshandler.ProgressHandler;
 public class AlgorithmExternalTest extends AlgorithmExternal {
     
     public AlgorithmExternalTest() {
-        super(new TrivialGraphFormatExport(), false, "");
-    }
-    
-
-    @Override
-    public AlgorithmParameters GetParameters(Structure structure) {
-        return new StringAlgorithmParameter("");
-    }    
-    
-    @Override
-    public Object Run(Structure structure, AlgorithmParameters params, ProgressHandler onprogress) throws Exception
-    {
-        StringAlgorithmParameter p = (StringAlgorithmParameter)params;
-        Command.clear();
-        Command.add(p.parameter);
-        return super.Run(structure, params, onprogress);
+        super(new TrivialGraphFormatExport(), false, "gralogexternaltest");
     }
     
 }
