@@ -15,12 +15,14 @@ import java.util.Map;
  *
  * @author viktor
  */
-public abstract class ExportFilter {
+public abstract class ExportFilter
+{
     
     //public abstract void Export(Structure structure, OutputStreamWriter stream, ExportParameters params);
     
     // null means it has no parameters
-    public ExportFilterParameters GetParameters(Structure structure) {
+    public ExportFilterParameters GetParameters(Structure structure)
+    {
         return null;
     }
     
@@ -59,7 +61,8 @@ public abstract class ExportFilter {
         throw new Exception("class " + this.getClass().getName() + " has no method \"GetEdgeNames\"");
     }    
     
-    public ExportFilterDescription getDescription() throws Exception {
+    public ExportFilterDescription getDescription() throws Exception
+    {
         if(!this.getClass().isAnnotationPresent(ExportFilterDescription.class))
             throw new Exception("class " + this.getClass().getName() + " has no @ExportFilterDescription Annotation");
         return this.getClass().getAnnotation(ExportFilterDescription.class);

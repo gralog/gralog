@@ -18,7 +18,6 @@ import gralog.structure.*;
 )
 public class Cycle extends Generator {
     
-    // null means it has no parameters
     @Override
     public GeneratorParameters GetParameters() {
         return new StringGeneratorParameter("5");

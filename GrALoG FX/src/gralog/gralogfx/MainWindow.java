@@ -15,6 +15,7 @@ import gralog.algorithm.*;
 import gralog.events.VertexEvent;
 
 import gralog.gralogfx.events.RedrawOnProgress;
+import gralog.gralogfx.views.ViewManager;
 
 import java.util.*;
 import java.io.File;
@@ -230,6 +231,7 @@ public class MainWindow extends Application {
         try {
             this.setStatus("Loading Plugin " + filename + "...");
             PluginManager.LoadPlugin(filename);
+            ViewManager.LoadPlugin(filename);
         } catch(Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -620,6 +622,7 @@ public class MainWindow extends Application {
     public static void main(String[] args) {
         try {
             PluginManager.Initialize();
+            ViewManager.Initialize();
             launch(args);
         } catch(Exception ex) {
             ex.printStackTrace();

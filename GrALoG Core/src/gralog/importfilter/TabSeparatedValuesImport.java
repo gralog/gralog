@@ -25,12 +25,11 @@ import java.util.StringTokenizer;
   url="https://reference.wolfram.com/language/ref/format/TSV.html",
   fileextension="tsv"
 )
-public class TabSeparatedValuesImport extends CommaSeparatedValuesImport {
-
+public class TabSeparatedValuesImport extends CommaSeparatedValuesImport
+{
     public TabSeparatedValuesImport()
     {
         super();
         this.CellSeparator = "\t";
     }
-    
 }

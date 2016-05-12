@@ -27,7 +27,8 @@ import java.util.StringTokenizer;
   url="https://en.wikipedia.org/wiki/Trivial_Graph_Format",
   fileextension="tgf"
 )
-public class TrivialGraphFormatExport extends ExportFilter {
+public class TrivialGraphFormatExport extends ExportFilter
+{
     
     public void Export(Structure structure, OutputStreamWriter stream, ExportFilterParameters params) throws Exception
     {
@@ -36,7 +37,8 @@ public class TrivialGraphFormatExport extends ExportFilter {
         String linefeed = System.getProperty("line.separator");
         
         Set<Vertex> V = structure.getVertices();
-        for(Vertex v : V){
+        for(Vertex v : V)
+        {
             NodeIndex.put(v, i);
             stream.write(i + linefeed);
             i++;
@@ -45,9 +47,8 @@ public class TrivialGraphFormatExport extends ExportFilter {
         stream.write("#" + linefeed);
         
         Set<Edge> E = structure.getEdges();
-        for(Edge e : E){
+        for(Edge e : E)
             stream.write(NodeIndex.get(e.source).toString() + " " + NodeIndex.get(e.target).toString() + linefeed);
-        }
         
         stream.write("#" + linefeed);
     }

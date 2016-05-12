@@ -7,6 +7,7 @@ package gralog.gralogfx;
 
 import gralog.gralogfx.views.View;
 import gralog.gralogfx.views.ReflectedView;
+import gralog.gralogfx.views.ViewManager;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -21,9 +22,6 @@ import javafx.scene.Node;
 public class ObjectInspector extends Pane {
     
     
-    HashMap<Class, Class> SkinFactory = new HashMap<Class,Class>();
-    
-    
     public ObjectInspector() {
         this.setMinWidth(200.0d);
         try {
@@ -31,12 +29,8 @@ public class ObjectInspector extends Pane {
         } catch (Exception ex) {
             // does not happen with null parameter
         }
-        AddSkin(Object.class, ReflectedView.class);
     }
     
-    public void AddSkin(Class forClass, Class skinClass) {
-        SkinFactory.put(forClass, skinClass);
-    }
     
     public void SetObjects(Set<Object> objects, StructurePane structurePane) throws Exception {
         SetObject(null, null);
@@ -45,30 +39,20 @@ public class ObjectInspector extends Pane {
                 SetObject(o, structurePane);
     }
     
+    
     public void SetObject(Object obj, StructurePane structurePane) throws Exception {
         this.getChildren().clear();
         if(obj == null)
             return;
-        
-        Class skinClass = null;
-        for(Class sup = obj.getClass(); sup != null && skinClass == null; sup = sup.getSuperclass())
-            if(SkinFactory.containsKey(sup))
-                skinClass = SkinFactory.get(sup);
-        if(skinClass == null)
+
+        View view = ViewManager.InstantiateView(obj.getClass());
+        if(view == null)
             return;
-        
-        Constructor ctor = skinClass.getConstructor(new Class<?>[]{});
-        if(ctor == null)
-            throw new Exception("Class " + skinClass.getName() + " has no constructor with empty signature");
-        Object view = ctor.newInstance(new Object[]{});
         if(!(view instanceof Node))
-            throw new Exception("Class " + skinClass.getName() + " is not derived from javafx.scene.Node");
-        if(!(view instanceof View))
-            throw new Exception("Class " + skinClass.getName() + " does not implement gralog.gralogfx.views.View");
+            throw new Exception("Class " + view.getClass().getName() + " is not derived from javafx.scene.Node");
         
-        View v = (View)view;
-        v.Update(obj);
-        v.setStructurePane(structurePane);
+        view.Update(obj);
+        view.setStructurePane(structurePane);
         this.getChildren().add((Node)view);
     }
     

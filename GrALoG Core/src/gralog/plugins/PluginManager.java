@@ -53,7 +53,8 @@ public class PluginManager {
     }
     
     
-    public static void RegisterClass(Class<?> c) throws Exception {
+    public static void RegisterClass(Class<?> c) throws Exception
+    {
         String XmlAlias = null;
         if(c.isAnnotationPresent(XmlName.class))
         {
