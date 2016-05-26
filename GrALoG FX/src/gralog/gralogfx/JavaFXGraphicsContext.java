@@ -71,4 +71,15 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.fillText(text, p1.getX(), p1.getY());
     }
     
+    @Override
+    public void FillRectangle(double x1, double y1, double x2, double y2, GralogColor c)
+    {
+        Point2D p1 = pane.ModelToScreen(new Point2D(x1,y1));
+        Point2D p2 = pane.ModelToScreen(new Point2D(x2,y2));
+
+        gc.setFill(Color.rgb(c.r, c.g, c.b));
+
+        gc.fillRect(p1.getX(), p1.getY(), p2.getX()-p1.getX(), p2.getY()-p1.getY());
+    }
+    
 }

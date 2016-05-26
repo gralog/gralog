@@ -41,6 +41,8 @@ public abstract class GralogGraphicsContext {
         Line(x2,y2,x1,y2,color,width);
         Line(x1,y2,x1,y1,color,width);
     }
+
+    abstract public void FillRectangle(double x1, double y1, double x2, double y2, GralogColor color);
     
     public void PutText(double centerx, double centery, String text, double LineHeightCm, GralogColor color) {
     }

@@ -53,8 +53,9 @@ public class TrivialGraphFormatExport extends ExportFilter
         stream.write("#" + linefeed);
     }
 
-    
-    public Map<String, Vertex> GetVertexNames(Structure structure, ExportFilterParameters params) throws Exception
+    @Override
+    public Map<String, Vertex> GetVertexNames(Structure structure,
+            ExportFilterParameters params) throws Exception
     {
         Map<String, Vertex> result = new HashMap<String, Vertex>();
         Integer i = 1;
@@ -64,10 +65,13 @@ public class TrivialGraphFormatExport extends ExportFilter
         return result;
     }
 
-    public Map<String, Edge> GetEdgeNames(Structure structure, ExportFilterParameters params) throws Exception
+    @Override
+    public Map<String, Edge> GetEdgeNames(Structure structure,
+            ExportFilterParameters params) throws Exception
     {
         Map<String, Edge> result = new HashMap<String, Edge>();
         HashMap<Vertex, Integer> NodeIndex = new HashMap<Vertex,Integer>();
+        
         Integer i = 1;
         Set<Vertex> V = structure.getVertices();
         for(Vertex v : V)

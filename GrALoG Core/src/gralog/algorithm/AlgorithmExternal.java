@@ -12,7 +12,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.File;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -68,8 +68,8 @@ public abstract class AlgorithmExternal extends Algorithm {
         OutputStream outstream = proc.getOutputStream();
         PrintWriter out = new PrintWriter(outstream);
         
-        HashMap<String, Vertex> VertexIndex = new HashMap<String, Vertex>();
-        HashMap<String, Edge> EdgeIndex = new HashMap<String, Edge>();
+        Map<String, Vertex> VertexIndex = exportFilter.GetVertexNames(structure, null);
+        Map<String, Edge> EdgeIndex = exportFilter.GetEdgeNames(structure, null);
         
         if(!PassStructureViaFile)
         {
