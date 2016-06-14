@@ -38,7 +38,6 @@ public class Colorability extends Algorithm{
     boolean check(StringBuilder str,DirectedGraph s){
         Set<Vertex> ver=s.getVertices();
         Set<Edge> edge=s.getEdges();
-       //System.out.println("****************************************");
         for(Vertex i: ver){
             int x=Integer.parseInt(i.Label );
             int cnt=0;
@@ -58,18 +57,16 @@ public class Colorability extends Algorithm{
                     }
                 
                     
-            }
-         //    System.out.println("x= " + x +"size= "+ size + "cnt= " + cnt);
-        
+            }        
              if(cnt>(size/2) ) {
                 
-           //   System.out.println("****************************************");
+           
              return false;
              }
              }
            
         
-         //System.out.println("****************************************");
+         
          return true;
     }
     public Object Run(DirectedGraph s,AlgorithmParameters p,ProgressHandler onprogress) throws Exception {
