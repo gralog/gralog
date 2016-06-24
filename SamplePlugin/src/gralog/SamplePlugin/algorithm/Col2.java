@@ -9,7 +9,7 @@ package gralog.SamplePlugin.algorithm;
  *
  * @author Hv
  */
-import com.microsoft.z3.*;
+
 import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.progresshandler.*;
