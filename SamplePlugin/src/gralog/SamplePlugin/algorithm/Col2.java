@@ -70,15 +70,6 @@ public class Col2 extends Algorithm{
          return true;
     }
     
-    /*public Object solve(DirectedGraph s){
-        Set<Vertex> vertices=s.getVertices();
-        int nVertices=vertices.size();
-        BoolExpr[][] colors = new BoolExpr[nVertices][];
-        for(int i=0;i<nVertices;i++){
-            colors[i]=new BoolExpr[3];
-        }
-        
-    }*/
     DirectedGraph generate(DirectedGraph s,int nVertices,double p){
      Set<Vertex> vertices=s.getVertices();
      Set<Edge> edge=s.getEdges();
@@ -90,17 +81,19 @@ public class Col2 extends Algorithm{
          v.Coordinates.add(Math.random()*100);
          v.Coordinates.add(Math.random()*100);
          v.Label=Integer.toString(i);
-         System.out.println(v.Label);
+        
          s.AddVertex(v);
          coor=coor+2;
      }
      
      for(Vertex v: vertices){
-         for(Vertex w: vertices){
-             double random=Math.random();
-             if(random<=p){
+         for(Vertex w: vertices ){
+             if(v!=w) {
+                double random=Math.random();
+                if(random<=p){
                   Edge ew=s.CreateEdge(v,w);
                   s.AddEdge(ew);
+                }
              }
          }
      }
@@ -110,13 +103,22 @@ public class Col2 extends Algorithm{
     private   int contradictions = 1;
     public Object Run(DirectedGraph s,AlgorithmParameters p,ProgressHandler onprogress) throws Exception {
       
+        Integer nIter,nVertices;
+        double prob;
+        Scanner in=new Scanner(System.in);
+        System.out.println("enter number of iterations");
+        nIter=in.nextInt();
+        System.out.println("enter the number of vertices");
+        nVertices=in.nextInt();
+        System.out.println("enter the edge density");
+        prob=in.nextDouble();
         for(int iter=1;iter<=100;iter++){
-            s=generate(s,20,0.9);
+            s=generate(s,nVertices,prob);
             /*SpringEmbedder embedder = new SpringEmbedder();
             AlgorithmParameters params = embedder.GetParameters(s);
             embedder.Run(s, params, onprogress);
             */Set<Vertex> vertices=s.getVertices();
-            int nVertices=vertices.size();
+            
             long i;
             for(i=0;i<Math.pow(3,nVertices);i++){
             
