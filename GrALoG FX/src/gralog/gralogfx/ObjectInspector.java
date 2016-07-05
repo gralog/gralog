@@ -51,8 +51,8 @@ public class ObjectInspector extends Pane {
         if(!(view instanceof Node))
             throw new Exception("Class " + view.getClass().getName() + " is not derived from javafx.scene.Node");
         
-        view.Update(obj);
         view.setStructurePane(structurePane);
+        view.Update(obj);
         this.getChildren().add((Node)view);
     }
     

@@ -541,7 +541,7 @@ public class MainWindow extends Application {
             if(algoResult == null)
             {
                 structurePane.RequestRedraw();
-                return;
+                algoResult = "null";
             }
 
             if(algoResult instanceof Structure)
@@ -569,6 +569,17 @@ public class MainWindow extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText((String)algoResult);
                 alert.showAndWait();
+            }
+            else
+            {
+                AlgorithmResultStage resultStage = new AlgorithmResultStage(
+                        algoThread.algo,
+                        algoThread.structure,
+                        algoThread.params,
+                        structurePane,
+                        algoResult
+                );
+                resultStage.show();
             }
         } catch(Exception ex) {
             this.setStatus("");

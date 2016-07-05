@@ -13,6 +13,7 @@ import gralog.gralogfx.events.*;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Vector;
+import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -120,19 +121,14 @@ public class StructurePane extends StackPane implements StructureListener {
             LastMouseY = (Double)mousePositionModel.getY();
             
             if(!e.isControlDown())
-                Selection.clear();
+                ClearSelection();
             
             IMovable selected = structure.FindObject((Double)LastMouseX, (Double)LastMouseY);
             if(selected != null)
             {
-                //if(!Selection.contains(selected))
-                    Selection.add(selected);
-                //else
-                //    Selection.remove(selected);
-                
+                Select(selected);
                 Dragging = Selection;
             }
-            this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
         });
         canvas.setOnMouseReleased(e -> {
             if(Dragging != null && SnapToGrid)
@@ -179,8 +175,7 @@ public class StructurePane extends StackPane implements StructureListener {
                             structure.RemoveEdge((Edge)o);
                     }
                     
-                    Selection.clear();
-                    this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+                    ClearSelection();
                     this.RequestRedraw();
                     break;
             }
@@ -202,10 +197,9 @@ public class StructurePane extends StackPane implements StructureListener {
                 v.SnapToGrid(GridSize);
             
             structure.AddVertex(v);
-            Selection.clear();
-            Selection.add(v);
+            ClearSelection();
+            Select(v);
             
-            this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
             this.RequestRedraw();
         });
         canvas.setOnMouseReleased(e -> {});
@@ -226,17 +220,16 @@ public class StructurePane extends StackPane implements StructureListener {
             if(SelectionTemp == null)
                 return;
             
-            Selection.clear();
+            ClearSelection();
             Dragging = null;
             if(SelectionTemp instanceof Vertex)
-                Selection.add(SelectionTemp);
+                Select(SelectionTemp);
             else if(SelectionTemp instanceof Edge) {
                 EdgeIntermediatePoint intermediatepoint = ((Edge)SelectionTemp).addIntermediatePoint(LastMouseX, LastMouseY);
-                Selection.add(intermediatepoint);
+                Select(intermediatepoint);
                 Dragging = Selection;
             }
             
-            this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
             this.RequestRedraw();
         });
         canvas.setOnMouseReleased(e -> {
@@ -256,8 +249,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     Edge edge = structure.CreateEdge((Vertex)o, (Vertex)releasedOver);
                     structure.AddEdge(edge);
                 }
-                Selection.clear();
-                this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+                ClearSelection();
             }
             this.RequestRedraw();
         });
@@ -390,6 +382,26 @@ public class StructurePane extends StackPane implements StructureListener {
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
         structure.Render(ggc, this.Selection);
     }
+    
+    
+    
+    public void Select(Object obj)
+    {
+        Selection.add(obj);
+        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+    }
+    public void SelectAll(Collection elems)
+    {
+        for(Object o : elems)
+            Selection.add(o);
+        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+    }
+    public void ClearSelection()
+    {
+        Selection.clear();
+        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+    }
+    
     
     
     public void StructureChanged(StructureEvent e) {

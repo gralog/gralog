@@ -58,6 +58,7 @@ public class TrivialGraphFormatImport extends ImportFilter {
             if(to == null)
             {
                 Vertex newnode = result.CreateVertex();
+                newnode.Label = from;
                 if(NodeIndex.containsKey(from))
                     throw new Exception("Vertex-identifier \"" + from + "\" multiply defined");
                 NodeIndex.put(from, newnode);
