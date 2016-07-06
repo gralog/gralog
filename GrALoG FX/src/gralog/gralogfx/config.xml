@@ -2,5 +2,5 @@
 <gralog>
   <plugin location="../../../GrALoG Automaton/dist/GrALoG_Automaton.jar" />
   <plugin location="../../../GrALoG Modal Logic/dist/GrALoG_Modal_Logic.jar" />
-  <plugin location="../../../SamplePlugin/dist/SamplePlugin.jar" />
+  <!--<plugin location="../../../SamplePlugin/dist/SamplePlugin.jar" />-->
 </gralog>

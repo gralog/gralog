@@ -12,14 +12,14 @@ import gralog.gralogfx.views.ViewManager;
 import java.util.HashMap;
 import java.util.Set;
 import java.lang.reflect.Constructor;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.Node;
 
 /**
  *
  * @author viktor
  */
-public class ObjectInspector extends Pane {
+public class ObjectInspector extends AnchorPane {
     
     
     public ObjectInspector() {
@@ -54,6 +54,11 @@ public class ObjectInspector extends Pane {
         view.setStructurePane(structurePane);
         view.Update(obj);
         this.getChildren().add((Node)view);
+        
+        AnchorPane.setTopAnchor((Node)view, 3.0);
+        AnchorPane.setRightAnchor((Node)view, 3.0);
+        AnchorPane.setBottomAnchor((Node)view, 3.0);
+        AnchorPane.setLeftAnchor((Node)view, 3.0);
     }
     
 }

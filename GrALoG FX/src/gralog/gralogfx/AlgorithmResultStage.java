@@ -13,9 +13,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.AnchorPane;
-//import javafx.scene.layout.HBox;
-import javafx.stage.Modality;
 
 /**
  *
@@ -43,6 +40,7 @@ public class AlgorithmResultStage extends Stage {
         this.structurePane = structurePane;
         
         objectInspector = new ObjectInspector();
+
         try {
             objectInspector.SetObject(result, structurePane);
         } catch(Exception ex) {
@@ -52,22 +50,11 @@ public class AlgorithmResultStage extends Stage {
 
         root = new BorderPane();
         
-        /*
-        AnchorPane anchorpane = new AnchorPane();
-        anchorpane.getChildren().add(objectInspector);
-        AnchorPane.setBottomAnchor(objectInspector, 5.0);
-        AnchorPane.setRightAnchor(objectInspector, 5.0);
-        AnchorPane.setLeftAnchor(objectInspector, 5.0);
-        AnchorPane.setTopAnchor(objectInspector, 5.0);
-        */
-        
         root.setCenter(objectInspector);
         root.setBottom(closeButton);
-        scene = new Scene(root, 320, 200);
+        scene = new Scene(root, 640, 480);
 
         this.setScene(scene);
         this.setTitle("Algorithm Result");
-        
-        //this.initModality(Modality.WINDOW_MODAL);
     }
 }

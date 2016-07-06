@@ -1,6 +1,8 @@
 package gralog.gralogfx.views;
 
-import java.util.Collection;
+//import java.util.Collection;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.RowConstraints;
 import javafx.beans.value.*;
 
 import gralog.treedecomposition.*;
@@ -40,7 +42,6 @@ public class TreeDecompositionView extends GridPaneView
             TreeItem root = new TreeItem("root");
             FillTreeView(root, treedecomp.rootBag);
             TreeView treeView = new TreeView(root);
-            StructurePane structurePane = this.structurePane;
             
             treeView.getSelectionModel().selectedItemProperty().addListener( new ChangeListener() {
 
@@ -55,8 +56,15 @@ public class TreeDecompositionView extends GridPaneView
 
                  });
 
-            
-            this.add(treeView,1,1);
+            ColumnConstraints columnConstraints = new ColumnConstraints();
+            columnConstraints.setPercentWidth(100);
+            this.getColumnConstraints().add(columnConstraints);
+    
+            RowConstraints rowConstraints = new RowConstraints();
+            rowConstraints.setPercentHeight(100);
+            this.getRowConstraints().add(rowConstraints);
+    
+            this.add(treeView,0,0);
         }
     }
 }
