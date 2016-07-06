@@ -20,4 +20,19 @@ public class Bag {
     
     public Vector<Bag> ChildBags = new Vector<Bag>();
     
+    @Override
+    public String toString()
+    {
+        String result = "{";
+        String glue = "";
+        
+        for(Vertex v : Nodes)
+        {
+            result += glue + v.Label;
+            glue = ",";
+        }
+        
+        return result + "}";
+    }
+    
 }
