@@ -73,9 +73,7 @@ public class TrivialGraphFormatImport extends ImportFilter {
                 if(nodeB == null)
                     throw new Exception("Edge containing undefined Vertex-identifier \"" + to + "\"");
 
-                Edge e = result.CreateEdge();
-                e.source = nodeA;
-                e.target = nodeB;
+                Edge e = result.CreateEdge(nodeA, nodeB);
                 result.AddEdge(e);
             }
             s = br.readLine();

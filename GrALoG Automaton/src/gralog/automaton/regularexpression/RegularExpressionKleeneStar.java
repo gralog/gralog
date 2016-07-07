@@ -54,18 +54,14 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         t.Coordinates.add(aMaxY/2d + scale);
 
         // Connect the new start and final states with epsilon transitions
-        Transition st = a.CreateEdge();
+        Transition st = a.CreateEdge(s,t);
         st.Symbol = ""; // epsilon transition
-        st.source = s;
-        st.target = t;
         a.AddEdge(st);
         st.intermediatePoints.add(new EdgeIntermediatePoint(scale, 0d));
         st.intermediatePoints.add(new EdgeIntermediatePoint(aMaxX + scale, 0d));
 
-        Transition ts = a.CreateEdge();
+        Transition ts = a.CreateEdge(t,s);
         ts.Symbol = ""; // epsilon transition
-        ts.source = t;
-        ts.target = s;
         a.AddEdge(ts);
         ts.intermediatePoints.add(new EdgeIntermediatePoint(aMaxX + scale, aMaxY + 2d*scale));
         ts.intermediatePoints.add(new EdgeIntermediatePoint(scale, aMaxY + 2d*scale));
@@ -73,17 +69,13 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         // Connect the old start and final states to the new start and final states
         for(Vertex v : a.getVertices()) {
             if(((State)v).StartState) {
-                Transition e = a.CreateEdge();
+                Transition e = a.CreateEdge(s,(State)v);
                 e.Symbol = ""; // epsilon transition
-                e.source = s;
-                e.target = v;
                 a.AddEdge(e);
             }
             if(((State)v).FinalState) {
-                Transition e = a.CreateEdge();
+                Transition e = a.CreateEdge((State)v,t);
                 e.Symbol = ""; // epsilon transition
-                e.source = v;
-                e.target = t;
                 a.AddEdge(e);
             }
             ((State)v).FinalState = false;

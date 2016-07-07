@@ -48,8 +48,8 @@ public class RegularExpressionString extends RegularExpression {
             a.AddVertex(t);
         
             Transition e = a.CreateEdge();
-            e.source = s;
-            e.target = t;
+            e.setSource(s);
+            e.setTarget(t);
             e.Symbol = ""+string.charAt(i);
             a.AddEdge(e);
         }

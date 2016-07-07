@@ -40,7 +40,7 @@ public class ModalLogicBox extends ModalLogicFormula
             boolean mustAdd = false;
             for(Edge e : structure.getEdges())
             {
-                if(e.source != v)
+                if(e.getSource() != v)
                     continue;
                 if(!(e instanceof Action))
                     continue;
@@ -49,7 +49,7 @@ public class ModalLogicBox extends ModalLogicFormula
                     if(!this.transitiontype.equals(a.Name))
                         continue;
                 
-                if(subresult.contains(a.target))
+                if(subresult.contains(a.getTarget()))
                 {
                     mustAdd = true;
                     break; // no need to search any further

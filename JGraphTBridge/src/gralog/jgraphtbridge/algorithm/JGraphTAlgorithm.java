@@ -38,7 +38,7 @@ public abstract class JGraphTAlgorithm extends Algorithm
             
             Set<gralog.structure.Edge> Es = s.getEdges();
             for(gralog.structure.Edge e : Es)
-                jgraph.addEdge(e.source, e.target);
+                jgraph.addEdge(e.getSource(), e.getTarget());
             
             return JGraphTRun(jgraph, ap, onprogress);
         }

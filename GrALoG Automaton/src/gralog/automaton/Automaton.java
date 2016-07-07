@@ -44,12 +44,12 @@ public class Automaton extends Structure<State, Transition> {
         
         while(!lastiteration.isEmpty()) {
             
-            for(Edge e : getEdges())
-                if(e instanceof Transition)
-                    if(((Transition)e).Symbol.equals("")) // epsilon transition
-                        if(lastiteration.contains(e.source))
-                            if(!result.contains(e.target))
-                                currentiteration.add((State)e.target);
+            for(State s : lastiteration)
+                for(Edge e : s.getConnectedEdges())
+                    if(e instanceof Transition)
+                        if(((Transition)e).Symbol.equals("")) // epsilon transition
+                            if(!result.contains((State)e.getTarget()))
+                                currentiteration.add((State)e.getTarget());
             
             result.addAll(currentiteration);
             HashSet<State> temp = lastiteration;

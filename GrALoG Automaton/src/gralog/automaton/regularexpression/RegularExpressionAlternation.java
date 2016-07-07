@@ -73,17 +73,13 @@ public class RegularExpressionAlternation extends RegularExpression {
         // Connect the old start and final states to the new start and final states
         for(Vertex v : a.getVertices()) {
             if(((State)v).StartState) {
-                Transition e = a.CreateEdge();
+                Transition e = a.CreateEdge(s,(State)v);
                 e.Symbol = ""; // epsilon transition
-                e.source = s;
-                e.target = v;
                 a.AddEdge(e);
             }
             if(((State)v).FinalState) {
-                Transition e = a.CreateEdge();
+                Transition e = a.CreateEdge((State)v,t);
                 e.Symbol = ""; // epsilon transition
-                e.source = v;
-                e.target = t;
                 a.AddEdge(e);
             }
             ((State)v).FinalState = false;

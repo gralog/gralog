@@ -80,6 +80,7 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
     }
     
     
+    abstract public V CreateVertex();
     public void AddVertex(V v) {
         Vertices.add(v);
     }
@@ -93,20 +94,22 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         
         Vertices.remove(v);
     }
-    abstract public V CreateVertex();
 
+    
+    abstract public E CreateEdge();
     public void AddEdge(E e) {
         Edges.add(e);
     }
     public void RemoveEdge(Edge e) {
+        e.setSource(null);
+        e.setTarget(null);
         Edges.remove(e);
     }
-    abstract public E CreateEdge();
     public E CreateEdge(V source, V target)
     {
         E edge = CreateEdge();
-        edge.source = source;
-        edge.target = target;
+        edge.setSource(source);
+        edge.setTarget(target);
         
         if(source == target && source != null)
         {
@@ -116,14 +119,15 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         
         return edge;
     }
+    
+    
+    
     public boolean Adjacent(V a, V b) {
         for(Edge e : this.Edges)
             if(e.ContainsVertex(a) && e.ContainsVertex(b))
                 return true;
         return false;
     }
-    
-    
     public IMovable FindObject(Double x, Double y)
     {
         IMovable result = null;

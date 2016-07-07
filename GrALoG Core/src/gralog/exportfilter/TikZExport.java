@@ -63,14 +63,14 @@ public class TikZExport extends ExportFilter {
         Set<Edge> E = structure.getEdges();
         for(Edge e : E){
 
-            Vector2D from = new Vector2D(e.source.Coordinates);
-            Vector2D to = new Vector2D(e.target.Coordinates);
+            Vector2D from = new Vector2D(e.getSource().Coordinates);
+            Vector2D to = new Vector2D(e.getTarget().Coordinates);
             
-            stream.write("        \\draw (n" + NodeIndex.get(e.source) + ")" );
+            stream.write("        \\draw (n" + NodeIndex.get(e.getSource()) + ")" );
             for(EdgeIntermediatePoint c : e.intermediatePoints)
                 stream.write(" edge[-] (" + c.get(0) + "cm," + c.get(1) + "cm)");
             
-            stream.write(" edge[-] (n" + NodeIndex.get(e.target) + ");" + linefeed);
+            stream.write(" edge[-] (n" + NodeIndex.get(e.getTarget()) + ");" + linefeed);
         }
 
         

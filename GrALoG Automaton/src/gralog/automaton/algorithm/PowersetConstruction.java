@@ -68,8 +68,8 @@ public class PowersetConstruction extends Algorithm {
             {
                 Set<State> cSuccessor = new HashSet<State>();
                 for(Edge e : delta)
-                    if(e instanceof Transition && front.contains(e.source) && ((Transition)e).Symbol.equals(c.toString()))
-                        cSuccessor.add((State)e.target);
+                    if(e instanceof Transition && front.contains(e.getSource()) && ((Transition)e).Symbol.equals(c.toString()))
+                        cSuccessor.add((State)e.getTarget());
                 cSuccessor = a.EpsilonHull(cSuccessor);
                 
                 State src = tree.getContentForSet(a, result, front);

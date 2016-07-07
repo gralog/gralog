@@ -55,10 +55,8 @@ public class RegularExpressionConcatenation extends RegularExpression {
             if(((State)v).FinalState) {
                 for(Vertex w : b.getVertices())
                     if(((State)w).StartState) {
-                        Transition t = a.CreateEdge();
+                        Transition t = a.CreateEdge((State)v,(State)w);
                         t.Symbol = ""; // epsilon transition
-                        t.source = v;
-                        t.target = w;
                         a.AddEdge(t);
                     }
             }

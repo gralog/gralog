@@ -69,11 +69,11 @@ public class TikZExport extends ExportFilter {
             Transition t = (Transition)e;
 
             Double halfLength = t.Length()/2.0;
-            Vector2D from = new Vector2D(t.source.Coordinates);
-            Vector2D to = new Vector2D(t.target.Coordinates);
+            Vector2D from = new Vector2D(t.getSource().Coordinates);
+            Vector2D to = new Vector2D(t.getTarget().Coordinates);
             Double distance = 0.0;
             
-            stream.write("        \\draw (q" + NodeIndex.get(e.source) + ")" );
+            stream.write("        \\draw (q" + NodeIndex.get(e.getSource()) + ")" );
             for(EdgeIntermediatePoint c : e.intermediatePoints)
             {
                 Vector2D betw = new Vector2D(c.get(0), c.get(1));
@@ -91,7 +91,7 @@ public class TikZExport extends ExportFilter {
             stream.write(" --");
             if(distance < halfLength)
                 stream.write(" node[above] {$" + (t.Symbol.equals("") ? "\\varepsilon" : t.Symbol) + "$}");
-            stream.write(" (q" + NodeIndex.get(e.target) + ");" + linefeed);
+            stream.write(" (q" + NodeIndex.get(e.getTarget()) + ");" + linefeed);
         }
 
         

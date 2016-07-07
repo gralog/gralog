@@ -32,7 +32,24 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     //public Vector<Double> Coordinates = new Vector<Double>();
     public VectorND Coordinates = new VectorND();
-    Set<VertexListener> listeners = new HashSet<VertexListener>();
+    private Set<VertexListener> listeners = new HashSet<VertexListener>();
+    
+    
+    
+    private Set<Edge> connectedEdges = new HashSet<Edge>();
+    void connectEdge(Edge e)
+    {
+        this.connectedEdges.add(e);
+    }
+    void disconnectEdge(Edge e)
+    {
+        this.connectedEdges.remove(e);
+    }
+    public Set<Edge> getConnectedEdges()
+    {
+        return connectedEdges;
+    }
+    
     
 
     public Double MaximumCoordinate(int dimension) {

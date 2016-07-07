@@ -45,14 +45,13 @@ public class WordAcceptance extends Algorithm {
         HashSet<State> NextStates = new HashSet<State>();
         for(int i = 0; i < str.length(); i++)
         {
+            String stri = ""+str.charAt(i);
             for(State s : CurrentStates)
-            {
-                for(Edge e : automaton.getEdges())
-                    if(e.source == s)
+                for(Edge e : s.getConnectedEdges())
+                    if(e.getSource() == s)
                         if(e instanceof Transition)
-                            if(((Transition)e).Symbol.equals(""+str.charAt(i)))
-                                NextStates.add((State)((Transition)e).target);
-            }
+                            if(((Transition)e).Symbol.equals(stri))
+                                NextStates.add((State)e.getTarget());
             NextStates = automaton.EpsilonHull(NextStates);
             
             HashSet<State> Temp = CurrentStates;

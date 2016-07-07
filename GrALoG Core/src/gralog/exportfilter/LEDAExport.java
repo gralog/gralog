@@ -53,7 +53,7 @@ public class LEDAExport extends ExportFilter {
         int m = E.size();
         stream.write("" + m + linefeed);
         for(Edge e : E)
-            stream.write(NodeIndex.get(e.source) + " " + NodeIndex.get(e.target) + " 0 |{}|" + linefeed);
+            stream.write(NodeIndex.get(e.getSource()) + " " + NodeIndex.get(e.getTarget()) + " 0 |{}|" + linefeed);
         stream.write(linefeed);
 
     }

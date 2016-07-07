@@ -37,8 +37,36 @@ public class Edge extends XmlMarshallable implements IMovable {
     public GralogColor Color = GralogColor.black;
     
     public Vector<EdgeIntermediatePoint> intermediatePoints = new Vector<EdgeIntermediatePoint>();
-    public Vertex source;
-    public Vertex target;
+    
+    
+    
+    private Vertex source = null;
+    private Vertex target = null;
+    public Vertex getSource()
+    {
+        return source;
+    }
+    public void setSource(Vertex source)
+    {
+        if(this.source != null)
+            this.source.disconnectEdge(this);
+        this.source = source;
+        if(source != null)
+            this.source.connectEdge(this);
+    }
+    public Vertex getTarget()
+    {
+        return target;
+    }
+    public void setTarget(Vertex target)
+    {
+        if(this.target != null)
+            this.target.disconnectEdge(this);
+        this.target = target;
+        if(target != null)
+            this.target.connectEdge(this);
+    }
+    
     
 
     public Double MaximumCoordinate(int dimension) {

@@ -62,18 +62,18 @@ public class Minimization extends Algorithm {
                     if(Table.get(y).get(x) == false) {
                     
                         for(Edge tx : automaton.getEdges()) {
-                            if(tx.source != States.get(x))
+                            if(tx.getSource() != States.get(x))
                                 continue;
                             
                             for(Edge ty : automaton.getEdges()) {
-                                if(ty.source != States.get(y))
+                                if(ty.getSource() != States.get(y))
                                     continue;
                                 if(!((Transition)ty).Symbol.equals(((Transition)tx).Symbol))
                                     continue;
         
                                 // x and y have distinguishable "symbol"-successors
                                 // hence x and y are distinguishable
-                                if(Table.get(StateIndex.get(tx.target)).get(StateIndex.get(ty.target)) == true)
+                                if(Table.get(StateIndex.get(tx.getTarget())).get(StateIndex.get(ty.getTarget())) == true)
                                 {
                                     Table.get(x).set(y, true);
                                     Table.get(y).set(x, true);
@@ -137,7 +137,7 @@ public class Minimization extends Algorithm {
         for(Edge e : automaton.getEdges())
         {
             Transition t = (Transition)e;
-            State resultSource = NerodeRelation_EquivalenceClass.get(t.source);
+            State resultSource = NerodeRelation_EquivalenceClass.get(t.getSource());
             
             if(!TransitionDefined.containsKey(resultSource))
 	        TransitionDefined.put(resultSource, "");
@@ -148,8 +148,8 @@ public class Minimization extends Algorithm {
 	        TransitionDefined.put(resultSource, ""+t.Symbol);
 	        Transition resultTransition = (Transition)result.CreateEdge();
 	        resultTransition.Symbol = t.Symbol;
-	        resultTransition.source = NerodeRelation_EquivalenceClass.get(t.source);
-	        resultTransition.target = NerodeRelation_EquivalenceClass.get(t.target);
+	        resultTransition.setSource(  NerodeRelation_EquivalenceClass.get(t.getSource())  );
+	        resultTransition.setTarget(  NerodeRelation_EquivalenceClass.get(t.getTarget())  );
 	        result.AddEdge(resultTransition);
 	    }
         }
