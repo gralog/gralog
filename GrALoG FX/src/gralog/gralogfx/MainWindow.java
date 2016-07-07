@@ -109,7 +109,9 @@ public class MainWindow extends Application {
                 menuFileSave = new MenuItem("Save");
                     menuFileSave.setOnAction(e -> menuFileSaveActivated());
                 menuFileClose = new MenuItem("Close");
+                    menuFileClose.setOnAction(e -> menuFileCloseActivated());
                 menuFileExit = new MenuItem("Exit");
+                    menuFileExit.setOnAction(e -> menuFileExitActivated());
             menuFile.getItems().addAll(menuFilePlugin, menuFileNew, menuFileGenerators,
                                        menuFileOpen, menuFileDirectInput, menuFileSave,
                                        menuFileClose, menuFileExit);
@@ -382,11 +384,30 @@ public class MainWindow extends Application {
         this.setStatus("");
     }
 
+    public void menuFileExitActivated() {
+        try {
+            stage.close();
+        }  catch(Exception ex) {
+            ExceptionBox exbox = new ExceptionBox();
+            exbox.showAndWait(ex);
+        }
+    }
+
+    public void menuFileCloseActivated() {
+        try {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if(tab != null)
+                tabPane.getTabs().remove(tab);
+            
+        }  catch(Exception ex) {
+            ExceptionBox exbox = new ExceptionBox();
+            exbox.showAndWait(ex);
+        }
+    }
 
 
-
-
-
+    
+    
 
     public void setStatus(String status) {
         statusBarMessage.setText(status);
@@ -402,31 +423,6 @@ public class MainWindow extends Application {
         tabPane.getSelectionModel().select(t);
         structurePane.draw();
         structurePane.setOnSelectionChanged(e -> updateSelection(structurePane));
-
-
-        /*
-        JGraphPane jgraphpane = new JGraphPane();
-        t.setContent(jgraphpane);
-        tabPane.getTabs().add(t);
-        tabPane.getSelectionModel().select(t);
-        
-        //screen.getWidth(); 
-        //screen.getHeight(); 
-        double pixelPerInch=96d;//java.awt.Toolkit.getDefaultToolkit().getScreenResolution(); 
-        double pixelPerCM = pixelPerInch / 2.54d;
-
-        Set<Vertex> V = (Set<Vertex>)structure.getVertices();
-        for(Vertex v : V)
-        {
-            Vector<Double> coords = v.Coordinates;
-            jgraphpane.putVertex( v, coords.get(0)*pixelPerCM, coords.get(1)*pixelPerCM);
-        }
-        Set<Edge> E = (Set<Edge>)structure.getEdges();
-        for(Edge e : E)
-        {
-            jgraphpane.addEdge(e.source, e.target);
-        }
-        */
     }
 
     protected void updateStructures() {
