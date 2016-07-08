@@ -5,6 +5,7 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
 import java.util.HashMap;
 
@@ -15,6 +16,6 @@ import java.util.HashMap;
  */
 abstract public class FirstOrderFormula {
     
-    abstract public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception;
+    abstract public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
     
 }

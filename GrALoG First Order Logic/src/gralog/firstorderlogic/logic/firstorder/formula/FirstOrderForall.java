@@ -5,6 +5,8 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.progresshandler.ProgressHandler;
+import gralog.rendering.GralogColor;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
@@ -26,7 +28,7 @@ public class FirstOrderForall extends FirstOrderFormula {
     }
     
     @Override
-    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception
     {
         Vertex oldvalue = varassign.get(variable);
         boolean result = true;
@@ -35,12 +37,19 @@ public class FirstOrderForall extends FirstOrderFormula {
         for(Vertex v : V)
         {
             varassign.put(variable, v);
-            if(!subformula1.Evaluate(s, varassign))
-            {
-                result = false;
+            
+            GralogColor bak = v.FillColor;
+            v.FillColor = GralogColor.green;
+            onprogress.OnProgress(s);
+
+            result = subformula1.Evaluate(s, varassign, onprogress);
+
+            v.FillColor = bak;
+            
+            if(!result)
                 break;
-            }
         }
+        onprogress.OnProgress(s);
         
         varassign.remove(variable);
         if(oldvalue != null)

@@ -5,6 +5,7 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
 import java.util.HashMap;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
     }
  
     @Override
-    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception
     {
         switch(parameters.size())
         {

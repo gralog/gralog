@@ -40,7 +40,7 @@ public class FirstOrderSolver extends Algorithm {
         FirstOrderFormula phi = parser.parseString(sp.parameter);
         
         HashMap<String, Vertex> varassign = new HashMap<String, Vertex>();
-        return phi.Evaluate(s, varassign) ? "true" : "false";
+        return phi.Evaluate(s, varassign, onprogress) ? "true" : "false";
     }
     
 }
