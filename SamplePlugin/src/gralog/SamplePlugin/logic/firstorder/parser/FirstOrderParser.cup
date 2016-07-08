@@ -1,0 +1,102 @@
+package gralog.SamplePlugin.logic.firstorder.parser;
+
+import java_cup.runtime.*;
+import gralog.SamplePlugin.logic.firstorder.formula.*;
+import java.io.ByteArrayInputStream;
+import java.util.Vector;
+
+
+parser code {:
+
+    String errorMsg = null;
+
+    public Boolean hasError()
+    {
+        return errorMsg == null;
+    }
+    
+    public String getErrorMsg()
+    {
+        if(errorMsg == null)
+            return "no error";
+        else
+            return errorMsg;
+    }
+    
+    public void syntax_error(Symbol cur_token)
+    {
+        if(errorMsg == null)
+            errorMsg = "Syntax Error: " + cur_token.toString();
+    }
+
+    public void report_fatal_error(String message, Object info) throws Exception
+    {
+        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+    }
+
+    public FirstOrderFormula parseString(String str) throws Exception
+    {
+        String charset = "UTF8";
+        byte[] bytes = str.getBytes(charset);
+        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
+                
+        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
+        FirstOrderScanner scanner = new FirstOrderScanner(stringstream, symbolfactory);
+        this.setScanner(scanner);
+        
+        Symbol parserresult = this.parse();
+        return (FirstOrderFormula) parserresult.value;
+    }
+
+:}
+
+
+
+
+terminal OPEN, CLOSE;                             // "(", ")"
+terminal NEG, AND, OR;                            // \neg, \wedge, \vee
+terminal EXISTS, FORALL;                          // \exists \forall
+terminal COMMA, DOT;                              // ",", "."
+terminal String STRING;
+
+
+non terminal FirstOrderFormula formula;
+non terminal FirstOrderFormula veeformula;
+non terminal FirstOrderFormula wedgeformula;
+non terminal FirstOrderFormula atomicformula;
+non terminal Vector<String> parameters;
+
+
+
+formula ::= veeformula:f 
+                   {: RESULT = f; :} ;
+
+veeformula ::= wedgeformula:left OR veeformula:right
+                   {: RESULT = new FirstOrderOr(left, right); :}
+             | wedgeformula:f
+                   {: RESULT = f; :}
+             ;
+
+wedgeformula ::= atomicformula:left AND wedgeformula:right
+                  {: RESULT = new FirstOrderAnd(left, right); :}
+            | atomicformula:f
+                  {: RESULT = f; :}
+            ;
+
+atomicformula ::= NEG atomicformula:f
+                  {: RESULT = new FirstOrderNot(f); :}
+                | OPEN formula:f CLOSE
+                  {: RESULT = f; :}
+                | STRING:rel OPEN parameters:params CLOSE
+                  {: RESULT = new FirstOrderRelation(rel, params); :}
+                | EXISTS STRING:var DOT atomicformula:f
+                  {: RESULT = new FirstOrderExists(var, f); :}
+                | FORALL STRING:var DOT atomicformula:f
+                  {: RESULT = new FirstOrderForall(var, f); :}
+            ;
+
+parameters ::= STRING:s
+               {: RESULT = new Vector<String>(); RESULT.add(s); :}
+             | parameters:params COMMA STRING:s
+               {: RESULT = params; RESULT.add(s); :}
+             ;

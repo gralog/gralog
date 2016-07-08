@@ -45,7 +45,7 @@ public class Col2 extends Algorithm{
             int size=0;
             for (Vertex j : ver ){
                     for(Edge e : edge){
-                        if(e.source==i  && e.target== j ){
+                        if(e.getSource()==i  && e.getTarget()== j ){
                            int y=Integer.parseInt(j.Label);
                             if(str.charAt(x) == str.charAt(y) ){
                             
