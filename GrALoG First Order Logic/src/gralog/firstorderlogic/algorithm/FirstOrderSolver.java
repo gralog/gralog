@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gralog.SamplePlugin.algorithm;
+package gralog.firstorderlogic.algorithm;
 
-import gralog.SamplePlugin.logic.firstorder.formula.*;
-import gralog.SamplePlugin.logic.firstorder.parser.*;
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
+import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 
 import gralog.algorithm.*;
 import gralog.structure.*;

@@ -3,27 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package gralog.SamplePlugin.logic.firstorder.formula;
+package gralog.firstorderlogic.logic.firstorder.formula;
 
 /**
  *
  * @author viktor
  */
-public class FirstOrderForall extends FirstOrderFormula {
-
-    String variable;
+public class FirstOrderNot extends FirstOrderFormula
+{
     FirstOrderFormula subformula1;
     
-    public FirstOrderForall(String variable, FirstOrderFormula subformula1)
+    public FirstOrderNot(FirstOrderFormula subformula1)
     {
-        this.variable = variable;
         this.subformula1 = subformula1;
     }
     
     @Override
     public String toString()
     {
-        return "FORALL " + variable + " . (" + subformula1.toString() + ")";
+        return "NOT (" + subformula1.toString() + ")";
     }
-
 }

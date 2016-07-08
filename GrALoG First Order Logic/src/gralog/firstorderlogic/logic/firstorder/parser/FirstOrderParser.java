@@ -4,10 +4,16 @@
 // Fri Jul 08 12:43:13 CEST 2016
 //----------------------------------------------------
 
-package gralog.SamplePlugin.logic.firstorder.parser;
+package gralog.firstorderlogic.logic.firstorder.parser;
 
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderForall;
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderOr;
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderNot;
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderRelation;
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderExists;
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderAnd;
 import java_cup.runtime.*;
-import gralog.SamplePlugin.logic.firstorder.formula.*;
 import java.io.ByteArrayInputStream;
 import java.util.Vector;
 

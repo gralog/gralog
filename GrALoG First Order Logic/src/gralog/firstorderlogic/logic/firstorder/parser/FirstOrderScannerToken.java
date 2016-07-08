@@ -4,7 +4,7 @@
 // Fri Jul 08 12:43:13 CEST 2016
 //----------------------------------------------------
 
-package gralog.SamplePlugin.logic.firstorder.parser;
+package gralog.firstorderlogic.logic.firstorder.parser;
 
 /** CUP generated class containing symbol constants. */
 public class FirstOrderScannerToken {
