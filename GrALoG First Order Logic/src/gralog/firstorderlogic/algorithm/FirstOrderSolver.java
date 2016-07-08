@@ -29,7 +29,7 @@ public class FirstOrderSolver extends Algorithm {
     
     @Override
     public AlgorithmParameters GetParameters(Structure s) {
-        return new StringAlgorithmParameter("");
+        return new StringAlgorithmParameter("\\forall x.\\exists y. E(x,y)");
     }
     
     public Object Run(Structure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
