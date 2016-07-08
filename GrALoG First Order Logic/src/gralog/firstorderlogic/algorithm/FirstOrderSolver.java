@@ -12,7 +12,7 @@ import gralog.algorithm.*;
 import gralog.structure.*;
 import gralog.progresshandler.*;
 
-import java.util.HashSet;
+import java.util.HashMap;
 
 
 /**
@@ -39,7 +39,8 @@ public class FirstOrderSolver extends Algorithm {
         FirstOrderParser parser = new FirstOrderParser();
         FirstOrderFormula phi = parser.parseString(sp.parameter);
         
-        return phi.toString();
+        HashMap<String, Vertex> varassign = new HashMap<String, Vertex>();
+        return phi.Evaluate(s, varassign) ? "true" : "false";
     }
     
 }

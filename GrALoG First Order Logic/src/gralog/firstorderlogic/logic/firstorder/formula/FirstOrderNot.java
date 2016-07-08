@@ -5,6 +5,11 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
+import java.util.HashMap;
+
+
 /**
  *
  * @author viktor
@@ -19,8 +24,9 @@ public class FirstOrderNot extends FirstOrderFormula
     }
     
     @Override
-    public String toString()
+    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
     {
-        return "NOT (" + subformula1.toString() + ")";
+        return !subformula1.Evaluate(s, varassign);
     }
+
 }

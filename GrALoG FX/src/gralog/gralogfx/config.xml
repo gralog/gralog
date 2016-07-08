@@ -2,7 +2,8 @@
 <gralog>
   <plugin location="../../../GrALoG Automaton/dist/GrALoG_Automaton.jar" />
   <plugin location="../../../GrALoG Modal Logic/dist/GrALoG_Modal_Logic.jar" />
+  <plugin location="../../../GrALoG First Order Logic/dist/GrALoG_First_Order_Logic.jar" />
+  
   <plugin location="../../../JGraphTBridge/lib/jgrapht-core-0.9.2.jar" />
   <plugin location="../../../JGraphTBridge/dist/JGraphTBridge.jar" />
-  <!--<plugin location="../../../SamplePlugin/dist/SamplePlugin.jar" />-->
 </gralog>

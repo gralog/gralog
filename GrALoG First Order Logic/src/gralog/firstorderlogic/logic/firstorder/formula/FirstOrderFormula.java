@@ -5,13 +5,16 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.structure.*;
+import java.util.HashMap;
+
+
 /**
  *
  * @author Hv
  */
 abstract public class FirstOrderFormula {
     
-    @Override
-    abstract public String toString();
+    abstract public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception;
     
 }

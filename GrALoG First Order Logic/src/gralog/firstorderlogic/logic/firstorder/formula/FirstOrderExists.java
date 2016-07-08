@@ -5,6 +5,11 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
+import java.util.HashMap;
+import java.util.Set;
+
 /**
  *
  * @author viktor
@@ -21,9 +26,27 @@ public class FirstOrderExists extends FirstOrderFormula {
     }
 
     @Override
-    public String toString()
+    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
     {
-        return "EXISTS " + variable + " . (" + subformula1.toString() + ")";
+        Vertex oldvalue = varassign.get(variable);
+        boolean result = false;
+        
+        Set<Vertex> V = s.getVertices();
+        for(Vertex v : V)
+        {
+            varassign.put(variable, v);
+            if(subformula1.Evaluate(s, varassign))
+            {
+                result = true;
+                break;
+            }
+        }
+        
+        varassign.remove(variable);
+        if(oldvalue != null)
+            varassign.put(variable, oldvalue);
+        
+        return result;
     }
 
 }

@@ -5,6 +5,11 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
+import java.util.HashMap;
+
+
 /**
  *
  * @author Hv
@@ -21,8 +26,11 @@ public class FirstOrderOr extends FirstOrderFormula
     }
 
     @Override
-    public String toString()
+    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
     {
-        return "(" + subformula1.toString() + " OR " + subformula2.toString() + ")";
+        if(subformula1.Evaluate(s, varassign))
+            return true;
+        return subformula2.Evaluate(s, varassign);
     }
+
 }
