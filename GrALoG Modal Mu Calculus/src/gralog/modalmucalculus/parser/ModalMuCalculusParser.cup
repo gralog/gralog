@@ -1,0 +1,106 @@
+package gralog.modalmucalculus.parser;
+
+import java_cup.runtime.*;
+import gralog.modalmucalculus.formula.*;
+import java.io.ByteArrayInputStream;
+
+
+parser code {:
+
+    String errorMsg = null;
+
+    public Boolean hasError()
+    {
+        return errorMsg == null;
+    }
+    
+    public String getErrorMsg()
+    {
+        if(errorMsg == null)
+            return "no error";
+        else
+            return errorMsg;
+    }
+    
+    public void syntax_error(Symbol cur_token)
+    {
+        if(errorMsg == null)
+            errorMsg = "Syntax Error: " + cur_token.toString();
+    }
+
+    public void report_fatal_error(String message, Object info) throws Exception
+    {
+        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+    }
+
+    public ModalMuCalculusFormula parseString(String str) throws Exception
+    {
+        String charset = "UTF8";
+        byte[] bytes = str.getBytes(charset);
+        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
+                
+        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
+        ModalMuCalculusScanner scanner = new ModalMuCalculusScanner(stringstream, symbolfactory);
+        this.setScanner(scanner);
+        
+        Symbol parserresult = this.parse();
+        return (ModalMuCalculusFormula) parserresult.value;
+    }
+
+:}
+
+
+
+
+terminal LT, GT, BRACKETLEFT, BRACKETRIGHT, DOT;                         // "<", ">","[", "]", "."
+terminal MU, NU;
+terminal BOT, TOP, WEDGE, VEE, NEG, PARENTHESISLEFT, PARENTHESISRIGHT;   // \bot, \top, \wedge, \vee, \neg, (, )
+terminal String STRING;
+
+
+non terminal ModalMuCalculusFormula formula, veeformula, wedgeformula, atomicformula;
+
+ 
+                      
+formula ::= veeformula:f
+                {: RESULT = f; :}
+          ;
+
+veeformula ::= wedgeformula:left VEE veeformula:right
+                {: RESULT = new ModalMuCalculusOr(left, right); :}
+             | wedgeformula:f
+                {: RESULT = f; :}
+          ;
+
+wedgeformula ::= atomicformula:left WEDGE wedgeformula:right
+                  {: RESULT = new ModalMuCalculusAnd(left, right); :}
+            | atomicformula:f
+                  {: RESULT = f; :}
+            ;
+
+atomicformula ::= BOT
+                      {: RESULT = new ModalMuCalculusBottom(); :} 
+                | TOP
+                      {: RESULT = new ModalMuCalculusTop(); :} 
+                | NEG atomicformula:f
+                      {: RESULT = new ModalMuCalculusNot(f); :}
+                | STRING:s                                      // a proposition
+                      {: RESULT = new ModalMuCalculusProposition(s); :}
+
+                | LT GT atomicformula:f
+                      {: RESULT = new ModalMuCalculusDiamond(f); :}
+                | LT STRING:s GT atomicformula:f
+                      {: RESULT = new ModalMuCalculusDiamond(s, f); :}
+                | BRACKETLEFT BRACKETRIGHT atomicformula:f
+                      {: RESULT = new ModalMuCalculusBox(f); :}
+                | BRACKETLEFT STRING:s BRACKETRIGHT atomicformula:f
+                      {: RESULT = new ModalMuCalculusBox(s, f); :}
+
+                | MU STRING:s DOT atomicformula:f
+                      {: RESULT = new ModalMuCalculusLeastFixedPoint(s,f); :}
+                | NU STRING:s DOT atomicformula:f
+                      {: RESULT = new ModalMuCalculusGreatestFixedPoint(s,f); :}
+
+                | PARENTHESISLEFT formula:f PARENTHESISRIGHT
+                      {: RESULT = f; :}
+                ;
