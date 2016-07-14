@@ -44,12 +44,15 @@ public class DepthFirstSearchTree extends Algorithm
     
     public Object Run(Structure s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress)
     {
-        if(selection == null || selection.size() != 1)
-            return null;
-
         HashMap<Vertex, Vertex> predecessor = new HashMap<>();
         HashMap<Vertex, Edge> edgeFromPredecessor = new HashMap<>();
-        Vertex v = (Vertex)((selection.toArray())[0]);
+        Vertex v = null;
+        if(selection != null)
+            for(Object o : selection)
+                if(o instanceof Vertex)
+                    v = (Vertex)o;
+        if(v == null)
+            v = (Vertex)((s.getVertices().toArray())[0]);
         predecessor.put(v,null);
         edgeFromPredecessor.put(v, null);
         DepthFirstSearch(v, predecessor, edgeFromPredecessor);
