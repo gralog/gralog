@@ -76,6 +76,7 @@ public class ExportFilterManager {
                     }
                     result.add(f);
                 }
+        result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }    
     

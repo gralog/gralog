@@ -13,6 +13,7 @@ import java.util.HashSet;
 import gralog.algorithm.*;
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
+import java.util.Set;
 
 /**
  *
@@ -25,7 +26,7 @@ import gralog.structure.*;
 )
 public class WinningRegionPlayer1 extends WinningRegionPlayer0
 {
-    public Object Run(FiniteGame game, AlgorithmParameters ap, ProgressHandler onprogress) throws Exception
+    public Object Run(FiniteGame game, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception
     {
         HashMap<FiniteGamePosition, Integer> winningRegions = WinningRegions(game);
         HashSet<Vertex> result = new HashSet<Vertex>();

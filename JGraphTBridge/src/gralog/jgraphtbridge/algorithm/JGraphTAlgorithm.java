@@ -25,9 +25,9 @@ public abstract class JGraphTAlgorithm extends Algorithm
 {
     
         public abstract Object JGraphTRun(org.jgrapht.Graph<gralog.structure.Vertex, org.jgrapht.graph.DefaultEdge> g,
-                AlgorithmParameters ap, ProgressHandler onprogress) throws Exception;
+                AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception;
         
-        public Object Run(gralog.structure.DirectedGraph s, AlgorithmParameters ap, ProgressHandler onprogress) throws Exception
+        public Object Run(gralog.structure.DirectedGraph s, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception
         {
             org.jgrapht.DirectedGraph<gralog.structure.Vertex, org.jgrapht.graph.DefaultEdge> jgraph
                     = new org.jgrapht.graph.SimpleDirectedGraph<>(org.jgrapht.graph.DefaultEdge.class);
@@ -40,7 +40,7 @@ public abstract class JGraphTAlgorithm extends Algorithm
             for(gralog.structure.Edge e : Es)
                 jgraph.addEdge(e.getSource(), e.getTarget());
             
-            return JGraphTRun(jgraph, ap, onprogress);
+            return JGraphTRun(jgraph, ap, selection, onprogress);
         }
     
     

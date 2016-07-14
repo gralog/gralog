@@ -11,6 +11,7 @@ import gralog.automaton.*;
 import gralog.progresshandler.ProgressHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 @AlgorithmDescription(
   name="Language-Emptiness",
@@ -129,7 +130,7 @@ public class BuechiLanguageEmptiness extends Algorithm
         return null;
     }
     
-    public Object Run(BuechiAutomaton s, AlgorithmParameters p, ProgressHandler onprogress)
+    public Object Run(BuechiAutomaton s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress)
     {
         String result = LanguageEmptiness(s);
         if(result == null)

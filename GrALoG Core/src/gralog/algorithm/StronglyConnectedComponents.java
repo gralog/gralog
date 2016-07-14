@@ -120,7 +120,7 @@ public class StronglyConnectedComponents extends Algorithm
         } // for (Vertex i : V)
     }
 
-    public Object Run(Structure s, AlgorithmParameters ap, ProgressHandler onprogress) throws Exception
+    public Object Run(Structure s, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception
     {
         HashMap<Vertex, Integer> ComponentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex> > VerticesInComponent = new ArrayList<>();

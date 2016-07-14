@@ -115,7 +115,7 @@ public class WinningRegionPlayer0 extends Algorithm
         return result;
     }
     
-    public Object Run(FiniteGame game, AlgorithmParameters ap, ProgressHandler onprogress) throws Exception
+    public Object Run(FiniteGame game, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception
     {
         HashMap<FiniteGamePosition, Integer> winningRegions = WinningRegions(game);
         HashSet<Vertex> result = new HashSet<Vertex>();

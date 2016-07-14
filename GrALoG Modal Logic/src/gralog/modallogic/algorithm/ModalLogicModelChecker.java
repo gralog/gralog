@@ -14,6 +14,7 @@ import gralog.structure.*;
 import gralog.progresshandler.*;
 
 import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -32,7 +33,7 @@ public class ModalLogicModelChecker extends Algorithm {
         return new StringAlgorithmParameter("[](P \\wedge Q)");
     }
     
-    public Object Run(KripkeStructure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
+    public Object Run(KripkeStructure s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception {
         
         StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
         

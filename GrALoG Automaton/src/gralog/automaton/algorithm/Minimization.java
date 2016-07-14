@@ -26,7 +26,7 @@ import java.util.*;
 public class Minimization extends Algorithm {
     
    
-    public Object Run(Automaton s, AlgorithmParameters p, ProgressHandler onprogress) {
+    public Object Run(Automaton s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) {
         return Minimize((Automaton)s);
     }
     

@@ -26,11 +26,8 @@ import gralog.progresshandler.ProgressHandler;
 )
 public class PowersetConstruction extends Algorithm {
     
-    public Object Run(Automaton a, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
-        /*throw new Exception("this algorithm isn't implemented yet.\n"
-                + "it is only a test of the exception-handling of the GUI");
-        */
-        
+    public Object Run(Automaton a, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception
+    {
         Automaton result = new Automaton();
         PowersetConstructionTreeNode tree = new PowersetConstructionTreeNode(null,null,null);
         

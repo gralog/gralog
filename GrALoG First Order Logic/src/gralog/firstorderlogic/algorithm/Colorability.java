@@ -69,7 +69,7 @@ public class Colorability extends Algorithm{
          
          return true;
     }
-    public Object Run(DirectedGraph s,AlgorithmParameters p,ProgressHandler onprogress) throws Exception {
+    public Object Run(DirectedGraph s,AlgorithmParameters p,Set<Object> selection, ProgressHandler onprogress) throws Exception {
      Set<Vertex> vertices=s.getVertices();
      int nVertices=vertices.size();
      int k=0;

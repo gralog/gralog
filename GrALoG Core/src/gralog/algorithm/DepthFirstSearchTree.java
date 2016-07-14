@@ -9,6 +9,7 @@ import gralog.structure.*;
 import gralog.progresshandler.ProgressHandler;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -41,17 +42,21 @@ public class DepthFirstSearchTree extends Algorithm
         }
     }
     
-    public Object Run(Structure s, AlgorithmParameters p, ProgressHandler onprogress)
+    public Object Run(Structure s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress)
     {
+        if(selection == null || selection.size() != 1)
+            return null;
+
         HashMap<Vertex, Vertex> predecessor = new HashMap<>();
         HashMap<Vertex, Edge> edgeFromPredecessor = new HashMap<>();
-        Vertex v = (Vertex)s.getVertices().toArray()[0];
+        Vertex v = (Vertex)((selection.toArray())[0]);
         predecessor.put(v,null);
         edgeFromPredecessor.put(v, null);
         DepthFirstSearch(v, predecessor, edgeFromPredecessor);
 
         HashSet<Edge> tree = new HashSet<>();
         tree.addAll(edgeFromPredecessor.values());
+        tree.remove(null);
         return tree;
     }
     

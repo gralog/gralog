@@ -13,6 +13,7 @@ import gralog.structure.*;
 import gralog.progresshandler.*;
 
 import java.util.HashMap;
+import java.util.Set;
 
 
 /**
@@ -32,7 +33,7 @@ public class FirstOrderSolver extends Algorithm {
         return new StringAlgorithmParameter("\\forall x.\\exists y. E(x,y)");
     }
     
-    public Object Run(Structure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
+    public Object Run(Structure s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception {
         
         StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
         
