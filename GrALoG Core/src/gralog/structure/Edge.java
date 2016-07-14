@@ -28,6 +28,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     Set<EdgeListener> listeners = new HashSet<EdgeListener>();
     
     public String Label = "";
+    public Double Cost = 1.0d;
     
     public Boolean isDirected = true;
     
@@ -271,6 +272,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         enode.setAttribute("target", ids.get(target));
         enode.setAttribute("isdirected", isDirected ? "true" : "false");
         enode.setAttribute("label", Label);
+        enode.setAttribute("cost", Cost.toString());
         enode.setAttribute("width", Width.toString());
         enode.setAttribute("arrowheadlength", ArrowHeadLength.toString());
         enode.setAttribute("arrowheadangle", ArrowHeadAngle.toString());
@@ -293,6 +295,9 @@ public class Edge extends XmlMarshallable implements IMovable {
         if(enode.hasAttribute("isdirected"))
             isDirected = enode.getAttribute("isdirected").equals("true");
         Label = enode.getAttribute("label");
+        if(enode.hasAttribute("cost"))
+            Cost = Double.parseDouble(enode.getAttribute("cost"));
+
         if(enode.hasAttribute("width"))
             Width = Double.parseDouble(enode.getAttribute("width"));
 
