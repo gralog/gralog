@@ -4,6 +4,9 @@
 */build/
 */nbproject/private/*
 
+# jflex backups
+*.java~
+
 # OS-specific files (add lines accordingly)
 # Linux + KDE
 .directory

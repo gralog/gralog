@@ -1,4 +1,4 @@
-package gralog.SamplePlugin.logic.firstorder.parser;
+package gralog.firstorderlogic.logic.firstorder.parser;
 
 import java_cup.runtime.SymbolFactory;
 import java.lang.StringBuffer;
