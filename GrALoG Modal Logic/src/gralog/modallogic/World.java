@@ -24,28 +24,33 @@ import java.util.HashSet;
 @XmlName(name="world")
 public class World extends Vertex {
     
-    public HashSet<String> propositions = new HashSet<String>();
+    public String propositions = "";
 
     @Override
-    public Element ToXml(Document doc, String id) throws Exception {
+    public Element ToXml(Document doc, String id) throws Exception
+    {
         Element vnode = super.ToXml(doc, id);
-        String props = "";
-        for(String str : propositions)
-            props = props + "," + str;
-        if(!props.equals(""))
-            vnode.setAttribute("propositions", props.substring(1));
+        vnode.setAttribute("propositions", propositions);
         return vnode;
     }
     
     @Override
-    public String FromXml(Element vnode) {
+    public String FromXml(Element vnode)
+    {
         String id = super.FromXml(vnode);
-        String props = vnode.getAttribute("propositions");
-        if(props != null)
-            for(String prop : props.split(","))
-                if(!prop.equals(""))
-                    this.propositions.add(prop);
+        if(vnode.hasAttribute("propositions"))
+            propositions = vnode.getAttribute("propositions");
         return id;
+    }
+    
+    public boolean SatisfiesProposition(String proposition)
+    {
+        proposition = proposition.trim();
+        String[] props = propositions.split(",");
+        for(String prop : props)
+            if(proposition.equalsIgnoreCase(prop.trim()))
+                return true;
+        return false;
     }
     
 }
