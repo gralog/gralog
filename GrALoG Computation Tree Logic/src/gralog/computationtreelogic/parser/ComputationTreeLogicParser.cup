@@ -1,0 +1,111 @@
+package gralog.computationtreelogic.parser;
+
+import java_cup.runtime.*;
+import gralog.computationtreelogic.formula.*;
+import java.io.ByteArrayInputStream;
+
+
+parser code {:
+
+    String errorMsg = null;
+
+    public Boolean hasError()
+    {
+        return errorMsg == null;
+    }
+    
+    public String getErrorMsg()
+    {
+        if(errorMsg == null)
+            return "no error";
+        else
+            return errorMsg;
+    }
+    
+    public void syntax_error(Symbol cur_token)
+    {
+        if(errorMsg == null)
+            errorMsg = "Syntax Error: " + cur_token.toString();
+    }
+
+    public void report_fatal_error(String message, Object info) throws Exception
+    {
+        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+    }
+
+    public ComputationTreeLogicFormula parseString(String str) throws Exception
+    {
+        String charset = "UTF8";
+        byte[] bytes = str.getBytes(charset);
+        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
+                
+        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
+        ComputationTreeLogicScanner scanner = new ComputationTreeLogicScanner(stringstream, symbolfactory);
+        this.setScanner(scanner);
+        
+        Symbol parserresult = this.parse();
+        return (ComputationTreeLogicFormula) parserresult.value;
+    }
+
+:}
+
+
+
+
+terminal ALWAYS, EXISTS;
+terminal NEXT, GLOBALLY, FINALLY, UNTIL;
+terminal BOT, TOP, WEDGE, VEE, NEG, PARENTHESISLEFT, PARENTHESISRIGHT;   // \bot, \top, \wedge, \vee, \neg, (, )
+terminal String STRING;
+
+
+non terminal ComputationTreeLogicFormula formula, atomicformula, veeformula, wedgeformula;
+
+
+                      
+formula ::= veeformula:f
+                {: RESULT = f; :}
+          ;
+            
+
+veeformula ::= wedgeformula:left VEE veeformula:right
+                 {: RESULT = new ComputationTreeLogicOr(left, right); :}
+             | wedgeformula:f
+                 {: RESULT = f; :}
+             ;
+
+wedgeformula ::= atomicformula:left WEDGE wedgeformula:right
+                   {: RESULT = new ComputationTreeLogicAnd(left, right); :}
+               | atomicformula:f
+                   {: RESULT = f; :}
+               ;
+
+atomicformula ::= STRING:s                                            // a proposition
+                    {: RESULT = new ComputationTreeLogicProposition(s); :}
+                | BOT
+                    {: RESULT = new ComputationTreeLogicBottom(); :} 
+                | TOP
+                    {: RESULT = new ComputationTreeLogicTop(); :} 
+                | PARENTHESISLEFT formula:f PARENTHESISRIGHT
+                    {: RESULT = f; :}
+                | NEG atomicformula:f
+                    {: RESULT = new ComputationTreeLogicNot(f); :}
+
+                | ALWAYS NEXT atomicformula:f
+                    {: RESULT = new ComputationTreeLogicAlwaysNext(f); :}
+                | ALWAYS GLOBALLY atomicformula:f
+                    {: RESULT = new ComputationTreeLogicAlwaysGlobally(f); :}
+                | ALWAYS FINALLY atomicformula:f
+                    {: RESULT = new ComputationTreeLogicAlwaysFinally(f); :}
+                | ALWAYS atomicformula:f1 UNTIL atomicformula:f2
+                    {: RESULT = new ComputationTreeLogicAlwaysUntil(f1,f2); :}
+
+                | EXISTS NEXT atomicformula:f
+                    {: RESULT = new ComputationTreeLogicExistsNext(f); :}
+                | EXISTS GLOBALLY atomicformula:f
+                    {: RESULT = new ComputationTreeLogicExistsGlobally(f); :}
+                | EXISTS FINALLY atomicformula:f
+                    {: RESULT = new ComputationTreeLogicExistsFinally(f); :}
+                | EXISTS atomicformula:f1 UNTIL atomicformula:f2
+                    {: RESULT = new ComputationTreeLogicExistsUntil(f1,f2); :}
+
+                ;
