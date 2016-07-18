@@ -6,16 +6,22 @@
 package gralog.npcompleteness.propositionallogic.formula;
 
 import java.util.Set;
+import java.util.HashSet;
+import java.util.HashMap;
 
 /**
  *
  * @author viktor
  */
-abstract public class PropositionalLogicFormula {
-
-    
+abstract public class PropositionalLogicFormula 
+{
     abstract boolean isAClause();
-    
+
+    public boolean hasConjunctiveNormalForm()
+    {
+        return isAClause();
+    }
+
     public void GetClauses(Set<PropositionalLogicFormula> clauses) throws Exception // only works on cnf formulas
     {
         if(!isAClause())
@@ -31,5 +37,22 @@ abstract public class PropositionalLogicFormula {
     public void GetVariables(Set<String> vars)
     {
     }
-
+    
+    
+    abstract protected PropositionalLogicFormula ConjunctiveNormalForm(Integer varId, HashMap<PropositionalLogicFormula, String> VarIdx);
+    
+    public PropositionalLogicFormula ConjunctiveNormalForm()
+    {
+        if(hasConjunctiveNormalForm())
+            return this;
+        
+        HashMap<PropositionalLogicFormula, String> VarIdx = new HashMap<>();
+        Integer id = 0;
+        
+        PropositionalLogicFormula sub = ConjunctiveNormalForm(id, VarIdx);
+        
+        return new PropositionalLogicAnd(sub,
+            new PropositionalLogicVariable(VarIdx.get(this)));
+    }
+    
 }

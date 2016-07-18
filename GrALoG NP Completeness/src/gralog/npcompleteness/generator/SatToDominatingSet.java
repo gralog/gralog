@@ -20,27 +20,16 @@ import java.util.HashMap;
 @GeneratorDescription(
   name="SAT to Dominating Set Instance",
   text="Constructs a Dominating Set Instance from a SAT Formula",
-  url=""
+  url="https://en.wikipedia.org/wiki/Dominating_set"
 )
-public class SatToDominatingSet extends Generator {
+public class SatToDominatingSet extends Generator
+{
 
-        
     @Override
-    public GeneratorParameters GetParameters() {
+    public GeneratorParameters GetParameters()
+    {
         return new StringGeneratorParameter("(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c)");
     }
-    
-    
-    protected void GenerateClauseNodes(PropositionalLogicFormula cnf)
-    {
-        
-    }
-    
-    protected void GenerateVarNodes(PropositionalLogicFormula cnf)
-    {
-        
-    }
-    
     
     @Override
     public Structure Generate(GeneratorParameters p) throws Exception
@@ -49,7 +38,9 @@ public class SatToDominatingSet extends Generator {
         
         PropositionalLogicParser parser = new PropositionalLogicParser();
         PropositionalLogicFormula phi = parser.parseString(sp.parameter);
-        PropositionalLogicFormula cnf = phi;//.ConjunctiveNormalForm();
+        PropositionalLogicFormula cnf = phi;
+        if(!phi.hasConjunctiveNormalForm())
+            cnf = phi.ConjunctiveNormalForm();
         
         UndirectedGraph result = new UndirectedGraph();
         
@@ -117,12 +108,12 @@ public class SatToDominatingSet extends Generator {
             clause.GetLiterals(literals);
             for(PropositionalLogicFormula literal : literals)
             {
-                if(literal instanceof PropositionalLogicVariable)
+                if(literal instanceof PropositionalLogicVariable) // positive literal
                 {
                     PropositionalLogicVariable v = (PropositionalLogicVariable)literal;
                     result.AddEdge(result.CreateEdge(clauseVert, PosNode.get(v.variable)));
                 }
-                else if(literal instanceof PropositionalLogicNot
+                else if(literal instanceof PropositionalLogicNot // negative literal
                      && ((PropositionalLogicNot)literal).subformula instanceof PropositionalLogicVariable)
                 {
                     PropositionalLogicNot plnot = (PropositionalLogicNot)literal;

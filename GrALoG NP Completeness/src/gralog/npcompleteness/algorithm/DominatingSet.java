@@ -18,7 +18,7 @@ import java.util.HashSet;
 @AlgorithmDescription(
   name="Dominating Set",
   text="Finds a minimum Dominating Set",
-  url=""
+  url="https://en.wikipedia.org/wiki/Dominating_set"
 )
 public class DominatingSet extends Algorithm {
      

@@ -5,6 +5,7 @@
  */
 package gralog.npcompleteness.propositionallogic.formula;
 
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -47,4 +48,59 @@ public class PropositionalLogicOr extends PropositionalLogicFormula
         left.GetVariables(vars);
         right.GetVariables(vars);
     }
+
+    @Override
+    protected PropositionalLogicFormula ConjunctiveNormalForm(Integer varId, HashMap<PropositionalLogicFormula, String> VarIdx)
+    {
+        String myName = "v"+varId;
+        varId++;
+        VarIdx.put(this, myName);
+        PropositionalLogicFormula leftCnf = left.ConjunctiveNormalForm(varId, VarIdx);
+        String leftName = VarIdx.get(left);
+        PropositionalLogicFormula rightCnf = right.ConjunctiveNormalForm(varId, VarIdx);
+        String rightName = VarIdx.get(right);
+        
+        PropositionalLogicFormula result =
+            new PropositionalLogicAnd(
+                new PropositionalLogicAnd(
+                    new PropositionalLogicOr(
+                        new PropositionalLogicOr(
+                            new PropositionalLogicVariable(leftName),
+                            new PropositionalLogicVariable(rightName)
+                        ),
+                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
+                    ),
+                    new PropositionalLogicOr(
+                        new PropositionalLogicOr(
+                            new PropositionalLogicVariable(leftName),
+                            new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
+                        ),
+                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
+                    )
+                ),
+                new PropositionalLogicAnd(
+                    new PropositionalLogicOr(
+                        new PropositionalLogicOr(
+                            new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
+                            new PropositionalLogicVariable(rightName)
+                        ),
+                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
+                    ),
+                    new PropositionalLogicOr(
+                        new PropositionalLogicOr(
+                            new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
+                            new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
+                        ),
+                        new PropositionalLogicVariable(myName)
+                    )
+                )
+            );
+        
+        if(leftCnf != null)
+            result = new PropositionalLogicAnd(leftCnf, result);
+        if(rightCnf != null)
+            result = new PropositionalLogicAnd(rightCnf, result);
+        return result;
+    }
+
 }

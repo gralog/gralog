@@ -5,6 +5,7 @@
  */
 package gralog.npcompleteness.propositionallogic.formula;
 
+import java.util.HashMap;
 import java.util.Set;
 
 /**
@@ -36,5 +37,13 @@ public class PropositionalLogicVariable extends PropositionalLogicFormula {
     public void GetVariables(Set<String> vars)
     {
         vars.add(variable);
+    }
+    
+    @Override
+    protected PropositionalLogicFormula ConjunctiveNormalForm(Integer varId, HashMap<PropositionalLogicFormula, String> VarIdx)
+    {
+        varId++;
+        VarIdx.put(this, variable);
+        return null;
     }
 }
