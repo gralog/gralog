@@ -1,0 +1,89 @@
+package gralog.npcompleteness.propositionallogic.parser;
+
+import java_cup.runtime.*;
+import gralog.npcompleteness.propositionallogic.formula.*;
+import java.io.ByteArrayInputStream;
+import java.util.Vector;
+
+
+parser code {:
+
+    String errorMsg = null;
+
+    public Boolean hasError()
+    {
+        return errorMsg == null;
+    }
+    
+    public String getErrorMsg()
+    {
+        if(errorMsg == null)
+            return "no error";
+        else
+            return errorMsg;
+    }
+    
+    public void syntax_error(Symbol cur_token)
+    {
+        if(errorMsg == null)
+            errorMsg = "Syntax Error: " + cur_token.toString();
+    }
+
+    public void report_fatal_error(String message, Object info) throws Exception
+    {
+        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+    }
+
+    public PropositionalLogicFormula parseString(String str) throws Exception
+    {
+        String charset = "UTF8";
+        byte[] bytes = str.getBytes(charset);
+        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
+                
+        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
+        PropositionalLogicScanner scanner = new PropositionalLogicScanner(stringstream, symbolfactory);
+        this.setScanner(scanner);
+        
+        Symbol parserresult = this.parse();
+        return (PropositionalLogicFormula) parserresult.value;
+    }
+
+:}
+
+
+
+
+terminal OPEN, CLOSE;                             // "(", ")"
+terminal NEG, AND, OR;                            // \neg, \wedge, \vee
+terminal String STRING;
+
+
+non terminal PropositionalLogicFormula formula;
+non terminal PropositionalLogicFormula veeformula;
+non terminal PropositionalLogicFormula wedgeformula;
+non terminal PropositionalLogicFormula atomicformula;
+
+
+
+formula ::= veeformula:f 
+                   {: RESULT = f; :} ;
+
+veeformula ::= wedgeformula:left OR veeformula:right
+                   {: RESULT = new PropositionalLogicOr(left, right); :}
+             | wedgeformula:f
+                   {: RESULT = f; :}
+             ;
+
+wedgeformula ::= atomicformula:left AND wedgeformula:right
+                  {: RESULT = new PropositionalLogicAnd(left, right); :}
+            | atomicformula:f
+                  {: RESULT = f; :}
+            ;
+
+atomicformula ::= NEG atomicformula:f
+                  {: RESULT = new PropositionalLogicNot(f); :}
+                | OPEN formula:f CLOSE
+                  {: RESULT = f; :}
+                | STRING:var
+                  {: RESULT = new PropositionalLogicVariable(var); :}
+            ;
