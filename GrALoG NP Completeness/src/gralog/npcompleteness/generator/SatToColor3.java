@@ -49,7 +49,7 @@ public class SatToColor3 extends Generator {
         
         PropositionalLogicParser parser = new PropositionalLogicParser();
         PropositionalLogicFormula phi = parser.parseString(sp.parameter);
-        PropositionalLogicFormula cnf = phi.ConjunctiveNormalForm();
+        PropositionalLogicFormula cnf = phi.ConjunctiveNormalForm3(); // need 3-SAT
         
         UndirectedGraph result = new UndirectedGraph();
         
