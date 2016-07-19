@@ -73,7 +73,7 @@ public class SatToIndependentSet extends Generator {
             result.AddVertex(neg);
             NegNode.put(var, neg);
 
-            result.AddEdge(result.CreateEdge(pos, neg)); // connections
+            result.AddEdge(result.CreateEdge(pos, neg)); // connect them
             
             i++;
         }
@@ -87,7 +87,6 @@ public class SatToIndependentSet extends Generator {
         i = 0;
         for(PropositionalLogicFormula clause : clauses)
         {
-            // connect clause-vertices to the nodes of their member-literals
             literals.clear();
             clause.GetLiterals(literals);
             int j = 0;
@@ -99,6 +98,7 @@ public class SatToIndependentSet extends Generator {
                 clauseVert.Coordinates.add(3d - Math.sin( j * Math.PI / (literals.size()-1) ));
                 clauseVert.Label = literal.toString();
                 result.AddVertex(clauseVert);
+                
                 // connect vert to all verts in the same clause
                 for(Vertex w : vertsOfClause)
                     result.AddEdge(result.CreateEdge(clauseVert, w));
@@ -106,6 +106,9 @@ public class SatToIndependentSet extends Generator {
                 j++;
                 
                 // positive literal of clause connected to negative literal in variables
+                // because connection means you cannot choose both together,
+                // i.e. you cannot choose x=true and say that a clause with ¬x
+                // was satisfied by that literal
                 if(literal instanceof PropositionalLogicVariable)
                 {
                     PropositionalLogicVariable v = (PropositionalLogicVariable)literal;
