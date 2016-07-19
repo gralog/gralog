@@ -22,7 +22,7 @@ import java.util.HashSet;
 )
 public class Clique extends Algorithm {
      
-    protected boolean FindClique(UndirectedGraph s, int k, Set<Vertex> clique, Set<Vertex> candidates)
+    static boolean FindClique(UndirectedGraph s, int k, Set<Vertex> clique, Set<Vertex> candidates)
     {
         if(k < 1)
             return true;
@@ -51,8 +51,8 @@ public class Clique extends Algorithm {
         
         return false;
     }
-    
-    public Object Run(UndirectedGraph s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception
+
+    public static Set<Vertex> FindMaximumClique(UndirectedGraph s)
     {
         Set<Vertex> result = new HashSet<>();
         for(int k = 1; ; k++)
@@ -69,5 +69,11 @@ public class Clique extends Algorithm {
             result.addAll(Clique);
         }
         return result;
+    }
+
+    
+    public Object Run(UndirectedGraph s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception
+    {
+        return FindMaximumClique(s);
     }        
 }
