@@ -22,11 +22,23 @@ public class PropositionalLogicVariable extends PropositionalLogicFormula {
         return variable;
     }
     
+    
+    @Override
+    public boolean isLiteral()
+    {
+        return true;
+    }
     @Override
     public boolean isAClause()
     {
         return true;
     }
+    @Override
+    public boolean isAClause3()
+    {
+        return true;
+    }
+    
     
     public PropositionalLogicVariable(String variable)
     {

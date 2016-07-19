@@ -15,13 +15,23 @@ import java.util.HashMap;
  */
 abstract public class PropositionalLogicFormula 
 {
+    
+    public boolean isLiteral()
+    {
+        return false;
+    }
     abstract boolean isAClause();
-
     public boolean hasConjunctiveNormalForm()
     {
         return isAClause();
     }
-
+    abstract boolean isAClause3();
+    public boolean hasConjunctiveNormalForm3()
+    {
+        return isAClause3();
+    }
+            
+    
     public void GetClauses(Set<PropositionalLogicFormula> clauses) throws Exception // only works on cnf formulas
     {
         if(!isAClause())
@@ -45,6 +55,14 @@ abstract public class PropositionalLogicFormula
     {
         if(hasConjunctiveNormalForm())
             return this;
+        return ConjunctiveNormalForm3();
+    }
+    
+    
+    public PropositionalLogicFormula ConjunctiveNormalForm3()
+    {
+        if(hasConjunctiveNormalForm3())
+            return this;
         
         HashMap<PropositionalLogicFormula, String> VarIdx = new HashMap<>();
         Integer id = 0;
@@ -54,5 +72,4 @@ abstract public class PropositionalLogicFormula
         return new PropositionalLogicAnd(sub,
             new PropositionalLogicVariable(VarIdx.get(this)));
     }
-    
 }

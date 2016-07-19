@@ -36,6 +36,27 @@ public class PropositionalLogicOr extends PropositionalLogicFormula
     }
     
     @Override
+    public boolean isAClause3()
+    {
+        if(!isAClause())
+            return false;
+            
+        if(left instanceof PropositionalLogicOr)
+        {
+            PropositionalLogicOr lOr = (PropositionalLogicOr)left;
+            return right.isLiteral() && lOr.left.isLiteral() && lOr.right.isLiteral();
+        }
+
+        if(right instanceof PropositionalLogicOr)
+        {
+            PropositionalLogicOr rOr = (PropositionalLogicOr)right;
+            return left.isLiteral() && rOr.left.isLiteral() && rOr.right.isLiteral();
+        }
+
+        return left.isLiteral() && right.isLiteral(); // 2-SAT
+    }
+    
+    @Override
     public void GetLiterals(Set<PropositionalLogicFormula> literals)
     {
         left.GetLiterals(literals);

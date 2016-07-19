@@ -33,11 +33,23 @@ public class PropositionalLogicNot extends PropositionalLogicFormula
         return "¬" + s;
     }
 
+    
     @Override
-    public boolean isAClause()
+    public boolean isLiteral()
     {
         return (subformula instanceof PropositionalLogicVariable);
     }
+    @Override
+    public boolean isAClause()
+    {
+        return isLiteral();
+    }
+    @Override
+    public boolean isAClause3()
+    {
+        return isLiteral();
+    }
+
     
     @Override
     public void GetVariables(Set<String> vars)

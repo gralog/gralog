@@ -28,6 +28,14 @@ public class PropositionalLogicAnd extends PropositionalLogicFormula
         return left.hasConjunctiveNormalForm()
             && right.hasConjunctiveNormalForm();
     }
+    
+    @Override
+    public boolean hasConjunctiveNormalForm3()
+    {
+        return left.hasConjunctiveNormalForm3()
+            && right.hasConjunctiveNormalForm3();
+    }
+
 
     @Override
     public String toString()
@@ -43,11 +51,18 @@ public class PropositionalLogicAnd extends PropositionalLogicFormula
         return l + " ∧ " + r;
     }
     
+    
     @Override   
     public boolean isAClause()
     {
         return false;
     }
+    @Override   
+    public boolean isAClause3()
+    {
+        return false;
+    }
+    
     
     @Override
     public void GetClauses(Set<PropositionalLogicFormula> clauses) throws Exception
