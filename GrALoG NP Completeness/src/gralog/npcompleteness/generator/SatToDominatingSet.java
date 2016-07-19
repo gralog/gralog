@@ -28,7 +28,7 @@ public class SatToDominatingSet extends Generator
     @Override
     public GeneratorParameters GetParameters()
     {
-        return new StringGeneratorParameter("(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c)");
+        return new StringGeneratorParameter("(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c) \\wedge (a \\vee \\neg b \\vee \\neg c)");
     }
     
     @Override
