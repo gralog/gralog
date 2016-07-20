@@ -62,9 +62,13 @@ non terminal ModalMuCalculusFormula formula, veeformula, wedgeformula, atomicfor
 
  
                       
-formula ::= veeformula:f
+formula ::= MU STRING:s DOT formula:f
+                {: RESULT = new ModalMuCalculusLeastFixedPoint(s,f); :}
+            | NU STRING:s DOT formula:f
+                {: RESULT = new ModalMuCalculusGreatestFixedPoint(s,f); :}
+            | veeformula:f
                 {: RESULT = f; :}
-          ;
+            ;
 
 veeformula ::= wedgeformula:left VEE veeformula:right
                 {: RESULT = new ModalMuCalculusOr(left, right); :}
@@ -79,9 +83,9 @@ wedgeformula ::= atomicformula:left WEDGE wedgeformula:right
             ;
 
 atomicformula ::= BOT
-                      {: RESULT = new ModalMuCalculusBottom(); :} 
+                      {: RESULT = new ModalMuCalculusBottom(); :}
                 | TOP
-                      {: RESULT = new ModalMuCalculusTop(); :} 
+                      {: RESULT = new ModalMuCalculusTop(); :}
                 | NEG atomicformula:f
                       {: RESULT = new ModalMuCalculusNot(f); :}
                 | STRING:s                                      // a proposition
@@ -95,11 +99,6 @@ atomicformula ::= BOT
                       {: RESULT = new ModalMuCalculusBox(f); :}
                 | BRACKETLEFT STRING:s BRACKETRIGHT atomicformula:f
                       {: RESULT = new ModalMuCalculusBox(s, f); :}
-
-                | MU STRING:s DOT atomicformula:f
-                      {: RESULT = new ModalMuCalculusLeastFixedPoint(s,f); :}
-                | NU STRING:s DOT atomicformula:f
-                      {: RESULT = new ModalMuCalculusGreatestFixedPoint(s,f); :}
 
                 | PARENTHESISLEFT formula:f PARENTHESISRIGHT
                       {: RESULT = f; :}
