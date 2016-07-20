@@ -38,7 +38,12 @@ public class ModalMuCalculusDiamond extends ModalMuCalculusFormula
             return new ModalMuCalculusDiamond(transitiontype, subformula.NegationNormalForm(negated));
     }
 
-    
+    @Override
+    protected ModalMuCalculusFormula NegateVariable(String variable)
+    {
+        return new ModalMuCalculusDiamond(transitiontype, subformula.NegateVariable(variable));
+    }
+
     @Override
     public Double FormulaWidth()
     {
@@ -53,17 +58,18 @@ public class ModalMuCalculusDiamond extends ModalMuCalculusFormula
     
     
     @Override
-    public void CreateParityGamePositions(Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p,
+    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
+            KripkeStructure s, ParityGame p, int NextPriority,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception
     {
-        subformula.CreateParityGamePositions(x, y+1, w, h, s, p, index);
+        subformula.CreateParityGamePositions(scale, x, y+scale, w, h, s, p, NextPriority, index);
         
         for(Vertex v : s.getVertices())
         {
             ParityGamePosition node = p.CreateVertex();
-            node.Coordinates.add(w * v.Coordinates.get(0) + x);
-            node.Coordinates.add(h * v.Coordinates.get(1) + y);
+            //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
+            node.Coordinates.add(index.get((World)v).get(subformula).Coordinates.get(0));
+            node.Coordinates.add(scale * h * v.Coordinates.get(1) + y);
             node.Label = transitiontype == null ? "◇" : ("<"+transitiontype+">");
             node.Player1Position = true;
             p.AddVertex(node);

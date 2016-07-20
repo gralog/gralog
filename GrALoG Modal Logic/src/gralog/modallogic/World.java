@@ -24,13 +24,13 @@ import java.util.HashSet;
 @XmlName(name="world")
 public class World extends Vertex {
     
-    public String propositions = "";
+    public String Propositions = "";
 
     @Override
     public Element ToXml(Document doc, String id) throws Exception
     {
         Element vnode = super.ToXml(doc, id);
-        vnode.setAttribute("propositions", propositions);
+        vnode.setAttribute("propositions", Propositions);
         return vnode;
     }
     
@@ -39,14 +39,14 @@ public class World extends Vertex {
     {
         String id = super.FromXml(vnode);
         if(vnode.hasAttribute("propositions"))
-            propositions = vnode.getAttribute("propositions");
+            Propositions = vnode.getAttribute("propositions");
         return id;
     }
     
     public boolean SatisfiesProposition(String proposition)
     {
         proposition = proposition.trim();
-        String[] props = propositions.split(",");
+        String[] props = Propositions.split(",");
         for(String prop : props)
             if(proposition.equalsIgnoreCase(prop.trim()))
                 return true;

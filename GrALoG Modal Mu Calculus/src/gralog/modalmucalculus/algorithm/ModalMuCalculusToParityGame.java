@@ -33,7 +33,7 @@ public class ModalMuCalculusToParityGame extends Algorithm {
     
     @Override
     public AlgorithmParameters GetParameters(Structure s) {
-        return new StringAlgorithmParameter("");
+        return new StringAlgorithmParameter("\\nu X. \\mu Y.((P \\wedge []X) \\vee []Y)");
     }
     
     public Object Run(KripkeStructure s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception
@@ -50,7 +50,7 @@ public class ModalMuCalculusToParityGame extends Algorithm {
         Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> positionIndex = new HashMap<>();
         Map<String, ModalMuCalculusFormula> variableDefinitionPosition = new HashMap<>();
         
-        nnf.CreateParityGamePositions(0d,0d,w,h, s, result, positionIndex);
+        nnf.CreateParityGamePositions(3d, 0d, 0d, Math.max(w, h), Math.max(w, h), s, result, 0, positionIndex);
         nnf.CreateParityGameTransitions(s, result, positionIndex, variableDefinitionPosition);
         
         return result;

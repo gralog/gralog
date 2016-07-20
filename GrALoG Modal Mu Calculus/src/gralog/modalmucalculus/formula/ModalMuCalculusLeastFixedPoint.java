@@ -7,7 +7,6 @@ import gralog.modallogic.World;
 import gralog.modalmucalculus.structure.ParityGame;
 import gralog.modalmucalculus.structure.ParityGamePosition;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 
@@ -27,11 +26,24 @@ public class ModalMuCalculusLeastFixedPoint extends ModalMuCalculusFormula
     protected ModalMuCalculusFormula NegationNormalForm(boolean negated)
     {
         if(negated)
-            // not sure if this is right... maybe the variable must be negated in all subformulas?
-            return new ModalMuCalculusGreatestFixedPoint(variable, formula.NegationNormalForm(negated));
+        {
+            ModalMuCalculusFormula temp = this.NegateVariable(variable);
+            return new ModalMuCalculusGreatestFixedPoint(variable, temp.NegationNormalForm(negated));
+        }
         else
             return new ModalMuCalculusLeastFixedPoint(variable, formula.NegationNormalForm(negated));
     }
+
+    
+    @Override
+    protected ModalMuCalculusFormula NegateVariable(String variable)
+    {
+        if(variable.equals(this.variable))
+            return this; // don't negate in subformula, because inside the variable refers to a different one
+        
+        return new ModalMuCalculusLeastFixedPoint(this.variable, formula.NegateVariable(variable));
+    }
+
     
     @Override
     public Double FormulaWidth()
@@ -47,18 +59,21 @@ public class ModalMuCalculusLeastFixedPoint extends ModalMuCalculusFormula
     
     
     @Override
-    public void CreateParityGamePositions(Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p,
+    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
+            KripkeStructure s, ParityGame p, int NextPriority,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception
     {
-        formula.CreateParityGamePositions(x, y+1, w, h, s, p, index);
+        int MyPriority = NextPriority + 1 - NextPriority%2;
+        formula.CreateParityGamePositions(scale, x, y+scale, w, h, s, p, MyPriority, index);
         
         for(Vertex v : s.getVertices())
         {
             ParityGamePosition node = p.CreateVertex();
-            node.Coordinates.add(w * v.Coordinates.get(0) + x);
-            node.Coordinates.add(h * v.Coordinates.get(1) + y);
+            //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
+            node.Coordinates.add(index.get((World)v).get(formula).Coordinates.get(0));
+            node.Coordinates.add(scale * h * v.Coordinates.get(1) + y);
             node.Label = "μ" + variable;
+            node.Priority = MyPriority;
             p.AddVertex(node);
             
             if(!index.containsKey((World)v))

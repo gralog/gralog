@@ -30,17 +30,25 @@ public class ModalMuCalculusProposition extends ModalMuCalculusFormula
             return new ModalMuCalculusProposition(proposition);
     }
 
+    @Override
+    protected ModalMuCalculusFormula NegateVariable(String variable)
+    {
+        if(variable.equals(proposition))
+            return new ModalMuCalculusNot(new ModalMuCalculusProposition(proposition));
+        else
+            return new ModalMuCalculusProposition(proposition);
+    }
 
     @Override
-    public void CreateParityGamePositions(Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p,
+    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
+            KripkeStructure s, ParityGame p, int NextPriority,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index)
     {
         for(Vertex v : s.getVertices())
         {
             ParityGamePosition node = p.CreateVertex();
-            node.Coordinates.add(w * v.Coordinates.get(0) + x);
-            node.Coordinates.add(h * v.Coordinates.get(1) + y);
+            node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
+            node.Coordinates.add(scale * h * v.Coordinates.get(1) + y);
             node.Label = proposition;
             node.Player1Position = !((World)v).SatisfiesProposition(proposition);
             p.AddVertex(node);

@@ -7,7 +7,6 @@ import gralog.modalmucalculus.structure.ParityGame;
 import gralog.modalmucalculus.structure.ParityGamePosition;
 import gralog.structure.*;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 
@@ -28,15 +27,22 @@ public class ModalMuCalculusTop extends ModalMuCalculusFormula
     }
     
     @Override
-    public void CreateParityGamePositions(Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p,
+    protected ModalMuCalculusFormula NegateVariable(String variable)
+    {
+        return new ModalMuCalculusTop();
+    }
+
+    
+    @Override
+    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
+            KripkeStructure s, ParityGame p, int NextPriority,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index)
     {
         for(Vertex v : s.getVertices())
         {
             ParityGamePosition node = p.CreateVertex();
-            node.Coordinates.add(w * v.Coordinates.get(0) + x);
-            node.Coordinates.add(h * v.Coordinates.get(1) + y);
+            node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
+            node.Coordinates.add(scale * h * v.Coordinates.get(1) + y);
             node.Label = "⊤";
             node.Player1Position = false; // verifier wins
             p.AddVertex(node);

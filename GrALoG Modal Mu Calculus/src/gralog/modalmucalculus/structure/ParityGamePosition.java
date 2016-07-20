@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  */
 public class ParityGamePosition extends FiniteGamePosition {
     
-    public Integer Priority = 0;
+    public Integer Priority = Integer.MAX_VALUE;
     
     @Override
     public Element ToXml(Document doc, String id) throws Exception
