@@ -7,7 +7,8 @@ package gralog.firstorderlogic.logic.firstorder.formula;
 
 import gralog.structure.*;
 import java.util.HashMap;
-
+import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
+import gralog.firstorderlogic.structure.*;
 
 /**
  *
@@ -16,5 +17,7 @@ import java.util.HashMap;
 abstract public class FirstOrderFormula {
     
     abstract public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception;
-    
+    abstract public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign) throws Exception;
+    abstract public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
+            Double x, Double y);
 }

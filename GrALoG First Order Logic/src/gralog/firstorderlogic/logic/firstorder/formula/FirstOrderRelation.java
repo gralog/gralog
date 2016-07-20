@@ -5,10 +5,13 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
 import gralog.structure.*;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
+import gralog.firstorderlogic.structure.*;
+import java.util.Map;
 
 /**
  *
@@ -23,6 +26,20 @@ public class FirstOrderRelation extends FirstOrderFormula {
     {
         this.relation = relation;
         this.parameters = parameters;
+    }
+    @Override
+    public String toString()
+    {
+        String result = "";
+        String glue = "";
+        
+        for(String p : parameters)
+        {
+            result += glue + p;
+            glue = ",";
+        }
+        
+        return relation + "(" + result + ")";
     }
  
     @Override
@@ -57,5 +74,74 @@ public class FirstOrderRelation extends FirstOrderFormula {
         }
         
         return false;
+    }
+    @Override
+    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    {
+        
+        String glue = "";
+        
+        Bag b=new Bag();
+        Bag t=new Bag();
+        t.caption=relation + "(";
+       
+        
+        for(int i=0;i<parameters.size();i++)
+        {
+            
+           Vertex v=varassign.get(parameters.get(i));
+           
+            
+           t.caption += glue + v.Label;
+           glue = ",";
+           
+        }
+        t.caption+=")";
+        
+           Boolean res;
+            res=Evaluate(s,varassign);
+            if(res){
+                for(int i=0;i<parameters.size();i++)
+                {
+                    Vertex v=varassign.get(parameters.get(i));
+                    t.Nodes.add(v);
+
+                }
+            }
+                
+           
+        b.Nodes.addAll(t.Nodes);
+        b.ChildBags.add(t);
+        return b;
+    }
+
+       @Override
+    public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
+            Double x, Double y) {
+          System.out.println("int evaluate relation") ;
+         GamePosition parent=new GamePosition();
+         parent.Coordinates.add(x);
+         parent.Coordinates.add(y);
+         System.out.println("in relation" + toString()); 
+         System.out.println("y= "+ y) ;
+        String phi="\u2205";
+         parent.Label=this.toString()+ ", { ";
+         if(varassign.isEmpty()){
+            parent.Label+= phi;
+        }
+        else{
+               String glue="";
+                for (Map.Entry<String,Vertex> entry : varassign.entrySet()) {
+                    String key = entry.getKey();
+                    Vertex value = entry.getValue();
+                    parent.Label+= glue+ "(" + key +"," +value.Label + ")";
+                    glue=",";
+                }
+             
+             
+         
+        }
+        parent.Label+= " }";
+         return parent;
     }
 }

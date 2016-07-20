@@ -5,10 +5,11 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
-
+import gralog.firstorderlogic.structure.*;
 
 /**
  *
@@ -22,11 +23,39 @@ public class FirstOrderNot extends FirstOrderFormula
     {
         this.subformula1 = subformula1;
     }
+    @Override
+    public String toString()
+    {
+        String not="0xAC";
+        return not + "(" + subformula1.toString() + ")";
+    }
     
     @Override
     public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
     {
         return !subformula1.Evaluate(s, varassign);
     }
+     @Override
+    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    {
+        
+        Bag b=new Bag();
+        Boolean res;
+        
+        res = subformula1.Evaluate(s, varassign);
+        Bag b1=subformula1.EvaluateProver(s, varassign);
+        if(res)
+            b.Nodes.addAll(b1.Nodes);
+                
+        b.ChildBags.add( b1);
+        
+        b.caption="NOT";
+        return b;
+    }
 
+    @Override
+    public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
+            Double x, Double y) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
