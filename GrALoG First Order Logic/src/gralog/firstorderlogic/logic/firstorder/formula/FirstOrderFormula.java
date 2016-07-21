@@ -9,6 +9,7 @@ import gralog.structure.*;
 import java.util.HashMap;
 import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
 import gralog.firstorderlogic.structure.*;
+import java.util.Set;
 
 /**
  *
@@ -20,4 +21,6 @@ abstract public class FirstOrderFormula {
     abstract public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign) throws Exception;
     abstract public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
             Double x, Double y);
+    abstract public Set<String> Variables() throws Exception;
+    abstract public String Substitute(HashMap<String,String> replace)throws Exception; 
 }

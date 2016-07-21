@@ -10,6 +10,8 @@ import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
 import gralog.firstorderlogic.structure.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -58,4 +60,17 @@ public class FirstOrderNot extends FirstOrderFormula
             Double x, Double y) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public Set<String> Variables() throws Exception {
+        Set<String> result=new HashSet<>();
+        result.addAll(subformula1.Variables());
+        return result;
+    }
+
+    @Override
+    public String Substitute(HashMap<String, String> replace) throws Exception {
+        return " \neg " +subformula1.Substitute(replace); 
+    }
+
 }

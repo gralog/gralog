@@ -10,7 +10,9 @@ import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
 import gralog.firstorderlogic.structure.*;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 
 /**
@@ -101,7 +103,7 @@ public class FirstOrderOr extends FirstOrderFormula
         parent.Player1Position=false;
         parent.Coordinates.add(x);
         parent.Coordinates.add(y);
-        
+       
         
         game.AddVertex(parent);
         
@@ -118,6 +120,19 @@ public class FirstOrderOr extends FirstOrderFormula
         game.AddVertex(c2);
         game.AddEdge(game.CreateEdge(parent,c2));
         return parent;
+    }
+
+    @Override
+    public Set<String> Variables() throws Exception {
+         Set<String> result=new HashSet<>();
+        result.addAll(subformula1.Variables());
+        result.addAll(subformula2.Variables());
+        return result;
+    }
+
+    @Override
+    public String Substitute(HashMap<String, String> replace) throws Exception {
+        return subformula1.Substitute(replace) + " \\vee "  + subformula1.Substitute(replace);
     }
 
 }

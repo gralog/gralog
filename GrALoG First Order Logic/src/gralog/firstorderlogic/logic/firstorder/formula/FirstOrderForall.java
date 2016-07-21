@@ -11,6 +11,7 @@ import gralog.structure.Vertex;
 import java.util.HashMap;
 import java.util.Set;
 import gralog.firstorderlogic.structure.*;
+import java.util.HashSet;
 import java.util.Map;
 /**
  *
@@ -121,7 +122,7 @@ public class FirstOrderForall extends FirstOrderFormula {
 
         //forall : player 1 position;
         parent.Player1Position=true;
-        parent.Coordinates.add(x);
+      parent.Coordinates.add(x);
         parent.Coordinates.add(y);
         
         
@@ -156,5 +157,23 @@ public class FirstOrderForall extends FirstOrderFormula {
             varassign.put(variable, oldvalue);
     
         return parent;
+    }
+
+    @Override
+    public Set<String> Variables() throws Exception {
+        Set<String> result=new HashSet<>();
+        result.add(variable);
+        result.addAll(subformula1.Variables());
+        return result;
+        
+    }
+
+    @Override
+    public String Substitute(HashMap<String,String> replace) throws Exception {
+        if(replace.containsKey(variable)){
+            variable=replace.get(variable);
+        }
+        
+        return "\\forall " + variable + " . " + subformula1.Substitute(replace);
     }
 }

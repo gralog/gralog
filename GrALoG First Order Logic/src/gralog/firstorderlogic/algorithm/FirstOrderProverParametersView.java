@@ -5,9 +5,10 @@
  */
 package gralog.firstorderlogic.algorithm;
 
-import static com.oracle.jrockit.jfr.ContentType.Timestamp;
-import gralog.firstorderlogic.importfilter.LoadFromFile;
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
+import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 import gralog.gralogfx.views.*;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,16 +18,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Scanner;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -39,6 +37,8 @@ import javafx.scene.layout.Priority;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 /**
  *
@@ -52,13 +52,24 @@ public class FirstOrderProverParametersView extends GridPaneView{
         
         if(f.exists()){
             BufferedReader input = new BufferedReader(new FileReader(f));
-            String tmp=null;
+            String tmp;
             while((tmp=input.readLine())!=null){
                 result.add(tmp);
             }
             
         }
         return result;
+    }
+    
+    public Set<String> getUsedVariables(String text){
+        Set<String> usedVariables=new HashSet<>();
+        String[] split = text.split("\\s+");
+        for(String token : split){
+            if( (token.length() == 1 )  &&  Character.isLetter(token.charAt(0) ) ) {
+                 usedVariables.add(token);
+            }  
+        }
+        return usedVariables;
     }
     
     @Override
@@ -121,26 +132,72 @@ public class FirstOrderProverParametersView extends GridPaneView{
             Button save=new Button("save");
             Button delete =new Button("delete");
             Button clear=new Button("clear");
-            this.add(load, 0, 3);
-            this.add(save, 1, 3);
-            this.add(delete,2,3);
-            this.add(clear, 3, 3);
+            Button substitute = new Button("Substitute");
+            this.add(load, 0, 4);
+            this.add(save, 1, 4);
+            this.add(delete,2,4);
+            this.add(clear, 3, 4);
+            this.add(substitute,4,4);
+            
+          
+           substitute.setOnAction(e->{
+              if( (textArea.getSelectedText())!=null ){
+                        String text=textArea.getSelectedText();
+                        String tfText=tf.getText();
+                        
+                        FirstOrderParser parser = new FirstOrderParser();
+                       
+                        
+                        Set<String> usedInFormula=new HashSet<>();
+                            FirstOrderFormula phi=null;
+                        try {
+                            phi = parser.parseString(text);
+                            usedInFormula=phi.Variables();
+                          Set<String> usedInField= new HashSet<>();
+                        try{
+                             FirstOrderFormula phi2 = parser.parseString(tfText);
+                             usedInField=phi2.Variables();
+                        }
+                        catch(Exception ex){
+                            usedInField=getUsedVariables(tfText);
+                        }
+                        HashMap<String,String> replace=new HashMap<String,String>();
+                        for(String s: usedInField ){
+                            if(usedInFormula.contains(s)){
+                                replace.put(s, s+"1");
+                            }
+                        }
+                        String subformula=phi.Substitute(replace);
+                        tf.setText(tfText+ "( " + subformula + ")");
+
+                        } catch (Exception ex) {
+                             Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("Information Dialog");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Please select a valid formula to substitute");
+
+                            alert.showAndWait();
+                        }
+                        
+                    }
+                    
+                 
+           });
             
             
-            load.setOnAction(new EventHandler<ActionEvent>() {
-             @Override
-              public void handle(ActionEvent e) {
+            
+            load.setOnAction(e->{
                   FileChooser fileChooser = new FileChooser();
                   fileChooser.setTitle("Open Resource File");
                   fileChooser.getExtensionFilters().addAll(
                     new ExtensionFilter("Text Files", "*.txt") );
                   Stage stage=new Stage();
-                  File file= fileChooser.showOpenDialog(stage);  
-                  if(file!=null){
+                  File f= fileChooser.showOpenDialog(stage);  
+                  if(f!=null){
                       textArea.clear();
                       Set<String> uniqueSearch;
                       try {
-                          uniqueSearch = getUniqueSearches(file);
+                          uniqueSearch = getUniqueSearches(f);
                           for(String s : uniqueSearch){
                               textArea.appendText(s);
                               textArea.appendText("\n");
@@ -150,13 +207,11 @@ public class FirstOrderProverParametersView extends GridPaneView{
                       }
                       
                   }
-              }
+            
             
             });
             
-              save.setOnAction(new EventHandler<ActionEvent>() {
-             @Override
-              public void handle(ActionEvent e) {
+              save.setOnAction(e-> {
                   String text=textArea.getText();
                   String fileName="Formulae"+ new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()) + ".txt";
                   PrintWriter out;    
@@ -174,12 +229,12 @@ public class FirstOrderProverParametersView extends GridPaneView{
                  alert.setHeaderText(null);
                  alert.setContentText("File saved successfully as " + fileName);
 
-alert.showAndWait();
+                 alert.showAndWait();
                  
             
-              }
+              });
             
-            });
+      
             
              
               
@@ -188,6 +243,7 @@ alert.showAndWait();
              @Override
               public void handle(ActionEvent e) {
                   textArea.replaceSelection("");
+              
               }
             
             });
@@ -203,6 +259,4 @@ alert.showAndWait();
         }
     }
 }
-
-    
 

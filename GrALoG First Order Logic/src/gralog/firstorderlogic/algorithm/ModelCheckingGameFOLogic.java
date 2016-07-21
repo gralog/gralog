@@ -54,40 +54,23 @@ public class ModelCheckingGameFOLogic extends Algorithm{
            
         return new StringAlgorithmParameter(str);
     }
-    /*void AssignCoordinates(Vertex root,Set<Vertex> V){
-     //for graph with no cycles///
-       int size=V.size();
-        LinkedList<Vertex> queue = new LinkedList<Vertex>();
-        queue.add(root);
-        root.Coordinates.add((double)(size*4) );
-        root.Coordinates.add((double)(1) );
-        while (queue.size() != 0)
-        {
-            root = queue.poll();
-            
-            Set<Edge> conEdge=root.getConnectedEdges();
-            
-            VectorND coor=root.Coordinates;
-            Double xcoor=coor.get(0);
-            Double ycoor=coor.get(1);
-            Double x=(2*xcoor)/size;
-            Double y=ycoor+5;
-            int i=1;
-            for(Edge e : conEdge){
-                Vertex target=e.getTarget();
-                if(target.Coordinates.Dimensions()==0){
-                     queue.add(target);
-                     target.Coordinates.add(x*i);
-                    target.Coordinates.add(y/i);
-                    i++;
-                }
-                
-               
+    /*void DFS(Vertex root,Double x,Double y)
+    {
+        root.Coordinates.add(x);
+        root.Coordinates.add(y);
+        
+        System.out.println(root.Label + "  x = " +x + "y= " + y ); 
+        Set<Edge> edges=root.getConnectedEdges();
+        for(Edge e:edges){
+            Vertex target=e.getTarget();
+            if(target.Coordinates.Dimensions()==0){
+                DFS(target,x+7,y);
+                y=y+2;
             }
         }
-    }
-    
-    */
+   
+    }*/
+ 
    public Object Run(Structure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
        StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
         
@@ -107,7 +90,8 @@ public class ModelCheckingGameFOLogic extends Algorithm{
          HashMap<String, Vertex> varassign = new HashMap<String, Vertex>();
          GameGraph gp=new GameGraph();
         GamePosition root= phi.ConstructGameGraph(s,varassign,gp,5.0,5.0);
-        //AssignCoordinates(root,V);
+      //  DFS(root,5.0,5.0);
+        
         return gp;
    }
 }

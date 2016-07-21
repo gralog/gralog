@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
 import gralog.firstorderlogic.structure.*;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -122,6 +123,8 @@ public class FirstOrderRelation extends FirstOrderFormula {
          GamePosition parent=new GamePosition();
          parent.Coordinates.add(x);
          parent.Coordinates.add(y);
+       y=y+2;
+         
          System.out.println("in relation" + toString()); 
          System.out.println("y= "+ y) ;
         String phi="\u2205";
@@ -144,4 +147,25 @@ public class FirstOrderRelation extends FirstOrderFormula {
         parent.Label+= " }";
          return parent;
     }
+
+    @Override
+    public Set<String> Variables() throws Exception {
+         Set<String> result=new HashSet<>();
+        for(String s: parameters){
+            result.add(s);
+        }
+        return result;
+    }
+
+      @Override
+    public String Substitute(HashMap<String, String> replace) throws Exception {
+        for(int i=0;i<parameters.size();i++ ){
+            if(replace.containsKey(parameters.get(i) ) ){
+               parameters.setElementAt(replace.get(parameters.get(i)), i) ;
+            }
+        }
+        return toString();
+                
+    }
+
 }
