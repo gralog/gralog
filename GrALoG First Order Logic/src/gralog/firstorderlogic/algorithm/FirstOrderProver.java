@@ -9,7 +9,7 @@ import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 
 import gralog.algorithm.*;
-import gralog.firstorderlogic.prover.TreeDecomposition.FOQueryResult;
+import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.structure.*;
 import gralog.progresshandler.*;
 import java.io.BufferedReader;
@@ -44,7 +44,7 @@ public class FirstOrderProver extends Algorithm {
         return new FirstOrderProverParameters();
     }
   
-    public Object Run(Structure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
+    public Object Run(Structure s, AlgorithmParameters p,Set<Object> selection, ProgressHandler onprogress) throws Exception {
         
        FirstOrderProverParameters sp = (FirstOrderProverParameters)(p);
         Set<Vertex> V=s.getVertices();
@@ -75,7 +75,7 @@ public class FirstOrderProver extends Algorithm {
         HashMap<String, Vertex> varassign = new HashMap<String, Vertex>();
         
         FOQueryResult result=new FOQueryResult();
-        result.rootBag=phi.EvaluateProver(s, varassign);
+        result.rootBag=phi.EvaluateProver(s, varassign,onprogress);
         
         result.rootBag.caption=phi.toString();
         

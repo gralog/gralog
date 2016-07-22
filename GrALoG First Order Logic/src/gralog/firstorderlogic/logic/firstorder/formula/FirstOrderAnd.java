@@ -5,10 +5,11 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
-import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
+import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.firstorderlogic.structure.*;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,31 +35,31 @@ public class FirstOrderAnd extends FirstOrderFormula {
         return "(" + subformula1.toString() + and + subformula2.toString() + ")";
     }
     @Override
-    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception
     {
-        if(!subformula1.Evaluate(s, varassign))
+        if(!subformula1.Evaluate(s, varassign, onprogress))
             return false;
-        return subformula2.Evaluate(s, varassign);
+        return subformula2.Evaluate(s, varassign, onprogress);
     }
         @Override
-    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception
     {
         
         Bag b=new Bag();
         Bag sep=new Bag();
         sep.caption="AND";
         b.ChildBags.add(sep);
-        Bag b1=subformula1.EvaluateProver(s, varassign);
+        Bag b1=subformula1.EvaluateProver(s, varassign,onprogress);
             
         b1.caption=subformula1.toString();
         
         sep.ChildBags.add(b1);
         
-        Bag b2=subformula2.EvaluateProver(s, varassign);
+        Bag b2=subformula2.EvaluateProver(s, varassign,onprogress);
         b2.caption=subformula2.toString();
         
         sep.ChildBags.add(b2);
-        if(Evaluate(s,varassign)){
+        if(Evaluate(s,varassign,onprogress)){
             sep.Nodes.addAll(b1.Nodes);
             sep.Nodes.addAll(b2.Nodes);
         }

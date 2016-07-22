@@ -5,7 +5,9 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
-import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
+import gralog.firstorderlogic.prover.TreeDecomposition.*;
+import gralog.progresshandler.ProgressHandler;
+import gralog.rendering.GralogColor;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
@@ -29,7 +31,7 @@ public class FirstOrderForall extends FirstOrderFormula {
     }
     
     @Override
-    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception
     {
         Vertex oldvalue = varassign.get(variable);
         boolean result = true;
@@ -38,12 +40,19 @@ public class FirstOrderForall extends FirstOrderFormula {
         for(Vertex v : V)
         {
             varassign.put(variable, v);
-            if(!subformula1.Evaluate(s, varassign))
-            {
-                result = false;
+            
+            GralogColor bak = v.FillColor;
+            v.FillColor = GralogColor.green;
+            onprogress.OnProgress(s);
+
+            result = subformula1.Evaluate(s, varassign, onprogress);
+
+            v.FillColor = bak;
+            
+            if(!result)
                 break;
-            }
         }
+        onprogress.OnProgress(s);
         
         varassign.remove(variable);
         if(oldvalue != null)
@@ -58,23 +67,26 @@ public class FirstOrderForall extends FirstOrderFormula {
         return forall + variable + "  (" + subformula1.toString() + ")";
     }
     @Override
-    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign) throws Exception 
+    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception 
     {
         
         Vertex oldvalue = varassign.get(variable);
-       
+       String assignment=new String();
+        for(String str : varassign.keySet()){
+            assignment+=" [ " + str + " | " + varassign.get(str).Label + " ] ";
+        }
         Set<Vertex> V = s.getVertices();
          Bag b=new Bag();
         for(Vertex v : V)
         {
             varassign.put(variable, v);
-            Bag t=subformula1.EvaluateProver(s, varassign);
-            Boolean res=subformula1.Evaluate(s, varassign);
+            Bag t=subformula1.EvaluateProver(s, varassign,onprogress);
+            Boolean res=subformula1.Evaluate(s, varassign,onprogress);
             if(res){
-                t.Nodes.add(v);
+                
                 b.Nodes.add(v);
             }
-            t.caption=" [ " + variable + " | " + v.Label + " ] " + subformula1.toString();
+            t.caption=assignment + " [ " + variable + " | " + v.Label + " ] " + subformula1.toString();
 
             
             b.ChildBags.add(t);

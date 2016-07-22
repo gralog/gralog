@@ -5,7 +5,9 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
-import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
+
+import gralog.firstorderlogic.prover.TreeDecomposition.*;
+import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
@@ -33,19 +35,19 @@ public class FirstOrderNot extends FirstOrderFormula
     }
     
     @Override
-    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception
     {
-        return !subformula1.Evaluate(s, varassign);
+        return !subformula1.Evaluate(s, varassign, onprogress);
     }
      @Override
-    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception
     {
         
         Bag b=new Bag();
         Boolean res;
         
-        res = subformula1.Evaluate(s, varassign);
-        Bag b1=subformula1.EvaluateProver(s, varassign);
+        res = subformula1.Evaluate(s, varassign,onprogress);
+        Bag b1=subformula1.EvaluateProver(s, varassign,onprogress);
         if(res)
             b.Nodes.addAll(b1.Nodes);
                 

@@ -1,7 +1,7 @@
-package gralog.SamplePlugin.logic.firstorder.parser;
+package gralog.firstorderlogic.logic.firstorder.parser;
 
 import java_cup.runtime.*;
-import gralog.SamplePlugin.logic.firstorder.formula.*;
+import gralog.firstorderlogic.logic.firstorder.formula.*;
 import java.io.ByteArrayInputStream;
 import java.util.Vector;
 

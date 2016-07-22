@@ -101,7 +101,7 @@ public class Col2 extends Algorithm{
     }
    
     private   int contradictions = 1;
-    public Object Run(DirectedGraph s,AlgorithmParameters p,ProgressHandler onprogress) throws Exception {
+    public Object Run(DirectedGraph s,AlgorithmParameters p,Set<Object> selection, ProgressHandler onprogress) throws Exception {
       
         Integer nIter,nVertices;
         double prob;

@@ -71,7 +71,7 @@ public class ModelCheckingGameFOLogic extends Algorithm{
    
     }*/
  
-   public Object Run(Structure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
+   public Object Run(Structure s, AlgorithmParameters p,Set<Object> selection, ProgressHandler onprogress) throws Exception {
        StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
         
         FirstOrderParser parser = new FirstOrderParser();

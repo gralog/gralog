@@ -5,7 +5,8 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
-import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
+import gralog.firstorderlogic.prover.TreeDecomposition.*;
+import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
 import java.util.HashMap;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
     }
  
     @Override
-    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception
     {
         switch(parameters.size())
         {
@@ -77,7 +78,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
         return false;
     }
     @Override
-    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign) throws Exception
+    public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception
     {
         
         String glue = "";
@@ -100,7 +101,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
         t.caption+=")";
         
            Boolean res;
-            res=Evaluate(s,varassign);
+            res=Evaluate(s,varassign,onprogress);
             if(res){
                 for(int i=0;i<parameters.size();i++)
                 {
