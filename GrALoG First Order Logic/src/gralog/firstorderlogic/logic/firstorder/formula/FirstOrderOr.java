@@ -73,14 +73,10 @@ public class FirstOrderOr extends FirstOrderFormula
     @Override
     public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
             Double x, Double y) {
-        // verifier move
-       
-        //create parent 
-         GamePosition parent=new GamePosition();
+        
+        GamePosition parent=new GamePosition();
         String phi="\u2205";
-         System.out.println("in or");
-      
-               String or="\u2228";
+         String or="\u2228";
         parent.Label= "(" + subformula1.toString() + or + subformula2.toString() + ")";
         parent.Label += " , { ";
         
@@ -111,14 +107,10 @@ public class FirstOrderOr extends FirstOrderFormula
         
         GamePosition c1=subformula1.ConstructGameGraph(s, varassign, game,x+7,y);
         y=y+2;
-        System.out.println("in or" + toString());
-          System.out.println("y= "+ y) ;
         game.AddVertex(c1);
         game.AddEdge(game.CreateEdge(parent,c1));
         GamePosition c2=subformula2.ConstructGameGraph(s, varassign, game,x+7,y);
         y=y+2;
-        System.out.println("in or" + toString());
-          System.out.println("y= "+ y) ;
         game.AddVertex(c2);
         game.AddEdge(game.CreateEdge(parent,c2));
         return parent;

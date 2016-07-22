@@ -54,22 +54,7 @@ public class ModelCheckingGameFOLogic extends Algorithm{
            
         return new StringAlgorithmParameter(str);
     }
-    /*void DFS(Vertex root,Double x,Double y)
-    {
-        root.Coordinates.add(x);
-        root.Coordinates.add(y);
-        
-        System.out.println(root.Label + "  x = " +x + "y= " + y ); 
-        Set<Edge> edges=root.getConnectedEdges();
-        for(Edge e:edges){
-            Vertex target=e.getTarget();
-            if(target.Coordinates.Dimensions()==0){
-                DFS(target,x+7,y);
-                y=y+2;
-            }
-        }
    
-    }*/
  
    public Object Run(Structure s, AlgorithmParameters p,Set<Object> selection, ProgressHandler onprogress) throws Exception {
        StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
@@ -90,7 +75,6 @@ public class ModelCheckingGameFOLogic extends Algorithm{
          HashMap<String, Vertex> varassign = new HashMap<String, Vertex>();
          GameGraph gp=new GameGraph();
         GamePosition root= phi.ConstructGameGraph(s,varassign,gp,5.0,5.0);
-      //  DFS(root,5.0,5.0);
         
         return gp;
    }

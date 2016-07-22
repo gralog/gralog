@@ -106,11 +106,7 @@ public class FirstOrderExists extends FirstOrderFormula {
     @Override
     public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
             Double x, Double y) {
-        // verifier move
-         System.out.println("in exists ");
-      
         Vertex oldvalue = varassign.get(variable);
-        //create parent 
          GamePosition parent=new GamePosition();
         String phi="\u2205";
         String exists="\u2203";
@@ -148,8 +144,6 @@ public class FirstOrderExists extends FirstOrderFormula {
             varassign.put(variable, v);
             GamePosition gp=subformula1.ConstructGameGraph(s,varassign,game, x+7, y);
             y = y+2;
-            System.out.println("in exists " + toString());  
-            System.out.println("y= "+ y) ;
             game.AddVertex(gp);
             game.AddEdge(game.CreateEdge(parent,gp));
             //set label for this vertex

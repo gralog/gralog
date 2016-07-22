@@ -122,14 +122,12 @@ public class FirstOrderRelation extends FirstOrderFormula {
        @Override
     public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
             Double x, Double y) {
-          System.out.println("int evaluate relation") ;
+        
          GamePosition parent=new GamePosition();
          parent.Coordinates.add(x);
          parent.Coordinates.add(y);
        y=y+2;
          
-         System.out.println("in relation" + toString()); 
-         System.out.println("y= "+ y) ;
         String phi="\u2205";
          parent.Label=this.toString()+ ", { ";
          if(varassign.isEmpty()){

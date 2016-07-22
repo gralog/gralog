@@ -71,11 +71,6 @@ public class FirstOrderAnd extends FirstOrderFormula {
     @Override
     public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
             Double x, Double y) {
-        // falsifier move
-       System.out.println("int and");
-      
-       
-        //create parent 
          GamePosition parent=new GamePosition();
         String phi="\u2205";
        
@@ -93,9 +88,6 @@ public class FirstOrderAnd extends FirstOrderFormula {
                     parent.Label+= glue+ "(" + key +"," +value.Label + ")";
                     glue=",";
                 }
-             
-             
-         
         }
         parent.Label+= " }";
 
@@ -108,16 +100,11 @@ public class FirstOrderAnd extends FirstOrderFormula {
         
         GamePosition c1=subformula1.ConstructGameGraph(s, varassign, game,x+7,y);
         y=y+2;
-        System.out.println("int and" + toString());
-        System.out.println("y= "+ y) ;
-      System.out.println("int and" + toString());
         game.AddVertex(c1);
         
         game.AddEdge(game.CreateEdge(parent,c1));
         GamePosition c2=subformula2.ConstructGameGraph(s, varassign, game,x+7,y);
         y=y+2;
-      System.out.println("int and" + toString());
-        System.out.println("y= "+ y) ;
         game.AddVertex(c2);
         game.AddEdge(game.CreateEdge(parent,c2));
         return parent;
