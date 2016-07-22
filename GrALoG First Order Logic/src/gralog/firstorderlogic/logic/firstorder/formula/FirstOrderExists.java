@@ -8,6 +8,7 @@ package gralog.firstorderlogic.logic.firstorder.formula;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.progresshandler.ProgressHandler;
 
+import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import gralog.rendering.GralogColor;

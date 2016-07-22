@@ -10,6 +10,7 @@ import gralog.structure.Structure;
 import gralog.algorithm.Algorithm;
 import gralog.algorithm.AlgorithmParameters;
 import gralog.progresshandler.ProgressHandler;
+import java.util.Set;
 
 /**
  *
@@ -19,6 +20,7 @@ public class AlgorithmThread extends Thread {
     
     Algorithm algo;
     AlgorithmParameters params;
+    Set<Object> selection;
     Structure structure;
     ProgressHandler onprogress;
     
@@ -26,12 +28,13 @@ public class AlgorithmThread extends Thread {
     Exception exception = null;
     Object result = null;
     
-    public AlgorithmThread(Algorithm algo, Structure structure, AlgorithmParameters params, ProgressHandler onprogress) {
+    public AlgorithmThread(Algorithm algo, Structure structure, AlgorithmParameters params, Set<Object> selection, ProgressHandler onprogress) {
         setDaemon(true);
         setName(algo.getClass().getName() + " Thread");
         
         this.algo = algo;
         this.params = params;
+        this.selection = selection;
         this.structure = structure;
         this.onprogress = onprogress;
     }
@@ -44,7 +47,7 @@ public class AlgorithmThread extends Thread {
     public void run() {
 
         try {
-            result = this.algo.DoRun(structure, params, onprogress);
+            result = this.algo.DoRun(structure, params, selection, onprogress);
         } catch(Exception ex) {
             this.exception = ex;
         }

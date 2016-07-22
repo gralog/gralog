@@ -603,7 +603,7 @@ public class MainWindow extends Application {
             }
             
             // Run
-            AlgorithmThread algoThread = new AlgorithmThread(algo, structure, params, new RedrawOnProgress(structurePane, 1d/60d));
+            AlgorithmThread algoThread = new AlgorithmThread(algo, structure, params, structurePane.Selection, new RedrawOnProgress(structurePane, 1d/60d));
             algoThread.setOnThreadComplete(t -> Platform.runLater( ()->{AlgorithmCompleted(structurePane, t);}));
             this.setStatus("Running Algorithm \"" + str + "\"...");
             algoThread.start();

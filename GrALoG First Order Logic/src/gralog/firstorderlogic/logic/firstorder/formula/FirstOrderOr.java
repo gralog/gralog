@@ -136,5 +136,5 @@ public class FirstOrderOr extends FirstOrderFormula
     public String Substitute(HashMap<String, String> replace) throws Exception {
         return subformula1.Substitute(replace) + " \\vee "  + subformula1.Substitute(replace);
     }
-
+    
 }

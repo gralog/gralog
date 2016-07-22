@@ -13,12 +13,12 @@ public class ModalLogicDiamond extends ModalLogicFormula
 {
     String transitiontype;
     ModalLogicFormula subformula;
-    
+
     public ModalLogicDiamond(ModalLogicFormula subformula)
     {
         this(null, subformula);
     }
-    
+
     public ModalLogicDiamond(String transitiontype, ModalLogicFormula subformula)
     {
         this.transitiontype = transitiontype;
@@ -37,7 +37,7 @@ public class ModalLogicDiamond extends ModalLogicFormula
                 continue;
             World w = (World)v;
             
-            boolean mustAdd = true;
+            boolean mustAdd = false;
             for(Edge e : structure.getEdges())
             {
                 if(e.getSource() != v)
@@ -49,9 +49,9 @@ public class ModalLogicDiamond extends ModalLogicFormula
                     if(!this.transitiontype.equals(a.Name))
                         continue;
                 
-                if(!subresult.contains(a.getTarget()))
+                if(subresult.contains(a.getTarget()))
                 {
-                    mustAdd = false;
+                    mustAdd = true;
                     break; // no need to search any further
                 }
             }

@@ -20,6 +20,7 @@ import gralog.structure.*;
 import gralog.rendering.*;
 import gralog.progresshandler.*;
 import gralog.exportfilter.ExportFilter;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,7 +47,7 @@ public abstract class AlgorithmExternal extends Algorithm {
     
     
     
-    public Object Run(Structure structure, AlgorithmParameters params, ProgressHandler onprogress) throws Exception
+    public Object Run(Structure structure, AlgorithmParameters params, Set<Object> selection, ProgressHandler onprogress) throws Exception
     {
         List<String> EffectiveCommand = null;
         if(PassStructureViaFile)

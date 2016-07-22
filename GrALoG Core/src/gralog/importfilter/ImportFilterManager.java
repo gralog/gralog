@@ -9,6 +9,7 @@ import static gralog.plugins.PluginManager.InstantiateClass;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  *
@@ -33,8 +34,11 @@ public class ImportFilterManager {
         ImportFilterDescriptions.put(descr.name(), descr);
     }
     
-    public static Set<String> getImportFilterClasses() {
-        return ImportFilterNames.keySet();
+    public static Vector<String> getImportFilterClasses() {
+        Vector<String> result = new Vector<>();
+        result.addAll(ImportFilterNames.keySet());
+        result.sort(String.CASE_INSENSITIVE_ORDER);
+        return result;
     }
     
     public static ImportFilter InstantiateImportFilter(String identifier) throws Exception {

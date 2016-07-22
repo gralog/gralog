@@ -9,6 +9,7 @@ import gralog.algorithm.AlgorithmDescription;
 import gralog.structure.Vertex;
 import gralog.algorithm.AlgorithmParameters;
 import gralog.progresshandler.ProgressHandler;
+import java.util.Set;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
 
@@ -25,7 +26,7 @@ import org.jgrapht.graph.DefaultEdge;
 public class JGraphTBridgeExample extends JGraphTAlgorithm {
     
     @Override
-    public Object JGraphTRun(Graph<Vertex,DefaultEdge> g, AlgorithmParameters ap, ProgressHandler onprogress) throws Exception
+    public Object JGraphTRun(Graph<Vertex,DefaultEdge> g, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception
     {
         int i = 0;
         for(Vertex v : g.vertexSet())

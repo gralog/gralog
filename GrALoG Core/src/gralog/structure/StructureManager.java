@@ -9,6 +9,7 @@ import static gralog.plugins.PluginManager.InstantiateClass;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Set;
+import java.util.Vector;
 
 /**
  *
@@ -33,8 +34,11 @@ public class StructureManager {
     }
     
     
-    public static Set<String> getStructureClasses() {
-        return StructureNames.keySet();
+    public static Vector<String> getStructureClasses() {
+        Vector<String> result = new Vector<>();
+        result.addAll(StructureNames.keySet());
+        result.sort(String.CASE_INSENSITIVE_ORDER);
+        return result;
     }
     
     public static Structure InstantiateStructure(String identifier) throws Exception {

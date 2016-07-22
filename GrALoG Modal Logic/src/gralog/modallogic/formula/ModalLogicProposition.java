@@ -6,8 +6,6 @@ import gralog.modallogic.World;
 import gralog.structure.*;
 import java.util.HashSet;
 
-
-
 public class ModalLogicProposition extends ModalLogicFormula
 {
     String proposition;
@@ -25,7 +23,7 @@ public class ModalLogicProposition extends ModalLogicFormula
             if(v instanceof World)
             {
                 World w = (World)v;
-                if(w.propositions.contains(this.proposition))
+                if(w.SatisfiesProposition(this.proposition))
                     result.add(w);
             }
         return result;

@@ -24,6 +24,7 @@ abstract public class FirstOrderFormula {
             Double x, Double y);
     abstract public Set<String> Variables() throws Exception;
     abstract public String Substitute(HashMap<String,String> replace)throws Exception; 
+
     abstract public boolean Evaluate(Structure s, HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
     
 }

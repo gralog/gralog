@@ -13,12 +13,12 @@ public class ModalLogicBox extends ModalLogicFormula
 {
     String transitiontype;
     ModalLogicFormula subformula;
-
+    
     public ModalLogicBox(ModalLogicFormula subformula)
     {
         this(null, subformula);
     }
-
+    
     public ModalLogicBox(String transitiontype, ModalLogicFormula subformula)
     {
         this.transitiontype = transitiontype;
@@ -37,7 +37,7 @@ public class ModalLogicBox extends ModalLogicFormula
                 continue;
             World w = (World)v;
             
-            boolean mustAdd = false;
+            boolean mustAdd = true;
             for(Edge e : structure.getEdges())
             {
                 if(e.getSource() != v)
@@ -49,9 +49,9 @@ public class ModalLogicBox extends ModalLogicFormula
                     if(!this.transitiontype.equals(a.Name))
                         continue;
                 
-                if(subresult.contains(a.getTarget()))
+                if(!subresult.contains(a.getTarget()))
                 {
-                    mustAdd = true;
+                    mustAdd = false;
                     break; // no need to search any further
                 }
             }

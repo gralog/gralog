@@ -3,6 +3,13 @@
   <plugin location="../../../GrALoG Automaton/dist/GrALoG_Automaton.jar" />
   <plugin location="../../../GrALoG Modal Logic/dist/GrALoG_Modal_Logic.jar" />
   <plugin location="../../../GrALoG First Order Logic/dist/GrALoG_First_Order_Logic.jar" />
+
+  <plugin location="../../../GrALoG NP Completeness/dist/GrALoG_NP_Completeness.jar" />
+
+  <plugin location="../../../GrALoG Finite Game/dist/GrALoG_Finite_Game.jar" />
+  <plugin location="../../../GrALoG Modal Mu Calculus/dist/GrALoG_Modal_Mu_Calculus.jar" />
+  <plugin location="../../../GrALoG Computation Tree Logic/dist/GrALoG_Computation_Tree_Logic.jar" />
+  
   <plugin location="../../../JGraphTBridge/lib/jgrapht-core-0.9.2.jar" />
   <plugin location="../../../JGraphTBridge/dist/JGraphTBridge.jar" />
 </gralog>

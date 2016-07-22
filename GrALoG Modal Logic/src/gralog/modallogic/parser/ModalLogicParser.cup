@@ -57,46 +57,42 @@ terminal BOT, TOP, WEDGE, VEE, NEG, PARENTHESISLEFT, PARENTHESISRIGHT;   // \bot
 terminal String STRING;
 
 
-non terminal ModalLogicFormula formula, booleanlist, veelist, wedgelist;
+non terminal ModalLogicFormula formula, veeformula, wedgeformula, atomicformula;
 
 
                       
-formula ::= STRING:s                                            // a proposition
+formula ::= veeformula:f
+              {: RESULT = f; :}
+          ;
+            
+veeformula ::= wedgeformula:left VEE veeformula:right
+                 {: RESULT = new ModalLogicOr(left, right); :}
+             | wedgeformula:f
+                 {: RESULT = f; :}
+             ;
+
+wedgeformula ::= atomicformula:left WEDGE wedgeformula:right
+                   {: RESULT = new ModalLogicAnd(left, right); :}
+               | atomicformula:f
+                   {: RESULT = f; :}
+               ;
+
+atomicformula ::= STRING:s                                            // a proposition
                 {: RESULT = new ModalLogicProposition(s); :}
-          | PARENTHESISLEFT booleanlist:f PARENTHESISRIGHT
+          | PARENTHESISLEFT formula:f PARENTHESISRIGHT
                 {: RESULT = f; :}
           | BOT
                 {: RESULT = new ModalLogicBottom(); :} 
           | TOP
                 {: RESULT = new ModalLogicTop(); :} 
-          | NEG formula:f
+          | NEG atomicformula:f
                 {: RESULT = new ModalLogicNot(f); :}
-          | LT GT formula:f
+          | LT GT atomicformula:f
                 {: RESULT = new ModalLogicDiamond(f); :}
-          | LT STRING:s GT formula:f
+          | LT STRING:s GT atomicformula:f
                 {: RESULT = new ModalLogicDiamond(s, f); :}
-          | BRACKETLEFT BRACKETRIGHT formula:f
+          | BRACKETLEFT BRACKETRIGHT atomicformula:f
                 {: RESULT = new ModalLogicBox(f); :}
-          | BRACKETLEFT STRING:s BRACKETRIGHT formula:f
+          | BRACKETLEFT STRING:s BRACKETRIGHT atomicformula:f
                 {: RESULT = new ModalLogicBox(s, f); :}
-          ;
-            
-booleanlist ::= formula:f
-                    {: RESULT = f; :}
-              | formula:left WEDGE wedgelist:right
-                    {: RESULT = new ModalLogicAnd(left, right); :}
-              | formula:left VEE veelist:right
-                    {: RESULT = new ModalLogicOr(left, right); :}
-              ;
-
-wedgelist ::= formula:left WEDGE wedgelist:right
-                  {: RESULT = new ModalLogicAnd(left, right); :}
-            | formula:f
-                  {: RESULT = f; :}
-            ;
-
-veelist ::= formula:left VEE veelist:right
-                {: RESULT = new ModalLogicOr(left, right); :}
-          | formula:f
-                {: RESULT = f; :}
           ;

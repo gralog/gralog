@@ -43,7 +43,7 @@ public class FakeDirectedTreeDecomposition extends Algorithm {
         return result;
     }
 
-    public Object Run(Structure s, AlgorithmParameters ap, ProgressHandler onprogress) throws Exception
+    public Object Run(Structure s, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception
     {
         // DirectedTreeDecompositionParameters p = (DirectedTreeDecompositionParameters)ap;
         

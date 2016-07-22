@@ -5,7 +5,9 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
+
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
 import java.util.HashMap;

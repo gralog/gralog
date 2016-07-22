@@ -28,7 +28,7 @@ public class AssignLabels extends Algorithm {
         return new StringAlgorithmParameter("");
     }
 
-    public Object Run(Structure s, AlgorithmParameters p, ProgressHandler onprogress) throws Exception {
+    public Object Run(Structure s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter stringparam = (StringAlgorithmParameter)p;
         int i = 0;
 

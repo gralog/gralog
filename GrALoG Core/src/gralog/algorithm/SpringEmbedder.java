@@ -73,7 +73,7 @@ public class SpringEmbedder extends Algorithm {
     }
 
 
-    public Object Run(Structure s, AlgorithmParameters ap, ProgressHandler onprogress) throws Exception {
+    public Object Run(Structure s, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception {
         SpringEmbedderParameters p = (SpringEmbedderParameters)ap;
         Vector<VectorND> tractions = new Vector<VectorND>();
         int dimensions = dimension_limits.size();

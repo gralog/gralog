@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.Arrays;
 
 /**
  *
@@ -59,6 +60,7 @@ public class AlgorithmManager {
         for(Class i = forClass; i != null; i = i.getSuperclass())
             if(AlgorithmNames.containsKey(i))
                 result.addAll(AlgorithmNames.get(i).keySet());
+        result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }
     

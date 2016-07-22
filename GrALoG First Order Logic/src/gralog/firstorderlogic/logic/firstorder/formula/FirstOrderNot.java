@@ -6,7 +6,9 @@
 package gralog.firstorderlogic.logic.firstorder.formula;
 
 
+
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
+
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
@@ -74,5 +76,4 @@ public class FirstOrderNot extends FirstOrderFormula
     public String Substitute(HashMap<String, String> replace) throws Exception {
         return " \neg " +subformula1.Substitute(replace); 
     }
-
 }

@@ -31,6 +31,7 @@ public class FirstOrderAnd extends FirstOrderFormula {
      @Override
     public String toString()
     {
+
         String and="\u2227";
         return "(" + subformula1.toString() + and + subformula2.toString() + ")";
     }
@@ -120,6 +121,7 @@ public class FirstOrderAnd extends FirstOrderFormula {
         game.AddVertex(c2);
         game.AddEdge(game.CreateEdge(parent,c2));
         return parent;
+
     }
 
     @Override

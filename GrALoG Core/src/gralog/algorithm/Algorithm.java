@@ -8,6 +8,7 @@ package gralog.algorithm;
 import gralog.structure.*;
 import gralog.progresshandler.*;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 /**
  *
@@ -22,7 +23,7 @@ public abstract class Algorithm {
         return null;
     }
     
-    public Object DoRun(Structure structure, AlgorithmParameters params, ProgressHandler onprogress) throws Exception
+    public Object DoRun(Structure structure, AlgorithmParameters params, Set<Object> selection, ProgressHandler onprogress) throws Exception
     {
         Object algoResult = null;
         Method[] methods = this.getClass().getMethods();
@@ -31,10 +32,10 @@ public abstract class Algorithm {
             if(!method.getName().equals("Run"))
                 continue;
             Class[] paramTypes = method.getParameterTypes();
-            if(paramTypes.length != 3)
+            if(paramTypes.length != 4)
                 continue;
                 
-            algoResult = method.invoke(this, new Object[]{structure, params, onprogress});
+            algoResult = method.invoke(this, new Object[]{structure, params, selection, onprogress});
             break;
         }
         
