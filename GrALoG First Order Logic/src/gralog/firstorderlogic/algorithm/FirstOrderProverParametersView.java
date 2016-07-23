@@ -65,9 +65,21 @@ public class FirstOrderProverParametersView extends GridPaneView{
         Set<String> usedVariables=new HashSet<>();
         String[] split = text.split("\\s+");
         for(String token : split){
-            if( (token.length() == 1 )  &&  Character.isLetter(token.charAt(0) ) ) {
-                 usedVariables.add(token);
-            }  
+            int i;
+            boolean found=false;
+            int end=1;
+            for( i=0;i<token.length();i++){
+                if(!Character.isLetterOrDigit( token.charAt(i) ) ) {
+                   break;
+                }
+                else if(Character.isDigit(token.charAt(i)) && !found){
+                    end=i;
+                    found=true;
+                }
+            }
+            if(i==token.length()){
+                usedVariables.add(token.substring(0, end));
+            }
         }
         return usedVariables;
     }
@@ -162,10 +174,14 @@ public class FirstOrderProverParametersView extends GridPaneView{
                             usedInField=getUsedVariables(tfText);
                         }
                         HashMap<String,String> replace=new HashMap<String,String>();
-                        for(String s: usedInField ){
-                            if(usedInFormula.contains(s)){
-                                replace.put(s, s+"1");
-                            }
+                        String ch="a";
+                        char c='a';
+                        while(usedInField.contains(ch)){
+                            ch=String.valueOf(++c);
+                        }
+                        int cnt=1;
+                        for(String s : usedInFormula){
+                            replace.put(s, ch+String.valueOf(cnt++));
                         }
                         String subformula=phi.Substitute(replace);
                         tf.setText(tfText+ "( " + subformula + ")");
