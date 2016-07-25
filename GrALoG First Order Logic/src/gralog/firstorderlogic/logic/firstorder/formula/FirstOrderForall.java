@@ -13,9 +13,11 @@ import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
 import java.util.Set;
-import gralog.firstorderlogic.structure.*;
+
 import java.util.HashSet;
 import java.util.Map;
+import gralog.finitegame.structure.*;
+import gralog.firstorderlogic.algorithm.CoordinateClass;
 /**
  *
  * @author viktor
@@ -65,7 +67,7 @@ public class FirstOrderForall extends FirstOrderFormula {
     public String toString()
     {
         String forall="\u2200";
-        return forall + variable + "  (" + subformula1.toString() + ")";
+        return forall + variable +" "+ subformula1.toString() ;
     }
     @Override
     public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception 
@@ -103,17 +105,22 @@ public class FirstOrderForall extends FirstOrderFormula {
 
     
     @Override
-    public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
-            Double x, Double y) {
-        Vertex oldvalue = varassign.get(variable);
-         GamePosition parent=new GamePosition();
+    public FiniteGamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,FiniteGame game,
+            CoordinateClass coor) {
+         Vertex oldvalue = varassign.get(variable);
+         FiniteGamePosition parent=new FiniteGamePosition();
          String phi="\u2205";
-                 String forall="\u2200";
+         String forall="\u2200";
+         parent.Coordinates.add(coor.x);
+         parent.Coordinates.add(coor.y);
+         
+         
         parent.Label="( " +  forall + variable + "  (" + subformula1.toString() + ")";
         parent.Label += " , { ";
         
         if(varassign.isEmpty()){
             parent.Label+= phi;
+            coor.x=coor.x+2;
         }
         else{
                String glue="";
@@ -131,18 +138,18 @@ public class FirstOrderForall extends FirstOrderFormula {
 
         //forall : player 1 position;
         parent.Player1Position=true;
-      parent.Coordinates.add(x);
-        parent.Coordinates.add(y);
-        
-        
-        game.AddVertex(parent);
+       
+         game.AddVertex(parent);
         
         Set<Vertex> V = s.getVertices();
         for(Vertex v : V)
         {
             varassign.put(variable, v);
-            GamePosition gp=subformula1.ConstructGameGraph(s,varassign,game,x+7,y);
-            y=y+2;
+            CoordinateClass temp=new CoordinateClass();
+            temp.x=coor.x+7;
+            temp.y=coor.y;
+            FiniteGamePosition gp=subformula1.ConstructGameGraph(s,varassign,game,temp);
+            coor.y=temp.y+1;
             game.AddVertex(gp);
             game.AddEdge(game.CreateEdge(parent,gp));
             //set label for this vertex
@@ -162,7 +169,6 @@ public class FirstOrderForall extends FirstOrderFormula {
          varassign.remove(variable);
         if(oldvalue != null)
             varassign.put(variable, oldvalue);
-    
         return parent;
     }
 

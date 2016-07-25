@@ -13,10 +13,11 @@ import gralog.structure.*;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Vector;
-import gralog.firstorderlogic.structure.*;
+
 import java.util.HashSet;
 import java.util.Map;
-
+import gralog.finitegame.structure.*;
+import gralog.firstorderlogic.algorithm.CoordinateClass;
 /**
  *
  * @author viktor
@@ -25,7 +26,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
     
     String relation;
     Vector<String> parameters;
-    
+ 
     public FirstOrderRelation(String relation, Vector<String> parameters)
     {
         this.relation = relation;
@@ -82,12 +83,16 @@ public class FirstOrderRelation extends FirstOrderFormula {
     @Override
     public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception
     {
-        
-        String glue = "";
-        
         Bag b=new Bag();
+        
+       /* String glue = "";
+        
         Bag t=new Bag();
-        t.caption=relation + "(";
+        String assignment=new String();
+        for(String str : varassign.keySet()){
+            assignment+=" [ " + str + " | " + varassign.get(str).Label + " ] ";
+        }
+        t.caption=assignment+relation + "(";
        
         
         for(int i=0;i<parameters.size();i++)
@@ -102,33 +107,33 @@ public class FirstOrderRelation extends FirstOrderFormula {
         }
         t.caption+=")";
         
-           Boolean res;
+           */Boolean res;
             res=Evaluate(s,varassign,onprogress);
             if(res){
                 for(int i=0;i<parameters.size();i++)
                 {
                     Vertex v=varassign.get(parameters.get(i));
-                    t.Nodes.add(v);
+                    b.Nodes.add(v);
 
                 }
             }
                 
            
-        b.Nodes.addAll(t.Nodes);
+        /*b.Nodes.addAll(t.Nodes);
         b.ChildBags.add(t);
-        return b;
+        */return b;
     }
 
        @Override
-    public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
-            Double x, Double y) {
+    public FiniteGamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,FiniteGame game,
+         CoordinateClass coor) {
         
-         GamePosition parent=new GamePosition();
-         parent.Coordinates.add(x);
-         parent.Coordinates.add(y);
-       y=y+2;
-         
-        String phi="\u2205";
+         FiniteGamePosition parent=new FiniteGamePosition();
+         parent.Coordinates.add(coor.x);
+         parent.Coordinates.add(coor.y);
+      
+        coor.y=coor.y+1;   
+         String phi="\u2205";
          parent.Label=this.toString()+ ", { ";
          if(varassign.isEmpty()){
             parent.Label+= phi;
@@ -141,12 +146,31 @@ public class FirstOrderRelation extends FirstOrderFormula {
                     parent.Label+= glue+ "(" + key +"," +value.Label + ")";
                     glue=",";
                 }
-             
-             
-         
         }
         parent.Label+= " }";
-         return parent;
+        
+        Boolean res=false;
+          Vertex from = varassign.get(parameters.get(0));
+                Vertex to = varassign.get(parameters.get(1));
+
+                Set<Edge> E = from.getConnectedEdges();
+                for(Edge e : E)
+                {
+                    if(  e.getSource() == from && e.getTarget() == to // same direction
+                    || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) // opposite direction, but undirected edge
+                    {
+                        if(relation.equals("E") // generic query - matches any edge!
+                        || relation.equals(e.Label)) // specific query - matches current edge?
+                            res= true;
+                    }
+                }
+        if(res){
+            parent.Player1Position=true;
+        }     
+        else{
+            parent.Player1Position=false;
+        } 
+        return parent;
     }
 
     @Override

@@ -11,11 +11,12 @@ import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
-import gralog.firstorderlogic.structure.*;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
+import gralog.finitegame.structure.*;
+import gralog.firstorderlogic.algorithm.CoordinateClass;
 
 /**
  *
@@ -51,9 +52,13 @@ public class FirstOrderOr extends FirstOrderFormula
        Bag b=new Bag();
        Bag sep=new Bag();
        sep.caption="OR";
+     String assignment=new String();
+        for(String str : varassign.keySet()){
+            assignment+=" [ " + str + " | " + varassign.get(str).Label + " ] ";
+        }
        b.ChildBags.add(sep); 
        Bag b1=subformula1.EvaluateProver(s, varassign,onprogress);
-       b1.caption=subformula1.toString();
+       b1.caption=assignment+subformula1.toString();
         
         sep.ChildBags.add(b1);
         if(subformula1.Evaluate(s, varassign,onprogress)){
@@ -61,7 +66,7 @@ public class FirstOrderOr extends FirstOrderFormula
         }
         
         Bag b2=subformula2.EvaluateProver(s, varassign,onprogress);
-        b2.caption=subformula2.toString();
+        b2.caption=assignment+subformula2.toString();
         sep.ChildBags.add(b2);
          if(subformula2.Evaluate(s, varassign,onprogress)){
             sep.Nodes.addAll(b2.Nodes);
@@ -71,10 +76,10 @@ public class FirstOrderOr extends FirstOrderFormula
     }
     
     @Override
-    public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
-            Double x, Double y) {
+    public FiniteGamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,FiniteGame game,
+        CoordinateClass coor) {
         
-        GamePosition parent=new GamePosition();
+        FiniteGamePosition parent=new FiniteGamePosition();
         String phi="\u2205";
          String or="\u2228";
         parent.Label= "(" + subformula1.toString() + or + subformula2.toString() + ")";
@@ -99,20 +104,23 @@ public class FirstOrderOr extends FirstOrderFormula
     
         //or : player 0 position;
         parent.Player1Position=false;
-        parent.Coordinates.add(x);
-        parent.Coordinates.add(y);
-       
-        
+        parent.Coordinates.add(coor.x);
+        parent.Coordinates.add(coor.y);
         game.AddVertex(parent);
-        
-        GamePosition c1=subformula1.ConstructGameGraph(s, varassign, game,x+7,y);
-        y=y+2;
+        CoordinateClass temp=new CoordinateClass();
+        temp.x=coor.x+7;
+        temp.y=coor.y;
+           FiniteGamePosition c1=subformula1.ConstructGameGraph(s, varassign, game,temp);
+        coor.y=temp.y+1;
         game.AddVertex(c1);
         game.AddEdge(game.CreateEdge(parent,c1));
-        GamePosition c2=subformula2.ConstructGameGraph(s, varassign, game,x+7,y);
-        y=y+2;
+        temp.x=coor.x+7;
+        temp.y=coor.y;
+        FiniteGamePosition c2=subformula2.ConstructGameGraph(s, varassign, game,temp);
+        coor.y=temp.y+1;
         game.AddVertex(c2);
         game.AddEdge(game.CreateEdge(parent,c2));
+     
         return parent;
     }
 

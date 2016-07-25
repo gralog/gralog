@@ -13,10 +13,11 @@ import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
-import gralog.firstorderlogic.structure.*;
+
 import java.util.HashSet;
 import java.util.Set;
-
+import gralog.finitegame.structure.*;
+import gralog.firstorderlogic.algorithm.CoordinateClass;
 /**
  *
  * @author viktor
@@ -32,8 +33,8 @@ public class FirstOrderNot extends FirstOrderFormula
     @Override
     public String toString()
     {
-        String not="0xAC";
-        return not + "(" + subformula1.toString() + ")";
+        String not="\u00AC";
+        return not + " (" + subformula1.toString() + ")";
     }
     
     @Override
@@ -46,22 +47,31 @@ public class FirstOrderNot extends FirstOrderFormula
     {
         
         Bag b=new Bag();
-        Boolean res;
+       Bag sep=new Bag();
+       sep.caption="NOT";
+       b.ChildBags.add(sep);
         
+        String assignment=new String();
+        for(String str : varassign.keySet()){
+            assignment+=" [ " + str + " | " + varassign.get(str).Label + " ] ";
+        }
+        Boolean res;
         res = subformula1.Evaluate(s, varassign,onprogress);
         Bag b1=subformula1.EvaluateProver(s, varassign,onprogress);
+        String not="\u00AC";
+        b1.caption=assignment+" ("+ subformula1.toString()+" )";
         if(res)
-            b.Nodes.addAll(b1.Nodes);
+            sep.Nodes.addAll(b1.Nodes);
                 
-        b.ChildBags.add( b1);
+        sep.ChildBags.add( b1);
         
-        b.caption="NOT";
+        b.Nodes.addAll(sep.Nodes);
         return b;
     }
 
     @Override
-    public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
-            Double x, Double y) {
+    public FiniteGamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,FiniteGame game,
+            CoordinateClass coor) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
