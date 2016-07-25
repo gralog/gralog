@@ -63,6 +63,7 @@ public class FirstOrderProverParametersView extends GridPaneView{
     
     public Set<String> getUsedVariables(String text){
         Set<String> usedVariables=new HashSet<>();
+        if(text.isEmpty()) return usedVariables;
         String[] split = text.split("\\s+");
         for(String token : split){
             int i;
@@ -166,13 +167,13 @@ public class FirstOrderProverParametersView extends GridPaneView{
                             phi = parser.parseString(text);
                             usedInFormula=phi.Variables();
                           Set<String> usedInField= new HashSet<>();
-                        try{
-                             FirstOrderFormula phi2 = parser.parseString(tfText);
-                             usedInField=phi2.Variables();
-                        }
-                        catch(Exception ex){
-                            usedInField=getUsedVariables(tfText);
-                        }
+                          try{
+                                 FirstOrderFormula phi2 = parser.parseString(tfText);
+                                 usedInField=phi2.Variables();
+                            }
+                            catch(Exception ex){
+                                usedInField=getUsedVariables(tfText);
+                            }   
                         HashMap<String,String> replace=new HashMap<String,String>();
                         String ch="a";
                         char c='a';

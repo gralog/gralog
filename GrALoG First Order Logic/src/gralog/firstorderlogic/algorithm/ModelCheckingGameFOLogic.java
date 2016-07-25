@@ -9,11 +9,9 @@ import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 
 import gralog.algorithm.*;
-import gralog.firstorderlogic.structure.*;
+
 import gralog.structure.*;
 import gralog.progresshandler.*;
-import gralog.rendering.VectorND;
-import gralog.structure.*;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,9 +19,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Set;
-import java.util.Vector;
+
+import gralog.finitegame.structure.*;
 /**
  *
  * @author Hv
@@ -31,7 +29,7 @@ import java.util.Vector;
 @AlgorithmDescription(
   name="Model Checking Game for first Order Logic",
   text="",
-  url="https://en.wikipedia.org/wiki/First-order_logic"
+  url="https://en.wikipedia.org/wiki/Game_semantics#Classical_logic"
 )
 public class ModelCheckingGameFOLogic extends Algorithm{
     @Override
@@ -72,10 +70,15 @@ public class ModelCheckingGameFOLogic extends Algorithm{
             v.Label=String.valueOf(i);
             i++;
         }
-         HashMap<String, Vertex> varassign = new HashMap<String, Vertex>();
-         GameGraph gp=new GameGraph();
-        GamePosition root= phi.ConstructGameGraph(s,varassign,gp,5.0,5.0);
+         HashMap<String, Vertex> varassign = new HashMap<>();
+         FiniteGame gp=new FiniteGame();
+        CoordinateClass ob=new CoordinateClass();
+        ob.x=5.0;
+        ob.y=5.0;
+        FiniteGamePosition root= phi.ConstructGameGraph(s,varassign,gp,ob) ;
         
+
+
         return gp;
    }
 }

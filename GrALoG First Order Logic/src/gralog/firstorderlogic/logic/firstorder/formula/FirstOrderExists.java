@@ -5,6 +5,8 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.finitegame.structure.*;
+import gralog.firstorderlogic.algorithm.CoordinateClass;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.progresshandler.ProgressHandler;
 
@@ -14,7 +16,7 @@ import gralog.structure.Vertex;
 import gralog.rendering.GralogColor;
 import java.util.HashMap;
 import java.util.Set;
-import gralog.firstorderlogic.structure.*;
+
 import java.util.HashSet;
 import java.util.Map;
 
@@ -36,7 +38,7 @@ public class FirstOrderExists extends FirstOrderFormula {
     public String toString()
     {
         String exists="\u2203";
-        return exists + variable + "  (" + subformula1.toString() + ")";
+        return exists + variable +  " " +subformula1.toString() ;
     }
 
     @Override
@@ -104,10 +106,10 @@ public class FirstOrderExists extends FirstOrderFormula {
     }
     
     @Override
-    public GamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,GameGraph game,
-            Double x, Double y) {
+    public FiniteGamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,FiniteGame game,
+           CoordinateClass coor) {
         Vertex oldvalue = varassign.get(variable);
-         GamePosition parent=new GamePosition();
+        FiniteGamePosition parent=new FiniteGamePosition();
         String phi="\u2205";
         String exists="\u2203";
         parent.Label="( "+ exists + variable + "  (" + subformula1.toString() + ")";
@@ -124,26 +126,24 @@ public class FirstOrderExists extends FirstOrderFormula {
                     parent.Label+= glue+ "(" + key +"," +value.Label + ")";
                     glue=",";
                 }
-             
-             
-         
-        }
+            }
         parent.Label+= " }";
        
         //exists : player 0 position;
         parent.Player1Position=false;
-        
-       parent.Coordinates.add(x);
-        parent.Coordinates.add(y);
-        
+        parent.Coordinates.add(coor.x);
+        parent.Coordinates.add(coor.y);
         game.AddVertex(parent);
         
         Set<Vertex> V = s.getVertices();
         for(Vertex v : V)
         {
+            CoordinateClass temp=new CoordinateClass();
+            temp.x=coor.x+7;
+            temp.y=coor.y;
             varassign.put(variable, v);
-            GamePosition gp=subformula1.ConstructGameGraph(s,varassign,game, x+7, y);
-            y = y+2;
+            FiniteGamePosition gp=subformula1.ConstructGameGraph(s,varassign,game,temp);
+            coor.y=temp.y+1;
             game.AddVertex(gp);
             game.AddEdge(game.CreateEdge(parent,gp));
             //set label for this vertex
@@ -163,7 +163,7 @@ public class FirstOrderExists extends FirstOrderFormula {
          varassign.remove(variable);
         if(oldvalue != null)
             varassign.put(variable, oldvalue);
-    
+        
         return parent;
     }
 
