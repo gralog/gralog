@@ -111,6 +111,7 @@ public class FirstOrderForall extends FirstOrderFormula {
          FiniteGamePosition parent=new FiniteGamePosition();
          String phi="\u2205";
          String forall="\u2200";
+
          parent.Coordinates.add(coor.x);
          parent.Coordinates.add(coor.y);
          
