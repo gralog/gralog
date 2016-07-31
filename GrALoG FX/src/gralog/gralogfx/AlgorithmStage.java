@@ -68,8 +68,7 @@ public class AlgorithmStage extends Stage {
         root = new BorderPane();
         root.setCenter(objectInspector);
         root.setBottom(hBox);
-        scene = new Scene(root, 350, 200);
-
+        scene = new Scene(root);
         this.setScene(scene);
         this.setTitle("Run Algorithm");
         this.initModality(Modality.APPLICATION_MODAL);
