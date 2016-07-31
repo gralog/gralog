@@ -15,14 +15,16 @@ import java.util.Vector;
  * @author Hv
  */
 public class Bag {
-    public String caption;
+    public String caption=new String("");
+    public String assignment=new String("");
+    public Boolean eval=new Boolean(false);
     public Set<Vertex> Nodes = new HashSet<Vertex>();
     public Vector<Bag> ChildBags = new Vector<Bag>();
  
      @Override
     public String toString()
     {
-        return caption;
+        return assignment+ " " +caption;
     }
    
 }

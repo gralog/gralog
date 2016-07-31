@@ -12,19 +12,13 @@ import gralog.algorithm.*;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.structure.*;
 import gralog.progresshandler.*;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
 
 import java.util.HashMap;
-import java.util.Scanner;
 import java.util.Set;
-
-import javafx.scene.control.TextArea;
 
 
 /**
@@ -34,7 +28,7 @@ import javafx.scene.control.TextArea;
 @AlgorithmDescription(
   name="First Order Logic Prover",
   text="",
-  url="https://en.wikipedia.org/wiki/First-order_logic"
+  url="First_Order_Prover_Manual.pdf"
 )
 
 public class FirstOrderProver extends Algorithm {
@@ -45,14 +39,14 @@ public class FirstOrderProver extends Algorithm {
     }
   
     public Object Run(Structure s, AlgorithmParameters p,Set<Object> selection, ProgressHandler onprogress) throws Exception {
-        
-       FirstOrderProverParameters sp = (FirstOrderProverParameters)(p);
+        FirstOrderProverParameters sp = (FirstOrderProverParameters)(p);
         Set<Vertex> V=s.getVertices();
         int i=0;
         for(Vertex v : V ){
             v.Label=String.valueOf(i);
             i++;
         }
+         onprogress.OnProgress(s);
         if(V.isEmpty()){
             return "Please input a graph";
         }
@@ -65,7 +59,7 @@ public class FirstOrderProver extends Algorithm {
         try {
             phi = parser.parseString(sp.formulae);
         } catch (Exception ex) {
-           return "Incorrect Syntax or Formula";
+           return ex.getMessage();
         }
         PrintWriter o1 = new PrintWriter(new BufferedWriter(
                                                  new FileWriter("CorrectSearches.txt", true)));
@@ -74,12 +68,13 @@ public class FirstOrderProver extends Algorithm {
       
         HashMap<String, Vertex> varassign = new HashMap<String, Vertex>();
         
-        FOQueryResult result=new FOQueryResult();
-        result.rootBag=phi.EvaluateProver(s, varassign,onprogress);
+        //FOQueryResult result=new FOQueryResult();
+        Bag rootBag=phi.EvaluateProver(s, varassign,onprogress);
         
-        result.rootBag.caption=phi.toString();
+        rootBag.caption=phi.toString();
         
-        return result;
+        return rootBag;
+        
     }
     
 }

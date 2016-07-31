@@ -73,29 +73,28 @@ public class FirstOrderForall extends FirstOrderFormula {
     public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception 
     {
         
-        Vertex oldvalue = varassign.get(variable);
+       Boolean result=true;
+       Vertex oldvalue = varassign.get(variable);
        String assignment=new String();
         for(String str : varassign.keySet()){
             assignment+=" [ " + str + " | " + varassign.get(str).Label + " ] ";
         }
+
         Set<Vertex> V = s.getVertices();
          Bag b=new Bag();
         for(Vertex v : V)
         {
             varassign.put(variable, v);
             Bag t=subformula1.EvaluateProver(s, varassign,onprogress);
-            Boolean res=subformula1.Evaluate(s, varassign,onprogress);
-            if(res){
-                
-                b.Nodes.add(v);
+            if(!t.eval){
+                result=false;
             }
-            t.caption=assignment + " [ " + variable + " | " + v.Label + " ] " + subformula1.toString();
-
-            
+            t.assignment=assignment+  " [ " + variable + " | " + v.Label + " ] ";
+            t.caption=  subformula1.toString();
             b.ChildBags.add(t);
         }
         
-        
+        b.eval=result;
         varassign.remove(variable);
         if(oldvalue != null)
             varassign.put(variable, oldvalue);

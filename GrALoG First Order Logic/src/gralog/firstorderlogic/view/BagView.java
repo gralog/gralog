@@ -7,11 +7,15 @@ import gralog.gralogfx.views.ViewDescription;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.css.PseudoClass;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.HBox;
+
 import javafx.scene.layout.RowConstraints;
-import javafx.beans.value.*;
+import javafx.scene.text.Text;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -22,8 +26,8 @@ import javafx.beans.value.*;
  *
  * @author Hv
  */
-@ViewDescription(forClass=gralog.firstorderlogic.prover.TreeDecomposition.FOQueryResult.class)
-public class FOQueryResultView extends GridPaneView{
+@ViewDescription(forClass=gralog.firstorderlogic.prover.TreeDecomposition.Bag.class)
+public class BagView extends GridPaneView{
 
    
     
@@ -36,7 +40,7 @@ public class FOQueryResultView extends GridPaneView{
             node.getChildren().add(child);
             FillTreeView(child, b);
         }
-        node.setExpanded(true);
+        node.setExpanded(false);
     }
     
     @Override
@@ -47,14 +51,45 @@ public class FOQueryResultView extends GridPaneView{
         if(displayObject != null)
         {
             
-            FOQueryResult treedecomp = (FOQueryResult)displayObject;
-            
-            
-            //TextBox tb = new TextBox("hello world");
-            
+            Bag treedecomp = (Bag)displayObject;
+           
             TreeItem root = new TreeItem("root");
-            FillTreeView(root, treedecomp.rootBag);
+        
+            FillTreeView(root, treedecomp);
+            root.setExpanded(true);
             TreeView treeView = new TreeView(root);
+          
+            treeView.setCellFactory(tv -> {
+                return new TreeCell<Bag>() {
+                    
+                    private final Text assignment;
+                    private final Text caption;
+                    HBox hbox;
+                    {
+                        assignment = new Text();
+                        caption = new Text();
+                        assignment.setStyle("-fx-fill:blue");
+                         hbox=new HBox(4, assignment, caption);
+                    }
+                    
+                    @Override
+                    protected void updateItem(Bag item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            assignment.setText(item.assignment);
+                            caption.setText(item.caption);
+                            caption.setStyle(null);
+                            if (item.eval) {
+                                caption.setStyle("-fx-fill:green");
+                            }
+                            setGraphic(hbox);
+                        }
+                    }
+                    
+                };
+            });
             
             treeView.getSelectionModel().selectedItemProperty().addListener( new ChangeListener() {
 
@@ -78,7 +113,7 @@ public class FOQueryResultView extends GridPaneView{
             this.getRowConstraints().add(rowConstraints);
     
             this.add(treeView,0,0);
-            //this.add(tb, 1, 0);
+            
         }
     }
 

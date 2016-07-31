@@ -52,8 +52,25 @@ public class ModelCheckingGameFOLogic extends Algorithm{
            
         return new StringAlgorithmParameter(str);
     }
-   
- 
+  /* public void getUniqueGamePositions(FiniteGame game){
+       Set<FiniteGamePosition> gp=game.getVertices();
+       for(FiniteGamePosition v: (Set<FiniteGamePosition>)gp){
+           for(FiniteGamePosition w: gp){
+               if(v!=w){
+                   if(v.Label.equals(w.Label)){
+                       Set<Edge> connectedEdges=w.getConnectedEdges();
+                       for(Edge e: connectedEdges){
+                           if(e.getSource()!=w){
+                               Vertex temp=e.getSource();
+                               game.AddEdge(game.CreateEdge(temp,v) );
+                           }
+                       }
+                   }
+               }
+           }
+       }
+   }
+ */
    public Object Run(Structure s, AlgorithmParameters p,Set<Object> selection, ProgressHandler onprogress) throws Exception {
        StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
         

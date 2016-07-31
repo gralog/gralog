@@ -59,7 +59,6 @@ terminal EXISTS, FORALL;                          // \exists \forall
 terminal COMMA, DOT;                              // ",", "."
 terminal String STRING;
 
-
 non terminal FirstOrderFormula formula;
 non terminal FirstOrderFormula veeformula;
 non terminal FirstOrderFormula wedgeformula;

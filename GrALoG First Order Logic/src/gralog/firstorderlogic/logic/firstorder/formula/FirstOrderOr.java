@@ -52,26 +52,21 @@ public class FirstOrderOr extends FirstOrderFormula
        Bag b=new Bag();
        Bag sep=new Bag();
        sep.caption="OR";
-     String assignment=new String();
+       String assignment=new String();
         for(String str : varassign.keySet()){
             assignment+=" [ " + str + " | " + varassign.get(str).Label + " ] ";
         }
-       b.ChildBags.add(sep); 
-       Bag b1=subformula1.EvaluateProver(s, varassign,onprogress);
-       b1.caption=assignment+subformula1.toString();
-        
+        b.ChildBags.add(sep); 
+        Bag b1=subformula1.EvaluateProver(s, varassign,onprogress);
+        b1.assignment=assignment;
+        b1.caption=subformula1.toString();
         sep.ChildBags.add(b1);
-        if(subformula1.Evaluate(s, varassign,onprogress)){
-            sep.Nodes.addAll(b1.Nodes);
-        }
         
         Bag b2=subformula2.EvaluateProver(s, varassign,onprogress);
-        b2.caption=assignment+subformula2.toString();
+        b2.assignment=assignment;
+        b2.caption=subformula2.toString();
         sep.ChildBags.add(b2);
-         if(subformula2.Evaluate(s, varassign,onprogress)){
-            sep.Nodes.addAll(b2.Nodes);
-        }
-         b.Nodes.addAll(sep.Nodes);
+        b.eval=( b1.eval || b2.eval ) ;
         return b;
     }
     

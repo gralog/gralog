@@ -60,7 +60,11 @@ public class FirstOrderRelation extends FirstOrderFormula {
             
                 Vertex from = varassign.get(parameters.get(0));
                 Vertex to = varassign.get(parameters.get(1));
-
+                
+                if(relation.equals("equals") ){
+                    return from.equals(to);
+                }
+                
                 Set<Edge> E = from.getConnectedEdges();
                 for(Edge e : E)
                 {
@@ -84,44 +88,8 @@ public class FirstOrderRelation extends FirstOrderFormula {
     public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception
     {
         Bag b=new Bag();
-        
-       /* String glue = "";
-        
-        Bag t=new Bag();
-        String assignment=new String();
-        for(String str : varassign.keySet()){
-            assignment+=" [ " + str + " | " + varassign.get(str).Label + " ] ";
-        }
-        t.caption=assignment+relation + "(";
-       
-        
-        for(int i=0;i<parameters.size();i++)
-        {
-            
-           Vertex v=varassign.get(parameters.get(i));
-           
-            
-           t.caption += glue + v.Label;
-           glue = ",";
-           
-        }
-        t.caption+=")";
-        
-           */Boolean res;
-            res=Evaluate(s,varassign,onprogress);
-            if(res){
-                for(int i=0;i<parameters.size();i++)
-                {
-                    Vertex v=varassign.get(parameters.get(i));
-                    b.Nodes.add(v);
-
-                }
-            }
-                
-           
-        /*b.Nodes.addAll(t.Nodes);
-        b.ChildBags.add(t);
-        */return b;
+        b.eval=Evaluate(s, varassign, onprogress);
+        return b;
     }
 
        @Override

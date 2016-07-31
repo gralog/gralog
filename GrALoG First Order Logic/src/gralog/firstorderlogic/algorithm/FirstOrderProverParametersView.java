@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -33,7 +34,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -47,6 +50,7 @@ import javax.swing.event.CaretListener;
 @ViewDescription(forClass=FirstOrderProverParameters.class)
 public class FirstOrderProverParametersView extends GridPaneView{
 
+    
     public Set<String> getUniqueSearches(File f) throws Exception{
         Set<String> result=new HashSet<>();
         
@@ -92,7 +96,8 @@ public class FirstOrderProverParametersView extends GridPaneView{
             FirstOrderProverParameters p =(FirstOrderProverParameters)displayObject;
             this.setVgap(8);
             this.setHgap(10);
-            this.add(new Label("Formulae"), 0, 0);
+            Label label =new Label("Formula");
+            setConstraints(label, 0,0);
             File file=new File("PreviousSearch.txt");
             String str="";
            
@@ -109,7 +114,7 @@ public class FirstOrderProverParametersView extends GridPaneView{
             }
             else str="";
             TextField tf=new TextField(str);
-            this.add(tf, 1,0);
+            setConstraints(tf,1,0);
             TextArea textArea = new TextArea();
             textArea.clear();
            
@@ -140,18 +145,15 @@ public class FirstOrderProverParametersView extends GridPaneView{
            textArea.setMaxWidth(Double.MAX_VALUE);
             textArea.setMaxHeight(Double.MAX_VALUE);
             
-            this.add(textArea,1,2);
+            setConstraints(textArea,1,1);
             Button load=new Button("load");
             Button save=new Button("save");
             Button delete =new Button("delete");
             Button clear=new Button("clear");
             Button substitute = new Button("Substitute");
-            this.add(load, 0, 4);
-            this.add(save, 1, 4);
-            this.add(delete,2,4);
-            this.add(clear, 3, 4);
-            this.add(substitute,4,4);
-            
+            VBox vbox=new VBox(5);
+            vbox.getChildren().addAll(load,save,delete,clear,substitute);
+            setConstraints(vbox, 4,1);
           
            substitute.setOnAction(e->{
               if( (textArea.getSelectedText())!=null ){
@@ -271,8 +273,9 @@ public class FirstOrderProverParametersView extends GridPaneView{
               }
             
             });
-              
-              
+            this.getChildren().addAll(label,tf,textArea,vbox);
+            
+            setMaxSize(USE_COMPUTED_SIZE,USE_COMPUTED_SIZE);
         }
     }
 }

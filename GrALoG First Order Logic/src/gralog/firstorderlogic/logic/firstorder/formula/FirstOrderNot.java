@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Set;
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.algorithm.CoordinateClass;
+
 /**
  *
  * @author viktor
@@ -25,7 +26,6 @@ import gralog.firstorderlogic.algorithm.CoordinateClass;
 public class FirstOrderNot extends FirstOrderFormula
 {
     FirstOrderFormula subformula1;
-    
     public FirstOrderNot(FirstOrderFormula subformula1)
     {
         this.subformula1 = subformula1;
@@ -47,25 +47,16 @@ public class FirstOrderNot extends FirstOrderFormula
     {
         
         Bag b=new Bag();
-       Bag sep=new Bag();
-       sep.caption="NOT";
-       b.ChildBags.add(sep);
-        
         String assignment=new String();
         for(String str : varassign.keySet()){
             assignment+=" [ " + str + " | " + varassign.get(str).Label + " ] ";
         }
-        Boolean res;
-        res = subformula1.Evaluate(s, varassign,onprogress);
+      
         Bag b1=subformula1.EvaluateProver(s, varassign,onprogress);
-        String not="\u00AC";
-        b1.caption=assignment+" ("+ subformula1.toString()+" )";
-        if(res)
-            sep.Nodes.addAll(b1.Nodes);
-                
-        sep.ChildBags.add( b1);
-        
-        b.Nodes.addAll(sep.Nodes);
+        b1.assignment=assignment;
+        b1.caption=" ("+ subformula1.toString()+" )";
+        b.eval=!b1.eval;
+        b.ChildBags.add(b1);
         return b;
     }
 

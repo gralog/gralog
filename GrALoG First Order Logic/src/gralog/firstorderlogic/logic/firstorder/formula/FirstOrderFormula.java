@@ -12,15 +12,13 @@ import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.algorithm.CoordinateClass;
 import java.util.Set;
-
 /**
  *
  * @author Hv
  */
 abstract public class FirstOrderFormula {
     
-
-    abstract public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception;
+   abstract public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception;
     abstract public FiniteGamePosition ConstructGameGraph(Structure s, HashMap<String, Vertex> varassign,FiniteGame game,CoordinateClass coor);
     abstract public Set<String> Variables() throws Exception;
     abstract public String Substitute(HashMap<String,String> replace)throws Exception; 

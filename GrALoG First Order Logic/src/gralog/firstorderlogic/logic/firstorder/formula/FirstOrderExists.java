@@ -25,7 +25,7 @@ import java.util.Map;
  * @author viktor
  */
 public class FirstOrderExists extends FirstOrderFormula {
-    
+
     String variable;
     FirstOrderFormula subformula1;
     
@@ -74,7 +74,7 @@ public class FirstOrderExists extends FirstOrderFormula {
     @Override
     public Bag EvaluateProver(Structure s, HashMap<String, Vertex> varassign,ProgressHandler onprogress) throws Exception
     {   
-        
+        Boolean result=false;
         Vertex oldvalue = varassign.get(variable);
         Bag b=new Bag();
         Set<Vertex> V = s.getVertices();
@@ -82,22 +82,20 @@ public class FirstOrderExists extends FirstOrderFormula {
         for(String str : varassign.keySet()){
             assignment+=" [ " + str + " | " + varassign.get(str).Label + " ] ";
         }
-        
+      
         for(Vertex v : V)
         {
             varassign.put(variable, v);
             Bag t=subformula1.EvaluateProver(s, varassign,onprogress);
-            Boolean res=subformula1.Evaluate(s, varassign,onprogress);
-            if(res){
-                
+            if(t.eval){
                 b.Nodes.add(v);
+                result=true;
             }
-            t.caption=assignment + " [ " + variable + " | " + v.Label + " ] " + subformula1.toString();
-
-            
+            t.assignment=assignment+  " [ " + variable + " | " + v.Label + " ] ";
+            t.caption=  subformula1.toString();
             b.ChildBags.add(t);
         }
-       
+         b.eval=result;
         varassign.remove(variable);
         if(oldvalue != null)
             varassign.put(variable, oldvalue);
