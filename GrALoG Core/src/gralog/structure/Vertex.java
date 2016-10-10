@@ -32,11 +32,10 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     //public Vector<Double> Coordinates = new Vector<Double>();
     public VectorND Coordinates = new VectorND();
-    private Set<VertexListener> listeners = new HashSet<VertexListener>();
+    private final Set<VertexListener> listeners = new HashSet<>();
     
     
-    
-    private Set<Edge> connectedEdges = new HashSet<Edge>();
+    private final Set<Edge> connectedEdges = new HashSet<>();
     void connectEdge(Edge e)
     {
         this.connectedEdges.add(e);
@@ -64,6 +63,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
     
     
+    @Override
     public void Move(Vector<Double> offset) {
         while(Coordinates.Dimensions() < offset.size())
             Coordinates.add(0d);
@@ -97,9 +97,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public boolean ContainsCoordinate(Double x, Double y) {
         Double tx = Coordinates.get(0);
         Double ty = Coordinates.get(1);
-        if( (x-tx)*(x-tx) + (y-ty)*(y-ty) < Radius*Radius )
-            return true;
-        return false;
+        return (x-tx)*(x-tx) + (y-ty)*(y-ty) < Radius*Radius;
     }
     
     public Element ToXml(Document doc, String id) throws Exception {

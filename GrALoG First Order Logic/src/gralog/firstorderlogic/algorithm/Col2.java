@@ -101,8 +101,8 @@ public class Col2 extends Algorithm{
     }
    
     private   int contradictions = 1;
-    public Object Run(DirectedGraph s,AlgorithmParameters p,Set<Object> selection, ProgressHandler onprogress) throws Exception {
-      
+    public Object Run(DirectedGraph s,AlgorithmParameters p,Set<Object> selection, ProgressHandler onprogress)
+            throws Exception {
         Integer nIter,nVertices;
         double prob;
         Scanner in=new Scanner(System.in);
@@ -112,51 +112,56 @@ public class Col2 extends Algorithm{
         nVertices=in.nextInt();
         System.out.println("enter the edge density");
         prob=in.nextDouble();
-        for(int iter=1;iter<=100;iter++){
-            s=generate(s,nVertices,prob);
+        for(int iter=1;iter<=100;iter++)
+        {
+            s = generate(s, nVertices, prob);
             /*SpringEmbedder embedder = new SpringEmbedder();
             AlgorithmParameters params = embedder.GetParameters(s);
             embedder.Run(s, params, onprogress);
-            */Set<Vertex> vertices=s.getVertices();
-            
+            */
+            Set<Vertex> vertices = s.getVertices();
             long i;
-            for(i=0;i<Math.pow(3,nVertices);i++){
-            
-            StringBuilder str=ConvertToBase3(i,nVertices);
-            if( check(str,s)  == true ){
-                int j=0;
-                for(Vertex v: vertices){
-                    String x= Character.toString(str.charAt(j));
-                    if(x.contentEquals("0") ){
-                        v.FillColor=GralogColor.blue;
+            for(i = 0; i < Math.pow(3, nVertices); ++i)
+            {
+                StringBuilder str=ConvertToBase3(i,nVertices);
+                if(check(str,s))
+                {
+                    int j = 0;
+                    for(Vertex v: vertices) {
+                        String x = Character.toString(str.charAt(j));
+                        switch (x) {
+                            case "0":
+                                v.FillColor=GralogColor.blue;
+                                break;
+                            case "1":
+                                v.FillColor=GralogColor.green;
+                                break;
+                            default:
+                                v.FillColor=GralogColor.red;
+                                break;
+                        }
+                        ++j;
                     }
-                    else if(x.contentEquals("1") ){
-                        v.FillColor=GralogColor.green;
+                    if(onprogress!= null) {
+                        onprogress.OnProgress(s);
                     }
-                    else{
-                        v.FillColor=GralogColor.red;
-                    }
-                    j=j+1;
-               }
-                if(onprogress!= null) {
-                    onprogress.OnProgress(s);
+                    Thread.sleep(3000);
+                    break;
+                    // return "Arrangement possible"; 
                 }
-                Thread.sleep(3000);
-                break;
-       //     return "Arrangement possible"; 
             }
-            }
-              if (onprogress!= null) {
+            if(onprogress != null)
+            {
                 onprogress.OnProgress(s);
-              }
-        if(i==Math.pow(3, nVertices)){
-         
-            s.WriteToFile("contradiction" + contradictions + ".graphml");
-            contradictions++;
-            return "Contradiction found!!";
-        
+            }
+            if(i == Math.pow(3, nVertices))
+            {
+                s.WriteToFile("contradiction" + contradictions + ".graphml");
+                ++contradictions;
+                return "Contradiction found!";
+
+            }
         }
-    }
         return "All checks passed";
     }
 }

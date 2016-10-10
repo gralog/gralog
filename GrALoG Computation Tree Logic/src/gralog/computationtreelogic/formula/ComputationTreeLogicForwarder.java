@@ -1,7 +1,6 @@
 
 package gralog.computationtreelogic.formula;
 
-import gralog.structure.*;
 import gralog.modallogic.KripkeStructure;
 import gralog.modallogic.World;
 import java.util.HashSet;

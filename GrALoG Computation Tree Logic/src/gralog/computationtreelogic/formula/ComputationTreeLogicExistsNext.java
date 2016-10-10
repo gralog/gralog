@@ -2,7 +2,6 @@
 package gralog.computationtreelogic.formula;
 
 import gralog.modallogic.KripkeStructure;
-import gralog.modallogic.Action;
 import gralog.modallogic.World;
 import gralog.structure.*;
 import java.util.HashSet;
@@ -19,7 +18,7 @@ public class ComputationTreeLogicExistsNext extends ComputationTreeLogicFormula
     @Override
     public HashSet<World> Interpretation(KripkeStructure structure)
     {
-        HashSet<World> result = new HashSet<World>();
+        HashSet<World> result = new HashSet<>();
         HashSet<World> subresult = subformula.Interpretation(structure);
 
         // the result is the set of predecessors of subresult

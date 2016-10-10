@@ -31,11 +31,11 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
     protected Set<Vertex> Vertices;
     protected Set<Edge> Edges;
     
-    Set<StructureListener> listeners = new HashSet<StructureListener>();
+    Set<StructureListener> listeners = new HashSet<>();
     
     public Structure() {
-        Vertices = new HashSet<Vertex>();
-        Edges = new HashSet<Edge>();
+        Vertices = new HashSet<>();
+        Edges = new HashSet<>();
     }
     
 
@@ -85,7 +85,7 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         Vertices.add(v);
     }
     public void RemoveVertex(Vertex v) {
-        Set<Edge> deletedEdges = new HashSet<Edge>();
+        Set<Edge> deletedEdges = new HashSet<>();
         for(Edge e : Edges)
             if(e.ContainsVertex(v))
                 deletedEdges.add(e);
@@ -148,10 +148,11 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
     
     
     
+    @Override
     public Element ToXml(Document doc) throws Exception {
         Element snode = super.ToXml(doc);
 
-        HashMap<Vertex, String> ids = new HashMap<Vertex, String>();
+        HashMap<Vertex, String> ids = new HashMap<>();
         Integer i = 1;
         for(Vertex v : Vertices)
         {
@@ -200,13 +201,13 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         
         HashMap<String,Vertex> VertexRegister = new HashMap<>();
         HashMap<Edge, Element> LoadedFrom = new HashMap<>();
-        Vector<Edge> TempEdges = new Vector<Edge>();
+        Vector<Edge> TempEdges = new Vector<>();
         
         NodeList children = gnode.getChildNodes();
         for(int i = 0; i < children.getLength(); ++i)
         {
             Node childNode = children.item(i);
-            if (childNode.getNodeType() != childNode.ELEMENT_NODE)
+            if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
             Element child = (Element) childNode;
@@ -252,7 +253,7 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         
         for(int i = children.getLength()-1; i >= 0; --i) {
             Node childNode = children.item(i);
-            if (childNode.getNodeType() != childNode.ELEMENT_NODE)
+            if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
             Element child = (Element)childNode;
             

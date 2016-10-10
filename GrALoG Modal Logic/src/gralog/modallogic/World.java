@@ -15,7 +15,6 @@ import gralog.plugins.XmlName;
 import gralog.structure.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import java.util.HashSet;
 
 /**
  *

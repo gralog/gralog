@@ -6,7 +6,7 @@
 package gralog.generator;
 
 import gralog.structure.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  *
@@ -32,7 +32,7 @@ public class Grid extends Generator {
         
         UndirectedGraph result = new UndirectedGraph();
         
-        Vector<Vertex> last = new Vector<Vertex>();
+        ArrayList<Vertex> last = new ArrayList<>();
         for(int j = 0; j < n; j++)
         {
             Vertex temp = result.CreateVertex();
@@ -40,13 +40,13 @@ public class Grid extends Generator {
             temp.Coordinates.add(1d);
             temp.Coordinates.add(2d*j + 1d);
             if(j > 0)
-                result.AddEdge(result.CreateEdge(last.elementAt(j-1), temp));
+                result.AddEdge(result.CreateEdge(last.get(j-1), temp));
             result.AddVertex(temp);
         }
         
         for(int i = 1; i < n; i++)
         {
-            Vector<Vertex> next = new Vector<Vertex>();
+            ArrayList<Vertex> next = new ArrayList<>();
             Vertex lasttemp = null;
             for(int j = 0; j < n; j++)
             {
@@ -56,7 +56,7 @@ public class Grid extends Generator {
                 temp.Coordinates.add(2d*j + 1d);
                 if(j > 0)
                     result.AddEdge(result.CreateEdge(lasttemp, temp));
-                result.AddEdge(result.CreateEdge(last.elementAt(j), temp));
+                result.AddEdge(result.CreateEdge(last.get(j), temp));
                 
                 result.AddVertex(temp);
                 lasttemp = temp;

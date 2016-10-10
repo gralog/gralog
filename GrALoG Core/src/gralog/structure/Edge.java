@@ -25,7 +25,7 @@ import org.w3c.dom.NodeList;
 @XmlName(name="edge")
 public class Edge extends XmlMarshallable implements IMovable {
     
-    Set<EdgeListener> listeners = new HashSet<EdgeListener>();
+    Set<EdgeListener> listeners = new HashSet<>();
     
     public String Label = "";
     public Double Cost = 1.0d;
@@ -37,9 +37,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public Double Width = 2.54/96; // cm
     public GralogColor Color = GralogColor.black;
     
-    public Vector<EdgeIntermediatePoint> intermediatePoints = new Vector<EdgeIntermediatePoint>();
-    
-    
+    public Vector<EdgeIntermediatePoint> intermediatePoints = new Vector<>();
     
     private Vertex source = null;
     private Vertex target = null;
@@ -78,6 +76,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         return result;
     }
 
+    @Override
     public void Move(Vector<Double> offset) {
         for(EdgeIntermediatePoint between : intermediatePoints)
             between.Move(offset);
@@ -239,7 +238,6 @@ public class Edge extends XmlMarshallable implements IMovable {
         if( distanceTemp < MinDistance )
         {
             insertionIndex = intermediatePoints.size();
-            MinDistance = distanceTemp;
         }
         
         EdgeIntermediatePoint result = new EdgeIntermediatePoint(x,y);
@@ -313,7 +311,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         for(int i = 0; i < children.getLength(); ++i)
         {
             Node childNode = children.item(i);
-            if (childNode.getNodeType() != childNode.ELEMENT_NODE)
+            if(childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
             Element child = (Element) childNode;
@@ -326,7 +324,6 @@ public class Edge extends XmlMarshallable implements IMovable {
             }
         }
     }
-    
     
     protected void notifyEdgeListeners() {
         for(EdgeListener listener : listeners)

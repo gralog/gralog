@@ -26,10 +26,11 @@ import java.util.Set;
 )
 public class WinningRegionPlayer1 extends WinningRegionPlayer0
 {
+    @Override
     public Object Run(FiniteGame game, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception
     {
         HashMap<FiniteGamePosition, Integer> winningRegions = WinningRegions(game);
-        HashSet<Vertex> result = new HashSet<Vertex>();
+        HashSet<Vertex> result = new HashSet<>();
         for(Vertex v : game.getVertices())
             if(winningRegions.containsKey((FiniteGamePosition)v))
                 if(winningRegions.get((FiniteGamePosition)v) == 1)

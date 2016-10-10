@@ -7,7 +7,6 @@ import gralog.modallogic.World;
 import gralog.modalmucalculus.structure.ParityGame;
 import gralog.modalmucalculus.structure.ParityGamePosition;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 

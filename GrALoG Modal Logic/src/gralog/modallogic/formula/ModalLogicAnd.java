@@ -25,7 +25,7 @@ public class ModalLogicAnd extends ModalLogicFormula
         HashSet<World> rresult = right.Interpretation(structure);
         
         // intersection
-        HashSet<World> result = new HashSet<World>();
+        HashSet<World> result = new HashSet<>();
         for(World w : lresult)
             if(rresult.contains(w))
                 result.add(w);

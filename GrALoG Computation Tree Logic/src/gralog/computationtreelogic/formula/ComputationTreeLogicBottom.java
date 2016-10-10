@@ -16,7 +16,7 @@ public class ComputationTreeLogicBottom extends ComputationTreeLogicFormula
     @Override
     public HashSet<World> Interpretation(KripkeStructure structure)
     {
-        return new HashSet<World>();
+        return new HashSet<>();
     }
 
 }

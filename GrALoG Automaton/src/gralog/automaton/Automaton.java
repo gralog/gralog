@@ -35,9 +35,9 @@ public class Automaton extends Structure<State, Transition> {
  
     
     public HashSet<State> EpsilonHull(Set<State> start) {
-        HashSet<State> result = new HashSet<State>();
-        HashSet<State> lastiteration = new HashSet<State>();
-        HashSet<State> currentiteration = new HashSet<State>();
+        HashSet<State> result = new HashSet<>();
+        HashSet<State> lastiteration = new HashSet<>();
+        HashSet<State> currentiteration = new HashSet<>();
         
         result.addAll(start);
         lastiteration.addAll(start);

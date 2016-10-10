@@ -10,7 +10,6 @@ import gralog.structure.*;
 import java.util.HashMap;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.util.StringTokenizer;
 
@@ -36,7 +35,7 @@ public class CommaSeparatedValuesImport extends ImportFilter {
         BufferedReader br = new BufferedReader(new InputStreamReader(stream));
         String s = br.readLine();
 
-        HashMap<String, Vertex> NodeIndex = new HashMap<String, Vertex>();
+        HashMap<String, Vertex> NodeIndex = new HashMap<>();
         
         while (s != null) {
 

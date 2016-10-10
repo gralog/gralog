@@ -5,14 +5,13 @@
  */
 package gralog.automaton.generator;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import gralog.automaton.*;
 import gralog.generator.Generator;
 import gralog.generator.GeneratorDescription;
 import gralog.generator.GeneratorParameters;
-import gralog.generator.StringGeneratorParameter;
 import gralog.structure.Structure;
 
 /**
@@ -41,12 +40,12 @@ public class GeneratorKnuthMorrisPratt extends Generator {
         
         Automaton result = new Automaton();
         int n = str.length();
-        HashMap<Integer, HashMap<Character, Integer>> delta = new HashMap<Integer, HashMap<Character, Integer>>();
+        HashMap<Integer, HashMap<Character, Integer>> delta = new HashMap<>();
 
         
-        Vector<Boolean> current = new Vector<Boolean>();
-        Vector<Boolean> next = new Vector<Boolean>();
-        Vector<State> states = new Vector<State>();
+        ArrayList<Boolean> current = new ArrayList<>();
+        ArrayList<Boolean> next = new ArrayList<>();
+        ArrayList<State> states = new ArrayList<>();
         for(int i = 0; i < n+1; i++) {
             State s = result.CreateVertex();
             s.Coordinates.add(i*3d);
@@ -59,7 +58,7 @@ public class GeneratorKnuthMorrisPratt extends Generator {
             
             current.add(false);
             next.add(false);
-            delta.put(i, new HashMap<Character, Integer>());
+            delta.put(i, new HashMap<>());
         }
         current.set(0, true);
         next.set(0, true);
@@ -80,7 +79,7 @@ public class GeneratorKnuthMorrisPratt extends Generator {
                 }
             
             current = next;
-            next = new Vector<Boolean>();
+            next = new ArrayList<>();
             for(int f = 0; f < n+1; f++)
                 next.add(false);
             next.set(0, true);

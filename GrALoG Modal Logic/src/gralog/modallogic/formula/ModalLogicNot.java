@@ -20,7 +20,7 @@ public class ModalLogicNot extends ModalLogicFormula
     @Override
     public HashSet<World> Interpretation(KripkeStructure structure)
     {
-        HashSet<World> result = new HashSet<World>();
+        HashSet<World> result = new HashSet<>();
         HashSet<World> fresult = formula.Interpretation(structure);
         
         // difference to set of all worlds

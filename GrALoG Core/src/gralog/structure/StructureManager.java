@@ -8,8 +8,8 @@ package gralog.structure;
 import static gralog.plugins.PluginManager.InstantiateClass;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
@@ -34,9 +34,8 @@ public class StructureManager {
     }
     
     
-    public static Vector<String> getStructureClasses() {
-        Vector<String> result = new Vector<>();
-        result.addAll(StructureNames.keySet());
+    public static List<String> getStructureClasses() {
+        ArrayList<String> result = new ArrayList<>(StructureNames.keySet());
         result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }

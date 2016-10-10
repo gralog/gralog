@@ -82,6 +82,7 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
         return 0.0d;
     }
     
+    @Override
     public Element ToXml(Document doc) throws Exception {
         Element enode = super.ToXml(doc);
         enode.setAttribute("x", this.get(0).toString());

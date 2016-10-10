@@ -7,8 +7,9 @@ package gralog.treedecomposition;
 
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Vector;
+import java.util.ArrayList;
 import gralog.structure.*;
+import java.util.List;
 
 /**
  *
@@ -16,9 +17,9 @@ import gralog.structure.*;
  */
 public class Bag {
     
-    public Set<Vertex> Nodes = new HashSet<Vertex>();
+    public Set<Vertex> Nodes = new HashSet<>();
     
-    public Vector<Bag> ChildBags = new Vector<Bag>();
+    public List<Bag> ChildBags = new ArrayList<>();
     
     @Override
     public String toString()

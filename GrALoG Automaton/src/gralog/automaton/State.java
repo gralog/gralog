@@ -65,6 +65,7 @@ public class State extends Vertex {
         return id;
     }
     
+    @Override
     public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
         
         if(highlights != null && highlights.contains(this))

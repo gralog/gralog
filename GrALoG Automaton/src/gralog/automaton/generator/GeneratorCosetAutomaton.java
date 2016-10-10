@@ -5,13 +5,12 @@
  */
 package gralog.automaton.generator;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 import gralog.automaton.*;
 import gralog.generator.Generator;
 import gralog.generator.GeneratorDescription;
 import gralog.generator.GeneratorParameters;
-import gralog.generator.StringGeneratorParameter;
 import gralog.structure.Structure;
 
 @GeneratorDescription(
@@ -36,7 +35,7 @@ public class GeneratorCosetAutomaton extends Generator {
         double diameter = 10d;
         
         Automaton result = new Automaton();
-        Vector<State> states = new Vector<State>();
+        ArrayList<State> states = new ArrayList<>();
         
         for(int i = 0; i < n; i++)
         {
@@ -51,11 +50,11 @@ public class GeneratorCosetAutomaton extends Generator {
 
         for(int i = 0; i < n; i++)
         {
-            State statei = states.elementAt(i);
+            State statei = states.get(i);
             for(int s = 0; s < Base; s++)
             {
                 int j = (i * Base + s) % n;                     // Here's the magic
-                State statej = states.elementAt(j);
+                State statej = states.get(j);
                 
                 Transition transition = result.CreateEdge(statei, statej);
                 transition.Symbol = "" + Alphabet.charAt(s);
@@ -64,7 +63,7 @@ public class GeneratorCosetAutomaton extends Generator {
             }
         }
         
-        State q0 = states.elementAt(0);
+        State q0 = states.get(0);
         q0.StartState = true;
         q0.FinalState = true;
         

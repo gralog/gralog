@@ -35,15 +35,14 @@ public class WordAcceptance extends Algorithm {
     
     public boolean Accepts(Automaton automaton, String str) {
         
-        HashSet<State> CurrentStates = new HashSet<State>();
+        HashSet<State> CurrentStates = new HashSet<>();
         for(Vertex v : automaton.getVertices())
             if(v instanceof State)
                 if(((State)v).StartState)
                     CurrentStates.add((State)v);
         CurrentStates = automaton.EpsilonHull(CurrentStates);
 
-        
-        HashSet<State> NextStates = new HashSet<State>();
+        HashSet<State> NextStates = new HashSet<>();
         for(int i = 0; i < str.length(); i++)
         {
             String stri = ""+str.charAt(i);
@@ -60,7 +59,6 @@ public class WordAcceptance extends Algorithm {
             NextStates = Temp;
             NextStates.clear();
         }
-            
         
         for(State s : CurrentStates)
             if(s.FinalState)

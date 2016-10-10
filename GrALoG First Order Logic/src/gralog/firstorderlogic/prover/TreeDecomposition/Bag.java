@@ -8,20 +8,21 @@ package gralog.firstorderlogic.prover.TreeDecomposition;
 import gralog.structure.Vertex;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author Hv
  */
 public class Bag {
-    public String caption=new String("");
-    public String assignment=new String("");
-    public Boolean eval=new Boolean(false);
-    public Set<Vertex> Nodes = new HashSet<Vertex>();
-    public Vector<Bag> ChildBags = new Vector<Bag>();
+    public String caption="";
+    public String assignment="";
+    public Boolean eval=false;
+    public Set<Vertex> Nodes = new HashSet<>();
+    public List<Bag> ChildBags = new ArrayList<>();
  
-     @Override
+    @Override
     public String toString()
     {
         return assignment+ " " +caption;

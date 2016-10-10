@@ -20,12 +20,10 @@ import java.util.jar.JarFile;
 import java.lang.reflect.*;
 import java.util.*;
 
-
 /**
  *
  * @author viktor
  */
-
 public class PluginManager {
 
     
@@ -76,9 +74,8 @@ public class PluginManager {
             if(ClassRegister.containsKey(xmlAlias))
                 throw new Exception("class name \"" + xmlAlias + "\" already exists!");
         
-        Constructor ctor = null;
         try {
-            ctor = aClass.getConstructor(new Class[]{});
+            Constructor ctor = aClass.getConstructor(new Class[]{});
             // Register the Class
             ClassRegister.put(classname, ctor);
             if(xmlAlias != null)
@@ -102,7 +99,6 @@ public class PluginManager {
                 if(sup == ExportFilter.class)                                   // Export Filter
                     ExportFilterManager.RegisterExportFilterClass(aClass, classname);
             }
-            
         } catch(NoSuchMethodException e)
         {
         }
@@ -122,7 +118,7 @@ public class PluginManager {
 
 
         // Load the classes
-        Collection<Class<?>> classes = new ArrayList<Class<?>>();
+        Collection<Class<?>> classes = new ArrayList<>();
         JarFile jar = new JarFile(pathToPlugin);
         for (Enumeration<JarEntry> entries = jar.entries() ; entries.hasMoreElements() ;)
         {
@@ -135,7 +131,6 @@ public class PluginManager {
                 classes.add(c);
             }
         }
-
         
         // Register the classes
         for (Class<?> c : classes)

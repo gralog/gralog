@@ -43,7 +43,7 @@ public class TikZExport extends ExportFilter {
 
         
         
-        HashMap<State, Integer> NodeIndex = new HashMap<State,Integer>();
+        HashMap<State, Integer> NodeIndex = new HashMap<>();
         Integer i = 1;
         Set<Vertex> V = structure.getVertices();
         for(Vertex v : V){

@@ -7,9 +7,9 @@ package gralog.generator;
 
 import static gralog.plugins.PluginManager.InstantiateClass;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.Vector;
+import java.util.List;
 
 /**
  *
@@ -31,9 +31,8 @@ public class GeneratorManager {
         GeneratorDescriptions.put(descr.name(), descr);
     }
 
-    public static Vector<String> getGeneratorClasses() {
-        Vector<String> result = new Vector<>();
-        result.addAll(GeneratorNames.keySet());
+    public static List<String> getGeneratorClasses() {
+        ArrayList<String> result = new ArrayList<>(GeneratorNames.keySet());
         result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }

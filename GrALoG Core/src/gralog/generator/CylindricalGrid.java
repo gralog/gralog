@@ -6,7 +6,7 @@
 package gralog.generator;
 
 import gralog.structure.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  *
@@ -32,21 +32,21 @@ public class CylindricalGrid extends Generator {
         
         DirectedGraph result = new DirectedGraph();
         
-        Vector<Vertex> first = new Vector<Vertex>();
+        ArrayList<Vertex> first = new ArrayList<>();
         for(int j = 0; j < n; j++) {
             Vertex temp = result.CreateVertex();
             first.add(temp);
             temp.Coordinates.add(Math.sin(0 * 2*Math.PI / n) * 2 * (j+2));
             temp.Coordinates.add(Math.cos(0 * 2*Math.PI / n) * 2 * (j+2));
             if(j > 0)
-                result.AddEdge(result.CreateEdge(first.elementAt(j-1), temp));
+                result.AddEdge(result.CreateEdge(first.get(j-1), temp));
             result.AddVertex(temp);
         }
         
-        Vector<Vertex> last = first;
+        ArrayList<Vertex> last = first;
         for(int i = 1; i < n; i++)
         {
-            Vector<Vertex> next = new Vector<Vertex>();
+            ArrayList<Vertex> next = new ArrayList<>();
             Vertex lasttemp = null;
             for(int j = 0; j < n; j++) {
                 Vertex temp = result.CreateVertex();
@@ -59,7 +59,7 @@ public class CylindricalGrid extends Generator {
                     else
                         result.AddEdge(result.CreateEdge(temp, lasttemp));
                 
-                result.AddEdge(result.CreateEdge(last.elementAt(j), temp));
+                result.AddEdge(result.CreateEdge(last.get(j), temp));
                 
                 result.AddVertex(temp);
                 lasttemp = temp;
@@ -69,7 +69,7 @@ public class CylindricalGrid extends Generator {
         }
         
         for(int i = 0; i < n; i++)
-            result.AddEdge(result.CreateEdge(last.elementAt(i), first.elementAt(i)));
+            result.AddEdge(result.CreateEdge(last.get(i), first.get(i)));
         
         return result;
     }

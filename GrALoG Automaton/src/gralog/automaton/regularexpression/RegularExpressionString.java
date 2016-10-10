@@ -7,7 +7,6 @@ package gralog.automaton.regularexpression;
 
 import gralog.automaton.*;
 import gralog.rendering.VectorND;
-import java.util.Vector;
 
 /**
  *

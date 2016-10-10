@@ -1,13 +1,10 @@
 package gralog.firstorderlogic.view;
 
 import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
-import gralog.firstorderlogic.prover.TreeDecomposition.FOQueryResult;
 import gralog.gralogfx.views.GridPaneView;
 import gralog.gralogfx.views.ViewDescription;
 
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.css.PseudoClass;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -28,9 +25,6 @@ import javafx.scene.text.Text;
  */
 @ViewDescription(forClass=gralog.firstorderlogic.prover.TreeDecomposition.Bag.class)
 public class BagView extends GridPaneView{
-
-   
-    
     protected void FillTreeView(TreeItem node, Bag bag)
     {
         node.setValue(bag);
@@ -91,18 +85,14 @@ public class BagView extends GridPaneView{
                 };
             });
             
-            treeView.getSelectionModel().selectedItemProperty().addListener( new ChangeListener() {
-
-                   @Override
-                   public void changed(ObservableValue observable, Object oldValue, Object newValue)
-                   {
-                       TreeItem selectedItem = (TreeItem) newValue;
-                       Bag bag = (Bag)selectedItem.getValue();
-                       structurePane.ClearSelection();
-                       structurePane.SelectAll(bag.Nodes);
-                   }
-
-                 });
+            treeView.getSelectionModel()
+                    .selectedItemProperty()
+                    .addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+                TreeItem selectedItem = (TreeItem) newValue;
+                Bag bag = (Bag)selectedItem.getValue();
+                structurePane.ClearSelection();
+                structurePane.SelectAll(bag.Nodes);
+            });
 
             ColumnConstraints columnConstraints = new ColumnConstraints();
             columnConstraints.setPercentWidth(100);
@@ -116,5 +106,4 @@ public class BagView extends GridPaneView{
             
         }
     }
-
 }

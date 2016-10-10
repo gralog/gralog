@@ -116,6 +116,7 @@ public class BuechiLanguageEmptiness extends Algorithm
                     }
             }
 
+            // TODO: Check if lastCycleEdge can be null.
             String cycle = lastCycleEdge.Symbol;
             for(Vertex it = lastCycleMember; it != null; it = finalStateReach.get(it))
             {

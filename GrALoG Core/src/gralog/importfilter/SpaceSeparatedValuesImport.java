@@ -5,16 +5,6 @@
  */
 package gralog.importfilter;
 
-import gralog.structure.*;
-
-import java.util.HashMap;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.util.StringTokenizer;
-
-
 /**
  *
  * @author viktor

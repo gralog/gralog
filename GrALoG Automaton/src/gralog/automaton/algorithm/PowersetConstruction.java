@@ -32,7 +32,7 @@ public class PowersetConstruction extends Algorithm {
         PowersetConstructionTreeNode tree = new PowersetConstructionTreeNode(null,null,null);
         
        
-        Set<State> Q0 = new HashSet<State>();
+        Set<State> Q0 = new HashSet<>();
         Set<Vertex> Q = a.getVertices();
         Set<Edge> delta = a.getEdges();
         for(Vertex v : Q)
@@ -43,7 +43,7 @@ public class PowersetConstruction extends Algorithm {
         q0.StartState = true;
 
 
-        Set<Character> Alphabet = new HashSet<Character>();
+        Set<Character> Alphabet = new HashSet<>();
         for(Edge e : delta)
             if(e instanceof Transition)
             {
@@ -53,9 +53,9 @@ public class PowersetConstruction extends Algorithm {
             }
         
         
-        Queue<Set<State>> queue = new LinkedList<Set<State>>();
+        Queue<Set<State>> queue = new LinkedList<>();
         queue.add(Q0);
-        Set<State> knownStates = new HashSet<State>();
+        Set<State> knownStates = new HashSet<>();
         knownStates.add(q0);
         while(!queue.isEmpty())
         {
@@ -63,10 +63,12 @@ public class PowersetConstruction extends Algorithm {
             
             for(Character c : Alphabet)
             {
-                Set<State> cSuccessor = new HashSet<State>();
+                Set<State> cSuccessor = new HashSet<>();
                 for(Edge e : delta)
+                {
                     if(e instanceof Transition && front.contains(e.getSource()) && ((Transition)e).Symbol.equals(c.toString()))
                         cSuccessor.add((State)e.getTarget());
+                }
                 cSuccessor = a.EpsilonHull(cSuccessor);
                 
                 State src = tree.getContentForSet(a, result, front);

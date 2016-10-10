@@ -8,8 +8,8 @@ package gralog.importfilter;
 import static gralog.plugins.PluginManager.InstantiateClass;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -34,8 +34,8 @@ public class ImportFilterManager {
         ImportFilterDescriptions.put(descr.name(), descr);
     }
     
-    public static Vector<String> getImportFilterClasses() {
-        Vector<String> result = new Vector<>();
+    public static List<String> getImportFilterClasses() {
+        ArrayList<String> result = new ArrayList<>();
         result.addAll(ImportFilterNames.keySet());
         result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;

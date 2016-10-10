@@ -34,27 +34,23 @@ public class Minimization extends Algorithm {
     public static Automaton Minimize(Automaton automaton)
     {
         int n = 0;
-        Vector<State> States = new Vector<State>();
-        HashMap<State,Integer> StateIndex = new HashMap<State,Integer>();
+        ArrayList<State> States = new ArrayList<>();
+        HashMap<State,Integer> StateIndex = new HashMap<>();
         for(Vertex v : automaton.getVertices())
         {
             States.add((State)v);
             StateIndex.put((State)v, n++);
         }
 
-
-        
         // Create Initial Table
-        Vector<Vector<Boolean>> Table = new Vector<Vector<Boolean>>();
+        ArrayList<ArrayList<Boolean>> Table = new ArrayList<>();
         for(int y = 0; y < n; y++) // iterate over table-rows
         {
-            Table.add(new Vector<Boolean>());
+            Table.add(new ArrayList<>());
             for(int x = 0; x < n; x++) // iterate over row-cells
                 Table.get(y).add(States.get(y).FinalState != States.get(x).FinalState); // xor
         }
-        
-        
-        
+
         // Refine Table
         for(int i = 0; i < n; i++) // n times do
             for(int y = 0; y < n; y++) // iterate over table-rows
@@ -90,8 +86,8 @@ public class Minimization extends Algorithm {
         Automaton result = new Automaton();
         
         // Build State Set
-        HashMap<State,State> NerodeRelation_EquivalenceClass = new HashMap<State,State>();
-        HashMap<State,Integer> NerodeRelation_EquivalenceClassSize = new HashMap<State,Integer>();
+        HashMap<State,State> NerodeRelation_EquivalenceClass = new HashMap<>();
+        HashMap<State,Integer> NerodeRelation_EquivalenceClassSize = new HashMap<>();
         for(int y = 0; y < n; y++)
         {
             State equivalent = null;
@@ -133,7 +129,7 @@ public class Minimization extends Algorithm {
             NerodeRelation_EquivalenceClass.get(States.get(y)).FinalState = States.get(y).FinalState;
         
         // Set Transitions
-        HashMap<State, String> TransitionDefined = new HashMap<State, String>();
+        HashMap<State, String> TransitionDefined = new HashMap<>();
         for(Edge e : automaton.getEdges())
         {
             Transition t = (Transition)e;
@@ -143,7 +139,7 @@ public class Minimization extends Algorithm {
 	        TransitionDefined.put(resultSource, "");
 	        
 	    String foo = TransitionDefined.get(resultSource);
-	    if(foo.indexOf(""+t.Symbol) < 0)
+	    if(!foo.contains("" + t.Symbol))
 	    {
 	        TransitionDefined.put(resultSource, ""+t.Symbol);
 	        Transition resultTransition = (Transition)result.CreateEdge();

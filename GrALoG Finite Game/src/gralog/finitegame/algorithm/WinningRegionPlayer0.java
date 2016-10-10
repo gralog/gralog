@@ -28,10 +28,10 @@ public class WinningRegionPlayer0 extends Algorithm
 {
     protected HashMap<FiniteGamePosition, Integer> WinningRegions(FiniteGame game)
     {
-        HashMap<FiniteGamePosition, Integer> result = new HashMap<FiniteGamePosition, Integer>();
+        HashMap<FiniteGamePosition, Integer> result = new HashMap<>();
         Set<Vertex> V = game.getVertices();
-        Set<FiniteGamePosition> LastIteration = new HashSet<FiniteGamePosition>();
-        Set<FiniteGamePosition> CurrentIteration = new HashSet<FiniteGamePosition>();
+        Set<FiniteGamePosition> LastIteration = new HashSet<>();
+        Set<FiniteGamePosition> CurrentIteration = new HashSet<>();
         
         // collect terminal positions
         for(Vertex v : V)
@@ -118,7 +118,7 @@ public class WinningRegionPlayer0 extends Algorithm
     public Object Run(FiniteGame game, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception
     {
         HashMap<FiniteGamePosition, Integer> winningRegions = WinningRegions(game);
-        HashSet<Vertex> result = new HashSet<Vertex>();
+        HashSet<Vertex> result = new HashSet<>();
         for(Vertex v : game.getVertices())
             if(winningRegions.containsKey((FiniteGamePosition)v))
                 if(winningRegions.get((FiniteGamePosition)v) == 0)
