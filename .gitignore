@@ -1,8 +1,11 @@
-
 # netbeans
 */dist/
 */build/
-*/nbproject/private/*
+*/nbproject/private/
+*/nbproject/build-impl.xml
+*/nbproject/genfiles.properties
+*/nbproject/jfx-impl_backup*.xml
+*/nbproject/UPDATED.TXT
 
 # jflex backups
 *.java~
@@ -16,4 +19,3 @@
 
 # Mac OS-X
 *.DS_Store
-
