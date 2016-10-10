@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.algorithm.CoordinateClass;
+import gralog.rendering.Vector2D;
 /**
  *
  * @author viktor
@@ -97,8 +98,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
          CoordinateClass coor) {
         
          FiniteGamePosition parent=new FiniteGamePosition();
-         parent.Coordinates.add(coor.x);
-         parent.Coordinates.add(coor.y);
+         parent.Coordinates = new Vector2D(coor.x, coor.y);
       
         coor.y=coor.y+1;   
          String phi="\u2205";

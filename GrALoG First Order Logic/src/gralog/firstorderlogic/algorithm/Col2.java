@@ -14,6 +14,7 @@ import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.progresshandler.*;
 import gralog.rendering.GralogColor;
+import gralog.rendering.Vector2D;
 import java.util.*;
 
 @AlgorithmDescription(
@@ -78,8 +79,7 @@ public class Col2 extends Algorithm{
      Integer coor=1;
      for(Integer i=0;i<nVertices;i++){
          Vertex v=s.CreateVertex();
-         v.Coordinates.add(Math.random()*100);
-         v.Coordinates.add(Math.random()*100);
+         v.Coordinates = new Vector2D(Math.random()*100, Math.random()*100);
          v.Label=Integer.toString(i);
         
          s.AddVertex(v);

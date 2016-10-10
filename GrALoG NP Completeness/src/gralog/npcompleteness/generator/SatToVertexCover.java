@@ -10,6 +10,7 @@ import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicFormul
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicNot;
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicVariable;
 import gralog.npcompleteness.propositionallogic.parser.PropositionalLogicParser;
+import gralog.rendering.Vector2D;
 import gralog.structure.Structure;
 import gralog.structure.UndirectedGraph;
 import gralog.structure.Vertex;
@@ -65,15 +66,13 @@ public class SatToVertexCover extends Generator {
         for(String var : vars)
         {
             Vertex pos = result.CreateVertex(); // the positive literal
-            pos.Coordinates.add(6d*i);
-            pos.Coordinates.add(10d);
+            pos.Coordinates = new Vector2D(6d*i, 10d);
             pos.Label = var;
             result.AddVertex(pos);
             PosNode.put(var, pos);
             
             Vertex neg = result.CreateVertex(); // the negative literal
-            neg.Coordinates.add(6d*i + 2);
-            neg.Coordinates.add(10d);
+            neg.Coordinates = new Vector2D(6d*i + 2, 10d);
             neg.Label = "¬"+var;
             result.AddVertex(neg);
             NegNode.put(var, neg);
@@ -96,18 +95,15 @@ public class SatToVertexCover extends Generator {
             clause.GetLiterals(literals);
             
             Vertex clauseVert1 = result.CreateVertex();
-            clauseVert1.Coordinates.add(5d*i);
-            clauseVert1.Coordinates.add(3d);
+            clauseVert1.Coordinates = new Vector2D(5d*i, 3d);
             result.AddVertex(clauseVert1);
 
             Vertex clauseVert2 = result.CreateVertex();
-            clauseVert2.Coordinates.add(5d*i+2);
-            clauseVert2.Coordinates.add(3d);
+            clauseVert2.Coordinates = new Vector2D(5d*i+2, 3d);
             result.AddVertex(clauseVert2);
 
             Vertex clauseVert3 = result.CreateVertex();
-            clauseVert3.Coordinates.add(5d*i+1);
-            clauseVert3.Coordinates.add(2d);
+            clauseVert3.Coordinates = new Vector2D(5d*i+1, 2d);
             result.AddVertex(clauseVert3);
 
             result.AddEdge(result.CreateEdge(clauseVert1, clauseVert2));

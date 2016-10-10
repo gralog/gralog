@@ -27,7 +27,8 @@ import javax.xml.transform.OutputKeys;
  *
  * @author viktor
  */
-public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMarshallable {
+public abstract class Structure<V extends Vertex, E extends Edge>
+        extends XmlMarshallable implements IMovable {
     protected Set<Vertex> Vertices;
     protected Set<Edge> Edges;
     
@@ -55,7 +56,7 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
     }
 
     
-    public void SnapToGrid(Double GridSize) {
+    public void SnapToGrid(double GridSize) {
         for(Edge e : Edges)
             e.SnapToGrid(GridSize);
         for(Vertex v : Vertices)
@@ -63,8 +64,8 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
     }
     
     
-    public Double MaximumCoordinate(int dimension) {
-        Double result = Double.NEGATIVE_INFINITY;
+    public double MaximumCoordinate(int dimension) {
+        double result = Double.NEGATIVE_INFINITY;
         for(Vertex v : getVertices())
             result = Math.max(result, v.MaximumCoordinate(dimension));
         for(Edge e : getEdges())
@@ -72,7 +73,8 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         return result;
     }
     
-    public void Move(Vector<Double> offset) {
+    @Override
+    public void Move(Vector2D offset) {
         for(Vertex v : getVertices())
             v.Move(offset);
         for(Edge e : getEdges())
@@ -128,7 +130,7 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
                 return true;
         return false;
     }
-    public IMovable FindObject(Double x, Double y)
+    public IMovable FindObject(double x, double y)
     {
         IMovable result = null;
 
@@ -201,7 +203,7 @@ public abstract class Structure<V extends Vertex, E extends Edge> extends XmlMar
         
         HashMap<String,Vertex> VertexRegister = new HashMap<>();
         HashMap<Edge, Element> LoadedFrom = new HashMap<>();
-        Vector<Edge> TempEdges = new Vector<>();
+        ArrayList<Edge> TempEdges = new ArrayList<>();
         
         NodeList children = gnode.getChildNodes();
         for(int i = 0; i < children.getLength(); ++i)

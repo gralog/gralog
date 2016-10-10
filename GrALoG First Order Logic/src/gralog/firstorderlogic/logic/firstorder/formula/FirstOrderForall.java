@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.algorithm.CoordinateClass;
+import gralog.rendering.Vector2D;
 /**
  *
  * @author viktor
@@ -111,8 +112,7 @@ public class FirstOrderForall extends FirstOrderFormula {
          String phi="\u2205";
          String forall="\u2200";
 
-         parent.Coordinates.add(coor.x);
-         parent.Coordinates.add(coor.y);
+         parent.Coordinates = new Vector2D(coor.x, coor.y);
          
          
         parent.Label="( " +  forall + variable + "  (" + subformula1.toString() + ")";

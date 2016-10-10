@@ -9,6 +9,7 @@ import gralog.structure.*;
 import gralog.generator.*;
 import gralog.npcompleteness.propositionallogic.parser.*;
 import gralog.npcompleteness.propositionallogic.formula.*;
+import gralog.rendering.Vector2D;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
@@ -54,28 +55,24 @@ public class SatToDominatingSet extends Generator
         for(String var : vars)
         {
             Vertex pos = result.CreateVertex(); // the positive literal
-            pos.Coordinates.add(6d*i);
-            pos.Coordinates.add(10d);
+            pos.Coordinates = new Vector2D(6d*i, 10d);
             pos.Label = var;
             result.AddVertex(pos);
             PosNode.put(var, pos);
             
             Vertex neg = result.CreateVertex(); // the negative literal
-            neg.Coordinates.add(6d*i + 2);
-            neg.Coordinates.add(10d);
+            neg.Coordinates = new Vector2D(6d*i + 2, 10d);
             neg.Label = "¬"+var;
             result.AddVertex(neg);
             NegNode.put(var, neg);
 
             Vertex dummy1 = result.CreateVertex(); // 2 dummies
-            dummy1.Coordinates.add(6d*i);
-            dummy1.Coordinates.add(12d);
+            dummy1.Coordinates = new Vector2D(6d*i, 12d);
             dummy1.Label = var + "'";
             result.AddVertex(dummy1);
 
             Vertex dummy2 = result.CreateVertex();
-            dummy2.Coordinates.add(6d*i + 2);
-            dummy2.Coordinates.add(12d);
+            dummy2.Coordinates = new Vector2D(6d*i + 2, 12d);
             dummy2.Label = var + "''";
             result.AddVertex(dummy2);
 
@@ -98,8 +95,7 @@ public class SatToDominatingSet extends Generator
         for(PropositionalLogicFormula clause : clauses)
         {
             Vertex clauseVert = result.CreateVertex();
-            clauseVert.Coordinates.add(6d*i);
-            clauseVert.Coordinates.add(1d);
+            clauseVert.Coordinates = new Vector2D(6d*i, 1d);
             clauseVert.Label = clause.toString();
             result.AddVertex(clauseVert);
 

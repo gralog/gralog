@@ -10,6 +10,7 @@ import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicFormul
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicNot;
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicVariable;
 import gralog.npcompleteness.propositionallogic.parser.PropositionalLogicParser;
+import gralog.rendering.Vector2D;
 import gralog.structure.Structure;
 import gralog.structure.DirectedGraph;
 import gralog.structure.Vertex;
@@ -63,8 +64,7 @@ public class SatToHamiltonCycle extends Generator {
         for(PropositionalLogicFormula clause : clauses)
         {
             Vertex cnode = result.CreateVertex();
-            cnode.Coordinates.add(5d + 5d*clausej);
-            cnode.Coordinates.add(-2d);
+            cnode.Coordinates = new Vector2D(5d + 5d*clausej, -2d);
             cnode.Label = clause.toString();
             result.AddVertex(cnode);
             ClauseNodes.put(clause, cnode);
@@ -73,8 +73,7 @@ public class SatToHamiltonCycle extends Generator {
         
         
         Vertex start = result.CreateVertex(); // start node
-        start.Coordinates.add(3d + (5*clauses.size())/2);
-        start.Coordinates.add(1d);
+        start.Coordinates = new Vector2D(3d + (5*clauses.size())/2, 1d);
         start.Label = "start";
         result.AddVertex(start);
         Set<Vertex> lastRow = new HashSet<>();
@@ -86,8 +85,7 @@ public class SatToHamiltonCycle extends Generator {
         for(String var : vars)
         {
             Vertex pos = result.CreateVertex(); // node for positive assignment to var
-            pos.Coordinates.add(1d);
-            pos.Coordinates.add(5*i+3d);
+            pos.Coordinates = new Vector2D(1d, 5*i+3d);
             pos.Label = var;
             result.AddVertex(pos);
             
@@ -110,15 +108,13 @@ public class SatToHamiltonCycle extends Generator {
                 
                 // create 2 nodes for occurence of var in clause
                 Vertex a = result.CreateVertex();
-                a.Coordinates.add(4d + 5*j);
-                a.Coordinates.add(5*i+3d);
+                a.Coordinates = new Vector2D(4d + 5*j, 5*i+3d);
                 result.AddEdge(result.CreateEdge(last, a));
                 result.AddEdge(result.CreateEdge(a, last));
                 result.AddVertex(a);
 
                 Vertex b = result.CreateVertex();
-                b.Coordinates.add(4d + 5*j + 2);
-                b.Coordinates.add(5*i+3d);
+                b.Coordinates = new Vector2D(4d + 5*j + 2, 5*i+3d);
                 result.AddEdge(result.CreateEdge(b, a));
                 result.AddEdge(result.CreateEdge(a, b));
                 result.AddVertex(b);
@@ -160,8 +156,7 @@ public class SatToHamiltonCycle extends Generator {
             }
             
             Vertex neg = result.CreateVertex(); // node for negative assignment to var
-            neg.Coordinates.add(4d + 5*clauses.size());
-            neg.Coordinates.add(5*i+3d);
+            neg.Coordinates = new Vector2D(4d + 5*clauses.size(), 5*i+3d);
             neg.Label = "¬"+var;
             result.AddVertex(neg);
             
@@ -183,8 +178,7 @@ public class SatToHamiltonCycle extends Generator {
         
 
         Vertex end = result.CreateVertex(); // the end-node
-        end.Coordinates.add(3d + (5*clauses.size())/2);
-        end.Coordinates.add(5d*vars.size());
+        end.Coordinates = new Vector2D(3d + (5*clauses.size())/2, 5d*vars.size());
         end.Label = "end";
         result.AddVertex(end);
         for(Vertex l : lastRow)

@@ -8,10 +8,10 @@ package gralog.structure;
 import gralog.plugins.*;
 import gralog.events.*;
 import gralog.rendering.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Vector;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,16 +28,16 @@ public class Edge extends XmlMarshallable implements IMovable {
     Set<EdgeListener> listeners = new HashSet<>();
     
     public String Label = "";
-    public Double Cost = 1.0d;
+    public double Cost = 1.0d;
     
     public Boolean isDirected = true;
     
-    public Double ArrowHeadLength = 0.4d; // cm
-    public Double ArrowHeadAngle = 40d; // degrees
-    public Double Width = 2.54/96; // cm
+    public double ArrowHeadLength = 0.4d; // cm
+    public double ArrowHeadAngle = 40d; // degrees
+    public double Width = 2.54/96; // cm
     public GralogColor Color = GralogColor.black;
     
-    public Vector<EdgeIntermediatePoint> intermediatePoints = new Vector<>();
+    public ArrayList<EdgeIntermediatePoint> intermediatePoints = new ArrayList<>();
     
     private Vertex source = null;
     private Vertex target = null;
@@ -68,26 +68,25 @@ public class Edge extends XmlMarshallable implements IMovable {
     
     
 
-    public Double MaximumCoordinate(int dimension) {
-        Double result = Double.NEGATIVE_INFINITY;
+    public double MaximumCoordinate(int dimension) {
+        double result = Double.NEGATIVE_INFINITY;
         for(EdgeIntermediatePoint between : intermediatePoints)
-            if(between.size() > dimension)
-                result = Math.max(result, between.get(dimension));
+            result = Math.max(result, between.get(dimension));
         return result;
     }
 
     @Override
-    public void Move(Vector<Double> offset) {
+    public void Move(Vector2D offset) {
         for(EdgeIntermediatePoint between : intermediatePoints)
             between.Move(offset);
     }
 
-    public void SnapToGrid(Double GridSize) {
+    public void SnapToGrid(double GridSize) {
         for(EdgeIntermediatePoint between : intermediatePoints)
             between.SnapToGrid(GridSize);
     }
     
-    public IMovable FindObject(Double x, Double y) {
+    public IMovable FindObject(double x, double y) {
         for(EdgeIntermediatePoint p : intermediatePoints)
             if(p.ContainsCoordinate(x,y))
                 return p;
@@ -99,7 +98,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     }
     
     
-    protected Double BinomialCoefficients(int n, int k)
+    protected double BinomialCoefficients(int n, int k)
     {
         double result = 1.0;
         for (int i = 1; i <= k; i++)
@@ -107,16 +106,18 @@ public class Edge extends XmlMarshallable implements IMovable {
         return result;
     }
     
-    protected VectorND BezierCurve(Double t) {
+    protected Vector2D BezierCurve(double t) {
         int n = intermediatePoints.size() + 1;
         
-        VectorND result = this.source.Coordinates.Multiply( Math.pow(1-t, n) );
+        Vector2D result = this.source.Coordinates.Multiply( Math.pow(1-t, n) );
         result = result.Plus(this.target.Coordinates.Multiply( Math.pow(t, n) ));
 
         int i = 1;
         for(EdgeIntermediatePoint between : intermediatePoints)
         {
-            result = result.Plus(between.Coordinates.Multiply(     BinomialCoefficients(n,i) * Math.pow(t,i) * Math.pow(1-t, n-i)  ));
+            result = result.Plus(between.Coordinates.Multiply(
+                BinomialCoefficients(n, i) * Math.pow(t, i) * Math.pow(1 - t, n - i)
+            ));
             i++;
         }
 
@@ -126,10 +127,10 @@ public class Edge extends XmlMarshallable implements IMovable {
     
     public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
         
-        Double fromX = source.Coordinates.get(0);
-        Double fromY = source.Coordinates.get(1);
-        Double toX = target.Coordinates.get(0);
-        Double toY = target.Coordinates.get(1);
+        double fromX = source.Coordinates.get(0);
+        double fromY = source.Coordinates.get(1);
+        double toX = target.Coordinates.get(0);
+        double toY = target.Coordinates.get(1);
 
         /*
         if(intermediatePoints.size() > 0)
@@ -138,8 +139,8 @@ public class Edge extends XmlMarshallable implements IMovable {
 
             for(double t = steps; t < 1; t += steps) {
                 VectorND next = BezierCurve(t);
-                Double tempX = next.get(0);
-                Double tempY = next.get(1);
+                double tempX = next.get(0);
+                double tempY = next.get(1);
 
                 gc.Line(fromX, fromY, tempX, tempY, this.Color, this.Width);
                 fromX = tempX;
@@ -156,8 +157,8 @@ public class Edge extends XmlMarshallable implements IMovable {
         }
         */
         
-        Double tempX = fromX;
-        Double tempY = fromY;
+        double tempX = fromX;
+        double tempY = fromY;
 
         GralogColor color = this.Color;
         if(highlights != null && highlights.contains(this))
@@ -184,11 +185,11 @@ public class Edge extends XmlMarshallable implements IMovable {
             gc.Line(tempX, tempY, toX, toY, color, Width);
     }
     
-    public boolean ContainsCoordinate(Double x, Double y) {
-        Double fromX = source.Coordinates.get(0);
-        Double fromY = source.Coordinates.get(1);
-        Double nextfromX = fromX;
-        Double nextfromY = fromY;
+    public boolean ContainsCoordinate(double x, double y) {
+        double fromX = source.Coordinates.get(0);
+        double fromY = source.Coordinates.get(1);
+        double nextfromX = fromX;
+        double nextfromY = fromY;
 
         for(EdgeIntermediatePoint between : intermediatePoints)
         {
@@ -200,20 +201,20 @@ public class Edge extends XmlMarshallable implements IMovable {
                 return true;
         }
         
-        Double toX = target.Coordinates.get(0);
-        Double toY = target.Coordinates.get(1);
+        double toX = target.Coordinates.get(0);
+        double toY = target.Coordinates.get(1);
         return Vector2D.DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < 0.3;
     }
 
-    public EdgeIntermediatePoint addIntermediatePoint(Double x, Double y)
+    public EdgeIntermediatePoint addIntermediatePoint(double x, double y)
     {
-        Double fromX = source.Coordinates.get(0);
-        Double fromY = source.Coordinates.get(1);
-        Double nextfromX = fromX;
-        Double nextfromY = fromY;
+        double fromX = source.Coordinates.get(0);
+        double fromY = source.Coordinates.get(1);
+        double nextfromX = fromX;
+        double nextfromY = fromY;
         
         int i = 0, insertionIndex = 0;
-        Double MinDistance = Double.MAX_VALUE;
+        double MinDistance = Double.MAX_VALUE;
 
         for(EdgeIntermediatePoint between : intermediatePoints)
         {
@@ -222,7 +223,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             nextfromX = between.get(0);
             nextfromY = between.get(1);
             
-            Double distanceTemp = Vector2D.DistancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY);
+            double distanceTemp = Vector2D.DistancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY);
             if( distanceTemp < MinDistance )
             {
                 insertionIndex = i;
@@ -231,17 +232,17 @@ public class Edge extends XmlMarshallable implements IMovable {
             i++;
         }
         
-        Double toX = target.Coordinates.get(0);
-        Double toY = target.Coordinates.get(1);
+        double toX = target.Coordinates.get(0);
+        double toY = target.Coordinates.get(1);
 
-        Double distanceTemp = Vector2D.DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY);
+        double distanceTemp = Vector2D.DistancePointToLine(x, y, nextfromX, nextfromY, toX, toY);
         if( distanceTemp < MinDistance )
         {
             insertionIndex = intermediatePoints.size();
         }
         
         EdgeIntermediatePoint result = new EdgeIntermediatePoint(x,y);
-        intermediatePoints.insertElementAt(result, insertionIndex);
+        intermediatePoints.add(insertionIndex, result);
         return result;
     }    
     
@@ -249,11 +250,11 @@ public class Edge extends XmlMarshallable implements IMovable {
         return source == v || target == v;
     }
     
-    public Double Length() {
-        Vector2D from = new Vector2D(this.source.Coordinates);
-        Vector2D to = new Vector2D(this.target.Coordinates);
+    public double Length() {
+        Vector2D from = this.source.Coordinates;
+        Vector2D to = this.target.Coordinates;
         
-        Double result = 0.0;
+        double result = 0.0;
         for(EdgeIntermediatePoint between : this.intermediatePoints)
         {
             Vector2D betw = new Vector2D(between.get(0), between.get(1));
@@ -270,10 +271,10 @@ public class Edge extends XmlMarshallable implements IMovable {
         enode.setAttribute("target", ids.get(target));
         enode.setAttribute("isdirected", isDirected ? "true" : "false");
         enode.setAttribute("label", Label);
-        enode.setAttribute("cost", Cost.toString());
-        enode.setAttribute("width", Width.toString());
-        enode.setAttribute("arrowheadlength", ArrowHeadLength.toString());
-        enode.setAttribute("arrowheadangle", ArrowHeadAngle.toString());
+        enode.setAttribute("cost", Double.toString(Cost));
+        enode.setAttribute("width", Double.toString(Width));
+        enode.setAttribute("arrowheadlength", Double.toString(ArrowHeadLength));
+        enode.setAttribute("arrowheadangle", Double.toString(ArrowHeadAngle));
         enode.setAttribute("color", Color.toHtmlString());
         
         for(EdgeIntermediatePoint p : intermediatePoints)

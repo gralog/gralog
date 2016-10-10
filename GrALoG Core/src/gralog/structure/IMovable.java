@@ -5,14 +5,12 @@
  */
 package gralog.structure;
 
-import java.util.Vector;
+import gralog.rendering.Vector2D;
 
 /**
  *
  * @author viktor
  */
 public interface IMovable {
-
-    public void Move(Vector<Double> coords);
-    
+    public void Move(Vector2D coords);
 }

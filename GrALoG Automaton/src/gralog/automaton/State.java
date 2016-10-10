@@ -79,7 +79,7 @@ public class State extends Vertex {
         }
         
         if(StartState) {
-            Vector2D center = new Vector2D(Coordinates);
+            Vector2D center = Coordinates;
             Vector2D intersectionOffset = new Vector2D(-Radius*Math.cos(InitialMarkAngle/180*Math.PI),
                                                        -Radius*Math.sin(InitialMarkAngle/180*Math.PI));
             Vector2D intersection = center.Plus(intersectionOffset);

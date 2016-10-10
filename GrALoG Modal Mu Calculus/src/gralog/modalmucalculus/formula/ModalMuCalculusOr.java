@@ -5,6 +5,7 @@ import gralog.modallogic.KripkeStructure;
 import gralog.modallogic.World;
 import gralog.modalmucalculus.structure.ParityGame;
 import gralog.modalmucalculus.structure.ParityGamePosition;
+import gralog.rendering.Vector2D;
 import gralog.structure.Vertex;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,9 +67,13 @@ public class ModalMuCalculusOr extends ModalMuCalculusFormula
         {
             ParityGamePosition node = p.CreateVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x + scale*(lw + 0.5d));
-            node.Coordinates.add((index.get((World)v).get(left).Coordinates.get(0)
-                                + index.get((World)v).get(right).Coordinates.get(0))/2d);
-            node.Coordinates.add(scale * h * v.Coordinates.get(1) + y);
+            node.Coordinates = new Vector2D(
+                    (
+                        index.get((World)v).get(left).Coordinates.getX() +
+                        index.get((World)v).get(right).Coordinates.getX()
+                    ) / 2d,
+                scale * h * v.Coordinates.getY() + y
+            );
             node.Label = "∨";
             node.Player1Position = true;
             p.AddVertex(node);

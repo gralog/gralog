@@ -8,8 +8,8 @@ package gralog.algorithm;
 import gralog.structure.*;
 import gralog.rendering.*;
 import gralog.progresshandler.*;
+import java.util.ArrayList;
 
-import java.util.Vector;
 import java.util.Set;
 
 /**
@@ -27,19 +27,15 @@ public class SpringEmbedder extends Algorithm {
     public AlgorithmParameters GetParameters(Structure s) {
         return new SpringEmbedderParameters();
     }
-
     
-    protected Vector<Double> dimension_limits = new Vector<Double>();
-
+    protected Vector2D dimension_limits;
     
     public SpringEmbedder()
     {
-        dimension_limits.add(30d);
-        dimension_limits.add(20d);
+        dimension_limits = new Vector2D(30d, 20d);
     }
     
-    
-    public VectorND Coulomb(VectorND u, VectorND v, SpringEmbedderParameters p)
+    public Vector2D Coulomb(Vector2D u, Vector2D v, SpringEmbedderParameters p)
     {
         // coulomb's law:
         //                 u-v    c_repel
@@ -47,16 +43,16 @@ public class SpringEmbedder extends Algorithm {
         //                |u-v|   |u-v|²
 
 
-        Double distance = (u.Minus(v)).Length() / p.unstressed_spring_length;
+        double distance = u.Minus(v).Length() / p.unstressed_spring_length;
         if(distance < 0.00001) // to avoid (near) infinite force
             return u.Normalized().Multiply(p.unstressed_spring_length);
-        VectorND e = (u.Minus(v)).Normalized().Multiply(p.unstressed_spring_length);
+        Vector2D e = (u.Minus(v)).Normalized().Multiply(p.unstressed_spring_length);
         
         Double factor = p.c_repel / (distance*distance);
         return e.Multiply(factor);
     }
 
-    VectorND Hooke(VectorND u, VectorND v, SpringEmbedderParameters p)
+    Vector2D Hooke(Vector2D u, Vector2D v, SpringEmbedderParameters p)
     {
         // hooke's law:
         // attraction force of a spring is proportional to distance
@@ -66,7 +62,7 @@ public class SpringEmbedder extends Algorithm {
             return u.Multiply(0d);
         distance = (distance / p.unstressed_spring_length) - 1d;
 
-        VectorND e = (u.Minus(v)).Normalized().Multiply(p.unstressed_spring_length);
+        Vector2D e = (u.Minus(v)).Normalized().Multiply(p.unstressed_spring_length);
         // e is normalized vector between the two points
 
         return e.Multiply(-p.c_spring * distance);
@@ -75,12 +71,10 @@ public class SpringEmbedder extends Algorithm {
 
     public Object Run(Structure s, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception {
         SpringEmbedderParameters p = (SpringEmbedderParameters)ap;
-        Vector<VectorND> tractions = new Vector<VectorND>();
-        int dimensions = dimension_limits.size();
-        
-        Double maxDim = s.getVertices().size() * p.unstressed_spring_length;
-        for(int i = 1; i < dimensions; i++)
-            dimension_limits.set(i, maxDim);
+        ArrayList<Vector2D> tractions = new ArrayList<>();
+
+        double maxDim = s.getVertices().size() * p.unstressed_spring_length;
+        dimension_limits = new Vector2D(maxDim, maxDim);
 
         /*
         p.unstressed_spring_length = dimension_limits.elementAt(0);
@@ -94,13 +88,14 @@ public class SpringEmbedder extends Algorithm {
         Set<Vertex> vertices = s.getVertices();
         for(Vertex a : vertices)
         {
-            VectorND coordinates = new VectorND();
-            for(int i = 0; i < dimensions; i++)
-                coordinates.add(Math.random() * dimension_limits.elementAt(i));
+            Vector2D coordinates = new Vector2D(
+                    Math.random() * dimension_limits.getX(),
+                    Math.random() * dimension_limits.getY()
+            );
             a.Coordinates = coordinates;
             // should make sure that no two vertices have the same position
             
-            tractions.add(new VectorND());
+            tractions.add(new Vector2D(0d, 0d));
         }
         
         
@@ -110,7 +105,7 @@ public class SpringEmbedder extends Algorithm {
             e.intermediatePoints.clear();
         
 
-        Double max_movement = 0d;
+        double max_movement = 0d;
         int iteration = 0;
         int nextincrease = 50;
         do
@@ -120,24 +115,22 @@ public class SpringEmbedder extends Algorithm {
             int i = 0;
             for(Vertex a : vertices)
             {
-                VectorND traction = tractions.elementAt(i).Multiply(p.friction);
+                Vector2D traction = tractions.get(i).Multiply(p.friction);
 
                 // compute forces on a by the other vertices
-                VectorND aCoordinates = new VectorND(a.Coordinates);
                 for(Vertex b : vertices)
                 {
                     if(b==a)
                         continue;
 
                     // force on a by vertex b
-                    VectorND bCoordinates = new VectorND(b.Coordinates);
-                    traction = traction.Plus(Coulomb(aCoordinates, bCoordinates, p));
+                    traction = traction.Plus(Coulomb(a.Coordinates, b.Coordinates, p));
                     if(s.Adjacent(a,b))
-                        traction = traction.Plus(Hooke(aCoordinates, bCoordinates, p));
+                        traction = traction.Plus(Hooke(a.Coordinates, b.Coordinates, p));
                 }
 
-                tractions.setElementAt(traction, i);
-                i++;
+                tractions.set(i, traction);
+                ++i;
             }
 
 
@@ -145,25 +138,24 @@ public class SpringEmbedder extends Algorithm {
             i = 0;
             for(Vertex a : vertices)
             {
-                VectorND OldCoordinates = a.Coordinates;
-                VectorND NewCoordinates = new VectorND();
-                for(int j = 0; j < dimensions; j++)
-                    NewCoordinates.add(
-                            Math.max(0.0d,
-                                    Math.min(dimension_limits.elementAt(j),
-                                             OldCoordinates.get(j) + p.delta * tractions.elementAt(i).toVector().elementAt(j)   )));
+                Vector2D OldCoordinates = a.Coordinates;
+                Vector2D NewCoordinates = new Vector2D(
+                    Math.max(0.0d,
+                        Math.min(dimension_limits.getX(), OldCoordinates.getX()) + p.delta * tractions.get(i).getX()),
+                    Math.max(0.0d,
+                        Math.min(dimension_limits.getY(), OldCoordinates.getY()) + p.delta * tractions.get(i).getY())
+                );
                 a.Coordinates = NewCoordinates;
 
-                // for the loop-condition
-                Double current_movement = 0.0d;
-                for(int j = 0; j < dimensions; j++)
-                    current_movement += (OldCoordinates.get(j) - NewCoordinates.get(j)) * (OldCoordinates.get(j) - NewCoordinates.get(j));
+                // for the loop condition
+                double current_movement =
+                    (OldCoordinates.getX() - NewCoordinates.getX()) * (OldCoordinates.getX() - NewCoordinates.getX()) +
+                    (OldCoordinates.getY() - NewCoordinates.getY()) * (OldCoordinates.getY() - NewCoordinates.getY());
                 if(Math.sqrt(current_movement) > max_movement)
                     max_movement = Math.sqrt(current_movement);
                 
-                i++;
+                ++i;
             }
-
 
             if(++iteration > nextincrease)
             {

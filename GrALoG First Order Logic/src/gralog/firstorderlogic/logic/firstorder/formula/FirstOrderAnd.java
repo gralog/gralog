@@ -12,6 +12,7 @@ import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
+import gralog.rendering.Vector2D;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -97,8 +98,7 @@ public class FirstOrderAnd extends FirstOrderFormula {
         //and : player 1 position;
         parent.Player1Position=true;
         
-        parent.Coordinates.add(coor.x);
-        parent.Coordinates.add(coor.y);
+        parent.Coordinates = new Vector2D(coor.x, coor.y);
         game.AddVertex(parent);
         CoordinateClass temp=new CoordinateClass();
         temp.x=coor.x+7;

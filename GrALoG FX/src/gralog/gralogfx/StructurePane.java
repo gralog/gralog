@@ -12,7 +12,6 @@ import gralog.gralogfx.events.*;
 
 import java.util.Set;
 import java.util.HashSet;
-import java.util.Vector;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -146,10 +145,11 @@ public class StructurePane extends StackPane implements StructureListener {
                 for(Object o : Dragging)
                     if(o instanceof IMovable)
                     {
-                        Vector<Double> offsets = new Vector<Double>();
-                        offsets.add(mousePositionModel.getX() - LastMouseX);
-                        offsets.add(mousePositionModel.getY() - LastMouseY);
-                        ((IMovable)o).Move(offsets);
+                        Vector2D offset = new Vector2D(
+                                mousePositionModel.getX() - LastMouseX,
+                                mousePositionModel.getY() - LastMouseY
+                        );
+                        ((IMovable)o).Move(offset);
                     }
                 // update model position under mouse
                 // this must not be done when we are dragging the screen!!!!!
@@ -191,8 +191,10 @@ public class StructurePane extends StackPane implements StructureListener {
             LastMouseY = (Double)mousePositionModel.getY();
 
             Vertex v = structure.CreateVertex();
-            v.Coordinates.add(mousePositionModel.getX());
-            v.Coordinates.add(mousePositionModel.getY());
+            v.Coordinates = new Vector2D(
+                    mousePositionModel.getX(),
+                    mousePositionModel.getY()
+            );
             if(SnapToGrid)
                 v.SnapToGrid(GridSize);
             
@@ -264,10 +266,11 @@ public class StructurePane extends StackPane implements StructureListener {
                     for(Object o : Dragging)
                         if(o instanceof IMovable)
                         {
-                            Vector<Double> offsets = new Vector<Double>();
-                            offsets.add(mousePositionModel.getX() - LastMouseX);
-                            offsets.add(mousePositionModel.getY() - LastMouseY);
-                            ((IMovable)o).Move(offsets);
+                            Vector2D offset = new Vector2D(
+                                    mousePositionModel.getX() - LastMouseX,
+                                    mousePositionModel.getY() - LastMouseY
+                            );
+                            ((IMovable)o).Move(offset);
                         }
                     // update model position under mouse
                     // this must not be done when we are dragging the screen!!!!!

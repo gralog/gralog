@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.algorithm.CoordinateClass;
+import gralog.rendering.Vector2D;
 
 /**
  *
@@ -99,8 +100,7 @@ public class FirstOrderOr extends FirstOrderFormula
     
         //or : player 0 position;
         parent.Player1Position=false;
-        parent.Coordinates.add(coor.x);
-        parent.Coordinates.add(coor.y);
+        parent.Coordinates = new Vector2D(coor.x, coor.y);
         game.AddVertex(parent);
         CoordinateClass temp=new CoordinateClass();
         temp.x=coor.x+7;

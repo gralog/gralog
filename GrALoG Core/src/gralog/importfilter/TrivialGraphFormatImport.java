@@ -5,6 +5,7 @@
  */
 package gralog.importfilter;
 
+import gralog.rendering.Vector2D;
 import gralog.structure.*;
 
 import java.util.HashMap;
@@ -79,8 +80,9 @@ public class TrivialGraphFormatImport extends ImportFilter {
 
         for(Vertex newnode : NodeIndex.values())
         {
-            newnode.Coordinates.add(Math.random()*3d*NodeIndex.size());
-            newnode.Coordinates.add(Math.random()*3d*NodeIndex.size());
+            newnode.Coordinates = new Vector2D(
+                    Math.random() * 3d * NodeIndex.size(),
+                    Math.random() * 3d * NodeIndex.size());
             result.AddVertex(newnode);
         }        
         

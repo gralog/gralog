@@ -5,6 +5,7 @@
  */
 package gralog.generator;
 
+import gralog.rendering.Vector2D;
 import gralog.structure.*;
 
 /**
@@ -31,21 +32,24 @@ public class Wheel extends Generator {
         UndirectedGraph result = new UndirectedGraph();
 
         Vertex center = result.CreateVertex();
-        center.Coordinates.add(3.5);
-        center.Coordinates.add(3.5);
+        center.Coordinates = new Vector2D(3.5, 3.5);
         result.AddVertex(center);
         
         Vertex first = result.CreateVertex();
-        first.Coordinates.add(Math.sin(0 * 2*Math.PI / n) * 3.5 + 3.5);
-        first.Coordinates.add(Math.cos(0 * 2*Math.PI / n) * 3.5 + 3.5);
+        first.Coordinates = new Vector2D(
+                Math.sin(0 * 2*Math.PI / n) * 3.5 + 3.5,
+                Math.cos(0 * 2*Math.PI / n) * 3.5 + 3.5
+        );
         result.AddVertex(first);
         
         Vertex last = first;
         for(int i = 1; i < n; i++)
         {
             Vertex next = result.CreateVertex();
-            next.Coordinates.add(Math.sin(i * 2*Math.PI / n) * 3.5 + 3.5);
-            next.Coordinates.add(Math.cos(i * 2*Math.PI / n) * 3.5 + 3.5);
+            next.Coordinates = new Vector2D(
+                    Math.sin(i * 2 * Math.PI / n) * 3.5 + 3.5,
+                    Math.cos(i * 2 * Math.PI / n) * 3.5 + 3.5
+            );
             
             result.AddEdge(result.CreateEdge(last, next));
             result.AddEdge(result.CreateEdge(last, center));

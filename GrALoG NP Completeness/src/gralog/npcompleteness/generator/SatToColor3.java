@@ -10,6 +10,7 @@ import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicFormul
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicNot;
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicVariable;
 import gralog.npcompleteness.propositionallogic.parser.PropositionalLogicParser;
+import gralog.rendering.Vector2D;
 import gralog.structure.Structure;
 import gralog.structure.UndirectedGraph;
 import gralog.structure.Vertex;
@@ -61,21 +62,18 @@ public class SatToColor3 extends Generator {
         
         // create the bottom gadget (triangle true-false-dummy)
         Vertex trueVert = result.CreateVertex();
-        trueVert.Coordinates.add(8d);
-        trueVert.Coordinates.add(14d);
+        trueVert.Coordinates = new Vector2D(8d, 14d);
         trueVert.Label = "true";
         result.AddVertex(trueVert);
 
         Vertex falseVert = result.CreateVertex();
-        falseVert.Coordinates.add(12d);
-        falseVert.Coordinates.add(14d);
+        falseVert.Coordinates = new Vector2D(12d, 14d);
         falseVert.Label = "false";
         result.AddVertex(falseVert);
         result.AddEdge(result.CreateEdge(trueVert, falseVert));
 
         Vertex dummyVert = result.CreateVertex();
-        dummyVert.Coordinates.add(10d);
-        dummyVert.Coordinates.add(12d);
+        dummyVert.Coordinates = new Vector2D(10d, 12d);
         result.AddVertex(dummyVert);
         result.AddEdge(result.CreateEdge(trueVert, dummyVert));
         result.AddEdge(result.CreateEdge(falseVert, dummyVert));
@@ -86,15 +84,13 @@ public class SatToColor3 extends Generator {
         for(String var : vars)
         {
             Vertex pos = result.CreateVertex(); // the positive literal
-            pos.Coordinates.add(6d*i);
-            pos.Coordinates.add(8d);
+            pos.Coordinates = new Vector2D(6d*i, 8d);
             pos.Label = var;
             result.AddVertex(pos);
             PosNode.put(var, pos);
             
             Vertex neg = result.CreateVertex(); // the negative literal
-            neg.Coordinates.add(6d*i + 2);
-            neg.Coordinates.add(8d);
+            neg.Coordinates = new Vector2D(6d*i + 2, 8d);
             neg.Label = "¬"+var;
             result.AddVertex(neg);
             NegNode.put(var, neg);
@@ -121,34 +117,28 @@ public class SatToColor3 extends Generator {
             // create gadget for clause (6 nodes)
 
             Vertex leftBottomVert = result.CreateVertex();
-            leftBottomVert.Coordinates.add(8d*i);
-            leftBottomVert.Coordinates.add(4d);
+            leftBottomVert.Coordinates = new Vector2D(8d*i, 4d);
             result.AddVertex(leftBottomVert);
 
             Vertex leftTopVert = result.CreateVertex();
-            leftTopVert.Coordinates.add(8d*i);
-            leftTopVert.Coordinates.add(2d);
+            leftTopVert.Coordinates = new Vector2D(8d*i, 2d);
             result.AddVertex(leftTopVert);
 
             Vertex centerBottomVert = result.CreateVertex();
-            centerBottomVert.Coordinates.add(8d*i+2);
-            centerBottomVert.Coordinates.add(3d);
+            centerBottomVert.Coordinates = new Vector2D(8d*i+2, 3d);
             result.AddVertex(centerBottomVert);
 
             Vertex centerTopVert = result.CreateVertex();
-            centerTopVert.Coordinates.add(8d*i+2);
-            centerTopVert.Coordinates.add(1d);
+            centerTopVert.Coordinates = new Vector2D(8d*i+2, 1d);
             centerTopVert.Label = clause.toString();
             result.AddVertex(centerTopVert);
 
             Vertex rightBottomVert = result.CreateVertex();
-            rightBottomVert.Coordinates.add(8d*i+4);
-            rightBottomVert.Coordinates.add(4d);
+            rightBottomVert.Coordinates = new Vector2D(8d*i+4, 4d);
             result.AddVertex(rightBottomVert);
 
             Vertex rightTopVert = result.CreateVertex();
-            rightTopVert.Coordinates.add(8d*i+4);
-            rightTopVert.Coordinates.add(2d);
+            rightTopVert.Coordinates = new Vector2D(8d*i+4, 2d);
             result.AddVertex(rightTopVert);
             
             // create edges in gadget

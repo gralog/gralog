@@ -69,8 +69,8 @@ public class TikZExport extends ExportFilter {
             Transition t = (Transition)e;
 
             Double halfLength = t.Length()/2.0;
-            Vector2D from = new Vector2D(t.getSource().Coordinates);
-            Vector2D to = new Vector2D(t.getTarget().Coordinates);
+            Vector2D from = t.getSource().Coordinates;
+            Vector2D to = t.getTarget().Coordinates;
             Double distance = 0.0;
             
             stream.write("        \\draw (q" + NodeIndex.get(e.getSource()) + ")" );

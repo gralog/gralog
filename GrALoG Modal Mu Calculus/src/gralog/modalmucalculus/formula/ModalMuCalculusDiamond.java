@@ -6,6 +6,7 @@ import gralog.modallogic.Action;
 import gralog.modallogic.World;
 import gralog.modalmucalculus.structure.ParityGame;
 import gralog.modalmucalculus.structure.ParityGamePosition;
+import gralog.rendering.Vector2D;
 import gralog.structure.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,8 +68,10 @@ public class ModalMuCalculusDiamond extends ModalMuCalculusFormula
         {
             ParityGamePosition node = p.CreateVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
-            node.Coordinates.add(index.get((World)v).get(subformula).Coordinates.get(0));
-            node.Coordinates.add(scale * h * v.Coordinates.get(1) + y);
+            node.Coordinates = new Vector2D(
+                    index.get((World)v).get(subformula).Coordinates.getX(),
+                    scale * h * v.Coordinates.getY() + y
+            );
             node.Label = transitiontype == null ? "◇" : ("<"+transitiontype+">");
             node.Player1Position = true;
             p.AddVertex(node);

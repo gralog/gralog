@@ -6,13 +6,11 @@
 package gralog.exportfilter;
 
 import gralog.structure.*;
-import gralog.exportfilter.*;
 import gralog.rendering.Vector2D;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  *
@@ -43,7 +41,7 @@ public class TikZExport extends ExportFilter {
 
         
         
-        HashMap<Vertex, Integer> NodeIndex = new HashMap<Vertex,Integer>();
+        HashMap<Vertex, Integer> NodeIndex = new HashMap<>();
         Integer i = 1;
         Set<Vertex> V = structure.getVertices();
         for(Vertex v : V){
@@ -63,8 +61,8 @@ public class TikZExport extends ExportFilter {
         Set<Edge> E = structure.getEdges();
         for(Edge e : E){
 
-            Vector2D from = new Vector2D(e.getSource().Coordinates);
-            Vector2D to = new Vector2D(e.getTarget().Coordinates);
+            Vector2D from = e.getSource().Coordinates;
+            Vector2D to = e.getTarget().Coordinates;
             
             stream.write("        \\draw (n" + NodeIndex.get(e.getSource()) + ")" );
             for(EdgeIntermediatePoint c : e.intermediatePoints)

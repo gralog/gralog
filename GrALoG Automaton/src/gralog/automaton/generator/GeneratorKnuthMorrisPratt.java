@@ -12,6 +12,7 @@ import gralog.automaton.*;
 import gralog.generator.Generator;
 import gralog.generator.GeneratorDescription;
 import gralog.generator.GeneratorParameters;
+import gralog.rendering.Vector2D;
 import gralog.structure.Structure;
 
 /**
@@ -48,8 +49,7 @@ public class GeneratorKnuthMorrisPratt extends Generator {
         ArrayList<State> states = new ArrayList<>();
         for(int i = 0; i < n+1; i++) {
             State s = result.CreateVertex();
-            s.Coordinates.add(i*3d);
-            s.Coordinates.add(1d);
+            s.Coordinates = new Vector2D(i*3d, 1d);
             s.StartState = (i == 0);
             s.FinalState = (i == n);
             s.Label = str.substring(0, i);

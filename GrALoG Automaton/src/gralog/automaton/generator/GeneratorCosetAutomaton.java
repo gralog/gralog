@@ -11,6 +11,7 @@ import gralog.automaton.*;
 import gralog.generator.Generator;
 import gralog.generator.GeneratorDescription;
 import gralog.generator.GeneratorParameters;
+import gralog.rendering.Vector2D;
 import gralog.structure.Structure;
 
 @GeneratorDescription(
@@ -40,8 +41,10 @@ public class GeneratorCosetAutomaton extends Generator {
         for(int i = 0; i < n; i++)
         {
             State state = result.CreateVertex();
-            state.Coordinates.add(((Math.cos(2d*Math.PI*i/n + Math.PI/2d)*diameter)+diameter)/2d);
-            state.Coordinates.add(((Math.sin(2d*Math.PI*i/n + Math.PI/2d)*diameter)+diameter)/2d);
+            state.Coordinates = new Vector2D(
+                    ((Math.cos(2d*Math.PI*i/n + Math.PI/2d)*diameter)+diameter)/2d,
+                    ((Math.sin(2d*Math.PI*i/n + Math.PI/2d)*diameter)+diameter)/2d
+            );
             state.Label = "" + i;
             
             states.add(state);

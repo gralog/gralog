@@ -9,7 +9,7 @@ import java.util.Set;
 
 import gralog.automaton.*;
 import gralog.structure.*;
-import gralog.rendering.VectorND;
+import gralog.rendering.Vector2D;
 
 /**
  *
@@ -59,9 +59,7 @@ public class PowersetConstructionTreeNode {
         {
             State temp = resultAutomaton.CreateVertex();
             
-            temp.Coordinates = new VectorND();
-            temp.Coordinates.add(0d);
-            temp.Coordinates.add(0d);
+            temp.Coordinates = new Vector2D(0d, 0d);
             for(State v : statesSubset)
                 temp.Coordinates = temp.Coordinates.Plus(v.Coordinates);
             

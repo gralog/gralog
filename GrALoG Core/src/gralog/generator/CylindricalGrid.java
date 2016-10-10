@@ -5,6 +5,7 @@
  */
 package gralog.generator;
 
+import gralog.rendering.Vector2D;
 import gralog.structure.*;
 import java.util.ArrayList;
 
@@ -36,8 +37,10 @@ public class CylindricalGrid extends Generator {
         for(int j = 0; j < n; j++) {
             Vertex temp = result.CreateVertex();
             first.add(temp);
-            temp.Coordinates.add(Math.sin(0 * 2*Math.PI / n) * 2 * (j+2));
-            temp.Coordinates.add(Math.cos(0 * 2*Math.PI / n) * 2 * (j+2));
+            temp.Coordinates = new Vector2D(
+                    Math.sin(0 * 2*Math.PI / n) * 2 * (j+2),
+                    Math.cos(0 * 2*Math.PI / n) * 2 * (j+2)
+            );
             if(j > 0)
                 result.AddEdge(result.CreateEdge(first.get(j-1), temp));
             result.AddVertex(temp);
@@ -51,8 +54,10 @@ public class CylindricalGrid extends Generator {
             for(int j = 0; j < n; j++) {
                 Vertex temp = result.CreateVertex();
                 next.add(temp);
-                temp.Coordinates.add(Math.sin(i * 2*Math.PI / n) * 2 * (j+2));
-                temp.Coordinates.add(Math.cos(i * 2*Math.PI / n) * 2 * (j+2));
+                temp.Coordinates = new Vector2D(
+                        Math.sin(i * 2*Math.PI / n) * 2 * (j+2),
+                        Math.cos(i * 2*Math.PI / n) * 2 * (j+2)
+                );
                 if(lasttemp != null)
                     if(i % 2 == 0)
                         result.AddEdge(result.CreateEdge(lasttemp, temp));

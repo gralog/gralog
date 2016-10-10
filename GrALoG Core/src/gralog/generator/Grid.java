@@ -5,6 +5,7 @@
  */
 package gralog.generator;
 
+import gralog.rendering.Vector2D;
 import gralog.structure.*;
 import java.util.ArrayList;
 
@@ -37,8 +38,7 @@ public class Grid extends Generator {
         {
             Vertex temp = result.CreateVertex();
             last.add(temp);
-            temp.Coordinates.add(1d);
-            temp.Coordinates.add(2d*j + 1d);
+            temp.Coordinates = new Vector2D(1d, 2d*j + 1d);
             if(j > 0)
                 result.AddEdge(result.CreateEdge(last.get(j-1), temp));
             result.AddVertex(temp);
@@ -52,8 +52,7 @@ public class Grid extends Generator {
             {
                 Vertex temp = result.CreateVertex();
                 next.add(temp);
-                temp.Coordinates.add(2d*i + 1d);
-                temp.Coordinates.add(2d*j + 1d);
+                temp.Coordinates = new Vector2D(2d*i + 1d, 2d*j + 1d);
                 if(j > 0)
                     result.AddEdge(result.CreateEdge(lasttemp, temp));
                 result.AddEdge(result.CreateEdge(last.get(j), temp));

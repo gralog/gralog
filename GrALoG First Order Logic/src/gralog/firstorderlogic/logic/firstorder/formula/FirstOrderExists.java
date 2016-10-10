@@ -14,6 +14,7 @@ import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import gralog.rendering.GralogColor;
+import gralog.rendering.Vector2D;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -112,8 +113,7 @@ public class FirstOrderExists extends FirstOrderFormula {
         String exists="\u2203";
         parent.Label="( "+ exists + variable + "  (" + subformula1.toString() + ")";
         parent.Label += " , { ";
-        parent.Coordinates.add(coor.x);
-        parent.Coordinates.add(coor.y);
+        parent.Coordinates = new Vector2D(coor.x, coor.y);
        
         
         if(varassign.isEmpty()){

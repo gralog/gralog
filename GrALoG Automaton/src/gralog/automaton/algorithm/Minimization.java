@@ -7,7 +7,7 @@ package gralog.automaton.algorithm;
 
 import gralog.structure.*;
 import gralog.algorithm.*;
-import gralog.rendering.VectorND;
+import gralog.rendering.Vector2D;
 import gralog.automaton.*;
 import gralog.progresshandler.*;
 
@@ -99,15 +99,15 @@ public class Minimization extends Algorithm {
             {
                 equivalent = (State)result.CreateVertex();
                 result.AddVertex(equivalent);
-                equivalent.Coordinates = new VectorND(); // initial coordinate (0,0)
-                equivalent.Coordinates.add(0.0d);
-                equivalent.Coordinates.add(0.0d);
+                equivalent.Coordinates = new Vector2D(0d, 0d); // initial coordinate (0,0)
                 NerodeRelation_EquivalenceClassSize.put(equivalent, 0);
             }
             
             // add current coordinates to coordinates of <equivalent> state
-            equivalent.Coordinates.set(0, equivalent.Coordinates.get(0) + States.get(y).Coordinates.get(0));
-            equivalent.Coordinates.set(1, equivalent.Coordinates.get(1) + States.get(y).Coordinates.get(1));
+            equivalent.Coordinates = new Vector2D(
+                    equivalent.Coordinates.getX() + States.get(y).Coordinates.getX(),
+                    equivalent.Coordinates.getY() + States.get(y).Coordinates.getY()
+            );
             NerodeRelation_EquivalenceClass.put(States.get(y), equivalent);
             NerodeRelation_EquivalenceClassSize.put(equivalent, NerodeRelation_EquivalenceClassSize.get(equivalent)+1);
         }
@@ -115,8 +115,10 @@ public class Minimization extends Algorithm {
         // divide coordinates by number of equivalent states
         // i.e. resulting state is in the center of the equivalent states
         for(Vertex v : result.getVertices()) {
-            v.Coordinates.set(0, v.Coordinates.get(0) / NerodeRelation_EquivalenceClassSize.get((State)v));
-            v.Coordinates.set(1, v.Coordinates.get(1) / NerodeRelation_EquivalenceClassSize.get((State)v));
+            v.Coordinates = new Vector2D(
+                    v.Coordinates.getX() / NerodeRelation_EquivalenceClassSize.get((State)v),
+                    v.Coordinates.getY() / NerodeRelation_EquivalenceClassSize.get((State)v)
+            );
         }
         
         // Set Start-State

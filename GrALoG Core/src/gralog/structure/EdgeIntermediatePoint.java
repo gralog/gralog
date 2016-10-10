@@ -7,10 +7,8 @@ package gralog.structure;
 
 import gralog.plugins.XmlMarshallable;
 import gralog.plugins.XmlName;
-import gralog.rendering.VectorND;
+import gralog.rendering.Vector2D;
 
-import java.util.HashMap;
-import java.util.Vector;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -21,60 +19,45 @@ import org.w3c.dom.Element;
 @XmlName(name="intermediatepoint")
 public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     
-    VectorND Coordinates = new VectorND();
+    public Vector2D Coordinates;
     
     public EdgeIntermediatePoint()
     {
+        Coordinates = new Vector2D(0d, 0d);
     }
     
     public EdgeIntermediatePoint(Double x, Double y)
     {
-        this.Coordinates.add(x);
-        this.Coordinates.add(y);
+        Coordinates = new Vector2D(x, y);
     }
     
-    public EdgeIntermediatePoint(Vector<Double> coords)
+    public EdgeIntermediatePoint(Vector2D coords)
     {
-        for(Double d : coords)
-            this.Coordinates.add(d);
+        Coordinates = coords;
     }
     
-    public boolean ContainsCoordinate(Double x, Double y)
+    public boolean ContainsCoordinate(double x, double y)
     {
         return  (get(0)-x)*(get(0)-x)
               + (get(1)-y)*(get(1)-y)
               < 0.15*0.15;
     }
     
-    public void Move(Vector<Double> offsets)
+    @Override
+    public void Move(Vector2D offset)
     {
-        int n = Math.min(offsets.size(), Coordinates.Dimensions());
-        
-        for(int i = 0; i < n; i++)
-            Coordinates.set(i, Coordinates.get(i) + offsets.get(i));
-        
-        // if offsets has more elements, treat coordinates as if it had
-        // (infinitely many) zeroes behind
-        for(int i = n; i < offsets.size(); i++)
-            Coordinates.add(offsets.get(i));
+        Coordinates = Coordinates.Plus(offset);
+    }
+
+    public void SnapToGrid(double GridSize)
+    {
+        Coordinates = Coordinates.SnapToGrid(GridSize);
     }
     
-    public void SnapToGrid(Double GridSize)
-    {
-        for(int i = 0; i < Coordinates.Dimensions(); i++)
-        {
-            Double newCoord = Coordinates.get(i) + GridSize/2d;
-            Double temp = newCoord % GridSize;
-            if(temp < 0)
-                temp += GridSize;
-            newCoord -= temp;
-            Coordinates.set(i, newCoord);
-        }
-    }
-    
-    public int size() {
+    // TODO: Remove
+    /*public int size() {
         return Coordinates.Dimensions();
-    }
+    }*/
     
     public Double get(int dimension) {
         if(dimension < Coordinates.Dimensions())
@@ -91,9 +74,9 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     }
     
     public void FromXml(Element enode) {
-        Coordinates.clear();
-        Coordinates.add(Double.parseDouble(enode.getAttribute("x")));
-        Coordinates.add(Double.parseDouble(enode.getAttribute("y")));
+        double x = Double.parseDouble(enode.getAttribute("x"));
+        double y = Double.parseDouble(enode.getAttribute("y"));
+        Coordinates = new Vector2D(x, y);
     }
     
     @Override

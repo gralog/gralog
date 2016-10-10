@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
 import java.io.File;
 import java.io.OutputStreamWriter;
 import java.util.Map;
@@ -20,6 +19,7 @@ import gralog.structure.*;
 import gralog.rendering.*;
 import gralog.progresshandler.*;
 import gralog.exportfilter.ExportFilter;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -32,15 +32,14 @@ public abstract class AlgorithmExternal extends Algorithm {
     // set these explicitly in the constructor of your derived classes!
     // e.g. the command should not be set via an AlgorithmParameter
     // the class must know these - it is not the users job to know them!
-    protected List<String> Command = new LinkedList<String>();
+    protected List<String> Command = new LinkedList<>();
     ExportFilter exportFilter = null;
     boolean PassStructureViaFile = false;
     
     
     protected AlgorithmExternal(ExportFilter exportFilter, boolean PassStructureViaFile, String... Command)
     {
-        for(String s : Command)
-            this.Command.add(s);
+        this.Command.addAll(Arrays.asList(Command));
         this.exportFilter = exportFilter;
         this.PassStructureViaFile = PassStructureViaFile;
     }
@@ -54,7 +53,7 @@ public abstract class AlgorithmExternal extends Algorithm {
         {
             File temp = File.createTempFile("GrALoG", "." + exportFilter.getDescription().fileextension()); 
             exportFilter.DoExport(structure, new OutputStreamWriter(new FileOutputStream(temp)), null);
-            EffectiveCommand = new LinkedList<String>();
+            EffectiveCommand = new LinkedList<>();
             for(String s : Command)
                 EffectiveCommand.add(s.replaceAll("%u", "\"" + temp.getAbsolutePath() + "\""));
         }
@@ -95,8 +94,7 @@ public abstract class AlgorithmExternal extends Algorithm {
                     if(VertexIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to create vertex, but handle \"" + parts[1] + "\" already exists");
                     Vertex v = structure.CreateVertex();
-                    v.Coordinates.add(0d);
-                    v.Coordinates.add(0d);
+                    v.Coordinates = new Vector2D(0d, 0d);
                     VertexIndex.put(parts[1], v);
                     structure.AddVertex(v);
                     break;
@@ -158,9 +156,7 @@ public abstract class AlgorithmExternal extends Algorithm {
                     Double x = Double.parseDouble(parts[2]);
                     Double y = Double.parseDouble(parts[3]);
 
-                    v.Coordinates.clear();
-                    v.Coordinates.add(x);
-                    v.Coordinates.add(y);
+                    v.Coordinates = new Vector2D(x, y);
                     break;
                 }
 

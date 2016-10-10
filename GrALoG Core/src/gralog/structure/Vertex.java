@@ -23,15 +23,14 @@ public class Vertex extends XmlMarshallable implements IMovable {
  
     
     public String Label = "";
-    public Double Radius = 0.5; // cm
+    public double Radius = 0.5; // cm
     public GralogColor FillColor = GralogColor.white;
-    public Double StrokeWidth = 2.54/96; // cm
-    public Double TextHeight = 0.4d; // cm
+    public double StrokeWidth = 2.54/96; // cm
+    public double TextHeight = 0.4d; // cm
     public GralogColor StrokeColor = GralogColor.black;
     
 
-    //public Vector<Double> Coordinates = new Vector<Double>();
-    public VectorND Coordinates = new VectorND();
+    public Vector2D Coordinates = new Vector2D(0.0, 0.0);
     private final Set<VertexListener> listeners = new HashSet<>();
     
     
@@ -51,7 +50,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     
     
 
-    public Double MaximumCoordinate(int dimension) {
+    public double MaximumCoordinate(int dimension) {
         if(Coordinates.Dimensions() > dimension)
             return Coordinates.get(dimension);
         return Double.NEGATIVE_INFINITY;
@@ -64,11 +63,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
     
     
     @Override
-    public void Move(Vector<Double> offset) {
-        while(Coordinates.Dimensions() < offset.size())
-            Coordinates.add(0d);
-        for(int i = 0; i < offset.size(); i++)
-            Coordinates.set(i, Coordinates.get(i) + offset.get(i));
+    public void Move(Vector2D offset) {
+        Coordinates = Coordinates.Plus(offset);
     }
 
     public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
@@ -81,43 +77,36 @@ public class Vertex extends XmlMarshallable implements IMovable {
         gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, TextHeight, FillColor.inverse());
     }
     
-    public void SnapToGrid(Double GridSize)
+    public void SnapToGrid(double GridSize)
     {
-        for(int i = 0; i < Coordinates.Dimensions(); i++)
-        {
-            Double newCoord = (Coordinates.get(i) + GridSize/2);
-            Double temp = newCoord%GridSize;
-            if(temp < 0)
-                temp += GridSize;
-            newCoord -= temp;
-            Coordinates.set(i, newCoord);
-        }
+        Coordinates = Coordinates.SnapToGrid(GridSize);
     }
     
-    public boolean ContainsCoordinate(Double x, Double y) {
-        Double tx = Coordinates.get(0);
-        Double ty = Coordinates.get(1);
+    public boolean ContainsCoordinate(double x, double y) {
+        double tx = Coordinates.get(0);
+        double ty = Coordinates.get(1);
         return (x-tx)*(x-tx) + (y-ty)*(y-ty) < Radius*Radius;
     }
     
     public Element ToXml(Document doc, String id) throws Exception {
         Element vnode = super.ToXml(doc);
         vnode.setAttribute("id", id);
-        vnode.setAttribute("x", Coordinates.get(0).toString());
-        vnode.setAttribute("y", Coordinates.get(1).toString());
+        vnode.setAttribute("x", Double.toString(Coordinates.getX()));
+        vnode.setAttribute("y", Double.toString(Coordinates.getY()));
         vnode.setAttribute("label", Label);
-        vnode.setAttribute("radius", Radius.toString());
+        vnode.setAttribute("radius", Double.toString(Radius));
         vnode.setAttribute("fillcolor", FillColor.toHtmlString());
-        vnode.setAttribute("textheight", TextHeight.toString());
-        vnode.setAttribute("strokewidth", StrokeWidth.toString());
+        vnode.setAttribute("textheight", Double.toString(TextHeight));
+        vnode.setAttribute("strokewidth", Double.toString(StrokeWidth));
         vnode.setAttribute("strokecolor", StrokeColor.toHtmlString());
         return vnode;
     }
     
     public String FromXml(Element vnode) {
-        Coordinates.clear();
-        Coordinates.add(Double.parseDouble(vnode.getAttribute("x")));
-        Coordinates.add(Double.parseDouble(vnode.getAttribute("y")));
+        Coordinates = new Vector2D(
+                Double.parseDouble(vnode.getAttribute("x")),
+                Double.parseDouble(vnode.getAttribute("y"))
+        );
         if(vnode.hasAttribute("label"))
             Label = vnode.getAttribute("label");
         if(vnode.hasAttribute("radius"))

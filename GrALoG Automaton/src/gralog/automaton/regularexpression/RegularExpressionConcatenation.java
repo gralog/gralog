@@ -7,6 +7,7 @@ package gralog.automaton.regularexpression;
 
 import gralog.structure.*;
 import gralog.automaton.*;
+import gralog.rendering.Vector2D;
 import java.util.Vector;
 
 /**
@@ -40,14 +41,15 @@ public class RegularExpressionConcatenation extends RegularExpression {
         Double bMaxY = b.MaximumCoordinate(1);
 
         // Set the new positions of the states
-        Vector<Double> aOffset = new Vector<Double>();
-        aOffset.add(0d);
-        aOffset.add(bMaxY > aMaxY ? (bMaxY - aMaxY)/2d : 0d);
+        Vector2D aOffset = new Vector2D(
+                0d, bMaxY > aMaxY ? (bMaxY - aMaxY)/2d : 0d
+        );
         a.Move(aOffset);
         
-        Vector<Double> bOffset = new Vector<Double>();
-        bOffset.add(aMaxX + scale);
-        bOffset.add(aMaxY > bMaxY ? (aMaxY - bMaxY)/2d : 0d);
+        Vector2D bOffset = new Vector2D(
+                aMaxX + scale,
+                aMaxY > bMaxY ? (aMaxY - bMaxY)/2d : 0d
+        );
         b.Move(bOffset);
         
         // Connect the final states of A to initial states of B

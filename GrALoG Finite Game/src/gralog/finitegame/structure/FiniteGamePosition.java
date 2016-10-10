@@ -63,7 +63,7 @@ public class FiniteGamePosition extends Vertex
     }
     
     @Override
-    public boolean ContainsCoordinate(Double x, Double y)
+    public boolean ContainsCoordinate(double x, double y)
     {
         return (Coordinates.get(0)-Radius <= x)
             && (x <= Coordinates.get(0)+Radius)

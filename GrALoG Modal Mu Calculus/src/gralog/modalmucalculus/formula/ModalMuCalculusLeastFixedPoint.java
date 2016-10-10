@@ -6,6 +6,7 @@ import gralog.modallogic.KripkeStructure;
 import gralog.modallogic.World;
 import gralog.modalmucalculus.structure.ParityGame;
 import gralog.modalmucalculus.structure.ParityGamePosition;
+import gralog.rendering.Vector2D;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,8 +71,10 @@ public class ModalMuCalculusLeastFixedPoint extends ModalMuCalculusFormula
         {
             ParityGamePosition node = p.CreateVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
-            node.Coordinates.add(index.get((World)v).get(formula).Coordinates.get(0));
-            node.Coordinates.add(scale * h * v.Coordinates.get(1) + y);
+            node.Coordinates = new Vector2D(
+                    index.get((World)v).get(formula).Coordinates.getX(),
+                    scale * h * v.Coordinates.getY() + y
+            );
             node.Label = "μ" + variable;
             node.Priority = MyPriority;
             p.AddVertex(node);

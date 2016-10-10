@@ -6,6 +6,7 @@
 package gralog.automaton.regularexpression;
 
 import gralog.automaton.*;
+import gralog.rendering.Vector2D;
 import gralog.structure.*;
 import java.util.Vector;
 
@@ -36,22 +37,21 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         Double aMaxY = a.MaximumCoordinate(1);
 
         // set new positions
-        Vector<Double> aOffset = new Vector<Double>();
-        aOffset.add(scale);
-        aOffset.add(scale);
+        Vector2D aOffset = new Vector2D(scale, scale);
         a.Move(aOffset);
 
         
         // create new, common start- and final-state
         State s = a.CreateVertex();
         s.StartState = true;
-        s.Coordinates.add(0d);
-        s.Coordinates.add(aMaxY/2d + scale);
+        s.Coordinates = new Vector2D(0d, aMaxY/2d + scale);
         
         State t = a.CreateVertex();
         t.FinalState = true;
-        t.Coordinates.add(aMaxX + 2d*scale);
-        t.Coordinates.add(aMaxY/2d + scale);
+        t.Coordinates = new Vector2D(
+                aMaxX + 2d*scale,
+                aMaxY/2d + scale
+        );
 
         // Connect the new start and final states with epsilon transitions
         Transition st = a.CreateEdge(s,t);
