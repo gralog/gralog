@@ -6,7 +6,6 @@
 package gralog.exportfilter;
 
 import gralog.structure.*;
-import gralog.rendering.Vector2D;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -45,8 +44,8 @@ public class TikZExport extends ExportFilter {
         for (Vertex v : V) {
             NodeIndex.put(v, i);
             stream.write("        \\node (n" + i + ") at ("
-                         + v.coordinates.get(0) + "cm,"
-                         + v.coordinates.get(1) + "cm) {};" + linefeed);
+                         + v.coordinates.getX() + "cm,"
+                         + v.coordinates.getY() + "cm) {};" + linefeed);
             ++i;
         }
 
@@ -63,5 +62,4 @@ public class TikZExport extends ExportFilter {
         stream.write("    \\end{tikzpicture}" + linefeed);
         stream.write("%\\end{document}" + linefeed);
     }
-
 }

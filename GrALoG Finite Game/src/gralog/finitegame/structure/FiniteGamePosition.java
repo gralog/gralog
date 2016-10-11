@@ -35,23 +35,23 @@ public class FiniteGamePosition extends Vertex {
         }
         else {
             if (highlights != null && highlights.contains(this))
-                gc.fillRectangle(coordinates.get(0) - radius - 0.07, // outer
-                                 coordinates.get(1) - radius - 0.07,
-                                 coordinates.get(0) + radius + 0.07,
-                                 coordinates.get(1) + radius + 0.07,
+                gc.fillRectangle(coordinates.getX() - radius - 0.07, // outer
+                                 coordinates.getY() - radius - 0.07,
+                                 coordinates.getX() + radius + 0.07,
+                                 coordinates.getY() + radius + 0.07,
                                  GralogColor.RED);
 
-            gc.fillRectangle(coordinates.get(0) - radius, // outer
-                             coordinates.get(1) - radius,
-                             coordinates.get(0) + radius,
-                             coordinates.get(1) + radius,
+            gc.fillRectangle(coordinates.getX() - radius, // outer
+                             coordinates.getY() - radius,
+                             coordinates.getX() + radius,
+                             coordinates.getY() + radius,
                              strokeColor);
-            gc.fillRectangle(coordinates.get(0) - radius + strokeWidth, // inner
-                             coordinates.get(1) - radius + strokeWidth,
-                             coordinates.get(0) + radius - strokeWidth,
-                             coordinates.get(1) + radius - strokeWidth,
+            gc.fillRectangle(coordinates.getX() - radius + strokeWidth, // inner
+                             coordinates.getY() - radius + strokeWidth,
+                             coordinates.getX() + radius - strokeWidth,
+                             coordinates.getY() + radius - strokeWidth,
                              fillColor);
-            gc.putText(coordinates.get(0), coordinates.get(1), label,
+            gc.putText(coordinates, label,
                        textHeight, fillColor.inverse());
         }
     }

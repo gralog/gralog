@@ -61,11 +61,11 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     public void render(GralogGraphicsContext gc, Set<Object> highlights) {
         if (highlights != null && highlights.contains(this))
-            gc.circle(coordinates.get(0), coordinates.get(1), radius + 0.07, GralogColor.RED);
+            gc.circle(coordinates, radius + 0.07, GralogColor.RED);
 
-        gc.circle(coordinates.get(0), coordinates.get(1), radius, strokeColor);
-        gc.circle(coordinates.get(0), coordinates.get(1), radius - strokeWidth, fillColor);
-        gc.putText(coordinates.get(0), coordinates.get(1), label, textHeight, fillColor.inverse());
+        gc.circle(coordinates, radius, strokeColor);
+        gc.circle(coordinates, radius - strokeWidth, fillColor);
+        gc.putText(coordinates, label, textHeight, fillColor.inverse());
     }
 
     public void snapToGrid(double GridSize) {
