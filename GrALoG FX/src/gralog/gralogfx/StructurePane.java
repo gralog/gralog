@@ -398,13 +398,16 @@ public class StructurePane extends StackPane implements StructureListener {
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
 
+    @Override
     public void structureChanged(StructureEvent e) {
         this.requestRedraw();
     }
 
+    @Override
     public void vertexChanged(VertexEvent e) {
     }
 
+    @Override
     public void edgeChanged(EdgeEvent e) {
     }
 }
