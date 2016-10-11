@@ -39,12 +39,18 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edges = new HashSet<>();
     }
 
+    /**
+     * @return An unmodifiable set of vertices.
+     */
     public Set<Vertex> getVertices() {
-        return vertices;
+        return Collections.unmodifiableSet(vertices);
     }
 
+    /**
+     * @return An unmodifiable set of edges.
+     */
     public Set<Edge> getEdges() {
-        return edges;
+        return Collections.unmodifiableSet(edges);
     }
 
     public void render(GralogGraphicsContext gc, Set<Object> highlights) {
