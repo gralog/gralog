@@ -482,10 +482,10 @@ public class MainWindow extends Application {
             Object algoResult = algoThread.result;
             this.setStatus("");
 
-            // Show Result
+            // Show result if it is not null.
             if (algoResult == null) {
                 structurePane.requestRedraw();
-                algoResult = "null";
+                return;
             }
 
             if (algoResult instanceof Structure) {
@@ -530,7 +530,6 @@ public class MainWindow extends Application {
 
     public void menuAlgorithmActivated(String str) {
         try {
-
             // Prepare
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             StructurePane structurePane = (StructurePane) tab.getContent();
@@ -552,7 +551,6 @@ public class MainWindow extends Application {
             }));
             this.setStatus("Running Algorithm \"" + str + "\"...");
             algoThread.start();
-
         }
         catch (InvocationTargetException ex) {
             this.setStatus("");
