@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.HashSet;
 
 /**
- *
+ * A vertex with a circle shape.
  */
 @XmlName(name = "node")
 public class Vertex extends XmlMarshallable implements IMovable {
@@ -71,9 +71,15 @@ public class Vertex extends XmlMarshallable implements IMovable {
         coordinates = coordinates.snapToGrid(GridSize);
     }
 
+    /**
+     * @return True if the given coordinates are inside the circular shape of
+     * this vertex.
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     */
     public boolean containsCoordinate(double x, double y) {
-        double tx = coordinates.get(0);
-        double ty = coordinates.get(1);
+        double tx = coordinates.getX();
+        double ty = coordinates.getY();
         return (x - tx) * (x - tx) + (y - ty) * (y - ty) < radius * radius;
     }
 

@@ -61,6 +61,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             v.snapToGrid(GridSize);
     }
 
+    /**
+     * @param dimension 0 for the x-dimension and 1 for the y-dimension.
+     * @return The largest x or y value occurring in vertex/edges coordinates.
+     */
     public double maximumCoordinate(int dimension) {
         double result = Double.NEGATIVE_INFINITY;
         for (Vertex v : getVertices())
@@ -78,12 +82,28 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             e.move(offset);
     }
 
+    /**
+     * Creates a new vertex instance without adding it to the structure.
+     *
+     * @return The new vertex instance.
+     */
     abstract public V createVertex();
 
+    /**
+     * Adds a vertex to the structure. Has no effect if the vertex already
+     * exists in the structure.
+     *
+     * @param v The vertex to be added.
+     */
     public void addVertex(V v) {
         vertices.add(v);
     }
 
+    /**
+     * Removes a vertex and its incident edges from the structure.
+     *
+     * @param v The vertex to be removed.
+     */
     public void removeVertex(Vertex v) {
         Set<Edge> deletedEdges = new HashSet<>();
         for (Edge e : edges)
@@ -91,35 +111,66 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 deletedEdges.add(e);
         for (Edge e : deletedEdges)
             removeEdge(e);
-
         vertices.remove(v);
     }
 
+    /**
+     * Create a new edge instance without adding it to the structure.
+     *
+     * @return The new edge instance.
+     */
     abstract public E createEdge();
 
+    /**
+     * Add an edge to the structure. Has no effect if the edge already exists in
+     * the structure.
+     *
+     * @param e The edge to be added.
+     */
     public void addEdge(E e) {
         edges.add(e);
     }
 
+    /**
+     * Removes an edge from the structure. Does not affect vertices, incident or
+     * not.
+     *
+     * @param e The edge to be removed.
+     */
     public void removeEdge(Edge e) {
         e.setSource(null);
         e.setTarget(null);
         edges.remove(e);
     }
 
+    /**
+     * Creates an edge without adding it to the graph.
+     *
+     * @param source The tail of the new edge.
+     * @param target The head of the new edge.
+     * @return The new edge instance.
+     */
     public E createEdge(V source, V target) {
         E edge = createEdge();
         edge.setSource(source);
         edge.setTarget(target);
 
         if (source == target && source != null) {
-            edge.intermediatePoints.add(new EdgeIntermediatePoint(source.coordinates.get(0) + 0.6, source.coordinates.get(1) - 1.5d));
-            edge.intermediatePoints.add(new EdgeIntermediatePoint(source.coordinates.get(0) - 0.6, source.coordinates.get(1) - 1.5d));
+            edge.intermediatePoints.add(
+                    new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
+                                              source.coordinates.getY() - 1.5d));
+            edge.intermediatePoints.add(
+                    new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
+                                              source.coordinates.getY() - 1.5d));
         }
-
         return edge;
     }
 
+    /**
+     * @return True if the given two vertices are adjacent.
+     * @param a The first vertex.
+     * @param b The second vertex.
+     */
     public boolean adjacent(V a, V b) {
         for (Edge e : this.edges)
             if (e.containsVertex(a) && e.containsVertex(b))
@@ -127,6 +178,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return false;
     }
 
+    /**
+     * Return an edge or vertex that lies at the given coordinates. If multiple
+     * objects are stacked at the given location, then vertices win over edges.
+     * If multiple edges or multiple vertices are stacked, then the top-most
+     * object will be chosen in an unspecified way.
+     *
+     * @param x The x coordinate.
+     * @param y The y coordinate.
+     * @return An edge or vertex that lies at the given x/y coordinate.
+     */
     public IMovable findObject(double x, double y) {
         IMovable result = null;
 
