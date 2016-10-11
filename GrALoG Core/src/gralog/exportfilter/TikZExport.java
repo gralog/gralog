@@ -66,7 +66,7 @@ public class TikZExport extends ExportFilter {
             
             stream.write("        \\draw (n" + NodeIndex.get(e.getSource()) + ")" );
             for(EdgeIntermediatePoint c : e.intermediatePoints)
-                stream.write(" edge[-] (" + c.get(0) + "cm," + c.get(1) + "cm)");
+                stream.write(" edge[-] (" + c.getX() + "cm," + c.getY() + "cm)");
             
             stream.write(" edge[-] (n" + NodeIndex.get(e.getTarget()) + ");" + linefeed);
         }

@@ -168,8 +168,8 @@ public class Edge extends XmlMarshallable implements IMovable {
         {
             fromX = tempX;
             fromY = tempY;
-            tempX = between.get(0);
-            tempY = between.get(1);
+            tempX = between.getX();
+            tempY = between.getY();
             gc.Line(fromX, fromY, tempX, tempY, color, Width);
             
             if(highlights != null && highlights.contains(this))
@@ -195,8 +195,8 @@ public class Edge extends XmlMarshallable implements IMovable {
         {
             fromX = nextfromX;
             fromY = nextfromY;
-            nextfromX = between.get(0);
-            nextfromY = between.get(1);
+            nextfromX = between.getX();
+            nextfromY = between.getY();
             if(Vector2D.DistancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY) < 0.3)
                 return true;
         }
@@ -220,8 +220,8 @@ public class Edge extends XmlMarshallable implements IMovable {
         {
             fromX = nextfromX;
             fromY = nextfromY;
-            nextfromX = between.get(0);
-            nextfromY = between.get(1);
+            nextfromX = between.getX();
+            nextfromY = between.getY();
             
             double distanceTemp = Vector2D.DistancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY);
             if( distanceTemp < MinDistance )
@@ -257,9 +257,8 @@ public class Edge extends XmlMarshallable implements IMovable {
         double result = 0.0;
         for(EdgeIntermediatePoint between : this.intermediatePoints)
         {
-            Vector2D betw = new Vector2D(between.get(0), between.get(1));
-            result += betw.Minus(from).Length();
-            from = betw;
+            result += between.Coordinates.Minus(from).Length();
+            from = between.Coordinates;
         }
         return result + to.Minus(from).Length();
     }

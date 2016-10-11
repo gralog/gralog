@@ -43,18 +43,13 @@ public class TreeDecompositionView extends GridPaneView
             FillTreeView(root, treedecomp.rootBag);
             TreeView treeView = new TreeView(root);
             
-            treeView.getSelectionModel().selectedItemProperty().addListener( new ChangeListener() {
-
-                   @Override
-                   public void changed(ObservableValue observable, Object oldValue, Object newValue)
-                   {
-                       TreeItem selectedItem = (TreeItem) newValue;
-                       Bag bag = (Bag)selectedItem.getValue();
-                       structurePane.ClearSelection();
-                       structurePane.SelectAll(bag.Nodes);
-                   }
-
-                 });
+            treeView.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue observable, Object oldValue, Object newValue) -> {
+                TreeItem selectedItem = (TreeItem) newValue;
+                Bag bag = (Bag)selectedItem.getValue();
+                structurePane.ClearSelection();
+                structurePane.SelectAll(bag.Nodes);
+            });
 
             ColumnConstraints columnConstraints = new ColumnConstraints();
             columnConstraints.setPercentWidth(100);

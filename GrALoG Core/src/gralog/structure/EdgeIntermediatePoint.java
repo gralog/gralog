@@ -38,9 +38,8 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
     
     public boolean ContainsCoordinate(double x, double y)
     {
-        return  (get(0)-x)*(get(0)-x)
-              + (get(1)-y)*(get(1)-y)
-              < 0.15*0.15;
+        return (getX() - x) * (getX() - x) +
+               (getY() - y) * (getY() - y) < 0.15*0.15;
     }
     
     @Override
@@ -54,22 +53,23 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
         Coordinates = Coordinates.SnapToGrid(GridSize);
     }
     
-    // TODO: Remove
-    /*public int size() {
-        return Coordinates.Dimensions();
-    }*/
-    
-    public Double get(int dimension) {
+    public double get(int dimension) {
         if(dimension < Coordinates.Dimensions())
             return Coordinates.get(dimension);
         return 0.0d;
+    }
+    public double getX() {
+        return Coordinates.getX();
+    }
+    public double getY() {
+        return Coordinates.getY();
     }
     
     @Override
     public Element ToXml(Document doc) throws Exception {
         Element enode = super.ToXml(doc);
-        enode.setAttribute("x", this.get(0).toString());
-        enode.setAttribute("y", this.get(1).toString());
+        enode.setAttribute("x", Double.toString(getX()));
+        enode.setAttribute("y", Double.toString(getY()));
         return enode;
     }
     

@@ -8,7 +8,6 @@ package gralog.firstorderlogic.algorithm;
 import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 import gralog.gralogfx.views.*;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,8 +23,6 @@ import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -33,15 +30,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 
 /**
  *
@@ -230,7 +222,7 @@ public class FirstOrderProverParametersView extends GridPaneView{
             
             });
             
-              save.setOnAction(e-> {
+              save.setOnAction(e -> {
                   String text=textArea.getText();
                   String fileName="Formulae"+ new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()) + ".txt";
                   PrintWriter out;    
@@ -252,26 +244,12 @@ public class FirstOrderProverParametersView extends GridPaneView{
                  
             
               });
-            
-      
-            
-             
-              
-              
-           delete.setOnAction(new EventHandler<ActionEvent>() {
-             @Override
-              public void handle(ActionEvent e) {
-                  textArea.replaceSelection("");
-              
-              }
-            
+
+            delete.setOnAction((ActionEvent e) -> {
+               textArea.replaceSelection("");
             });
-             clear.setOnAction(new EventHandler<ActionEvent>() {
-             @Override
-              public void handle(ActionEvent e) {
-                  textArea.clear();
-              }
-            
+            clear.setOnAction((ActionEvent e) -> {
+                textArea.clear();
             });
             this.getChildren().addAll(label,tf,textArea,vbox);
             

@@ -76,13 +76,13 @@ public class TikZExport extends ExportFilter {
             stream.write("        \\draw (q" + NodeIndex.get(e.getSource()) + ")" );
             for(EdgeIntermediatePoint c : e.intermediatePoints)
             {
-                Vector2D betw = new Vector2D(c.get(0), c.get(1));
+                Vector2D betw = new Vector2D(c.getX(), c.getY());
                 Double segmentlength = betw.Minus(from).Length();
                 
                 stream.write(" --");
                 if(distance < halfLength && halfLength <= distance + segmentlength)
                     stream.write(" node[above] {$" + (t.Symbol.equals("") ? "\\varepsilon" : t.Symbol) + "$}");
-                stream.write(" (" + c.get(0) + "cm," + c.get(1) + "cm)");
+                stream.write(" (" + c.getX() + "cm," + c.getY() + "cm)");
                 
                 distance += segmentlength;
                 from = betw;
