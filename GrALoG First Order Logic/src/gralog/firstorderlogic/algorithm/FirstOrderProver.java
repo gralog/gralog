@@ -49,10 +49,10 @@ public class FirstOrderProver extends Algorithm {
         if (V.isEmpty()) {
             return "Please input a graph";
         }
-        PrintWriter out = new PrintWriter(new BufferedWriter(
-                new FileWriter("PreviousSearch.txt", false)));
-        out.println(sp.formulae);
-        out.close();
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(
+                new FileWriter("PreviousSearch.txt", false)))) {
+            out.println(sp.formulae);
+        }
         FirstOrderParser parser = new FirstOrderParser();
         FirstOrderFormula phi;
         try {
@@ -61,10 +61,10 @@ public class FirstOrderProver extends Algorithm {
         catch (Exception ex) {
             return ex.getMessage();
         }
-        PrintWriter o1 = new PrintWriter(new BufferedWriter(
-                new FileWriter("CorrectSearches.txt", true)));
-        o1.println(sp.formulae);
-        o1.close();
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(
+                new FileWriter("CorrectSearches.txt", true)))) {
+            out.println(sp.formulae);
+        }
 
         HashMap<String, Vertex> varassign = new HashMap<>();
 

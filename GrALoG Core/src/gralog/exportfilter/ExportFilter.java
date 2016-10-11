@@ -26,10 +26,9 @@ public abstract class ExportFilter {
     public void exportGraph(Structure structure, String FileName,
             ExportFilterParameters params) throws Exception {
         FileOutputStream stream = new FileOutputStream(FileName);
-        OutputStreamWriter writer = new OutputStreamWriter(stream);
-        exportGraph(structure, writer, params);
-        writer.flush();
-        writer.close();
+        try (OutputStreamWriter writer = new OutputStreamWriter(stream)) {
+            exportGraph(structure, writer, params);
+        }
     }
 
     public void exportGraph(Structure structure, OutputStreamWriter stream,

@@ -60,15 +60,14 @@ public abstract class AlgorithmExternal extends Algorithm {
         ProcessBuilder pb = new ProcessBuilder(EffectiveCommand);
         Process proc = pb.start();
         Scanner in = new Scanner(proc.getInputStream());
-        OutputStream outstream = proc.getOutputStream();
 
         Map<String, Vertex> vertexIndex = exportFilter.getVertexNames(structure, null);
         Map<String, Edge> edgeIndex = exportFilter.getEdgeNames(structure, null);
 
         if (!passStructureViaFile) {
-            exportFilter.exportGraph(structure, new OutputStreamWriter(outstream), null);
-            outstream.flush();
-            outstream.close();
+            try (OutputStreamWriter out = new OutputStreamWriter(proc.getOutputStream())) {
+                exportFilter.exportGraph(structure, out, null);
+            }
         }
 
         boolean quit = false;

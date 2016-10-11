@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import gralog.finitegame.structure.*;
+import java.io.IOException;
 
 /**
  *
@@ -41,16 +42,12 @@ public class ModelCheckingGameFOLogic extends Algorithm {
 
         if (file.exists()) {
             try {
-
                 BufferedReader input = new BufferedReader(new FileReader(file));
                 str = input.readLine();
             }
-            catch (Exception ex) {
+            catch (IOException ex) {
                 str = "ERROR" + ex.toString();
             }
-        }
-        else {
-            str = "";
         }
 
         return new StringAlgorithmParameter(str);
@@ -81,10 +78,10 @@ public class ModelCheckingGameFOLogic extends Algorithm {
 
         FirstOrderParser parser = new FirstOrderParser();
         FirstOrderFormula phi = parser.parseString(sp.parameter);
-        PrintWriter out = new PrintWriter(new BufferedWriter(
-                new FileWriter("PreviousSearch.txt", false)));
-        out.println(sp.parameter);
-        out.close();
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(
+                new FileWriter("PreviousSearch.txt", false)))) {
+            out.println(sp.parameter);
+        }
 
         Set<Vertex> V = s.getVertices();
         int i = 0;
