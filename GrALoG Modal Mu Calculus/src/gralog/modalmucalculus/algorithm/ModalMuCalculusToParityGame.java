@@ -20,7 +20,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Modal μ-Calculus to Parity Game",

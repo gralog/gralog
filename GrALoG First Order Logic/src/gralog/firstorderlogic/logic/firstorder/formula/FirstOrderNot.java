@@ -19,7 +19,6 @@ import gralog.firstorderlogic.algorithm.CoordinateClass;
 
 /**
  *
- * @author viktor
  */
 public class FirstOrderNot extends FirstOrderFormula {
 

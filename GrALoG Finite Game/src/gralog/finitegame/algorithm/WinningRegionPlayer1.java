@@ -17,7 +17,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Player 1 Winning Region",

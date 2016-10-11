@@ -6,7 +6,6 @@ import java.util.HashSet;
 /**
  * Base class for all formulas.
  *
- * @author viktor
  *
  */
 public abstract class ComputationTreeLogicFormula {

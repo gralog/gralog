@@ -15,7 +15,6 @@ import static gralog.plugins.PluginManager.instantiateClass;
 
 /**
  *
- * @author viktor
  */
 public class ExportFilterManager {
 

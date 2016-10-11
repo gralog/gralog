@@ -9,7 +9,6 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.TreeItem;
 
 /**
- * @author viktor
  */
 @ViewDescription(forClass = TreeDecomposition.class)
 public class TreeDecompositionView extends GridPaneView {

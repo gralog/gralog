@@ -17,7 +17,6 @@ import org.w3c.dom.Element;
 
 /**
  *
- * @author viktor
  */
 @XmlName(name = "world")
 public class World extends Vertex {

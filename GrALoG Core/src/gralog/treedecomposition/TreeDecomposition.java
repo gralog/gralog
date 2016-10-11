@@ -7,7 +7,6 @@ package gralog.treedecomposition;
 
 /**
  *
- * @author viktor
  */
 public class TreeDecomposition {
 

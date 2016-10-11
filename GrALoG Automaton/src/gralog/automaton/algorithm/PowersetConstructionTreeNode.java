@@ -13,7 +13,6 @@ import gralog.rendering.Vector2D;
 
 /**
  *
- * @author viktor
  */
 public class PowersetConstructionTreeNode {
 

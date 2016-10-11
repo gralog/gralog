@@ -13,7 +13,6 @@ import gralog.structure.Structure;
 
 /**
  *
- * @author viktor
  */
 @GeneratorDescription(
         name = "Thompson's Construction",

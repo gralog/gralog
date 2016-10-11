@@ -9,7 +9,6 @@ import gralog.structure.Structure;
 
 /**
  *
- * @author viktor
  */
 public class ProgressHandler {
 

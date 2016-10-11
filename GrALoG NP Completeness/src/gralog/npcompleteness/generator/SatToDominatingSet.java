@@ -16,7 +16,6 @@ import java.util.HashMap;
 
 /**
  *
- * @author viktor
  */
 @GeneratorDescription(
         name = "SAT to Dominating Set Instance",

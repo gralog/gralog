@@ -12,7 +12,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @ExportFilterDescription(
         name = "Library of Efficient Data types and Algorithms (LEDA)",

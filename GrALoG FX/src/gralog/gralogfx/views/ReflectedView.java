@@ -15,7 +15,6 @@ import javafx.scene.control.Control;
 
 /**
  *
- * @author viktor
  */
 @ViewDescription(forClass = Object.class)
 public class ReflectedView extends GridPaneView {

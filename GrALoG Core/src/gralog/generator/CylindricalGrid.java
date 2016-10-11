@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 /**
  *
- * @author viktor
  */
 @GeneratorDescription(
   name="Cylindrical Grid",

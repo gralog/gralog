@@ -20,7 +20,6 @@ import javafx.scene.Node;
 
 /**
  *
- * @author viktor
  */
 public class ViewManager {
 

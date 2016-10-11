@@ -22,7 +22,6 @@ import gralog.rendering.Vector2D;
 
 /**
  *
- * @author viktor
  */
 public class FirstOrderForall extends FirstOrderFormula {
 

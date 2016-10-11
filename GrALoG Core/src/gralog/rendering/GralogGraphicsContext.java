@@ -7,7 +7,6 @@ package gralog.rendering;
 
 /**
  *
- * @author viktor
  */
 public abstract class GralogGraphicsContext {
 

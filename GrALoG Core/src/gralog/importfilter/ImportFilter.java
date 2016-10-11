@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 
 /**
  *
- * @author viktor
  */
 abstract public class ImportFilter {
 

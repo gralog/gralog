@@ -21,7 +21,6 @@ import java.util.*;
 
 /**
  *
- * @author viktor
  */
 public class PluginManager {
 

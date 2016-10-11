@@ -17,7 +17,6 @@ import java.io.*;
 )
 /**
  *
- * @author Hv
  */
 public class LoadFromFile extends ImportFilter {
 

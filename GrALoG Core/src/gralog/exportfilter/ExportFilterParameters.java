@@ -7,7 +7,6 @@ package gralog.exportfilter;
 
 /**
  *
- * @author viktor
  */
 public class ExportFilterParameters {
 }

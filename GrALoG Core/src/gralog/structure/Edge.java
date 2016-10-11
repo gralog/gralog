@@ -20,7 +20,6 @@ import org.w3c.dom.NodeList;
 
 /**
  *
- * @author viktor
  */
 @XmlName(name = "edge")
 public class Edge extends XmlMarshallable implements IMovable {

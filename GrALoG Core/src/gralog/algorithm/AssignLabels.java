@@ -12,7 +12,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Assign Labels",

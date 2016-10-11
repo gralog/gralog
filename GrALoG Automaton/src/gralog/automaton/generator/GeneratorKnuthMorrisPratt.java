@@ -17,7 +17,6 @@ import gralog.structure.Structure;
 
 /**
  *
- * @author viktor
  */
 @GeneratorDescription(
         name = "Knuth Morris Pratt Algorithm",

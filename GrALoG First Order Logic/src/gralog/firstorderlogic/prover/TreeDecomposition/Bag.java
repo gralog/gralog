@@ -13,7 +13,6 @@ import java.util.List;
 
 /**
  *
- * @author Hv
  */
 public class Bag {
 

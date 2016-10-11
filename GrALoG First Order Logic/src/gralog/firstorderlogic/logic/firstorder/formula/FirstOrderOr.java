@@ -20,7 +20,6 @@ import gralog.rendering.Vector2D;
 
 /**
  *
- * @author Hv
  */
 public class FirstOrderOr extends FirstOrderFormula {
 

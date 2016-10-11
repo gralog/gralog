@@ -40,7 +40,6 @@ import org.w3c.dom.NodeList;
 
 /**
  *
- * @author viktor
  */
 public class MainWindow extends Application {
 

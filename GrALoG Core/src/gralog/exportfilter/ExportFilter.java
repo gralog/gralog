@@ -13,7 +13,6 @@ import java.util.Map;
 
 /**
  *
- * @author viktor
  */
 public abstract class ExportFilter {
 

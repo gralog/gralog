@@ -9,7 +9,6 @@ import gralog.generator.GeneratorParameters;
 
 /**
  *
- * @author viktor
  */
 public class CosetAutomatonParameters extends GeneratorParameters {
 

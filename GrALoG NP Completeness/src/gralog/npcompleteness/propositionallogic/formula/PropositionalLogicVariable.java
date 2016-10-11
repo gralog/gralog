@@ -10,7 +10,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 public class PropositionalLogicVariable extends PropositionalLogicFormula {
 

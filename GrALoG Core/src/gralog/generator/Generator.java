@@ -9,7 +9,6 @@ import gralog.structure.*;
 
 /**
  *
- * @author viktor
  */
 public abstract class Generator {
 

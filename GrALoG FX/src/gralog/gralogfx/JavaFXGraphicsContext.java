@@ -16,7 +16,6 @@ import javafx.scene.text.Font;
 
 /**
  *
- * @author viktor
  */
 public class JavaFXGraphicsContext extends GralogGraphicsContext {
 

@@ -15,7 +15,6 @@ import org.w3c.dom.Element;
 
 /**
  *
- * @author viktor
  */
 @XmlName(name = "state")
 public class State extends Vertex {

@@ -11,7 +11,6 @@ import java.util.EventListener;
 
 /**
  *
- * @author viktor
  */
 public interface EdgeListener<E extends Edge> extends EventListener {
     public void EdgeChanged(EdgeEvent<E> e);

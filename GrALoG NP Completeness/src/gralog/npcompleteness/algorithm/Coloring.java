@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Coloring",

@@ -9,7 +9,6 @@ import gralog.exportfilter.*;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "External Algorithm Test",

@@ -13,7 +13,6 @@ import java.util.HashSet;
 
 /**
  *
- * @author viktor
  */
 @StructureDescription(
         name = "Automaton",

@@ -7,7 +7,6 @@ package gralog.importfilter;
 
 /**
  *
- * @author viktor
  */
 @ImportFilterDescription(
         name = "Space Separated Values",

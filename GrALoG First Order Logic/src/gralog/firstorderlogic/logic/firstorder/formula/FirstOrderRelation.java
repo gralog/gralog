@@ -21,7 +21,6 @@ import java.util.List;
 
 /**
  *
- * @author viktor
  */
 public class FirstOrderRelation extends FirstOrderFormula {
 

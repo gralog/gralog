@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  *
- * @author viktor
  */
 public abstract class AlgorithmExternal extends Algorithm {
 

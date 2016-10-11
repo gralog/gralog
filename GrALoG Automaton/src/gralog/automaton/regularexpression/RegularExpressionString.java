@@ -10,7 +10,6 @@ import gralog.rendering.Vector2D;
 
 /**
  *
- * @author viktor
  */
 public class RegularExpressionString extends RegularExpression {
 

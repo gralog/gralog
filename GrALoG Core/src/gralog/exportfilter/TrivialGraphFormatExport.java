@@ -14,7 +14,6 @@ import java.util.Map;
 
 /**
  *
- * @author viktor
  */
 @ExportFilterDescription(
         name = "Trivial Graph Format",

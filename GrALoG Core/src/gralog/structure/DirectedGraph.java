@@ -9,7 +9,6 @@ import gralog.plugins.XmlName;
 
 /**
  *
- * @author viktor
  */
 @StructureDescription(
         name = "Directed Graph",

@@ -20,7 +20,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @GeneratorDescription(
         name = "SAT to Hamiltonian Cycle",

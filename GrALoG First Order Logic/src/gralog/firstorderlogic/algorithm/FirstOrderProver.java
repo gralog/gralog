@@ -21,7 +21,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "First Order Logic Prover",

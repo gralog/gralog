@@ -31,7 +31,6 @@ import javafx.scene.input.ScrollEvent;
 
 /**
  *
- * @author viktor
  */
 //public class StructurePane extends ScrollPane implements StructureListener {
 public class StructurePane extends StackPane implements StructureListener {

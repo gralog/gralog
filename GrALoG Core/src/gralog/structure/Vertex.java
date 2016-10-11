@@ -15,7 +15,6 @@ import java.util.HashSet;
 
 /**
  *
- * @author viktor
  */
 @XmlName(name = "node")
 public class Vertex extends XmlMarshallable implements IMovable {

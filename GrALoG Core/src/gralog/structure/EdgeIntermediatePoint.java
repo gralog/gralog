@@ -14,7 +14,6 @@ import org.w3c.dom.Element;
 
 /**
  *
- * @author viktor
  */
 @XmlName(name = "intermediatepoint")
 public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {

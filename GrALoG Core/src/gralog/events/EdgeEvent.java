@@ -10,7 +10,6 @@ import java.util.EventObject;
 
 /**
  *
- * @author viktor
  */
 public class EdgeEvent<E extends Edge> extends EventObject {
     public EdgeEvent(E source) {

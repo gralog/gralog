@@ -10,7 +10,6 @@ import java.util.EventObject;
 
 /**
  *
- * @author viktor
  */
 public class VertexEvent<V extends Vertex> extends EventObject {
     public VertexEvent(V source) {

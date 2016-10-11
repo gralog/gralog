@@ -9,7 +9,6 @@ import gralog.automaton.*;
 
 /**
  *
- * @author viktor
  */
 abstract public class RegularExpression {
 

@@ -18,7 +18,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Computation-Tree-Logic Model-Checking",

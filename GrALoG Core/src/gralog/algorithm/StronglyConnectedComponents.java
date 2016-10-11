@@ -11,7 +11,6 @@ import gralog.progresshandler.*;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Strongly Connected Components",

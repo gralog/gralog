@@ -7,7 +7,6 @@ package gralog.algorithm;
 
 /**
  *
- * @author viktor
  */
 public class StringAlgorithmParameter extends AlgorithmParameters {
 

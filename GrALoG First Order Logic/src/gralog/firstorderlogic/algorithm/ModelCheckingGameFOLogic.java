@@ -26,7 +26,6 @@ import java.io.IOException;
 
 /**
  *
- * @author Hv
  */
 @AlgorithmDescription(
         name = "Model Checking Game for first Order Logic",

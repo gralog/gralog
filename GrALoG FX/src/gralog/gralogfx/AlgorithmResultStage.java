@@ -16,7 +16,6 @@ import javafx.scene.layout.BorderPane;
 
 /**
  *
- * @author viktor
  */
 public class AlgorithmResultStage extends Stage {
 

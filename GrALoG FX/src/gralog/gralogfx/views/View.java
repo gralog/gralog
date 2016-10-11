@@ -9,7 +9,6 @@ import gralog.gralogfx.StructurePane;
 
 /**
  *
- * @author viktor
  */
 public interface View {
     void update();

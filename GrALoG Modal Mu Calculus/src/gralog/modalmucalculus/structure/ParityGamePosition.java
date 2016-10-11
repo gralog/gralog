@@ -11,7 +11,6 @@ import org.w3c.dom.Element;
 
 /**
  *
- * @author viktor
  */
 public class ParityGamePosition extends FiniteGamePosition {
 

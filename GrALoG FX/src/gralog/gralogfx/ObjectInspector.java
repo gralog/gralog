@@ -14,7 +14,6 @@ import javafx.scene.Node;
 
 /**
  *
- * @author viktor
  */
 public class ObjectInspector extends AnchorPane {
 

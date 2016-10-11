@@ -6,7 +6,6 @@ import gralog.structure.StructureDescription;
 
 /**
  *
- * @author viktor
  */
 @StructureDescription(
         name = "Büchi Automaton",

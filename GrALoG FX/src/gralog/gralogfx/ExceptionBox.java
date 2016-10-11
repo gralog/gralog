@@ -16,7 +16,6 @@ import javafx.scene.layout.Priority;
 
 /**
  *
- * @author viktor
  */
 public class ExceptionBox extends Alert {
 

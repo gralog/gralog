@@ -15,7 +15,6 @@ import java.util.*;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Minimization",

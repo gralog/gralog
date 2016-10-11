@@ -13,7 +13,6 @@ import org.w3c.dom.Element;
 
 /**
  *
- * @author viktor
  */
 @XmlName(name = "transition")
 public class Transition extends Edge {

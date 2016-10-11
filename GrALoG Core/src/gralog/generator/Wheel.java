@@ -10,7 +10,6 @@ import gralog.structure.*;
 
 /**
  *
- * @author viktor
  */
 @GeneratorDescription(
         name = "Wheel",

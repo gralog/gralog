@@ -20,7 +20,6 @@ import java.util.Set;
 
 /**
  *
- * @author Hv
  */
 public class FirstOrderAnd extends FirstOrderFormula {
 

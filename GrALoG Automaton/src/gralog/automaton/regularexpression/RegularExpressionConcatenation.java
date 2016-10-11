@@ -11,7 +11,6 @@ import gralog.rendering.Vector2D;
 
 /**
  *
- * @author viktor
  */
 public class RegularExpressionConcatenation extends RegularExpression {
 

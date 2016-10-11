@@ -13,7 +13,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 public class AlgorithmThread extends Thread {
 

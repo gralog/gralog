@@ -17,7 +17,6 @@ import javafx.stage.Modality;
 
 /**
  *
- * @author viktor
  */
 public class AlgorithmStage extends Stage {
 

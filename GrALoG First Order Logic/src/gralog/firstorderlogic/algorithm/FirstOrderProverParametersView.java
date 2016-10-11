@@ -37,7 +37,6 @@ import javafx.stage.Stage;
 
 /**
  *
- * @author Hv
  */
 @ViewDescription(forClass = FirstOrderProverParameters.class)
 public class FirstOrderProverParametersView extends GridPaneView {

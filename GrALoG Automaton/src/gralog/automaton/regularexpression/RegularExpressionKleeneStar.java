@@ -11,7 +11,6 @@ import gralog.structure.*;
 
 /**
  *
- * @author viktor
  */
 public class RegularExpressionKleeneStar extends RegularExpression {
 

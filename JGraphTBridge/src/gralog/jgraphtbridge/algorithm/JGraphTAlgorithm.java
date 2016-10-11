@@ -13,7 +13,6 @@ import gralog.progresshandler.ProgressHandler;
 
 /**
  *
- * @author viktor
  */
 public abstract class JGraphTAlgorithm extends Algorithm {
 

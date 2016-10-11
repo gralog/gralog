@@ -16,7 +16,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @ExportFilterDescription(
         name = "TikZ ist kein Zeichenprogramm",

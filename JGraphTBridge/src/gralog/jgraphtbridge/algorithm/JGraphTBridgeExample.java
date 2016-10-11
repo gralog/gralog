@@ -15,7 +15,6 @@ import org.jgrapht.graph.DefaultEdge;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "JGraphT Bridge Example",

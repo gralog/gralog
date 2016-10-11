@@ -17,7 +17,6 @@ import gralog.progresshandler.ProgressHandler;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Rabin-Scott Powerset Construction",

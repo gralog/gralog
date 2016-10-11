@@ -16,7 +16,6 @@ import javafx.scene.web.WebEngine;
 
 /**
  *
- * @author viktor
  */
 public class AboutStage extends Stage {
 

@@ -9,7 +9,6 @@ import gralog.algorithm.AlgorithmParameters;
 
 /**
  *
- * @author Hv
  */
 public class FirstOrderProverParameters extends AlgorithmParameters {
 

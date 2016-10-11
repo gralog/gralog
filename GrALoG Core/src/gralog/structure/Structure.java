@@ -25,7 +25,6 @@ import javax.xml.transform.OutputKeys;
 
 /**
  *
- * @author viktor
  */
 public abstract class Structure<V extends Vertex, E extends Edge>
         extends XmlMarshallable implements IMovable {

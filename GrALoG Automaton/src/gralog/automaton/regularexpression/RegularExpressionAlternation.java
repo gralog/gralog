@@ -11,7 +11,6 @@ import gralog.structure.Vertex;
 
 /**
  *
- * @author viktor
  */
 public class RegularExpressionAlternation extends RegularExpression {
 

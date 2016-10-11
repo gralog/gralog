@@ -7,7 +7,6 @@ package gralog.generator;
 
 /**
  *
- * @author viktor
  */
 public class StringGeneratorParameter extends GeneratorParameters {
 

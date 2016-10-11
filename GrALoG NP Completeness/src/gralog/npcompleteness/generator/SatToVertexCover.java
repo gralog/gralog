@@ -21,7 +21,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @GeneratorDescription(
         name = "SAT to Vertex Cover Instance",

@@ -11,7 +11,6 @@ import java.util.EventListener;
 
 /**
  *
- * @author viktor
  */
 public interface StructureListener<V extends Vertex, E extends Edge> extends EventListener {
     public void structureChanged(StructureEvent<V,E> e);

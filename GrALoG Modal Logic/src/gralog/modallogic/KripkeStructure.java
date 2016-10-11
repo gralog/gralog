@@ -10,7 +10,6 @@ import gralog.plugins.*;
 
 /**
  *
- * @author viktor
  */
 @StructureDescription(
         name = "Kripke Structure",

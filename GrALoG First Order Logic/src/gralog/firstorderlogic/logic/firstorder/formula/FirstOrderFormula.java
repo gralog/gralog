@@ -15,7 +15,6 @@ import java.util.Set;
 
 /**
  *
- * @author Hv
  */
 abstract public class FirstOrderFormula {
 

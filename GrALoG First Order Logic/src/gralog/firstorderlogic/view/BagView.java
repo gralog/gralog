@@ -22,7 +22,6 @@ import javafx.scene.text.Text;
 
 /**
  *
- * @author Hv
  */
 @ViewDescription(
         forClass = gralog.firstorderlogic.prover.TreeDecomposition.Bag.class)

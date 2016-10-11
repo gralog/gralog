@@ -16,7 +16,6 @@ import java.util.StringTokenizer;
 
 /**
  *
- * @author viktor
  */
 @ImportFilterDescription(
         name = "Trivial Graph Format",

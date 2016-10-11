@@ -14,7 +14,6 @@ import org.w3c.dom.Element;
 
 /**
  *
- * @author viktor
  */
 @XmlName(name = "action")
 public class Action extends Edge {

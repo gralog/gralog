@@ -21,7 +21,6 @@ import javafx.stage.Modality;
 
 /**
  *
- * @author viktor
  */
 public class ImportFilterStage extends Stage {
 

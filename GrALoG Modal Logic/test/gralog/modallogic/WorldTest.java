@@ -10,7 +10,6 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author christoph
  */
 public class WorldTest {
     /**

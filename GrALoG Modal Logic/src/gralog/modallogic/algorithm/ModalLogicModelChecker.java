@@ -18,7 +18,6 @@ import java.util.Set;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Modal Logic Model-Checking",

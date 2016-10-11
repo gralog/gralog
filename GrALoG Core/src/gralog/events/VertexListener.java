@@ -11,7 +11,6 @@ import java.util.EventListener;
 
 /**
  *
- * @author viktor
  */
 public interface VertexListener<V extends Vertex> extends EventListener {
     public void VertexChanged(VertexEvent<V> e);

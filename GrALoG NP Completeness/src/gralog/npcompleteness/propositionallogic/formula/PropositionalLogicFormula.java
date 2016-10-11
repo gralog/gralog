@@ -11,7 +11,6 @@ import java.util.HashMap;
 
 /**
  *
- * @author viktor
  */
 abstract public class PropositionalLogicFormula {
 

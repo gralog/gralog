@@ -7,7 +7,6 @@ package gralog.firstorderlogic.prover.TreeDecomposition;
  */
 /**
  *
- * @author Hv
  */
 public class FOQueryResult {
 

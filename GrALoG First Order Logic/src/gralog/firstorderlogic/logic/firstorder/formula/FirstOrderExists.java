@@ -22,7 +22,6 @@ import java.util.Map;
 
 /**
  *
- * @author viktor
  */
 public class FirstOrderExists extends FirstOrderFormula {
 

@@ -17,7 +17,6 @@ import gralog.structure.*;
 
 /**
  *
- * @author viktor
  */
 @AlgorithmDescription(
         name = "Player 0 Winning Region",

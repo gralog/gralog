@@ -11,7 +11,6 @@ import gralog.progresshandler.*;
 
 /**
  *
- * @author viktor
  */
 public class RedrawOnProgress extends ProgressHandler {
 
