@@ -5,8 +5,6 @@
  */
 package gralog.treedecomposition;
 
-import gralog.structure.*;
-
 /**
  *
  * @author viktor
@@ -14,5 +12,4 @@ import gralog.structure.*;
 public class TreeDecomposition {
 
     public Bag rootBag = new Bag();
-    
 }

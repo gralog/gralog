@@ -23,170 +23,146 @@ import java.util.Set;
  * @author viktor
  */
 @GeneratorDescription(
-  name="SAT to Hamiltonian Cycle",
-  text="Constructs a Hamiltonian-Cycle Instance from a SAT Formula",
-  url="https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
+        name = "SAT to Hamiltonian Cycle",
+        text = "Constructs a Hamiltonian-Cycle Instance from a SAT Formula",
+        url = "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
 )
 public class SatToHamiltonCycle extends Generator {
-    
-    
-    @Override
-    public GeneratorParameters GetParameters()
-    {
-        return new StringGeneratorParameter("(a \\vee b \\vee c) \\wedge (\\neg a \\vee c) \\wedge (a \\vee \\neg c)");
-    }
-    
-    
 
     @Override
-    public Structure Generate(GeneratorParameters p) throws Exception
-    {
-        StringGeneratorParameter sp = (StringGeneratorParameter)(p);
-        
+    public GeneratorParameters getParameters() {
+        return new StringGeneratorParameter("(a \\vee b \\vee c) \\wedge (\\neg a \\vee c) \\wedge (a \\vee \\neg c)");
+    }
+
+    @Override
+    public Structure generate(GeneratorParameters p) throws Exception {
+        StringGeneratorParameter sp = (StringGeneratorParameter) (p);
+
         PropositionalLogicParser parser = new PropositionalLogicParser();
         PropositionalLogicFormula phi = parser.parseString(sp.parameter);
         PropositionalLogicFormula cnf = phi;
-        if(!phi.hasConjunctiveNormalForm())
-            cnf = phi.ConjunctiveNormalForm();
-        
-        
-        DirectedGraph result = new DirectedGraph();
-        
-        Set<String> vars = new HashSet<>();
-        cnf.GetVariables(vars);
-        Set<PropositionalLogicFormula> clauses = new HashSet<>();
-        cnf.GetClauses(clauses);
+        if (!phi.hasConjunctiveNormalForm())
+            cnf = phi.conjunctiveNormalForm();
 
-        
+        DirectedGraph result = new DirectedGraph();
+
+        Set<String> vars = new HashSet<>();
+        cnf.getVariables(vars);
+        Set<PropositionalLogicFormula> clauses = new HashSet<>();
+        cnf.getClauses(clauses);
+
         // create nodes for clauses
         HashMap<PropositionalLogicFormula, Vertex> ClauseNodes = new HashMap<>();
         int clausej = 0;
-        for(PropositionalLogicFormula clause : clauses)
-        {
-            Vertex cnode = result.CreateVertex();
-            cnode.Coordinates = new Vector2D(5d + 5d*clausej, -2d);
-            cnode.Label = clause.toString();
-            result.AddVertex(cnode);
+        for (PropositionalLogicFormula clause : clauses) {
+            Vertex cnode = result.createVertex();
+            cnode.coordinates = new Vector2D(5d + 5d * clausej, -2d);
+            cnode.label = clause.toString();
+            result.addVertex(cnode);
             ClauseNodes.put(clause, cnode);
             clausej++;
         }
-        
-        
-        Vertex start = result.CreateVertex(); // start node
-        start.Coordinates = new Vector2D(3d + (5*clauses.size())/2, 1d);
-        start.Label = "start";
-        result.AddVertex(start);
+
+        Vertex start = result.createVertex(); // start node
+        start.coordinates = new Vector2D(3d + (5 * clauses.size()) / 2, 1d);
+        start.label = "start";
+        result.addVertex(start);
         Set<Vertex> lastRow = new HashSet<>();
         lastRow.add(start);
-        
-        
+
         // create rows for the variables
         int i = 0;
-        for(String var : vars)
-        {
-            Vertex pos = result.CreateVertex(); // node for positive assignment to var
-            pos.Coordinates = new Vector2D(1d, 5*i+3d);
-            pos.Label = var;
-            result.AddVertex(pos);
-            
-            
+        for (String var : vars) {
+            Vertex pos = result.createVertex(); // node for positive assignment to var
+            pos.coordinates = new Vector2D(1d, 5 * i + 3d);
+            pos.label = var;
+            result.addVertex(pos);
+
             Vertex last = pos;
             int j = -1;
-            for(PropositionalLogicFormula clause : clauses)
-            {
+            for (PropositionalLogicFormula clause : clauses) {
                 j++;
                 // test if clause contains the variable
                 HashSet<String> clauseVars = new HashSet<>();
-                clause.GetVariables(clauseVars);
+                clause.getVariables(clauseVars);
                 boolean clauseContainsVar = false;
-                for(String clauseVar : clauseVars)
-                    if(clauseVar.equals(var))
+                for (String clauseVar : clauseVars)
+                    if (clauseVar.equals(var))
                         clauseContainsVar = true;
-                if(!clauseContainsVar)
+                if (!clauseContainsVar)
                     continue;
-                
-                
-                // create 2 nodes for occurence of var in clause
-                Vertex a = result.CreateVertex();
-                a.Coordinates = new Vector2D(4d + 5*j, 5*i+3d);
-                result.AddEdge(result.CreateEdge(last, a));
-                result.AddEdge(result.CreateEdge(a, last));
-                result.AddVertex(a);
 
-                Vertex b = result.CreateVertex();
-                b.Coordinates = new Vector2D(4d + 5*j + 2, 5*i+3d);
-                result.AddEdge(result.CreateEdge(b, a));
-                result.AddEdge(result.CreateEdge(a, b));
-                result.AddVertex(b);
+                // create 2 nodes for occurence of var in clause
+                Vertex a = result.createVertex();
+                a.coordinates = new Vector2D(4d + 5 * j, 5 * i + 3d);
+                result.addEdge(result.createEdge(last, a));
+                result.addEdge(result.createEdge(a, last));
+                result.addVertex(a);
+
+                Vertex b = result.createVertex();
+                b.coordinates = new Vector2D(4d + 5 * j + 2, 5 * i + 3d);
+                result.addEdge(result.createEdge(b, a));
+                result.addEdge(result.createEdge(a, b));
+                result.addVertex(b);
 
                 // connect them to the node for the clause (edges may go in
                 // both directions, if clause contains x and !x
                 Vertex clauseNode = ClauseNodes.get(clause);
 
                 Set<PropositionalLogicFormula> literals = new HashSet<>();
-                clause.GetLiterals(literals);
-                for(PropositionalLogicFormula literal : literals)
-                {
-                    if(literal instanceof PropositionalLogicVariable)
-                    {
-                        PropositionalLogicVariable v = (PropositionalLogicVariable)literal;
-                        if(var.equals(v.variable))
-                        {
-                            result.AddEdge(result.CreateEdge(a, clauseNode));
-                            result.AddEdge(result.CreateEdge(clauseNode, b));
+                clause.getLiterals(literals);
+                for (PropositionalLogicFormula literal : literals) {
+                    if (literal instanceof PropositionalLogicVariable) {
+                        PropositionalLogicVariable v = (PropositionalLogicVariable) literal;
+                        if (var.equals(v.variable)) {
+                            result.addEdge(result.createEdge(a, clauseNode));
+                            result.addEdge(result.createEdge(clauseNode, b));
                         }
                     }
-                    else if(literal instanceof PropositionalLogicNot
-                         && ((PropositionalLogicNot)literal).subformula instanceof PropositionalLogicVariable)
-                    {
-                        PropositionalLogicNot plnot = (PropositionalLogicNot)literal;
-                        PropositionalLogicVariable v = (PropositionalLogicVariable)plnot.subformula;
-                        if(var.equals(v.variable))
-                        {
-                            result.AddEdge(result.CreateEdge(b, clauseNode));
-                            result.AddEdge(result.CreateEdge(clauseNode, a));
+                    else if (literal instanceof PropositionalLogicNot
+                             && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
+                        PropositionalLogicNot plnot = (PropositionalLogicNot) literal;
+                        PropositionalLogicVariable v = (PropositionalLogicVariable) plnot.subformula;
+                        if (var.equals(v.variable)) {
+                            result.addEdge(result.createEdge(b, clauseNode));
+                            result.addEdge(result.createEdge(clauseNode, a));
                         }
                     }
                     else
                         throw new Exception("Formula is not in Conjunctive Normal Form");
                 }
 
-                
                 last = b;
             }
-            
-            Vertex neg = result.CreateVertex(); // node for negative assignment to var
-            neg.Coordinates = new Vector2D(4d + 5*clauses.size(), 5*i+3d);
-            neg.Label = "¬"+var;
-            result.AddVertex(neg);
-            
-            result.AddEdge(result.CreateEdge(last, neg));
-            result.AddEdge(result.CreateEdge(neg, last));
-            
+
+            Vertex neg = result.createVertex(); // node for negative assignment to var
+            neg.coordinates = new Vector2D(4d + 5 * clauses.size(), 5 * i + 3d);
+            neg.label = "¬" + var;
+            result.addVertex(neg);
+
+            result.addEdge(result.createEdge(last, neg));
+            result.addEdge(result.createEdge(neg, last));
+
             // connect to start and end of last row
-            for(Vertex l : lastRow)
-            {
-                result.AddEdge(result.CreateEdge(l, neg));
-                result.AddEdge(result.CreateEdge(l, pos));
+            for (Vertex l : lastRow) {
+                result.addEdge(result.createEdge(l, neg));
+                result.addEdge(result.createEdge(l, pos));
             }
             lastRow.clear();
             lastRow.add(pos);
             lastRow.add(neg);
-            
+
             i++;
         }
-        
 
-        Vertex end = result.CreateVertex(); // the end-node
-        end.Coordinates = new Vector2D(3d + (5*clauses.size())/2, 5d*vars.size());
-        end.Label = "end";
-        result.AddVertex(end);
-        for(Vertex l : lastRow)
-        {
-            result.AddEdge(result.CreateEdge(l, end));
+        Vertex end = result.createVertex(); // the end-node
+        end.coordinates = new Vector2D(3d + (5 * clauses.size()) / 2, 5d * vars.size());
+        end.label = "end";
+        result.addVertex(end);
+        for (Vertex l : lastRow) {
+            result.addEdge(result.createEdge(l, end));
         }
 
         return result;
     }
-    
 }

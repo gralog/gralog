@@ -10,9 +10,9 @@ package gralog.generator;
  * @author viktor
  */
 public class StringGeneratorParameter extends GeneratorParameters {
-    
+
     public String parameter;
-    
+
     public StringGeneratorParameter() {
         this.parameter = "";
     }
@@ -20,5 +20,4 @@ public class StringGeneratorParameter extends GeneratorParameters {
     public StringGeneratorParameter(String parameter) {
         this.parameter = parameter;
     }
-
 }

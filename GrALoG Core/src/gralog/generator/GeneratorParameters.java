@@ -10,5 +10,4 @@ package gralog.generator;
  * @author viktor
  */
 public class GeneratorParameters {
-    
 }

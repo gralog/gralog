@@ -12,22 +12,20 @@ import gralog.plugins.XmlName;
  * @author viktor
  */
 @StructureDescription(
-  name="Undirected Graph",
-  text="",
-  url="https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)#Undirected_graph"
+        name = "Undirected Graph",
+        text = "",
+        url = "https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)#Undirected_graph"
 )
-@XmlName(name="graph")
-public class UndirectedGraph extends Structure<Vertex,Edge>
-{
+@XmlName(name = "graph")
+public class UndirectedGraph extends Structure<Vertex, Edge> {
+
     @Override
-    public Vertex CreateVertex()
-    {
+    public Vertex createVertex() {
         return new Vertex();
     }
 
     @Override
-    public Edge CreateEdge()
-    {
+    public Edge createEdge() {
         Edge result = new Edge();
         result.isDirected = false;
         return result;

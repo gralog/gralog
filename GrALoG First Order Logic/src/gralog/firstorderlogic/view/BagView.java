@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -23,55 +24,55 @@ import javafx.scene.text.Text;
  *
  * @author Hv
  */
-@ViewDescription(forClass=gralog.firstorderlogic.prover.TreeDecomposition.Bag.class)
-public class BagView extends GridPaneView{
-    protected void FillTreeView(TreeItem node, Bag bag)
-    {
+@ViewDescription(
+        forClass = gralog.firstorderlogic.prover.TreeDecomposition.Bag.class)
+public class BagView extends GridPaneView {
+
+    protected void FillTreeView(TreeItem node, Bag bag) {
         node.setValue(bag);
-        for(Bag b : bag.ChildBags)
-        {
+        for (Bag b : bag.ChildBags) {
             TreeItem child = new TreeItem("bag");
             node.getChildren().add(child);
             FillTreeView(child, b);
         }
         node.setExpanded(false);
     }
-    
+
     @Override
-    public void Update()
-    {
+    public void update() {
         this.getChildren().clear();
-        
-        if(displayObject != null)
-        {
-            
-            Bag treedecomp = (Bag)displayObject;
-           
+
+        if (displayObject != null) {
+
+            Bag treedecomp = (Bag) displayObject;
+
             TreeItem root = new TreeItem("root");
-        
+
             FillTreeView(root, treedecomp);
             root.setExpanded(true);
             TreeView treeView = new TreeView(root);
-          
+
             treeView.setCellFactory(tv -> {
                 return new TreeCell<Bag>() {
-                    
+
                     private final Text assignment;
                     private final Text caption;
                     HBox hbox;
+
                     {
                         assignment = new Text();
                         caption = new Text();
                         assignment.setStyle("-fx-fill:blue");
-                         hbox=new HBox(4, assignment, caption);
+                        hbox = new HBox(4, assignment, caption);
                     }
-                    
+
                     @Override
                     protected void updateItem(Bag item, boolean empty) {
                         super.updateItem(item, empty);
                         if (empty || item == null) {
                             setGraphic(null);
-                        } else {
+                        }
+                        else {
                             assignment.setText(item.assignment);
                             caption.setText(item.caption);
                             caption.setStyle(null);
@@ -81,29 +82,28 @@ public class BagView extends GridPaneView{
                             setGraphic(hbox);
                         }
                     }
-                    
+
                 };
             });
-            
+
             treeView.getSelectionModel()
                     .selectedItemProperty()
                     .addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
-                TreeItem selectedItem = (TreeItem) newValue;
-                Bag bag = (Bag)selectedItem.getValue();
-                structurePane.ClearSelection();
-                structurePane.SelectAll(bag.Nodes);
-            });
+                        TreeItem selectedItem = (TreeItem) newValue;
+                        Bag bag = (Bag) selectedItem.getValue();
+                        structurePane.clearSelection();
+                        structurePane.selectAll(bag.Nodes);
+                    });
 
             ColumnConstraints columnConstraints = new ColumnConstraints();
             columnConstraints.setPercentWidth(100);
             this.getColumnConstraints().add(columnConstraints);
-    
+
             RowConstraints rowConstraints = new RowConstraints();
             rowConstraints.setPercentHeight(100);
             this.getRowConstraints().add(rowConstraints);
-    
-            this.add(treeView,0,0);
-            
+
+            this.add(treeView, 0, 0);
         }
     }
 }

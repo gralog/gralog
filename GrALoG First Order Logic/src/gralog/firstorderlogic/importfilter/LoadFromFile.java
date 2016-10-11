@@ -8,35 +8,34 @@ package gralog.firstorderlogic.importfilter;
 import gralog.structure.*;
 import gralog.importfilter.*;
 import java.io.*;
-import java.util.Set;
 
 @ImportFilterDescription(
-    name="first order logic formulae",
-    text="load formulae from a file",
-    url="",
-    fileextension="txt"
+        name = "first order logic formulae",
+        text = "load formulae from a file",
+        url = "",
+        fileExtension = "txt"
 )
 /**
  *
  * @author Hv
  */
 public class LoadFromFile extends ImportFilter {
-    
-    static public int count=1;
+
+    static public int count = 1;
+
     @Override
-    public Structure Import(InputStream stream,ImportFilterParameters params) throws Exception{
-        
+    public Structure importGraph(InputStream stream,
+            ImportFilterParameters params) throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         String line;
         PrintWriter out = new PrintWriter(new BufferedWriter(
-                                                 new FileWriter("Formulae" + count + ".txt", true)));
-            count++;
-        while( (line=reader.readLine())!=null ){
+                new FileWriter("Formulae" + count + ".txt", true)));
+        count++;
+        while ((line = reader.readLine()) != null) {
             out.println(line);
-          
+
         }
-          out.close();
+        out.close();
         return new DirectedGraph();
     }
-    
 }

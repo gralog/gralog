@@ -12,5 +12,5 @@ import gralog.rendering.Vector2D;
  * @author viktor
  */
 public interface IMovable {
-    public void Move(Vector2D coords);
+    public void move(Vector2D coords);
 }

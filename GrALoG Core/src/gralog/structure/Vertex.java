@@ -10,7 +10,6 @@ import gralog.events.*;
 import gralog.rendering.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import java.util.Vector;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -18,122 +17,112 @@ import java.util.HashSet;
  *
  * @author viktor
  */
-@XmlName(name="node")
+@XmlName(name = "node")
 public class Vertex extends XmlMarshallable implements IMovable {
- 
-    
-    public String Label = "";
-    public double Radius = 0.5; // cm
-    public GralogColor FillColor = GralogColor.white;
-    public double StrokeWidth = 2.54/96; // cm
-    public double TextHeight = 0.4d; // cm
-    public GralogColor StrokeColor = GralogColor.black;
-    
 
-    public Vector2D Coordinates = new Vector2D(0.0, 0.0);
+    public String label = "";
+    public double radius = 0.5; // cm
+    public GralogColor fillColor = GralogColor.WHITE;
+    public double strokeWidth = 2.54 / 96; // cm
+    public double textHeight = 0.4d; // cm
+    public GralogColor strokeColor = GralogColor.BLACK;
+
+    public Vector2D coordinates = new Vector2D(0.0, 0.0);
     private final Set<VertexListener> listeners = new HashSet<>();
-    
-    
+
     private final Set<Edge> connectedEdges = new HashSet<>();
-    void connectEdge(Edge e)
-    {
+
+    void connectEdge(Edge e) {
         this.connectedEdges.add(e);
     }
-    void disconnectEdge(Edge e)
-    {
+
+    void disconnectEdge(Edge e) {
         this.connectedEdges.remove(e);
     }
-    public Set<Edge> getConnectedEdges()
-    {
+
+    public Set<Edge> getConnectedEdges() {
         return connectedEdges;
     }
-    
-    
 
-    public double MaximumCoordinate(int dimension) {
-        if(Coordinates.Dimensions() > dimension)
-            return Coordinates.get(dimension);
+    public double maximumCoordinate(int dimension) {
+        if (coordinates.dimensions() > dimension)
+            return coordinates.get(dimension);
         return Double.NEGATIVE_INFINITY;
     }
-    
-    public Vector2D Intersection(Vector2D p1, Vector2D p2)
-    {
-        return p1.Minus(p2).Normalized().Multiply(this.Radius).Plus(p2);
+
+    public Vector2D intersection(Vector2D p1, Vector2D p2) {
+        return p1.minus(p2).normalized().multiply(this.radius).plus(p2);
     }
-    
-    
+
     @Override
-    public void Move(Vector2D offset) {
-        Coordinates = Coordinates.Plus(offset);
+    public void move(Vector2D offset) {
+        coordinates = coordinates.plus(offset);
     }
 
-    public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
-        
-        if(highlights != null && highlights.contains(this))
-            gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius+0.07, GralogColor.red);
+    public void render(GralogGraphicsContext gc, Set<Object> highlights) {
+        if (highlights != null && highlights.contains(this))
+            gc.circle(coordinates.get(0), coordinates.get(1), radius + 0.07, GralogColor.RED);
 
-        gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius, StrokeColor);
-        gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-StrokeWidth, FillColor);
-        gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, TextHeight, FillColor.inverse());
+        gc.circle(coordinates.get(0), coordinates.get(1), radius, strokeColor);
+        gc.circle(coordinates.get(0), coordinates.get(1), radius - strokeWidth, fillColor);
+        gc.putText(coordinates.get(0), coordinates.get(1), label, textHeight, fillColor.inverse());
     }
-    
-    public void SnapToGrid(double GridSize)
-    {
-        Coordinates = Coordinates.SnapToGrid(GridSize);
+
+    public void snapToGrid(double GridSize) {
+        coordinates = coordinates.snapToGrid(GridSize);
     }
-    
-    public boolean ContainsCoordinate(double x, double y) {
-        double tx = Coordinates.get(0);
-        double ty = Coordinates.get(1);
-        return (x-tx)*(x-tx) + (y-ty)*(y-ty) < Radius*Radius;
+
+    public boolean containsCoordinate(double x, double y) {
+        double tx = coordinates.get(0);
+        double ty = coordinates.get(1);
+        return (x - tx) * (x - tx) + (y - ty) * (y - ty) < radius * radius;
     }
-    
-    public Element ToXml(Document doc, String id) throws Exception {
-        Element vnode = super.ToXml(doc);
+
+    public Element toXml(Document doc, String id) throws Exception {
+        Element vnode = super.toXml(doc);
         vnode.setAttribute("id", id);
-        vnode.setAttribute("x", Double.toString(Coordinates.getX()));
-        vnode.setAttribute("y", Double.toString(Coordinates.getY()));
-        vnode.setAttribute("label", Label);
-        vnode.setAttribute("radius", Double.toString(Radius));
-        vnode.setAttribute("fillcolor", FillColor.toHtmlString());
-        vnode.setAttribute("textheight", Double.toString(TextHeight));
-        vnode.setAttribute("strokewidth", Double.toString(StrokeWidth));
-        vnode.setAttribute("strokecolor", StrokeColor.toHtmlString());
+        vnode.setAttribute("x", Double.toString(coordinates.getX()));
+        vnode.setAttribute("y", Double.toString(coordinates.getY()));
+        vnode.setAttribute("label", label);
+        vnode.setAttribute("radius", Double.toString(radius));
+        vnode.setAttribute("fillcolor", fillColor.toHtmlString());
+        vnode.setAttribute("textheight", Double.toString(textHeight));
+        vnode.setAttribute("strokewidth", Double.toString(strokeWidth));
+        vnode.setAttribute("strokecolor", strokeColor.toHtmlString());
         return vnode;
     }
-    
-    public String FromXml(Element vnode) {
-        Coordinates = new Vector2D(
+
+    public String fromXml(Element vnode) {
+        coordinates = new Vector2D(
                 Double.parseDouble(vnode.getAttribute("x")),
                 Double.parseDouble(vnode.getAttribute("y"))
         );
-        if(vnode.hasAttribute("label"))
-            Label = vnode.getAttribute("label");
-        if(vnode.hasAttribute("radius"))
-            Radius = Double.parseDouble(vnode.getAttribute("radius"));
-        if(vnode.hasAttribute("fillcolor"))
-            FillColor = GralogColor.parseColor(vnode.getAttribute("fillcolor"));
-        if(vnode.hasAttribute("textheight"))
-            TextHeight = Double.parseDouble(vnode.getAttribute("textheight"));
-        if(vnode.hasAttribute("strokewidth"))
-            StrokeWidth = Double.parseDouble(vnode.getAttribute("strokewidth"));
-        if(vnode.hasAttribute("strokecolor"))
-            StrokeColor = GralogColor.parseColor(vnode.getAttribute("strokecolor"));
+        if (vnode.hasAttribute("label"))
+            label = vnode.getAttribute("label");
+        if (vnode.hasAttribute("radius"))
+            radius = Double.parseDouble(vnode.getAttribute("radius"));
+        if (vnode.hasAttribute("fillcolor"))
+            fillColor = GralogColor.parseColor(vnode.getAttribute("fillcolor"));
+        if (vnode.hasAttribute("textheight"))
+            textHeight = Double.parseDouble(vnode.getAttribute("textheight"));
+        if (vnode.hasAttribute("strokewidth"))
+            strokeWidth = Double.parseDouble(vnode.getAttribute("strokewidth"));
+        if (vnode.hasAttribute("strokecolor"))
+            strokeColor = GralogColor.parseColor(vnode.getAttribute("strokecolor"));
 
         return vnode.getAttribute("id");
     }
-    
 
-    
     protected void notifyVertexListeners() {
-        for(VertexListener listener : listeners)
+        for (VertexListener listener : listeners)
             listener.VertexChanged(new VertexEvent(this));
     }
+
     public void addVertexListener(VertexListener listener) {
         listeners.add(listener);
     }
+
     public void removeVertexListener(VertexListener listener) {
         listeners.remove(listener);
     }
-
 }

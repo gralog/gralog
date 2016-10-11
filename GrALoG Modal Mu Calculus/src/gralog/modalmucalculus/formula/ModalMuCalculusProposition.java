@@ -1,4 +1,3 @@
-
 package gralog.modalmucalculus.formula;
 
 import gralog.modallogic.KripkeStructure;
@@ -10,70 +9,62 @@ import gralog.structure.*;
 import java.util.HashMap;
 import java.util.Map;
 
+public class ModalMuCalculusProposition extends ModalMuCalculusFormula {
 
-
-public class ModalMuCalculusProposition extends ModalMuCalculusFormula
-{
     String proposition;
-    
-    public ModalMuCalculusProposition(String proposition)
-    {
+
+    public ModalMuCalculusProposition(String proposition) {
         this.proposition = proposition;
     }
-    
-    @Override
-    protected ModalMuCalculusFormula NegationNormalForm(boolean negated)
-    {
-        if(negated)
-            return new ModalMuCalculusNot( new ModalMuCalculusProposition(proposition));
-        else
-            return new ModalMuCalculusProposition(proposition);
-    }
 
     @Override
-    protected ModalMuCalculusFormula NegateVariable(String variable)
-    {
-        if(variable.equals(proposition))
+    protected ModalMuCalculusFormula negationNormalForm(boolean negated) {
+        if (negated)
             return new ModalMuCalculusNot(new ModalMuCalculusProposition(proposition));
         else
             return new ModalMuCalculusProposition(proposition);
     }
 
     @Override
-    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p, int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index)
-    {
-        for(Vertex v : s.getVertices())
-        {
-            ParityGamePosition node = p.CreateVertex();
-            node.Coordinates = new Vector2D(
-                    scale * w * v.Coordinates.getX() + x,
-                    scale * h * v.Coordinates.getY() + y
+    protected ModalMuCalculusFormula negateVariable(String variable) {
+        if (variable.equals(proposition))
+            return new ModalMuCalculusNot(new ModalMuCalculusProposition(proposition));
+        else
+            return new ModalMuCalculusProposition(proposition);
+    }
+
+    @Override
+    public void createParityGamePositions(double scale, double x, double y,
+            double w, double h, KripkeStructure s, ParityGame p,
+            int NextPriority,
+            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) {
+        for (Vertex v : s.getVertices()) {
+            ParityGamePosition node = p.createVertex();
+            node.coordinates = new Vector2D(
+                    scale * w * v.coordinates.getX() + x,
+                    scale * h * v.coordinates.getY() + y
             );
-            node.Label = proposition;
-            node.Player1Position = !((World)v).SatisfiesProposition(proposition);
-            p.AddVertex(node);
-            
-            if(!index.containsKey((World)v))
-                index.put((World)v, new HashMap<>());
-            index.get((World)v).put(this, node);
+            node.label = proposition;
+            node.player1Position = !((World) v).satisfiesProposition(proposition);
+            p.addVertex(node);
+
+            if (!index.containsKey((World) v))
+                index.put((World) v, new HashMap<>());
+            index.get((World) v).put(this, node);
         }
     }
-    
+
     @Override
-    public void CreateParityGameTransitions(KripkeStructure s, ParityGame p,
+    public void createParityGameTransitions(KripkeStructure s, ParityGame p,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints)
-    {
-        if(!variableDefinitionPoints.containsKey(proposition))
+            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) {
+        if (!variableDefinitionPoints.containsKey(proposition))
             return; // simple proposition
-        
-        for(Vertex v : s.getVertices())
-        {
-            ParityGamePosition pv = index.get((World)v).get(this);
-            ParityGamePosition pdef = index.get((World)v).get(variableDefinitionPoints.get(proposition));
-            p.AddEdge( p.CreateEdge(pv, pdef) );
+
+        for (Vertex v : s.getVertices()) {
+            ParityGamePosition pv = index.get((World) v).get(this);
+            ParityGamePosition pdef = index.get((World) v).get(variableDefinitionPoints.get(proposition));
+            p.addEdge(p.createEdge(pv, pdef));
         }
     }
 }

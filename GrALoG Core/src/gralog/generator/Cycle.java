@@ -20,38 +20,38 @@ import gralog.structure.*;
 public class Cycle extends Generator {
     
     @Override
-    public GeneratorParameters GetParameters() {
+    public GeneratorParameters getParameters() {
         return new StringGeneratorParameter("5");
     }
     
     @Override
-    public Structure Generate(GeneratorParameters p) throws Exception
+    public Structure generate(GeneratorParameters p) throws Exception
     {
         Integer n = Integer.parseInt(((StringGeneratorParameter)p).parameter);
         
         DirectedGraph result = new DirectedGraph();
         
-        Vertex first = result.CreateVertex();
-        first.Coordinates = new Vector2D(
+        Vertex first = result.createVertex();
+        first.coordinates = new Vector2D(
                 Math.sin(0 * 2*Math.PI / n) * 3.5 + 3.5,
                 Math.cos(0 * 2*Math.PI / n) * 3.5 + 3.5
         );
-        result.AddVertex(first);
+        result.addVertex(first);
         
         Vertex last = first;
         for(int i = 1; i < n; i++)
         {
-            Vertex next = result.CreateVertex();
-            next.Coordinates = new Vector2D(
+            Vertex next = result.createVertex();
+            next.coordinates = new Vector2D(
                     Math.sin(i * 2*Math.PI / n) * 3.5 + 3.5,
                     Math.cos(i * 2*Math.PI / n) * 3.5 + 3.5
             );
-            result.AddEdge(result.CreateEdge(last, next));
+            result.addEdge(result.createEdge(last, next));
             
             last = next;
-            result.AddVertex(next);
+            result.addVertex(next);
         }
-        result.AddEdge(result.CreateEdge(last, first));
+        result.addEdge(result.createEdge(last, first));
         
         return result;
     }

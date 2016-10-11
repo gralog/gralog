@@ -29,268 +29,250 @@ import javax.xml.transform.OutputKeys;
  */
 public abstract class Structure<V extends Vertex, E extends Edge>
         extends XmlMarshallable implements IMovable {
-    protected Set<Vertex> Vertices;
-    protected Set<Edge> Edges;
-    
-    Set<StructureListener> listeners = new HashSet<>();
-    
+
+    protected Set<Vertex> vertices;
+    protected Set<Edge> edges;
+
+    private final Set<StructureListener> listeners = new HashSet<>();
+
     public Structure() {
-        Vertices = new HashSet<>();
-        Edges = new HashSet<>();
+        vertices = new HashSet<>();
+        edges = new HashSet<>();
     }
-    
 
     public Set<Vertex> getVertices() {
-        return Vertices;
-    }
-    public Set<Edge> getEdges() {
-        return Edges;
-    }            
-    
-    
-    public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
-        for(Edge e : Edges)
-            e.Render(gc, highlights);
-        for(Vertex v : Vertices)
-            v.Render(gc, highlights);
+        return vertices;
     }
 
-    
-    public void SnapToGrid(double GridSize) {
-        for(Edge e : Edges)
-            e.SnapToGrid(GridSize);
-        for(Vertex v : Vertices)
-            v.SnapToGrid(GridSize);
+    public Set<Edge> getEdges() {
+        return edges;
     }
-    
-    
-    public double MaximumCoordinate(int dimension) {
+
+    public void render(GralogGraphicsContext gc, Set<Object> highlights) {
+        for (Edge e : edges)
+            e.render(gc, highlights);
+        for (Vertex v : vertices)
+            v.render(gc, highlights);
+    }
+
+    public void snapToGrid(double GridSize) {
+        for (Edge e : edges)
+            e.snapToGrid(GridSize);
+        for (Vertex v : vertices)
+            v.snapToGrid(GridSize);
+    }
+
+    public double maximumCoordinate(int dimension) {
         double result = Double.NEGATIVE_INFINITY;
-        for(Vertex v : getVertices())
-            result = Math.max(result, v.MaximumCoordinate(dimension));
-        for(Edge e : getEdges())
-            result = Math.max(result, e.MaximumCoordinate(dimension));
+        for (Vertex v : getVertices())
+            result = Math.max(result, v.maximumCoordinate(dimension));
+        for (Edge e : getEdges())
+            result = Math.max(result, e.maximumCoordinate(dimension));
         return result;
     }
-    
+
     @Override
-    public void Move(Vector2D offset) {
-        for(Vertex v : getVertices())
-            v.Move(offset);
-        for(Edge e : getEdges())
-            e.Move(offset);
-    }
-    
-    
-    abstract public V CreateVertex();
-    public void AddVertex(V v) {
-        Vertices.add(v);
-    }
-    public void RemoveVertex(Vertex v) {
-        Set<Edge> deletedEdges = new HashSet<>();
-        for(Edge e : Edges)
-            if(e.ContainsVertex(v))
-                deletedEdges.add(e);
-        for(Edge e : deletedEdges)
-            RemoveEdge(e);
-        
-        Vertices.remove(v);
+    public void move(Vector2D offset) {
+        for (Vertex v : getVertices())
+            v.move(offset);
+        for (Edge e : getEdges())
+            e.move(offset);
     }
 
-    
-    abstract public E CreateEdge();
-    public void AddEdge(E e) {
-        Edges.add(e);
+    abstract public V createVertex();
+
+    public void addVertex(V v) {
+        vertices.add(v);
     }
-    public void RemoveEdge(Edge e) {
+
+    public void removeVertex(Vertex v) {
+        Set<Edge> deletedEdges = new HashSet<>();
+        for (Edge e : edges)
+            if (e.containsVertex(v))
+                deletedEdges.add(e);
+        for (Edge e : deletedEdges)
+            removeEdge(e);
+
+        vertices.remove(v);
+    }
+
+    abstract public E createEdge();
+
+    public void addEdge(E e) {
+        edges.add(e);
+    }
+
+    public void removeEdge(Edge e) {
         e.setSource(null);
         e.setTarget(null);
-        Edges.remove(e);
+        edges.remove(e);
     }
-    public E CreateEdge(V source, V target)
-    {
-        E edge = CreateEdge();
+
+    public E createEdge(V source, V target) {
+        E edge = createEdge();
         edge.setSource(source);
         edge.setTarget(target);
-        
-        if(source == target && source != null)
-        {
-            edge.intermediatePoints.add(new EdgeIntermediatePoint(source.Coordinates.get(0) + 0.6, source.Coordinates.get(1)-1.5d));
-            edge.intermediatePoints.add(new EdgeIntermediatePoint(source.Coordinates.get(0) - 0.6, source.Coordinates.get(1)-1.5d));
+
+        if (source == target && source != null) {
+            edge.intermediatePoints.add(new EdgeIntermediatePoint(source.coordinates.get(0) + 0.6, source.coordinates.get(1) - 1.5d));
+            edge.intermediatePoints.add(new EdgeIntermediatePoint(source.coordinates.get(0) - 0.6, source.coordinates.get(1) - 1.5d));
         }
-        
+
         return edge;
     }
-    
-    
-    
-    public boolean Adjacent(V a, V b) {
-        for(Edge e : this.Edges)
-            if(e.ContainsVertex(a) && e.ContainsVertex(b))
+
+    public boolean adjacent(V a, V b) {
+        for (Edge e : this.edges)
+            if (e.containsVertex(a) && e.containsVertex(b))
                 return true;
         return false;
     }
-    public IMovable FindObject(double x, double y)
-    {
+
+    public IMovable findObject(double x, double y) {
         IMovable result = null;
 
-        for(Edge e : Edges)
-        {
-            IMovable temp = e.FindObject(x,y);
-            if(temp != null)
+        for (Edge e : edges) {
+            IMovable temp = e.findObject(x, y);
+            if (temp != null)
                 result = temp;
         }
-        
-        for(Vertex v : Vertices)
-            if(v.ContainsCoordinate(x,y))
+
+        for (Vertex v : vertices)
+            if (v.containsCoordinate(x, y))
                 result = v;
 
         return result;
     }
-    
-    
-    
+
     @Override
-    public Element ToXml(Document doc) throws Exception {
-        Element snode = super.ToXml(doc);
+    public Element toXml(Document doc) throws Exception {
+        Element snode = super.toXml(doc);
 
         HashMap<Vertex, String> ids = new HashMap<>();
         Integer i = 1;
-        for(Vertex v : Vertices)
-        {
-            String id = "n"+(i++);
+        for (Vertex v : vertices) {
+            String id = "n" + (i++);
             ids.put(v, id);
-            Element vnode = v.ToXml(doc, id);
-            if(vnode != null)
+            Element vnode = v.toXml(doc, id);
+            if (vnode != null)
                 snode.appendChild(vnode);
         }
-        
-        for(Edge e : Edges)
-        {
-            Element enode = e.ToXml(doc, ids);
-            if(enode != null)
+
+        for (Edge e : edges) {
+            Element enode = e.toXml(doc, ids);
+            if (enode != null)
                 snode.appendChild(enode);
-        }        
-        
+        }
+
         return snode;
     }
-    
-    public void WriteToFile(String filename) throws Exception {
-        WriteToStream(new StreamResult(filename));
+
+    public void writeToFile(String filename) throws Exception {
+        writeToStream(new StreamResult(filename));
     }
-    
-    public void WriteToStream(StreamResult stream) throws Exception {
+
+    public void writeToStream(StreamResult stream) throws Exception {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
         Document doc = docBuilder.newDocument();
 
         Element root = doc.createElement("graphml");
-        Element snode = ToXml(doc);
-        if(snode == null)
+        Element snode = toXml(doc);
+        if (snode == null)
             throw new Exception("Error writing to XML");
         root.appendChild(snode);
         doc.appendChild(root);
-        
+
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");            
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         DOMSource source = new DOMSource(doc);
         transformer.transform(source, stream);
     }
-    
-    public void FromXml(Element gnode) throws Exception {
-        
-        HashMap<String,Vertex> VertexRegister = new HashMap<>();
+
+    public void fromXml(Element gnode) throws Exception {
+        HashMap<String, Vertex> VertexRegister = new HashMap<>();
         HashMap<Edge, Element> LoadedFrom = new HashMap<>();
         ArrayList<Edge> TempEdges = new ArrayList<>();
-        
+
         NodeList children = gnode.getChildNodes();
-        for(int i = 0; i < children.getLength(); ++i)
-        {
+        for (int i = 0; i < children.getLength(); ++i) {
             Node childNode = children.item(i);
             if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
             Element child = (Element) childNode;
-            Object obj = PluginManager.InstantiateClass(child.getTagName());
-            if(obj instanceof Vertex)
-            {
-                V v = (V)obj;
-                String id = v.FromXml(child);
+            Object obj = PluginManager.instantiateClass(child.getTagName());
+            if (obj instanceof Vertex) {
+                V v = (V) obj;
+                String id = v.fromXml(child);
                 VertexRegister.put(id, v);
-                AddVertex(v);
+                addVertex(v);
             }
-            else if(obj instanceof Edge)
-            {
-                TempEdges.add((E)obj);
-                LoadedFrom.put((E)obj, child);
+            else if (obj instanceof Edge) {
+                TempEdges.add((E) obj);
+                LoadedFrom.put((E) obj, child);
             }
         }
-        
-        for(Edge e : TempEdges)
-        {
-            e.FromXml(LoadedFrom.get(e), VertexRegister);
-            Edges.add(e);
+
+        for (Edge e : TempEdges) {
+            e.fromXml(LoadedFrom.get(e), VertexRegister);
+            edges.add(e);
         }
     }
 
-    public static Structure LoadFromFile(String fileName) throws Exception
-    {
-        return LoadFromStream(new FileInputStream(fileName));
+    public static Structure loadFromFile(String fileName) throws Exception {
+        return loadFromStream(new FileInputStream(fileName));
     }
-    
-    public static Structure LoadFromStream(InputStream stream) throws Exception
-    {
-     	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-	Document doc = dBuilder.parse(stream);
-	doc.getDocumentElement().normalize();
-        
+
+    public static Structure loadFromStream(InputStream stream) throws Exception {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(stream);
+        doc.getDocumentElement().normalize();
+
         Element root = doc.getDocumentElement();
-        if(!root.getTagName().equalsIgnoreCase("graphml"))
+        if (!root.getTagName().equalsIgnoreCase("graphml"))
             throw new Exception("Not a GraphML file");
-        
+
         NodeList children = root.getChildNodes();
-        
-        for(int i = children.getLength()-1; i >= 0; --i) {
+
+        for (int i = children.getLength() - 1; i >= 0; --i) {
             Node childNode = children.item(i);
             if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
-            Element child = (Element)childNode;
-            
-            Object result = PluginManager.InstantiateClass(child.getTagName());
-            if(result == null)
+            Element child = (Element) childNode;
+
+            Object result = PluginManager.instantiateClass(child.getTagName());
+            if (result == null)
                 continue;
-            
-            if(result instanceof Structure)
-            {
-                ((Structure)result).FromXml(child);
-                return (Structure)result;
+
+            if (result instanceof Structure) {
+                ((Structure) result).fromXml(child);
+                return (Structure) result;
             }
         }
 
         return null;
     }
-    
-    
+
     protected void notifyStructureListeners() {
-        for(StructureListener listener : listeners)
-            listener.StructureChanged(new StructureEvent(this));
+        for (StructureListener listener : listeners)
+            listener.structureChanged(new StructureEvent(this));
     }
+
     public void addStructureListener(StructureListener listener) {
         listeners.add(listener);
     }
+
     public void removeStructureListener(StructureListener listener) {
         listeners.remove(listener);
     }
-    
-    
+
     public StructureDescription getDescription() throws Exception {
-        if(!this.getClass().isAnnotationPresent(StructureDescription.class))
+        if (!this.getClass().isAnnotationPresent(StructureDescription.class))
             throw new Exception("class " + this.getClass().getName() + " has no @StructureDescription Annotation");
         return this.getClass().getAnnotation(StructureDescription.class);
     }
-    
 }
-

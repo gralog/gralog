@@ -28,217 +28,195 @@ import java.util.concurrent.TimeUnit;
  * @author viktor
  */
 public abstract class AlgorithmExternal extends Algorithm {
-    
+
     // set these explicitly in the constructor of your derived classes!
     // e.g. the command should not be set via an AlgorithmParameter
     // the class must know these - it is not the users job to know them!
-    protected List<String> Command = new LinkedList<>();
-    ExportFilter exportFilter = null;
-    boolean PassStructureViaFile = false;
-    
-    
-    protected AlgorithmExternal(ExportFilter exportFilter, boolean PassStructureViaFile, String... Command)
-    {
-        this.Command.addAll(Arrays.asList(Command));
+    protected List<String> command;
+    ExportFilter exportFilter;
+    boolean passStructureViaFile;
+
+    protected AlgorithmExternal(ExportFilter exportFilter,
+            boolean passStructureViaFile, String... command) {
+        this.command = new LinkedList<>(Arrays.asList(command));
         this.exportFilter = exportFilter;
-        this.PassStructureViaFile = PassStructureViaFile;
+        this.passStructureViaFile = passStructureViaFile;
     }
-    
-    
-    
-    public Object Run(Structure structure, AlgorithmParameters params, Set<Object> selection, ProgressHandler onprogress) throws Exception
-    {
+
+    public Object run(Structure structure, AlgorithmParameters params,
+            Set<Object> selection, ProgressHandler onProgress) throws Exception {
         List<String> EffectiveCommand = null;
-        if(PassStructureViaFile)
-        {
-            File temp = File.createTempFile("GrALoG", "." + exportFilter.getDescription().fileextension()); 
-            exportFilter.DoExport(structure, new OutputStreamWriter(new FileOutputStream(temp)), null);
+        if (passStructureViaFile) {
+            File temp = File.createTempFile("GrALoG", "." + exportFilter.getDescription().fileExtension());
+            exportFilter.exportGraph(structure, new OutputStreamWriter(new FileOutputStream(temp)), null);
             EffectiveCommand = new LinkedList<>();
-            for(String s : Command)
+            for (String s : command)
                 EffectiveCommand.add(s.replaceAll("%u", "\"" + temp.getAbsolutePath() + "\""));
         }
-        else
-        {
-            EffectiveCommand = Command;
+        else {
+            EffectiveCommand = command;
         }
-        
+
         ProcessBuilder pb = new ProcessBuilder(EffectiveCommand);
         Process proc = pb.start();
         Scanner in = new Scanner(proc.getInputStream());
         OutputStream outstream = proc.getOutputStream();
-        PrintWriter out = new PrintWriter(outstream);
-        
-        Map<String, Vertex> VertexIndex = exportFilter.GetVertexNames(structure, null);
-        Map<String, Edge> EdgeIndex = exportFilter.GetEdgeNames(structure, null);
-        
-        if(!PassStructureViaFile)
-        {
-            exportFilter.DoExport(structure, new OutputStreamWriter(outstream), null);
+
+        Map<String, Vertex> vertexIndex = exportFilter.getVertexNames(structure, null);
+        Map<String, Edge> edgeIndex = exportFilter.getEdgeNames(structure, null);
+
+        if (!passStructureViaFile) {
+            exportFilter.exportGraph(structure, new OutputStreamWriter(outstream), null);
             outstream.flush();
             outstream.close();
         }
-        
-        
-        boolean quitted = false;
-        while(in.hasNextLine() && !quitted)
-        {
+
+        boolean quit = false;
+        while (in.hasNextLine() && !quit) {
             String line = in.nextLine();
             String[] parts = line.split(" ");
-            
-            switch(parts[0])
-            {
-                case "CREATEVERTEX":
-                {
-                    if(parts.length < 2)
+
+            switch (parts[0]) {
+                case "CREATEVERTEX": {
+                    if (parts.length < 2)
                         throw new Exception("External Algorithm tries to create vertex, but supplied no vertex-handle");
-                    if(VertexIndex.containsKey(parts[1]))
+                    if (vertexIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to create vertex, but handle \"" + parts[1] + "\" already exists");
-                    Vertex v = structure.CreateVertex();
-                    v.Coordinates = new Vector2D(0d, 0d);
-                    VertexIndex.put(parts[1], v);
-                    structure.AddVertex(v);
+                    Vertex v = structure.createVertex();
+                    v.coordinates = new Vector2D(0d, 0d);
+                    vertexIndex.put(parts[1], v);
+                    structure.addVertex(v);
                     break;
                 }
 
-                case "DELETEVERTEX":
-                {
-                    if(parts.length < 2)
+                case "DELETEVERTEX": {
+                    if (parts.length < 2)
                         throw new Exception("External Algorithm tries to delete vertex, but supplied no vertex-handle");
-                    if(!VertexIndex.containsKey(parts[1]))
+                    if (!vertexIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to delete nonexistent vertex \"" + parts[1] + "\"");
-                    Vertex v = VertexIndex.get(parts[1]);
-                    structure.RemoveVertex(v);
-                    VertexIndex.remove(parts[1]);
+                    Vertex v = vertexIndex.get(parts[1]);
+                    structure.removeVertex(v);
+                    vertexIndex.remove(parts[1]);
                     break;
                 }
 
-                case "SETVERTEXLABEL":
-                {
-                    if(parts.length < 2)
+                case "SETVERTEXLABEL": {
+                    if (parts.length < 2)
                         throw new Exception("External Algorithm tries to set vertex label, but supplied no vertex-handle");
-                    if(!VertexIndex.containsKey(parts[1]))
+                    if (!vertexIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to set label to nonexistent vertex \"" + parts[1] + "\"");
 
                     String label = "";
-                    if(parts.length > 2)
+                    if (parts.length > 2)
                         label = parts[2];
 
-                    Vertex v = VertexIndex.get(parts[1]);
-                    v.Label = label;
+                    Vertex v = vertexIndex.get(parts[1]);
+                    v.label = label;
                     break;
                 }
 
-                case "SETVERTEXCOLOR":
-                {
-                    if(parts.length < 2)
+                case "SETVERTEXCOLOR": {
+                    if (parts.length < 2)
                         throw new Exception("External Algorithm tries to colorize vertex, but supplied no vertex-handle");
-                    if(!VertexIndex.containsKey(parts[1]))
+                    if (!vertexIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to colorize nonexistent vertex \"" + parts[1] + "\"");
-                    if(parts.length < 3)
+                    if (parts.length < 3)
                         throw new Exception("External Algorithm tries to colorize vertex, but supplied no color");
 
-                    Vertex v = VertexIndex.get(parts[1]);
+                    Vertex v = vertexIndex.get(parts[1]);
                     GralogColor color = GralogColor.parseColor(parts[2]);
-                    v.FillColor = color;
+                    v.fillColor = color;
                     break;
                 }
 
-                case "MOVEVERTEX":
-                {
-                    if(parts.length < 2)
+                case "MOVEVERTEX": {
+                    if (parts.length < 2)
                         throw new Exception("External Algorithm tries to move vertex, but supplied no vertex-handle");
-                    if(!VertexIndex.containsKey(parts[1]))
+                    if (!vertexIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to move nonexistent vertex \"" + parts[1] + "\"");
-                    if(parts.length < 4)
+                    if (parts.length < 4)
                         throw new Exception("External Algorithm tries to move vertex, but did not supply 2 coordinates");
 
-                    Vertex v = VertexIndex.get(parts[1]);
+                    Vertex v = vertexIndex.get(parts[1]);
                     Double x = Double.parseDouble(parts[2]);
                     Double y = Double.parseDouble(parts[3]);
 
-                    v.Coordinates = new Vector2D(x, y);
+                    v.coordinates = new Vector2D(x, y);
                     break;
                 }
 
-                
-                
-                case "CREATEEDGE":
-                {
-                    if(parts.length < 4)
+                case "CREATEEDGE": {
+                    if (parts.length < 4)
                         throw new Exception("External Algorithm tries to create edge, but did not supply 1 edge-handle and 2 vertex-handles");
-                    if(EdgeIndex.containsKey(parts[1]))
+                    if (edgeIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to create edge, but edge-handle \"" + parts[1] + "\" already exists");
-                    if(!VertexIndex.containsKey(parts[2]))
+                    if (!vertexIndex.containsKey(parts[2]))
                         throw new Exception("External Algorithm tries to create edge for nonexistent vertex \"" + parts[2] + "\"");
-                    if(!VertexIndex.containsKey(parts[3]))
+                    if (!vertexIndex.containsKey(parts[3]))
                         throw new Exception("External Algorithm tries to create edge for nonexistent vertex \"" + parts[3] + "\"");
-                    Vertex v1 = VertexIndex.get(parts[2]);
-                    Vertex v2 = VertexIndex.get(parts[3]);
-                    Edge e = structure.CreateEdge(v1, v2);
-                    EdgeIndex.put(parts[1], e);
-                    structure.AddEdge(e);
+                    Vertex v1 = vertexIndex.get(parts[2]);
+                    Vertex v2 = vertexIndex.get(parts[3]);
+                    Edge e = structure.createEdge(v1, v2);
+                    edgeIndex.put(parts[1], e);
+                    structure.addEdge(e);
                     break;
                 }
 
-                case "DELETEEDGE":
-                {
-                    if(parts.length < 2)
+                case "DELETEEDGE": {
+                    if (parts.length < 2)
                         throw new Exception("External Algorithm tries to delete edge, but supplied no edge-handle");
-                    if(!EdgeIndex.containsKey(parts[1]))
+                    if (!edgeIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to delete nonexistent edge \"" + parts[1] + "\"");
-                    Edge e = EdgeIndex.get(parts[1]);
-                    structure.RemoveEdge(e);
-                    EdgeIndex.remove(parts[1]);
+                    Edge e = edgeIndex.get(parts[1]);
+                    structure.removeEdge(e);
+                    edgeIndex.remove(parts[1]);
                     break;
                 }
 
-                case "SETEDGECOLOR":
-                {
-                    if(parts.length < 2)
+                case "SETEDGECOLOR": {
+                    if (parts.length < 2)
                         throw new Exception("External Algorithm tries to colorize edge, but supplied no edge-handle");
-                    if(!EdgeIndex.containsKey(parts[1]))
+                    if (!edgeIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to colorize nonexistent edge \"" + parts[1] + "\"");
-                    if(parts.length < 3)
+                    if (parts.length < 3)
                         throw new Exception("External Algorithm tries to colorize edge, but supplied no color");
 
-                    Edge e = EdgeIndex.get(parts[1]);
+                    Edge e = edgeIndex.get(parts[1]);
                     GralogColor color = GralogColor.parseColor(parts[2]);
-                    e.Color = color;
+                    e.color = color;
                     break;
                 }
 
-                case "SETEDGELABEL":
-                {
-                    if(parts.length < 2)
+                case "SETEDGELABEL": {
+                    if (parts.length < 2)
                         throw new Exception("External Algorithm tries to set edge label, but supplied no edge-handle");
-                    if(!EdgeIndex.containsKey(parts[1]))
+                    if (!edgeIndex.containsKey(parts[1]))
                         throw new Exception("External Algorithm tries to set label to nonexistent edge \"" + parts[1] + "\"");
 
                     String label = "";
-                    if(parts.length > 2)
+                    if (parts.length > 2)
                         label = parts[2];
 
-                    Edge e = EdgeIndex.get(parts[1]);
-                    e.Label = label;
+                    Edge e = edgeIndex.get(parts[1]);
+                    e.label = label;
                     break;
                 }
 
                 case "QUIT":
-                    quitted = true;
+                    quit = true;
                     break;
             }
 
-            if(onprogress != null)
-                onprogress.OnProgress(structure);
-            
+            if (onProgress != null)
+                onProgress.onProgress(structure);
+
         } // while(in.hasNextLine())
-        
-        if(!proc.waitFor(5000, TimeUnit.MILLISECONDS))
-        {
+
+        if (!proc.waitFor(5000, TimeUnit.MILLISECONDS)) {
             proc.destroyForcibly();
             throw new Exception("External Algorithm did not terminate within 5 seconds after QUIT message");
         }
-        
+
         return null;
     }
 }

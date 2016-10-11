@@ -12,28 +12,25 @@ import javafx.scene.layout.GridPane;
  *
  * @author viktor
  */
-public abstract class GridPaneView extends GridPane implements View
-{
+public abstract class GridPaneView extends GridPane implements View {
+
     protected StructurePane structurePane = null;
     protected Object displayObject = null;
 
     @Override
-    public void Update(Object newObject)
-    {
+    public void update(Object newObject) {
         this.displayObject = newObject;
-        Update();
+        update();
     }
-    
+
     @Override
-    public void setStructurePane(StructurePane structurePane) 
-    {
+    public void setStructurePane(StructurePane structurePane) {
         this.structurePane = structurePane;
     }
-    
-    public void RequestRedraw()
-    {
+
+    public void requestRedraw() {
         StructurePane sp = structurePane;
-        if(sp != null)
-            sp.RequestRedraw();
+        if (sp != null)
+            sp.requestRedraw();
     }
 }

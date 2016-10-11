@@ -22,12 +22,12 @@ public class CylindricalGrid extends Generator {
     
     // null means it has no parameters
     @Override
-    public GeneratorParameters GetParameters() {
+    public GeneratorParameters getParameters() {
         return new StringGeneratorParameter("5");
     }
     
     @Override
-    public Structure Generate(GeneratorParameters p) throws Exception
+    public Structure generate(GeneratorParameters p) throws Exception
     {
         Integer n = Integer.parseInt(((StringGeneratorParameter)p).parameter);
         
@@ -35,15 +35,15 @@ public class CylindricalGrid extends Generator {
         
         ArrayList<Vertex> first = new ArrayList<>();
         for(int j = 0; j < n; j++) {
-            Vertex temp = result.CreateVertex();
+            Vertex temp = result.createVertex();
             first.add(temp);
-            temp.Coordinates = new Vector2D(
+            temp.coordinates = new Vector2D(
                     Math.sin(0 * 2*Math.PI / n) * 2 * (j+2),
                     Math.cos(0 * 2*Math.PI / n) * 2 * (j+2)
             );
             if(j > 0)
-                result.AddEdge(result.CreateEdge(first.get(j-1), temp));
-            result.AddVertex(temp);
+                result.addEdge(result.createEdge(first.get(j-1), temp));
+            result.addVertex(temp);
         }
         
         ArrayList<Vertex> last = first;
@@ -52,21 +52,21 @@ public class CylindricalGrid extends Generator {
             ArrayList<Vertex> next = new ArrayList<>();
             Vertex lasttemp = null;
             for(int j = 0; j < n; j++) {
-                Vertex temp = result.CreateVertex();
+                Vertex temp = result.createVertex();
                 next.add(temp);
-                temp.Coordinates = new Vector2D(
+                temp.coordinates = new Vector2D(
                         Math.sin(i * 2*Math.PI / n) * 2 * (j+2),
                         Math.cos(i * 2*Math.PI / n) * 2 * (j+2)
                 );
                 if(lasttemp != null)
                     if(i % 2 == 0)
-                        result.AddEdge(result.CreateEdge(lasttemp, temp));
+                        result.addEdge(result.createEdge(lasttemp, temp));
                     else
-                        result.AddEdge(result.CreateEdge(temp, lasttemp));
+                        result.addEdge(result.createEdge(temp, lasttemp));
                 
-                result.AddEdge(result.CreateEdge(last.get(j), temp));
+                result.addEdge(result.createEdge(last.get(j), temp));
                 
-                result.AddVertex(temp);
+                result.addVertex(temp);
                 lasttemp = temp;
             }
             
@@ -74,7 +74,7 @@ public class CylindricalGrid extends Generator {
         }
         
         for(int i = 0; i < n; i++)
-            result.AddEdge(result.CreateEdge(last.get(i), first.get(i)));
+            result.addEdge(result.createEdge(last.get(i), first.get(i)));
         
         return result;
     }

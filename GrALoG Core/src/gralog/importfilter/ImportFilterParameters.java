@@ -11,5 +11,4 @@ package gralog.importfilter;
  * @author viktor
  */
 public class ImportFilterParameters {
-    
 }

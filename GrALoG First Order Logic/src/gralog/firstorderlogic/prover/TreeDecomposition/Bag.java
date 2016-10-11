@@ -16,16 +16,15 @@ import java.util.List;
  * @author Hv
  */
 public class Bag {
-    public String caption="";
-    public String assignment="";
-    public Boolean eval=false;
+
+    public String caption = "";
+    public String assignment = "";
+    public Boolean eval = false;
     public Set<Vertex> Nodes = new HashSet<>();
     public List<Bag> ChildBags = new ArrayList<>();
- 
+
     @Override
-    public String toString()
-    {
-        return assignment+ " " +caption;
+    public String toString() {
+        return assignment + " " + caption;
     }
-   
 }

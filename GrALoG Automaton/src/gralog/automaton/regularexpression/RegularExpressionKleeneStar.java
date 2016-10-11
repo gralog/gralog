@@ -8,82 +8,80 @@ package gralog.automaton.regularexpression;
 import gralog.automaton.*;
 import gralog.rendering.Vector2D;
 import gralog.structure.*;
-import java.util.Vector;
 
 /**
  *
  * @author viktor
  */
 public class RegularExpressionKleeneStar extends RegularExpression {
-        
+
     RegularExpression regexp = null;
-    
+
     public RegularExpressionKleeneStar(RegularExpression regexp) {
         this.regexp = regexp;
     }
-    
+
     @Override
     public String toString() {
         return "(" + regexp.toString() + ")*";
     }
 
     @Override
-    public Automaton ThompsonConstruction(Double scale) {
-        
-        Automaton a = regexp.ThompsonConstruction(scale);
-        
+    public Automaton thompsonConstruction(double scale) {
+
+        Automaton a = regexp.thompsonConstruction(scale);
+
         // Determine new positions for the states
-        Double aMaxX = a.MaximumCoordinate(0);
-        Double aMaxY = a.MaximumCoordinate(1);
+        double aMaxX = a.maximumCoordinate(0);
+        double aMaxY = a.maximumCoordinate(1);
 
         // set new positions
         Vector2D aOffset = new Vector2D(scale, scale);
-        a.Move(aOffset);
+        a.move(aOffset);
 
-        
         // create new, common start- and final-state
-        State s = a.CreateVertex();
-        s.StartState = true;
-        s.Coordinates = new Vector2D(0d, aMaxY/2d + scale);
-        
-        State t = a.CreateVertex();
-        t.FinalState = true;
-        t.Coordinates = new Vector2D(
-                aMaxX + 2d*scale,
-                aMaxY/2d + scale
+        State s = a.createVertex();
+        s.startState = true;
+        s.coordinates = new Vector2D(0d, aMaxY / 2d + scale);
+
+        State t = a.createVertex();
+        t.finalState = true;
+        t.coordinates = new Vector2D(
+                aMaxX + 2d * scale,
+                aMaxY / 2d + scale
         );
 
         // Connect the new start and final states with epsilon transitions
-        Transition st = a.CreateEdge(s,t);
+        Transition st = a.createEdge(s, t);
         st.Symbol = ""; // epsilon transition
-        a.AddEdge(st);
+        a.addEdge(st);
         st.intermediatePoints.add(new EdgeIntermediatePoint(scale, 0d));
         st.intermediatePoints.add(new EdgeIntermediatePoint(aMaxX + scale, 0d));
 
-        Transition ts = a.CreateEdge(t,s);
+        Transition ts = a.createEdge(t, s);
         ts.Symbol = ""; // epsilon transition
-        a.AddEdge(ts);
-        ts.intermediatePoints.add(new EdgeIntermediatePoint(aMaxX + scale, aMaxY + 2d*scale));
-        ts.intermediatePoints.add(new EdgeIntermediatePoint(scale, aMaxY + 2d*scale));
-        
+        a.addEdge(ts);
+        ts.intermediatePoints.add(new EdgeIntermediatePoint(aMaxX + scale, aMaxY + 2d * scale));
+        ts.intermediatePoints.add(new EdgeIntermediatePoint(scale, aMaxY + 2d * scale));
+
         // Connect the old start and final states to the new start and final states
-        for(Vertex v : a.getVertices()) {
-            if(((State)v).StartState) {
-                Transition e = a.CreateEdge(s,(State)v);
+        for (Vertex v : a.getVertices()) {
+            if (((State) v).startState) {
+                Transition e = a.createEdge(s, (State) v);
                 e.Symbol = ""; // epsilon transition
-                a.AddEdge(e);
+                a.addEdge(e);
             }
-            if(((State)v).FinalState) {
-                Transition e = a.CreateEdge((State)v,t);
+            if (((State) v).finalState) {
+                Transition e = a.createEdge((State) v, t);
                 e.Symbol = ""; // epsilon transition
-                a.AddEdge(e);
+                a.addEdge(e);
             }
-            ((State)v).FinalState = false;
-            ((State)v).StartState = false;
+            ((State) v).finalState = false;
+            ((State) v).startState = false;
         }
-        
-        a.AddVertex(s);
-        a.AddVertex(t);
+
+        a.addVertex(s);
+        a.addVertex(t);
         return a;
     }
 }

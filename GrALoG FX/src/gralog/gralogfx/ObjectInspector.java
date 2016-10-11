@@ -6,12 +6,9 @@
 package gralog.gralogfx;
 
 import gralog.gralogfx.views.View;
-import gralog.gralogfx.views.ReflectedView;
 import gralog.gralogfx.views.ViewManager;
 
-import java.util.HashMap;
 import java.util.Set;
-import java.lang.reflect.Constructor;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.Node;
 
@@ -20,45 +17,42 @@ import javafx.scene.Node;
  * @author viktor
  */
 public class ObjectInspector extends AnchorPane {
-    
-    
+
     public ObjectInspector() {
         this.setMinWidth(200.0d);
         try {
-            SetObject(null, null);
-        } catch (Exception ex) {
+            setObject(null, null);
+        }
+        catch (Exception ex) {
             // does not happen with null parameter
         }
     }
-    
-    
-    public void SetObjects(Set<Object> objects, StructurePane structurePane) throws Exception {
-        SetObject(null, null);
-        if(objects != null && objects.size() == 1)
-            for(Object o : objects)
-                SetObject(o, structurePane);
+
+    public void setObjects(Set<Object> objects, StructurePane structurePane) throws Exception {
+        setObject(null, null);
+        if (objects != null && objects.size() == 1)
+            for (Object o : objects)
+                setObject(o, structurePane);
     }
-    
-    
-    public void SetObject(Object obj, StructurePane structurePane) throws Exception {
+
+    public void setObject(Object obj, StructurePane structurePane) throws Exception {
         this.getChildren().clear();
-        if(obj == null)
+        if (obj == null)
             return;
 
-        View view = ViewManager.InstantiateView(obj.getClass());
-        if(view == null)
+        View view = ViewManager.instantiateView(obj.getClass());
+        if (view == null)
             return;
-        if(!(view instanceof Node))
+        if (!(view instanceof Node))
             throw new Exception("Class " + view.getClass().getName() + " is not derived from javafx.scene.Node");
-        
+
         view.setStructurePane(structurePane);
-        view.Update(obj);
-        this.getChildren().add((Node)view);
-        
-        AnchorPane.setTopAnchor((Node)view, 3.0);
-        AnchorPane.setRightAnchor((Node)view, 3.0);
-        AnchorPane.setBottomAnchor((Node)view, 3.0);
-        AnchorPane.setLeftAnchor((Node)view, 3.0);
+        view.update(obj);
+        this.getChildren().add((Node) view);
+
+        AnchorPane.setTopAnchor((Node) view, 3.0);
+        AnchorPane.setRightAnchor((Node) view, 3.0);
+        AnchorPane.setBottomAnchor((Node) view, 3.0);
+        AnchorPane.setLeftAnchor((Node) view, 3.0);
     }
-    
 }

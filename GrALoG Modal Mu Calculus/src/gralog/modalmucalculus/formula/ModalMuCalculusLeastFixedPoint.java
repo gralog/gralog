@@ -1,4 +1,3 @@
-
 package gralog.modalmucalculus.formula;
 
 import gralog.structure.*;
@@ -10,101 +9,87 @@ import gralog.rendering.Vector2D;
 import java.util.HashMap;
 import java.util.Map;
 
+public class ModalMuCalculusLeastFixedPoint extends ModalMuCalculusFormula {
 
-
-public class ModalMuCalculusLeastFixedPoint extends ModalMuCalculusFormula
-{
     ModalMuCalculusFormula formula;
     String variable;
-    
-    public ModalMuCalculusLeastFixedPoint(String variable, ModalMuCalculusFormula formula)
-    {
+
+    public ModalMuCalculusLeastFixedPoint(String variable,
+            ModalMuCalculusFormula formula) {
         this.variable = variable;
         this.formula = formula;
     }
-    
+
     @Override
-    protected ModalMuCalculusFormula NegationNormalForm(boolean negated)
-    {
-        if(negated)
-        {
-            ModalMuCalculusFormula temp = this.NegateVariable(variable);
-            return new ModalMuCalculusGreatestFixedPoint(variable, temp.NegationNormalForm(negated));
+    protected ModalMuCalculusFormula negationNormalForm(boolean negated) {
+        if (negated) {
+            ModalMuCalculusFormula temp = this.negateVariable(variable);
+            return new ModalMuCalculusGreatestFixedPoint(variable, temp.negationNormalForm(negated));
         }
         else
-            return new ModalMuCalculusLeastFixedPoint(variable, formula.NegationNormalForm(negated));
+            return new ModalMuCalculusLeastFixedPoint(variable, formula.negationNormalForm(negated));
     }
 
-    
     @Override
-    protected ModalMuCalculusFormula NegateVariable(String variable)
-    {
-        if(variable.equals(this.variable))
+    protected ModalMuCalculusFormula negateVariable(String variable) {
+        if (variable.equals(this.variable))
             return this; // don't negate in subformula, because inside the variable refers to a different one
-        
-        return new ModalMuCalculusLeastFixedPoint(this.variable, formula.NegateVariable(variable));
-    }
 
-    
-    @Override
-    public Double FormulaWidth()
-    {
-        return formula.FormulaWidth();
+        return new ModalMuCalculusLeastFixedPoint(this.variable, formula.negateVariable(variable));
     }
 
     @Override
-    public Double FormulaDepth()
-    {
-        return formula.FormulaDepth() + 1;
+    public double formulaWidth() {
+        return formula.formulaWidth();
     }
-    
-    
+
     @Override
-    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p, int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception
-    {
-        int MyPriority = NextPriority + 1 - NextPriority%2;
-        formula.CreateParityGamePositions(scale, x, y+scale, w, h, s, p, MyPriority, index);
-        
-        for(Vertex v : s.getVertices())
-        {
-            ParityGamePosition node = p.CreateVertex();
+    public double formulaDepth() {
+        return formula.formulaDepth() + 1;
+    }
+
+    @Override
+    public void createParityGamePositions(double scale, double x, double y,
+            double w, double h, KripkeStructure s, ParityGame p,
+            int NextPriority,
+            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
+        int MyPriority = NextPriority + 1 - NextPriority % 2;
+        formula.createParityGamePositions(scale, x, y + scale, w, h, s, p, MyPriority, index);
+
+        for (Vertex v : s.getVertices()) {
+            ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
-            node.Coordinates = new Vector2D(
-                    index.get((World)v).get(formula).Coordinates.getX(),
-                    scale * h * v.Coordinates.getY() + y
+            node.coordinates = new Vector2D(
+                    index.get((World) v).get(formula).coordinates.getX(),
+                    scale * h * v.coordinates.getY() + y
             );
-            node.Label = "μ" + variable;
-            node.Priority = MyPriority;
-            p.AddVertex(node);
-            
-            if(!index.containsKey((World)v))
-                index.put((World)v, new HashMap<>());
-            index.get((World)v).put(this, node);
+            node.label = "μ" + variable;
+            node.priority = MyPriority;
+            p.addVertex(node);
+
+            if (!index.containsKey((World) v))
+                index.put((World) v, new HashMap<>());
+            index.get((World) v).put(this, node);
         }
     }
-    
+
     @Override
-    public void CreateParityGameTransitions(KripkeStructure s, ParityGame p,
+    public void createParityGameTransitions(KripkeStructure s, ParityGame p,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception
-    {
-        for(Vertex v : s.getVertices())
-        {
-            ParityGamePosition pv = index.get((World)v).get(this);
-            ParityGamePosition ps = index.get((World)v).get(formula);
-            p.AddEdge(p.CreateEdge(pv, ps));
+            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
+        for (Vertex v : s.getVertices()) {
+            ParityGamePosition pv = index.get((World) v).get(this);
+            ParityGamePosition ps = index.get((World) v).get(formula);
+            p.addEdge(p.createEdge(pv, ps));
         }
 
-        
         ModalMuCalculusFormula olddef = variableDefinitionPoints.get(variable);
         variableDefinitionPoints.put(variable, this);
-        
-        formula.CreateParityGameTransitions(s, p, index, variableDefinitionPoints);
-        
+
+        formula.createParityGameTransitions(s, p, index, variableDefinitionPoints);
+
         variableDefinitionPoints.remove(variable);
-        if(olddef != null)
+        if (olddef != null)
             variableDefinitionPoints.put(variable, olddef);
     }
 }

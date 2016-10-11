@@ -17,77 +17,77 @@ import org.w3c.dom.Element;
  *
  * @author viktor
  */
-@XmlName(name="state")
+@XmlName(name = "state")
 public class State extends Vertex {
-    
-    public Boolean StartState = false;
-    public Boolean FinalState = false;
-    
-    public Double InitialMarkAngle = 0d; // degrees
-    public Double InitialMarkLength = 0.7d; // cm
-    public Double InitialMarkWidth = 2.54/96; // cm
-    public Double InitialMarkHeadAngle = 40d; // degrees
-    public Double InitialMarkHeadLength = 0.4d; // cm
-    public GralogColor InitialMarkColor = GralogColor.black;
-    
+
+    public Boolean startState = false;
+    public Boolean finalState = false;
+
+    public Double initialMarkAngle = 0d; // degrees
+    public Double initialMarkLength = 0.7d; // cm
+    public Double initialMarkWidth = 2.54 / 96; // cm
+    public Double initialMarkHeadAngle = 40d; // degrees
+    public Double initialMarkHeadLength = 0.4d; // cm
+    public GralogColor initialMarkColor = GralogColor.BLACK;
+
     @Override
-    public Element ToXml(Document doc, String id) throws Exception {
-        Element vnode = super.ToXml(doc, id);
-        vnode.setAttribute("initial", StartState ? "true" : "false");
-        vnode.setAttribute("final", FinalState ? "true" : "false");
-        vnode.setAttribute("initialmarkangle", InitialMarkAngle.toString());
-        vnode.setAttribute("initialmarklength", InitialMarkLength.toString());
-        vnode.setAttribute("initialmarkwidth", InitialMarkWidth.toString());
-        vnode.setAttribute("initialmarkheadangle", InitialMarkHeadAngle.toString());
-        vnode.setAttribute("initialmarkheadlength", InitialMarkHeadLength.toString());
-        vnode.setAttribute("initialmarkcolor", InitialMarkColor.toHtmlString());
+    public Element toXml(Document doc, String id) throws Exception {
+        Element vnode = super.toXml(doc, id);
+        vnode.setAttribute("initial", startState ? "true" : "false");
+        vnode.setAttribute("final", finalState ? "true" : "false");
+        vnode.setAttribute("initialmarkangle", initialMarkAngle.toString());
+        vnode.setAttribute("initialmarklength", initialMarkLength.toString());
+        vnode.setAttribute("initialmarkwidth", initialMarkWidth.toString());
+        vnode.setAttribute("initialmarkheadangle", initialMarkHeadAngle.toString());
+        vnode.setAttribute("initialmarkheadlength", initialMarkHeadLength.toString());
+        vnode.setAttribute("initialmarkcolor", initialMarkColor.toHtmlString());
         return vnode;
     }
-    
+
     @Override
-    public String FromXml(Element vnode) {
-        String id = super.FromXml(vnode);
-        StartState = (vnode.getAttribute("initial").equals("true"));
-        FinalState = (vnode.getAttribute("final").equals("true"));
-        if(vnode.hasAttribute("initialmarkangle"))
-            InitialMarkAngle = Double.parseDouble(vnode.getAttribute("initialmarkangle"));
-        if(vnode.hasAttribute("initialmarklength"))
-            InitialMarkLength = Double.parseDouble(vnode.getAttribute("initialmarklength"));
-        if(vnode.hasAttribute("initialmarkwidth"))
-            InitialMarkWidth = Double.parseDouble(vnode.getAttribute("initialmarkwidth"));
-        if(vnode.hasAttribute("initialmarkheadangle"))
-            InitialMarkHeadAngle = Double.parseDouble(vnode.getAttribute("initialmarkheadangle"));
-        if(vnode.hasAttribute("initialmarkheadlength"))
-            InitialMarkHeadLength = Double.parseDouble(vnode.getAttribute("initialmarkheadlength"));
-        if(vnode.hasAttribute("initialmarkcolor"))
-            InitialMarkColor = GralogColor.parseColor(vnode.getAttribute("initialmarkcolor"));
-        
+    public String fromXml(Element vnode) {
+        String id = super.fromXml(vnode);
+        startState = (vnode.getAttribute("initial").equals("true"));
+        finalState = (vnode.getAttribute("final").equals("true"));
+        if (vnode.hasAttribute("initialmarkangle"))
+            initialMarkAngle = Double.parseDouble(vnode.getAttribute("initialmarkangle"));
+        if (vnode.hasAttribute("initialmarklength"))
+            initialMarkLength = Double.parseDouble(vnode.getAttribute("initialmarklength"));
+        if (vnode.hasAttribute("initialmarkwidth"))
+            initialMarkWidth = Double.parseDouble(vnode.getAttribute("initialmarkwidth"));
+        if (vnode.hasAttribute("initialmarkheadangle"))
+            initialMarkHeadAngle = Double.parseDouble(vnode.getAttribute("initialmarkheadangle"));
+        if (vnode.hasAttribute("initialmarkheadlength"))
+            initialMarkHeadLength = Double.parseDouble(vnode.getAttribute("initialmarkheadlength"));
+        if (vnode.hasAttribute("initialmarkcolor"))
+            initialMarkColor = GralogColor.parseColor(vnode.getAttribute("initialmarkcolor"));
+
         return id;
     }
-    
-    @Override
-    public void Render(GralogGraphicsContext gc, Set<Object> highlights) {
-        
-        if(highlights != null && highlights.contains(this))
-            gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius+0.07, GralogColor.red);
 
-        gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius, StrokeColor);
-        gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-StrokeWidth, FillColor);
-        if(this.FinalState) {
-            gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-3*StrokeWidth, StrokeColor);
-            gc.Circle(Coordinates.get(0), Coordinates.get(1), Radius-4*StrokeWidth, FillColor);
+    @Override
+    public void render(GralogGraphicsContext gc, Set<Object> highlights) {
+        if (highlights != null && highlights.contains(this))
+            gc.circle(coordinates.get(0), coordinates.get(1), radius + 0.07, GralogColor.RED);
+
+        gc.circle(coordinates.get(0), coordinates.get(1), radius, strokeColor);
+        gc.circle(coordinates.get(0), coordinates.get(1), radius - strokeWidth, fillColor);
+        if (this.finalState) {
+            gc.circle(coordinates.get(0), coordinates.get(1), radius - 3 * strokeWidth, strokeColor);
+            gc.circle(coordinates.get(0), coordinates.get(1), radius - 4 * strokeWidth, fillColor);
         }
-        
-        if(StartState) {
-            Vector2D center = Coordinates;
-            Vector2D intersectionOffset = new Vector2D(-Radius*Math.cos(InitialMarkAngle/180*Math.PI),
-                                                       -Radius*Math.sin(InitialMarkAngle/180*Math.PI));
-            Vector2D intersection = center.Plus(intersectionOffset);
-            Vector2D headStart = intersection.Plus(intersectionOffset.Normalized().Multiply(InitialMarkLength));
-            
-            gc.Arrow(headStart.getX(), headStart.getY(), intersection.getX(), intersection.getY(), InitialMarkHeadAngle, InitialMarkHeadLength, InitialMarkColor, InitialMarkWidth);
+
+        if (startState) {
+            Vector2D center = coordinates;
+            Vector2D intersectionOffset = new Vector2D(-radius * Math.cos(initialMarkAngle / 180 * Math.PI),
+                                                       -radius * Math.sin(initialMarkAngle / 180 * Math.PI));
+            Vector2D intersection = center.plus(intersectionOffset);
+            Vector2D headStart = intersection.plus(intersectionOffset.normalized().multiply(initialMarkLength));
+
+            gc.arrow(headStart.getX(), headStart.getY(), intersection.getX(), intersection.getY(),
+                     initialMarkHeadAngle, initialMarkHeadLength, initialMarkColor, initialMarkWidth);
         }
-        
-        gc.PutText(Coordinates.get(0), Coordinates.get(1), Label, TextHeight, FillColor.inverse());
+
+        gc.putText(coordinates.get(0), coordinates.get(1), label, textHeight, fillColor.inverse());
     }
 }

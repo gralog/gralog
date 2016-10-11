@@ -12,7 +12,6 @@ import gralog.importfilter.*;
 import gralog.exportfilter.*;
 import gralog.generator.*;
 import gralog.algorithm.*;
-import gralog.events.VertexEvent;
 
 import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
@@ -21,14 +20,10 @@ import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.*;
-import java.net.URL;
-import java.net.URI;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.WindowEvent;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser;
@@ -52,37 +47,36 @@ public class MainWindow extends Application {
     Stage stage;
     BorderPane root;
     MenuBar menu;
-        Menu menuFile;
-            MenuItem menuFilePlugin;
-            Menu menuFileNew;
-            Menu menuFileGenerators;
-            MenuItem menuFileOpen;
-            MenuItem menuFileDirectInput;
-            MenuItem menuFileSave;
-            MenuItem menuFileClose;
-            MenuItem menuFileExit;
-        Menu menuEdit;
-            MenuItem menuEditUndo;
-            MenuItem menuEditRedo;
-            MenuItem menuEditCut;
-            MenuItem menuEditCopy;
-            MenuItem menuEditPaste;
-            MenuItem menuEditDelete;
-        Menu menuAlgo;
-        Menu menuHelp;
-            MenuItem menuHelpAbout;
-            MenuItem menuHelpInfo;
+    Menu menuFile;
+    MenuItem menuFilePlugin;
+    Menu menuFileNew;
+    Menu menuFileGenerators;
+    MenuItem menuFileOpen;
+    MenuItem menuFileDirectInput;
+    MenuItem menuFileSave;
+    MenuItem menuFileClose;
+    MenuItem menuFileExit;
+    Menu menuEdit;
+    MenuItem menuEditUndo;
+    MenuItem menuEditRedo;
+    MenuItem menuEditCut;
+    MenuItem menuEditCopy;
+    MenuItem menuEditPaste;
+    MenuItem menuEditDelete;
+    Menu menuAlgo;
+    Menu menuHelp;
+    MenuItem menuHelpAbout;
+    MenuItem menuHelpInfo;
     VBox topPane;
-        HBox buttonBar;
+    HBox buttonBar;
     TabPane tabPane;
     ObjectInspector objectInspector;
     HBox statusBar;
     Label statusBarMessage;
-            
-    public MainWindow()
-    {
+
+    public MainWindow() {
         stage = null;
-        
+
         // Tab Panel
         tabPane = new TabPane();
         tabPane.getSelectionModel().selectedItemProperty().addListener(e -> {
@@ -91,107 +85,106 @@ public class MainWindow extends Application {
         });
         //tabPane.setFocusTraversable(true);
 
-        
         // Menu
         menu = new MenuBar();
-            // File Menu
-            menuFile = new Menu("File");
-                menuFilePlugin = new MenuItem("Load Plugin");
-                    menuFilePlugin.setOnAction(e -> menuFilePluginActivated());
-                menuFileNew = new Menu("New");
-                updateStructures();
-                menuFileGenerators = new Menu("Generators");
-                updateGenerators();
-                menuFileOpen = new MenuItem("Open");
-                    menuFileOpen.setOnAction(e -> menuFileOpenActivated());
-                menuFileDirectInput = new MenuItem("Direct Input");
-                    menuFileDirectInput.setOnAction(e -> menuFileDirectInputActivated());
-                menuFileSave = new MenuItem("Save");
-                    menuFileSave.setOnAction(e -> menuFileSaveActivated());
-                menuFileClose = new MenuItem("Close");
-                    menuFileClose.setOnAction(e -> menuFileCloseActivated());
-                menuFileExit = new MenuItem("Exit");
-                    menuFileExit.setOnAction(e -> menuFileExitActivated());
-            menuFile.getItems().addAll(menuFilePlugin, menuFileNew, menuFileGenerators,
-                                       menuFileOpen, menuFileDirectInput, menuFileSave,
-                                       menuFileClose, menuFileExit);
-            
-            // Edit Menu
-            menuEdit = new Menu("Edit");
-                menuEditUndo = new MenuItem("Undo");
-                menuEditRedo = new MenuItem("Redo");
-                menuEditCut = new MenuItem("Cut");
-                menuEditCopy = new MenuItem("Copy");
-                menuEditPaste = new MenuItem("Paste");
-                menuEditDelete = new MenuItem("Delete");
-            menuEdit.getItems().addAll(menuEditUndo, menuEditRedo, menuEditCut,
-                    menuEditCopy,menuEditPaste,menuEditDelete);
-            
-            // Algorithm Menu
-            menuAlgo = new Menu("Algorithms");
-                
-            // Help Menu
-            menuHelp = new Menu("Help");
-                menuHelpAbout = new MenuItem("About GrALoG");
-                menuHelpAbout.setOnAction(e -> {
-                    AboutStage aboutstage = new AboutStage(this);
-                    aboutstage.showAndWait();
-                });
-                menuHelpInfo = new MenuItem("Info");
-                menuHelpInfo.setOnAction(e -> {
-                    Tab tab = tabPane.getSelectionModel().getSelectedItem();
-                    if(tab == null)
-                        return;
-                    StructurePane structurePane = (StructurePane)tab.getContent();
-                    Structure structure = structurePane.structure;
-                    try {
-                        StructureDescription descr = structure.getDescription();
-                        String url = descr.url();
-                        if(url != null && !url.trim().equals(""))
-                            this.getHostServices().showDocument(url);
-                    } catch(Exception ex) {
-                        ExceptionBox exbox = new ExceptionBox();
-                        exbox.showAndWait(ex);
-                    }
-                });
-            menuHelp.getItems().addAll(menuHelpAbout, menuHelpInfo);
-            
+        // File Menu
+        menuFile = new Menu("File");
+        menuFilePlugin = new MenuItem("Load Plugin");
+        menuFilePlugin.setOnAction(e -> menuFilePluginActivated());
+        menuFileNew = new Menu("New");
+        updateStructures();
+        menuFileGenerators = new Menu("Generators");
+        updateGenerators();
+        menuFileOpen = new MenuItem("Open");
+        menuFileOpen.setOnAction(e -> menuFileOpenActivated());
+        menuFileDirectInput = new MenuItem("Direct Input");
+        menuFileDirectInput.setOnAction(e -> menuFileDirectInputActivated());
+        menuFileSave = new MenuItem("Save");
+        menuFileSave.setOnAction(e -> menuFileSaveActivated());
+        menuFileClose = new MenuItem("Close");
+        menuFileClose.setOnAction(e -> menuFileCloseActivated());
+        menuFileExit = new MenuItem("Exit");
+        menuFileExit.setOnAction(e -> menuFileExitActivated());
+        menuFile.getItems().addAll(menuFilePlugin, menuFileNew, menuFileGenerators,
+                                   menuFileOpen, menuFileDirectInput, menuFileSave,
+                                   menuFileClose, menuFileExit);
+
+        // Edit Menu
+        menuEdit = new Menu("Edit");
+        menuEditUndo = new MenuItem("Undo");
+        menuEditRedo = new MenuItem("Redo");
+        menuEditCut = new MenuItem("Cut");
+        menuEditCopy = new MenuItem("Copy");
+        menuEditPaste = new MenuItem("Paste");
+        menuEditDelete = new MenuItem("Delete");
+        menuEdit.getItems().addAll(menuEditUndo, menuEditRedo, menuEditCut,
+                                   menuEditCopy, menuEditPaste, menuEditDelete);
+
+        // Algorithm Menu
+        menuAlgo = new Menu("Algorithms");
+
+        // Help Menu
+        menuHelp = new Menu("Help");
+        menuHelpAbout = new MenuItem("About GrALoG");
+        menuHelpAbout.setOnAction(e -> {
+            AboutStage aboutstage = new AboutStage(this);
+            aboutstage.showAndWait();
+        });
+        menuHelpInfo = new MenuItem("Info");
+        menuHelpInfo.setOnAction(e -> {
+            Tab tab = tabPane.getSelectionModel().getSelectedItem();
+            if (tab == null)
+                return;
+            StructurePane structurePane = (StructurePane) tab.getContent();
+            Structure structure = structurePane.structure;
+            try {
+                StructureDescription descr = structure.getDescription();
+                String url = descr.url();
+                if (url != null && !url.trim().equals(""))
+                    this.getHostServices().showDocument(url);
+            }
+            catch (Exception ex) {
+                ExceptionBox exbox = new ExceptionBox();
+                exbox.showAndWait(ex);
+            }
+        });
+        menuHelp.getItems().addAll(menuHelpAbout, menuHelpInfo);
+
         menu.getMenus().addAll(menuFile, menuEdit, menuAlgo, menuHelp);
 
         // Button Bar
         buttonBar = new HBox();
         Button buttonSelectMode = new Button();
         buttonSelectMode.setText("S");
-        buttonSelectMode.setOnAction( e -> {
+        buttonSelectMode.setOnAction(e -> {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if(tab == null)
+            if (tab == null)
                 return;
-            StructurePane structurePane = (StructurePane)tab.getContent();
-            structurePane.SetSelectMode();
+            StructurePane structurePane = (StructurePane) tab.getContent();
+            structurePane.setSelectMode();
         });
         Button buttonVertexMode = new Button();
         buttonVertexMode.setText("V");
         buttonVertexMode.setOnAction(e -> {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if(tab == null)
+            if (tab == null)
                 return;
-            StructurePane structurePane = (StructurePane)tab.getContent();
-            structurePane.SetVertexCreationMode();
+            StructurePane structurePane = (StructurePane) tab.getContent();
+            structurePane.setVertexCreationMode();
         });
         Button buttonEdgeMode = new Button();
         buttonEdgeMode.setText("E");
         buttonEdgeMode.setOnAction(e -> {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if(tab == null)
+            if (tab == null)
                 return;
-            StructurePane structurePane = (StructurePane)tab.getContent();
-            structurePane.SetEdgeCreationMode();
+            StructurePane structurePane = (StructurePane) tab.getContent();
+            structurePane.setEdgeCreationMode();
         });
-        buttonBar.getChildren().addAll(buttonSelectMode,buttonVertexMode,buttonEdgeMode);
+        buttonBar.getChildren().addAll(buttonSelectMode, buttonVertexMode, buttonEdgeMode);
         topPane = new VBox();
-        topPane.getChildren().addAll(menu,buttonBar);
-                
-        
+        topPane.getChildren().addAll(menu, buttonBar);
+
         // Object Inspector
         objectInspector = new ObjectInspector();
 
@@ -199,7 +192,7 @@ public class MainWindow extends Application {
         statusBar = new HBox();
         statusBarMessage = new Label("");
         statusBar.getChildren().add(statusBarMessage);
-        
+
         // 
         root = new BorderPane();
         //root.setFocusTraversable(true);
@@ -208,33 +201,26 @@ public class MainWindow extends Application {
         root.setRight(objectInspector);
         root.setBottom(statusBar);
     }
-    
-    
-    
-    
-    
-    
-  
-    
+
     public void menuFilePluginActivated() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Plugins");
         fileChooser.getExtensionFilters().add(
-            new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
+                new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
         );
         List<File> list = fileChooser.showOpenMultipleDialog(stage);
         if (list != null)
             for (File file : list)
                 doLoadPlugin(file.getAbsolutePath());
     }
-    
-    public void doLoadPlugin(String filename)
-    {
+
+    public void doLoadPlugin(String filename) {
         try {
             this.setStatus("Loading Plugin " + filename + "...");
-            PluginManager.LoadPlugin(filename);
-            ViewManager.LoadPlugin(filename);
-        } catch(Exception ex) {
+            PluginManager.loadPlugin(filename);
+            ViewManager.loadPlugin(filename);
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -243,88 +229,88 @@ public class MainWindow extends Application {
         updateAlgorithms();
         this.setStatus("");
     }
-    
+
     public void menuFileNewActivated(String str) {
         try {
-            Structure structure = StructureManager.InstantiateStructure(str);
+            Structure structure = StructureManager.instantiateStructure(str);
             addTab(str, structure);
             setStatus("created a " + str + "...");
-        } catch(Exception ex) {
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
     }
-    
+
     public void menuFileSaveActivated() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            StructurePane structurePane = (StructurePane)tab.getContent();
+            StructurePane structurePane = (StructurePane) tab.getContent();
             Structure structure = structurePane.structure;
-            
+
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All Files (*.*)", "*.*"),
-                new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
+                    new FileChooser.ExtensionFilter("All Files (*.*)", "*.*"),
+                    new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
-            
+
             // add export-filters to list of extensions
-            for(String format : ExportFilterManager.getExportFilters(structure.getClass())){
-                ExportFilterDescription descr = ExportFilterManager.getExportFilterDescription(structure.getClass(),format);
-                ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileextension() + ")", "*." + descr.fileextension());
+            for (String format : ExportFilterManager.getExportFilters(structure.getClass())) {
+                ExportFilterDescription descr = ExportFilterManager.getExportFilterDescription(structure.getClass(), format);
+                ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileExtension() + ")", "*." + descr.fileExtension());
                 fileChooser.getExtensionFilters().add(filter);
             }
-            
+
             fileChooser.setInitialFileName("*.*");
             fileChooser.setTitle("Save File");
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
-                
                 // has the user selected the native file-type or an export-filter?
                 ExportFilter exportFilter = null;
                 String extension = file.getName(); // unclean way of getting file extension
                 int idx = extension.lastIndexOf(".");
-                extension = idx > 0 ? extension.substring(idx+1) : "";
-                
-                exportFilter = ExportFilterManager.InstantiateExportFilterByExtension(structure.getClass(), extension);
-                if(exportFilter != null) {
+                extension = idx > 0 ? extension.substring(idx + 1) : "";
+
+                exportFilter = ExportFilterManager.instantiateExportFilterByExtension(structure.getClass(), extension);
+                if (exportFilter != null) {
                     // configure export filter
-                    ExportFilterParameters params = exportFilter.GetParameters(structure);
-                    if(params != null) {
-                        ExportFilterStage stage = new ExportFilterStage(exportFilter,params,this);
-                        if(!stage.ShowAndWait())
+                    ExportFilterParameters params = exportFilter.getParameters(structure);
+                    if (params != null) {
+                        ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, this);
+                        exportStage.showAndWait();
+                        if (!exportStage.dialogResult)
                             return;
                     }
-                    
-                    exportFilter.DoExport(structure, file.getAbsolutePath(), params);
-                    
-                } else {
-                    structure.WriteToFile(file.getAbsolutePath());
+
+                    exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
                 }
-                    
+                else {
+                    structure.writeToFile(file.getAbsolutePath());
+                }
             }
-            
-        } catch(Exception ex) {
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
-        }        
+        }
     }
 
     public void menuFileOpenActivated() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
         fileChooser.getExtensionFilters().addAll(
-            new FileChooser.ExtensionFilter("All (*.*)", "*.*"),
-            new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
+                new FileChooser.ExtensionFilter("All (*.*)", "*.*"),
+                new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
         );
-        
+
         // add export-filters to list of extensions
-        for(String format : ImportFilterManager.getImportFilterClasses()){
+        for (String format : ImportFilterManager.getImportFilterClasses()) {
             ImportFilterDescription descr = ImportFilterManager.getImportFilterDescription(format);
-            ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileextension() + ")", "*." + descr.fileextension());
+            ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileExtension() + ")", "*." + descr.fileExtension());
             fileChooser.getExtensionFilters().add(filter);
         }
-            
+
         fileChooser.setInitialFileName("*.*");
         fileChooser.setTitle("Open File");
         List<File> list = fileChooser.showOpenMultipleDialog(stage);
@@ -335,49 +321,48 @@ public class MainWindow extends Application {
 
     public void menuFileDirectInputActivated() {
         try {
-            
+
             DirectInputStage directinputstage = new DirectInputStage(this);
-            Structure s = directinputstage.ShowAndWait();
-            if(s != null)
+            directinputstage.showAndWait();
+            Structure s = directinputstage.dialogResult;
+            if (s != null)
                 this.addTab("", s);
-            
-        }  catch(Exception ex) {
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
-    }    
-    
-    public void doOpenFile(File file)
-    {
+    }
+
+    public void doOpenFile(File file) {
         try {
             String extension = ""; // unclean way of getting file extension
             int idx = file.getName().lastIndexOf(".");
-            extension = idx > 0 ? file.getName().substring(idx+1) : "";
+            extension = idx > 0 ? file.getName().substring(idx + 1) : "";
 
-            ImportFilter importFilter = ImportFilterManager.InstantiateImportFilterByExtension(extension);            
+            ImportFilter importFilter = ImportFilterManager.instantiateImportFilterByExtension(extension);
             this.setStatus("Loading File " + file.getAbsolutePath() + "...");
             Structure structure = null;
-            
-            if(importFilter != null)
-            {
-                ImportFilterParameters params = importFilter.GetParameters();
-                if(params != null)
-                {
+
+            if (importFilter != null) {
+                ImportFilterParameters params = importFilter.getParameters();
+                if (params != null) {
                     ImportFilterStage stage = new ImportFilterStage(importFilter, params, this);
-                    if(!stage.ShowAndWait())
-                    {
+                    stage.showAndWait();
+                    if (!stage.DialogResult) {
                         this.setStatus("");
                         return;
                     }
                 }
-                structure = importFilter.Import(file.getAbsolutePath(), params);
+                structure = importFilter.importGraph(file.getAbsolutePath(), params);
             }
             else
-                structure = Structure.LoadFromFile(file.getAbsolutePath());
-            
-            if(structure != null)
+                structure = Structure.loadFromFile(file.getAbsolutePath());
+
+            if (structure != null)
                 addTab("", structure);
-        } catch(Exception ex) {
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -387,7 +372,8 @@ public class MainWindow extends Application {
     public void menuFileExitActivated() {
         try {
             stage.close();
-        }  catch(Exception ex) {
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -396,25 +382,21 @@ public class MainWindow extends Application {
     public void menuFileCloseActivated() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if(tab != null)
+            if (tab != null)
                 tabPane.getTabs().remove(tab);
-            
-        }  catch(Exception ex) {
+
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
     }
 
-
-    
-    
-
     public void setStatus(String status) {
         statusBarMessage.setText(status);
     }
 
-    public void addTab(String text, Structure structure)
-    {
+    public void addTab(String text, Structure structure) {
         Tab t = new Tab(text);
         StructurePane structurePane = new StructurePane(structure);
         t.setContent(structurePane);
@@ -427,8 +409,7 @@ public class MainWindow extends Application {
 
     protected void updateStructures() {
         menuFileNew.getItems().clear();
-        for(String str : StructureManager.getStructureClasses())
-        {
+        for (String str : StructureManager.getStructureClasses()) {
             MenuItem item = new MenuItem(str);
             item.setOnAction(e -> menuFileNewActivated(str));
             menuFileNew.getItems().add(item);
@@ -437,26 +418,24 @@ public class MainWindow extends Application {
 
     protected void updateGenerators() {
         menuFileGenerators.getItems().clear();
-        for(String str : GeneratorManager.getGeneratorClasses())
-        {
+        for (String str : GeneratorManager.getGeneratorClasses()) {
             MenuItem item = new MenuItem(str);
             item.setOnAction(e -> menuFileGeneratorActivated(str));
             menuFileGenerators.getItems().add(item);
         }
-    }    
-    
+    }
+
     protected void updateAlgorithms() {
         menuAlgo.getItems().clear();
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if(tab == null)
+        if (tab == null)
             return;
-        if(!(tab.getContent() instanceof StructurePane))
+        if (!(tab.getContent() instanceof StructurePane))
             return;
-        StructurePane structurePane = (StructurePane)tab.getContent();
+        StructurePane structurePane = (StructurePane) tab.getContent();
         Structure structure = structurePane.structure;
-        
-        for(String str : AlgorithmManager.getAlgorithms(structure.getClass()))
-        {
+
+        for (String str : AlgorithmManager.getAlgorithms(structure.getClass())) {
             MenuItem item = new MenuItem(str);
             item.setOnAction(e -> menuAlgorithmActivated(str));
             menuAlgo.getItems().add(item);
@@ -466,108 +445,93 @@ public class MainWindow extends Application {
     protected void updateSelection() {
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         StructurePane structurePane = null;
-        
-        if(tab != null)
-            if(tab.getContent() instanceof StructurePane)
-                structurePane = (StructurePane)tab.getContent();
-        
+
+        if (tab != null)
+            if (tab.getContent() instanceof StructurePane)
+                structurePane = (StructurePane) tab.getContent();
+
         updateSelection(structurePane);
     }
-    
+
     protected void updateSelection(StructurePane sender) {
         try {
             Set<Object> selection = null;
-            if(sender != null)
-            {
-                selection = sender.Selection;
-                sender.RequestRedraw();
+            if (sender != null) {
+                selection = sender.selection;
+                sender.requestRedraw();
             }
-            objectInspector.SetObjects(selection, sender);
-        } catch(Exception ex) {
+            objectInspector.setObjects(selection, sender);
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
-            exbox.showAndWait(ex);            
+            exbox.showAndWait(ex);
         }
     }
-        
-    
-    
-    
-    
-    
-    
+
     public void menuFileGeneratorActivated(String str) {
         try {
-            
             // prepare
-            
-            Generator gen  = GeneratorManager.InstantiateGenerator(str);
-            GeneratorParameters params = gen.GetParameters();
-            if(params != null)
-            {
+            Generator gen = GeneratorManager.instantiateGenerator(str);
+            GeneratorParameters params = gen.getParameters();
+            if (params != null) {
                 GeneratorStage genstage = new GeneratorStage(gen, params, this);
-                if(!genstage.ShowAndWait())
+                genstage.showAndWait();
+                if (!genstage.dialogResult)
                     return;
             }
 
             // run
-            
-            Structure genResult = gen.Generate(params);
-            if(genResult == null)
+            Structure genResult = gen.generate(params);
+            if (genResult == null)
                 return;
             this.addTab("", genResult);
-            
-        } catch(Exception ex) {
+
+        }
+        catch (Exception ex) {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
-    }    
-    
-    
-    public void AlgorithmCompleted(StructurePane structurePane, AlgorithmThread algoThread)
-    {
+    }
+
+    public void algorithmCompleted(StructurePane structurePane,
+            AlgorithmThread algoThread) {
         try {
-            if(algoThread.exception != null)
+            if (algoThread.exception != null)
                 throw algoThread.exception;
-            
+
             Object algoResult = algoThread.result;
             this.setStatus("");
 
             // Show Result
-            if(algoResult == null)
-            {
-                structurePane.RequestRedraw();
+            if (algoResult == null) {
+                structurePane.requestRedraw();
                 algoResult = "null";
             }
 
-            if(algoResult instanceof Structure)
-            {
-                this.addTab("", (Structure)algoResult);
+            if (algoResult instanceof Structure) {
+                this.addTab("", (Structure) algoResult);
             }
-            else if(algoResult instanceof Set)
-            {
+            else if (algoResult instanceof Set) {
                 boolean isSelection = true;
-                for(Object o : (Set)algoResult)
-                    if( !(o instanceof Vertex)
-                    &&  !(o instanceof Edge)
-                    &&  !(o instanceof EdgeIntermediatePoint))
+                for (Object o : (Set) algoResult)
+                    if (!(o instanceof Vertex)
+                        && !(o instanceof Edge)
+                        && !(o instanceof EdgeIntermediatePoint))
                         isSelection = false;
-                if(isSelection)
-                {
-                    structurePane.Selection = (Set)algoResult;
-                    structurePane.RequestRedraw();
+                if (isSelection) {
+                    structurePane.selection = (Set) algoResult;
+                    structurePane.requestRedraw();
                 }
             }
-            else if(algoResult instanceof String)
-            {
+            else if (algoResult instanceof String) {
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Algorithm Result");
                 alert.setHeaderText(null);
-                alert.setContentText((String)algoResult);
+                alert.setContentText((String) algoResult);
                 alert.showAndWait();
             }
-            else
-            {
+            else {
                 AlgorithmResultStage resultStage = new AlgorithmResultStage(
                         algoThread.algo,
                         algoThread.structure,
@@ -577,65 +541,67 @@ public class MainWindow extends Application {
                 );
                 resultStage.show();
             }
-        } catch(Exception ex) {
+        }
+        catch (Exception ex) {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
-
     }
+
     public void menuAlgorithmActivated(String str) {
         try {
 
             // Prepare
-            
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            StructurePane structurePane = (StructurePane)tab.getContent();
+            StructurePane structurePane = (StructurePane) tab.getContent();
             Structure structure = structurePane.structure;
-            Algorithm algo  = AlgorithmManager.InstantiateAlgorithm(structure.getClass(), str);
-            
-            AlgorithmParameters params = algo.GetParameters(structure);
-            if(params != null)
-            {
+            Algorithm algo = AlgorithmManager.instantiateAlgorithm(structure.getClass(), str);
+
+            AlgorithmParameters params = algo.getParameters(structure);
+            if (params != null) {
                 AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
-                if(!algostage.ShowAndWait())
+                algostage.showAndWait();
+                if (!algostage.dialogResult)
                     return;
             }
-            
+
             // Run
-            AlgorithmThread algoThread = new AlgorithmThread(algo, structure, params, structurePane.Selection, new RedrawOnProgress(structurePane, 1d/60d));
-            algoThread.setOnThreadComplete(t -> Platform.runLater( ()->{AlgorithmCompleted(structurePane, t);}));
+            AlgorithmThread algoThread = new AlgorithmThread(algo, structure, params, structurePane.selection, new RedrawOnProgress(structurePane, 1d / 60d));
+            algoThread.setOnThreadComplete(t -> Platform.runLater(() -> {
+                algorithmCompleted(structurePane, t);
+            }));
             this.setStatus("Running Algorithm \"" + str + "\"...");
             algoThread.start();
-            
-        } catch(InvocationTargetException ex) {
+
+        }
+        catch (InvocationTargetException ex) {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
-            exbox.showAndWait((Exception)ex.getCause());
-        } catch(Exception ex) {
+            exbox.showAndWait((Exception) ex.getCause());
+        }
+        catch (Exception ex) {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
     }
-    
-    
-    
+
     // PROGRAM STARTUP
-    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         try {
-            PluginManager.Initialize();
-            ViewManager.Initialize();
+            PluginManager.initialize();
+            ViewManager.initialize();
             launch(args);
-        } catch(Exception ex) {
+        }
+        catch (Exception ex) {
             ex.printStackTrace();
         }
-    }    
-    
+    }
+
     @Override
     public void start(Stage primaryStage) {
         Scene scene = new Scene(root, 800, 600);
@@ -646,9 +612,8 @@ public class MainWindow extends Application {
         primaryStage.show();
     }
 
-    
     public void windowShown() {
-        
+
         // Load Config
         NodeList children = null;
         String configFileDir = null;
@@ -656,54 +621,53 @@ public class MainWindow extends Application {
             File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
             File configFile = new File(jarFile.getParentFile().getAbsolutePath() + File.separator + "config.xml");
             configFileDir = configFile.getParent();
-        
-            if(configFile.exists())
-            {
+
+            if (configFile.exists()) {
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                 Document doc = dBuilder.parse(new FileInputStream(configFile));
                 doc.getDocumentElement().normalize();
-                Element root = doc.getDocumentElement();
-                children = root.getChildNodes();
+                children = doc.getDocumentElement().getChildNodes();
             }
-        } catch(Exception ex) { }
+        }
+        catch (Exception ex) {
+        }
 
         // Load Plugins from Config
-        if(children != null)
-            for(int i = 0; i < children.getLength(); ++i) {
+        if (children != null)
+            for (int i = 0; i < children.getLength(); ++i) {
                 Node childNode = children.item(i);
-                if (childNode.getNodeType() != childNode.ELEMENT_NODE)
+                if (childNode.getNodeType() != Node.ELEMENT_NODE)
                     continue;
-                Element child = (Element)childNode;
-                if(!child.getTagName().equals("plugin"))
+                Element child = (Element) childNode;
+                if (!child.getTagName().equals("plugin"))
                     continue;
 
                 doLoadPlugin(configFileDir + File.separator + child.getAttribute("location"));
             }
-        
+
         // Load Plugins from Parameters
         Application.Parameters params = this.getParameters();
-        for(String s : params.getUnnamed())
-            if(s.endsWith(".jar"))
+        for (String s : params.getUnnamed())
+            if (s.endsWith(".jar"))
                 doLoadPlugin(s);
 
         // Open Files from Config
-        if(children != null)
-            for(int i = 0; i < children.getLength(); ++i) {
+        if (children != null)
+            for (int i = 0; i < children.getLength(); ++i) {
                 Node childNode = children.item(i);
-                if (childNode.getNodeType() != childNode.ELEMENT_NODE)
+                if (childNode.getNodeType() != Node.ELEMENT_NODE)
                     continue;
-                Element child = (Element)childNode;
-                if(!child.getTagName().equals("file"))
+                Element child = (Element) childNode;
+                if (!child.getTagName().equals("file"))
                     continue;
 
                 doOpenFile(new File(child.getAttribute("location")));
             }
 
         // Open Files from Parameters
-        for(String s : params.getUnnamed())
-            if(!s.endsWith(".jar"))
+        for (String s : params.getUnnamed())
+            if (!s.endsWith(".jar"))
                 doOpenFile(new File(s));
     }
-    
 }

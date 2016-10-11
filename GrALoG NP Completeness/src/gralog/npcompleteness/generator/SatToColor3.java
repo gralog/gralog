@@ -24,172 +24,157 @@ import java.util.Set;
  * @author viktor
  */
 @GeneratorDescription(
-  name="SAT to 3-Colorability Instance",
-  text="Constructs a 3-Colorability Instance from a SAT Formula",
-  url="https://en.wikipedia.org/wiki/Graph_coloring"
+        name = "SAT to 3-Colorability Instance",
+        text = "Constructs a 3-Colorability Instance from a SAT Formula",
+        url = "https://en.wikipedia.org/wiki/Graph_coloring"
 )
 public class SatToColor3 extends Generator {
-    
-    
+
     @Override
-    public GeneratorParameters GetParameters()
-    {
+    public GeneratorParameters getParameters() {
         return new StringGeneratorParameter("(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c) \\wedge (a \\vee \\neg b \\vee \\neg c)");
     }
-    
+
     // if a literal-node gets the same color as the "true" node, it means
     // this literal becomes true
     // the center top node of a gadget is only legally colorable,
     // iff one of its literals has the "true"-color.
     // see https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/sat.pdf
-
     @Override
-    public Structure Generate(GeneratorParameters p) throws Exception
-    {
-        StringGeneratorParameter sp = (StringGeneratorParameter)(p);
-        
+    public Structure generate(GeneratorParameters p) throws Exception {
+        StringGeneratorParameter sp = (StringGeneratorParameter) (p);
+
         PropositionalLogicParser parser = new PropositionalLogicParser();
         PropositionalLogicFormula phi = parser.parseString(sp.parameter);
-        PropositionalLogicFormula cnf = phi.ConjunctiveNormalForm3(); // need 3-SAT
-        
+        PropositionalLogicFormula cnf = phi.conjunctiveNormalForm3(); // need 3-SAT
+
         UndirectedGraph result = new UndirectedGraph();
-        
+
         Set<String> vars = new HashSet<>();
         HashMap<String, Vertex> PosNode = new HashMap();
         HashMap<String, Vertex> NegNode = new HashMap();
-        cnf.GetVariables(vars);
+        cnf.getVariables(vars);
 
-        
         // create the bottom gadget (triangle true-false-dummy)
-        Vertex trueVert = result.CreateVertex();
-        trueVert.Coordinates = new Vector2D(8d, 14d);
-        trueVert.Label = "true";
-        result.AddVertex(trueVert);
+        Vertex trueVert = result.createVertex();
+        trueVert.coordinates = new Vector2D(8d, 14d);
+        trueVert.label = "true";
+        result.addVertex(trueVert);
 
-        Vertex falseVert = result.CreateVertex();
-        falseVert.Coordinates = new Vector2D(12d, 14d);
-        falseVert.Label = "false";
-        result.AddVertex(falseVert);
-        result.AddEdge(result.CreateEdge(trueVert, falseVert));
+        Vertex falseVert = result.createVertex();
+        falseVert.coordinates = new Vector2D(12d, 14d);
+        falseVert.label = "false";
+        result.addVertex(falseVert);
+        result.addEdge(result.createEdge(trueVert, falseVert));
 
-        Vertex dummyVert = result.CreateVertex();
-        dummyVert.Coordinates = new Vector2D(10d, 12d);
-        result.AddVertex(dummyVert);
-        result.AddEdge(result.CreateEdge(trueVert, dummyVert));
-        result.AddEdge(result.CreateEdge(falseVert, dummyVert));
+        Vertex dummyVert = result.createVertex();
+        dummyVert.coordinates = new Vector2D(10d, 12d);
+        result.addVertex(dummyVert);
+        result.addEdge(result.createEdge(trueVert, dummyVert));
+        result.addEdge(result.createEdge(falseVert, dummyVert));
 
-        
         // create gadgets for the literals
         int i = 0;
-        for(String var : vars)
-        {
-            Vertex pos = result.CreateVertex(); // the positive literal
-            pos.Coordinates = new Vector2D(6d*i, 8d);
-            pos.Label = var;
-            result.AddVertex(pos);
+        for (String var : vars) {
+            Vertex pos = result.createVertex(); // the positive literal
+            pos.coordinates = new Vector2D(6d * i, 8d);
+            pos.label = var;
+            result.addVertex(pos);
             PosNode.put(var, pos);
-            
-            Vertex neg = result.CreateVertex(); // the negative literal
-            neg.Coordinates = new Vector2D(6d*i + 2, 8d);
-            neg.Label = "¬"+var;
-            result.AddVertex(neg);
+
+            Vertex neg = result.createVertex(); // the negative literal
+            neg.coordinates = new Vector2D(6d * i + 2, 8d);
+            neg.label = "¬" + var;
+            result.addVertex(neg);
             NegNode.put(var, neg);
-            
-            result.AddEdge(result.CreateEdge(pos, neg));
-            result.AddEdge(result.CreateEdge(pos, dummyVert));
-            result.AddEdge(result.CreateEdge(neg, dummyVert));
-            
+
+            result.addEdge(result.createEdge(pos, neg));
+            result.addEdge(result.createEdge(pos, dummyVert));
+            result.addEdge(result.createEdge(neg, dummyVert));
+
             i++;
         }
-        
 
         // create nodes for clauses
         Set<PropositionalLogicFormula> clauses = new HashSet<>();
-        cnf.GetClauses(clauses);
+        cnf.getClauses(clauses);
         Set<PropositionalLogicFormula> literals = new HashSet<>();
 
         i = 0;
-        for(PropositionalLogicFormula clause : clauses)
-        {
+        for (PropositionalLogicFormula clause : clauses) {
             literals.clear();
-            clause.GetLiterals(literals);
+            clause.getLiterals(literals);
 
             // create gadget for clause (6 nodes)
+            Vertex leftBottomVert = result.createVertex();
+            leftBottomVert.coordinates = new Vector2D(8d * i, 4d);
+            result.addVertex(leftBottomVert);
 
-            Vertex leftBottomVert = result.CreateVertex();
-            leftBottomVert.Coordinates = new Vector2D(8d*i, 4d);
-            result.AddVertex(leftBottomVert);
+            Vertex leftTopVert = result.createVertex();
+            leftTopVert.coordinates = new Vector2D(8d * i, 2d);
+            result.addVertex(leftTopVert);
 
-            Vertex leftTopVert = result.CreateVertex();
-            leftTopVert.Coordinates = new Vector2D(8d*i, 2d);
-            result.AddVertex(leftTopVert);
+            Vertex centerBottomVert = result.createVertex();
+            centerBottomVert.coordinates = new Vector2D(8d * i + 2, 3d);
+            result.addVertex(centerBottomVert);
 
-            Vertex centerBottomVert = result.CreateVertex();
-            centerBottomVert.Coordinates = new Vector2D(8d*i+2, 3d);
-            result.AddVertex(centerBottomVert);
+            Vertex centerTopVert = result.createVertex();
+            centerTopVert.coordinates = new Vector2D(8d * i + 2, 1d);
+            centerTopVert.label = clause.toString();
+            result.addVertex(centerTopVert);
 
-            Vertex centerTopVert = result.CreateVertex();
-            centerTopVert.Coordinates = new Vector2D(8d*i+2, 1d);
-            centerTopVert.Label = clause.toString();
-            result.AddVertex(centerTopVert);
+            Vertex rightBottomVert = result.createVertex();
+            rightBottomVert.coordinates = new Vector2D(8d * i + 4, 4d);
+            result.addVertex(rightBottomVert);
 
-            Vertex rightBottomVert = result.CreateVertex();
-            rightBottomVert.Coordinates = new Vector2D(8d*i+4, 4d);
-            result.AddVertex(rightBottomVert);
+            Vertex rightTopVert = result.createVertex();
+            rightTopVert.coordinates = new Vector2D(8d * i + 4, 2d);
+            result.addVertex(rightTopVert);
 
-            Vertex rightTopVert = result.CreateVertex();
-            rightTopVert.Coordinates = new Vector2D(8d*i+4, 2d);
-            result.AddVertex(rightTopVert);
-            
             // create edges in gadget
-            result.AddEdge(result.CreateEdge(centerTopVert, leftTopVert));
-            result.AddEdge(result.CreateEdge(centerTopVert, centerBottomVert));
-            result.AddEdge(result.CreateEdge(centerTopVert, rightTopVert));
+            result.addEdge(result.createEdge(centerTopVert, leftTopVert));
+            result.addEdge(result.createEdge(centerTopVert, centerBottomVert));
+            result.addEdge(result.createEdge(centerTopVert, rightTopVert));
 
-            result.AddEdge(result.CreateEdge(rightTopVert, rightBottomVert));
-            result.AddEdge(result.CreateEdge(leftTopVert, leftBottomVert));
+            result.addEdge(result.createEdge(rightTopVert, rightBottomVert));
+            result.addEdge(result.createEdge(leftTopVert, leftBottomVert));
 
-            result.AddEdge(result.CreateEdge(leftBottomVert, trueVert));
-            result.AddEdge(result.CreateEdge(centerBottomVert, trueVert));
-            result.AddEdge(result.CreateEdge(rightBottomVert, trueVert));
-            
-            result.AddEdge(result.CreateEdge(leftTopVert, trueVert));
-            result.AddEdge(result.CreateEdge(rightTopVert, falseVert));
+            result.addEdge(result.createEdge(leftBottomVert, trueVert));
+            result.addEdge(result.createEdge(centerBottomVert, trueVert));
+            result.addEdge(result.createEdge(rightBottomVert, trueVert));
 
-            
+            result.addEdge(result.createEdge(leftTopVert, trueVert));
+            result.addEdge(result.createEdge(rightTopVert, falseVert));
+
             ArrayList<Vertex> connectors = new ArrayList<>();
             connectors.add(leftBottomVert);
             connectors.add(centerBottomVert);
             connectors.add(rightBottomVert);
-            
+
             // connect gadget to corresponding nodes for the literals
             int literalIter = 0;
-            for(PropositionalLogicFormula literal : literals)
-            {
+            for (PropositionalLogicFormula literal : literals) {
                 Vertex connector = connectors.get(literalIter);
-                connector.Label = literal.toString();
+                connector.label = literal.toString();
                 literalIter++;
-                
-                if(literal instanceof PropositionalLogicVariable)
-                {
-                    PropositionalLogicVariable v = (PropositionalLogicVariable)literal;
-                    result.AddEdge(result.CreateEdge(connector, PosNode.get(v.variable)));
+
+                if (literal instanceof PropositionalLogicVariable) {
+                    PropositionalLogicVariable v = (PropositionalLogicVariable) literal;
+                    result.addEdge(result.createEdge(connector, PosNode.get(v.variable)));
                 }
-                else if(literal instanceof PropositionalLogicNot
-                     && ((PropositionalLogicNot)literal).subformula instanceof PropositionalLogicVariable)
-                {
-                    PropositionalLogicNot plnot = (PropositionalLogicNot)literal;
-                    PropositionalLogicVariable v = (PropositionalLogicVariable)plnot.subformula;
-                    result.AddEdge(result.CreateEdge(connector, NegNode.get(v.variable)));
+                else if (literal instanceof PropositionalLogicNot
+                         && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
+                    PropositionalLogicNot plnot = (PropositionalLogicNot) literal;
+                    PropositionalLogicVariable v = (PropositionalLogicVariable) plnot.subformula;
+                    result.addEdge(result.createEdge(connector, NegNode.get(v.variable)));
                 }
                 else
                     throw new Exception("Formula is not in Conjunctive Normal Form");
             }
-            
+
             i++;
         }
-        
+
         return result;
     }
-    
 }

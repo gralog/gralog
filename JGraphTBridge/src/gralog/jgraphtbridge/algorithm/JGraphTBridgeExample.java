@@ -18,20 +18,20 @@ import org.jgrapht.graph.DefaultEdge;
  * @author viktor
  */
 @AlgorithmDescription(
-  name="JGraphT Bridge Example",
-  text="Test of the Bridge to JGraphT",
-  url="http://jgrapht.org/"
+        name = "JGraphT Bridge Example",
+        text = "Test of the Bridge to JGraphT",
+        url = "http://jgrapht.org/"
 )
 
 public class JGraphTBridgeExample extends JGraphTAlgorithm {
-    
+
     @Override
-    public Object JGraphTRun(Graph<Vertex,DefaultEdge> g, AlgorithmParameters ap, Set<Object> selection, ProgressHandler onprogress) throws Exception
-    {
+    public Object jGraphTRun(Graph<Vertex, DefaultEdge> g,
+            AlgorithmParameters ap, Set<Object> selection,
+            ProgressHandler onprogress) throws Exception {
         int i = 0;
-        for(Vertex v : g.vertexSet())
+        for (Vertex v : g.vertexSet())
             i++;
-        return ""+i+" nodes (computed through JGraphTBridge)";
+        return "" + i + " nodes (computed through JGraphTBridge)";
     }
-    
 }

@@ -1,15 +1,11 @@
-
 package gralog.computationtreelogic.formula;
 
-public class ComputationTreeLogicAlwaysNext extends ComputationTreeLogicForwarder
-{
+public class ComputationTreeLogicAlwaysNext extends ComputationTreeLogicForwarder {
     // AX phi = not EX not phi
-    
-    public ComputationTreeLogicAlwaysNext(ComputationTreeLogicFormula subformula)
-    {
+
+    public ComputationTreeLogicAlwaysNext(ComputationTreeLogicFormula subformula) {
         super(new ComputationTreeLogicNot(
-                  new ComputationTreeLogicExistsNext(
-                      new ComputationTreeLogicNot(subformula))));
+                new ComputationTreeLogicExistsNext(
+                        new ComputationTreeLogicNot(subformula))));
     }
 }
-

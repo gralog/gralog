@@ -1,4 +1,3 @@
-
 package gralog.finitegame.structure;
 
 import gralog.structure.*;
@@ -9,65 +8,59 @@ import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-@XmlName(name="finitegameposition")
-public class FiniteGamePosition extends Vertex
-{
-    public Boolean Player1Position = true;
-    
+@XmlName(name = "finitegameposition")
+public class FiniteGamePosition extends Vertex {
+
+    public Boolean player1Position = true;
+
     @Override
-    public Element ToXml(Document doc, String id) throws Exception
-    {
-        Element vnode = super.ToXml(doc, id);
-        vnode.setAttribute("player1position", Player1Position ? "true" : "false");
+    public Element toXml(Document doc, String id) throws Exception {
+        Element vnode = super.toXml(doc, id);
+        vnode.setAttribute("player1position", player1Position ? "true" : "false");
         return vnode;
     }
-    
+
     @Override
-    public String FromXml(Element vnode)
-    {
-        String id = super.FromXml(vnode);
-        if(vnode.hasAttribute("player1position"))
-            Player1Position = (vnode.getAttribute("player1position").equals("true"));
+    public String fromXml(Element vnode) {
+        String id = super.fromXml(vnode);
+        if (vnode.hasAttribute("player1position"))
+            player1Position = (vnode.getAttribute("player1position").equals("true"));
         return id;
     }
- 
+
     @Override
-    public void Render(GralogGraphicsContext gc, Set<Object> highlights)
-    {
-        if(Player1Position)
-        {
-            super.Render(gc, highlights);
+    public void render(GralogGraphicsContext gc, Set<Object> highlights) {
+        if (player1Position) {
+            super.render(gc, highlights);
         }
-        else
-        {
-            if(highlights != null && highlights.contains(this))
-                gc.FillRectangle(Coordinates.get(0)-Radius-0.07, // outer
-                                 Coordinates.get(1)-Radius-0.07,
-                                 Coordinates.get(0)+Radius+0.07,
-                                 Coordinates.get(1)+Radius+0.07,
-                                 GralogColor.red);
-            
-            gc.FillRectangle(Coordinates.get(0)-Radius, // outer
-                             Coordinates.get(1)-Radius,
-                             Coordinates.get(0)+Radius,
-                             Coordinates.get(1)+Radius,
-                             StrokeColor);
-            gc.FillRectangle(Coordinates.get(0)-Radius+StrokeWidth, // inner
-                             Coordinates.get(1)-Radius+StrokeWidth,
-                             Coordinates.get(0)+Radius-StrokeWidth,
-                             Coordinates.get(1)+Radius-StrokeWidth,
-                             FillColor);
-            gc.PutText(Coordinates.get(0), Coordinates.get(1), Label,
-                       TextHeight, FillColor.inverse());
+        else {
+            if (highlights != null && highlights.contains(this))
+                gc.fillRectangle(coordinates.get(0) - radius - 0.07, // outer
+                                 coordinates.get(1) - radius - 0.07,
+                                 coordinates.get(0) + radius + 0.07,
+                                 coordinates.get(1) + radius + 0.07,
+                                 GralogColor.RED);
+
+            gc.fillRectangle(coordinates.get(0) - radius, // outer
+                             coordinates.get(1) - radius,
+                             coordinates.get(0) + radius,
+                             coordinates.get(1) + radius,
+                             strokeColor);
+            gc.fillRectangle(coordinates.get(0) - radius + strokeWidth, // inner
+                             coordinates.get(1) - radius + strokeWidth,
+                             coordinates.get(0) + radius - strokeWidth,
+                             coordinates.get(1) + radius - strokeWidth,
+                             fillColor);
+            gc.putText(coordinates.get(0), coordinates.get(1), label,
+                       textHeight, fillColor.inverse());
         }
     }
-    
+
     @Override
-    public boolean ContainsCoordinate(double x, double y)
-    {
-        return (Coordinates.get(0)-Radius <= x)
-            && (x <= Coordinates.get(0)+Radius)
-            && (Coordinates.get(1)-Radius <= y)
-            && (y <= Coordinates.get(1)+Radius);
+    public boolean containsCoordinate(double x, double y) {
+        return (coordinates.get(0) - radius <= x)
+               && (x <= coordinates.get(0) + radius)
+               && (coordinates.get(1) - radius <= y)
+               && (y <= coordinates.get(1) + radius);
     }
 }

@@ -5,56 +5,56 @@
  */
 package gralog.importfilter;
 
-import static gralog.plugins.PluginManager.InstantiateClass;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import static gralog.plugins.PluginManager.instantiateClass;
 
 /**
  *
  * @author viktor
  */
 public class ImportFilterManager {
- 
-    private final static HashMap<String, String> ImportFilterNames = new HashMap<String,String>();
-    private final static HashMap<String, String> ImportFilterExtensions = new HashMap<String,String>();
-    private final static HashMap<String, ImportFilterDescription> ImportFilterDescriptions = new HashMap<String,ImportFilterDescription>();
-    
-    public static void RegisterImportFilterClass(Class<?> aClass, String classname) throws Exception
-    {
-        if(Modifier.isAbstract(aClass.getModifiers()))
+
+    private final static HashMap<String, String> importFilterNames = new HashMap<>();
+    private final static HashMap<String, String> importFilterExtensions = new HashMap<>();
+    private final static HashMap<String, ImportFilterDescription> importFilterDescriptions = new HashMap<>();
+
+    public static void registerImportFilterClass(Class<?> aClass,
+            String classname) throws Exception {
+        if (Modifier.isAbstract(aClass.getModifiers()))
             return;
-        
-        if(!aClass.isAnnotationPresent(ImportFilterDescription.class))
+
+        if (!aClass.isAnnotationPresent(ImportFilterDescription.class))
             throw new Exception("class " + aClass.getName() + " has no @ImportFilterDescription annotation");
         ImportFilterDescription descr = aClass.getAnnotation(ImportFilterDescription.class);
-        ImportFilterNames.put(descr.name(), classname);
-        ImportFilterExtensions.put(descr.fileextension(), classname);
-        ImportFilterDescriptions.put(descr.name(), descr);
+        importFilterNames.put(descr.name(), classname);
+        importFilterExtensions.put(descr.fileExtension(), classname);
+        importFilterDescriptions.put(descr.name(), descr);
     }
-    
+
     public static List<String> getImportFilterClasses() {
-        ArrayList<String> result = new ArrayList<>();
-        result.addAll(ImportFilterNames.keySet());
+        List<String> result = new ArrayList<>(importFilterNames.keySet());
         result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }
-    
-    public static ImportFilter InstantiateImportFilter(String identifier) throws Exception {
-        String classname = ImportFilterNames.get(identifier);
-        return (ImportFilter)InstantiateClass(classname);
-    }
-    
-    public static ImportFilter InstantiateImportFilterByExtension(String identifier) throws Exception {
-        if(!ImportFilterExtensions.containsKey(identifier))
-            return null;
-        String classname = ImportFilterExtensions.get(identifier);
-        return (ImportFilter)InstantiateClass(classname);
-    }
-    
-    public static ImportFilterDescription getImportFilterDescription(String identifier) {
-        return ImportFilterDescriptions.get(identifier);
+
+    public static ImportFilter instantiateImportFilter(String identifier) throws Exception {
+        String classname = importFilterNames.get(identifier);
+        return (ImportFilter) instantiateClass(classname);
     }
 
+    public static ImportFilter instantiateImportFilterByExtension(
+            String identifier) throws Exception {
+        if (!importFilterExtensions.containsKey(identifier))
+            return null;
+        String classname = importFilterExtensions.get(identifier);
+        return (ImportFilter) instantiateClass(classname);
+    }
+
+    public static ImportFilterDescription getImportFilterDescription(
+            String identifier) {
+        return importFilterDescriptions.get(identifier);
+    }
 }

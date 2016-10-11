@@ -1,4 +1,3 @@
-
 package gralog.modalmucalculus.formula;
 
 import gralog.structure.*;
@@ -10,81 +9,71 @@ import gralog.rendering.Vector2D;
 import java.util.HashMap;
 import java.util.Map;
 
+public class ModalMuCalculusNot extends ModalMuCalculusFormula {
 
-
-public class ModalMuCalculusNot extends ModalMuCalculusFormula
-{
     ModalMuCalculusFormula formula;
-    
-    public ModalMuCalculusNot(ModalMuCalculusFormula formula)
-    {
+
+    public ModalMuCalculusNot(ModalMuCalculusFormula formula) {
         this.formula = formula;
     }
-    
+
     @Override
-    protected ModalMuCalculusFormula NegationNormalForm(boolean negated)
-    {
-        return formula.NegationNormalForm(!negated);
+    protected ModalMuCalculusFormula negationNormalForm(boolean negated) {
+        return formula.negationNormalForm(!negated);
     }
 
     @Override
-    protected ModalMuCalculusFormula NegateVariable(String variable)
-    {
-        return new ModalMuCalculusNot(formula.NegateVariable(variable));
+    protected ModalMuCalculusFormula negateVariable(String variable) {
+        return new ModalMuCalculusNot(formula.negateVariable(variable));
     }
 
     @Override
-    public Double FormulaWidth()
-    {
-        return formula.FormulaWidth();
+    public double formulaWidth() {
+        return formula.formulaWidth();
     }
 
     @Override
-    public Double FormulaDepth()
-    {
-        return formula.FormulaDepth();
+    public double formulaDepth() {
+        return formula.formulaDepth();
     }
-    
-    
+
     @Override
-    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p, int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception
-    {
+    public void createParityGamePositions(double scale, double x, double y,
+            double w, double h, KripkeStructure s, ParityGame p,
+            int NextPriority,
+            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
         // Parity game can only be constructed from NNF formulas.
-        if(!(formula instanceof ModalMuCalculusProposition))
+        if (!(formula instanceof ModalMuCalculusProposition))
             throw new Exception("Formula is not in Negation Normal Form");
-        ModalMuCalculusProposition prop = (ModalMuCalculusProposition)formula;
-        
-        for(Vertex v : s.getVertices())
-        {
-            ParityGamePosition node = p.CreateVertex();
-            node.Coordinates = new Vector2D(
-                    scale * w * v.Coordinates.getX() + x,
-                    scale * h * v.Coordinates.getY() + y
+        ModalMuCalculusProposition prop = (ModalMuCalculusProposition) formula;
+
+        for (Vertex v : s.getVertices()) {
+            ParityGamePosition node = p.createVertex();
+            node.coordinates = new Vector2D(
+                    scale * w * v.coordinates.getX() + x,
+                    scale * h * v.coordinates.getY() + y
             );
-            node.Label = prop.proposition;
-            node.Player1Position = ((World)v).SatisfiesProposition(prop.proposition);
-            p.AddVertex(node);
-            
-            if(!index.containsKey((World)v))
-                index.put((World)v, new HashMap<>());
-            index.get((World)v).put(this, node);
+            node.label = prop.proposition;
+            node.player1Position = ((World) v).satisfiesProposition(prop.proposition);
+            p.addVertex(node);
+
+            if (!index.containsKey((World) v))
+                index.put((World) v, new HashMap<>());
+            index.get((World) v).put(this, node);
         }
         //formula.CreateParityGamePositions(x, y, w, h, s, p, index);
     }
-    
+
     @Override
-    public void CreateParityGameTransitions(KripkeStructure s, ParityGame p,
+    public void createParityGameTransitions(KripkeStructure s, ParityGame p,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception
-    {
-        if(!(formula instanceof ModalMuCalculusProposition))
+            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
+        if (!(formula instanceof ModalMuCalculusProposition))
             throw new Exception("Formula is not in Negation Normal Form");
-        
-        ModalMuCalculusProposition prop = (ModalMuCalculusProposition)formula;
-        
-        if(variableDefinitionPoints.containsKey(prop.proposition))
+
+        ModalMuCalculusProposition prop = (ModalMuCalculusProposition) formula;
+
+        if (variableDefinitionPoints.containsKey(prop.proposition))
             throw new Exception("Formula contains bound variable \"" + prop.proposition + "\" negatively");
     }
 }

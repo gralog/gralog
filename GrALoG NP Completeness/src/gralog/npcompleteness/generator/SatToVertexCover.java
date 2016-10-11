@@ -24,124 +24,108 @@ import java.util.Set;
  * @author viktor
  */
 @GeneratorDescription(
-  name="SAT to Vertex Cover Instance",
-  text="Constructs a Vertex-Cover Instance from a SAT Formula",
-  url=""
+        name = "SAT to Vertex Cover Instance",
+        text = "Constructs a Vertex-Cover Instance from a SAT Formula",
+        url = ""
 )
 public class SatToVertexCover extends Generator {
-    
-    
+
     @Override
-    public GeneratorParameters GetParameters()
-    {
+    public GeneratorParameters getParameters() {
         return new StringGeneratorParameter("(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c) \\wedge (a \\vee \\neg b \\vee \\neg c)");
     }
-    
-    
+
     // notice that the size of a min vertex cover becomes |vars| + 2*|clauses|
     // we select the literal-node corresponding to an assignment and the 2
     // remaining nodes in the clause-gadgets
-    
-
     @Override
-    public Structure Generate(GeneratorParameters p) throws Exception
-    {
-        StringGeneratorParameter sp = (StringGeneratorParameter)(p);
-        
+    public Structure generate(GeneratorParameters p) throws Exception {
+        StringGeneratorParameter sp = (StringGeneratorParameter) (p);
+
         PropositionalLogicParser parser = new PropositionalLogicParser();
         PropositionalLogicFormula phi = parser.parseString(sp.parameter);
-        PropositionalLogicFormula cnf = phi.ConjunctiveNormalForm3(); // need 3-SAT
-        
-        
+        PropositionalLogicFormula cnf = phi.conjunctiveNormalForm3(); // need 3-SAT
+
         UndirectedGraph result = new UndirectedGraph();
-        
+
         Set<String> vars = new HashSet<>();
         HashMap<String, Vertex> PosNode = new HashMap();
         HashMap<String, Vertex> NegNode = new HashMap();
-        cnf.GetVariables(vars);
-        
-        
+        cnf.getVariables(vars);
+
         // create gadgets for the literals
         int i = 0;
-        for(String var : vars)
-        {
-            Vertex pos = result.CreateVertex(); // the positive literal
-            pos.Coordinates = new Vector2D(6d*i, 10d);
-            pos.Label = var;
-            result.AddVertex(pos);
+        for (String var : vars) {
+            Vertex pos = result.createVertex(); // the positive literal
+            pos.coordinates = new Vector2D(6d * i, 10d);
+            pos.label = var;
+            result.addVertex(pos);
             PosNode.put(var, pos);
-            
-            Vertex neg = result.CreateVertex(); // the negative literal
-            neg.Coordinates = new Vector2D(6d*i + 2, 10d);
-            neg.Label = "¬"+var;
-            result.AddVertex(neg);
+
+            Vertex neg = result.createVertex(); // the negative literal
+            neg.coordinates = new Vector2D(6d * i + 2, 10d);
+            neg.label = "¬" + var;
+            result.addVertex(neg);
             NegNode.put(var, neg);
-            
-            result.AddEdge(result.CreateEdge(pos, neg));
-            
+
+            result.addEdge(result.createEdge(pos, neg));
+
             i++;
         }
-        
 
         // create gadgets for clauses
         Set<PropositionalLogicFormula> clauses = new HashSet<>();
-        cnf.GetClauses(clauses);
+        cnf.getClauses(clauses);
         Set<PropositionalLogicFormula> literals = new HashSet<>();
 
         i = 0;
-        for(PropositionalLogicFormula clause : clauses)
-        {
+        for (PropositionalLogicFormula clause : clauses) {
             literals.clear();
-            clause.GetLiterals(literals);
-            
-            Vertex clauseVert1 = result.CreateVertex();
-            clauseVert1.Coordinates = new Vector2D(5d*i, 3d);
-            result.AddVertex(clauseVert1);
+            clause.getLiterals(literals);
 
-            Vertex clauseVert2 = result.CreateVertex();
-            clauseVert2.Coordinates = new Vector2D(5d*i+2, 3d);
-            result.AddVertex(clauseVert2);
+            Vertex clauseVert1 = result.createVertex();
+            clauseVert1.coordinates = new Vector2D(5d * i, 3d);
+            result.addVertex(clauseVert1);
 
-            Vertex clauseVert3 = result.CreateVertex();
-            clauseVert3.Coordinates = new Vector2D(5d*i+1, 2d);
-            result.AddVertex(clauseVert3);
+            Vertex clauseVert2 = result.createVertex();
+            clauseVert2.coordinates = new Vector2D(5d * i + 2, 3d);
+            result.addVertex(clauseVert2);
 
-            result.AddEdge(result.CreateEdge(clauseVert1, clauseVert2));
-            result.AddEdge(result.CreateEdge(clauseVert2, clauseVert3));
-            result.AddEdge(result.CreateEdge(clauseVert3, clauseVert1));
-            
+            Vertex clauseVert3 = result.createVertex();
+            clauseVert3.coordinates = new Vector2D(5d * i + 1, 2d);
+            result.addVertex(clauseVert3);
+
+            result.addEdge(result.createEdge(clauseVert1, clauseVert2));
+            result.addEdge(result.createEdge(clauseVert2, clauseVert3));
+            result.addEdge(result.createEdge(clauseVert3, clauseVert1));
+
             ArrayList<Vertex> gadget = new ArrayList<>();
             gadget.add(clauseVert1);
             gadget.add(clauseVert2);
             gadget.add(clauseVert3);
 
             int j = 0;
-            for(PropositionalLogicFormula literal : literals)
-            {
+            for (PropositionalLogicFormula literal : literals) {
                 Vertex clauseVert = gadget.get(j);
-                clauseVert.Label = literal.toString();
+                clauseVert.label = literal.toString();
                 j++;
-                
-                if(literal instanceof PropositionalLogicVariable)
-                {
-                    PropositionalLogicVariable v = (PropositionalLogicVariable)literal;
-                    result.AddEdge(result.CreateEdge(clauseVert, PosNode.get(v.variable)));
+
+                if (literal instanceof PropositionalLogicVariable) {
+                    PropositionalLogicVariable v = (PropositionalLogicVariable) literal;
+                    result.addEdge(result.createEdge(clauseVert, PosNode.get(v.variable)));
                 }
-                else if(literal instanceof PropositionalLogicNot
-                     && ((PropositionalLogicNot)literal).subformula instanceof PropositionalLogicVariable)
-                {
-                    PropositionalLogicNot plnot = (PropositionalLogicNot)literal;
-                    PropositionalLogicVariable v = (PropositionalLogicVariable)plnot.subformula;
-                    result.AddEdge(result.CreateEdge(clauseVert, NegNode.get(v.variable)));
+                else if (literal instanceof PropositionalLogicNot
+                         && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
+                    PropositionalLogicNot plnot = (PropositionalLogicNot) literal;
+                    PropositionalLogicVariable v = (PropositionalLogicVariable) plnot.subformula;
+                    result.addEdge(result.createEdge(clauseVert, NegNode.get(v.variable)));
                 }
                 else
                     throw new Exception("Formula is not in Conjunctive Normal Form");
             }
-            
-            i++;
+            ++i;
         }
-        
+
         return result;
     }
-    
 }

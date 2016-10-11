@@ -5,48 +5,45 @@
  */
 package gralog.structure;
 
-import static gralog.plugins.PluginManager.InstantiateClass;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import static gralog.plugins.PluginManager.instantiateClass;
 
 /**
  *
  * @author viktor
  */
 public class StructureManager {
-    
+
     // The XNames HashMaps are maps from description-name -> fully qualified class name
-    private final static HashMap<String, String> StructureNames = new HashMap<String,String>();
-    private final static HashMap<String, StructureDescription> StructureDescriptions = new HashMap<String,StructureDescription>();
-    
-    public static void RegisterStructureClass(Class<?> aClass, String classname) throws Exception
-    {
-        if(Modifier.isAbstract(aClass.getModifiers()))
+    private final static HashMap<String, String> structureNames = new HashMap<>();
+    private final static HashMap<String, StructureDescription> structureDescriptions = new HashMap<>();
+
+    public static void registerStructureClass(Class<?> aClass, String className) throws Exception {
+        if (Modifier.isAbstract(aClass.getModifiers()))
             return;
-        
-        if(!aClass.isAnnotationPresent(StructureDescription.class))
+
+        if (!aClass.isAnnotationPresent(StructureDescription.class))
             throw new Exception("class " + aClass.getName() + " has no @StructureDescription annotation");
         StructureDescription descr = aClass.getAnnotation(StructureDescription.class);
-        StructureNames.put(descr.name(), classname);
-        StructureDescriptions.put(descr.name(), descr);
+        structureNames.put(descr.name(), className);
+        structureDescriptions.put(descr.name(), descr);
     }
-    
-    
+
     public static List<String> getStructureClasses() {
-        ArrayList<String> result = new ArrayList<>(StructureNames.keySet());
+        ArrayList<String> result = new ArrayList<>(structureNames.keySet());
         result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }
-    
-    public static Structure InstantiateStructure(String identifier) throws Exception {
-        String classname = StructureNames.get(identifier);
-        return (Structure)InstantiateClass(classname);
+
+    public static Structure instantiateStructure(String identifier) throws Exception {
+        String classname = structureNames.get(identifier);
+        return (Structure) instantiateClass(classname);
     }
-    
+
     public static StructureDescription getStructureDescription(String identifier) {
-        return StructureDescriptions.get(identifier);
+        return structureDescriptions.get(identifier);
     }
-    
 }

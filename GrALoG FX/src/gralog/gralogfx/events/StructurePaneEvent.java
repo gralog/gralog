@@ -13,9 +13,8 @@ import javafx.event.EventType;
  * @author viktor
  */
 public class StructurePaneEvent extends Event {
-    
+
     public StructurePaneEvent(EventType type) {
         super(type);
     }
-    
 }

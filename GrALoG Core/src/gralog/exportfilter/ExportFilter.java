@@ -15,57 +15,51 @@ import java.util.Map;
  *
  * @author viktor
  */
-public abstract class ExportFilter
-{
-    
+public abstract class ExportFilter {
+
     //public abstract void Export(Structure structure, OutputStreamWriter stream, ExportParameters params);
-    
     // null means it has no parameters
-    public ExportFilterParameters GetParameters(Structure structure)
-    {
+    public ExportFilterParameters getParameters(Structure structure) {
         return null;
     }
-    
-    public void DoExport(Structure structure, String FileName, ExportFilterParameters params) throws Exception
-    {
+
+    public void exportGraph(Structure structure, String FileName,
+            ExportFilterParameters params) throws Exception {
         FileOutputStream stream = new FileOutputStream(FileName);
         OutputStreamWriter writer = new OutputStreamWriter(stream);
-        DoExport(structure, writer, params);
+        exportGraph(structure, writer, params);
         writer.flush();
         writer.close();
     }
-    
-    public void DoExport(Structure structure, OutputStreamWriter stream, ExportFilterParameters params) throws Exception
-    {
+
+    public void exportGraph(Structure structure, OutputStreamWriter stream,
+            ExportFilterParameters params) throws Exception {
         Method[] methods = this.getClass().getMethods();
-        for(Method method : methods)
-        {
-            if(!method.getName().equals("Export"))
+        for (Method method : methods) {
+            if (!method.getName().equals("export"))
                 continue;
             Class[] paramTypes = method.getParameterTypes();
-            if(paramTypes.length != 3)
+            if (paramTypes.length != 3)
                 continue;
-                
+
             method.invoke(this, new Object[]{structure, stream, params});
             break;
         }
     }
-    
-    public Map<String, Vertex> GetVertexNames(Structure structure, ExportFilterParameters params) throws Exception
-    {
-        throw new Exception("class " + this.getClass().getName() + " has no method \"GetVertexNames\"");
+
+    public Map<String, Vertex> getVertexNames(Structure structure,
+            ExportFilterParameters params) throws Exception {
+        throw new Exception("class " + this.getClass().getName() + " has no method \"getVertexNames\"");
     }
 
-    public Map<String, Edge> GetEdgeNames(Structure structure, ExportFilterParameters params) throws Exception
-    {
-        throw new Exception("class " + this.getClass().getName() + " has no method \"GetEdgeNames\"");
-    }    
-    
-    public ExportFilterDescription getDescription() throws Exception
-    {
-        if(!this.getClass().isAnnotationPresent(ExportFilterDescription.class))
+    public Map<String, Edge> getEdgeNames(Structure structure,
+            ExportFilterParameters params) throws Exception {
+        throw new Exception("class " + this.getClass().getName() + " has no method \"getEdgeNames\"");
+    }
+
+    public ExportFilterDescription getDescription() throws Exception {
+        if (!this.getClass().isAnnotationPresent(ExportFilterDescription.class))
             throw new Exception("class " + this.getClass().getName() + " has no @ExportFilterDescription Annotation");
         return this.getClass().getAnnotation(ExportFilterDescription.class);
     }
-    
 }

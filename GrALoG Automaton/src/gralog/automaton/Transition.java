@@ -15,21 +15,21 @@ import org.w3c.dom.Element;
  *
  * @author viktor
  */
-@XmlName(name="transition")
+@XmlName(name = "transition")
 public class Transition extends Edge {
-    
+
     public String Symbol = "";
-    
+
     @Override
-    public Element ToXml(Document doc, HashMap<Vertex,String> ids) throws Exception {
-        Element enode = super.ToXml(doc, ids);
+    public Element toXml(Document doc, HashMap<Vertex, String> ids) throws Exception {
+        Element enode = super.toXml(doc, ids);
         enode.setAttribute("symbol", Symbol);
         return enode;
     }
-    
-    @Override    
-    public void FromXml(Element enode, HashMap<String,Vertex> ids) throws Exception {
-        super.FromXml(enode, ids);
+
+    @Override
+    public void fromXml(Element enode, HashMap<String, Vertex> ids) throws Exception {
+        super.fromXml(enode, ids);
         Symbol = enode.getAttribute("symbol");
-    }    
+    }
 }

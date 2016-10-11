@@ -14,20 +14,19 @@ import gralog.progresshandler.*;
  * @author viktor
  */
 public class RedrawOnProgress extends ProgressHandler {
-    
+
     StructurePane pane;
     long sleepTime = 0;
-    
-    public RedrawOnProgress(StructurePane pane, Double sleepTimeSEC) {
+
+    public RedrawOnProgress(StructurePane pane, double sleepTimeSEC) {
         this.pane = pane;
-        this.sleepTime = (long)(sleepTimeSEC*1000);
+        this.sleepTime = (long) (sleepTimeSEC * 1000);
     }
-    
+
     @Override
-    public void OnProgress(Structure s) throws Exception {
-        this.pane.RequestRedraw();
-        if(sleepTime > 0)
-           Thread.sleep(sleepTime);
+    public void onProgress(Structure s) throws Exception {
+        this.pane.requestRedraw();
+        if (sleepTime > 0)
+            Thread.sleep(sleepTime);
     }
-    
 }

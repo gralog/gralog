@@ -16,24 +16,21 @@ import java.util.List;
  * @author viktor
  */
 public class Bag {
-    
+
     public Set<Vertex> Nodes = new HashSet<>();
-    
     public List<Bag> ChildBags = new ArrayList<>();
-    
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         String result = "{";
         String glue = "";
-        
-        for(Vertex v : Nodes)
-        {
-            result += glue + v.Label;
+
+        for (Vertex v : Nodes) {
+            result += glue + v.label;
             glue = ",";
         }
-        
+
         return result + "}";
     }
-    
+
 }

@@ -12,17 +12,16 @@ import gralog.structure.*;
  * @author viktor
  */
 public abstract class Generator {
-    
+
     // null means it has no parameters
-    public GeneratorParameters GetParameters() {
+    public GeneratorParameters getParameters() {
         return null;
     }
-    
-    public abstract Structure Generate(GeneratorParameters p) throws Exception;
- 
-    
+
+    public abstract Structure generate(GeneratorParameters p) throws Exception;
+
     public GeneratorDescription getDescription() throws Exception {
-        if(!this.getClass().isAnnotationPresent(GeneratorDescription.class))
+        if (!this.getClass().isAnnotationPresent(GeneratorDescription.class))
             throw new Exception("class " + this.getClass().getName() + " has no @GeneratorDescription Annotation");
         return this.getClass().getAnnotation(GeneratorDescription.class);
     }

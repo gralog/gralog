@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package gralog.plugins;
 
 import gralog.structure.*;
@@ -26,89 +25,78 @@ import java.util.*;
  */
 public class PluginManager {
 
-    
-    private final static HashMap<String, Constructor> ClassRegister = new HashMap<String,Constructor>();
-    
-    
-    public static void Initialize() throws Exception {
-        File f = new File(PluginManager.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        LoadPlugin(f.getAbsolutePath());
-    }
-    
+    private final static HashMap<String, Constructor> ClassRegister = new HashMap<String, Constructor>();
 
-    public static Object InstantiateClass(String className) throws Exception {
-        if(!ClassRegister.containsKey(className))
+    public static void initialize() throws Exception {
+        File f = new File(PluginManager.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        loadPlugin(f.getAbsolutePath());
+    }
+
+    public static Object instantiateClass(String className) throws Exception {
+        if (!ClassRegister.containsKey(className))
             throw new Exception("class \"" + className + "\" is unknown, has no @XmlName annotation or has no empty constructor");
-        
+
         Constructor ctor = ClassRegister.get(className);
         return ctor.newInstance();
     }
 
-
-    public static void RegisterClass(String ClassName) throws Exception {
+    public static void registerClass(String ClassName) throws Exception {
         Class<?> c = Class.forName(ClassName);
-        RegisterClass(c);
+        PluginManager.registerClass(c);
     }
-    
-    
-    public static void RegisterClass(Class<?> c) throws Exception
-    {
+
+    public static void registerClass(Class<?> c) throws Exception {
         String XmlAlias = null;
-        if(c.isAnnotationPresent(XmlName.class))
-        {
+        if (c.isAnnotationPresent(XmlName.class)) {
             XmlName xmlname = c.getAnnotation(XmlName.class);
             XmlAlias = xmlname.name();
         }
-        RegisterClass(c.getName(), XmlAlias, c);
+        registerClass(c.getName(), XmlAlias, c);
     }
-    
 
-    public static void RegisterClass(String classname, String xmlAlias, Class<?> aClass) throws Exception
-    {
-        if(Modifier.isAbstract(aClass.getModifiers()))
-            return;        
-        
-        if(ClassRegister.containsKey(classname))
+    public static void registerClass(String classname, String xmlAlias,
+            Class<?> aClass) throws Exception {
+        if (Modifier.isAbstract(aClass.getModifiers()))
+            return;
+
+        if (ClassRegister.containsKey(classname))
             throw new Exception("class name \"" + classname + "\" already exists!");
-        if(xmlAlias != null)
-            if(ClassRegister.containsKey(xmlAlias))
+        if (xmlAlias != null)
+            if (ClassRegister.containsKey(xmlAlias))
                 throw new Exception("class name \"" + xmlAlias + "\" already exists!");
-        
+
         try {
             Constructor ctor = aClass.getConstructor(new Class[]{});
             // Register the Class
             ClassRegister.put(classname, ctor);
-            if(xmlAlias != null)
+            if (xmlAlias != null)
                 ClassRegister.put(xmlAlias, ctor);
-            
+
             // Register the classes in the corresponding managers
-            for(Class sup = aClass; sup != null; sup = sup.getSuperclass())
-            {
-                if(sup == Structure.class)                                      // Structure
-                    StructureManager.RegisterStructureClass(aClass, classname);
-                
-                if(sup == Generator.class)                                      // Generator
-                    GeneratorManager.RegisterGeneratorClass(aClass, classname);
-                
-                if(sup == ImportFilter.class)                                   // Import Filter
-                    ImportFilterManager.RegisterImportFilterClass(aClass, classname);
-                
-                if(sup == Algorithm.class)                                      // Algorithms
-                    AlgorithmManager.RegisterAlgorithmClass(aClass, classname);
-                
-                if(sup == ExportFilter.class)                                   // Export Filter
-                    ExportFilterManager.RegisterExportFilterClass(aClass, classname);
+            for (Class sup = aClass; sup != null; sup = sup.getSuperclass()) {
+                if (sup == Structure.class) // Structure
+                    StructureManager.registerStructureClass(aClass, classname);
+
+                if (sup == Generator.class) // Generator
+                    GeneratorManager.registerGeneratorClass(aClass, classname);
+
+                if (sup == ImportFilter.class) // Import Filter
+                    ImportFilterManager.registerImportFilterClass(aClass, classname);
+
+                if (sup == Algorithm.class) // Algorithms
+                    AlgorithmManager.registerAlgorithmClass(aClass, classname);
+
+                if (sup == ExportFilter.class) // Export Filter
+                    ExportFilterManager.registerExportFilterClass(aClass, classname);
             }
-        } catch(NoSuchMethodException e)
-        {
+        }
+        catch (NoSuchMethodException e) {
         }
     }
-    
-    
-    public static void LoadPlugin(String pathToPlugin) throws Exception {
+
+    public static void loadPlugin(String pathToPlugin) throws Exception {
         File plugin = new File(pathToPlugin);
-        
-        
+
         // Add the plugin to the classpath
         URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
         Class sysclass = URLClassLoader.class;
@@ -116,26 +104,21 @@ public class PluginManager {
         method.setAccessible(true);
         method.invoke(sysloader, new Object[]{plugin.toURL()});
 
-
         // Load the classes
         Collection<Class<?>> classes = new ArrayList<>();
         JarFile jar = new JarFile(pathToPlugin);
-        for (Enumeration<JarEntry> entries = jar.entries() ; entries.hasMoreElements() ;)
-        {
+        for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
             JarEntry entry = entries.nextElement();
             String file = entry.getName();
-            if (file.endsWith(".class"))
-            {
+            if (file.endsWith(".class")) {
                 String classname = file.replace('/', '.').substring(0, file.length() - 6);
-                Class<?> c = Class.forName(classname,false,sysloader);
+                Class<?> c = Class.forName(classname, false, sysloader);
                 classes.add(c);
             }
         }
-        
+
         // Register the classes
         for (Class<?> c : classes)
-            RegisterClass(c);
+            PluginManager.registerClass(c);
     }
-    
-    
 }

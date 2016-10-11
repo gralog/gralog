@@ -25,13 +25,9 @@ import javafx.geometry.Point2D;
 
 import javafx.event.EventType;
 import javafx.event.EventHandler;
-import javafx.event.Event;
-import javafx.event.ActionEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
-
 
 /**
  *
@@ -39,383 +35,362 @@ import javafx.scene.input.ScrollEvent;
  */
 //public class StructurePane extends ScrollPane implements StructureListener {
 public class StructurePane extends StackPane implements StructureListener {
-    
-    boolean NeedsRepaint = true;
-    Lock NeedsRepaintLock = new ReentrantLock();
-    
-    static EventType<StructurePaneEvent> ALL_STRUCTUREPANE_EVENTS = new EventType<>("ALL_STRUCTUREPANE_EVENTS");
-    static EventType<StructurePaneEvent> STRUCTUREPANE_SELECTIONCHANGED = new EventType<>(ALL_STRUCTUREPANE_EVENTS, "STRUCTUREPANE_SELECTIONCHANGED");
+
+    boolean needsRepaint = true;
+    Lock needsRepaintLock = new ReentrantLock();
+
+    static final EventType<StructurePaneEvent> ALL_STRUCTUREPANE_EVENTS
+            = new EventType<>("ALL_STRUCTUREPANE_EVENTS");
+    static final EventType<StructurePaneEvent> STRUCTUREPANE_SELECTIONCHANGED
+            = new EventType<>(ALL_STRUCTUREPANE_EVENTS, "STRUCTUREPANE_SELECTIONCHANGED");
+
     public void setOnSelectionChanged(EventHandler<StructurePaneEvent> handler) {
         this.setEventHandler(STRUCTUREPANE_SELECTIONCHANGED, handler);
     }
-    
+
     Structure structure;
     Canvas canvas;
-    
-    Set<Object> Selection = new HashSet<Object>();
-    Set<Object> Dragging = null;
-    Double LastMouseX = -1d;
-    Double LastMouseY = -1d;
-    
-    Double GridSize = 1.0; // cm
-    Boolean SnapToGrid = true;
-    
-    
+
+    Set<Object> selection = new HashSet<>();
+    Set<Object> dragging = null;
+    double lastMouseX = -1d;
+    double lastMouseY = -1d;
+
+    double gridSize = 1.0; // cm
+    boolean snapToGrid = true;
+
     public StructurePane(Structure structure) {
         this.structure = structure;
-        canvas = new Canvas(500,500);
+        canvas = new Canvas(500, 500);
 
         this.getChildren().add(canvas);
         // resize canvas with surrounding StructurePane
         canvas.widthProperty().bind(this.widthProperty());
         canvas.heightProperty().bind(this.heightProperty());
-        canvas.widthProperty().addListener(e -> this.RequestRedraw());
-        canvas.heightProperty().addListener(e -> this.RequestRedraw());
-        
-        canvas.setOnScroll(e->{
-            ScrollEvent se = (ScrollEvent)e;
-            
-            Point2D oldMousePos = ScreenToModel(new Point2D(se.getX(), se.getY()));
-            ZoomFactor *= Math.pow(1.2d, se.getDeltaY()/40d);
-            Point2D newMousePos = ScreenToModel(new Point2D(se.getX(), se.getY()));
-            
-            OffsetX += oldMousePos.getX() - newMousePos.getX(); // sweet :-)
-            OffsetY += oldMousePos.getY() - newMousePos.getY();
-            this.RequestRedraw();
+        canvas.widthProperty().addListener(e -> this.requestRedraw());
+        canvas.heightProperty().addListener(e -> this.requestRedraw());
+
+        canvas.setOnScroll(e -> {
+            ScrollEvent se = (ScrollEvent) e;
+
+            Point2D oldMousePos = screenToModel(new Point2D(se.getX(), se.getY()));
+            zoomFactor *= Math.pow(1.2d, se.getDeltaY() / 40d);
+            Point2D newMousePos = screenToModel(new Point2D(se.getX(), se.getY()));
+
+            offsetX += oldMousePos.getX() - newMousePos.getX(); // sweet :-)
+            offsetY += oldMousePos.getY() - newMousePos.getY();
+            this.requestRedraw();
         });
-        
+
         canvas.setFocusTraversable(true);
         canvas.addEventFilter(MouseEvent.ANY, (e) -> canvas.requestFocus());
 
-        SetSelectMode();
+        setSelectMode();
     }
-    
-    
-    public void RequestRedraw()
-    {
-        NeedsRepaintLock.lock();
-        if(!NeedsRepaint) {
-            Platform.runLater(()->{this.draw();});
-            NeedsRepaint = true;
+
+    public void requestRedraw() {
+        needsRepaintLock.lock();
+        if (!needsRepaint) {
+            Platform.runLater(() -> {
+                this.draw();
+            });
+            needsRepaint = true;
         }
-        NeedsRepaintLock.unlock();
+        needsRepaintLock.unlock();
     }
-    public void RequestRedraw(Double screenX, Double screenY)
-    {
-        NeedsRepaintLock.lock();
-        if(!NeedsRepaint) {
-            Platform.runLater(()->{this.draw(screenX,screenY);});
-            NeedsRepaint = true;
+
+    public void requestRedraw(double screenX, double screenY) {
+        needsRepaintLock.lock();
+        if (!needsRepaint) {
+            Platform.runLater(() -> {
+                this.draw(screenX, screenY);
+            });
+            needsRepaint = true;
         }
-        NeedsRepaintLock.unlock();
+        needsRepaintLock.unlock();
     }
-    
-    
-    public void SetSelectMode()
-    {
+
+    public void setSelectMode() {
         canvas.setOnMousePressed(e -> {
-            MouseEvent me = (MouseEvent)e;
-            Point2D mousePositionModel = ScreenToModel(new Point2D(me.getX(), me.getY()));
-            LastMouseX = (Double)mousePositionModel.getX();
-            LastMouseY = (Double)mousePositionModel.getY();
-            
-            if(!e.isControlDown())
-                ClearSelection();
-            
-            IMovable selected = structure.FindObject((Double)LastMouseX, (Double)LastMouseY);
-            if(selected != null)
-            {
-                Select(selected);
-                Dragging = Selection;
+            MouseEvent me = (MouseEvent) e;
+            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
+            lastMouseX = (double) mousePositionModel.getX();
+            lastMouseY = (double) mousePositionModel.getY();
+
+            if (!e.isControlDown())
+                clearSelection();
+
+            IMovable selected = structure.findObject(lastMouseX, lastMouseY);
+            if (selected != null) {
+                select(selected);
+                dragging = selection;
             }
         });
         canvas.setOnMouseReleased(e -> {
-            if(Dragging != null && SnapToGrid)
-            {
-                structure.SnapToGrid(GridSize);
-                this.RequestRedraw();
+            if (dragging != null && snapToGrid) {
+                structure.snapToGrid(gridSize);
+                this.requestRedraw();
             }
-            Dragging = null;
+            dragging = null;
         });
         canvas.setOnMouseDragged(e -> {
-            MouseEvent me = (MouseEvent)e;
-            Point2D mousePositionModel = ScreenToModel(new Point2D(me.getX(), me.getY()));
-            if(Dragging != null)
-            {
-                for(Object o : Dragging)
-                    if(o instanceof IMovable)
-                    {
+            MouseEvent me = (MouseEvent) e;
+            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
+            if (dragging != null) {
+                for (Object o : dragging)
+                    if (o instanceof IMovable) {
                         Vector2D offset = new Vector2D(
-                                mousePositionModel.getX() - LastMouseX,
-                                mousePositionModel.getY() - LastMouseY
+                                mousePositionModel.getX() - lastMouseX,
+                                mousePositionModel.getY() - lastMouseY
                         );
-                        ((IMovable)o).Move(offset);
+                        ((IMovable) o).move(offset);
                     }
                 // update model position under mouse
                 // this must not be done when we are dragging the screen!!!!!
-                LastMouseX = (Double)mousePositionModel.getX();
-                LastMouseY = (Double)mousePositionModel.getY();
-            } else {                                                 // draging the screen
-                OffsetX -= (mousePositionModel.getX() - LastMouseX);
-                OffsetY -= (mousePositionModel.getY() - LastMouseY);
+                lastMouseX = mousePositionModel.getX();
+                lastMouseY = mousePositionModel.getY();
             }
-            
-            this.RequestRedraw();
+            else {                                                 // draging the screen
+                offsetX -= (mousePositionModel.getX() - lastMouseX);
+                offsetY -= (mousePositionModel.getY() - lastMouseY);
+            }
+
+            this.requestRedraw();
         });
         canvas.setOnKeyPressed(e -> {
-            KeyEvent ke = (KeyEvent)e;
-            switch(ke.getCode())
-            {
+            KeyEvent ke = (KeyEvent) e;
+            switch (ke.getCode()) {
                 case DELETE:
-                    for(Object o : Selection)
-                    {
-                        if(o instanceof Vertex)
-                            structure.RemoveVertex((Vertex)o);
-                        else if(o instanceof Edge)
-                            structure.RemoveEdge((Edge)o);
+                    for (Object o : selection) {
+                        if (o instanceof Vertex)
+                            structure.removeVertex((Vertex) o);
+                        else if (o instanceof Edge)
+                            structure.removeEdge((Edge) o);
                     }
-                    
-                    ClearSelection();
-                    this.RequestRedraw();
+
+                    clearSelection();
+                    this.requestRedraw();
                     break;
             }
         });
     }
 
-    public void SetVertexCreationMode()
-    {
+    public void setVertexCreationMode() {
         canvas.setOnMousePressed(e -> {
-            MouseEvent me = (MouseEvent)e;
-            Point2D mousePositionModel = ScreenToModel(new Point2D(me.getX(), me.getY()));
-            LastMouseX = (Double)mousePositionModel.getX();
-            LastMouseY = (Double)mousePositionModel.getY();
+            MouseEvent me = (MouseEvent) e;
+            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
+            lastMouseX = mousePositionModel.getX();
+            lastMouseY = mousePositionModel.getY();
 
-            Vertex v = structure.CreateVertex();
-            v.Coordinates = new Vector2D(
+            Vertex v = structure.createVertex();
+            v.coordinates = new Vector2D(
                     mousePositionModel.getX(),
                     mousePositionModel.getY()
             );
-            if(SnapToGrid)
-                v.SnapToGrid(GridSize);
-            
-            structure.AddVertex(v);
-            ClearSelection();
-            Select(v);
-            
-            this.RequestRedraw();
-        });
-        canvas.setOnMouseReleased(e -> {});
-        canvas.setOnMouseDragged(e -> {});
-        canvas.setOnKeyReleased(e -> {});
+            if (snapToGrid)
+                v.snapToGrid(gridSize);
 
-    }    
-    
-    public void SetEdgeCreationMode()
-    {
-        canvas.setOnMousePressed(e -> {
-            MouseEvent me = (MouseEvent)e;
-            Point2D mousePositionModel = ScreenToModel(new Point2D(me.getX(), me.getY()));
-            LastMouseX = (Double)mousePositionModel.getX();
-            LastMouseY = (Double)mousePositionModel.getY();
-            
-            Object SelectionTemp = structure.FindObject(LastMouseX, LastMouseY);
-            if(SelectionTemp == null)
-                return;
-            
-            ClearSelection();
-            Dragging = null;
-            if(SelectionTemp instanceof Vertex)
-                Select(SelectionTemp);
-            else if(SelectionTemp instanceof Edge) {
-                EdgeIntermediatePoint intermediatepoint = ((Edge)SelectionTemp).addIntermediatePoint(LastMouseX, LastMouseY);
-                Select(intermediatepoint);
-                Dragging = Selection;
-            }
-            
-            this.RequestRedraw();
+            structure.addVertex(v);
+            clearSelection();
+            select(v);
+
+            this.requestRedraw();
         });
         canvas.setOnMouseReleased(e -> {
-            MouseEvent me = (MouseEvent)e;
-            Point2D mousePositionModel = ScreenToModel(new Point2D(me.getX(), me.getY()));
-            LastMouseX = (Double)mousePositionModel.getX();
-            LastMouseY = (Double)mousePositionModel.getY();
-            Dragging = null;
-            
-            Object releasedOver = structure.FindObject((Double)LastMouseX, (Double)LastMouseY);
-            if(releasedOver != null && (releasedOver instanceof Vertex))
-            {
-                for(Object o : Selection)
-                {
-                    if(!(o instanceof Vertex))
-                        continue;
-                    Edge edge = structure.CreateEdge((Vertex)o, (Vertex)releasedOver);
-                    structure.AddEdge(edge);
-                }
-                ClearSelection();
-            }
-            this.RequestRedraw();
         });
         canvas.setOnMouseDragged(e -> {
-            MouseEvent me = (MouseEvent)e;
-            if(!Selection.isEmpty() && Dragging == null) {
-                this.RequestRedraw(me.getX(), me.getY());
-            } else {
-                Point2D mousePositionModel = ScreenToModel(new Point2D(me.getX(), me.getY()));
-                if(Dragging != null)
-                {
-                    for(Object o : Dragging)
-                        if(o instanceof IMovable)
-                        {
+        });
+        canvas.setOnKeyReleased(e -> {
+        });
+
+    }
+
+    public void setEdgeCreationMode() {
+        canvas.setOnMousePressed(e -> {
+            MouseEvent me = (MouseEvent) e;
+            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
+            lastMouseX = mousePositionModel.getX();
+            lastMouseY = mousePositionModel.getY();
+
+            Object SelectionTemp = structure.findObject(lastMouseX, lastMouseY);
+            if (SelectionTemp == null)
+                return;
+
+            clearSelection();
+            dragging = null;
+            if (SelectionTemp instanceof Vertex)
+                select(SelectionTemp);
+            else if (SelectionTemp instanceof Edge) {
+                EdgeIntermediatePoint intermediatepoint = ((Edge) SelectionTemp).addIntermediatePoint(lastMouseX, lastMouseY);
+                select(intermediatepoint);
+                dragging = selection;
+            }
+
+            this.requestRedraw();
+        });
+        canvas.setOnMouseReleased(e -> {
+            MouseEvent me = (MouseEvent) e;
+            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
+            lastMouseX = mousePositionModel.getX();
+            lastMouseY = mousePositionModel.getY();
+            dragging = null;
+
+            Object releasedOver = structure.findObject(lastMouseX, lastMouseY);
+            if (releasedOver != null && (releasedOver instanceof Vertex)) {
+                for (Object o : selection) {
+                    if (!(o instanceof Vertex))
+                        continue;
+                    Edge edge = structure.createEdge((Vertex) o, (Vertex) releasedOver);
+                    structure.addEdge(edge);
+                }
+                clearSelection();
+            }
+            this.requestRedraw();
+        });
+        canvas.setOnMouseDragged(e -> {
+            MouseEvent me = (MouseEvent) e;
+            if (!selection.isEmpty() && dragging == null) {
+                this.requestRedraw(me.getX(), me.getY());
+            }
+            else {
+                Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
+                if (dragging != null) {
+                    for (Object o : dragging)
+                        if (o instanceof IMovable) {
                             Vector2D offset = new Vector2D(
-                                    mousePositionModel.getX() - LastMouseX,
-                                    mousePositionModel.getY() - LastMouseY
+                                    mousePositionModel.getX() - lastMouseX,
+                                    mousePositionModel.getY() - lastMouseY
                             );
-                            ((IMovable)o).Move(offset);
+                            ((IMovable) o).move(offset);
                         }
                     // update model position under mouse
                     // this must not be done when we are dragging the screen!!!!!
-                    LastMouseX = (Double)mousePositionModel.getX();
-                    LastMouseY = (Double)mousePositionModel.getY();
-                } else {                                                 // draging the screen
-                    OffsetX -= (mousePositionModel.getX() - LastMouseX);
-                    OffsetY -= (mousePositionModel.getY() - LastMouseY);
+                    lastMouseX = mousePositionModel.getX();
+                    lastMouseY = mousePositionModel.getY();
+                }
+                else {                                                 // draging the screen
+                    offsetX -= (mousePositionModel.getX() - lastMouseX);
+                    offsetY -= (mousePositionModel.getY() - lastMouseY);
                 }
 
-                this.RequestRedraw();                
+                this.requestRedraw();
             }
         });
-        canvas.setOnKeyReleased(e -> {});
+        canvas.setOnKeyReleased(e -> {
+        });
     }
-    
-    
-    
-    double ScreenResolutionX = 96d; // dpi
-    double ScreenResolutionY = 96d; // dpi
-    double OffsetX = -1d;
-    double OffsetY = -1d;
-    double ZoomFactor = 1d;
-    
-    public Point2D ModelToScreen(Point2D point)
-    {
-        Point2D result = new Point2D(
-            (point.getX() - OffsetX) * ZoomFactor * (ScreenResolutionX / 2.54),
-            (point.getY() - OffsetY) * ZoomFactor * (ScreenResolutionY / 2.54)
-                                                 // dots per inch -> dots per cm
-        );
-        return result;
-    }
-    
-    public Point2D ScreenToModel(Point2D point)
-    {
-        Point2D result = new Point2D(
-            (point.getX() / (ScreenResolutionX/2.54) / ZoomFactor) + OffsetX,
-            (point.getY() / (ScreenResolutionY/2.54) / ZoomFactor) + OffsetY
-                       // dots per inch -> dots per cm
-        );
-        return result;
-    }
-    
-    
-    
 
-    public void draw(Double MouseScreenX, Double MouseScreenY) {
-        
-        this.NeedsRepaintLock.lock();
-        if(NeedsRepaint) {
-            
+    double screenResolutionX = 96d; // dpi
+    double screenResolutionY = 96d; // dpi
+    double offsetX = -1d;
+    double offsetY = -1d;
+    double zoomFactor = 1d;
+
+    public Point2D modelToScreen(Point2D point) {
+        Point2D result = new Point2D(
+                (point.getX() - offsetX) * zoomFactor * (screenResolutionX / 2.54),
+                (point.getY() - offsetY) * zoomFactor * (screenResolutionY / 2.54)
+        // dots per inch -> dots per cm
+        );
+        return result;
+    }
+
+    public Point2D screenToModel(Point2D point) {
+        Point2D result = new Point2D(
+                (point.getX() / (screenResolutionX / 2.54) / zoomFactor) + offsetX,
+                (point.getY() / (screenResolutionY / 2.54) / zoomFactor) + offsetY
+        // dots per inch -> dots per cm
+        );
+        return result;
+    }
+
+    public void draw(double mouseScreenX, double mouseScreenY) {
+        this.needsRepaintLock.lock();
+        if (needsRepaint) {
             GraphicsContext gc = canvas.getGraphicsContext2D();
             draw(gc);
 
             gc.setStroke(Color.BLACK);
-            for(Object o : Selection)
-            {
-                if(!(o instanceof Vertex))
+            for (Object o : selection) {
+                if (!(o instanceof Vertex))
                     continue;
-                Vertex v = (Vertex)o;
-                Point2D selectionScreen = ModelToScreen(new Point2D(v.Coordinates.get(0), v.Coordinates.get(1)));
-                gc.strokeLine(selectionScreen.getX(),selectionScreen.getY(),MouseScreenX, MouseScreenY);
+                Vertex v = (Vertex) o;
+                Point2D selectionScreen = modelToScreen(new Point2D(v.coordinates.get(0), v.coordinates.get(1)));
+                gc.strokeLine(selectionScreen.getX(), selectionScreen.getY(), mouseScreenX, mouseScreenY);
             }
-            
-            NeedsRepaint = false;
+
+            needsRepaint = false;
         }
-        this.NeedsRepaintLock.unlock();
+        this.needsRepaintLock.unlock();
     }
-    
+
     public void draw() {
-        
-        this.NeedsRepaintLock.lock();
-        if(NeedsRepaint) {
+        this.needsRepaintLock.lock();
+        if (needsRepaint) {
             draw(canvas.getGraphicsContext2D());
-            NeedsRepaint = false;
+            needsRepaint = false;
         }
-        this.NeedsRepaintLock.unlock();
+        this.needsRepaintLock.unlock();
     }
-    
+
     protected void draw(GraphicsContext gc) {
         // clear
-        Double w = gc.getCanvas().getWidth();
-        Double h = gc.getCanvas().getHeight();
+        double w = gc.getCanvas().getWidth();
+        double h = gc.getCanvas().getHeight();
         gc.clearRect(0, 0, w, h);
         gc.setFill(Color.rgb(0xFA, 0xFB, 0xFF));
         gc.fillRect(0, 0, w, h);
 
         // grid
-        if(ZoomFactor * (ScreenResolutionX / 2.54) >= 10) {
-            
-            gc.setStroke(Color.rgb(0xcc,0xcc,0xcc));
-            Point2D leftupper = ScreenToModel(new Point2D(0d,0d));
-            Point2D rightlower = ScreenToModel(new Point2D(w, h));
-            for(Double x = leftupper.getX() - (leftupper.getX() % GridSize); x <= rightlower.getX(); x += GridSize) {
-                Point2D lineScreen = ModelToScreen(new Point2D(x, 0));
+        if (zoomFactor * (screenResolutionX / 2.54) >= 10) {
+
+            gc.setStroke(Color.rgb(0xcc, 0xcc, 0xcc));
+            Point2D leftupper = screenToModel(new Point2D(0d, 0d));
+            Point2D rightlower = screenToModel(new Point2D(w, h));
+            for (double x = leftupper.getX() - (leftupper.getX() % gridSize); x <= rightlower.getX(); x += gridSize) {
+                Point2D lineScreen = modelToScreen(new Point2D(x, 0));
                 gc.strokeLine(lineScreen.getX(), 0, lineScreen.getX(), h);
             }
-            for(Double y = leftupper.getY() - (leftupper.getY() % GridSize); y <= rightlower.getY(); y += GridSize) {
-                Point2D lineScreen = ModelToScreen(new Point2D(0, y));
+            for (double y = leftupper.getY() - (leftupper.getY() % gridSize); y <= rightlower.getY(); y += gridSize) {
+                Point2D lineScreen = modelToScreen(new Point2D(0, y));
                 gc.strokeLine(0, lineScreen.getY(), w, lineScreen.getY());
             }
         }
 
         // origin
         gc.setStroke(Color.BLACK);
-        Point2D center = ModelToScreen(new Point2D(0d,0d));
+        Point2D center = modelToScreen(new Point2D(0d, 0d));
         gc.strokeLine(center.getX(), 0, center.getX(), h);
         gc.strokeLine(0, center.getY(), w, center.getY());
-        
+
         // draw the graph
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
-        structure.Render(ggc, this.Selection);
+        structure.render(ggc, this.selection);
     }
-    
-    
-    
-    public void Select(Object obj)
-    {
-        Selection.add(obj);
+
+    public void select(Object obj) {
+        selection.add(obj);
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
-    public void SelectAll(Collection elems)
-    {
-        for(Object o : elems)
-            Selection.add(o);
+
+    public void selectAll(Collection elems) {
+        for (Object o : elems)
+            selection.add(o);
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
-    public void ClearSelection()
-    {
-        Selection.clear();
+
+    public void clearSelection() {
+        selection.clear();
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
-    
-    
-    
-    public void StructureChanged(StructureEvent e) {
-        this.RequestRedraw();
+
+    public void structureChanged(StructureEvent e) {
+        this.requestRedraw();
     }
-    
-    public void VertexChanged(VertexEvent e) {
-        
+
+    public void vertexChanged(VertexEvent e) {
     }
-    
-    public void EdgeChanged(EdgeEvent e) {
-        
+
+    public void edgeChanged(EdgeEvent e) {
     }
 }

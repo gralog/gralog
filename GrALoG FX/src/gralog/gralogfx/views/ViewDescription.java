@@ -5,8 +5,6 @@
  */
 package gralog.gralogfx.views;
 
-import java.lang.reflect.*;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.ElementType;

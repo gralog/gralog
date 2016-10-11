@@ -24,6 +24,7 @@ import javafx.stage.Modality;
  * @author viktor
  */
 public class ExportFilterStage extends Stage {
+
     Scene scene;
     BorderPane root;
     ObjectInspector objectInspector;
@@ -31,39 +32,42 @@ public class ExportFilterStage extends Stage {
     Button runButton;
     Button cancelButton;
     Button infoButton;
-    
+
     ExportFilter exportfilter;
     ExportFilterParameters params;
-    boolean DialogResult;
-    
-    public ExportFilterStage(ExportFilter exportfilter, ExportFilterParameters params, Application app) throws Exception
-    {
+    boolean dialogResult;
+
+    public ExportFilterStage(ExportFilter exportfilter,
+            ExportFilterParameters params, Application app) throws Exception {
         this.exportfilter = exportfilter;
         this.params = params;
-        this.DialogResult = false;
-        
+        this.dialogResult = false;
+
         objectInspector = new ObjectInspector();
         try {
-            objectInspector.SetObject(params, null);
-        } catch(Exception ex) {
+            objectInspector.setObject(params, null);
+        }
+        catch (Exception ex) {
         }
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Export");
-        runButton.setOnAction(e -> {this.DialogResult = true; this.close();});
+        runButton.setOnAction(e -> {
+            this.dialogResult = true;
+            this.close();
+        });
         hBox = new HBox();
         infoButton = null;
         ExportFilterDescription descr = exportfilter.getDescription();
         String url = descr.url();
-        if(url != null && !url.trim().equals(""))
-        {
+        if (url != null && !url.trim().equals("")) {
             infoButton = new Button("Info");
             infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
-            hBox.getChildren().addAll(infoButton, cancelButton,runButton);
+            hBox.getChildren().addAll(infoButton, cancelButton, runButton);
         }
         else
-            hBox.getChildren().addAll(cancelButton,runButton);
-        
+            hBox.getChildren().addAll(cancelButton, runButton);
+
         root = new BorderPane();
         root.setCenter(objectInspector);
         root.setBottom(hBox);
@@ -72,11 +76,5 @@ public class ExportFilterStage extends Stage {
         this.setScene(scene);
         this.setTitle("Export to " + descr.name());
         this.initModality(Modality.APPLICATION_MODAL);
-    }
-    
-    public boolean ShowAndWait()
-    {
-        this.showAndWait();
-        return DialogResult;
     }
 }

@@ -19,37 +19,39 @@ import javafx.scene.layout.BorderPane;
  * @author viktor
  */
 public class AlgorithmResultStage extends Stage {
-    
+
     Scene scene;
     BorderPane root;
     ObjectInspector objectInspector;
     Button closeButton;
-    
+
     Algorithm algo;
     Structure structure;
     StructurePane structurePane;
     AlgorithmParameters params;
     Object result;
 
-    public AlgorithmResultStage(Algorithm algo, Structure structure, AlgorithmParameters params, StructurePane structurePane, Object result) throws Exception
-    {
+    public AlgorithmResultStage(Algorithm algo, Structure structure,
+            AlgorithmParameters params, StructurePane structurePane,
+            Object result) throws Exception {
         this.algo = algo;
         this.structure = structure;
         this.params = params;
         this.result = result;
         this.structurePane = structurePane;
-        
+
         objectInspector = new ObjectInspector();
 
         try {
-            objectInspector.SetObject(result, structurePane);
-        } catch(Exception ex) {
+            objectInspector.setObject(result, structurePane);
+        }
+        catch (Exception ex) {
         }
         closeButton = new Button("Close");
         closeButton.setOnAction(e -> this.close());
 
         root = new BorderPane();
-        
+
         root.setCenter(objectInspector);
         root.setBottom(closeButton);
         scene = new Scene(root, 640, 480);

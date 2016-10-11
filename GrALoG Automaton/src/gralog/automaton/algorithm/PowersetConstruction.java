@@ -20,81 +20,67 @@ import gralog.progresshandler.ProgressHandler;
  * @author viktor
  */
 @AlgorithmDescription(
-  name="Rabin-Scott Powerset Construction",
-  text="",
-  url="https://en.wikipedia.org/wiki/Powerset_construction"
+        name = "Rabin-Scott Powerset Construction",
+        text = "",
+        url = "https://en.wikipedia.org/wiki/Powerset_construction"
 )
 public class PowersetConstruction extends Algorithm {
-    
-    public Object Run(Automaton a, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception
-    {
+
+    public Object run(Automaton a, AlgorithmParameters p, Set<Object> selection,
+            ProgressHandler onprogress) throws Exception {
         Automaton result = new Automaton();
-        PowersetConstructionTreeNode tree = new PowersetConstructionTreeNode(null,null,null);
-        
-       
+        PowersetConstructionTreeNode tree = new PowersetConstructionTreeNode(null, null, null);
+
         Set<State> Q0 = new HashSet<>();
         Set<Vertex> Q = a.getVertices();
         Set<Edge> delta = a.getEdges();
-        for(Vertex v : Q)
-            if(v instanceof State && ((State)v).StartState)
-                Q0.add((State)v);
-        Q0 = a.EpsilonHull(Q0);
+        for (Vertex v : Q)
+            if (v instanceof State && ((State) v).startState)
+                Q0.add((State) v);
+        Q0 = a.epsilonHull(Q0);
         State q0 = tree.getContentForSet(a, result, Q0);
-        q0.StartState = true;
-
+        q0.startState = true;
 
         Set<Character> Alphabet = new HashSet<>();
-        for(Edge e : delta)
-            if(e instanceof Transition)
-            {
-                String s = ((Transition)e).Symbol;
-                for(int i = 0; i < s.length(); i++)
+        for (Edge e : delta)
+            if (e instanceof Transition) {
+                String s = ((Transition) e).Symbol;
+                for (int i = 0; i < s.length(); i++)
                     Alphabet.add(s.charAt(i));
             }
-        
-        
+
         Queue<Set<State>> queue = new LinkedList<>();
         queue.add(Q0);
         Set<State> knownStates = new HashSet<>();
         knownStates.add(q0);
-        while(!queue.isEmpty())
-        {
+        while (!queue.isEmpty()) {
             Set<State> front = queue.remove();
-            
-            for(Character c : Alphabet)
-            {
+
+            for (Character c : Alphabet) {
                 Set<State> cSuccessor = new HashSet<>();
-                for(Edge e : delta)
-                {
-                    if(e instanceof Transition && front.contains(e.getSource()) && ((Transition)e).Symbol.equals(c.toString()))
-                        cSuccessor.add((State)e.getTarget());
+                for (Edge e : delta) {
+                    if (e instanceof Transition && front.contains(e.getSource()) && ((Transition) e).Symbol.equals(c.toString()))
+                        cSuccessor.add((State) e.getTarget());
                 }
-                cSuccessor = a.EpsilonHull(cSuccessor);
-                
+                cSuccessor = a.epsilonHull(cSuccessor);
+
                 State src = tree.getContentForSet(a, result, front);
                 State dst = tree.getContentForSet(a, result, cSuccessor);
-                
-                
-                if(!knownStates.contains(dst))
-                {
-                    for(State cSuccessorElement : cSuccessor)
-                        if(cSuccessorElement.FinalState)
-                            dst.FinalState = true;
+
+                if (!knownStates.contains(dst)) {
+                    for (State cSuccessorElement : cSuccessor)
+                        if (cSuccessorElement.finalState)
+                            dst.finalState = true;
                     queue.add(cSuccessor);
                     knownStates.add(dst);
                 }
-                
-                
-                Transition trans = result.CreateEdge(src, dst);
+
+                Transition trans = result.createEdge(src, dst);
                 trans.Symbol = c.toString();
-                result.AddEdge(trans);
-                
+                result.addEdge(trans);
             }
-            
         }
-        
-        
+
         return result;
     }
-    
 }

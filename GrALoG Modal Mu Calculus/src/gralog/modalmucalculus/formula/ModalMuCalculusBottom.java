@@ -1,4 +1,3 @@
-
 package gralog.modalmucalculus.formula;
 
 import gralog.modallogic.KripkeStructure;
@@ -10,57 +9,48 @@ import gralog.structure.*;
 import java.util.HashMap;
 import java.util.Map;
 
+public class ModalMuCalculusBottom extends ModalMuCalculusFormula {
 
-
-public class ModalMuCalculusBottom extends ModalMuCalculusFormula
-{
-    public ModalMuCalculusBottom()
-    {
+    public ModalMuCalculusBottom() {
     }
-    
+
     @Override
-    protected ModalMuCalculusFormula NegationNormalForm(boolean negated)
-    {
-        if(negated)
+    protected ModalMuCalculusFormula negationNormalForm(boolean negated) {
+        if (negated)
             return new ModalMuCalculusTop();
         else
             return new ModalMuCalculusBottom();
     }
-    
+
     @Override
-    protected ModalMuCalculusFormula NegateVariable(String variable)
-    {
+    protected ModalMuCalculusFormula negateVariable(String variable) {
         return new ModalMuCalculusBottom();
     }
 
-    
     @Override
-    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p, int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index)
-    {
-        for(Vertex v : s.getVertices())
-        {
-            ParityGamePosition node = p.CreateVertex();
-            node.Coordinates = new Vector2D(
-                    scale * w * v.Coordinates.getX() + x,
-                    scale * h * v.Coordinates.getY() + y
+    public void createParityGamePositions(double scale, double x, double y,
+            double w, double h, KripkeStructure s, ParityGame p,
+            int NextPriority,
+            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) {
+        for (Vertex v : s.getVertices()) {
+            ParityGamePosition node = p.createVertex();
+            node.coordinates = new Vector2D(
+                    scale * w * v.coordinates.getX() + x,
+                    scale * h * v.coordinates.getY() + y
             );
-            node.Label = "⊥";
-            node.Player1Position = true; // verifier loses
-            p.AddVertex(node);
-            
-            if(!index.containsKey((World)v))
-                index.put((World)v, new HashMap<>());
-            index.get((World)v).put(this, node);
+            node.label = "⊥";
+            node.player1Position = true; // verifier loses
+            p.addVertex(node);
+
+            if (!index.containsKey((World) v))
+                index.put((World) v, new HashMap<>());
+            index.get((World) v).put(this, node);
         }
     }
-    
+
     @Override
-    public void CreateParityGameTransitions(KripkeStructure s, ParityGame p,
+    public void createParityGameTransitions(KripkeStructure s, ParityGame p,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints)
-    {
-        
+            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) {
     }
 }

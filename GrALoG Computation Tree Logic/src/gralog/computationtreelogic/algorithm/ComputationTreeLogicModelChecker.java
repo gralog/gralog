@@ -16,33 +16,30 @@ import gralog.progresshandler.*;
 import java.util.HashSet;
 import java.util.Set;
 
-
 /**
  *
  * @author viktor
  */
 @AlgorithmDescription(
-  name="Computation-Tree-Logic Model-Checking",
-  text="",
-  url="https://en.wikipedia.org/wiki/Computation_tree_logic"
+        name = "Computation-Tree-Logic Model-Checking",
+        text = "",
+        url = "https://en.wikipedia.org/wiki/Computation_tree_logic"
 )
-public class ComputationTreeLogicModelChecker extends Algorithm
-{
-    
+public class ComputationTreeLogicModelChecker extends Algorithm {
+
     @Override
-    public AlgorithmParameters GetParameters(Structure s)
-    {
+    public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter("A X (P \\wedge Q)");
     }
-    
-    public Object Run(KripkeStructure s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception
-    {
-        StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
-        
+
+    public Object run(KripkeStructure s, AlgorithmParameters p,
+            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
+
         ComputationTreeLogicParser parser = new ComputationTreeLogicParser();
         ComputationTreeLogicFormula phi = parser.parseString(sp.parameter);
-        HashSet<World> result = phi.Interpretation(s);
-        
+        HashSet<World> result = phi.interpretation(s);
+
         return result;
     }
 }

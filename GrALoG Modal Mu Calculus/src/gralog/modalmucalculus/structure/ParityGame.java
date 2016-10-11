@@ -10,22 +10,20 @@ import gralog.structure.*;
 import gralog.finitegame.structure.*;
 
 @StructureDescription(
-    name="Parity Game",
-    text="Parity Game Arena",
-    url="https://en.wikipedia.org/wiki/Parity_game"
+        name = "Parity Game",
+        text = "Parity Game Arena",
+        url = "https://en.wikipedia.org/wiki/Parity_game"
 )
-@XmlName(name="paritygame")
-public class ParityGame extends Structure<ParityGamePosition, FiniteGameMove>
-{
+@XmlName(name = "paritygame")
+public class ParityGame extends Structure<ParityGamePosition, FiniteGameMove> {
+
     @Override
-    public ParityGamePosition CreateVertex()
-    {
+    public ParityGamePosition createVertex() {
         return new ParityGamePosition();
     }
-    
+
     @Override
-    public FiniteGameMove CreateEdge()
-    {
+    public FiniteGameMove createEdge() {
         return new FiniteGameMove();
     }
 }

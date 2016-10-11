@@ -1,4 +1,3 @@
-
 package gralog.modalmucalculus.formula;
 
 import gralog.modallogic.KripkeStructure;
@@ -11,100 +10,87 @@ import gralog.structure.*;
 import java.util.HashMap;
 import java.util.Map;
 
+public class ModalMuCalculusDiamond extends ModalMuCalculusFormula {
 
-
-public class ModalMuCalculusDiamond extends ModalMuCalculusFormula
-{
     String transitiontype;
     ModalMuCalculusFormula subformula;
-    
-    public ModalMuCalculusDiamond(ModalMuCalculusFormula subformula)
-    {
+
+    public ModalMuCalculusDiamond(ModalMuCalculusFormula subformula) {
         this(null, subformula);
     }
-    
-    public ModalMuCalculusDiamond(String transitiontype, ModalMuCalculusFormula subformula)
-    {
+
+    public ModalMuCalculusDiamond(String transitiontype,
+            ModalMuCalculusFormula subformula) {
         this.transitiontype = transitiontype;
         this.subformula = subformula;
     }
-    
+
     @Override
-    protected ModalMuCalculusFormula NegationNormalForm(boolean negated)
-    {
-        if(negated)
-            return new ModalMuCalculusBox(transitiontype, subformula.NegationNormalForm(negated));
+    protected ModalMuCalculusFormula negationNormalForm(boolean negated) {
+        if (negated)
+            return new ModalMuCalculusBox(transitiontype, subformula.negationNormalForm(negated));
         else
-            return new ModalMuCalculusDiamond(transitiontype, subformula.NegationNormalForm(negated));
+            return new ModalMuCalculusDiamond(transitiontype, subformula.negationNormalForm(negated));
     }
 
     @Override
-    protected ModalMuCalculusFormula NegateVariable(String variable)
-    {
-        return new ModalMuCalculusDiamond(transitiontype, subformula.NegateVariable(variable));
+    protected ModalMuCalculusFormula negateVariable(String variable) {
+        return new ModalMuCalculusDiamond(transitiontype, subformula.negateVariable(variable));
     }
 
     @Override
-    public Double FormulaWidth()
-    {
-        return subformula.FormulaWidth();
+    public double formulaWidth() {
+        return subformula.formulaWidth();
     }
 
     @Override
-    public Double FormulaDepth()
-    {
-        return subformula.FormulaDepth() + 1;
+    public double formulaDepth() {
+        return subformula.formulaDepth() + 1;
     }
-    
-    
+
     @Override
-    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p, int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception
-    {
-        subformula.CreateParityGamePositions(scale, x, y+scale, w, h, s, p, NextPriority, index);
-        
-        for(Vertex v : s.getVertices())
-        {
-            ParityGamePosition node = p.CreateVertex();
+    public void createParityGamePositions(double scale, double x, double y,
+            double w, double h, KripkeStructure s, ParityGame p,
+            int NextPriority,
+            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
+        subformula.createParityGamePositions(scale, x, y + scale, w, h, s, p, NextPriority, index);
+
+        for (Vertex v : s.getVertices()) {
+            ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
-            node.Coordinates = new Vector2D(
-                    index.get((World)v).get(subformula).Coordinates.getX(),
-                    scale * h * v.Coordinates.getY() + y
+            node.coordinates = new Vector2D(
+                    index.get((World) v).get(subformula).coordinates.getX(),
+                    scale * h * v.coordinates.getY() + y
             );
-            node.Label = transitiontype == null ? "◇" : ("<"+transitiontype+">");
-            node.Player1Position = true;
-            p.AddVertex(node);
-            
-            if(!index.containsKey((World)v))
-                index.put((World)v, new HashMap<>());
-            index.get((World)v).put(this, node);
+            node.label = transitiontype == null ? "◇" : ("<" + transitiontype + ">");
+            node.player1Position = true;
+            p.addVertex(node);
+
+            if (!index.containsKey((World) v))
+                index.put((World) v, new HashMap<>());
+            index.get((World) v).put(this, node);
         }
     }
-    
+
     @Override
-    public void CreateParityGameTransitions(KripkeStructure s, ParityGame p,
+    public void createParityGameTransitions(KripkeStructure s, ParityGame p,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception
-    {
-        subformula.CreateParityGameTransitions(s, p, index, variableDefinitionPoints);
-        
-        for(Vertex v : s.getVertices())
-        {
-            ParityGamePosition vp = index.get((World)v).get(this);
-            
-            for(Edge e : v.getConnectedEdges())
-            {
-                Action a = (Action)e;
-                if(e.getSource() != v)
+            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
+        subformula.createParityGameTransitions(s, p, index, variableDefinitionPoints);
+
+        for (Vertex v : s.getVertices()) {
+            ParityGamePosition vp = index.get((World) v).get(this);
+
+            for (Edge e : v.getConnectedEdges()) {
+                Action a = (Action) e;
+                if (e.getSource() != v)
                     continue;
-                if(this.transitiontype != null && !a.Name.equals(transitiontype))
+                if (this.transitiontype != null && !a.Name.equals(transitiontype))
                     continue;
-            
-                ParityGamePosition tp = index.get((World)e.getTarget()).get(subformula);
-                p.AddEdge(p.CreateEdge(vp, tp));
+
+                ParityGamePosition tp = index.get((World) e.getTarget()).get(subformula);
+                p.addEdge(p.createEdge(vp, tp));
             }
         }
     }
 }
-

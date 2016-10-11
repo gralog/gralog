@@ -16,59 +16,56 @@ import java.util.HashSet;
  * @author viktor
  */
 @AlgorithmDescription(
-  name="Independent Set",
-  text="Finds a maximum Independent Set",
-  url="https://en.wikipedia.org/wiki/Independent_set_(graph_theory)"
+        name = "Independent Set",
+        text = "Finds a maximum Independent Set",
+        url = "https://en.wikipedia.org/wiki/Independent_set_(graph_theory)"
 )
 public class IndependentSet extends Algorithm {
-     
-    protected boolean FindIndependentSet(UndirectedGraph s, int k, Set<Vertex> independentset, Set<Vertex> candidates)
-    {
-        if(k < 1)
+
+    protected boolean findIndependentSet(UndirectedGraph s, int k,
+            Set<Vertex> independentset, Set<Vertex> candidates) {
+        if (k < 1)
             return true;
-        if(candidates.isEmpty())
+        if (candidates.isEmpty())
             return false;
-        
-        for(Vertex candidate : candidates)
-        {
+
+        for (Vertex candidate : candidates) {
             Set<Vertex> candidateNeigh = new HashSet<>();
-            for(Edge e : candidate.getConnectedEdges())
-            {
+            for (Edge e : candidate.getConnectedEdges()) {
                 candidateNeigh.add(e.getSource());
                 candidateNeigh.add(e.getTarget());
             }
-            
+
             // nextCandidates = candidates \ N[candidate]
             Set<Vertex> nextCandidates = new HashSet<>();
-            for(Vertex u : candidates)
-                if(!candidateNeigh.contains(u))
+            for (Vertex u : candidates)
+                if (!candidateNeigh.contains(u))
                     nextCandidates.add(u);
-            
+
             independentset.add(candidate);
-            if(FindIndependentSet(s,k-1, independentset, nextCandidates))
+            if (findIndependentSet(s, k - 1, independentset, nextCandidates))
                 return true;
             independentset.remove(candidate);
         }
-        
+
         return false;
     }
-    
-    public Object Run(UndirectedGraph s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception
-    {
+
+    public Object run(UndirectedGraph s, AlgorithmParameters p,
+            Set<Object> selection, ProgressHandler onprogress) throws Exception {
         Set<Vertex> result = new HashSet<>();
-        for(int k = 1; ; k++)
-        {
+        for (int k = 1;; k++) {
             Set<Vertex> V = new HashSet<>();
-            for(Vertex v : s.getVertices())
+            for (Vertex v : s.getVertices())
                 V.add(v);
-            
+
             Set<Vertex> IndependentSet = new HashSet<>();
-            if(!FindIndependentSet(s, k, IndependentSet, V))
+            if (!findIndependentSet(s, k, IndependentSet, V))
                 break;
-            
+
             result.clear();
             result.addAll(IndependentSet);
         }
         return result;
-    }        
+    }
 }

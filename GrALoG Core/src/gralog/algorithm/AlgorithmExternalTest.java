@@ -5,23 +5,21 @@
  */
 package gralog.algorithm;
 
-import gralog.structure.*;
 import gralog.exportfilter.*;
-import gralog.progresshandler.ProgressHandler;
 
 /**
  *
  * @author viktor
  */
 @AlgorithmDescription(
-  name="External Algorithm Test",
-  text="Test-Class for running external algorithms",
-  url=""
+        name = "External Algorithm Test",
+        text = "Test-Class for running external algorithms",
+        url = ""
 )
 public class AlgorithmExternalTest extends AlgorithmExternal {
-    
+
     public AlgorithmExternalTest() {
         super(new TrivialGraphFormatExport(), false, "gralogexternaltest");
     }
-    
+
 }

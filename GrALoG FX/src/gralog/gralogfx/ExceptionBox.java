@@ -19,17 +19,14 @@ import javafx.scene.layout.Priority;
  * @author viktor
  */
 public class ExceptionBox extends Alert {
-    
-    public ExceptionBox()
-    {
+
+    public ExceptionBox() {
         super(AlertType.ERROR);
         this.setTitle("Exception Caught");
         this.setHeaderText(null);
-        
     }
-    
+
     public void showAndWait(Exception ex) {
-        
         this.setContentText(ex.getMessage());
 
         // Create expandable Exception.
@@ -57,5 +54,4 @@ public class ExceptionBox extends Alert {
         this.getDialogPane().setExpandableContent(expContent);
         this.showAndWait();
     }
-    
 }

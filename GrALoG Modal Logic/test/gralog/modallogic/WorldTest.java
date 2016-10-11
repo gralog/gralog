@@ -20,11 +20,11 @@ public class WorldTest {
     public void testSatisfiesProposition() {
         World v = new World();
         v.Propositions = "A,B,C";
-        assertEquals(true, v.SatisfiesProposition("A"));
-        assertEquals(true, v.SatisfiesProposition("B"));
-        assertEquals(true, v.SatisfiesProposition("C"));
-        assertEquals(false, v.SatisfiesProposition("X"));
-        assertEquals(false, v.SatisfiesProposition("A,B"));
-        assertEquals(false, v.SatisfiesProposition(""));
+        assertEquals(true, v.satisfiesProposition("A"));
+        assertEquals(true, v.satisfiesProposition("B"));
+        assertEquals(true, v.satisfiesProposition("C"));
+        assertEquals(false, v.satisfiesProposition("X"));
+        assertEquals(false, v.satisfiesProposition("A,B"));
+        assertEquals(false, v.satisfiesProposition(""));
     }
 }

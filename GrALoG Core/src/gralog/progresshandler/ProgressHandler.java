@@ -5,15 +5,14 @@
  */
 package gralog.progresshandler;
 
-import gralog.structure.*;
+import gralog.structure.Structure;
 
 /**
  *
  * @author viktor
  */
 public class ProgressHandler {
-    
-    public void OnProgress(Structure s) throws Exception {
+
+    public void onProgress(Structure s) throws Exception {
     }
-    
 }

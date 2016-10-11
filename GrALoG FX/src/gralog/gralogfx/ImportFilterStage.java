@@ -24,6 +24,7 @@ import javafx.stage.Modality;
  * @author viktor
  */
 public class ImportFilterStage extends Stage {
+
     Scene scene;
     BorderPane root;
     ObjectInspector objectInspector;
@@ -31,39 +32,42 @@ public class ImportFilterStage extends Stage {
     Button runButton;
     Button cancelButton;
     Button infoButton;
-    
+
     ImportFilter importfilter;
     ImportFilterParameters params;
     boolean DialogResult;
-    
-    public ImportFilterStage(ImportFilter importfilter, ImportFilterParameters params, Application app) throws Exception
-    {
+
+    public ImportFilterStage(ImportFilter importfilter,
+            ImportFilterParameters params, Application app) throws Exception {
         this.importfilter = importfilter;
         this.params = params;
         this.DialogResult = false;
-        
+
         objectInspector = new ObjectInspector();
         try {
-            objectInspector.SetObject(params, null);
-        } catch(Exception ex) {
+            objectInspector.setObject(params, null);
+        }
+        catch (Exception ex) {
         }
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Import");
-        runButton.setOnAction(e -> {this.DialogResult = true; this.close();});
+        runButton.setOnAction(e -> {
+            this.DialogResult = true;
+            this.close();
+        });
         hBox = new HBox();
         infoButton = null;
         ImportFilterDescription descr = importfilter.getDescription();
         String url = descr.url();
-        if(url != null && !url.trim().equals(""))
-        {
+        if (url != null && !url.trim().equals("")) {
             infoButton = new Button("Info");
             infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
-            hBox.getChildren().addAll(infoButton, cancelButton,runButton);
+            hBox.getChildren().addAll(infoButton, cancelButton, runButton);
         }
         else
-            hBox.getChildren().addAll(cancelButton,runButton);
-        
+            hBox.getChildren().addAll(cancelButton, runButton);
+
         root = new BorderPane();
         root.setCenter(objectInspector);
         root.setBottom(hBox);
@@ -72,11 +76,5 @@ public class ImportFilterStage extends Stage {
         this.setScene(scene);
         this.setTitle("Import from " + descr.name());
         this.initModality(Modality.APPLICATION_MODAL);
-    }
-    
-    public boolean ShowAndWait()
-    {
-        this.showAndWait();
-        return DialogResult;
     }
 }

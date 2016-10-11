@@ -16,23 +16,23 @@ import org.w3c.dom.Element;
  *
  * @author viktor
  */
-@XmlName(name="action")
+@XmlName(name = "action")
 public class Action extends Edge {
-    
+
     public String Name = null;
-    
+
     @Override
-    public Element ToXml(Document doc, HashMap<Vertex,String> ids) throws Exception {
-        Element enode = super.ToXml(doc, ids);
-        if(Name != null)
-            enode.setAttribute("name", ""+Name);
+    public Element toXml(Document doc, HashMap<Vertex, String> ids) throws Exception {
+        Element enode = super.toXml(doc, ids);
+        if (Name != null)
+            enode.setAttribute("name", "" + Name);
         return enode;
     }
-    
-    @Override    
-    public void FromXml(Element enode, HashMap<String,Vertex> ids) throws Exception {
-        super.FromXml(enode, ids);
+
+    @Override
+    public void fromXml(Element enode, HashMap<String, Vertex> ids) throws Exception {
+        super.fromXml(enode, ids);
         Name = enode.getAttribute("name");
     }
-    
+
 }

@@ -15,62 +15,58 @@ import gralog.rendering.Vector2D;
 import gralog.structure.Structure;
 
 @GeneratorDescription(
-  name="Coset Automaton",
-  text="Constructs an Automaton that accepts b-ary representations of numbers divisible by n",
-  url="http://math.stackexchange.com/questions/140283/why-does-this-fsm-accept-binary-numbers-divisible-by-three"
+        name = "Coset Automaton",
+        text = "Constructs an Automaton that accepts b-ary representations of numbers divisible by n",
+        url = "http://math.stackexchange.com/questions/140283/why-does-this-fsm-accept-binary-numbers-divisible-by-three"
 )
 public class GeneratorCosetAutomaton extends Generator {
-    
+
     @Override
-    public GeneratorParameters GetParameters() {
+    public GeneratorParameters getParameters() {
         return new CosetAutomatonParameters();
     }
-    
-    @Override
-    public Structure Generate(GeneratorParameters p) throws Exception {
-        CosetAutomatonParameters cap = (CosetAutomatonParameters)(p);
 
-        int Base = cap.Base;
-        int n = cap.Number;
-        String Alphabet = cap.Alphabet;
+    @Override
+    public Structure generate(GeneratorParameters p) throws Exception {
+        CosetAutomatonParameters cap = (CosetAutomatonParameters) (p);
+
+        int Base = cap.base;
+        int n = cap.number;
+        String Alphabet = cap.alphabet;
         double diameter = 10d;
-        
+
         Automaton result = new Automaton();
         ArrayList<State> states = new ArrayList<>();
-        
-        for(int i = 0; i < n; i++)
-        {
-            State state = result.CreateVertex();
-            state.Coordinates = new Vector2D(
-                    ((Math.cos(2d*Math.PI*i/n + Math.PI/2d)*diameter)+diameter)/2d,
-                    ((Math.sin(2d*Math.PI*i/n + Math.PI/2d)*diameter)+diameter)/2d
+
+        for (int i = 0; i < n; i++) {
+            State state = result.createVertex();
+            state.coordinates = new Vector2D(
+                    ((Math.cos(2d * Math.PI * i / n + Math.PI / 2d) * diameter) + diameter) / 2d,
+                    ((Math.sin(2d * Math.PI * i / n + Math.PI / 2d) * diameter) + diameter) / 2d
             );
-            state.Label = "" + i;
-            
+            state.label = "" + i;
+
             states.add(state);
-            result.AddVertex(state);
+            result.addVertex(state);
         }
 
-        for(int i = 0; i < n; i++)
-        {
+        for (int i = 0; i < n; i++) {
             State statei = states.get(i);
-            for(int s = 0; s < Base; s++)
-            {
+            for (int s = 0; s < Base; s++) {
                 int j = (i * Base + s) % n;                     // Here's the magic
                 State statej = states.get(j);
-                
-                Transition transition = result.CreateEdge(statei, statej);
+
+                Transition transition = result.createEdge(statei, statej);
                 transition.Symbol = "" + Alphabet.charAt(s);
-                
-                result.AddEdge(transition);
+
+                result.addEdge(transition);
             }
         }
-        
+
         State q0 = states.get(0);
-        q0.StartState = true;
-        q0.FinalState = true;
-        
+        q0.startState = true;
+        q0.finalState = true;
+
         return result;
     }
-    
 }

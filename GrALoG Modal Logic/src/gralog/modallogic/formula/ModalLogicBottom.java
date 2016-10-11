@@ -1,21 +1,16 @@
-
 package gralog.modallogic.formula;
 
 import gralog.modallogic.KripkeStructure;
 import gralog.modallogic.World;
 import java.util.HashSet;
 
+public class ModalLogicBottom extends ModalLogicFormula {
 
-
-public class ModalLogicBottom extends ModalLogicFormula
-{
-    public ModalLogicBottom()
-    {
+    public ModalLogicBottom() {
     }
-    
+
     @Override
-    public HashSet<World> Interpretation(KripkeStructure structure)
-    {
+    public HashSet<World> interpretation(KripkeStructure structure) {
         return new HashSet<>();
     }
 }

@@ -10,7 +10,7 @@ package gralog.firstorderlogic.algorithm;
  * @author Hv
  */
 public class CoordinateClass {
+
     public double x;
     public double y;
-    
 }

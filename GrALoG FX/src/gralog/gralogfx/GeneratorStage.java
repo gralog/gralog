@@ -24,6 +24,7 @@ import javafx.stage.Modality;
  * @author viktor
  */
 public class GeneratorStage extends Stage {
+
     Scene scene;
     BorderPane root;
     ObjectInspector objectInspector;
@@ -31,38 +32,41 @@ public class GeneratorStage extends Stage {
     Button runButton;
     Button cancelButton;
     Button infoButton;
-    
+
     Generator gen;
     GeneratorParameters params;
-    boolean DialogResult;
-    
-    public GeneratorStage(Generator gen, GeneratorParameters params, Application app) throws Exception
-    {
+    boolean dialogResult;
+
+    public GeneratorStage(Generator gen, GeneratorParameters params,
+            Application app) throws Exception {
         this.gen = gen;
         this.params = params;
-        this.DialogResult = false;
-        
+        this.dialogResult = false;
+
         objectInspector = new ObjectInspector();
         try {
-            objectInspector.SetObject(params, null);
-        } catch(Exception ex) {
+            objectInspector.setObject(params, null);
+        }
+        catch (Exception ex) {
         }
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Run");
-        runButton.setOnAction(e -> {this.DialogResult = true; this.close();});
+        runButton.setOnAction(e -> {
+            this.dialogResult = true;
+            this.close();
+        });
         hBox = new HBox();
-        hBox.getChildren().addAll(cancelButton,runButton);
+        hBox.getChildren().addAll(cancelButton, runButton);
         infoButton = null;
         GeneratorDescription descr = gen.getDescription();
         String url = descr.url();
-        if(url != null && !url.trim().equals(""))
-        {
+        if (url != null && !url.trim().equals("")) {
             infoButton = new Button("Info");
             infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
             hBox.getChildren().add(infoButton);
         }
-        
+
         root = new BorderPane();
         root.setCenter(objectInspector);
         root.setBottom(hBox);
@@ -71,11 +75,5 @@ public class GeneratorStage extends Stage {
         this.setScene(scene);
         this.setTitle("Generate " + gen.getDescription().name());
         this.initModality(Modality.APPLICATION_MODAL);
-    }
-    
-    public boolean ShowAndWait()
-    {
-        this.showAndWait();
-        return DialogResult;
     }
 }

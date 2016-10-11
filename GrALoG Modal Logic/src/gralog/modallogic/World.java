@@ -10,7 +10,6 @@ package gralog.modallogic;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import gralog.plugins.XmlName;
 import gralog.structure.*;
 import org.w3c.dom.Document;
@@ -20,36 +19,32 @@ import org.w3c.dom.Element;
  *
  * @author viktor
  */
-@XmlName(name="world")
+@XmlName(name = "world")
 public class World extends Vertex {
-    
+
     public String Propositions = "";
 
     @Override
-    public Element ToXml(Document doc, String id) throws Exception
-    {
-        Element vnode = super.ToXml(doc, id);
+    public Element toXml(Document doc, String id) throws Exception {
+        Element vnode = super.toXml(doc, id);
         vnode.setAttribute("propositions", Propositions);
         return vnode;
     }
-    
+
     @Override
-    public String FromXml(Element vnode)
-    {
-        String id = super.FromXml(vnode);
-        if(vnode.hasAttribute("propositions"))
+    public String fromXml(Element vnode) {
+        String id = super.fromXml(vnode);
+        if (vnode.hasAttribute("propositions"))
             Propositions = vnode.getAttribute("propositions");
         return id;
     }
-    
-    public boolean SatisfiesProposition(String proposition)
-    {
+
+    public boolean satisfiesProposition(String proposition) {
         proposition = proposition.trim();
         String[] props = Propositions.split(",");
-        for(String prop : props)
-            if(proposition.equalsIgnoreCase(prop.trim()))
+        for (String prop : props)
+            if (proposition.equalsIgnoreCase(prop.trim()))
                 return true;
         return false;
     }
-    
 }

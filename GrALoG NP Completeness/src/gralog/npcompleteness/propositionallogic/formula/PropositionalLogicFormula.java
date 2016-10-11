@@ -13,63 +13,59 @@ import java.util.HashMap;
  *
  * @author viktor
  */
-abstract public class PropositionalLogicFormula 
-{
-    
-    public boolean isLiteral()
-    {
+abstract public class PropositionalLogicFormula {
+
+    public boolean isLiteral() {
         return false;
     }
+
     abstract boolean isAClause();
-    public boolean hasConjunctiveNormalForm()
-    {
+
+    public boolean hasConjunctiveNormalForm() {
         return isAClause();
     }
+
     abstract boolean isAClause3();
-    public boolean hasConjunctiveNormalForm3()
-    {
+
+    public boolean hasConjunctiveNormalForm3() {
         return isAClause3();
     }
-            
-    
-    public void GetClauses(Set<PropositionalLogicFormula> clauses) throws Exception // only works on cnf formulas
+
+    public void getClauses(Set<PropositionalLogicFormula> clauses) throws Exception // only works on cnf formulas
     {
-        if(!isAClause())
+        if (!isAClause())
             throw new Exception("Formula is not in Conjunctive Normal Form");
         clauses.add(this);
     }
 
-    public void GetLiterals(Set<PropositionalLogicFormula> literals) // only works on cnf clauses
+    public void getLiterals(Set<PropositionalLogicFormula> literals) // only works on cnf clauses
     {
         literals.add(this);
     }
-    
-    public void GetVariables(Set<String> vars)
-    {
+
+    public void getVariables(Set<String> vars) {
     }
-    
-    
-    abstract protected PropositionalLogicFormula ConjunctiveNormalForm(Integer varId, HashMap<PropositionalLogicFormula, String> VarIdx);
-    
-    public PropositionalLogicFormula ConjunctiveNormalForm()
-    {
-        if(hasConjunctiveNormalForm())
+
+    abstract protected PropositionalLogicFormula conjunctiveNormalForm(
+            Integer varId, HashMap<PropositionalLogicFormula, String> VarIdx);
+
+    public PropositionalLogicFormula conjunctiveNormalForm() {
+        if (hasConjunctiveNormalForm())
             return this;
-        return ConjunctiveNormalForm3();
+        return conjunctiveNormalForm3();
     }
-    
-    
-    public PropositionalLogicFormula ConjunctiveNormalForm3()
-    {
-        if(hasConjunctiveNormalForm3())
+
+    public PropositionalLogicFormula conjunctiveNormalForm3() {
+        if (hasConjunctiveNormalForm3())
             return this;
-        
+
         HashMap<PropositionalLogicFormula, String> VarIdx = new HashMap<>();
         Integer id = 0;
-        
-        PropositionalLogicFormula sub = ConjunctiveNormalForm(id, VarIdx);
-        
-        return new PropositionalLogicAnd(sub,
-            new PropositionalLogicVariable(VarIdx.get(this)));
+
+        PropositionalLogicFormula sub = conjunctiveNormalForm(id, VarIdx);
+
+        return new PropositionalLogicAnd(
+                sub,
+                new PropositionalLogicVariable(VarIdx.get(this)));
     }
 }

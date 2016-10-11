@@ -12,8 +12,7 @@ import gralog.generator.GeneratorParameters;
  * @author viktor
  */
 public class KnuthMorrisPrattParameters extends GeneratorParameters {
-    
-    public String Word = "ababb";
-    public String Alphabet = "ab";
-    
+
+    public String word = "ababb";
+    public String alphabet = "ab";
 }

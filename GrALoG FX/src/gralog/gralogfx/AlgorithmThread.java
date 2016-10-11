@@ -5,7 +5,6 @@
  */
 package gralog.gralogfx;
 
-
 import gralog.structure.Structure;
 import gralog.algorithm.Algorithm;
 import gralog.algorithm.AlgorithmParameters;
@@ -17,43 +16,45 @@ import java.util.Set;
  * @author viktor
  */
 public class AlgorithmThread extends Thread {
-    
+
     Algorithm algo;
     AlgorithmParameters params;
     Set<Object> selection;
     Structure structure;
     ProgressHandler onprogress;
-    
+
     ThreadCompleteEvent handler = null;
     Exception exception = null;
     Object result = null;
-    
-    public AlgorithmThread(Algorithm algo, Structure structure, AlgorithmParameters params, Set<Object> selection, ProgressHandler onprogress) {
+
+    public AlgorithmThread(Algorithm algo, Structure structure,
+            AlgorithmParameters params, Set<Object> selection,
+            ProgressHandler onprogress) {
         setDaemon(true);
         setName(algo.getClass().getName() + " Thread");
-        
+
         this.algo = algo;
         this.params = params;
         this.selection = selection;
         this.structure = structure;
         this.onprogress = onprogress;
     }
- 
+
     public void setOnThreadComplete(ThreadCompleteEvent handler) {
         this.handler = handler;
     }
-    
+
     @Override
     public void run() {
-
         try {
-            result = this.algo.DoRun(structure, params, selection, onprogress);
-        } catch(Exception ex) {
+            result = this.algo.doRun(structure, params, selection, onprogress);
+        }
+        catch (Exception ex) {
             this.exception = ex;
         }
-        if(handler != null)
-            handler.OnThreadCompleted(this);
-        
+        if (handler != null)
+            handler.onThreadCompleted(this);
+
         /*
         while (!this.isInterrupted()) {
              
@@ -75,5 +76,4 @@ public class AlgorithmThread extends Thread {
         }
         */
     }
- 
 }

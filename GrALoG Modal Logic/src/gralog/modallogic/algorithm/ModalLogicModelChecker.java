@@ -16,33 +16,31 @@ import gralog.progresshandler.*;
 import java.util.HashSet;
 import java.util.Set;
 
-
 /**
  *
  * @author viktor
  */
 @AlgorithmDescription(
-  name="Modal Logic Model-Checking",
-  text="",
-  url="https://en.wikipedia.org/wiki/Modal_logic"
+        name = "Modal Logic Model-Checking",
+        text = "",
+        url = "https://en.wikipedia.org/wiki/Modal_logic"
 )
 public class ModalLogicModelChecker extends Algorithm {
-    
+
     @Override
-    public AlgorithmParameters GetParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter("[](P \\wedge Q)");
     }
-    
-    public Object Run(KripkeStructure s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) throws Exception {
-        
-        StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
-        
+
+    public Object run(KripkeStructure s, AlgorithmParameters p,
+            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+
+        StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
+
         ModalLogicParser parser = new ModalLogicParser();
         ModalLogicFormula phi = parser.parseString(sp.parameter);
-        HashSet<World> result = phi.Interpretation(s);
-        
+        HashSet<World> result = phi.interpretation(s);
+
         return result;
     }
-    
-    
 }

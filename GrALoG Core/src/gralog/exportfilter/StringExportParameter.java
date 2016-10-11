@@ -10,9 +10,9 @@ package gralog.exportfilter;
  * @author viktor
  */
 public class StringExportParameter extends ExportFilterParameters {
-    
+
     public String parameter;
-    
+
     public StringExportParameter() {
         this.parameter = "";
     }

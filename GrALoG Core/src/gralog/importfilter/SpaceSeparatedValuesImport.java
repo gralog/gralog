@@ -10,17 +10,15 @@ package gralog.importfilter;
  * @author viktor
  */
 @ImportFilterDescription(
-  name="Space Separated Values",
-  text="",
-  url="https://reference.wolfram.com/language/ref/format/TSV.html",
-  fileextension="ssv"
+        name = "Space Separated Values",
+        text = "",
+        url = "https://reference.wolfram.com/language/ref/format/TSV.html",
+        fileExtension = "ssv"
 )
 public class SpaceSeparatedValuesImport extends CommaSeparatedValuesImport {
 
-    public SpaceSeparatedValuesImport()
-    {
+    public SpaceSeparatedValuesImport() {
         super();
-        this.CellSeparator = " ";
+        this.cellSeparator = " ";
     }
-    
 }

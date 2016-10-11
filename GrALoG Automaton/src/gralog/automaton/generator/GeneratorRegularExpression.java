@@ -16,26 +16,25 @@ import gralog.structure.Structure;
  * @author viktor
  */
 @GeneratorDescription(
-  name="Thompson's Construction",
-  text="",
-  url="https://en.wikipedia.org/wiki/Thompson%27s_construction"
+        name = "Thompson's Construction",
+        text = "",
+        url = "https://en.wikipedia.org/wiki/Thompson%27s_construction"
 )
 public class GeneratorRegularExpression extends Generator {
-    
+
     @Override
-    public GeneratorParameters GetParameters() {
+    public GeneratorParameters getParameters() {
         return new StringGeneratorParameter("");
     }
-    
+
     @Override
-    public Structure Generate(GeneratorParameters p) throws Exception {
-        StringGeneratorParameter sp = (StringGeneratorParameter)(p);
-        
+    public Structure generate(GeneratorParameters p) throws Exception {
+        StringGeneratorParameter sp = (StringGeneratorParameter) (p);
+
         RegularExpressionParser parser = new RegularExpressionParser();
         RegularExpression regexp = parser.parseString(sp.parameter);
-        Automaton result = regexp.ThompsonConstruction();
-        
+        Automaton result = regexp.thompsonConstruction();
+
         return result;
     }
-    
 }

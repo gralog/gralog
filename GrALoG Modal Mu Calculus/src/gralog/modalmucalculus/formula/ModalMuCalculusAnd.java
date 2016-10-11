@@ -1,4 +1,3 @@
-
 package gralog.modalmucalculus.formula;
 
 import gralog.structure.*;
@@ -10,90 +9,79 @@ import gralog.rendering.Vector2D;
 import java.util.HashMap;
 import java.util.Map;
 
+public class ModalMuCalculusAnd extends ModalMuCalculusFormula {
 
-
-public class ModalMuCalculusAnd extends ModalMuCalculusFormula
-{
     ModalMuCalculusFormula left;
     ModalMuCalculusFormula right;
-    
-    public ModalMuCalculusAnd(ModalMuCalculusFormula left, ModalMuCalculusFormula right)
-    {
+
+    public ModalMuCalculusAnd(ModalMuCalculusFormula left,
+            ModalMuCalculusFormula right) {
         this.left = left;
         this.right = right;
     }
-    
+
     @Override
-    protected ModalMuCalculusFormula NegationNormalForm(boolean negated)
-    {
-        if(negated)
-            return new ModalMuCalculusOr(left.NegationNormalForm(negated), right.NegationNormalForm(negated));
+    protected ModalMuCalculusFormula negationNormalForm(boolean negated) {
+        if (negated)
+            return new ModalMuCalculusOr(left.negationNormalForm(negated), right.negationNormalForm(negated));
         else
-            return new ModalMuCalculusAnd(left.NegationNormalForm(negated), right.NegationNormalForm(negated));
+            return new ModalMuCalculusAnd(left.negationNormalForm(negated), right.negationNormalForm(negated));
     }
 
     @Override
-    protected ModalMuCalculusFormula NegateVariable(String variable)
-    {
-        return new ModalMuCalculusAnd(left.NegateVariable(variable),
-                                      right.NegateVariable(variable));
-    }
-
-    
-    @Override
-    public Double FormulaWidth()
-    {
-        return left.FormulaWidth() + right.FormulaWidth() + 1;
+    protected ModalMuCalculusFormula negateVariable(String variable) {
+        return new ModalMuCalculusAnd(left.negateVariable(variable),
+                                      right.negateVariable(variable));
     }
 
     @Override
-    public Double FormulaDepth()
-    {
-        return Math.max(left.FormulaDepth(), right.FormulaDepth()) + 1;
+    public double formulaWidth() {
+        return left.formulaWidth() + right.formulaWidth() + 1;
     }
-    
-    
+
     @Override
-    public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p, int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception
-    {
-        Double lw = left.FormulaWidth();
-        left.CreateParityGamePositions (scale, x,                y+scale, w, h, s, p, NextPriority, index);
-        right.CreateParityGamePositions(scale, x+scale*lw+scale, y+scale, w, h, s, p, NextPriority, index);
-        
-        for(Vertex v : s.getVertices())
-        {
-            ParityGamePosition node = p.CreateVertex();
+    public double formulaDepth() {
+        return Math.max(left.formulaDepth(), right.formulaDepth()) + 1;
+    }
+
+    @Override
+    public void createParityGamePositions(double scale,
+            double x, double y, double w, double h,
+            KripkeStructure s, ParityGame p, int nextPriority,
+            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
+        Double lw = left.formulaWidth();
+        left.createParityGamePositions(scale, x, y + scale, w, h,
+                                       s, p, nextPriority, index);
+        right.createParityGamePositions(scale, x + scale * lw + scale, y + scale, w, h,
+                                        s, p, nextPriority, index);
+
+        for (Vertex v : s.getVertices()) {
+            ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x + scale*(lw + 0.5d));
-            node.Coordinates = new Vector2D(
-                    (
-                        index.get((World)v).get(left).Coordinates.getX() +
-                        index.get((World)v).get(right).Coordinates.getX()
-                    ) / 2d,
-                    scale * h * v.Coordinates.getY() + y);
-            node.Label = "∧";
-            node.Player1Position = false;
-            p.AddVertex(node);
-            
-            if(!index.containsKey((World)v))
-                index.put((World)v, new HashMap<>());
-            index.get((World)v).put(this, node);
+            node.coordinates = new Vector2D(
+                    (index.get((World) v).get(left).coordinates.getX()
+                     + index.get((World) v).get(right).coordinates.getX()) / 2d,
+                    scale * h * v.coordinates.getY() + y);
+            node.label = "∧";
+            node.player1Position = false;
+            p.addVertex(node);
+
+            if (!index.containsKey((World) v))
+                index.put((World) v, new HashMap<>());
+            index.get((World) v).put(this, node);
         }
     }
-    
+
     @Override
-    public void CreateParityGameTransitions(KripkeStructure s, ParityGame p,
+    public void createParityGameTransitions(KripkeStructure s, ParityGame p,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception
-    {
-        left.CreateParityGameTransitions(s, p, index, variableDefinitionPoints);
-        right.CreateParityGameTransitions(s, p, index, variableDefinitionPoints);
-        
-        for(Vertex v : s.getVertices())
-        {
-            p.AddEdge( p.CreateEdge(index.get((World)v).get(this), index.get((World)v).get(left)) );
-            p.AddEdge( p.CreateEdge(index.get((World)v).get(this), index.get((World)v).get(right)) );
+            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
+        left.createParityGameTransitions(s, p, index, variableDefinitionPoints);
+        right.createParityGameTransitions(s, p, index, variableDefinitionPoints);
+
+        for (Vertex v : s.getVertices()) {
+            p.addEdge(p.createEdge(index.get((World) v).get(this), index.get((World) v).get(left)));
+            p.addEdge(p.createEdge(index.get((World) v).get(this), index.get((World) v).get(right)));
         }
     }
 }

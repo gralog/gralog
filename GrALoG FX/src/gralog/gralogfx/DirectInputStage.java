@@ -5,17 +5,14 @@
  */
 package gralog.gralogfx;
 
-import gralog.plugins.*;
 import gralog.structure.*;
 import gralog.importfilter.*;
 
-import java.util.Vector;
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.application.HostServices;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
@@ -27,26 +24,26 @@ import javafx.stage.Modality;
  * @author viktor
  */
 public class DirectInputStage extends Stage {
+
     Scene scene;
     BorderPane root;
     HBox hBox;
     Button runButton;
     Button cancelButton;
     Button infoButton;
-    
+
     TextArea inputArea;
     ComboBox formatComboBox;
-    Vector<String> importFilters;
-    
-    Structure DialogResult;
+    List<String> importFilters;
+
+    Structure dialogResult;
     Application app;
-    
-    public DirectInputStage(Application app) throws Exception
-    {
-        this.DialogResult = null;
+
+    public DirectInputStage(Application app) throws Exception {
+        this.dialogResult = null;
         this.app = app;
-        this.importFilters = new Vector<String>();
-        
+        this.importFilters = new ArrayList<>();
+
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Input");
@@ -54,18 +51,18 @@ public class DirectInputStage extends Stage {
         infoButton = new Button("Info");
         infoButton.setOnAction(e -> infoActivated());
         hBox = new HBox();
-        hBox.getChildren().addAll(infoButton, cancelButton,runButton);
+        hBox.getChildren().addAll(infoButton, cancelButton, runButton);
 
         inputArea = new TextArea();
-        
+
         formatComboBox = new ComboBox();
-        for(String format : ImportFilterManager.getImportFilterClasses()){
+        for (String format : ImportFilterManager.getImportFilterClasses()) {
             ImportFilterDescription descr = ImportFilterManager.getImportFilterDescription(format);
             formatComboBox.getItems().add(descr.name());
             importFilters.add(format);
         }
         formatComboBox.getSelectionModel().select(0);
-        
+
         root = new BorderPane();
         root.setTop(formatComboBox);
         root.setCenter(inputArea);
@@ -76,42 +73,36 @@ public class DirectInputStage extends Stage {
         this.setTitle("Direct Input");
         this.initModality(Modality.APPLICATION_MODAL);
     }
-    
-    public Structure ShowAndWait()
-    {
-        this.showAndWait();
-        return DialogResult;
-    }
-    
-    public void runActivated()
-    {
+
+    public void runActivated() {
         try {
             int filterSelection = formatComboBox.getSelectionModel().getSelectedIndex();
-            String filterName = importFilters.elementAt(filterSelection);
-            ImportFilter importfilter = ImportFilterManager.InstantiateImportFilter(filterName);
+            String filterName = importFilters.get(filterSelection);
+            ImportFilter importfilter = ImportFilterManager.instantiateImportFilter(filterName);
 
             ByteArrayInputStream input = new ByteArrayInputStream(inputArea.getText().getBytes("UTF-8"));
-        
-            DialogResult = importfilter.Import(input, null);
-        
+
+            dialogResult = importfilter.importGraph(input, null);
+
             this.close();
-        } catch(Exception ex) {
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
     }
-    
-    public void infoActivated()
-    {
+
+    public void infoActivated() {
         try {
             int filterSelection = formatComboBox.getSelectionModel().getSelectedIndex();
-            String filterName = importFilters.elementAt(filterSelection);
-            ImportFilter importfilter = ImportFilterManager.InstantiateImportFilter(filterName);
+            String filterName = importFilters.get(filterSelection);
+            ImportFilter importfilter = ImportFilterManager.instantiateImportFilter(filterName);
 
             ImportFilterDescription descr = importfilter.getDescription();
             String url = descr.url();
             app.getHostServices().showDocument(url);
-        } catch(Exception ex) {
+        }
+        catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }

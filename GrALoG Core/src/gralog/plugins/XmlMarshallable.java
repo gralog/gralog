@@ -13,18 +13,16 @@ import org.w3c.dom.Element;
  * @author viktor
  */
 public class XmlMarshallable {
-    
-    public String XmlName() throws Exception {
+
+    public String xmlName() throws Exception {
         Class c = this.getClass();
-        if(!c.isAnnotationPresent(XmlName.class))
+        if (!c.isAnnotationPresent(XmlName.class))
             throw new Exception("Class " + c.getName() + " has no @XmlName annotation");
         XmlName xmlname = this.getClass().getAnnotation(XmlName.class);
         return xmlname.name();
     }
-    
-    public Element ToXml(Document doc) throws Exception
-    {
-        return doc.createElement(XmlName());
+
+    public Element toXml(Document doc) throws Exception {
+        return doc.createElement(xmlName());
     }
-    
 }

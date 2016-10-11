@@ -20,5 +20,5 @@ public @interface ImportFilterDescription {
     String name();
     String text();
     String url();
-    String fileextension();
+    String fileExtension();
 }

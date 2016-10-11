@@ -4,35 +4,34 @@ import gralog.modallogic.*;
 import gralog.modalmucalculus.structure.*;
 import java.util.Map;
 
-public abstract class ModalMuCalculusFormula
-{
-    public ModalMuCalculusFormula()
-    {
+public abstract class ModalMuCalculusFormula {
+
+    public ModalMuCalculusFormula() {
     }
-    
-    public Double FormulaWidth()
-    {
+
+    public double formulaWidth() {
         return 0d;
     }
 
-    public Double FormulaDepth()
-    {
+    public double formulaDepth() {
         return 0d;
     }
-    
-    abstract protected ModalMuCalculusFormula NegateVariable(String variable);
-    abstract protected ModalMuCalculusFormula NegationNormalForm(boolean negated);
-    public ModalMuCalculusFormula NegationNormalForm()
-    {
-        return NegationNormalForm(false);
+
+    abstract protected ModalMuCalculusFormula negateVariable(String variable);
+
+    abstract protected ModalMuCalculusFormula negationNormalForm(boolean negated);
+
+    public ModalMuCalculusFormula NegationNormalForm() {
+        return negationNormalForm(false);
     }
-    
-    abstract public void CreateParityGamePositions(Double scale, Double x, Double y, Double w, Double h,
-            KripkeStructure s, ParityGame p, int NextPriority,
+
+    abstract public void createParityGamePositions(double scale, double x,
+            double y, double w, double h, KripkeStructure s, ParityGame p,
+            int NextPriority,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception;
-    
-    abstract public void CreateParityGameTransitions(KripkeStructure s, ParityGame p,
+
+    abstract public void createParityGameTransitions(KripkeStructure s,
+            ParityGame p,
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
             Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception;
-    
 }

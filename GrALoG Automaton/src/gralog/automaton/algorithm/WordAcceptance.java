@@ -17,53 +17,52 @@ import java.util.Set;
  * @author viktor
  */
 @AlgorithmDescription(
-  name="Word Acceptance",
-  text="",
-  url="https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton#Example"
+        name = "Word Acceptance",
+        text = "",
+        url = "https://en.wikipedia.org/wiki/Nondeterministic_finite_automaton#Example"
 )
 public class WordAcceptance extends Algorithm {
 
     @Override
-    public AlgorithmParameters GetParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter("");
     }
-    
-    public Object Run(Automaton s, AlgorithmParameters p, Set<Object> selection, ProgressHandler onprogress) {
-        StringAlgorithmParameter sp = (StringAlgorithmParameter)(p);
-        return Accepts(s, sp.parameter) ? "true" : "false";
+
+    public Object run(Automaton s, AlgorithmParameters p, Set<Object> selection,
+            ProgressHandler onprogress) {
+        StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
+        return accepts(s, sp.parameter) ? "true" : "false";
     }
-    
-    public boolean Accepts(Automaton automaton, String str) {
-        
+
+    public boolean accepts(Automaton automaton, String str) {
+
         HashSet<State> CurrentStates = new HashSet<>();
-        for(Vertex v : automaton.getVertices())
-            if(v instanceof State)
-                if(((State)v).StartState)
-                    CurrentStates.add((State)v);
-        CurrentStates = automaton.EpsilonHull(CurrentStates);
+        for (Vertex v : automaton.getVertices())
+            if (v instanceof State)
+                if (((State) v).startState)
+                    CurrentStates.add((State) v);
+        CurrentStates = automaton.epsilonHull(CurrentStates);
 
         HashSet<State> NextStates = new HashSet<>();
-        for(int i = 0; i < str.length(); i++)
-        {
-            String stri = ""+str.charAt(i);
-            for(State s : CurrentStates)
-                for(Edge e : s.getConnectedEdges())
-                    if(e.getSource() == s)
-                        if(e instanceof Transition)
-                            if(((Transition)e).Symbol.equals(stri))
-                                NextStates.add((State)e.getTarget());
-            NextStates = automaton.EpsilonHull(NextStates);
-            
+        for (int i = 0; i < str.length(); i++) {
+            String stri = "" + str.charAt(i);
+            for (State s : CurrentStates)
+                for (Edge e : s.getConnectedEdges())
+                    if (e.getSource() == s)
+                        if (e instanceof Transition)
+                            if (((Transition) e).Symbol.equals(stri))
+                                NextStates.add((State) e.getTarget());
+            NextStates = automaton.epsilonHull(NextStates);
+
             HashSet<State> Temp = CurrentStates;
             CurrentStates = NextStates;
             NextStates = Temp;
             NextStates.clear();
         }
-        
-        for(State s : CurrentStates)
-            if(s.FinalState)
+
+        for (State s : CurrentStates)
+            if (s.finalState)
                 return true;
         return false;
     }
-    
 }

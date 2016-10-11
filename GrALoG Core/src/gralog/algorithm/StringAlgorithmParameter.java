@@ -10,9 +10,9 @@ package gralog.algorithm;
  * @author viktor
  */
 public class StringAlgorithmParameter extends AlgorithmParameters {
-    
+
     public String parameter;
-    
+
     public StringAlgorithmParameter() {
         this.parameter = "";
     }
@@ -20,5 +20,4 @@ public class StringAlgorithmParameter extends AlgorithmParameters {
     public StringAlgorithmParameter(String parameter) {
         this.parameter = parameter;
     }
-
 }

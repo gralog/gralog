@@ -19,28 +19,28 @@ import javafx.scene.web.WebEngine;
  * @author viktor
  */
 public class AboutStage extends Stage {
+
     Application host;
     Scene scene;
     BorderPane root;
     WebView webView;
     WebEngine webEngine;
     Button okButton;
-    
-    public AboutStage(Application host)
-    {
+
+    public AboutStage(Application host) {
         this.host = host;
         okButton = new Button("OK");
         okButton.setOnAction(e -> this.close());
-        
+
         webView = new WebView();
         webEngine = webView.getEngine();
         webEngine.loadContent(
-            "<b>GrALoG FX</b><br/>"
-          + "Graphs, Algorithms, Logic and Games<br/>"
-          + "©2015 Technische Universität Berlin<br/>"
-          + "Lehrstuhl für Logik und Semantik"
+                "<b>GrALoG FX</b><br/>"
+                + "Graphs, Algorithms, Logic and Games<br/>"
+                + "©2015 Technische Universität Berlin<br/>"
+                + "Lehrstuhl für Logik und Semantik"
         );
-        
+
         root = new BorderPane();
         root.setCenter(webView);
         root.setBottom(okButton);

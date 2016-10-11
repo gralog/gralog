@@ -10,9 +10,9 @@ package gralog.importfilter;
  * @author viktor
  */
 public class StringImportParameter extends ImportFilterParameters {
-    
+
     public String parameter;
-    
+
     public StringImportParameter() {
         this.parameter = "";
     }
@@ -20,5 +20,4 @@ public class StringImportParameter extends ImportFilterParameters {
     public StringImportParameter(String parameter) {
         this.parameter = parameter;
     }
-
 }

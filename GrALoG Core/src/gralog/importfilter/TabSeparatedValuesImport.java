@@ -10,16 +10,15 @@ package gralog.importfilter;
  * @author viktor
  */
 @ImportFilterDescription(
-  name="Tab Separated Values",
-  text="",
-  url="https://reference.wolfram.com/language/ref/format/TSV.html",
-  fileextension="tsv"
+        name = "Tab Separated Values",
+        text = "",
+        url = "https://reference.wolfram.com/language/ref/format/TSV.html",
+        fileExtension = "tsv"
 )
-public class TabSeparatedValuesImport extends CommaSeparatedValuesImport
-{
-    public TabSeparatedValuesImport()
-    {
+public class TabSeparatedValuesImport extends CommaSeparatedValuesImport {
+
+    public TabSeparatedValuesImport() {
         super();
-        this.CellSeparator = "\t";
+        this.cellSeparator = "\t";
     }
 }

@@ -14,24 +14,21 @@ import org.w3c.dom.Element;
  * @author viktor
  */
 public class ParityGamePosition extends FiniteGamePosition {
-    
-    public Integer Priority = Integer.MAX_VALUE;
-    
+
+    public Integer priority = Integer.MAX_VALUE;
+
     @Override
-    public Element ToXml(Document doc, String id) throws Exception
-    {
-        Element vnode = super.ToXml(doc, id);
-        vnode.setAttribute("priority", Priority.toString());
+    public Element toXml(Document doc, String id) throws Exception {
+        Element vnode = super.toXml(doc, id);
+        vnode.setAttribute("priority", priority.toString());
         return vnode;
     }
-    
+
     @Override
-    public String FromXml(Element vnode)
-    {
-        String id = super.FromXml(vnode);
-        if(vnode.hasAttribute("priority"))
-            Priority = Integer.parseInt(vnode.getAttribute("priority"));
+    public String fromXml(Element vnode) {
+        String id = super.fromXml(vnode);
+        if (vnode.hasAttribute("priority"))
+            priority = Integer.parseInt(vnode.getAttribute("priority"));
         return id;
     }
-    
 }

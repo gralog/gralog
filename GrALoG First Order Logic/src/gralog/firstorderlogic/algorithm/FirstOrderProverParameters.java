@@ -7,12 +7,11 @@ package gralog.firstorderlogic.algorithm;
 
 import gralog.algorithm.AlgorithmParameters;
 
-
-
 /**
  *
  * @author Hv
  */
-public class FirstOrderProverParameters extends AlgorithmParameters{
+public class FirstOrderProverParameters extends AlgorithmParameters {
+
     public String formulae;
 }

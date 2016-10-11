@@ -1,21 +1,16 @@
-
 package gralog.computationtreelogic.formula;
 
 import gralog.modallogic.KripkeStructure;
 import gralog.modallogic.World;
 import java.util.HashSet;
 
+public class ComputationTreeLogicBottom extends ComputationTreeLogicFormula {
 
-
-public class ComputationTreeLogicBottom extends ComputationTreeLogicFormula
-{
-    public ComputationTreeLogicBottom()
-    {
+    public ComputationTreeLogicBottom() {
     }
-    
+
     @Override
-    public HashSet<World> Interpretation(KripkeStructure structure)
-    {
+    public HashSet<World> interpretation(KripkeStructure structure) {
         return new HashSet<>();
     }
 

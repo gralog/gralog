@@ -12,75 +12,68 @@ import java.util.Set;
  *
  * @author viktor
  */
-public class PropositionalLogicNot extends PropositionalLogicFormula
-{
-    
+public class PropositionalLogicNot extends PropositionalLogicFormula {
+
     public PropositionalLogicFormula subformula;
-    
-    public PropositionalLogicNot(PropositionalLogicFormula subformula)
-    {
+
+    public PropositionalLogicNot(PropositionalLogicFormula subformula) {
         this.subformula = subformula;
     }
-    
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         String s = subformula.toString();
-        if(subformula instanceof PropositionalLogicOr
-        || subformula instanceof PropositionalLogicAnd)
+        if (subformula instanceof PropositionalLogicOr
+            || subformula instanceof PropositionalLogicAnd)
             s = "(" + s + ")";
 
         return "¬" + s;
     }
 
-    
     @Override
-    public boolean isLiteral()
-    {
+    public boolean isLiteral() {
         return (subformula instanceof PropositionalLogicVariable);
     }
+
     @Override
-    public boolean isAClause()
-    {
-        return isLiteral();
-    }
-    @Override
-    public boolean isAClause3()
-    {
+    public boolean isAClause() {
         return isLiteral();
     }
 
-    
     @Override
-    public void GetVariables(Set<String> vars)
-    {
-        subformula.GetVariables(vars);
+    public boolean isAClause3() {
+        return isLiteral();
     }
-    
+
     @Override
-    protected PropositionalLogicFormula ConjunctiveNormalForm(Integer varId, HashMap<PropositionalLogicFormula, String> VarIdx)
-    {
+    public void getVariables(Set<String> vars) {
+        subformula.getVariables(vars);
+    }
+
+    @Override
+    protected PropositionalLogicFormula conjunctiveNormalForm(Integer varId,
+            HashMap<PropositionalLogicFormula, String> VarIdx) {
         String myName = "v" + varId;
         varId++;
         VarIdx.put(this, myName);
-        PropositionalLogicFormula subCnf = subformula.ConjunctiveNormalForm(varId, VarIdx);
+        PropositionalLogicFormula subCnf = subformula.conjunctiveNormalForm(varId, VarIdx);
         String subName = VarIdx.get(subformula);
-        
-        PropositionalLogicFormula result =
-            new PropositionalLogicAnd(
-                new PropositionalLogicOr(
-                    new PropositionalLogicVariable(subName),
-                    new PropositionalLogicVariable(myName)
-                ),
-                new PropositionalLogicOr(
-                    new PropositionalLogicNot(new PropositionalLogicVariable(subName)),
-                    new PropositionalLogicNot(new PropositionalLogicVariable(myName))
-                )
-            );
-        
-        if(subCnf != null)
+
+        PropositionalLogicFormula result
+                = new PropositionalLogicAnd(
+                        new PropositionalLogicOr(
+                                new PropositionalLogicVariable(subName),
+                                new PropositionalLogicVariable(myName)
+                        ),
+                        new PropositionalLogicOr(
+                                new PropositionalLogicNot(new PropositionalLogicVariable(subName)),
+                                new PropositionalLogicNot(new PropositionalLogicVariable(myName))
+                        )
+                );
+
+        if (subCnf != null)
             result = new PropositionalLogicAnd(subCnf, result);
-        
+
         return result;
     }
 }

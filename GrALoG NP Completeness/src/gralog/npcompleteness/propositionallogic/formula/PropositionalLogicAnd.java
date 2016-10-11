@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package gralog.npcompleteness.propositionallogic.formula;
+
 import java.util.HashMap;
 import java.util.Set;
 
@@ -11,123 +12,114 @@ import java.util.Set;
  *
  * @author viktor
  */
-public class PropositionalLogicAnd extends PropositionalLogicFormula
-{
+public class PropositionalLogicAnd extends PropositionalLogicFormula {
+
     public PropositionalLogicFormula left;
     public PropositionalLogicFormula right;
-    
-    public PropositionalLogicAnd(PropositionalLogicFormula left, PropositionalLogicFormula right)
-    {
+
+    public PropositionalLogicAnd(PropositionalLogicFormula left,
+            PropositionalLogicFormula right) {
         this.left = left;
         this.right = right;
     }
-    
+
     @Override
-    public boolean hasConjunctiveNormalForm()
-    {
+    public boolean hasConjunctiveNormalForm() {
         return left.hasConjunctiveNormalForm()
-            && right.hasConjunctiveNormalForm();
+               && right.hasConjunctiveNormalForm();
     }
-    
+
     @Override
-    public boolean hasConjunctiveNormalForm3()
-    {
+    public boolean hasConjunctiveNormalForm3() {
         return left.hasConjunctiveNormalForm3()
-            && right.hasConjunctiveNormalForm3();
+               && right.hasConjunctiveNormalForm3();
     }
 
-
     @Override
-    public String toString()
-    {
+    public String toString() {
         String l = left.toString();
-        if(left instanceof PropositionalLogicOr)
+        if (left instanceof PropositionalLogicOr)
             l = "(" + l + ")";
 
         String r = right.toString();
-        if(right instanceof PropositionalLogicOr)
+        if (right instanceof PropositionalLogicOr)
             r = "(" + r + ")";
 
         return l + " ∧ " + r;
     }
-    
-    
-    @Override   
-    public boolean isAClause()
-    {
+
+    @Override
+    public boolean isAClause() {
         return false;
     }
-    @Override   
-    public boolean isAClause3()
-    {
+
+    @Override
+    public boolean isAClause3() {
         return false;
     }
-    
-    
+
     @Override
-    public void GetClauses(Set<PropositionalLogicFormula> clauses) throws Exception
-    {
-        left.GetClauses(clauses);
-        right.GetClauses(clauses);
+    public void getClauses(Set<PropositionalLogicFormula> clauses) throws Exception {
+        left.getClauses(clauses);
+        right.getClauses(clauses);
     }
-    
+
     @Override
-    public void GetVariables(Set<String> vars)
-    {
-        left.GetVariables(vars);
-        right.GetVariables(vars);
+    public void getVariables(Set<String> vars) {
+        left.getVariables(vars);
+        right.getVariables(vars);
     }
-    
+
     @Override
-    protected PropositionalLogicFormula ConjunctiveNormalForm(Integer varId, HashMap<PropositionalLogicFormula, String> VarIdx)
-    {
-        String myName = "v"+varId;
+    protected PropositionalLogicFormula conjunctiveNormalForm(Integer varId,
+            HashMap<PropositionalLogicFormula, String> VarIdx) {
+        String myName = "v" + varId;
         varId++;
         VarIdx.put(this, myName);
-        PropositionalLogicFormula leftCnf = left.ConjunctiveNormalForm(varId, VarIdx);
+        PropositionalLogicFormula leftCnf = left.conjunctiveNormalForm(varId, VarIdx);
         String leftName = VarIdx.get(left);
-        PropositionalLogicFormula rightCnf = right.ConjunctiveNormalForm(varId, VarIdx);
+        PropositionalLogicFormula rightCnf = right.conjunctiveNormalForm(varId, VarIdx);
         String rightName = VarIdx.get(right);
-        
-        PropositionalLogicFormula result =
-            new PropositionalLogicAnd(
-                new PropositionalLogicAnd(
-                    new PropositionalLogicOr(
-                        new PropositionalLogicOr(
-                            new PropositionalLogicVariable(leftName),
-                            new PropositionalLogicVariable(rightName)
+
+        PropositionalLogicFormula result
+                = new PropositionalLogicAnd(
+                        new PropositionalLogicAnd(
+                                new PropositionalLogicOr(
+                                        new PropositionalLogicOr(
+                                                new PropositionalLogicVariable(leftName),
+                                                new PropositionalLogicVariable(rightName)
+                                        ),
+                                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
+                                ),
+                                new PropositionalLogicOr(
+                                        new PropositionalLogicOr(
+                                                new PropositionalLogicVariable(leftName),
+                                                new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
+                                        ),
+                                        new PropositionalLogicVariable(myName)
+                                )
                         ),
-                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
-                    ),
-                    new PropositionalLogicOr(
-                        new PropositionalLogicOr(
-                            new PropositionalLogicVariable(leftName),
-                            new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
-                        ),
-                        new PropositionalLogicVariable(myName)
-                    )
-                ),
-                new PropositionalLogicAnd(
-                    new PropositionalLogicOr(
-                        new PropositionalLogicOr(
-                            new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
-                            new PropositionalLogicVariable(rightName)
-                        ),
-                        new PropositionalLogicVariable(myName)
-                    ),
-                    new PropositionalLogicOr(
-                        new PropositionalLogicOr(
-                            new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
-                            new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
-                        ),
-                        new PropositionalLogicVariable(myName)
-                    )
-                )
-            );
-        
-        if(leftCnf != null)
+                        new PropositionalLogicAnd(
+                                new PropositionalLogicOr(
+                                        new PropositionalLogicOr(
+                                                new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
+                                                new PropositionalLogicVariable(rightName)
+                                        ),
+                                        new PropositionalLogicVariable(myName)
+                                ),
+                                new PropositionalLogicOr(
+                                        new PropositionalLogicOr(
+                                                new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
+                                                new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
+                                        ),
+                                        new PropositionalLogicVariable(myName)
+                                )
+                        )
+                );
+
+        if (leftCnf != null)
             result = new PropositionalLogicAnd(leftCnf, result);
-        if(rightCnf != null)
+        if (rightCnf != null)
             result = new PropositionalLogicAnd(rightCnf, result);
         return result;
     }
