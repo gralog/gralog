@@ -155,31 +155,13 @@ public class MainWindow extends Application {
         buttonBar = new HBox();
         Button buttonSelectMode = new Button();
         buttonSelectMode.setText("S");
-        buttonSelectMode.setOnAction(e -> {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == null)
-                return;
-            StructurePane structurePane = (StructurePane) tab.getContent();
-            structurePane.setSelectMode();
-        });
+        buttonSelectMode.setOnAction(e -> setSelectMode());
         Button buttonVertexMode = new Button();
         buttonVertexMode.setText("V");
-        buttonVertexMode.setOnAction(e -> {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == null)
-                return;
-            StructurePane structurePane = (StructurePane) tab.getContent();
-            structurePane.setVertexCreationMode();
-        });
+        buttonVertexMode.setOnAction(e -> setVertexCreationMode());
         Button buttonEdgeMode = new Button();
         buttonEdgeMode.setText("E");
-        buttonEdgeMode.setOnAction(e -> {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == null)
-                return;
-            StructurePane structurePane = (StructurePane) tab.getContent();
-            structurePane.setEdgeCreationMode();
-        });
+        buttonEdgeMode.setOnAction(e -> setEdgeCreationMode());
         buttonBar.getChildren().addAll(buttonSelectMode, buttonVertexMode, buttonEdgeMode);
         topPane = new VBox();
         topPane.getChildren().addAll(menu, buttonBar);
@@ -266,12 +248,11 @@ public class MainWindow extends Application {
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
                 // has the user selected the native file-type or an export-filter?
-                ExportFilter exportFilter = null;
                 String extension = file.getName(); // unclean way of getting file extension
                 int idx = extension.lastIndexOf(".");
                 extension = idx > 0 ? extension.substring(idx + 1) : "";
 
-                exportFilter = ExportFilterManager.instantiateExportFilterByExtension(structure.getClass(), extension);
+                ExportFilter exportFilter = ExportFilterManager.instantiateExportFilterByExtension(structure.getClass(), extension);
                 if (exportFilter != null) {
                     // configure export filter
                     ExportFilterParameters params = exportFilter.getParameters(structure);
@@ -281,7 +262,6 @@ public class MainWindow extends Application {
                         if (!exportStage.dialogResult)
                             return;
                     }
-
                     exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
                 }
                 else {
@@ -320,7 +300,6 @@ public class MainWindow extends Application {
 
     public void menuFileDirectInputActivated() {
         try {
-
             DirectInputStage directinputstage = new DirectInputStage(this);
             directinputstage.showAndWait();
             Structure s = directinputstage.dialogResult;
@@ -335,13 +314,13 @@ public class MainWindow extends Application {
 
     public void doOpenFile(File file) {
         try {
-            String extension = ""; // unclean way of getting file extension
+            // unclean way of getting file extension
             int idx = file.getName().lastIndexOf(".");
-            extension = idx > 0 ? file.getName().substring(idx + 1) : "";
+            String extension = idx > 0 ? file.getName().substring(idx + 1) : "";
 
             ImportFilter importFilter = ImportFilterManager.instantiateImportFilterByExtension(extension);
             this.setStatus("Loading File " + file.getAbsolutePath() + "...");
-            Structure structure = null;
+            Structure structure;
 
             if (importFilter != null) {
                 ImportFilterParameters params = importFilter.getParameters();
@@ -355,8 +334,9 @@ public class MainWindow extends Application {
                 }
                 structure = importFilter.importGraph(file.getAbsolutePath(), params);
             }
-            else
+            else {
                 structure = Structure.loadFromFile(file.getAbsolutePath());
+            }
 
             if (structure != null)
                 addTab("", structure);
@@ -608,11 +588,23 @@ public class MainWindow extends Application {
         primaryStage.setTitle("GrALoG FX");
         primaryStage.setScene(scene);
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case S:
+                    setSelectMode();
+                    break;
+                case V:
+                    setVertexCreationMode();
+                    break;
+                case E:
+                    setEdgeCreationMode();
+                    break;
+            }
+        });
         primaryStage.show();
     }
 
     public void windowShown() {
-
         // Load Config
         NodeList children = null;
         String configFileDir = null;
@@ -668,5 +660,36 @@ public class MainWindow extends Application {
         for (String s : params.getUnnamed())
             if (!s.endsWith(".jar"))
                 doOpenFile(new File(s));
+    }
+
+    private StructurePane getCurrentStructurePane() {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab == null)
+            return null;
+        return (StructurePane) tab.getContent();
+    }
+
+    private void setSelectMode() {
+        StructurePane pane = getCurrentStructurePane();
+        if(pane != null) {
+            pane.setSelectMode();
+            setStatus("Selection mode");
+        }
+    }
+
+    private void setVertexCreationMode() {
+        StructurePane pane = getCurrentStructurePane();
+        if(pane != null) {
+            pane.setVertexCreationMode();
+            setStatus("Vertex creation mode");
+        }
+    }
+
+    private void setEdgeCreationMode() {
+        StructurePane pane = getCurrentStructurePane();
+        if(pane != null) {
+            pane.setEdgeCreationMode();
+            setStatus("Edge creation mode");
+        }
     }
 }
