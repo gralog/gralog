@@ -89,24 +89,32 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public void requestRedraw() {
         needsRepaintLock.lock();
-        if (!needsRepaint) {
-            Platform.runLater(() -> {
-                this.draw();
-            });
-            needsRepaint = true;
+        try {
+            if (!needsRepaint) {
+                Platform.runLater(() -> {
+                    this.draw();
+                });
+                needsRepaint = true;
+            }
         }
-        needsRepaintLock.unlock();
+        finally {
+            needsRepaintLock.unlock();
+        }
     }
 
     public void requestRedraw(double screenX, double screenY) {
         needsRepaintLock.lock();
-        if (!needsRepaint) {
-            Platform.runLater(() -> {
-                this.draw(screenX, screenY);
-            });
-            needsRepaint = true;
+        try {
+            if (!needsRepaint) {
+                Platform.runLater(() -> {
+                    this.draw(screenX, screenY);
+                });
+                needsRepaint = true;
+            }
         }
-        needsRepaintLock.unlock();
+        finally {
+            needsRepaintLock.unlock();
+        }
     }
 
     public void setSelectMode() {
@@ -305,31 +313,39 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public void draw(double mouseScreenX, double mouseScreenY) {
         this.needsRepaintLock.lock();
-        if (needsRepaint) {
-            GraphicsContext gc = canvas.getGraphicsContext2D();
-            draw(gc);
+        try {
+            if (needsRepaint) {
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+                draw(gc);
 
-            gc.setStroke(Color.BLACK);
-            for (Object o : selection) {
-                if (!(o instanceof Vertex))
-                    continue;
-                Vertex v = (Vertex) o;
-                Point2D selectionScreen = modelToScreen(new Point2D(v.coordinates.get(0), v.coordinates.get(1)));
-                gc.strokeLine(selectionScreen.getX(), selectionScreen.getY(), mouseScreenX, mouseScreenY);
+                gc.setStroke(Color.BLACK);
+                for (Object o : selection) {
+                    if (!(o instanceof Vertex))
+                        continue;
+                    Vertex v = (Vertex) o;
+                    Point2D selectionScreen = modelToScreen(new Point2D(v.coordinates.get(0), v.coordinates.get(1)));
+                    gc.strokeLine(selectionScreen.getX(), selectionScreen.getY(), mouseScreenX, mouseScreenY);
+                }
+
+                needsRepaint = false;
             }
-
-            needsRepaint = false;
         }
-        this.needsRepaintLock.unlock();
+        finally {
+            this.needsRepaintLock.unlock();
+        }
     }
 
     public void draw() {
         this.needsRepaintLock.lock();
-        if (needsRepaint) {
-            draw(canvas.getGraphicsContext2D());
-            needsRepaint = false;
+        try {
+            if (needsRepaint) {
+                draw(canvas.getGraphicsContext2D());
+                needsRepaint = false;
+            }
         }
-        this.needsRepaintLock.unlock();
+        finally {
+            this.needsRepaintLock.unlock();
+        }
     }
 
     protected void draw(GraphicsContext gc) {
@@ -342,7 +358,6 @@ public class StructurePane extends StackPane implements StructureListener {
 
         // grid
         if (zoomFactor * (screenResolutionX / 2.54) >= 10) {
-
             gc.setStroke(Color.rgb(0xcc, 0xcc, 0xcc));
             Point2D leftupper = screenToModel(new Point2D(0d, 0d));
             Point2D rightlower = screenToModel(new Point2D(w, h));
