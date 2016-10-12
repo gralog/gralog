@@ -1,7 +1,6 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of GrALoG FX, Copyright (c) 2016 LaS group, TU Berlin.
+ * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later.
  */
 package gralog.modallogic;
 
