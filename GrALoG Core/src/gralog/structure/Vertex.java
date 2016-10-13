@@ -47,6 +47,20 @@ public class Vertex extends XmlMarshallable implements IMovable {
         return connectedEdges;
     }
 
+    /**
+     * @return The set of adjacent vertices.
+     */
+    public Set<Vertex> getAdjacentVertices() {
+        Set<Vertex> result = new HashSet<>();
+        for (Edge e : connectedEdges) {
+            Vertex v = e.getSource();
+            if (v == this)
+                v = e.getTarget();
+            result.add(v);
+        }
+        return result;
+    }
+
     public double maximumCoordinate(int dimension) {
         if (coordinates.dimensions() > dimension)
             return coordinates.get(dimension);
