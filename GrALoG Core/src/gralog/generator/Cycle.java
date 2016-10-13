@@ -23,7 +23,7 @@ public class Cycle extends Generator {
     }
     
     @Override
-    public Structure generate(GeneratorParameters p) throws Exception
+    public Structure generate(GeneratorParameters p)
     {
         Integer n = Integer.parseInt(((StringGeneratorParameter)p).parameter);
         

@@ -13,6 +13,12 @@ public class GralogColor {
     public final short g;
     public final short b;
 
+    public GralogColor(int red, int green, int blue) {
+        this.r = (short) (red & 0xFF);
+        this.g = (short) (green & 0xFF);
+        this.b = (short) (blue & 0xFF);
+    }
+
     public GralogColor(short red, short green, short blue) {
         this.r = (short) (red & 0xFF);
         this.g = (short) (green & 0xFF);
