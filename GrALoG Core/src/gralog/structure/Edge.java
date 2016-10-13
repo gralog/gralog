@@ -267,8 +267,8 @@ public class Edge extends XmlMarshallable implements IMovable {
     }
 
     public void fromXml(Element enode, HashMap<String, Vertex> ids) throws Exception {
-        source = ids.get(enode.getAttribute("source"));
-        target = ids.get(enode.getAttribute("target"));
+        setSource(ids.get(enode.getAttribute("source")));
+        setTarget(ids.get(enode.getAttribute("target")));
 
         if (enode.hasAttribute("isdirected"))
             isDirected = enode.getAttribute("isdirected").equals("true");
