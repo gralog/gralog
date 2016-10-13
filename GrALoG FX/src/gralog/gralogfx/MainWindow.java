@@ -223,14 +223,11 @@ public class MainWindow extends Application {
 
     public void menuFileSaveActivated() {
         try {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            StructurePane structurePane = (StructurePane) tab.getContent();
-            Structure structure = structurePane.structure;
+            Structure structure = getCurrentStructurePane().structure;
 
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("All Files (*.*)", "*.*"),
                     new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
 
@@ -241,7 +238,6 @@ public class MainWindow extends Application {
                 fileChooser.getExtensionFilters().add(filter);
             }
 
-            fileChooser.setInitialFileName("*.*");
             fileChooser.setTitle("Save File");
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
