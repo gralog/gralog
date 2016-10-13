@@ -16,6 +16,32 @@ public class Vector2D {
         this.y = y;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final Vector2D other = (Vector2D) obj;
+        return Double.doubleToLongBits(this.x) == Double.doubleToLongBits(other.x) &&
+               Double.doubleToLongBits(this.y) == Double.doubleToLongBits(other.y);
+    }
+
+    @Override
+    public String toString() {
+        return "Vector2D{" + x + "," + y + '}';
+    }
+
     public double getX() {
         return x;
     }

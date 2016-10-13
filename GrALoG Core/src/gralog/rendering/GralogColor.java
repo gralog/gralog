@@ -9,9 +9,9 @@ package gralog.rendering;
  */
 public class GralogColor {
 
-    public short r;
-    public short g;
-    public short b;
+    public final short r;
+    public final short g;
+    public final short b;
 
     public GralogColor(short red, short green, short blue) {
         this.r = (short) (red & 0xFF);
@@ -25,10 +25,30 @@ public class GralogColor {
              (short) (rgb & 0xFF));
     }
 
-    public boolean equals(GralogColor c) {
-        return this.r == c.r
-               && this.g == c.g
-               && this.b == c.b;
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + this.r;
+        hash = 97 * hash + this.g;
+        hash = 97 * hash + this.b;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final GralogColor other = (GralogColor) obj;
+        return r == other.r && g == other.g && b == other.b;
+    }
+
+    @Override
+    public String toString() {
+        return "GralogColor{" + r + "," + g + "," + b + '}';
     }
 
     public String toHtmlString() {
@@ -39,8 +59,7 @@ public class GralogColor {
     }
 
     public static GralogColor parseColor(String HtmlString) {
-
-        int ColorCode = 0;
+        int colorCode = 0;
         int i = 0;
         if (HtmlString.charAt(i) == '#')
             i++;
@@ -55,10 +74,10 @@ public class GralogColor {
             else if ('A' <= ci && ci <= 'F')
                 temp = (ci - 'A') + 10;
 
-            ColorCode = (ColorCode << 4) | temp;
+            colorCode = (colorCode << 4) | temp;
         }
 
-        return new GralogColor(ColorCode);
+        return new GralogColor(colorCode);
     }
 
     public GralogColor inverse() {

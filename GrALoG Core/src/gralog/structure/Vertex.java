@@ -30,6 +30,11 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     private final Set<Edge> connectedEdges = new HashSet<>();
 
+    @Override
+    public String toString() {
+        return "Vertex{" + "label=" + label + ", radius=" + radius + ", fillColor=" + fillColor + ", strokeWidth=" + strokeWidth + ", textHeight=" + textHeight + ", strokeColor=" + strokeColor + ", coordinates=" + coordinates + '}';
+    }
+
     void connectEdge(Edge e) {
         this.connectedEdges.add(e);
     }
