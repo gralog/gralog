@@ -22,7 +22,7 @@ public class LEDAExport extends ExportFilter {
 
     public void export(DirectedGraph structure, OutputStreamWriter stream,
             ExportFilterParameters params) throws Exception {
-        HashMap<Vertex, Integer> NodeIndex = new HashMap<Vertex, Integer>();
+        HashMap<Vertex, Integer> NodeIndex = new HashMap<>();
         Integer idx = 1;
         String linefeed = System.getProperty("line.separator");
 
@@ -49,6 +49,5 @@ public class LEDAExport extends ExportFilter {
         for (Edge e : E)
             stream.write(NodeIndex.get(e.getSource()) + " " + NodeIndex.get(e.getTarget()) + " 0 |{}|" + linefeed);
         stream.write(linefeed);
-
     }
 }
