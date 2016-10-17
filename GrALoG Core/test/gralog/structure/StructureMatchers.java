@@ -4,7 +4,10 @@
  */
 package gralog.structure;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.hamcrest.Description;
@@ -15,6 +18,11 @@ import static org.junit.Assert.*;
 
 public class StructureMatchers {
 
+    /**
+     * @param v The expected vertex.
+     * @return A matcher that compares an actual vertex with the expected
+     * vertex. Two vertices are considered equal if all their fields are equal.
+     */
     @Factory
     public static Matcher equalsVertex(Vertex v) {
         return new TypeSafeMatcher<Vertex>() {
@@ -37,6 +45,40 @@ public class StructureMatchers {
     }
 
     /**
+     * @param expectedVertices The expected set of vertices.
+     * @return A matcher that compares an actual set of vertices with the
+     * expected set of vertices. Two vertex sets are considered equal if they
+     * compare equivalent vertices (as defined by the equalsVertex matcher).
+     * Requires unique labels (it does not check for unique labels). The running
+     * time is O(n log n).
+     */
+    @Factory
+    public static Matcher equalsVertexSet(Collection<Vertex> expectedVertices) {
+        return new TypeSafeMatcher<Collection<Vertex>>() {
+            @Override
+            protected boolean matchesSafely(Collection<Vertex> actualVertices) {
+                assertSame("Vertex set size", expectedVertices.size(), actualVertices.size());
+
+                List<Vertex> expectedVerticesSorted = new ArrayList<>(expectedVertices);
+                List<Vertex> actualVerticesSorted = new ArrayList<>(actualVertices);
+                expectedVerticesSorted.sort((v, w) -> v.label.compareTo(w.label));
+                actualVerticesSorted.sort((v, w) -> v.label.compareTo(w.label));
+                for (int i = 0; i < expectedVerticesSorted.size(); ++i) {
+                    Vertex v = expectedVerticesSorted.get(i);
+                    Vertex w = actualVerticesSorted.get(i);
+                    assertThat("Vertex", v, equalsVertex(w));
+                }
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description d) {
+                d.appendText("Vertex set equality");
+            }
+        };
+    }
+
+    /**
      * @param s The expected structure.
      * @return A matcher that compares an actual structure with the expected
      * structure by identifying vertices via their labels.
@@ -52,20 +94,6 @@ public class StructureMatchers {
                     vertexMap.put(v.label, v);
                 }
                 return vertexMap;
-            }
-
-            private void equalVertexSets(String description,
-                    Set<Vertex> sV, Set<Vertex> tV,
-                    Map<String, Vertex> sVertexMap,
-                    Map<String, Vertex> tVertexMap) {
-                for (Vertex v : sV) {
-                    Vertex w = tVertexMap.get(v.label);
-                    assertThat(description + ", missing vertex", v, equalsVertex(w));
-                }
-                for (Vertex v : tV) {
-                    Vertex w = sVertexMap.get(v.label);
-                    assertThat(description + ", additional vertex", v, equalsVertex(w));
-                }
             }
 
             @Override
@@ -84,13 +112,13 @@ public class StructureMatchers {
                 if (sVertexMap.size() != sV.size())
                     throw new AssertionError("Cannot compare structures: Non-unique vertex labels");
 
-                equalVertexSets("Vertex sets", sV, tV, sVertexMap, tVertexMap);
+                assertThat("Vertex sets", sV, equalsVertexSet(tV));
 
                 for (Vertex v : sV) {
                     final Vertex w = tVertexMap.get(v.label);
-                    equalVertexSets("Adjacency sets",
-                                    v.getAdjacentVertices(), w.getAdjacentVertices(),
-                                    sVertexMap, tVertexMap);
+                    assertThat("Adjacency sets",
+                               v.getAdjacentVertices(),
+                               equalsVertexSet(w.getAdjacentVertices()));
                 }
 
                 return true;
