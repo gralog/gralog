@@ -55,20 +55,13 @@ public class StructureTest {
         }
     }
 
-    private static Vertex addVertex(Structure structure, String label) {
-        Vertex v = structure.createVertex();
-        v.label = label;
-        structure.addVertex(v);
-        return v;
-    }
-
     @Test
     public void testSimpleDirectedGraph() {
         Structure<Vertex, Edge> structure = new DirectedGraph();
 
-        Vertex v = addVertex(structure, "v");
-        Vertex w = addVertex(structure, "w");
-        structure.addEdge(structure.createEdge(v, w));
+        Vertex v = structure.addVertex("v");
+        Vertex w = structure.addVertex("w");
+        structure.addEdge(v, w);
 
         testWriteRead(structure);
     }
@@ -77,9 +70,9 @@ public class StructureTest {
     public void testSimpleUndirectedGraph() {
         Structure<Vertex, Edge> structure = new UndirectedGraph();
 
-        Vertex v = addVertex(structure, "v");
-        Vertex w = addVertex(structure, "w");
-        structure.addEdge(structure.createEdge(v, w));
+        Vertex v = structure.addVertex("v");
+        Vertex w = structure.addVertex("w");
+        structure.addEdge(v, w);
 
         testWriteRead(structure);
     }
@@ -88,8 +81,8 @@ public class StructureTest {
     public void testSimpleUndirectedGraphLoop() {
         Structure<Vertex, Edge> structure = new UndirectedGraph();
 
-        Vertex v = addVertex(structure, "v");
-        structure.addEdge(structure.createEdge(v, v));
+        Vertex v = structure.addVertex("v");
+        structure.addEdge(v, v);
 
         testWriteRead(structure);
     }
@@ -119,9 +112,9 @@ public class StructureTest {
     public void testComplexVertexReading() {
         Structure<Vertex, Edge> structure = new UndirectedGraph();
 
-        Vertex v = addVertex(structure, "v");
-        Vertex w = addVertex(structure, "w");
-        structure.addEdge(structure.createEdge(v, w));
+        Vertex v = structure.addVertex("v");
+        Vertex w = structure.addVertex("w");
+        structure.addEdge(v, w);
 
         int i = 0;
         for (Vertex u : structure.getVertices()) {
