@@ -90,7 +90,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     /**
      * Creates a new vertex instance without adding it to the structure.
      *
-     * @return The new vertex instance.
+     * @return The new vertex.
      */
     abstract public V createVertex();
 
@@ -102,6 +102,21 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public void addVertex(V v) {
         vertices.add(v);
+    }
+
+    /**
+     * Creates a new vertex with the given label and adds it to the structure.
+     * This is a convenience function combining createVertex and addVertex.
+     * Adding multiple vertices with the same name adds multiple vertices.
+     *
+     * @param label The label of the new vertex to be added.
+     * @return The new vertex.
+     */
+    public V addVertex(String label) {
+        V v = createVertex();
+        v.label = label;
+        addVertex(v);
+        return v;
     }
 
     /**
@@ -122,7 +137,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     /**
      * Create a new edge instance without adding it to the structure.
      *
-     * @return The new edge instance.
+     * @return The new edge.
      */
     abstract public E createEdge();
 
@@ -134,6 +149,20 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public void addEdge(E e) {
         edges.add(e);
+    }
+
+    /**
+     * Creates a new edge and adds it to the structure. This is a convenience
+     * function combining createEdge and addEdge.
+     *
+     * @param source The tail of the new edge.
+     * @param target The head of the new edge.
+     * @return The new edge.
+     */
+    public E addEdge(V source, V target) {
+        E e = createEdge(source, target);
+        addEdge(e);
+        return e;
     }
 
     /**
@@ -153,7 +182,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @param source The tail of the new edge.
      * @param target The head of the new edge.
-     * @return The new edge instance.
+     * @return The new edge.
      */
     public E createEdge(V source, V target) {
         E edge = createEdge();
