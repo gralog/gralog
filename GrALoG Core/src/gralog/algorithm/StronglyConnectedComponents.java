@@ -24,8 +24,8 @@ import gralog.progresshandler.*;
 public class StronglyConnectedComponents extends Algorithm {
 
     public static void tarjanStrongComponents(Structure s,
-            HashMap<Vertex, Integer> ComponentOfVertex,
-            ArrayList<ArrayList<Vertex>> VerticesInComponent) {
+            HashMap<Vertex, Integer> componentOfVertex,
+            ArrayList<ArrayList<Vertex>> verticesInComponent) {
         int numScc = 0;
         int index = 0;
         Stack<Vertex> tarStack = new Stack<>();
@@ -100,9 +100,9 @@ public class StronglyConnectedComponents extends Algorithm {
                             top = tarStack.pop();
                             onStack.remove(top);
                             scc.add(top);
-                            ComponentOfVertex.put(top, numScc);
+                            componentOfVertex.put(top, numScc);
                         }
-                        VerticesInComponent.add(scc);
+                        verticesInComponent.add(scc);
                         numScc++;
                     }
 
@@ -117,14 +117,9 @@ public class StronglyConnectedComponents extends Algorithm {
 
     public Object run(Structure s, AlgorithmParameters ap, Set<Object> selection,
             ProgressHandler onprogress) throws Exception {
-        HashMap<Vertex, Integer> ComponentOfVertex = new HashMap<>();
-        ArrayList<ArrayList<Vertex>> VerticesInComponent = new ArrayList<>();
-
-        tarjanStrongComponents(s, ComponentOfVertex, VerticesInComponent);
-        HashSet<Vertex> result = new HashSet<>();
-        for (Vertex v : VerticesInComponent.get(0))
-            result.add(v);
-
-        return result;
+        HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
+        ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
+        tarjanStrongComponents(s, componentOfVertex, verticesInComponent);
+        return new HashSet<>(verticesInComponent.get(0));
     }
 }
