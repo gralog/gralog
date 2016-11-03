@@ -14,7 +14,6 @@ import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.rendering.Vector2D;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -78,25 +77,11 @@ public class FirstOrderAnd extends FirstOrderFormula {
             HashMap<String, Vertex> varassign, FiniteGame game,
             CoordinateClass coor) {
         FiniteGamePosition parent = new FiniteGamePosition();
-        String phi = "\u2205";
-        String and = "\u2227";
-        parent.label = "(" + subformula1.toString() + and + subformula2.toString() + ")";
-        parent.label += " , { ";
-        if (varassign.isEmpty()) {
-            parent.label += phi;
-        }
-        else {
-            String glue = "";
-            for (Map.Entry<String, Vertex> entry : varassign.entrySet()) {
-                String key = entry.getKey();
-                Vertex value = entry.getValue();
-                parent.label += glue + "(" + key + "," + value.label + ")";
-                glue = ",";
-            }
-        }
-        parent.label += " }";
 
-        //and : player 1 position;
+        parent.label = toString() + ", "
+                       + FirstOrderFormula.variableAssignmentToString(varassign);
+
+        // "and", so this is a player 1 position.
         parent.player1Position = true;
 
         parent.coordinates = new Vector2D(coor.x, coor.y);
@@ -117,7 +102,6 @@ public class FirstOrderAnd extends FirstOrderFormula {
         game.addVertex(c2);
         game.addEdge(game.createEdge(parent, c2));
         return parent;
-
     }
 
     @Override

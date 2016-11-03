@@ -60,7 +60,7 @@ public class FirstOrderNot extends FirstOrderFormula {
     public FiniteGamePosition constructGameGraph(Structure s,
             HashMap<String, Vertex> varassign, FiniteGame game,
             CoordinateClass coor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

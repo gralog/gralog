@@ -5,7 +5,9 @@
 package gralog.firstorderlogic.logic.firstorder.formula;
 
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
+import gralog.structure.Vertex;
 import java.util.ArrayList;
+import java.util.TreeMap;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -19,6 +21,24 @@ public class FirstOrderFormulaTest {
         params.add("x");
         params.add("y");
         relation = new FirstOrderRelation("E", params);
+    }
+
+    private Vertex createVertex(String label) {
+        Vertex v = new Vertex();
+        v.label = label;
+        return v;
+    }
+
+    @Test
+    public void testVariableAssignmentToString() {
+        TreeMap<String, Vertex> assignment = new TreeMap<>();
+        assertEquals("{ }", FirstOrderFormula.variableAssignmentToString(assignment));
+        assignment.put("x", createVertex("0"));
+        assertEquals("{ x↦0 }", FirstOrderFormula.variableAssignmentToString(assignment));
+        assignment.put("y", createVertex("1"));
+        assertEquals("{ x↦0, y↦1 }", FirstOrderFormula.variableAssignmentToString(assignment));
+        assignment.put("z", createVertex("2"));
+        assertEquals("{ x↦0, y↦1, z↦2 }", FirstOrderFormula.variableAssignmentToString(assignment));
     }
 
     @Test

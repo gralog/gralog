@@ -11,7 +11,6 @@ import gralog.structure.Vertex;
 import java.util.HashMap;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.algorithm.CoordinateClass;
@@ -85,27 +84,11 @@ public class FirstOrderOr extends FirstOrderFormula {
             CoordinateClass coor) {
 
         FiniteGamePosition parent = new FiniteGamePosition();
-        String phi = "\u2205";
-        String or = "\u2228";
-        parent.label = "(" + subformula1.toString() + or + subformula2.toString() + ")";
-        parent.label += " , { ";
 
-        if (varassign.isEmpty()) {
-            parent.label += phi;
-        }
-        else {
-            String glue = "";
-            for (Map.Entry<String, Vertex> entry : varassign.entrySet()) {
-                String key = entry.getKey();
-                Vertex value = entry.getValue();
-                parent.label += glue + "(" + key + "," + value.label + ")";
-                glue = ",";
-            }
+        parent.label = toString() + ", "
+                       + FirstOrderFormula.variableAssignmentToString(varassign);
 
-        }
-        parent.label += " }";
-
-        //or : player 0 position;
+        // "or", so this is a player 0 position.
         parent.player1Position = false;
         parent.coordinates = new Vector2D(coor.x, coor.y);
         game.addVertex(parent);

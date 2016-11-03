@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 import java.util.HashSet;
-import java.util.Map;
 
 /**
  *
@@ -108,28 +107,16 @@ public class FirstOrderExists extends FirstOrderFormula {
             CoordinateClass coor) {
         Vertex oldvalue = varassign.get(variable);
         FiniteGamePosition parent = new FiniteGamePosition();
-        String phi = "\u2205";
-        String exists = "\u2203";
-        parent.label = "( " + exists + variable + "  (" + subformula1.toString() + ")";
-        parent.label += " , { ";
+
         parent.coordinates = new Vector2D(coor.x, coor.y);
 
-        if (varassign.isEmpty()) {
-            parent.label += phi;
-            coor.x = coor.x + 2;
-        }
-        else {
-            String glue = "";
-            for (Map.Entry<String, Vertex> entry : varassign.entrySet()) {
-                String key = entry.getKey();
-                Vertex value = entry.getValue();
-                parent.label += glue + "(" + key + "," + value.label + ")";
-                glue = ",";
-            }
-        }
-        parent.label += " }";
+        parent.label = toString() + ", "
+                       + FirstOrderFormula.variableAssignmentToString(varassign);
 
-        //exists : player 0 position;
+        if (varassign.isEmpty())
+            coor.x += 2;
+
+        // "exists", so this is a player 0 position.
         parent.player1Position = false;
         game.addVertex(parent);
 
@@ -143,18 +130,9 @@ public class FirstOrderExists extends FirstOrderFormula {
             coor.y = temp.y + 1;
             game.addVertex(gp);
             game.addEdge(game.createEdge(parent, gp));
-            //set label for this vertex
-            gp.label = "(" + subformula1.toString() + ") , { ";
-            String glue = "";
-            for (Map.Entry<String, Vertex> entry : varassign.entrySet()) {
-                String key = entry.getKey();
-                Vertex value = entry.getValue();
-                gp.label += glue + "(" + key + "," + value.label + ")";
-                glue = ",";
-            }
-
-            gp.label += " }";
-
+            // Set label for this vertex.
+            gp.label = subformula1.toString() + ", "
+                       + FirstOrderFormula.variableAssignmentToString(varassign);
         }
         varassign.remove(variable);
         if (oldvalue != null)

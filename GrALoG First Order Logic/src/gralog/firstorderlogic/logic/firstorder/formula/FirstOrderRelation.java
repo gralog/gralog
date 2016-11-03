@@ -92,26 +92,12 @@ public class FirstOrderRelation extends FirstOrderFormula {
     public FiniteGamePosition constructGameGraph(Structure s,
             HashMap<String, Vertex> varassign, FiniteGame game,
             CoordinateClass coor) {
-
         FiniteGamePosition parent = new FiniteGamePosition();
         parent.coordinates = new Vector2D(coor.x, coor.y);
 
         coor.y = coor.y + 1;
-        String phi = "\u2205";
-        parent.label = this.toString() + ", { ";
-        if (varassign.isEmpty()) {
-            parent.label += phi;
-        }
-        else {
-            String glue = "";
-            for (Map.Entry<String, Vertex> entry : varassign.entrySet()) {
-                String key = entry.getKey();
-                Vertex value = entry.getValue();
-                parent.label += glue + "(" + key + "," + value.label + ")";
-                glue = ",";
-            }
-        }
-        parent.label += " }";
+        parent.label = toString() + ", "
+                       + FirstOrderFormula.variableAssignmentToString(varassign);
 
         Boolean res = false;
         Vertex from = varassign.get(parameters.get(0));

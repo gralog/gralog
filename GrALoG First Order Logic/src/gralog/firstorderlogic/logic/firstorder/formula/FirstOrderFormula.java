@@ -10,7 +10,10 @@ import java.util.HashMap;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.algorithm.CoordinateClass;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -30,6 +33,15 @@ abstract public class FirstOrderFormula {
 
     abstract public boolean evaluate(Structure s,
             HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
+
+    protected static String variableAssignmentToString(Map<String, Vertex> assignment) {
+        if (assignment.isEmpty())
+            return "{ }";
+        return "{ " + assignment.entrySet().stream()
+                .map((e) -> e.getKey() + "↦" + e.getValue().label)
+                .collect(Collectors.joining(", "))
+               + " }";
+    }
 
     @Override
     public String toString() {

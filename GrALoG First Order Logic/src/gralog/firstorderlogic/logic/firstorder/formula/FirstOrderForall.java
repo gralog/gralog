@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Set;
 
 import java.util.HashSet;
-import java.util.Map;
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.algorithm.CoordinateClass;
 import gralog.rendering.Vector2D;
@@ -108,31 +107,16 @@ public class FirstOrderForall extends FirstOrderFormula {
             CoordinateClass coor) {
         Vertex oldvalue = varassign.get(variable);
         FiniteGamePosition parent = new FiniteGamePosition();
-        String phi = "\u2205";
-        String forall = "\u2200";
 
         parent.coordinates = new Vector2D(coor.x, coor.y);
 
-        parent.label = "( " + forall + variable + "  (" + subformula1.toString() + ")";
-        parent.label += " , { ";
+        parent.label = toString() + ", "
+                       + FirstOrderFormula.variableAssignmentToString(varassign);
 
-        if (varassign.isEmpty()) {
-            parent.label += phi;
-            coor.x = coor.x + 2;
-        }
-        else {
-            String glue = "";
-            for (Map.Entry<String, Vertex> entry : varassign.entrySet()) {
-                String key = entry.getKey();
-                Vertex value = entry.getValue();
-                parent.label += glue + "(" + key + "," + value.label + ")";
-                glue = ",";
-            }
+        if (varassign.isEmpty())
+            coor.x += 2;
 
-        }
-        parent.label += " }";
-
-        //forall : player 1 position;
+        // "forall", so this is a player 1 position.
         parent.player1Position = true;
 
         game.addVertex(parent);
@@ -147,18 +131,9 @@ public class FirstOrderForall extends FirstOrderFormula {
             coor.y = temp.y + 1;
             game.addVertex(gp);
             game.addEdge(game.createEdge(parent, gp));
-            //set label for this vertex
-            gp.label = "(" + subformula1.toString() + ") , { ";
-            String glue = "";
-            for (Map.Entry<String, Vertex> entry : varassign.entrySet()) {
-                String key = entry.getKey();
-                Vertex value = entry.getValue();
-                gp.label += glue + "(" + key + "," + value.label + ")";
-                glue = ",";
-            }
-
-            gp.label += " }";
-
+            // Set label for this vertex.
+            gp.label = subformula1.toString() + ", "
+                       + FirstOrderFormula.variableAssignmentToString(varassign);
         }
         varassign.remove(variable);
         if (oldvalue != null)
