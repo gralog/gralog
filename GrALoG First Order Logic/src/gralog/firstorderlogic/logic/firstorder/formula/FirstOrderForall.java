@@ -84,9 +84,10 @@ public class FirstOrderForall extends FirstOrderFormula {
         for (Vertex v : V) {
             varassign.put(variable, v);
             Bag t = subformula1.evaluateProver(s, varassign, onprogress);
-            if (!t.eval) {
+            if (t.eval)
+                b.Nodes.add(v);
+            else
                 result = false;
-            }
             t.assignment = assignment + " [ " + variable + " | " + v.label + " ] ";
             t.caption = subformula1.toString();
             b.ChildBags.add(t);
