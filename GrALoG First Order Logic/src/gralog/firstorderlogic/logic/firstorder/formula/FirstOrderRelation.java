@@ -12,9 +12,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import java.util.HashSet;
-import java.util.Map;
 import gralog.finitegame.structure.*;
-import gralog.firstorderlogic.algorithm.CoordinateClass;
 import gralog.rendering.Vector2D;
 import java.util.List;
 
@@ -89,13 +87,12 @@ public class FirstOrderRelation extends FirstOrderFormula {
     }
 
     @Override
-    public FiniteGamePosition constructGameGraph(Structure s,
+    public GameGraphResult constructGameGraph(Structure s,
             HashMap<String, Vertex> varassign, FiniteGame game,
-            CoordinateClass coor) {
+            Vector2D coor) {
         FiniteGamePosition parent = new FiniteGamePosition();
-        parent.coordinates = new Vector2D(coor.x, coor.y);
 
-        coor.y = coor.y + 1;
+        parent.coordinates = coor;
         parent.label = toString() + ", "
                        + FirstOrderFormula.variableAssignmentToString(varassign);
 
@@ -114,7 +111,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
             }
         }
         parent.player1Position = res;
-        return parent;
+        return new GameGraphResult(parent, 1);
     }
 
     @Override

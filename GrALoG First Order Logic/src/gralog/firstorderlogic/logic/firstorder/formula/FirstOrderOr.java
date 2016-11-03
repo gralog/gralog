@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import gralog.finitegame.structure.*;
-import gralog.firstorderlogic.algorithm.CoordinateClass;
 import gralog.rendering.Vector2D;
 
 /**
@@ -79,34 +78,31 @@ public class FirstOrderOr extends FirstOrderFormula {
     }
 
     @Override
-    public FiniteGamePosition constructGameGraph(Structure s,
+    public GameGraphResult constructGameGraph(Structure s,
             HashMap<String, Vertex> varassign, FiniteGame game,
-            CoordinateClass coor) {
-
+            Vector2D coor) {
         FiniteGamePosition parent = new FiniteGamePosition();
 
+        parent.coordinates = coor;
         parent.label = toString() + ", "
                        + FirstOrderFormula.variableAssignmentToString(varassign);
-
         // "or", so this is a player 0 position.
         parent.player1Position = false;
-        parent.coordinates = new Vector2D(coor.x, coor.y);
         game.addVertex(parent);
-        CoordinateClass temp = new CoordinateClass();
-        temp.x = coor.x + 7;
-        temp.y = coor.y;
-        FiniteGamePosition c1 = subformula1.constructGameGraph(s, varassign, game, temp);
-        coor.y = temp.y + 1;
-        game.addVertex(c1);
-        game.addEdge(game.createEdge(parent, c1));
-        temp.x = coor.x + 7;
-        temp.y = coor.y;
-        FiniteGamePosition c2 = subformula2.constructGameGraph(s, varassign, game, temp);
-        coor.y = temp.y + 1;
-        game.addVertex(c2);
-        game.addEdge(game.createEdge(parent, c2));
 
-        return parent;
+        GameGraphResult c1 = subformula1.constructGameGraph(
+                s, varassign, game, new Vector2D(coor.getX() + xOffset, coor.getY()));
+        game.addVertex(c1.position);
+
+        game.addEdge(game.createEdge(parent, c1.position));
+
+        GameGraphResult c2 = subformula2.constructGameGraph(
+                s, varassign, game, new Vector2D(coor.getX() + xOffset, coor.getY() + c1.height + 1));
+        game.addVertex(c2.position);
+
+        game.addEdge(game.createEdge(parent, c2.position));
+
+        return new GameGraphResult(parent, c1.height + c2.height + 1);
     }
 
     @Override

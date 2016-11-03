@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import gralog.finitegame.structure.*;
-import gralog.firstorderlogic.algorithm.CoordinateClass;
+import gralog.rendering.Vector2D;
 
 /**
  *
@@ -57,9 +57,9 @@ public class FirstOrderNot extends FirstOrderFormula {
     }
 
     @Override
-    public FiniteGamePosition constructGameGraph(Structure s,
+    public GameGraphResult constructGameGraph(Structure s,
             HashMap<String, Vertex> varassign, FiniteGame game,
-            CoordinateClass coor) {
+            Vector2D coor) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

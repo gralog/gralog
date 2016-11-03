@@ -14,7 +14,6 @@ import java.util.Set;
 
 import java.util.HashSet;
 import gralog.finitegame.structure.*;
-import gralog.firstorderlogic.algorithm.CoordinateClass;
 import gralog.rendering.Vector2D;
 
 /**
@@ -102,43 +101,36 @@ public class FirstOrderForall extends FirstOrderFormula {
     }
 
     @Override
-    public FiniteGamePosition constructGameGraph(Structure s,
+    public GameGraphResult constructGameGraph(Structure s,
             HashMap<String, Vertex> varassign, FiniteGame game,
-            CoordinateClass coor) {
+            Vector2D coor) {
         Vertex oldvalue = varassign.get(variable);
         FiniteGamePosition parent = new FiniteGamePosition();
 
-        parent.coordinates = new Vector2D(coor.x, coor.y);
-
+        parent.coordinates = coor;
         parent.label = toString() + ", "
                        + FirstOrderFormula.variableAssignmentToString(varassign);
-
-        if (varassign.isEmpty())
-            coor.x += 2;
-
         // "forall", so this is a player 1 position.
         parent.player1Position = true;
-
         game.addVertex(parent);
 
         Set<Vertex> V = s.getVertices();
+        int yOffset = 0;
         for (Vertex v : V) {
             varassign.put(variable, v);
-            CoordinateClass temp = new CoordinateClass();
-            temp.x = coor.x + 7;
-            temp.y = coor.y;
-            FiniteGamePosition gp = subformula1.constructGameGraph(s, varassign, game, temp);
-            coor.y = temp.y + 1;
-            game.addVertex(gp);
-            game.addEdge(game.createEdge(parent, gp));
+            GameGraphResult gp = subformula1.constructGameGraph(
+                    s, varassign, game, new Vector2D(coor.getX() + xOffset, coor.getY() + yOffset));
+            yOffset += gp.height + 1;
+            game.addVertex(gp.position);
+            game.addEdge(game.createEdge(parent, gp.position));
             // Set label for this vertex.
-            gp.label = subformula1.toString() + ", "
-                       + FirstOrderFormula.variableAssignmentToString(varassign);
+            gp.position.label = subformula1.toString() + ", "
+                                + FirstOrderFormula.variableAssignmentToString(varassign);
         }
         varassign.remove(variable);
         if (oldvalue != null)
             varassign.put(variable, oldvalue);
-        return parent;
+        return new GameGraphResult(parent, yOffset);
     }
 
     @Override

@@ -9,9 +9,8 @@ import gralog.structure.*;
 import java.util.HashMap;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.finitegame.structure.*;
-import gralog.firstorderlogic.algorithm.CoordinateClass;
+import gralog.rendering.Vector2D;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -20,12 +19,24 @@ import java.util.stream.Collectors;
  */
 abstract public class FirstOrderFormula {
 
+    public class GameGraphResult {
+
+        GameGraphResult(FiniteGamePosition pos, int h) {
+            position = pos;
+            height = h;
+        }
+        public final FiniteGamePosition position;
+        public final int height;
+    }
+
+    protected final int xOffset = 9;
+
     abstract public Bag evaluateProver(Structure s,
             HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
 
-    abstract public FiniteGamePosition constructGameGraph(Structure s,
+    abstract public GameGraphResult constructGameGraph(Structure s,
             HashMap<String, Vertex> varassign, FiniteGame game,
-            CoordinateClass coor);
+            Vector2D coor);
 
     abstract public Set<String> variables() throws Exception;
 
@@ -34,7 +45,8 @@ abstract public class FirstOrderFormula {
     abstract public boolean evaluate(Structure s,
             HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
 
-    protected static String variableAssignmentToString(Map<String, Vertex> assignment) {
+    protected static String variableAssignmentToString(
+            Map<String, Vertex> assignment) {
         if (assignment.isEmpty())
             return "{ }";
         return "{ " + assignment.entrySet().stream()

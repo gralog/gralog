@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import gralog.finitegame.structure.*;
+import gralog.rendering.Vector2D;
 import java.io.IOException;
 
 /**
@@ -89,11 +90,9 @@ public class ModelCheckingGameFOLogic extends Algorithm {
         }
         HashMap<String, Vertex> varassign = new HashMap<>();
         FiniteGame gp = new FiniteGame();
-        CoordinateClass ob = new CoordinateClass();
-        ob.x = 5.0;
-        ob.y = 5.0;
+        Vector2D ob = new Vector2D(5.0, 5.0);
 
-        FiniteGamePosition root = phi.constructGameGraph(s, varassign, gp, ob);
+        phi.constructGameGraph(s, varassign, gp, ob);
 
         return gp;
     }
