@@ -1,0 +1,112 @@
+/*
+ * This file is part of GrALoG FX, Copyright (c) 2016 LaS group, TU Berlin.
+ * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later.
+ */
+package gralog.firstorderlogic.logic.firstorder.formula;
+
+import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
+import java.util.ArrayList;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/**
+ *
+ */
+public class FirstOrderFormulaTest {
+
+    public FirstOrderFormulaTest() {
+        ArrayList<String> params = new ArrayList<>();
+        params.add("x");
+        params.add("y");
+        relation = new FirstOrderRelation("E", params);
+    }
+
+    @Test
+    public void testToStringSimple() {
+        assertEquals("E(x,y)", relation.toString());
+        assertEquals("E(x,y) ∧ E(x,y)", (new FirstOrderAnd(relation, relation)).toString());
+        assertEquals("E(x,y) ∨ E(x,y)", (new FirstOrderOr(relation, relation)).toString());
+        assertEquals("¬E(x,y)", (new FirstOrderNot(relation)).toString());
+    }
+
+    @Test
+    public void testToStringNested() {
+        assertEquals("E(x,y) ∧ E(x,y) ∧ E(x,y)", (new FirstOrderAnd(new FirstOrderAnd(relation, relation), relation)).toString());
+        assertEquals("E(x,y) ∧ (E(x,y) ∧ E(x,y))", (new FirstOrderAnd(relation, new FirstOrderAnd(relation, relation))).toString());
+        assertEquals("E(x,y) ∨ E(x,y) ∨ E(x,y)", (new FirstOrderOr(new FirstOrderOr(relation, relation), relation)).toString());
+        assertEquals("E(x,y) ∨ (E(x,y) ∨ E(x,y))", (new FirstOrderOr(relation, new FirstOrderOr(relation, relation))).toString());
+        assertEquals("E(x,y) ∨ E(x,y) ∧ E(x,y)", (new FirstOrderOr(relation, new FirstOrderAnd(relation, relation))).toString());
+        assertEquals("(E(x,y) ∨ E(x,y)) ∧ E(x,y)", (new FirstOrderAnd(new FirstOrderOr(relation, relation), relation)).toString());
+        assertEquals("E(x,y) ∧ E(x,y) ∨ E(x,y)", (new FirstOrderOr(new FirstOrderAnd(relation, relation), relation)).toString());
+        assertEquals("E(x,y) ∧ (E(x,y) ∨ E(x,y))", (new FirstOrderAnd(relation, new FirstOrderOr(relation, relation))).toString());
+        assertEquals("E(x,y) ∧ (E(x,y) ∨ E(x,y))", (new FirstOrderAnd(relation, new FirstOrderOr(relation, relation))).toString());
+    }
+
+    @Test
+    public void testToStringQuantifiers() {
+        assertEquals("∀x. ∃y. E(x,y)", (new FirstOrderForall("x", new FirstOrderExists("y", relation))).toString());
+        assertEquals("∀x. ∃y. ¬E(x,y)", (new FirstOrderForall("x", new FirstOrderExists("y", new FirstOrderNot(relation)))).toString());
+        assertEquals("∀x. ¬∃y. E(x,y)", (new FirstOrderForall("x", new FirstOrderNot(new FirstOrderExists("y", relation)))).toString());
+        assertEquals("¬∀x. ∃y. E(x,y)", (new FirstOrderNot(new FirstOrderForall("x", new FirstOrderExists("y", relation)))).toString());
+        assertEquals("∀x. E(x,y) ∧ E(x,y)", (new FirstOrderForall("x", new FirstOrderAnd(relation, relation))).toString());
+        assertEquals("∀x. E(x,y) ∨ E(x,y)", (new FirstOrderForall("x", new FirstOrderOr(relation, relation))).toString());
+        assertEquals("(∀x. E(x,y)) ∨ E(x,y)", (new FirstOrderOr(new FirstOrderForall("x", relation), relation)).toString());
+        assertEquals("(∀x. E(x,y)) ∧ E(x,y)", (new FirstOrderAnd(new FirstOrderForall("x", relation), relation)).toString());
+        assertEquals("E(x,y) ∨ ∀x. E(x,y)", (new FirstOrderOr(relation, new FirstOrderForall("x", relation))).toString());
+        assertEquals("E(x,y) ∧ ∀x. E(x,y)", (new FirstOrderAnd(relation, new FirstOrderForall("x", relation))).toString());
+    }
+
+    private void parseAndCompare(String toParse) throws Exception {
+        parseAndCompare(toParse, toParse);
+    }
+    private void parseAndCompare(String toParse, String result) throws Exception {
+        FirstOrderParser parser = new FirstOrderParser();
+        assertEquals(result, parser.parseString(toParse).toString());
+    }
+
+    @Test
+    public void testParseAlternateNotation() throws Exception {
+        // LaTeX notation
+        parseAndCompare("\\neg E(x,y)", "¬E(x,y)");
+        parseAndCompare("E(x,x) \\vee E(y,y)", "E(x,x) ∨ E(y,y)");
+        parseAndCompare("E(x,x) \\wedge E(y,y)", "E(x,x) ∧ E(y,y)");
+        parseAndCompare("\\forall x. E(x,y)", "∀x. E(x,y)");
+        parseAndCompare("\\exists x. E(x,y)", "∃x. E(x,y)");
+
+        // ASCII notation
+        parseAndCompare("-E(x,y)", "¬E(x,y)");
+        parseAndCompare("E(x,x) + E(y,y)", "E(x,x) ∨ E(y,y)");
+        parseAndCompare("E(x,x) * E(y,y)", "E(x,x) ∧ E(y,y)");
+        parseAndCompare("!x. E(x,y)", "∀x. E(x,y)");
+        parseAndCompare("?x. E(x,y)", "∃x. E(x,y)");
+    }
+
+    /**
+     * Tests that parsing a formula and printing it produces the same (or
+     * equivalent) result.
+     */
+    @Test
+    public void testParse() throws Exception {
+        parseAndCompare("¬E(x,y)");
+        // ∧ and ∨ are left-associative.
+        parseAndCompare("E(x,y) ∧ E(y,x) ∧ E(z,z)");
+        parseAndCompare("E(x,y) ∨ E(y,x) ∨ E(z,z)");
+        parseAndCompare("(E(x,y) ∧ E(y,x)) ∧ E(z,z)", "E(x,y) ∧ E(y,x) ∧ E(z,z)");
+        parseAndCompare("(E(x,y) ∨ E(y,x)) ∨ E(z,z)", "E(x,y) ∨ E(y,x) ∨ E(z,z)");
+        parseAndCompare("E(x,y) ∧ (E(y,x) ∧ E(z,z))");
+        parseAndCompare("E(x,y) ∨ (E(y,x) ∨ E(z,z))");
+        parseAndCompare("∀x. ∃y. E(x,y)");
+        parseAndCompare("∀x.∃y.E(x,y)", "∀x. ∃y. E(x,y)");
+        // Check that the dot after the quantifiers is optional
+        parseAndCompare("∀x∃y E(x,y)", "∀x. ∃y. E(x,y)");
+        parseAndCompare("¬∀x¬∃y¬E(x,y)", "¬∀x. ¬∃y. ¬E(x,y)");
+        parseAndCompare("∀x. E(x,y) ∧ E(x,y)");
+        parseAndCompare("∀x. E(x,y) ∨ E(x,y)");
+        parseAndCompare("∀x. ¬E(x,y) ∨ E(x,y)");
+        parseAndCompare("∀x. ¬(E(x,y) ∨ E(x,y))");
+        parseAndCompare("∀x. (¬E(x,y) ∨ E(x,y))", "∀x. ¬E(x,y) ∨ E(x,y)");
+        parseAndCompare("(∀x. ¬E(x,y)) ∨ E(x,y)");
+    }
+
+    private final FirstOrderFormula relation;
+}
