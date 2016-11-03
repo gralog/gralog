@@ -47,55 +47,59 @@ parser code {:
         Symbol parserresult = this.parse();
         return (FirstOrderFormula) parserresult.value;
     }
-
 :}
 
-
-
-
-terminal OPEN, CLOSE;                             // "(", ")"
-terminal NEG, AND, OR;                            // \neg, \wedge, \vee
-terminal EXISTS, FORALL;                          // \exists \forall
-terminal COMMA, DOT;                              // ",", "."
+terminal OPEN, CLOSE;      // "(", ")"
+terminal NEG, AND, OR;     // \neg, \wedge, \vee
+terminal EXISTS, FORALL;   // \exists \forall
+terminal COMMA, DOT;       // ",", "."
 terminal String STRING;
 
 non terminal FirstOrderFormula formula;
-non terminal FirstOrderFormula veeformula;
-non terminal FirstOrderFormula wedgeformula;
-non terminal FirstOrderFormula atomicformula;
+non terminal FirstOrderFormula quantifiedformula;
+non terminal FirstOrderFormula basicformula;
 non terminal Vector<String> parameters;
 
+precedence left OR;
+precedence left AND;
+precedence left NEG;
 
+formula ::=
+    quantifiedformula:f
+        {: RESULT = f; :}
+    | basicformula:f
+        {: RESULT = f; :}
+    ;
 
-formula ::= veeformula:f 
-                   {: RESULT = f; :} ;
+basicformula ::=
+    basicformula:left OR basicformula:right
+        {: RESULT = new FirstOrderOr(left, right); :}
+    | basicformula:left AND basicformula:right
+        {: RESULT = new FirstOrderAnd(left, right); :}
+    | NEG basicformula:f
+        {: RESULT = new FirstOrderNot(f); :}
+    | OPEN formula:f CLOSE
+        {: RESULT = f; :}
+    | STRING:rel OPEN parameters:params CLOSE
+        {: RESULT = new FirstOrderRelation(rel, params); :}
+    ;
 
-veeformula ::= wedgeformula:left OR veeformula:right
-                   {: RESULT = new FirstOrderOr(left, right); :}
-             | wedgeformula:f
-                   {: RESULT = f; :}
-             ;
+quantifiedformula ::=
+    NEG quantifiedformula:f
+        {: RESULT = new FirstOrderNot(f); :}
+    | EXISTS STRING:var DOT formula:f
+        {: RESULT = new FirstOrderExists(var, f); :}
+    | EXISTS STRING:var formula:f
+        {: RESULT = new FirstOrderExists(var, f); :}
+    | FORALL STRING:var DOT formula:f
+        {: RESULT = new FirstOrderForall(var, f); :}
+    | FORALL STRING:var formula:f
+        {: RESULT = new FirstOrderForall(var, f); :}
+    ;
 
-wedgeformula ::= atomicformula:left AND wedgeformula:right
-                  {: RESULT = new FirstOrderAnd(left, right); :}
-            | atomicformula:f
-                  {: RESULT = f; :}
-            ;
-
-atomicformula ::= NEG atomicformula:f
-                  {: RESULT = new FirstOrderNot(f); :}
-                | OPEN formula:f CLOSE
-                  {: RESULT = f; :}
-                | STRING:rel OPEN parameters:params CLOSE
-                  {: RESULT = new FirstOrderRelation(rel, params); :}
-                | EXISTS STRING:var DOT atomicformula:f
-                  {: RESULT = new FirstOrderExists(var, f); :}
-                | FORALL STRING:var DOT atomicformula:f
-                  {: RESULT = new FirstOrderForall(var, f); :}
-            ;
-
-parameters ::= STRING:s
-               {: RESULT = new Vector<String>(); RESULT.add(s); :}
-             | parameters:params COMMA STRING:s
-               {: RESULT = params; RESULT.add(s); :}
-             ;
+parameters ::=
+    STRING:s
+        {: RESULT = new Vector<String>(); RESULT.add(s); :}
+    | parameters:params COMMA STRING:s
+        {: RESULT = params; RESULT.add(s); :}
+    ;
