@@ -64,7 +64,7 @@ public class FirstOrderForall extends FirstOrderFormula {
     @Override
     public String toString() {
         String forall = "\u2200";
-        return forall + variable + " " + subformula1.toString();
+        return forall + variable + ". " + subformula1.toString();
     }
 
     @Override

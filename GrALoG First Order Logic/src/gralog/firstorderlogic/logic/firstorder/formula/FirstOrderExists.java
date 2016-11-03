@@ -35,7 +35,7 @@ public class FirstOrderExists extends FirstOrderFormula {
     @Override
     public String toString() {
         String exists = "\u2203";
-        return exists + variable + " " + subformula1.toString();
+        return exists + variable + ". " + subformula1.toString();
     }
 
     @Override
