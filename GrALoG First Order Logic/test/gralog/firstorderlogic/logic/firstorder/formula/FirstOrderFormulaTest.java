@@ -29,6 +29,9 @@ public class FirstOrderFormulaTest {
         return v;
     }
 
+    /**
+     * Test the pretty printing of variable assignments.
+     */
     @Test
     public void testVariableAssignmentToString() {
         TreeMap<String, Vertex> assignment = new TreeMap<>();
@@ -41,6 +44,9 @@ public class FirstOrderFormulaTest {
         assertEquals("{ x↦0, y↦1, z↦2 }", FirstOrderFormula.variableAssignmentToString(assignment));
     }
 
+    /**
+     * Test the pretty printing of formulas.
+     */
     @Test
     public void testToStringSimple() {
         assertEquals("E(x,y)", relation.toString());
@@ -49,6 +55,9 @@ public class FirstOrderFormulaTest {
         assertEquals("¬E(x,y)", (new FirstOrderNot(relation)).toString());
     }
 
+    /**
+     * Test the pretty printing of nested formulas.
+     */
     @Test
     public void testToStringNested() {
         assertEquals("E(x,y) ∧ E(x,y) ∧ E(x,y)", (new FirstOrderAnd(new FirstOrderAnd(relation, relation), relation)).toString());
@@ -62,6 +71,9 @@ public class FirstOrderFormulaTest {
         assertEquals("E(x,y) ∧ (E(x,y) ∨ E(x,y))", (new FirstOrderAnd(relation, new FirstOrderOr(relation, relation))).toString());
     }
 
+    /**
+     * Test the pretty printing of quantifiers.
+     */
     @Test
     public void testToStringQuantifiers() {
         assertEquals("∀x. ∃y. E(x,y)", (new FirstOrderForall("x", new FirstOrderExists("y", relation))).toString());
@@ -79,30 +91,14 @@ public class FirstOrderFormulaTest {
     private void parseAndCompare(String toParse) throws Exception {
         parseAndCompare(toParse, toParse);
     }
+
     private void parseAndCompare(String toParse, String result) throws Exception {
         FirstOrderParser parser = new FirstOrderParser();
         assertEquals(result, parser.parseString(toParse).toString());
     }
 
-    @Test
-    public void testParseAlternateNotation() throws Exception {
-        // LaTeX notation
-        parseAndCompare("\\neg E(x,y)", "¬E(x,y)");
-        parseAndCompare("E(x,x) \\vee E(y,y)", "E(x,x) ∨ E(y,y)");
-        parseAndCompare("E(x,x) \\wedge E(y,y)", "E(x,x) ∧ E(y,y)");
-        parseAndCompare("\\forall x. E(x,y)", "∀x. E(x,y)");
-        parseAndCompare("\\exists x. E(x,y)", "∃x. E(x,y)");
-
-        // ASCII notation
-        parseAndCompare("-E(x,y)", "¬E(x,y)");
-        parseAndCompare("E(x,x) + E(y,y)", "E(x,x) ∨ E(y,y)");
-        parseAndCompare("E(x,x) * E(y,y)", "E(x,x) ∧ E(y,y)");
-        parseAndCompare("!x. E(x,y)", "∀x. E(x,y)");
-        parseAndCompare("?x. E(x,y)", "∃x. E(x,y)");
-    }
-
     /**
-     * Tests that parsing a formula and printing it produces the same (or
+     * Test that parsing a formula and printing it produces the same (or
      * equivalent) result.
      */
     @Test
@@ -126,6 +122,26 @@ public class FirstOrderFormulaTest {
         parseAndCompare("∀x. ¬(E(x,y) ∨ E(x,y))");
         parseAndCompare("∀x. (¬E(x,y) ∨ E(x,y))", "∀x. ¬E(x,y) ∨ E(x,y)");
         parseAndCompare("(∀x. ¬E(x,y)) ∨ E(x,y)");
+    }
+
+    /**
+     * Test that parsing LaTeX and ASCII notation works as expected.
+     */
+    @Test
+    public void testParseAlternateNotation() throws Exception {
+        // LaTeX notation
+        parseAndCompare("\\neg E(x,y)", "¬E(x,y)");
+        parseAndCompare("E(x,x) \\vee E(y,y)", "E(x,x) ∨ E(y,y)");
+        parseAndCompare("E(x,x) \\wedge E(y,y)", "E(x,x) ∧ E(y,y)");
+        parseAndCompare("\\forall x. E(x,y)", "∀x. E(x,y)");
+        parseAndCompare("\\exists x. E(x,y)", "∃x. E(x,y)");
+
+        // ASCII notation
+        parseAndCompare("-E(x,y)", "¬E(x,y)");
+        parseAndCompare("E(x,x) + E(y,y)", "E(x,x) ∨ E(y,y)");
+        parseAndCompare("E(x,x) * E(y,y)", "E(x,x) ∧ E(y,y)");
+        parseAndCompare("!x. E(x,y)", "∀x. E(x,y)");
+        parseAndCompare("?x. E(x,y)", "∃x. E(x,y)");
     }
 
     private final FirstOrderFormula relation;
