@@ -30,4 +30,17 @@ abstract public class FirstOrderFormula {
 
     abstract public boolean evaluate(Structure s,
             HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
+
+    @Override
+    public String toString() {
+        return toString(FormulaPosition.Quantifier);
+    }
+
+    abstract public String toString(FormulaPosition pos);
+
+    // For the toString method, we track the position in the formula in order
+    // to produce a string with a minimum number of parantheses.
+    public enum FormulaPosition {
+        Not, OrLeft, OrRight, AndLeft, AndRight, Quantifier
+    }
 }

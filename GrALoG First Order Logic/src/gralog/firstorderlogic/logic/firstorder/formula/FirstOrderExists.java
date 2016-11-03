@@ -33,9 +33,12 @@ public class FirstOrderExists extends FirstOrderFormula {
     }
 
     @Override
-    public String toString() {
-        String exists = "\u2203";
-        return exists + variable + ". " + subformula1.toString();
+    public String toString(FormulaPosition pos) {
+        String result = "∃" + variable + ". "
+                        + subformula1.toString(FormulaPosition.Quantifier);
+        if (pos == FormulaPosition.OrLeft || pos == FormulaPosition.AndLeft)
+            return "(" + result + ")";
+        return result;
     }
 
     @Override

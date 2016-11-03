@@ -28,9 +28,8 @@ public class FirstOrderNot extends FirstOrderFormula {
     }
 
     @Override
-    public String toString() {
-        String not = "\u00AC";
-        return not + " (" + subformula1.toString() + ")";
+    public String toString(FormulaPosition pos) {
+        return "¬" + subformula1.toString(FormulaPosition.Not);
     }
 
     @Override

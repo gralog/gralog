@@ -32,7 +32,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
     }
 
     @Override
-    public String toString() {
+    public String toString(FormulaPosition pos) {
         String result = "";
         String glue = "";
 

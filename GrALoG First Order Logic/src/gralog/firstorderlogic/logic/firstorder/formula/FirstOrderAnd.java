@@ -32,10 +32,12 @@ public class FirstOrderAnd extends FirstOrderFormula {
     }
 
     @Override
-    public String toString() {
-
-        String and = "\u2227";
-        return "(" + subformula1.toString() + and + subformula2.toString() + ")";
+    public String toString(FormulaPosition pos) {
+        String result = subformula1.toString(FormulaPosition.AndLeft) + " ∧ "
+                        + subformula2.toString(FormulaPosition.AndRight);
+        if (pos == FormulaPosition.Not || pos == FormulaPosition.AndRight)
+            return "(" + result + ")";
+        return result;
     }
 
     @Override

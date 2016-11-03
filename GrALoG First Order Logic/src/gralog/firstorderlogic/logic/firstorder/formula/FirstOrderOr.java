@@ -32,9 +32,18 @@ public class FirstOrderOr extends FirstOrderFormula {
     }
 
     @Override
-    public String toString() {
-        String or = "\u2228";
-        return "(" + subformula1.toString() + or + subformula2.toString() + ")";
+    public String toString(FormulaPosition pos) {
+        String result = subformula1.toString(FormulaPosition.OrLeft) + " ∨ "
+                        + subformula2.toString(FormulaPosition.OrRight);
+        switch (pos) {
+            case Not:
+            case AndLeft:
+            case AndRight:
+            case OrRight:
+                return "(" + result + ")";
+            default:
+                return result;
+        }
     }
 
     @Override
