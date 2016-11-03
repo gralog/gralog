@@ -30,11 +30,11 @@ import java.lang.StringBuffer;
 
 [ \t\r\n\f]           { /* ignore white space. */ }
 
-"\\exists"            { return sf.newSymbol("\\exists",FirstOrderScannerToken.EXISTS); }
-"\\forall"            { return sf.newSymbol("\\forall",FirstOrderScannerToken.FORALL); }
-"\\neg"               { return sf.newSymbol("\\neg",FirstOrderScannerToken.NEG); }
-"\\vee"               { return sf.newSymbol("\\vee",FirstOrderScannerToken.OR); }
-"\\wedge"             { return sf.newSymbol("\\wedge",FirstOrderScannerToken.AND); }
+"\\exists" | [∃?]     { return sf.newSymbol("\\exists",FirstOrderScannerToken.EXISTS); }
+"\\forall" | [∀!]     { return sf.newSymbol("\\forall",FirstOrderScannerToken.FORALL); }
+"\\neg" | [¬-]        { return sf.newSymbol("\\neg",FirstOrderScannerToken.NEG); }
+"\\vee" | [∨+]        { return sf.newSymbol("\\vee",FirstOrderScannerToken.OR); }
+"\\wedge" | [∧*]      { return sf.newSymbol("\\wedge",FirstOrderScannerToken.AND); }
 
 "("                   { return sf.newSymbol("(",FirstOrderScannerToken.OPEN); }
 ")"                   { return sf.newSymbol(")",FirstOrderScannerToken.CLOSE); }
