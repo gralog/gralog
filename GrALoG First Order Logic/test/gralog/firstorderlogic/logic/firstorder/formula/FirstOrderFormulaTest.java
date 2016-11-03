@@ -138,6 +138,7 @@ public class FirstOrderFormulaTest {
 
         // ASCII notation
         parseAndCompare("-E(x,y)", "¬E(x,y)");
+        parseAndCompare("~E(x,y)", "¬E(x,y)");
         parseAndCompare("E(x,x) + E(y,y)", "E(x,x) ∨ E(y,y)");
         parseAndCompare("E(x,x) * E(y,y)", "E(x,x) ∧ E(y,y)");
         parseAndCompare("!x. E(x,y)", "∀x. E(x,y)");

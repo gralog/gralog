@@ -32,7 +32,7 @@ import java.lang.StringBuffer;
 
 "\\exists" | [∃?]     { return sf.newSymbol("\\exists",FirstOrderScannerToken.EXISTS); }
 "\\forall" | [∀!]     { return sf.newSymbol("\\forall",FirstOrderScannerToken.FORALL); }
-"\\neg" | [¬-]        { return sf.newSymbol("\\neg",FirstOrderScannerToken.NEG); }
+"\\neg" | [¬~-]       { return sf.newSymbol("\\neg",FirstOrderScannerToken.NEG); }
 "\\vee" | [∨+]        { return sf.newSymbol("\\vee",FirstOrderScannerToken.OR); }
 "\\wedge" | [∧*]      { return sf.newSymbol("\\wedge",FirstOrderScannerToken.AND); }
 
