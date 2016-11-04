@@ -1,45 +1,48 @@
 package gralog.firstorderlogic.logic.firstorder.parser;
 
-import java_cup.runtime.SymbolFactory;
-import java.lang.StringBuffer;
+import java_cup.runtime.Symbol;
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 
 %%
+%class FirstOrderScanner
 %unicode
 %cup
-%class FirstOrderScanner
+%column
+
 %{
-    public FirstOrderScanner(java.io.InputStream r, SymbolFactory sf){
-        this(r);
-        this.sf=sf;
+    private ComplexSymbolFactory sf = new ComplexSymbolFactory();
+
+    private Symbol symbol(String name, int type) {
+        return symbol(name, type, null);
     }
-    private SymbolFactory sf;
+
+    private Symbol symbol(String name, int type, Object value) {
+        return sf.newSymbol(name, type,
+            new Location(0, yycolumn, yychar),
+            new Location(0, yycolumn + yylength(), yychar + yylength()),
+            value);
+    }
 %}
 
-
-
-
 %eofval{
-    return sf.newSymbol("EOF",FirstOrderScannerToken.EOF);
+    return symbol("EOF", FirstOrderScannerToken.EOF);
 %eofval}
-
-
-
-
 
 %%
 
 [ \t\r\n\f]           { /* ignore white space. */ }
 
-"\\exists" | [∃?]     { return sf.newSymbol("\\exists",FirstOrderScannerToken.EXISTS); }
-"\\forall" | [∀!]     { return sf.newSymbol("\\forall",FirstOrderScannerToken.FORALL); }
-"\\neg" | [¬~-]       { return sf.newSymbol("\\neg",FirstOrderScannerToken.NEG); }
-"\\vee" | [∨+]        { return sf.newSymbol("\\vee",FirstOrderScannerToken.OR); }
-"\\wedge" | [∧*]      { return sf.newSymbol("\\wedge",FirstOrderScannerToken.AND); }
+"\\exists" | [∃?]     { return symbol("EXISTS", FirstOrderScannerToken.EXISTS); }
+"\\forall" | [∀!]     { return symbol("FORALL", FirstOrderScannerToken.FORALL); }
+"\\neg" | [¬~-]       { return symbol("NEGATION", FirstOrderScannerToken.NEG); }
+"\\vee" | [∨+]        { return symbol("OR", FirstOrderScannerToken.OR); }
+"\\wedge" | [∧*]      { return symbol("AND", FirstOrderScannerToken.AND); }
 
-"("                   { return sf.newSymbol("(",FirstOrderScannerToken.OPEN); }
-")"                   { return sf.newSymbol(")",FirstOrderScannerToken.CLOSE); }
-","                   { return sf.newSymbol(",",FirstOrderScannerToken.COMMA); }
-"."                   { return sf.newSymbol(".",FirstOrderScannerToken.DOT); }
+"("                   { return symbol("(", FirstOrderScannerToken.OPEN); }
+")"                   { return symbol(")", FirstOrderScannerToken.CLOSE); }
+","                   { return symbol(",", FirstOrderScannerToken.COMMA); }
+"."                   { return symbol(".", FirstOrderScannerToken.DOT); }
 
-[A-Za-z][A-Za-z0-9]*  { return sf.newSymbol("string", FirstOrderScannerToken.STRING, yytext()); }
+[A-Za-z][A-Za-z0-9]*  { return symbol("string", FirstOrderScannerToken.STRING, yytext()); }
 .                     { System.err.println("Illegal character: "+yytext()); }

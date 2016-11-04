@@ -115,6 +115,11 @@ public class FirstOrderFormulaTest {
 
         // Check quantifiers.
         parseAndCompare("∀x. ∃y. E(x,y)");
+        parseAndCompare("E(x,y) ∧ ∃y. E(y,y)");
+        parseAndCompare("E(x,y) ∨ ∃y. E(y,y)");
+        parseAndCompare("E(x,y) ∨ (∀x. ∃y. E(y,y) ∧ E(z,z)) ∨ E(x,x)");
+        parseAndCompare("E(x,y) ∧ E(x,y) ∨ ∃y. E(y,y)");
+        parseAndCompare("E(x,y) ∨ E(x,y) ∧ ∃y. E(y,y)");
         parseAndCompare("∀x.∃y.E(x,y)", "∀x. ∃y. E(x,y)");
         // Check that the dot after the quantifiers is optional.
         parseAndCompare("∀x∃y E(x,y)", "∀x. ∃y. E(x,y)");

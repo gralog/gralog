@@ -3,12 +3,14 @@ package gralog.firstorderlogic.logic.firstorder.parser;
 import java_cup.runtime.*;
 import gralog.firstorderlogic.logic.firstorder.formula.*;
 import java.io.ByteArrayInputStream;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 
 parser code {:
 
     String errorMsg = null;
+    private String inputString;
 
     public Boolean hasError()
     {
@@ -23,6 +25,14 @@ parser code {:
             return errorMsg;
     }
     
+
+    public void report_error(String message, Object info) {
+        java_cup.runtime.ComplexSymbolFactory.ComplexSymbol symbol = (java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)info;
+        String goodPrefix = inputString.substring(0, symbol.xleft.getColumn());
+        String badSuffix = inputString.substring(symbol.xleft.getColumn());
+        System.err.println("Parse error: Unexpected " + symbol.getName() + " at " + goodPrefix + " <HERE> " + badSuffix);
+    }
+
     public void syntax_error(Symbol cur_token)
     {
         if(errorMsg == null)
@@ -31,7 +41,7 @@ parser code {:
 
     public void report_fatal_error(String message, Object info) throws Exception
     {
-        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+        report_error(message, info);
     }
 
     public FirstOrderFormula parseString(String str) throws Exception
@@ -39,11 +49,11 @@ parser code {:
         String charset = "UTF8";
         byte[] bytes = str.getBytes(charset);
         ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
-                
-        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
-        FirstOrderScanner scanner = new FirstOrderScanner(stringstream, symbolfactory);
+
+        inputString = str;
+        FirstOrderScanner scanner = new FirstOrderScanner(stringstream);
         this.setScanner(scanner);
-        
+
         Symbol parserresult = this.parse();
         return (FirstOrderFormula) parserresult.value;
     }
@@ -58,25 +68,39 @@ terminal String STRING;
 non terminal FirstOrderFormula formula;
 non terminal FirstOrderFormula quantifiedformula;
 non terminal FirstOrderFormula basicformula;
-non terminal Vector<String> parameters;
-
-precedence left OR;
-precedence left AND;
-precedence left NEG;
+non terminal FirstOrderFormula disjunction;
+non terminal FirstOrderFormula conjunction;
+non terminal List<String> parameters;
 
 formula ::=
     quantifiedformula:f
         {: RESULT = f; :}
+    | disjunction:left OR quantifiedformula:right
+        {: RESULT = new FirstOrderOr(left, right); :}
+    | conjunction:left AND quantifiedformula:right
+        {: RESULT = new FirstOrderAnd(left, right); :}
+    | disjunction:left OR conjunction:middle AND quantifiedformula:right
+        {: RESULT = new FirstOrderOr(left, new FirstOrderAnd(middle, right)); :}
+    | disjunction:f
+        {: RESULT = f; :}
+    ;
+
+disjunction ::=
+    disjunction:left OR conjunction:right
+        {: RESULT = new FirstOrderOr(left, right); :}
+    | conjunction:f
+        {: RESULT = f; :}
+    ;
+
+conjunction ::=
+    conjunction:left AND basicformula:right
+        {: RESULT = new FirstOrderAnd(left, right); :}
     | basicformula:f
         {: RESULT = f; :}
     ;
 
 basicformula ::=
-    basicformula:left OR basicformula:right
-        {: RESULT = new FirstOrderOr(left, right); :}
-    | basicformula:left AND basicformula:right
-        {: RESULT = new FirstOrderAnd(left, right); :}
-    | NEG basicformula:f
+    NEG basicformula:f
         {: RESULT = new FirstOrderNot(f); :}
     | OPEN formula:f CLOSE
         {: RESULT = f; :}
@@ -99,7 +123,7 @@ quantifiedformula ::=
 
 parameters ::=
     STRING:s
-        {: RESULT = new Vector<String>(); RESULT.add(s); :}
+        {: RESULT = new ArrayList<String>(); RESULT.add(s); :}
     | parameters:params COMMA STRING:s
         {: RESULT = params; RESULT.add(s); :}
     ;
