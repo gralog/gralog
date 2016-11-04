@@ -4,9 +4,7 @@
  */
 package gralog.firstorderlogic.view;
 
-import gralog.algorithm.ParseError;
 import gralog.firstorderlogic.algorithm.FirstOrderAlgorithmParameter;
-import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 import gralog.gralogfx.views.GridPaneView;
 import gralog.gralogfx.views.ViewDescription;
 import javafx.scene.control.Label;
@@ -19,30 +17,6 @@ import javafx.scene.text.Text;
 @ViewDescription(forClass = FirstOrderAlgorithmParameter.class)
 public class FirstOrderAlgorithmParameterView extends GridPaneView {
 
-    private void syntaxCheck(TextField field, Text hint) {
-        String formula = field.getText();
-        hint.setText("");
-        boolean success = false;
-        if (formula.isEmpty())
-            success = true;
-        else {
-            try {
-                FirstOrderParser parser = new FirstOrderParser();
-                success = parser.parseString(formula) != null;
-            }
-            catch (ParseError e) {
-                hint.setText(e.getMessage());
-            }
-            catch (Exception e) {
-                hint.setText("Parse error");
-            }
-        }
-        if (success)
-            field.setStyle("-fx-text-inner-color: black;");
-        else
-            field.setStyle("-fx-text-inner-color: red;");
-    }
-
     @Override
     public void update() {
         this.getChildren().clear();
@@ -54,15 +28,11 @@ public class FirstOrderAlgorithmParameterView extends GridPaneView {
         valueField.promptTextProperty().set("Please enter a first-order formula");
         valueField.setPrefWidth(1000);
         Text hint = new Text();
-        syntaxCheck(valueField, hint);
+        FirstOrderSyntaxCheck.check(valueField, hint);
         valueField.textProperty().addListener(e -> {
-            try {
-                syntaxCheck(valueField, hint);
-                param.parameter = valueField.getText();
-                requestRedraw();
-            }
-            catch (Exception ex) {
-            }
+            FirstOrderSyntaxCheck.check(valueField, hint);
+            param.parameter = valueField.getText();
+            requestRedraw();
         });
         add(new Label("Formula: "), 0, 0);
         add(valueField, 1, 0);
