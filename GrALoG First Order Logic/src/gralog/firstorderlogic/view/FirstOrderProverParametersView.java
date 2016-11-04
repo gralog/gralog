@@ -30,6 +30,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -88,8 +91,11 @@ public class FirstOrderProverParametersView extends GridPaneView {
             FirstOrderProverParameters params = (FirstOrderProverParameters) displayObject;
             this.setVgap(8);
             this.setHgap(10);
+
             Label label = new Label("Formula:");
+            label.setMinWidth(USE_PREF_SIZE);
             setConstraints(label, 0, 0);
+
             File file = new File("PreviousSearch.txt");
 
             String str = "";
@@ -106,6 +112,8 @@ public class FirstOrderProverParametersView extends GridPaneView {
             }
             TextField formulaField = new TextField(str);
             setConstraints(formulaField, 1, 0);
+            formulaField.promptTextProperty().set("Please enter a first-order formula");
+            formulaField.setPrefWidth(1000);
 
             TextArea textArea = new TextArea();
             textArea.clear();
@@ -135,9 +143,6 @@ public class FirstOrderProverParametersView extends GridPaneView {
             textArea.setEditable(false);
             textArea.setWrapText(false);
 
-            textArea.setMaxWidth(Double.MAX_VALUE);
-            textArea.setMaxHeight(Double.MAX_VALUE);
-
             setConstraints(textArea, 1, 1);
             Button load = new Button("load");
             Button save = new Button("save");
@@ -146,6 +151,7 @@ public class FirstOrderProverParametersView extends GridPaneView {
             Button substitute = new Button("Substitute");
             VBox vbox = new VBox(5);
             vbox.getChildren().addAll(load, save, delete, clear, substitute);
+            vbox.setMinWidth(USE_PREF_SIZE);
             setConstraints(vbox, 4, 1);
 
             substitute.setOnAction(e -> {
@@ -243,9 +249,16 @@ public class FirstOrderProverParametersView extends GridPaneView {
             clear.setOnAction((ActionEvent e) -> {
                 textArea.clear();
             });
-            this.getChildren().addAll(label, formulaField, textArea, vbox, hint);
 
-            setMaxSize(USE_COMPUTED_SIZE, USE_COMPUTED_SIZE);
+            ColumnConstraints textAreaColumn = new ColumnConstraints();
+            textAreaColumn.setHgrow(Priority.ALWAYS);
+            getColumnConstraints().addAll(new ColumnConstraints(), textAreaColumn, new ColumnConstraints());
+
+            RowConstraints textAreaRow = new RowConstraints();
+            textAreaRow.setVgrow(Priority.ALWAYS);
+            getRowConstraints().addAll(new RowConstraints(), textAreaRow, new RowConstraints());
+
+            this.getChildren().addAll(label, formulaField, textArea, vbox, hint);
         }
     }
 }
