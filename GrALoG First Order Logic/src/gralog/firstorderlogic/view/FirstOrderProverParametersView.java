@@ -31,6 +31,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -84,14 +85,14 @@ public class FirstOrderProverParametersView extends GridPaneView {
     public void update() {
         this.getChildren().clear();
         if (displayObject != null) {
-            FirstOrderProverParameters p = (FirstOrderProverParameters) displayObject;
+            FirstOrderProverParameters params = (FirstOrderProverParameters) displayObject;
             this.setVgap(8);
             this.setHgap(10);
-            Label label = new Label("Formula");
+            Label label = new Label("Formula:");
             setConstraints(label, 0, 0);
             File file = new File("PreviousSearch.txt");
-            String str = "";
 
+            String str = "";
             if (file.exists()) {
 
                 try {
@@ -99,15 +100,13 @@ public class FirstOrderProverParametersView extends GridPaneView {
                     BufferedReader input = new BufferedReader(new FileReader(file));
                     str = input.readLine();
                 }
-                catch (Exception ex) {
+                catch (IOException ex) {
                     str = "ERROR" + ex.toString();
                 }
             }
-            else {
-                str = "";
-            }
-            TextField tf = new TextField(str);
-            setConstraints(tf, 1, 0);
+            TextField formulaField = new TextField(str);
+            setConstraints(formulaField, 1, 0);
+
             TextArea textArea = new TextArea();
             textArea.clear();
 
@@ -124,10 +123,13 @@ public class FirstOrderProverParametersView extends GridPaneView {
                 textArea.appendText("\n");
             }
 
-            p.formulae = tf.getText();
-            tf.textProperty().addListener((observable, oldValue, newValue) -> {
-                p.formulae = tf.getText();
+            Text hint = new Text();
+            setConstraints(hint, 0, 2, 2, 1);
 
+            params.formulae = formulaField.getText();
+            formulaField.textProperty().addListener(e -> {
+                FirstOrderSyntaxCheck.check(formulaField, hint);
+                params.formulae = formulaField.getText();
             });
 
             textArea.setEditable(false);
@@ -149,7 +151,7 @@ public class FirstOrderProverParametersView extends GridPaneView {
             substitute.setOnAction(e -> {
                 if ((textArea.getSelectedText()) != null) {
                     String text = textArea.getSelectedText();
-                    String tfText = tf.getText();
+                    String tfText = formulaField.getText();
 
                     FirstOrderParser parser = new FirstOrderParser();
 
@@ -176,7 +178,7 @@ public class FirstOrderProverParametersView extends GridPaneView {
                             replace.put(s, ch + String.valueOf(cnt++));
                         }
                         String subformula = phi.substitute(replace);
-                        tf.setText(tfText + "( " + subformula + ")");
+                        formulaField.setText(tfText + "( " + subformula + ")");
 
                     }
                     catch (Exception ex) {
@@ -241,7 +243,7 @@ public class FirstOrderProverParametersView extends GridPaneView {
             clear.setOnAction((ActionEvent e) -> {
                 textArea.clear();
             });
-            this.getChildren().addAll(label, tf, textArea, vbox);
+            this.getChildren().addAll(label, formulaField, textArea, vbox, hint);
 
             setMaxSize(USE_COMPUTED_SIZE, USE_COMPUTED_SIZE);
         }
