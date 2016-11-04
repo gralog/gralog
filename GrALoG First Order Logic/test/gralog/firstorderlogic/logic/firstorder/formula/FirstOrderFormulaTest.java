@@ -104,24 +104,36 @@ public class FirstOrderFormulaTest {
     @Test
     public void testParse() throws Exception {
         parseAndCompare("¬E(x,y)");
-        // ∧ and ∨ are left-associative.
+        // Check that ∧ and ∨ are left-associative.
         parseAndCompare("E(x,y) ∧ E(y,x) ∧ E(z,z)");
         parseAndCompare("E(x,y) ∨ E(y,x) ∨ E(z,z)");
         parseAndCompare("(E(x,y) ∧ E(y,x)) ∧ E(z,z)", "E(x,y) ∧ E(y,x) ∧ E(z,z)");
         parseAndCompare("(E(x,y) ∨ E(y,x)) ∨ E(z,z)", "E(x,y) ∨ E(y,x) ∨ E(z,z)");
+        // Check overriding the left-associativity with parentheses.
         parseAndCompare("E(x,y) ∧ (E(y,x) ∧ E(z,z))");
         parseAndCompare("E(x,y) ∨ (E(y,x) ∨ E(z,z))");
+
+        // Check quantifiers.
         parseAndCompare("∀x. ∃y. E(x,y)");
         parseAndCompare("∀x.∃y.E(x,y)", "∀x. ∃y. E(x,y)");
-        // Check that the dot after the quantifiers is optional
+        // Check that the dot after the quantifiers is optional.
         parseAndCompare("∀x∃y E(x,y)", "∀x. ∃y. E(x,y)");
-        parseAndCompare("¬∀x¬∃y¬E(x,y)", "¬∀x. ¬∃y. ¬E(x,y)");
+        // Check that quantifiers go as far as possible.
         parseAndCompare("∀x. E(x,y) ∧ E(x,y)");
         parseAndCompare("∀x. E(x,y) ∨ E(x,y)");
+        parseAndCompare("∀x. (E(x,x) ∧ E(y,y))", "∀x. E(x,x) ∧ E(y,y)");
+        parseAndCompare("(∀x. E(x,x)) ∧ E(y,y)", "(∀x. E(x,x)) ∧ E(y,y)");
         parseAndCompare("∀x. ¬E(x,y) ∨ E(x,y)");
+        parseAndCompare("(∀x. ¬E(x,y)) ∨ E(x,y)");
         parseAndCompare("∀x. ¬(E(x,y) ∨ E(x,y))");
         parseAndCompare("∀x. (¬E(x,y) ∨ E(x,y))", "∀x. ¬E(x,y) ∨ E(x,y)");
-        parseAndCompare("(∀x. ¬E(x,y)) ∨ E(x,y)");
+
+        // Check negations with quantifiers.
+        parseAndCompare("¬∀x¬∃y¬E(x,x) ∧ E(y,y)", "¬∀x. ¬∃y. ¬E(x,x) ∧ E(y,y)");
+        parseAndCompare("¬∀x¬∃y¬E(x,x) ∧ E(y,y)", "¬∀x. ¬∃y. ¬E(x,x) ∧ E(y,y)");
+
+        // Test excessive parentheses.
+        parseAndCompare("((∀x. ((E(x,y)))))", "∀x. E(x,y)");
     }
 
     /**
