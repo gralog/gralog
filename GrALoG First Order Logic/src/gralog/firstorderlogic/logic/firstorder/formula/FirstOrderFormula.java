@@ -63,7 +63,7 @@ abstract public class FirstOrderFormula {
     abstract public String toString(FormulaPosition pos);
 
     // For the toString method, we track the position in the formula in order
-    // to produce a string with a minimum number of parantheses.
+    // to produce a string with a minimum number of parentheses.
     public enum FormulaPosition {
         Not, OrLeft, OrRight, AndLeft, AndRight, Quantifier
     }
