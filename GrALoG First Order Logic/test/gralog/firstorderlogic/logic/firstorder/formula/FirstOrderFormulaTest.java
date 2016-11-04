@@ -4,6 +4,7 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
+import gralog.algorithm.ParseError;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 import gralog.structure.Vertex;
 import java.util.ArrayList;
@@ -160,6 +161,33 @@ public class FirstOrderFormulaTest {
         parseAndCompare("E(x,x) * E(y,y)", "E(x,x) ∧ E(y,y)");
         parseAndCompare("!x. E(x,y)", "∀x. E(x,y)");
         parseAndCompare("?x. E(x,y)", "∃x. E(x,y)");
+    }
+
+    private void parseAndFail(String toParse) throws Exception {
+        FirstOrderParser parser = new FirstOrderParser();
+        try {
+            parser.parseString(toParse);
+        }
+        catch(ParseError e) {
+            return; // Everything is fine, this is what we expect.
+        }
+        throw new Exception("Parsing should have failed on: " + toParse);
+    }
+
+    /**
+     * Test a few strings that should fail to parse.
+     */
+    @Test
+    public void testParseFails() throws Exception {
+        parseAndFail("E(x,y) ∧∧ E(x,y)");
+        parseAndFail("E(x,y) ∨∨ E(x,y)");
+        parseAndFail("E(x,y) !∧ E(x,y)");
+        parseAndFail("∧ E(x,y)");
+        parseAndFail("∨ E(x,y)");
+        parseAndFail("∀ E(x,y)");
+        parseAndFail("∀∀x. E(x,y)");
+        parseAndFail("(E(x,y)");
+        parseAndFail("E(x,y))");
     }
 
     private final FirstOrderFormula relation;
