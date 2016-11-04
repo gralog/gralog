@@ -6,6 +6,7 @@
 package gralog.firstorderlogic.logic.firstorder.parser;
 
 import java_cup.runtime.*;
+import gralog.algorithm.ParseError;
 import gralog.firstorderlogic.logic.firstorder.formula.*;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -160,21 +161,22 @@ public class FirstOrderParser extends java_cup.runtime.lr_parser {
             return errorMsg;
     }
 
+    @Override
     public void report_error(String message, Object info) {
     }
 
+    @Override
     public void syntax_error(Symbol cur_token)
     {
         if(errorMsg == null)
             errorMsg = "Syntax Error: " + cur_token.toString();
     }
 
-    public void report_fatal_error(String message, Object info) throws Exception
+    @Override
+    public void report_fatal_error(String message, Object info) throws ParseError
     {
         java_cup.runtime.ComplexSymbolFactory.ComplexSymbol symbol = (java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)info;
-        String goodPrefix = inputString.substring(0, symbol.xleft.getColumn());
-        String badSuffix = inputString.substring(symbol.xleft.getColumn());
-        throw new Exception("Parse error: Unexpected " + symbol.getName() + " at " + goodPrefix + " <HERE> " + badSuffix);
+        throw new ParseError("Unexpected " + symbol.getName(), inputString, symbol.xleft.getColumn());
     }
 
     public FirstOrderFormula parseString(String str) throws Exception
