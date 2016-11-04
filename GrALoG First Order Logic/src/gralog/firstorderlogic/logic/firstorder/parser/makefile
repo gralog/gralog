@@ -2,8 +2,7 @@
 # sudo apt-get install jflex cup
 
 JFLEX := jflex
-CUP := cup
-# CUP := java -jar /path/to/java-cup-version.jar
+CUP := java -jar ../../../../../../../bin/java-cup-11b.jar
 
 
 .PHONY: all
