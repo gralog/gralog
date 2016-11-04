@@ -26,7 +26,7 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 %}
 
 %eofval{
-    return symbol("EOF", FirstOrderScannerToken.EOF);
+    return symbol("END-OF-STRING", FirstOrderScannerToken.EOF);
 %eofval}
 
 %%
