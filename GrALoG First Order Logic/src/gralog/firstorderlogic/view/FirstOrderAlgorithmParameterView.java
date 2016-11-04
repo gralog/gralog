@@ -32,7 +32,6 @@ public class FirstOrderAlgorithmParameterView extends GridPaneView {
         valueField.textProperty().addListener(e -> {
             FirstOrderSyntaxCheck.check(valueField, hint);
             param.parameter = valueField.getText();
-            requestRedraw();
         });
         add(new Label("Formula: "), 0, 0);
         add(valueField, 1, 0);
