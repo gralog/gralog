@@ -30,9 +30,9 @@ public class FirstOrderAnd extends FirstOrderFormula {
     }
 
     @Override
-    public String toString(FormulaPosition pos) {
-        String result = subformula1.toString(FormulaPosition.AndLeft) + " ∧ "
-                        + subformula2.toString(FormulaPosition.AndRight);
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        String result = subformula1.toString(FormulaPosition.AndLeft, FormulaEndPosition.MIDDLE) + " ∧ "
+                        + subformula2.toString(FormulaPosition.AndRight, endPos);
         if (pos == FormulaPosition.Not || pos == FormulaPosition.AndRight)
             return "(" + result + ")";
         return result;

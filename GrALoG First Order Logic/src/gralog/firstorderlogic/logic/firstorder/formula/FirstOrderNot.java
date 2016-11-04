@@ -28,8 +28,8 @@ public class FirstOrderNot extends FirstOrderFormula {
     }
 
     @Override
-    public String toString(FormulaPosition pos) {
-        return "¬" + subformula1.toString(FormulaPosition.Not);
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        return "¬" + subformula1.toString(FormulaPosition.Not, endPos);
     }
 
     @Override

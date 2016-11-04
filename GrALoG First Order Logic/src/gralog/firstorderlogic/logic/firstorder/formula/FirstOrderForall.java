@@ -60,10 +60,10 @@ public class FirstOrderForall extends FirstOrderFormula {
     }
 
     @Override
-    public String toString(FormulaPosition pos) {
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
         String result = "∀" + variable + ". "
-                        + subformula1.toString(FormulaPosition.Quantifier);
-        if (pos == FormulaPosition.OrLeft || pos == FormulaPosition.AndLeft)
+                        + subformula1.toString(FormulaPosition.Quantifier, FormulaEndPosition.AT_END);
+        if (endPos == FormulaEndPosition.MIDDLE)
             return "(" + result + ")";
         return result;
     }

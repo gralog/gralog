@@ -57,14 +57,20 @@ abstract public class FirstOrderFormula {
 
     @Override
     public String toString() {
-        return toString(FormulaPosition.Quantifier);
+        return toString(FormulaPosition.Quantifier, FormulaEndPosition.AT_END);
     }
 
-    abstract public String toString(FormulaPosition pos);
+    abstract public String toString(FormulaPosition pos, FormulaEndPosition endPos);
 
     // For the toString method, we track the position in the formula in order
     // to produce a string with a minimum number of parentheses.
     public enum FormulaPosition {
         Not, OrLeft, OrRight, AndLeft, AndRight, Quantifier
+    }
+    // We also track if we are in the middle of a disjunction/conjunction or not
+    // in order to save parentheses for the quantifiers (quantifiers reach as
+    // far to the right as possible).
+    public enum FormulaEndPosition {
+        MIDDLE, AT_END
     }
 }
