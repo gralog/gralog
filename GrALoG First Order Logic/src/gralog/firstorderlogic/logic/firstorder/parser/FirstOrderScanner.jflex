@@ -45,4 +45,4 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 "."                   { return symbol(".", FirstOrderScannerToken.DOT); }
 
 [A-Za-z][A-Za-z0-9]*  { return symbol("string", FirstOrderScannerToken.STRING, yytext()); }
-.                     { System.err.println("Illegal character: "+yytext()); }
+.                     { return symbol("UNEXPECTED CHARACTER", FirstOrderScannerToken.error, yytext()); }

@@ -49,7 +49,7 @@ public class ModelCheckingGameFOLogic extends Algorithm {
             }
         }
 
-        return new StringAlgorithmParameter(str);
+        return new FirstOrderAlgorithmParameter(str);
     }
 
     /* public void getUniqueGamePositions(FiniteGame game){

@@ -159,13 +159,8 @@ public class FirstOrderParser extends java_cup.runtime.lr_parser {
         else
             return errorMsg;
     }
-    
 
     public void report_error(String message, Object info) {
-        java_cup.runtime.ComplexSymbolFactory.ComplexSymbol symbol = (java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)info;
-        String goodPrefix = inputString.substring(0, symbol.xleft.getColumn());
-        String badSuffix = inputString.substring(symbol.xleft.getColumn());
-        System.err.println("Parse error: Unexpected " + symbol.getName() + " at " + goodPrefix + " <HERE> " + badSuffix);
     }
 
     public void syntax_error(Symbol cur_token)
@@ -176,7 +171,10 @@ public class FirstOrderParser extends java_cup.runtime.lr_parser {
 
     public void report_fatal_error(String message, Object info) throws Exception
     {
-        report_error(message, info);
+        java_cup.runtime.ComplexSymbolFactory.ComplexSymbol symbol = (java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)info;
+        String goodPrefix = inputString.substring(0, symbol.xleft.getColumn());
+        String badSuffix = inputString.substring(symbol.xleft.getColumn());
+        throw new Exception("Parse error: Unexpected " + symbol.getName() + " at " + goodPrefix + " <HERE> " + badSuffix);
     }
 
     public FirstOrderFormula parseString(String str) throws Exception
