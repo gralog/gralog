@@ -27,7 +27,7 @@ public class FirstOrderSolver extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new StringAlgorithmParameter("\\forall x.\\exists y. E(x,y)");
+        return new FirstOrderAlgorithmParameter("!x. ?y. E(x,y)");
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
