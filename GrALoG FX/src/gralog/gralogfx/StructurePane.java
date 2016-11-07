@@ -57,6 +57,11 @@ public class StructurePane extends StackPane implements StructureListener {
     double gridSize = 1.0; // cm
     boolean snapToGrid = true;
 
+    public enum MouseMode {
+        SELECT_MODE, VERTEX_MODE, EDGE_MODE
+    };
+    MouseMode mouseMode = MouseMode.SELECT_MODE;
+
     public StructurePane(Structure structure) {
         this.structure = structure;
         canvas = new Canvas(500, 500);
@@ -116,7 +121,9 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public void setSelectMode() {
+    public final void setSelectMode() {
+        mouseMode = MouseMode.SELECT_MODE;
+
         canvas.setOnMousePressed(e -> {
             MouseEvent me = (MouseEvent) e;
             Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
@@ -181,7 +188,9 @@ public class StructurePane extends StackPane implements StructureListener {
         });
     }
 
-    public void setVertexCreationMode() {
+    public final void setVertexCreationMode() {
+        mouseMode = MouseMode.VERTEX_MODE;
+
         canvas.setOnMousePressed(e -> {
             MouseEvent me = (MouseEvent) e;
             Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
@@ -211,7 +220,9 @@ public class StructurePane extends StackPane implements StructureListener {
 
     }
 
-    public void setEdgeCreationMode() {
+    public final void setEdgeCreationMode() {
+        mouseMode = MouseMode.EDGE_MODE;
+
         canvas.setOnMousePressed(e -> {
             MouseEvent me = (MouseEvent) e;
             Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
@@ -284,6 +295,10 @@ public class StructurePane extends StackPane implements StructureListener {
         });
         canvas.setOnKeyReleased(e -> {
         });
+    }
+
+    public MouseMode getMouseMode() {
+        return mouseMode;
     }
 
     double screenResolutionX = 96d; // dpi

@@ -426,6 +426,7 @@ public class MainWindow extends Application {
                 structurePane = (StructurePane) tab.getContent();
 
         updateSelection(structurePane);
+        checkMode();
     }
 
     protected void updateSelection(StructurePane sender) {
@@ -663,27 +664,47 @@ public class MainWindow extends Application {
         return (StructurePane) tab.getContent();
     }
 
+    private void checkMode() {
+        buttonSelectMode.setStyle("");
+        buttonVertexMode.setStyle("");
+        buttonEdgeMode.setStyle("");
+        StructurePane pane = getCurrentStructurePane();
+        if (pane != null) {
+            switch (pane.getMouseMode()) {
+                case SELECT_MODE:
+                    buttonSelectMode.setStyle("-fx-base: #0000FF;");
+                    setStatus("Selection mode");
+                    break;
+                case VERTEX_MODE:
+                    buttonVertexMode.setStyle("-fx-base: #0000FF;");
+                    setStatus("Vertex creation mode");
+                    break;
+                case EDGE_MODE:
+                    buttonEdgeMode.setStyle("-fx-base: #0000FF;");
+                    setStatus("Edge creation mode");
+                    break;
+            }
+        }
+    }
+
     private void setSelectMode() {
         StructurePane pane = getCurrentStructurePane();
-        if(pane != null) {
+        if (pane != null)
             pane.setSelectMode();
-            setStatus("Selection mode");
-        }
+        checkMode();
     }
 
     private void setVertexCreationMode() {
         StructurePane pane = getCurrentStructurePane();
-        if(pane != null) {
+        if (pane != null)
             pane.setVertexCreationMode();
-            setStatus("Vertex creation mode");
-        }
+        checkMode();
     }
 
     private void setEdgeCreationMode() {
         StructurePane pane = getCurrentStructurePane();
-        if(pane != null) {
+        if (pane != null)
             pane.setEdgeCreationMode();
-            setStatus("Edge creation mode");
-        }
+        checkMode();
     }
 }
