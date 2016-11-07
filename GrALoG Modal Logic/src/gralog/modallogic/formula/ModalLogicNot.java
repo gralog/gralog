@@ -30,4 +30,9 @@ public class ModalLogicNot extends ModalLogicFormula {
 
         return result;
     }
+
+    @Override
+    public String toString(FormulaPosition pos) {
+        return "¬" + formula.toString(FormulaPosition.BoxDiamondNot);
+    }
 }

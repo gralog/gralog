@@ -56,4 +56,11 @@ public class ModalLogicDiamond extends ModalLogicFormula {
         }
         return result;
     }
+
+    @Override
+    public String toString(FormulaPosition pos) {
+        if (transitiontype != null)
+            return "<" + transitiontype + ">" + subformula.toString(FormulaPosition.BoxDiamondNot);
+        return "◊" + subformula.toString(FormulaPosition.BoxDiamondNot);
+    }
 }

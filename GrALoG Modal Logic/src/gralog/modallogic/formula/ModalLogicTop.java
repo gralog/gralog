@@ -22,4 +22,9 @@ public class ModalLogicTop extends ModalLogicFormula {
                 result.add((World) v);
         return result;
     }
+
+    @Override
+    public String toString(FormulaPosition pos) {
+        return "⊤";
+    }
 }

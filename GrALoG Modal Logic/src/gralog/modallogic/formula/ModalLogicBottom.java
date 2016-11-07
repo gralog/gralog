@@ -17,4 +17,9 @@ public class ModalLogicBottom extends ModalLogicFormula {
     public HashSet<World> interpretation(KripkeStructure structure) {
         return new HashSet<>();
     }
+
+    @Override
+    public String toString(FormulaPosition pos) {
+        return "⊥";
+    }
 }

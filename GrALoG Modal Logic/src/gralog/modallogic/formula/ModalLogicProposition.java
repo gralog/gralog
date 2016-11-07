@@ -28,4 +28,9 @@ public class ModalLogicProposition extends ModalLogicFormula {
             }
         return result;
     }
+
+    @Override
+    public String toString(FormulaPosition pos) {
+        return proposition;
+    }
 }
