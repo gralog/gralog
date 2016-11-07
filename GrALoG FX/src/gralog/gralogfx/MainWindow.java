@@ -156,12 +156,15 @@ public class MainWindow extends Application {
         buttonSelectMode = new Button();
         buttonSelectMode.setText("Select");
         buttonSelectMode.setOnAction(e -> setSelectMode());
+        buttonSelectMode.tooltipProperty().setValue(new Tooltip("Shortcut: s"));
         buttonVertexMode = new Button();
         buttonVertexMode.setText("New vertex");
         buttonVertexMode.setOnAction(e -> setVertexCreationMode());
+        buttonVertexMode.tooltipProperty().setValue(new Tooltip("Shortcut: v"));
         buttonEdgeMode = new Button();
         buttonEdgeMode.setText("New edge");
         buttonEdgeMode.setOnAction(e -> setEdgeCreationMode());
+        buttonEdgeMode.tooltipProperty().setValue(new Tooltip("Shortcut: e"));
         buttonBar.getChildren().addAll(buttonSelectMode, buttonVertexMode, buttonEdgeMode);
         topPane = new VBox();
         topPane.getChildren().addAll(menu, buttonBar);
