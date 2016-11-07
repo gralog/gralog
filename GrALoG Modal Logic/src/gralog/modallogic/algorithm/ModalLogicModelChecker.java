@@ -4,6 +4,7 @@
  */
 package gralog.modallogic.algorithm;
 
+import gralog.modallogic.ModalLogicSyntaxChecker;
 import gralog.modallogic.*;
 import gralog.modallogic.formula.*;
 import gralog.modallogic.parser.*;
@@ -27,7 +28,7 @@ public class ModalLogicModelChecker extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new StringAlgorithmParameter("Formula", "□(P ∧ Q)");
+        return new StringAlgorithmParameter("Formula", "□(P ∧ Q)", new ModalLogicSyntaxChecker());
     }
 
     public Object run(KripkeStructure s, AlgorithmParameters p,
