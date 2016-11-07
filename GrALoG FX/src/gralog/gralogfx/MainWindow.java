@@ -71,6 +71,8 @@ public class MainWindow extends Application {
     HBox statusBar;
     Label statusBarMessage;
 
+    Button buttonSelectMode, buttonVertexMode, buttonEdgeMode;
+
     public MainWindow() {
         stage = null;
 
@@ -151,14 +153,14 @@ public class MainWindow extends Application {
 
         // Button Bar
         buttonBar = new HBox();
-        Button buttonSelectMode = new Button();
-        buttonSelectMode.setText("S");
+        buttonSelectMode = new Button();
+        buttonSelectMode.setText("Select");
         buttonSelectMode.setOnAction(e -> setSelectMode());
-        Button buttonVertexMode = new Button();
-        buttonVertexMode.setText("V");
+        buttonVertexMode = new Button();
+        buttonVertexMode.setText("New vertex");
         buttonVertexMode.setOnAction(e -> setVertexCreationMode());
-        Button buttonEdgeMode = new Button();
-        buttonEdgeMode.setText("E");
+        buttonEdgeMode = new Button();
+        buttonEdgeMode.setText("New edge");
         buttonEdgeMode.setOnAction(e -> setEdgeCreationMode());
         buttonBar.getChildren().addAll(buttonSelectMode, buttonVertexMode, buttonEdgeMode);
         topPane = new VBox();
