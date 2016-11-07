@@ -490,7 +490,7 @@ public class MainWindow extends Application {
             }
 
             if (algoResult instanceof Structure) {
-                this.addTab("", (Structure) algoResult);
+                this.addTab("Algorithm result", (Structure) algoResult);
             }
             else if (algoResult instanceof Set) {
                 boolean isSelection = true;
