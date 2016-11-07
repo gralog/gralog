@@ -88,4 +88,13 @@ public class ModalMuCalculusAnd extends ModalMuCalculusFormula {
             p.addEdge(p.createEdge(index.get((World) v).get(this), index.get((World) v).get(right)));
         }
     }
+
+    @Override
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        if (pos == FormulaPosition.BoxDiamondNot)
+            return "(" + left.toString(FormulaPosition.AndLeft, FormulaEndPosition.MIDDLE) + " ∧ "
+                   + right.toString(FormulaPosition.AndRight, FormulaEndPosition.AT_END) + ")";
+        return left.toString(FormulaPosition.AndLeft, FormulaEndPosition.AT_END) + " ∧ "
+               + right.toString(FormulaPosition.AndRight, endPos);
+    }
 }

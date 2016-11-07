@@ -57,4 +57,9 @@ public class ModalMuCalculusBottom extends ModalMuCalculusFormula {
             Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
             Map<String, ModalMuCalculusFormula> variableDefinitionPoints) {
     }
+
+    @Override
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        return "⊥";
+    }
 }

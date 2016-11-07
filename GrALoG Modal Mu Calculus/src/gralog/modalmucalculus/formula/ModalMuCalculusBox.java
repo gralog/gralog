@@ -98,4 +98,11 @@ public class ModalMuCalculusBox extends ModalMuCalculusFormula {
             }
         }
     }
+
+    @Override
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        if (transitiontype != null)
+            return "[" + transitiontype + "]" + subformula.toString(FormulaPosition.BoxDiamondNot, endPos);
+        return "□" + subformula.toString(FormulaPosition.BoxDiamondNot, endPos);
+    }
 }

@@ -96,4 +96,13 @@ public class ModalMuCalculusLeastFixedPoint extends ModalMuCalculusFormula {
         if (olddef != null)
             variableDefinitionPoints.put(variable, olddef);
     }
+
+    @Override
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        String result = "μ" + variable + ". "
+                        + formula.toString(FormulaPosition.Fixpoint, FormulaEndPosition.AT_END);
+        if (endPos == FormulaEndPosition.MIDDLE)
+            return "(" + result + ")";
+        return result;
+    }
 }

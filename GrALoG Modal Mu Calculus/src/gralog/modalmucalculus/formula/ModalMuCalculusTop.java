@@ -58,4 +58,9 @@ public class ModalMuCalculusTop extends ModalMuCalculusFormula {
             Map<String, ModalMuCalculusFormula> variableDefinitionPoints) {
 
     }
+
+    @Override
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        return "⊤";
+    }
 }

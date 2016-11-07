@@ -71,4 +71,9 @@ public class ModalMuCalculusProposition extends ModalMuCalculusFormula {
             p.addEdge(p.createEdge(pv, pdef));
         }
     }
+
+    @Override
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        return proposition;
+    }
 }

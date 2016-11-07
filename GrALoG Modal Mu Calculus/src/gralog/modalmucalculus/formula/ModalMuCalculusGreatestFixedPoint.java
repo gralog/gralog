@@ -96,4 +96,13 @@ public class ModalMuCalculusGreatestFixedPoint extends ModalMuCalculusFormula {
         if (olddef != null)
             variableDefinitionPoints.put(variable, olddef);
     }
+
+    @Override
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        String result = "ν" + variable + ". "
+                        + formula.toString(FormulaPosition.Fixpoint, FormulaEndPosition.AT_END);
+        if (endPos == FormulaEndPosition.MIDDLE)
+            return "(" + result + ")";
+        return result;
+    }
 }

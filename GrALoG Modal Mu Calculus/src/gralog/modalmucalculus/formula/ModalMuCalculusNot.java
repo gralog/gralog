@@ -80,4 +80,9 @@ public class ModalMuCalculusNot extends ModalMuCalculusFormula {
         if (variableDefinitionPoints.containsKey(prop.proposition))
             throw new Exception("Formula contains bound variable \"" + prop.proposition + "\" negatively");
     }
+
+    @Override
+    public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
+        return "¬" + formula.toString(FormulaPosition.BoxDiamondNot, endPos);
+    }
 }
