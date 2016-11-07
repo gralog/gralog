@@ -338,7 +338,7 @@ public class MainWindow extends Application {
             }
 
             if (structure != null)
-                addTab("", structure);
+                addTab(file.getName(), structure);
         }
         catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
@@ -463,7 +463,7 @@ public class MainWindow extends Application {
             Structure genResult = gen.generate(params);
             if (genResult == null)
                 return;
-            this.addTab("", genResult);
+            this.addTab(gen.getDescription().name(), genResult);
 
         }
         catch (Exception ex) {
