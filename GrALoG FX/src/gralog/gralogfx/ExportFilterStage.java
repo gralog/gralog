@@ -4,14 +4,9 @@
  */
 package gralog.gralogfx;
 
-import gralog.plugins.*;
-import gralog.structure.*;
 import gralog.exportfilter.*;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.application.HostServices;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
