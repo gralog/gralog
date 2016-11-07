@@ -1,13 +1,16 @@
 package gralog.modalmucalculus.parser;
 
 import java_cup.runtime.*;
+import gralog.algorithm.ParseError;
 import gralog.modalmucalculus.formula.*;
 import java.io.ByteArrayInputStream;
-
+import java.util.ArrayList;
+import java.util.List;
 
 parser code {:
 
     String errorMsg = null;
+    private String inputString;
 
     public Boolean hasError()
     {
@@ -21,16 +24,23 @@ parser code {:
         else
             return errorMsg;
     }
-    
+
+    @Override
+    public void report_error(String message, Object info) {
+    }
+
+    @Override
     public void syntax_error(Symbol cur_token)
     {
         if(errorMsg == null)
             errorMsg = "Syntax Error: " + cur_token.toString();
     }
 
-    public void report_fatal_error(String message, Object info) throws Exception
+    @Override
+    public void report_fatal_error(String message, Object info) throws ParseError
     {
-        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+        java_cup.runtime.ComplexSymbolFactory.ComplexSymbol symbol = (java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)info;
+        throw new ParseError("Unexpected " + symbol.getName(), inputString, symbol.xleft.getColumn());
     }
 
     public ModalMuCalculusFormula parseString(String str) throws Exception
@@ -38,68 +48,90 @@ parser code {:
         String charset = "UTF8";
         byte[] bytes = str.getBytes(charset);
         ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
-                
-        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
-        ModalMuCalculusScanner scanner = new ModalMuCalculusScanner(stringstream, symbolfactory);
+
+        inputString = str;
+        ModalMuCalculusScanner scanner = new ModalMuCalculusScanner(stringstream);
         this.setScanner(scanner);
-        
+
         Symbol parserresult = this.parse();
         return (ModalMuCalculusFormula) parserresult.value;
     }
-
 :}
 
 
 
 
-terminal LT, GT, BRACKETLEFT, BRACKETRIGHT, DOT;                         // "<", ">","[", "]", "."
+terminal LT, GT, BRACKETLEFT, BRACKETRIGHT, DOT;
 terminal MU, NU;
-terminal BOT, TOP, WEDGE, VEE, NEG, PARENTHESISLEFT, PARENTHESISRIGHT;   // \bot, \top, \wedge, \vee, \neg, (, )
+terminal DIAMOND, BOX, BOT, TOP, AND, OR, NEG, PARENTHESISLEFT, PARENTHESISRIGHT;
 terminal String STRING;
 
+non terminal ModalMuCalculusFormula formula, quantifiedformula, disjunction, conjunction, basicformula;
 
-non terminal ModalMuCalculusFormula formula, veeformula, wedgeformula, atomicformula;
+formula ::=
+    quantifiedformula:f
+        {: RESULT = f; :}
+    | disjunction:left OR quantifiedformula:right
+        {: RESULT = new ModalMuCalculusOr(left, right); :}
+    | conjunction:left AND quantifiedformula:right
+        {: RESULT = new ModalMuCalculusAnd(left, right); :}
+    | disjunction:left OR conjunction:middle AND quantifiedformula:right
+        {: RESULT = new ModalMuCalculusOr(left, new ModalMuCalculusAnd(middle, right)); :}
+    | disjunction:f
+        {: RESULT = f; :}
+    ;
+disjunction ::=
+    disjunction:left OR conjunction:right
+        {: RESULT = new ModalMuCalculusOr(left, right); :}
+    | conjunction:f
+        {: RESULT = f; :}
+    ;
 
- 
-                      
-formula ::= MU STRING:s DOT formula:f
-                {: RESULT = new ModalMuCalculusLeastFixedPoint(s,f); :}
-            | NU STRING:s DOT formula:f
-                {: RESULT = new ModalMuCalculusGreatestFixedPoint(s,f); :}
-            | veeformula:f
-                {: RESULT = f; :}
-            ;
+conjunction ::=
+    conjunction:left AND basicformula:right
+        {: RESULT = new ModalMuCalculusAnd(left, right); :}
+    | basicformula:f
+        {: RESULT = f; :}
+    ;
 
-veeformula ::= wedgeformula:left VEE veeformula:right
-                {: RESULT = new ModalMuCalculusOr(left, right); :}
-             | wedgeformula:f
-                {: RESULT = f; :}
-          ;
+basicformula ::=
+    BOT
+        {: RESULT = new ModalMuCalculusBottom(); :}
+    | TOP
+        {: RESULT = new ModalMuCalculusTop(); :}
+    | NEG basicformula:f
+        {: RESULT = new ModalMuCalculusNot(f); :}
+    | DIAMOND basicformula:f
+          {: RESULT = new ModalMuCalculusDiamond(f); :}
+    | LT STRING:s GT basicformula:f
+          {: RESULT = new ModalMuCalculusDiamond(s, f); :}
+    | BOX basicformula:f
+          {: RESULT = new ModalMuCalculusBox(f); :}
+    | BRACKETLEFT STRING:s BRACKETRIGHT basicformula:f
+          {: RESULT = new ModalMuCalculusBox(s, f); :}
+    | PARENTHESISLEFT formula:f PARENTHESISRIGHT
+        {: RESULT = f; :}
+    | STRING:prop
+          {: RESULT = new ModalMuCalculusProposition(prop); :}
+    ;
 
-wedgeformula ::= atomicformula:left WEDGE wedgeformula:right
-                  {: RESULT = new ModalMuCalculusAnd(left, right); :}
-            | atomicformula:f
-                  {: RESULT = f; :}
-            ;
-
-atomicformula ::= BOT
-                      {: RESULT = new ModalMuCalculusBottom(); :}
-                | TOP
-                      {: RESULT = new ModalMuCalculusTop(); :}
-                | NEG atomicformula:f
-                      {: RESULT = new ModalMuCalculusNot(f); :}
-                | STRING:s                                      // a proposition
-                      {: RESULT = new ModalMuCalculusProposition(s); :}
-
-                | LT GT atomicformula:f
-                      {: RESULT = new ModalMuCalculusDiamond(f); :}
-                | LT STRING:s GT atomicformula:f
-                      {: RESULT = new ModalMuCalculusDiamond(s, f); :}
-                | BRACKETLEFT BRACKETRIGHT atomicformula:f
-                      {: RESULT = new ModalMuCalculusBox(f); :}
-                | BRACKETLEFT STRING:s BRACKETRIGHT atomicformula:f
-                      {: RESULT = new ModalMuCalculusBox(s, f); :}
-
-                | PARENTHESISLEFT formula:f PARENTHESISRIGHT
-                      {: RESULT = f; :}
-                ;
+quantifiedformula ::=
+    NEG quantifiedformula:f
+        {: RESULT = new ModalMuCalculusNot(f); :}
+    | DIAMOND quantifiedformula:f
+          {: RESULT = new ModalMuCalculusDiamond(f); :}
+    | LT STRING:s GT quantifiedformula:f
+          {: RESULT = new ModalMuCalculusDiamond(s, f); :}
+    | BOX quantifiedformula:f
+          {: RESULT = new ModalMuCalculusBox(f); :}
+    | BRACKETLEFT STRING:s BRACKETRIGHT quantifiedformula:f
+          {: RESULT = new ModalMuCalculusBox(s, f); :}
+    | MU STRING:var DOT formula:f
+        {: RESULT = new ModalMuCalculusLeastFixedPoint(var, f); :}
+    | MU STRING:var formula:f
+        {: RESULT = new ModalMuCalculusLeastFixedPoint(var, f); :}
+    | NU STRING:var DOT formula:f
+        {: RESULT = new ModalMuCalculusGreatestFixedPoint(var, f); :}
+    | NU STRING:var formula:f
+        {: RESULT = new ModalMuCalculusGreatestFixedPoint(var, f); :}
+    ;
