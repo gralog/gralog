@@ -27,7 +27,7 @@ public class ComputationTreeLogicModelChecker extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new StringAlgorithmParameter("A X (P \\wedge Q)");
+        return new StringAlgorithmParameter("Formula", "A X (P \\wedge Q)");
     }
 
     public Object run(KripkeStructure s, AlgorithmParameters p,

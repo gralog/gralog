@@ -29,7 +29,7 @@ public class ModalMuCalculusToParityGame extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new StringAlgorithmParameter("\\nu X. \\mu Y.(P \\wedge []X) \\vee []Y");
+        return new StringAlgorithmParameter("Formula", "\\nu X. \\mu Y.(P \\wedge []X) \\vee []Y");
     }
 
     public Object run(KripkeStructure s, AlgorithmParameters p,

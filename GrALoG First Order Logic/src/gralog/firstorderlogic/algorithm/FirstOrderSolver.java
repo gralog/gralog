@@ -8,6 +8,7 @@ import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 
 import gralog.algorithm.*;
+import gralog.firstorderlogic.view.FirstOrderSyntaxChecker;
 import gralog.structure.*;
 import gralog.progresshandler.*;
 
@@ -27,7 +28,7 @@ public class FirstOrderSolver extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new FirstOrderAlgorithmParameter("!x. ?y. E(x,y)");
+        return new StringAlgorithmParameter("Formula", "!x. ?y. E(x,y)", new FirstOrderSyntaxChecker());
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,

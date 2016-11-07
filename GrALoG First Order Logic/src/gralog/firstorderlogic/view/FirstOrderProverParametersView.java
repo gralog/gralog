@@ -4,6 +4,8 @@
  */
 package gralog.firstorderlogic.view;
 
+import gralog.algorithm.StringAlgorithmParameter;
+import gralog.algorithm.SyntaxChecker;
 import gralog.firstorderlogic.algorithm.FirstOrderProverParameters;
 import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
@@ -132,11 +134,12 @@ public class FirstOrderProverParametersView extends GridPaneView {
             }
 
             Text hint = new Text();
+            syntaxCheck(formulaField, hint);
             setConstraints(hint, 0, 2, 2, 1);
 
             params.formulae = formulaField.getText();
             formulaField.textProperty().addListener(e -> {
-                FirstOrderSyntaxCheck.check(formulaField, hint);
+                syntaxCheck(formulaField, hint);
                 params.formulae = formulaField.getText();
             });
 
@@ -260,5 +263,15 @@ public class FirstOrderProverParametersView extends GridPaneView {
 
             this.getChildren().addAll(label, formulaField, textArea, vbox, hint);
         }
+    }
+
+    private void syntaxCheck(TextField valueField, Text hint) {
+        FirstOrderSyntaxChecker check = new FirstOrderSyntaxChecker();
+        SyntaxChecker.Result syntax = check.check(valueField.getText());
+        if (syntax.syntaxCorrect)
+            valueField.setStyle("-fx-text-inner-color: black;");
+        else
+            valueField.setStyle("-fx-text-inner-color: red;");
+        hint.setText(syntax.hint);
     }
 }

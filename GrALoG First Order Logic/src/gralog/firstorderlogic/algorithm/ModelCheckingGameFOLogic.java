@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import gralog.finitegame.structure.*;
+import gralog.firstorderlogic.view.FirstOrderSyntaxChecker;
 import gralog.rendering.Vector2D;
 import java.io.IOException;
 
@@ -49,7 +50,7 @@ public class ModelCheckingGameFOLogic extends Algorithm {
             }
         }
 
-        return new FirstOrderAlgorithmParameter(str);
+        return new StringAlgorithmParameter("Formula", str, new FirstOrderSyntaxChecker());
     }
 
     /* public void getUniqueGamePositions(FiniteGame game){

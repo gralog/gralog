@@ -21,7 +21,7 @@ public class AssignLabels extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new StringAlgorithmParameter("");
+        return new StringAlgorithmParameter("Starting number", "");
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,

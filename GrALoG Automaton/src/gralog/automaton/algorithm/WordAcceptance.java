@@ -23,7 +23,7 @@ public class WordAcceptance extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new StringAlgorithmParameter("");
+        return new StringAlgorithmParameter("Word", "");
     }
 
     public Object run(Automaton s, AlgorithmParameters p, Set<Object> selection,
