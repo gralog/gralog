@@ -1,61 +1,58 @@
 package gralog.modallogic.parser;
 
-import java_cup.runtime.SymbolFactory;
-import java.lang.StringBuffer;
+import java_cup.runtime.Symbol;
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 
 %%
+%class ModalLogicScanner
 %unicode
 %cup
-%class ModalLogicScanner
+%column
+
 %{
-    public ModalLogicScanner(java.io.InputStream r, SymbolFactory sf){
-        this(r);
-        this.sf=sf;
+    private ComplexSymbolFactory sf = new ComplexSymbolFactory();
+
+    private Symbol symbol(String name, int type) {
+        return symbol(name, type, null);
     }
-    private SymbolFactory sf;
-    private StringBuffer string = new StringBuffer();
+
+    private Symbol symbol(String name, int type, Object value) {
+        return sf.newSymbol(name, type,
+            new Location(0, yycolumn, yychar),
+            new Location(0, yycolumn + yylength(), yychar + yylength()),
+            value);
+    }
 %}
 
-
-
-
 %eofval{
-    return sf.newSymbol("EOF",ModalLogicScannerToken.EOF);
+    return symbol("END-OF-STRING", ModalLogicScannerToken.EOF);
 %eofval}
 
-
-
-
-%state STRING
-
-
-
-
 %%
-<YYINITIAL> 
-{
 [ \t\r\n\f]   { /* ignore white space. */ }
 
-"<"           { return sf.newSymbol("<",ModalLogicScannerToken.LT); }
-">"           { return sf.newSymbol(">",ModalLogicScannerToken.GT); }
-"["           { return sf.newSymbol("[",ModalLogicScannerToken.BRACKETLEFT); }
-"]"           { return sf.newSymbol("]",ModalLogicScannerToken.BRACKETRIGHT); }
-"("           { return sf.newSymbol("(",ModalLogicScannerToken.PARENTHESISLEFT); }
-")"           { return sf.newSymbol(")",ModalLogicScannerToken.PARENTHESISRIGHT); }
+"\\diamond" | "◊" | "<>"
+    { return symbol("NEG", ModalLogicScannerToken.DIAMOND); }
+"\\box" | "□" | "[]"
+    { return symbol("NEG", ModalLogicScannerToken.BOX); }
+"\\neg" | [¬~-]
+    { return symbol("NEG", ModalLogicScannerToken.NEG); }
+"\\wedge" | [∧*]
+    { return symbol("AND", ModalLogicScannerToken.WEDGE); }
+"\\vee" | [∨+]
+    { return symbol("OR", ModalLogicScannerToken.VEE); }
+"\\bot" | "bottom" | "false" | "⊥"
+    { return symbol("BOTTOM", ModalLogicScannerToken.BOT); }
+"\\top" | "top" | "true" | "⊤"
+    { return symbol("TOP", ModalLogicScannerToken.TOP); }
 
-"\\neg"       { return sf.newSymbol("\\neg",ModalLogicScannerToken.NEG); }
-"\\wedge"     { return sf.newSymbol("\\wedge",ModalLogicScannerToken.WEDGE); }
-"\\vee"       { return sf.newSymbol("\\vee",ModalLogicScannerToken.VEE); }
-"\\bot"       { return sf.newSymbol("\\bot",ModalLogicScannerToken.BOT); }
-"\\top"       { return sf.newSymbol("\\top",ModalLogicScannerToken.TOP); }
+"<"           { return symbol("<", ModalLogicScannerToken.LT); }
+">"           { return symbol(">", ModalLogicScannerToken.GT); }
+"["           { return symbol("[", ModalLogicScannerToken.BRACKETLEFT); }
+"]"           { return symbol("]", ModalLogicScannerToken.BRACKETRIGHT); }
+"("           { return symbol("(", ModalLogicScannerToken.PARENTHESISLEFT); }
+")"           { return symbol(")", ModalLogicScannerToken.PARENTHESISRIGHT); }
 
-\"            { string.setLength(0); yybegin(STRING); }
-[A-Za-z0-9]+  { string.setLength(0); string.append(yytext()); return sf.newSymbol("simple", ModalLogicScannerToken.STRING, string.toString()); }
-.             { System.err.println("Illegal character: "+yytext()); }
-}
-
-<STRING>
-{
-\"            { yybegin(YYINITIAL); return sf.newSymbol("complex", ModalLogicScannerToken.STRING, string.toString()); }
-.             { string.append(yytext()); }
-}
+[A-Za-z][A-Za-z0-9]* { return symbol("STRING", ModalLogicScannerToken.STRING, yytext()); }
+.                    { return symbol("UNEXPECTED CHARACTER", ModalLogicScannerToken.error, yytext()); }

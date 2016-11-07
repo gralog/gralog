@@ -1,13 +1,16 @@
 package gralog.modallogic.parser;
 
 import java_cup.runtime.*;
+import gralog.algorithm.ParseError;
 import gralog.modallogic.formula.*;
 import java.io.ByteArrayInputStream;
-
+import java.util.ArrayList;
+import java.util.List;
 
 parser code {:
 
     String errorMsg = null;
+    private String inputString;
 
     public Boolean hasError()
     {
@@ -21,16 +24,23 @@ parser code {:
         else
             return errorMsg;
     }
-    
+
+    @Override
+    public void report_error(String message, Object info) {
+    }
+
+    @Override
     public void syntax_error(Symbol cur_token)
     {
         if(errorMsg == null)
             errorMsg = "Syntax Error: " + cur_token.toString();
     }
 
-    public void report_fatal_error(String message, Object info) throws Exception
+    @Override
+    public void report_fatal_error(String message, Object info) throws ParseError
     {
-        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+        java_cup.runtime.ComplexSymbolFactory.ComplexSymbol symbol = (java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)info;
+        throw new ParseError("Unexpected " + symbol.getName(), inputString, symbol.xleft.getColumn());
     }
 
     public ModalLogicFormula parseString(String str) throws Exception
@@ -38,33 +48,26 @@ parser code {:
         String charset = "UTF8";
         byte[] bytes = str.getBytes(charset);
         ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
-                
-        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
-        ModalLogicScanner scanner = new ModalLogicScanner(stringstream, symbolfactory);
+
+        inputString = str;
+        ModalLogicScanner scanner = new ModalLogicScanner(stringstream);
         this.setScanner(scanner);
-        
+
         Symbol parserresult = this.parse();
         return (ModalLogicFormula) parserresult.value;
     }
-
 :}
 
-
-
-
-terminal LT, GT, BRACKETLEFT, BRACKETRIGHT;                              // "<", ">","[", "]"
-terminal BOT, TOP, WEDGE, VEE, NEG, PARENTHESISLEFT, PARENTHESISRIGHT;   // \bot, \top, \wedge, \vee, \neg, (, )
+terminal LT, GT, BRACKETLEFT, BRACKETRIGHT;
+terminal DIAMOND, BOX, BOT, TOP, WEDGE, VEE, NEG, PARENTHESISLEFT, PARENTHESISRIGHT;
 terminal String STRING;
-
 
 non terminal ModalLogicFormula formula, veeformula, wedgeformula, atomicformula;
 
-
-                      
 formula ::= veeformula:f
               {: RESULT = f; :}
           ;
-            
+
 veeformula ::= wedgeformula:left VEE veeformula:right
                  {: RESULT = new ModalLogicOr(left, right); :}
              | wedgeformula:f
@@ -87,11 +90,11 @@ atomicformula ::= STRING:s                                            // a propo
                 {: RESULT = new ModalLogicTop(); :} 
           | NEG atomicformula:f
                 {: RESULT = new ModalLogicNot(f); :}
-          | LT GT atomicformula:f
+          | DIAMOND atomicformula:f
                 {: RESULT = new ModalLogicDiamond(f); :}
           | LT STRING:s GT atomicformula:f
                 {: RESULT = new ModalLogicDiamond(s, f); :}
-          | BRACKETLEFT BRACKETRIGHT atomicformula:f
+          | BOX atomicformula:f
                 {: RESULT = new ModalLogicBox(f); :}
           | BRACKETLEFT STRING:s BRACKETRIGHT atomicformula:f
                 {: RESULT = new ModalLogicBox(s, f); :}
