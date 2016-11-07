@@ -4,7 +4,6 @@
  */
 package gralog.modallogic.parser;
 
-import gralog.modallogic.formula.ModalLogicFormula;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
