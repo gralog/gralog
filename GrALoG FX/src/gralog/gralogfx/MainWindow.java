@@ -266,6 +266,7 @@ public class MainWindow extends Application {
                 else {
                     structure.writeToFile(file.getAbsolutePath());
                 }
+                setCurrentStructureTitle(file.getName());
             }
         }
         catch (Exception ex) {
@@ -658,6 +659,12 @@ public class MainWindow extends Application {
         for (String s : params.getUnnamed())
             if (!s.endsWith(".jar"))
                 doOpenFile(new File(s));
+    }
+
+    private void setCurrentStructureTitle(String title) {
+        Tab tab = tabPane.getSelectionModel().getSelectedItem();
+        if (tab != null)
+            tab.setText(title);
     }
 
     private StructurePane getCurrentStructurePane() {
