@@ -18,7 +18,9 @@ import gralog.preferences.Preferences;
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.*;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -34,10 +36,12 @@ import javafx.scene.layout.*;
 import javafx.scene.control.Alert.AlertType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -334,9 +338,9 @@ public class MainWindow extends Application {
             if (importFilter != null) {
                 ImportFilterParameters params = importFilter.getParameters();
                 if (params != null) {
-                    ImportFilterStage stage = new ImportFilterStage(importFilter, params, this);
-                    stage.showAndWait();
-                    if (!stage.DialogResult) {
+                    ImportFilterStage importStage = new ImportFilterStage(importFilter, params, this);
+                    importStage.showAndWait();
+                    if (!importStage.DialogResult) {
                         this.setStatus("");
                         return;
                     }
@@ -395,7 +399,7 @@ public class MainWindow extends Application {
         structurePane.setOnSelectionChanged(e -> updateSelection(structurePane));
     }
 
-    protected void updateStructures() {
+    protected final void updateStructures() {
         menuFileNew.getItems().clear();
         for (String str : StructureManager.getStructureClasses()) {
             MenuItem item = new MenuItem(str);
@@ -404,7 +408,7 @@ public class MainWindow extends Application {
         }
     }
 
-    protected void updateGenerators() {
+    protected final void updateGenerators() {
         menuFileGenerators.getItems().clear();
         for (String str : GeneratorManager.getGeneratorClasses()) {
             MenuItem item = new MenuItem(str);
@@ -413,7 +417,7 @@ public class MainWindow extends Application {
         }
     }
 
-    protected void updateAlgorithms() {
+    protected final void updateAlgorithms() {
         menuAlgo.getItems().clear();
         Tab tab = tabPane.getSelectionModel().getSelectedItem();
         if (tab == null)
@@ -629,7 +633,7 @@ public class MainWindow extends Application {
                 children = doc.getDocumentElement().getChildNodes();
             }
         }
-        catch (Exception ex) {
+        catch (IOException | URISyntaxException | ParserConfigurationException | SAXException ex) {
         }
 
         // Load Plugins from Config
