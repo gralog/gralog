@@ -4,6 +4,7 @@
  */
 package gralog.algorithm;
 
+import gralog.preferences.Preferences;
 import gralog.structure.*;
 import gralog.progresshandler.*;
 
@@ -21,12 +22,17 @@ public class AssignLabels extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new StringAlgorithmParameter("Starting number", "");
+        return new StringAlgorithmParameter(
+                "Prefix",
+                Preferences.getString(this.getClass(), "prefix", ""),
+                "Vertices will be labeled prefix0, prefix1, etc.");
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
             ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter stringparam = (StringAlgorithmParameter) p;
+        Preferences.setString(this.getClass(), "prefix", stringparam.parameter);
+
         int i = 0;
         Set<Vertex> vertices = s.getVertices();
         for (Vertex a : vertices) {
