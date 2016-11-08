@@ -10,7 +10,7 @@ import gralog.firstorderlogic.algorithm.FirstOrderProverParameters;
 import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 import gralog.gralogfx.views.*;
-import gralog.properties.Properties;
+import gralog.preferences.Preferences;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -50,7 +50,7 @@ import javafx.stage.Stage;
 public class FirstOrderProverParametersView extends GridPaneView {
 
     public Set<String> getUniqueSearches() {
-        String searches = Properties.getString(FirstOrderProver.class, "searches", "");
+        String searches = Preferences.getString(FirstOrderProver.class, "searches", "");
         if (searches.isEmpty())
             return new HashSet<>();
         return new HashSet<>(Arrays.asList(searches.split("\n")));

@@ -7,7 +7,7 @@ package gralog.generator;
 import gralog.algorithm.AlgorithmParameters;
 import gralog.algorithm.IntSyntaxChecker;
 import gralog.algorithm.StringAlgorithmParameter;
-import gralog.properties.Properties;
+import gralog.preferences.Preferences;
 import gralog.rendering.Vector2D;
 import gralog.structure.*;
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class CylindricalGrid extends Generator {
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
                 "Size",
-                Properties.getInteger(this.getClass(), "size", 5).toString(),
+                Preferences.getInteger(this.getClass(), "size", 5).toString(),
                 new IntSyntaxChecker(1, Integer.MAX_VALUE),
                 "");
     }
@@ -35,7 +35,7 @@ public class CylindricalGrid extends Generator {
     @Override
     public Structure generate(AlgorithmParameters p) {
         int n = Integer.parseInt(((StringAlgorithmParameter) p).parameter);
-        Properties.setInteger(this.getClass(), "size", n);
+        Preferences.setInteger(this.getClass(), "size", n);
 
         DirectedGraph result = new DirectedGraph();
 

@@ -2,7 +2,7 @@
  * This file is part of GrALoG FX, Copyright (c) 2016 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later.
  */
-package gralog.properties;
+package gralog.preferences;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -14,7 +14,7 @@ import java.nio.file.Paths;
  * Stores user-specific preferences. In contrast to the Java Preferences API,
  * this class stores everything in a single file in the user's home directory.
  */
-public class Properties {
+public class Preferences {
 
     private static final String FILENAME = "preferences";
     private static final java.util.Properties properties = new java.util.Properties();

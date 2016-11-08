@@ -16,7 +16,7 @@ import java.util.Set;
 
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.view.FirstOrderSyntaxChecker;
-import gralog.properties.Properties;
+import gralog.preferences.Preferences;
 import gralog.rendering.Vector2D;
 
 /**
@@ -33,7 +33,7 @@ public class ModelCheckingGameFOLogic extends Algorithm {
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
                 "Formula",
-                Properties.getString(this.getClass(), "formula", "!x. ?y. E(y,x) ∨ E(x,z)"),
+                Preferences.getString(this.getClass(), "formula", "!x. ?y. E(y,x) ∨ E(x,z)"),
                 new FirstOrderSyntaxChecker(),
                 FirstOrderSyntaxChecker.explanation());
     }
@@ -60,7 +60,7 @@ public class ModelCheckingGameFOLogic extends Algorithm {
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
             ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
-        Properties.setString(this.getClass(), "formula", sp.parameter);
+        Preferences.setString(this.getClass(), "formula", sp.parameter);
 
         FirstOrderParser parser = new FirstOrderParser();
         FirstOrderFormula phi = parser.parseString(sp.parameter);

@@ -11,7 +11,7 @@ import gralog.algorithm.*;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.structure.*;
 import gralog.progresshandler.*;
-import gralog.properties.Properties;
+import gralog.preferences.Preferences;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -32,7 +32,7 @@ public class FirstOrderProver extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new FirstOrderProverParameters(Properties.getString(
+        return new FirstOrderProverParameters(Preferences.getString(
                 this.getClass(), "formula", "!x. ?y. E(x,y)"));
     }
 
@@ -40,7 +40,7 @@ public class FirstOrderProver extends Algorithm {
             ProgressHandler onprogress) throws Exception {
         FirstOrderProverParameters sp = (FirstOrderProverParameters) (p);
 
-        Properties.setString(this.getClass(), "formula", sp.parameter);
+        Preferences.setString(this.getClass(), "formula", sp.parameter);
 
         Set<Vertex> V = s.getVertices();
         int i = 0;
