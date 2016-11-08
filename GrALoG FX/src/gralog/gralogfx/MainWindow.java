@@ -95,25 +95,27 @@ public class MainWindow extends Application {
         menu = new MenuBar();
         // File Menu
         menuFile = new Menu("File");
-        menuFilePlugin = new MenuItem("Load Plugin");
-        menuFilePlugin.setOnAction(e -> menuFilePluginActivated());
         menuFileNew = new Menu("New");
         updateStructures();
         menuFileGenerators = new Menu("Generators");
         updateGenerators();
-        menuFileOpen = new MenuItem("Open");
+        menuFileOpen = new MenuItem("Open graph...");
         menuFileOpen.setOnAction(e -> menuFileOpenActivated());
-        menuFileDirectInput = new MenuItem("Direct Input");
+        menuFileDirectInput = new MenuItem("Direct input...");
         menuFileDirectInput.setOnAction(e -> menuFileDirectInputActivated());
-        menuFileSave = new MenuItem("Save");
+        menuFileSave = new MenuItem("Save graph as...");
         menuFileSave.setOnAction(e -> menuFileSaveActivated());
-        menuFileClose = new MenuItem("Close");
+        menuFileClose = new MenuItem("Close graph");
         menuFileClose.setOnAction(e -> menuFileCloseActivated());
+        menuFilePlugin = new MenuItem("Load Plugin...");
+        menuFilePlugin.setOnAction(e -> menuFilePluginActivated());
         menuFileExit = new MenuItem("Exit");
         menuFileExit.setOnAction(e -> menuFileExitActivated());
-        menuFile.getItems().addAll(menuFilePlugin, menuFileNew, menuFileGenerators,
+        menuFile.getItems().addAll(menuFileNew, menuFileGenerators,
                                    menuFileOpen, menuFileDirectInput, menuFileSave,
-                                   menuFileClose, menuFileExit);
+                                   menuFileClose, new SeparatorMenuItem(),
+                                   menuFilePlugin, new SeparatorMenuItem(),
+                                   menuFileExit);
 
         // Edit Menu
         menuEdit = new Menu("Edit");
@@ -136,7 +138,7 @@ public class MainWindow extends Application {
             AboutStage aboutstage = new AboutStage(this);
             aboutstage.showAndWait();
         });
-        menuHelpInfo = new MenuItem("Info");
+        menuHelpInfo = new MenuItem("About the current graph");
         menuHelpInfo.setOnAction(e -> {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             if (tab == null)
