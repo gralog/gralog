@@ -440,7 +440,8 @@ public class MainWindow extends Application {
                 selection = sender.selection;
                 sender.requestRedraw();
             }
-            objectInspector.setObjects(selection, sender);
+            if(selection != null && selection.size() == 1)
+                objectInspector.setObject(selection.iterator().next(), sender);
         }
         catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();

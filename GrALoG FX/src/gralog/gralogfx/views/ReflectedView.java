@@ -7,6 +7,7 @@ package gralog.gralogfx.views;
 import gralog.rendering.GralogColor;
 
 import java.lang.reflect.*;
+import java.util.function.Consumer;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.CheckBox;
@@ -16,10 +17,10 @@ import javafx.scene.control.Control;
  *
  */
 @ViewDescription(forClass = Object.class)
-public class ReflectedView extends GridPaneView {
+public class ReflectedView extends GridPaneView<Object> {
 
     @Override
-    public void setObject(Object displayObject) {
+    public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
         int i = 0;
 

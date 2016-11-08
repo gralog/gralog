@@ -6,6 +6,7 @@ package gralog.gralogfx.views;
 
 import gralog.algorithm.StringAlgorithmParameter;
 import gralog.algorithm.SyntaxChecker;
+import java.util.function.Consumer;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
@@ -17,7 +18,8 @@ import javafx.scene.text.Text;
 public class StringAlgorithmParameterView extends GridPaneView<StringAlgorithmParameter> {
 
     @Override
-    public void setObject(StringAlgorithmParameter param) {
+    public void setObject(StringAlgorithmParameter param,
+            Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
         if (param == null)
             return;
@@ -27,11 +29,11 @@ public class StringAlgorithmParameterView extends GridPaneView<StringAlgorithmPa
 
         Text hint = new Text();
 
-        syntaxCheck(param, valueField, hint);
+        syntaxCheck(param, valueField, hint, submitPossible);
 
         valueField.textProperty().addListener(e -> {
             param.parameter = valueField.getText();
-            syntaxCheck(param, valueField, hint);
+            syntaxCheck(param, valueField, hint, submitPossible);
         });
         add(new Label(param.getLabel() + ": "), 0, 0);
         add(valueField, 1, 0);
@@ -43,12 +45,16 @@ public class StringAlgorithmParameterView extends GridPaneView<StringAlgorithmPa
     }
 
     private void syntaxCheck(StringAlgorithmParameter param,
-            TextField valueField, Text hint) {
+            TextField valueField, Text hint, Consumer<Boolean> submitPossible) {
         SyntaxChecker.Result syntax = param.syntaxCheck();
-        if (syntax.syntaxCorrect)
+        if (syntax.syntaxCorrect) {
             valueField.setStyle("-fx-text-inner-color: black;");
-        else
+            submitPossible.accept(true);
+        }
+        else {
             valueField.setStyle("-fx-text-inner-color: red;");
+            submitPossible.accept(false);
+        }
         hint.setText(syntax.hint);
     }
 }

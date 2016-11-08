@@ -8,6 +8,7 @@ import gralog.gralogfx.views.View;
 import gralog.gralogfx.views.ViewManager;
 
 import java.util.Set;
+import java.util.function.Consumer;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.Node;
 
@@ -18,22 +19,16 @@ public class ObjectInspector extends AnchorPane {
 
     public ObjectInspector() {
         this.setMinWidth(200.0d);
-        try {
-            setObject(null, null);
-        }
-        catch (Exception ex) {
-            // does not happen with null parameter
-        }
-    }
-
-    public void setObjects(Set<Object> objects, StructurePane structurePane) throws Exception {
-        setObject(null, null);
-        if (objects != null && objects.size() == 1)
-            for (Object o : objects)
-                setObject(o, structurePane);
+        this.getChildren().clear();
     }
 
     public void setObject(Object obj, StructurePane structurePane) throws Exception {
+        setObject(obj, structurePane, (b) -> {
+          });
+    }
+
+    public void setObject(Object obj, StructurePane structurePane,
+            Consumer<Boolean> submitPossible) throws Exception {
         this.getChildren().clear();
         if (obj == null)
             return;
@@ -45,7 +40,7 @@ public class ObjectInspector extends AnchorPane {
             throw new Exception("Class " + view.getClass().getName() + " is not derived from javafx.scene.Node");
 
         view.setStructurePane(structurePane);
-        view.setObject(obj);
+        view.setObject(obj, submitPossible);
         this.getChildren().add((Node) view);
 
         AnchorPane.setTopAnchor((Node) view, 3.0);

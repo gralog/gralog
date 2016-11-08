@@ -7,6 +7,7 @@ package gralog.firstorderlogic.view;
 import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
 import gralog.gralogfx.views.GridPaneView;
 import gralog.gralogfx.views.ViewDescription;
+import java.util.function.Consumer;
 
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeCell;
@@ -36,7 +37,7 @@ public class BagView extends GridPaneView<Bag> {
     }
 
     @Override
-    public void setObject(Bag treedecomp) {
+    public void setObject(Bag treedecomp, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
         if(treedecomp == null)
             return;

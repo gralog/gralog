@@ -37,12 +37,6 @@ public class GeneratorStage extends Stage {
         this.params = params;
         this.dialogResult = false;
 
-        objectInspector = new ObjectInspector();
-        try {
-            objectInspector.setObject(params, null);
-        }
-        catch (Exception ex) {
-        }
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Run");
@@ -59,6 +53,13 @@ public class GeneratorStage extends Stage {
             infoButton = new Button("Info");
             infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
             hBox.getChildren().add(infoButton);
+        }
+
+        objectInspector = new ObjectInspector();
+        try {
+            objectInspector.setObject(params, null, (b) -> runButton.setDisable(!b));
+        }
+        catch (Exception ex) {
         }
 
         root = new BorderPane();

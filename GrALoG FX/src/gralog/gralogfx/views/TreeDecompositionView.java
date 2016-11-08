@@ -9,6 +9,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.beans.value.*;
 
 import gralog.treedecomposition.*;
+import java.util.function.Consumer;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.TreeItem;
 
@@ -28,7 +29,7 @@ public class TreeDecompositionView extends GridPaneView<TreeDecomposition> {
     }
 
     @Override
-    public void setObject(TreeDecomposition treedecomp) {
+    public void setObject(TreeDecomposition treedecomp, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
         if (treedecomp == null)
             return;

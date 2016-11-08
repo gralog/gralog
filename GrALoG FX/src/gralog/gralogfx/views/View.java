@@ -5,12 +5,13 @@
 package gralog.gralogfx.views;
 
 import gralog.gralogfx.StructurePane;
+import java.util.function.Consumer;
 
 /**
  *
  * @param <T> The object to display.
  */
 public interface View<T> {
-    void setObject(T obj);
+    void setObject(T obj, Consumer<Boolean> submitPossible);
     void setStructurePane(StructurePane structurePane);
 }

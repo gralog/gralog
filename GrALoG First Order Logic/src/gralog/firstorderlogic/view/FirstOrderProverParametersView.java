@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
@@ -83,7 +84,8 @@ public class FirstOrderProverParametersView
     }
 
     @Override
-    public void setObject(FirstOrderProverParameters params) {
+    public void setObject(FirstOrderProverParameters params,
+            Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
         if (params == null)
             return;
@@ -108,12 +110,12 @@ public class FirstOrderProverParametersView
         }
 
         Text hint = new Text();
-        syntaxCheck(formulaField, hint);
+        syntaxCheck(formulaField, hint, submitPossible);
         setConstraints(hint, 0, 2, 2, 1);
 
         params.parameter = formulaField.getText();
         formulaField.textProperty().addListener(e -> {
-            syntaxCheck(formulaField, hint);
+            syntaxCheck(formulaField, hint, submitPossible);
             params.parameter = formulaField.getText();
         });
 
@@ -236,13 +238,18 @@ public class FirstOrderProverParametersView
         this.getChildren().addAll(label, formulaField, textArea, vbox, hint);
     }
 
-    private void syntaxCheck(TextField valueField, Text hint) {
+    private void syntaxCheck(TextField valueField, Text hint,
+            Consumer<Boolean> submitPossible) {
         FirstOrderSyntaxChecker check = new FirstOrderSyntaxChecker();
         SyntaxChecker.Result syntax = check.check(valueField.getText());
-        if (syntax.syntaxCorrect)
+        if (syntax.syntaxCorrect) {
             valueField.setStyle("-fx-text-inner-color: black;");
-        else
+            submitPossible.accept(true);
+        }
+        else {
             valueField.setStyle("-fx-text-inner-color: red;");
+            submitPossible.accept(false);
+        }
         hint.setText(syntax.hint);
     }
 }
