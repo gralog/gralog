@@ -4,12 +4,13 @@
  */
 package gralog.firstorderlogic.view;
 
-import gralog.algorithm.StringAlgorithmParameter;
 import gralog.algorithm.SyntaxChecker;
+import gralog.firstorderlogic.algorithm.FirstOrderProver;
 import gralog.firstorderlogic.algorithm.FirstOrderProverParameters;
 import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 import gralog.gralogfx.views.*;
+import gralog.properties.Properties;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,6 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
@@ -47,18 +49,11 @@ import javafx.stage.Stage;
 @ViewDescription(forClass = FirstOrderProverParameters.class)
 public class FirstOrderProverParametersView extends GridPaneView {
 
-    public Set<String> getUniqueSearches(File f) throws Exception {
-        Set<String> result = new HashSet<>();
-
-        if (f.exists()) {
-            BufferedReader input = new BufferedReader(new FileReader(f));
-            String tmp;
-            while ((tmp = input.readLine()) != null) {
-                result.add(tmp);
-            }
-
-        }
-        return result;
+    public Set<String> getUniqueSearches() {
+        String searches = Properties.getString(FirstOrderProver.class, "searches", "");
+        if (searches.isEmpty())
+            return new HashSet<>();
+        return new HashSet<>(Arrays.asList(searches.split("\n")));
     }
 
     public Set<String> getUsedVariables(String text) {
@@ -98,21 +93,7 @@ public class FirstOrderProverParametersView extends GridPaneView {
             label.setMinWidth(USE_PREF_SIZE);
             setConstraints(label, 0, 0);
 
-            File file = new File("PreviousSearch.txt");
-
-            String str = "";
-            if (file.exists()) {
-
-                try {
-
-                    BufferedReader input = new BufferedReader(new FileReader(file));
-                    str = input.readLine();
-                }
-                catch (IOException ex) {
-                    str = "ERROR" + ex.toString();
-                }
-            }
-            TextField formulaField = new TextField(str);
+            TextField formulaField = new TextField(params.parameter);
             setConstraints(formulaField, 1, 0);
             formulaField.promptTextProperty().set("Please enter a first-order formula");
             formulaField.setPrefWidth(1000);
@@ -120,15 +101,7 @@ public class FirstOrderProverParametersView extends GridPaneView {
             TextArea textArea = new TextArea();
             textArea.clear();
 
-            Set<String> uniqueSearches = null;
-            try {
-                uniqueSearches = getUniqueSearches(new File("CorrectSearches.txt"));
-            }
-            catch (Exception ex) {
-                uniqueSearches.add(ex.toString());
-            }
-
-            for (String s : uniqueSearches) {
+            for (String s : getUniqueSearches()) {
                 textArea.appendText(s);
                 textArea.appendText("\n");
             }
@@ -137,10 +110,10 @@ public class FirstOrderProverParametersView extends GridPaneView {
             syntaxCheck(formulaField, hint);
             setConstraints(hint, 0, 2, 2, 1);
 
-            params.formulae = formulaField.getText();
+            params.parameter = formulaField.getText();
             formulaField.textProperty().addListener(e -> {
                 syntaxCheck(formulaField, hint);
-                params.formulae = formulaField.getText();
+                params.parameter = formulaField.getText();
             });
 
             textArea.setEditable(false);
@@ -201,7 +174,7 @@ public class FirstOrderProverParametersView extends GridPaneView {
                 }
             });
 
-            load.setOnAction(e -> {
+            /*load.setOnAction(e -> {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle("Open Resource File");
                 fileChooser.getExtensionFilters().addAll(
@@ -222,7 +195,7 @@ public class FirstOrderProverParametersView extends GridPaneView {
                         Logger.getLogger(FirstOrderProverParametersView.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
-            });
+            });*/
 
             save.setOnAction(e -> {
                 String text = textArea.getText();

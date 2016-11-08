@@ -4,12 +4,16 @@
  */
 package gralog.firstorderlogic.algorithm;
 
-import gralog.algorithm.AlgorithmParameters;
+import gralog.algorithm.StringAlgorithmParameter;
+import gralog.firstorderlogic.view.FirstOrderSyntaxChecker;
 
 /**
  *
  */
-public class FirstOrderProverParameters extends AlgorithmParameters {
+public class FirstOrderProverParameters extends StringAlgorithmParameter {
 
-    public String formulae;
+    public FirstOrderProverParameters(String initialValue) {
+        super("Formula", initialValue,
+              new FirstOrderSyntaxChecker(), FirstOrderSyntaxChecker.explanation());
+    }
 }

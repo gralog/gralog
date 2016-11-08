@@ -11,6 +11,7 @@ import gralog.algorithm.*;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.structure.*;
 import gralog.progresshandler.*;
+import gralog.properties.Properties;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -31,12 +32,16 @@ public class FirstOrderProver extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new FirstOrderProverParameters();
+        return new FirstOrderProverParameters(Properties.getString(
+                this.getClass(), "formula", "!x. ?y. E(x,y)"));
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
             ProgressHandler onprogress) throws Exception {
         FirstOrderProverParameters sp = (FirstOrderProverParameters) (p);
+
+        Properties.setString(this.getClass(), "formula", sp.parameter);
+
         Set<Vertex> V = s.getVertices();
         int i = 0;
         for (Vertex v : V) {
@@ -44,24 +49,17 @@ public class FirstOrderProver extends Algorithm {
             i++;
         }
         onprogress.onProgress(s);
-        if (V.isEmpty()) {
+
+        if (V.isEmpty())
             return "Please input a graph";
-        }
-        try (PrintWriter out = new PrintWriter(new BufferedWriter(
-                new FileWriter("PreviousSearch.txt", false)))) {
-            out.println(sp.formulae);
-        }
+
         FirstOrderParser parser = new FirstOrderParser();
         FirstOrderFormula phi;
         try {
-            phi = parser.parseString(sp.formulae);
+            phi = parser.parseString(sp.parameter);
         }
         catch (Exception ex) {
             return ex.getMessage();
-        }
-        try (PrintWriter out = new PrintWriter(new BufferedWriter(
-                new FileWriter("CorrectSearches.txt", true)))) {
-            out.println(sp.formulae);
         }
 
         HashMap<String, Vertex> varassign = new HashMap<>();
