@@ -4,12 +4,12 @@
  */
 package gralog.automaton.generator;
 
-import gralog.generator.GeneratorParameters;
+import gralog.algorithm.AlgorithmParameters;
 
 /**
  *
  */
-public class KnuthMorrisPrattParameters extends GeneratorParameters {
+public class KnuthMorrisPrattParameters extends AlgorithmParameters {
 
     public String word = "ababb";
     public String alphabet = "ab";

@@ -4,6 +4,8 @@
  */
 package gralog.npcompleteness.generator;
 
+import gralog.algorithm.AlgorithmParameters;
+import gralog.algorithm.StringAlgorithmParameter;
 import gralog.generator.*;
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicFormula;
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicNot;
@@ -29,16 +31,18 @@ import java.util.Set;
 public class SatToVertexCover extends Generator {
 
     @Override
-    public GeneratorParameters getParameters() {
-        return new StringGeneratorParameter("(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c) \\wedge (a \\vee \\neg b \\vee \\neg c)");
+    public AlgorithmParameters getParameters() {
+        return new StringAlgorithmParameter(
+                "A propositional formula",
+                "(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c) \\wedge (a \\vee \\neg b \\vee \\neg c)");
     }
 
     // notice that the size of a min vertex cover becomes |vars| + 2*|clauses|
     // we select the literal-node corresponding to an assignment and the 2
     // remaining nodes in the clause-gadgets
     @Override
-    public Structure generate(GeneratorParameters p) throws Exception {
-        StringGeneratorParameter sp = (StringGeneratorParameter) (p);
+    public Structure generate(AlgorithmParameters p) throws Exception {
+        StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
 
         PropositionalLogicParser parser = new PropositionalLogicParser();
         PropositionalLogicFormula phi = parser.parseString(sp.parameter);

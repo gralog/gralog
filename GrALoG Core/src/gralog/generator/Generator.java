@@ -4,6 +4,7 @@
  */
 package gralog.generator;
 
+import gralog.algorithm.AlgorithmParameters;
 import gralog.structure.*;
 
 /**
@@ -12,11 +13,11 @@ import gralog.structure.*;
 public abstract class Generator {
 
     // null means it has no parameters
-    public GeneratorParameters getParameters() {
+    public AlgorithmParameters getParameters() {
         return null;
     }
 
-    public abstract Structure generate(GeneratorParameters p) throws Exception;
+    public abstract Structure generate(AlgorithmParameters p) throws Exception;
 
     public GeneratorDescription getDescription() throws Exception {
         if (!this.getClass().isAnnotationPresent(GeneratorDescription.class))

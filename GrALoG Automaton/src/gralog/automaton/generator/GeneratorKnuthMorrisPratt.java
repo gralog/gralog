@@ -4,13 +4,13 @@
  */
 package gralog.automaton.generator;
 
+import gralog.algorithm.AlgorithmParameters;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import gralog.automaton.*;
 import gralog.generator.Generator;
 import gralog.generator.GeneratorDescription;
-import gralog.generator.GeneratorParameters;
 import gralog.rendering.Vector2D;
 import gralog.structure.Structure;
 
@@ -25,12 +25,12 @@ import gralog.structure.Structure;
 public class GeneratorKnuthMorrisPratt extends Generator {
 
     @Override
-    public GeneratorParameters getParameters() {
+    public AlgorithmParameters getParameters() {
         return new KnuthMorrisPrattParameters();
     }
 
     @Override
-    public Structure generate(GeneratorParameters p) throws Exception {
+    public Structure generate(AlgorithmParameters p) throws Exception {
         KnuthMorrisPrattParameters kmpp = (KnuthMorrisPrattParameters) (p);
         String str = kmpp.word;
         String Alphabet = kmpp.alphabet;

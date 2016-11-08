@@ -4,6 +4,7 @@
  */
 package gralog.generator;
 
+import gralog.algorithm.StringAlgorithmParameter;
 import gralog.structure.DirectedGraph;
 import gralog.structure.Structure;
 import gralog.structure.UndirectedGraph;
@@ -18,7 +19,7 @@ public class GeneratorTest {
 
     @Test
     public void testCycle() throws Exception {
-        Structure result = (new Cycle()).generate(new StringGeneratorParameter("5"));
+        Structure result = (new Cycle()).generate(new StringAlgorithmParameter("", "5"));
         assertTrue(result instanceof DirectedGraph);
         assertSame(result.getVertices().size(), 5);
         assertSame(result.getEdges().size(), 5);
@@ -26,7 +27,7 @@ public class GeneratorTest {
 
     @Test
     public void testCylindricalGrid() throws Exception {
-        Structure result = (new CylindricalGrid()).generate(new StringGeneratorParameter("5"));
+        Structure result = (new CylindricalGrid()).generate(new StringAlgorithmParameter("", "5"));
         assertTrue(result instanceof DirectedGraph);
         assertSame(result.getVertices().size(), 25);
         assertSame(result.getEdges().size(), 45);
@@ -34,7 +35,7 @@ public class GeneratorTest {
 
     @Test
     public void testGrid() throws Exception {
-        Structure result = (new Grid()).generate(new StringGeneratorParameter("5"));
+        Structure result = (new Grid()).generate(new StringAlgorithmParameter("", "5"));
         assertTrue(result instanceof UndirectedGraph);
         assertSame(result.getVertices().size(), 25);
         assertSame(result.getEdges().size(), 40);
@@ -42,7 +43,7 @@ public class GeneratorTest {
 
     @Test
     public void testWheel() throws Exception {
-        Structure result = (new Wheel()).generate(new StringGeneratorParameter("5"));
+        Structure result = (new Wheel()).generate(new StringAlgorithmParameter("", "5"));
         assertTrue(result instanceof UndirectedGraph);
         assertSame(result.getVertices().size(), 6);
         assertSame(result.getEdges().size(), 10);

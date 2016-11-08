@@ -452,7 +452,7 @@ public class MainWindow extends Application {
         try {
             // prepare
             Generator gen = GeneratorManager.instantiateGenerator(str);
-            GeneratorParameters params = gen.getParameters();
+            AlgorithmParameters params = gen.getParameters();
             if (params != null) {
                 GeneratorStage genstage = new GeneratorStage(gen, params, this);
                 genstage.showAndWait();

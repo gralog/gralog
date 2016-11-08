@@ -4,6 +4,8 @@
  */
 package gralog.npcompleteness.generator;
 
+import gralog.algorithm.AlgorithmParameters;
+import gralog.algorithm.StringAlgorithmParameter;
 import gralog.generator.*;
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicFormula;
 import gralog.npcompleteness.propositionallogic.formula.PropositionalLogicNot;
@@ -29,8 +31,10 @@ import java.util.Set;
 public class SatToColor3 extends Generator {
 
     @Override
-    public GeneratorParameters getParameters() {
-        return new StringGeneratorParameter("(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c) \\wedge (a \\vee \\neg b \\vee \\neg c)");
+    public AlgorithmParameters getParameters() {
+        return new StringAlgorithmParameter(
+                "A propositional formula",
+                "(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c) \\wedge (a \\vee \\neg b \\vee \\neg c)");
     }
 
     // if a literal-node gets the same color as the "true" node, it means
@@ -39,8 +43,8 @@ public class SatToColor3 extends Generator {
     // iff one of its literals has the "true"-color.
     // see https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/sat.pdf
     @Override
-    public Structure generate(GeneratorParameters p) throws Exception {
-        StringGeneratorParameter sp = (StringGeneratorParameter) (p);
+    public Structure generate(AlgorithmParameters p) throws Exception {
+        StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
 
         PropositionalLogicParser parser = new PropositionalLogicParser();
         PropositionalLogicFormula phi = parser.parseString(sp.parameter);

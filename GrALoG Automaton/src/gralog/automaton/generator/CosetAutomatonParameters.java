@@ -4,12 +4,12 @@
  */
 package gralog.automaton.generator;
 
-import gralog.generator.GeneratorParameters;
+import gralog.algorithm.AlgorithmParameters;
 
 /**
  *
  */
-public class CosetAutomatonParameters extends GeneratorParameters {
+public class CosetAutomatonParameters extends AlgorithmParameters {
 
     public Integer number = 3;
     public Integer base = 2;

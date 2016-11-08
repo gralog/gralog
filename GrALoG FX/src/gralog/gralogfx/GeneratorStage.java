@@ -4,6 +4,7 @@
  */
 package gralog.gralogfx;
 
+import gralog.algorithm.AlgorithmParameters;
 import gralog.generator.*;
 
 import javafx.application.Application;
@@ -27,10 +28,10 @@ public class GeneratorStage extends Stage {
     Button infoButton;
 
     Generator gen;
-    GeneratorParameters params;
+    AlgorithmParameters params;
     boolean dialogResult;
 
-    public GeneratorStage(Generator gen, GeneratorParameters params,
+    public GeneratorStage(Generator gen, AlgorithmParameters params,
             Application app) throws Exception {
         this.gen = gen;
         this.params = params;
@@ -63,7 +64,7 @@ public class GeneratorStage extends Stage {
         root = new BorderPane();
         root.setCenter(objectInspector);
         root.setBottom(hBox);
-        scene = new Scene(root, 350, 200);
+        scene = new Scene(root);
 
         this.setScene(scene);
         this.setTitle("Generate " + gen.getDescription().name());

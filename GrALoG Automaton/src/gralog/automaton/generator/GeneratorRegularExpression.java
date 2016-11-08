@@ -4,6 +4,8 @@
  */
 package gralog.automaton.generator;
 
+import gralog.algorithm.AlgorithmParameters;
+import gralog.algorithm.StringAlgorithmParameter;
 import gralog.generator.*;
 import gralog.automaton.*;
 import gralog.automaton.regularexpression.*;
@@ -21,13 +23,13 @@ import gralog.structure.Structure;
 public class GeneratorRegularExpression extends Generator {
 
     @Override
-    public GeneratorParameters getParameters() {
-        return new StringGeneratorParameter("");
+    public AlgorithmParameters getParameters() {
+        return new StringAlgorithmParameter("Regular expression", "");
     }
 
     @Override
-    public Structure generate(GeneratorParameters p) throws Exception {
-        StringGeneratorParameter sp = (StringGeneratorParameter) (p);
+    public Structure generate(AlgorithmParameters p) throws Exception {
+        StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
 
         RegularExpressionParser parser = new RegularExpressionParser();
         RegularExpression regexp = parser.parseString(sp.parameter);

@@ -4,6 +4,9 @@
  */
 package gralog.generator;
 
+import gralog.algorithm.AlgorithmParameters;
+import gralog.algorithm.IntSyntaxChecker;
+import gralog.algorithm.StringAlgorithmParameter;
 import gralog.rendering.Vector2D;
 import gralog.structure.*;
 
@@ -18,13 +21,16 @@ import gralog.structure.*;
 public class Wheel extends Generator {
 
     @Override
-    public GeneratorParameters getParameters() {
-        return new StringGeneratorParameter("5");
+    public AlgorithmParameters getParameters() {
+        return new StringAlgorithmParameter(
+                "Number of rim vertices", "5",
+                new IntSyntaxChecker(1, Integer.MAX_VALUE),
+                "");
     }
 
     @Override
-    public Structure generate(GeneratorParameters p) throws Exception {
-        Integer n = Integer.parseInt(((StringGeneratorParameter) p).parameter);
+    public Structure generate(AlgorithmParameters p) throws Exception {
+        int n = Integer.parseInt(((StringAlgorithmParameter) p).parameter);
 
         UndirectedGraph result = new UndirectedGraph();
 

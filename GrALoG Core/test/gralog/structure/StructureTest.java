@@ -4,9 +4,9 @@
  */
 package gralog.structure;
 
+import gralog.algorithm.StringAlgorithmParameter;
 import gralog.generator.Cycle;
 import gralog.generator.CylindricalGrid;
-import gralog.generator.StringGeneratorParameter;
 import gralog.plugins.PluginManager;
 import gralog.rendering.GralogColor;
 import gralog.rendering.Vector2D;
@@ -89,7 +89,7 @@ public class StructureTest {
 
     @Test
     public void testCycleReading() {
-        Structure<Vertex, Edge> structure = (new Cycle()).generate(new StringGeneratorParameter("5"));
+        Structure<Vertex, Edge> structure = (new Cycle()).generate(new StringAlgorithmParameter("", "5"));
         int i = 0;
         for (Vertex v : structure.getVertices())
             v.label = "" + i++;
@@ -98,7 +98,7 @@ public class StructureTest {
 
     @Test
     public void testCylindricalGridReading() {
-        Structure<Vertex, Edge> structure = (new CylindricalGrid()).generate(new StringGeneratorParameter("5"));
+        Structure<Vertex, Edge> structure = (new CylindricalGrid()).generate(new StringAlgorithmParameter("", "5"));
         int i = 0;
         for (Vertex v : structure.getVertices())
             v.label = "" + i++;
