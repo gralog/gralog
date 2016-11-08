@@ -55,30 +55,25 @@ public class MainWindow extends Application {
     MenuItem menuFilePlugin;
     Menu menuFileNew;
     Menu menuFileGenerators;
-    MenuItem menuFileOpen;
-    MenuItem menuFileDirectInput;
-    MenuItem menuFileSave;
-    MenuItem menuFileClose;
-    MenuItem menuFileExit;
-    Menu menuEdit;
-    MenuItem menuEditUndo;
-    MenuItem menuEditRedo;
-    MenuItem menuEditCut;
-    MenuItem menuEditCopy;
-    MenuItem menuEditPaste;
-    MenuItem menuEditDelete;
     Menu menuAlgo;
-    Menu menuHelp;
-    MenuItem menuHelpAbout;
-    MenuItem menuHelpInfo;
     VBox topPane;
-    HBox buttonBar;
     TabPane tabPane;
     ObjectInspector objectInspector;
-    HBox statusBar;
     Label statusBarMessage;
 
     Button buttonSelectMode, buttonVertexMode, buttonEdgeMode;
+
+    private static MenuItem createMenuItem(String label, Runnable handler) {
+        MenuItem item = new MenuItem(label);
+        item.setOnAction(e -> handler.run());
+        return item;
+    }
+
+    private static MenuItem createDisabledMenuItem(String label) {
+        MenuItem item = new MenuItem(label);
+        item.setDisable(true);
+        return item;
+    }
 
     public MainWindow() {
         stage = null;
@@ -93,85 +88,75 @@ public class MainWindow extends Application {
 
         // Menu
         menu = new MenuBar();
+
         // File Menu
         menuFile = new Menu("File");
         menuFileNew = new Menu("New");
         updateStructures();
         menuFileGenerators = new Menu("Generators");
         updateGenerators();
-        menuFileOpen = new MenuItem("Open graph...");
-        menuFileOpen.setOnAction(e -> menuFileOpenActivated());
-        menuFileDirectInput = new MenuItem("Direct input...");
-        menuFileDirectInput.setOnAction(e -> menuFileDirectInputActivated());
-        menuFileSave = new MenuItem("Save graph as...");
-        menuFileSave.setOnAction(e -> menuFileSaveActivated());
-        menuFileClose = new MenuItem("Close graph");
-        menuFileClose.setOnAction(e -> menuFileCloseActivated());
-        menuFilePlugin = new MenuItem("Load Plugin...");
-        menuFilePlugin.setOnAction(e -> menuFilePluginActivated());
-        menuFileExit = new MenuItem("Exit");
-        menuFileExit.setOnAction(e -> menuFileExitActivated());
-        menuFile.getItems().addAll(menuFileNew, menuFileGenerators,
-                                   menuFileOpen, menuFileDirectInput, menuFileSave,
-                                   menuFileClose, new SeparatorMenuItem(),
-                                   menuFilePlugin, new SeparatorMenuItem(),
-                                   menuFileExit);
+        menuFile.getItems().addAll(
+                menuFileNew, menuFileGenerators,
+                createMenuItem("Open graph...", this::menuFileOpenActivated),
+                createMenuItem("Direct input...", this::menuFileDirectInputActivated),
+                createMenuItem("Save graph as...", this::menuFileSaveActivated),
+                createMenuItem("Close graph", this::menuFileCloseActivated),
+                new SeparatorMenuItem(),
+                createMenuItem("Load plugin...", this::menuFilePluginActivated),
+                new SeparatorMenuItem(),
+                createMenuItem("Exit", this::menuFileExitActivated));
 
         // Edit Menu
-        menuEdit = new Menu("Edit");
-        menuEditUndo = new MenuItem("Undo");
-        menuEditRedo = new MenuItem("Redo");
-        menuEditCut = new MenuItem("Cut");
-        menuEditCopy = new MenuItem("Copy");
-        menuEditPaste = new MenuItem("Paste");
-        menuEditDelete = new MenuItem("Delete");
-        menuEdit.getItems().addAll(menuEditUndo, menuEditRedo, menuEditCut,
-                                   menuEditCopy, menuEditPaste, menuEditDelete);
+        Menu menuEdit = new Menu("Edit");
+        menuEdit.getItems().addAll(
+                createDisabledMenuItem("Undo"),
+                createDisabledMenuItem("Redo"),
+                createDisabledMenuItem("Cut"),
+                createDisabledMenuItem("Copy"),
+                createDisabledMenuItem("Paste"),
+                createDisabledMenuItem("Delete"));
 
         // Algorithm Menu
         menuAlgo = new Menu("Algorithms");
 
         // Help Menu
-        menuHelp = new Menu("Help");
-        menuHelpAbout = new MenuItem("About GrALoG");
-        menuHelpAbout.setOnAction(e -> {
-            AboutStage aboutstage = new AboutStage(this);
-            aboutstage.showAndWait();
-        });
-        menuHelpInfo = new MenuItem("About the current graph");
-        menuHelpInfo.setOnAction(e -> {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab == null)
-                return;
-            StructurePane structurePane = (StructurePane) tab.getContent();
-            Structure structure = structurePane.structure;
-            try {
-                StructureDescription descr = structure.getDescription();
-                String url = descr.url();
-                if (url != null && !url.trim().equals(""))
-                    this.getHostServices().showDocument(url);
-            }
-            catch (Exception ex) {
-                ExceptionBox exbox = new ExceptionBox();
-                exbox.showAndWait(ex);
-            }
-        });
-        menuHelp.getItems().addAll(menuHelpAbout, menuHelpInfo);
+        Menu menuHelp = new Menu("Help");
+        menuHelp.getItems().addAll(
+                createMenuItem(
+                        "About GrALoG", ()
+                        -> {
+                    AboutStage aboutstage = new AboutStage(this);
+                    aboutstage.showAndWait();
+                }),
+                createMenuItem(
+                        "About the current graph", ()
+                        -> {
+                    StructurePane structurePane = this.getCurrentStructurePane();
+                    if (structurePane == null)
+                        return;
+                    try {
+                        StructureDescription descr = structurePane.structure.getDescription();
+                        String url = descr.url();
+                        if (url != null && !url.trim().equals(""))
+                            this.getHostServices().showDocument(url);
+                    }
+                    catch (Exception ex) {
+                        ExceptionBox exbox = new ExceptionBox();
+                        exbox.showAndWait(ex);
+                    }
+                }));
 
         menu.getMenus().addAll(menuFile, menuEdit, menuAlgo, menuHelp);
 
         // Button Bar
-        buttonBar = new HBox();
-        buttonSelectMode = new Button();
-        buttonSelectMode.setText("Select");
+        HBox buttonBar = new HBox();
+        buttonSelectMode = new Button("Select");
         buttonSelectMode.setOnAction(e -> setSelectMode());
         buttonSelectMode.tooltipProperty().setValue(new Tooltip("Shortcut: s"));
-        buttonVertexMode = new Button();
-        buttonVertexMode.setText("New vertex");
+        buttonVertexMode = new Button("New vertex");
         buttonVertexMode.setOnAction(e -> setVertexCreationMode());
         buttonVertexMode.tooltipProperty().setValue(new Tooltip("Shortcut: v"));
-        buttonEdgeMode = new Button();
-        buttonEdgeMode.setText("New edge");
+        buttonEdgeMode = new Button("New edge");
         buttonEdgeMode.setOnAction(e -> setEdgeCreationMode());
         buttonEdgeMode.tooltipProperty().setValue(new Tooltip("Shortcut: e"));
         buttonBar.getChildren().addAll(buttonSelectMode, buttonVertexMode, buttonEdgeMode);
@@ -182,7 +167,7 @@ public class MainWindow extends Application {
         objectInspector = new ObjectInspector();
 
         // Status Bar
-        statusBar = new HBox();
+        HBox statusBar = new HBox();
         statusBarMessage = new Label("");
         statusBar.getChildren().add(statusBarMessage);
 
