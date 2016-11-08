@@ -35,4 +35,12 @@ public class ModalLogicSyntaxChecker extends SyntaxChecker {
         }
         return result;
     }
+
+    public static String explanation() {
+        return "Conjunction (and): P ∧ Q, P * Q\n"
+               + "Disjunction (or): P ∨ Q, P + Q\n"
+               + "Negation: ¬P, -P, ~P\n"
+               + "Box: □P, []P, [edgelabel]P\n"
+               + "Diamond: ◊P, <>P, <edgelabel>P";
+    }
 }

@@ -11,16 +11,24 @@ public class StringAlgorithmParameter extends AlgorithmParameters {
 
     public String parameter = "";
     private SyntaxChecker syntaxChecker = null;
-    private String label;
+    private final String label, explanation;
 
     public StringAlgorithmParameter(String label, String initialValue) {
         this.label = label;
+        this.explanation = "";
+        this.parameter = initialValue;
+    }
+
+    public StringAlgorithmParameter(String label, String initialValue, String explanation) {
+        this.label = label;
+        this.explanation = explanation;
         this.parameter = initialValue;
     }
 
     public StringAlgorithmParameter(String label, String initialValue,
-            SyntaxChecker syntaxChecker) {
+            SyntaxChecker syntaxChecker, String explanation) {
         this.label = label;
+        this.explanation = explanation;
         this.parameter = initialValue;
         this.syntaxChecker = syntaxChecker;
     }
@@ -42,5 +50,9 @@ public class StringAlgorithmParameter extends AlgorithmParameters {
 
     public String getLabel() {
         return label;
+    }
+
+    public String getExplanation() {
+        return explanation;
     }
 }

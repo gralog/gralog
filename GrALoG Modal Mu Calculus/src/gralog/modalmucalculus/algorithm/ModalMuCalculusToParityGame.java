@@ -30,7 +30,10 @@ public class ModalMuCalculusToParityGame extends Algorithm {
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
-                "Formula", "νX. μY. (P  ∧ □X) ∨ □Y", new ModalMuCalculusSyntaxChecker());
+                "Formula", "νX. μY. (P  ∧ □X) ∨ □Y",
+                new ModalMuCalculusSyntaxChecker(),
+                ModalMuCalculusSyntaxChecker.explanation()
+        );
     }
 
     public Object run(KripkeStructure s, AlgorithmParameters p,

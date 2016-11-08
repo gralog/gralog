@@ -2,15 +2,15 @@
  * This file is part of GrALoG FX, Copyright (c) 2016 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later.
  */
-
 package gralog.modalmucalculus.algorithm;
 
 import gralog.algorithm.ParseError;
 import gralog.algorithm.SyntaxChecker;
+import gralog.modallogic.ModalLogicSyntaxChecker;
 import gralog.modalmucalculus.parser.ModalMuCalculusParser;
 
 /**
- * A syntax checker for modal mu calculusformulas.
+ * A syntax checker for modal mu calculus formulas.
  */
 public class ModalMuCalculusSyntaxChecker extends SyntaxChecker {
 
@@ -34,5 +34,11 @@ public class ModalMuCalculusSyntaxChecker extends SyntaxChecker {
             }
         }
         return result;
+    }
+
+    public static String explanation() {
+        return ModalLogicSyntaxChecker.explanation() + "\n"
+               + "mu: μX. P, mu X. P\n"
+               + "nu: νX. P, nu X. P";
     }
 }

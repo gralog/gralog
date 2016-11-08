@@ -50,7 +50,9 @@ public class ModelCheckingGameFOLogic extends Algorithm {
             }
         }
 
-        return new StringAlgorithmParameter("Formula", str, new FirstOrderSyntaxChecker());
+        return new StringAlgorithmParameter(
+                "Formula", str, new FirstOrderSyntaxChecker(),
+                FirstOrderSyntaxChecker.explanation());
     }
 
     /* public void getUniqueGamePositions(FiniteGame game){

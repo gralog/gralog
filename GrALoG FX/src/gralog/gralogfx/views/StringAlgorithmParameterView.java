@@ -37,6 +37,10 @@ public class StringAlgorithmParameterView extends GridPaneView {
         add(new Label(param.getLabel() + ": "), 0, 0);
         add(valueField, 1, 0);
         add(hint, 0, 1, 2, 1);
+
+        String explanation = param.getExplanation();
+        if(!explanation.isEmpty())
+            add(new Text(explanation), 0, 2, 2, 1);
     }
 
     private void syntaxCheck(TextField valueField, Text hint) {

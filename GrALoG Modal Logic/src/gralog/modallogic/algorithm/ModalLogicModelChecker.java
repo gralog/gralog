@@ -28,7 +28,10 @@ public class ModalLogicModelChecker extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new StringAlgorithmParameter("Formula", "□(P ∧ Q)", new ModalLogicSyntaxChecker());
+        return new StringAlgorithmParameter(
+                "Formula", "□(P ∧ Q)",
+                new ModalLogicSyntaxChecker(),
+                ModalLogicSyntaxChecker.explanation());
     }
 
     public Object run(KripkeStructure s, AlgorithmParameters p,

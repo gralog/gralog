@@ -28,7 +28,10 @@ public class FirstOrderSolver extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        return new StringAlgorithmParameter("Formula", "!x. ?y. E(x,y)", new FirstOrderSyntaxChecker());
+        return new StringAlgorithmParameter(
+                "Formula", "!x. ?y. E(x,y)",
+                new FirstOrderSyntaxChecker(),
+                FirstOrderSyntaxChecker.explanation());
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
