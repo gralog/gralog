@@ -12,6 +12,7 @@ import gralog.modallogic.parser.*;
 import gralog.algorithm.*;
 import gralog.structure.*;
 import gralog.progresshandler.*;
+import gralog.properties.Properties;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +30,8 @@ public class ModalLogicModelChecker extends Algorithm {
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
-                "Formula", "□(P ∧ Q)",
+                "Formula",
+                Properties.getString(this.getClass(), "formula", "□(P ∧ Q)"),
                 new ModalLogicSyntaxChecker(),
                 ModalLogicSyntaxChecker.explanation());
     }
@@ -38,6 +40,7 @@ public class ModalLogicModelChecker extends Algorithm {
             Set<Object> selection, ProgressHandler onprogress) throws Exception {
 
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
+        Properties.setString(this.getClass(), "formula", sp.parameter);
 
         ModalLogicParser parser = new ModalLogicParser();
         ModalLogicFormula phi = parser.parseString(sp.parameter);

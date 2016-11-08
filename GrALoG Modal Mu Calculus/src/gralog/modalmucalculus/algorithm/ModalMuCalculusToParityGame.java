@@ -12,6 +12,7 @@ import gralog.modalmucalculus.structure.*;
 import gralog.algorithm.*;
 import gralog.structure.*;
 import gralog.progresshandler.*;
+import gralog.properties.Properties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,8 @@ public class ModalMuCalculusToParityGame extends Algorithm {
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
-                "Formula", "νX. μY. (P  ∧ □X) ∨ □Y",
+                "Formula",
+                Properties.getString(this.getClass(), "formula", "νX. μY. (P  ∧ □X) ∨ □Y"),
                 new ModalMuCalculusSyntaxChecker(),
                 ModalMuCalculusSyntaxChecker.explanation()
         );
@@ -39,6 +41,7 @@ public class ModalMuCalculusToParityGame extends Algorithm {
     public Object run(KripkeStructure s, AlgorithmParameters p,
             Set<Object> selection, ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
+        Properties.setString(this.getClass(), "formula", sp.parameter);
 
         ModalMuCalculusParser parser = new ModalMuCalculusParser();
         ModalMuCalculusFormula phi = parser.parseString(sp.parameter);
