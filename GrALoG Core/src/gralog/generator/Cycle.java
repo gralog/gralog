@@ -7,6 +7,7 @@ package gralog.generator;
 import gralog.algorithm.AlgorithmParameters;
 import gralog.algorithm.IntSyntaxChecker;
 import gralog.algorithm.StringAlgorithmParameter;
+import gralog.properties.Properties;
 import gralog.rendering.Vector2D;
 import gralog.structure.*;
 
@@ -23,7 +24,8 @@ public class Cycle extends Generator {
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-                "Number of vertices", "5",
+                "Number of vertices",
+                Properties.getInteger(this.getClass(), "vertices", 5).toString(),
                 new IntSyntaxChecker(1, Integer.MAX_VALUE),
                 "");
     }
@@ -31,6 +33,7 @@ public class Cycle extends Generator {
     @Override
     public Structure generate(AlgorithmParameters p) {
         int n = Integer.parseInt(((StringAlgorithmParameter) p).parameter);
+        Properties.setInteger(this.getClass(), "vertices", n);
 
         DirectedGraph result = new DirectedGraph();
 
