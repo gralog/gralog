@@ -11,19 +11,13 @@ import gralog.algorithm.*;
 
 import gralog.structure.*;
 import gralog.progresshandler.*;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Set;
 
 import gralog.finitegame.structure.*;
 import gralog.firstorderlogic.view.FirstOrderSyntaxChecker;
+import gralog.properties.Properties;
 import gralog.rendering.Vector2D;
-import java.io.IOException;
 
 /**
  *
@@ -37,21 +31,10 @@ public class ModelCheckingGameFOLogic extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        File file = new File("PreviousSearch.txt");
-        String str = "";
-
-        if (file.exists()) {
-            try {
-                BufferedReader input = new BufferedReader(new FileReader(file));
-                str = input.readLine();
-            }
-            catch (IOException ex) {
-                str = "ERROR" + ex.toString();
-            }
-        }
-
         return new StringAlgorithmParameter(
-                "Formula", str, new FirstOrderSyntaxChecker(),
+                "Formula",
+                Properties.getString(this.getClass(), "formula", "!x. ?y. E(y,x) ∨ E(x,z)"),
+                new FirstOrderSyntaxChecker(),
                 FirstOrderSyntaxChecker.explanation());
     }
 
@@ -77,13 +60,10 @@ public class ModelCheckingGameFOLogic extends Algorithm {
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
             ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
+        Properties.setString(this.getClass(), "formula", sp.parameter);
 
         FirstOrderParser parser = new FirstOrderParser();
         FirstOrderFormula phi = parser.parseString(sp.parameter);
-        try (PrintWriter out = new PrintWriter(new BufferedWriter(
-                new FileWriter("PreviousSearch.txt", false)))) {
-            out.println(sp.parameter);
-        }
 
         Set<Vertex> V = s.getVertices();
         int i = 0;

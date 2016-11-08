@@ -11,6 +11,7 @@ import gralog.algorithm.*;
 import gralog.firstorderlogic.view.FirstOrderSyntaxChecker;
 import gralog.structure.*;
 import gralog.progresshandler.*;
+import gralog.properties.Properties;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -29,7 +30,8 @@ public class FirstOrderSolver extends Algorithm {
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
-                "Formula", "!x. ?y. E(x,y)",
+                "Formula",
+                Properties.getString(this.getClass(), "formula", "!x. ?y. E(x,y)"),
                 new FirstOrderSyntaxChecker(),
                 FirstOrderSyntaxChecker.explanation());
     }
@@ -38,6 +40,7 @@ public class FirstOrderSolver extends Algorithm {
             ProgressHandler onprogress) throws Exception {
 
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
+        Properties.setString(this.getClass(), "formula", sp.parameter);
 
         FirstOrderParser parser = new FirstOrderParser();
         FirstOrderFormula phi = parser.parseString(sp.parameter);
