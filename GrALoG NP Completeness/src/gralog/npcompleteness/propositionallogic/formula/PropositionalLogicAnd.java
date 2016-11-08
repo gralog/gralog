@@ -40,7 +40,8 @@ public class PropositionalLogicAnd extends PropositionalLogicFormula {
             l = "(" + l + ")";
 
         String r = right.toString();
-        if (right instanceof PropositionalLogicOr)
+        if (right instanceof PropositionalLogicOr
+            || right instanceof PropositionalLogicAnd)
             r = "(" + r + ")";
 
         return l + " ∧ " + r;

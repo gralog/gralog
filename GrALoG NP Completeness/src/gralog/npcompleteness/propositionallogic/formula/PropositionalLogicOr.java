@@ -23,7 +23,10 @@ public class PropositionalLogicOr extends PropositionalLogicFormula {
 
     @Override
     public String toString() {
-        return left.toString() + " ∨ " + right.toString();
+        String r = right.toString();
+        if (right instanceof PropositionalLogicOr)
+            r = "(" + r + ")";
+        return left.toString() + " ∨ " + r;
     }
 
     @Override
