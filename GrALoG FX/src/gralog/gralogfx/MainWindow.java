@@ -582,7 +582,10 @@ public class MainWindow extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Scene scene = new Scene(root, 1000, 800);
+        Scene scene = new Scene(
+                root,
+                Preferences.getInteger(getClass(), "main-window-width", 1000),
+                Preferences.getInteger(getClass(), "main-window-height", 800));
         this.stage = primaryStage;
         primaryStage.setTitle("GrALoG FX");
         primaryStage.setScene(scene);
@@ -599,6 +602,11 @@ public class MainWindow extends Application {
                     setEdgeCreationMode();
                     break;
             }
+        });
+        // Remember the size of the window.
+        primaryStage.setOnCloseRequest((e) -> {
+            Preferences.setInteger(getClass(), "main-window-width", (int) scene.getWidth());
+            Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
         });
         primaryStage.show();
     }
