@@ -582,7 +582,7 @@ public class MainWindow extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 1000, 800);
         this.stage = primaryStage;
         primaryStage.setTitle("GrALoG FX");
         primaryStage.setScene(scene);
