@@ -13,11 +13,14 @@ import gralog.algorithm.*;
 
 import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
+import gralog.preferences.Preferences;
 
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.lang.reflect.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -188,14 +191,17 @@ public class MainWindow extends Application {
 
     public void menuFilePluginActivated() {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(new File(getLastDirectory()));
         fileChooser.setTitle("Load Plugins");
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
         );
         List<File> list = fileChooser.showOpenMultipleDialog(stage);
-        if (list != null)
+        if (list != null && !list.isEmpty()) {
+            setLastDirectory(list.get(0));
             for (File file : list)
                 doLoadPlugin(file.getAbsolutePath());
+        }
     }
 
     public void doLoadPlugin(String filename) {
@@ -231,7 +237,7 @@ public class MainWindow extends Application {
             Structure structure = getCurrentStructurePane().structure;
 
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            fileChooser.setInitialDirectory(new File(getLastDirectory()));
             fileChooser.getExtensionFilters().addAll(
                     new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
@@ -246,6 +252,7 @@ public class MainWindow extends Application {
             fileChooser.setTitle("Save File");
             File file = fileChooser.showSaveDialog(stage);
             if (file != null) {
+                setLastDirectory(file);
                 // has the user selected the native file-type or an export-filter?
                 String extension = file.getName(); // unclean way of getting file extension
                 int idx = extension.lastIndexOf(".");
@@ -277,7 +284,7 @@ public class MainWindow extends Application {
 
     public void menuFileOpenActivated() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setInitialDirectory(new File(getLastDirectory()));
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("All (*.*)", "*.*"),
                 new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
@@ -293,9 +300,11 @@ public class MainWindow extends Application {
         fileChooser.setInitialFileName("*.*");
         fileChooser.setTitle("Open File");
         List<File> list = fileChooser.showOpenMultipleDialog(stage);
-        if (list != null)
+        if (list != null) {
+            setLastDirectory(list.get(0));
             for (File file : list)
                 doOpenFile(file);
+        }
     }
 
     public void menuFileDirectInputActivated() {
@@ -716,5 +725,21 @@ public class MainWindow extends Application {
         if (pane != null)
             pane.setEdgeCreationMode();
         checkMode();
+    }
+
+    private String getLastDirectory() {
+        final String defaultDir = System.getProperty("user.home");
+        String dir = Preferences.getString(this.getClass(), "lastdirectory", defaultDir);
+        if (Files.exists(Paths.get(dir)))
+            return dir;
+        return defaultDir;
+    }
+
+    private void setLastDirectory(File lastFile) {
+        setLastDirectory(Paths.get(lastFile.getAbsolutePath()).getParent().toString());
+    }
+
+    private void setLastDirectory(String lastDirectory) {
+        Preferences.setString(this.getClass(), "lastdirectory", lastDirectory);
     }
 }
