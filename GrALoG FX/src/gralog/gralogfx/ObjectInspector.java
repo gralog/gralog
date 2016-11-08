@@ -19,7 +19,6 @@ public class ObjectInspector extends AnchorPane {
 
     public ObjectInspector() {
         this.setMinWidth(200.0d);
-        this.getChildren().clear();
     }
 
     public void setObject(Object obj, StructurePane structurePane) throws Exception {
