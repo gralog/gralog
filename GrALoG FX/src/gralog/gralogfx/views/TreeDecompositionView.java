@@ -28,7 +28,7 @@ public class TreeDecompositionView extends GridPaneView {
     }
 
     @Override
-    public void update() {
+    public void setObject(Object displayObject) {
         this.getChildren().clear();
 
         if (displayObject != null) {

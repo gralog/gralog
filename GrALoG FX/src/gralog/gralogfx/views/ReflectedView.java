@@ -18,7 +18,8 @@ import javafx.scene.control.Control;
 @ViewDescription(forClass = Object.class)
 public class ReflectedView extends GridPaneView {
 
-    public void update() {
+    @Override
+    public void setObject(Object displayObject) {
         this.getChildren().clear();
         int i = 0;
 

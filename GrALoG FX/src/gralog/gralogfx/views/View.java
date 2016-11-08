@@ -10,7 +10,6 @@ import gralog.gralogfx.StructurePane;
  *
  */
 public interface View {
-    void update();
-    void update(Object obj);
+    void setObject(Object obj);
     void setStructurePane(StructurePane structurePane);
 }

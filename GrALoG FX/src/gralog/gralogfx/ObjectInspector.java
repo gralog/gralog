@@ -45,7 +45,7 @@ public class ObjectInspector extends AnchorPane {
             throw new Exception("Class " + view.getClass().getName() + " is not derived from javafx.scene.Node");
 
         view.setStructurePane(structurePane);
-        view.update(obj);
+        view.setObject(obj);
         this.getChildren().add((Node) view);
 
         AnchorPane.setTopAnchor((Node) view, 3.0);

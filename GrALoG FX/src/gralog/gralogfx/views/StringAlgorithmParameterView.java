@@ -17,7 +17,7 @@ import javafx.scene.text.Text;
 public class StringAlgorithmParameterView extends GridPaneView {
 
     @Override
-    public void update() {
+    public void setObject(Object displayObject) {
         this.getChildren().clear();
         if (displayObject == null)
             return;
@@ -28,11 +28,11 @@ public class StringAlgorithmParameterView extends GridPaneView {
 
         Text hint = new Text();
 
-        syntaxCheck(valueField, hint);
+        syntaxCheck(param, valueField, hint);
 
         valueField.textProperty().addListener(e -> {
             param.parameter = valueField.getText();
-            syntaxCheck(valueField, hint);
+            syntaxCheck(param, valueField, hint);
         });
         add(new Label(param.getLabel() + ": "), 0, 0);
         add(valueField, 1, 0);
@@ -43,8 +43,7 @@ public class StringAlgorithmParameterView extends GridPaneView {
             add(new Text(explanation), 0, 2, 2, 1);
     }
 
-    private void syntaxCheck(TextField valueField, Text hint) {
-        StringAlgorithmParameter param = (StringAlgorithmParameter) displayObject;
+    private void syntaxCheck(StringAlgorithmParameter param, TextField valueField, Text hint) {
         SyntaxChecker.Result syntax = param.syntaxCheck();
         if (syntax.syntaxCorrect)
             valueField.setStyle("-fx-text-inner-color: black;");

@@ -82,7 +82,7 @@ public class FirstOrderProverParametersView extends GridPaneView {
     }
 
     @Override
-    public void update() {
+    public void setObject(Object displayObject) {
         this.getChildren().clear();
         if (displayObject != null) {
             FirstOrderProverParameters params = (FirstOrderProverParameters) displayObject;
@@ -161,7 +161,6 @@ public class FirstOrderProverParametersView extends GridPaneView {
                         }
                         String subformula = phi.substitute(replace);
                         formulaField.setText(tfText + "( " + subformula + ")");
-
                     }
                     catch (Exception ex) {
                         Alert alert = new Alert(AlertType.INFORMATION);
