@@ -1,41 +1,45 @@
 package gralog.npcompleteness.propositionallogic.parser;
 
-import java_cup.runtime.SymbolFactory;
-import java.lang.StringBuffer;
+import java_cup.runtime.Symbol;
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 
 %%
+%class PropositionalLogicScanner
 %unicode
 %cup
-%class PropositionalLogicScanner
+%column
+
 %{
-    public PropositionalLogicScanner(java.io.InputStream r, SymbolFactory sf){
-        this(r);
-        this.sf=sf;
+    private ComplexSymbolFactory sf = new ComplexSymbolFactory();
+
+    private Symbol symbol(String name, int type) {
+        return symbol(name, type, null);
     }
-    private SymbolFactory sf;
+
+    private Symbol symbol(String name, int type, Object value) {
+        return sf.newSymbol(name, type,
+            new Location(0, yycolumn, yychar),
+            new Location(0, yycolumn + yylength(), yychar + yylength()),
+            value);
+    }
 %}
 
 
-
-
 %eofval{
-    return sf.newSymbol("EOF",PropositionalLogicScannerToken.EOF);
+    return symbol("END-OF-STRING", PropositionalLogicScannerToken.EOF);
 %eofval}
-
-
-
-
 
 %%
 
 [ \t\r\n\f]           { /* ignore white space. */ }
 
-"\\neg"               { return sf.newSymbol("\\neg",PropositionalLogicScannerToken.NEG); }
-"\\vee"               { return sf.newSymbol("\\vee",PropositionalLogicScannerToken.OR); }
-"\\wedge"             { return sf.newSymbol("\\wedge",PropositionalLogicScannerToken.AND); }
+"\\neg" | [¬~-]       { return symbol("NEGATION", PropositionalLogicScannerToken.NEG); }
+"\\vee" | [∨+]        { return symbol("OR", PropositionalLogicScannerToken.OR); }
+"\\wedge" | [∧*]      { return symbol("AND", PropositionalLogicScannerToken.AND); }
 
-"("                   { return sf.newSymbol("(",PropositionalLogicScannerToken.OPEN); }
-")"                   { return sf.newSymbol(")",PropositionalLogicScannerToken.CLOSE); }
+"("                   { return symbol("(",PropositionalLogicScannerToken.OPEN); }
+")"                   { return symbol(")",PropositionalLogicScannerToken.CLOSE); }
 
-[A-Za-z][A-Za-z0-9]*  { return sf.newSymbol("string", PropositionalLogicScannerToken.STRING, yytext()); }
-.                     { System.err.println("Illegal character: "+yytext()); }
+[A-Za-z][A-Za-z0-9]*  { return symbol("string", PropositionalLogicScannerToken.STRING, yytext()); }
+.                     { return symbol("UNEXPECTED CHARACTER", PropositionalLogicScannerToken.error, yytext()); }
