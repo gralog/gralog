@@ -47,7 +47,8 @@ import javafx.stage.Stage;
  *
  */
 @ViewDescription(forClass = FirstOrderProverParameters.class)
-public class FirstOrderProverParametersView extends GridPaneView {
+public class FirstOrderProverParametersView
+        extends GridPaneView<FirstOrderProverParameters> {
 
     public Set<String> getUniqueSearches() {
         String searches = Preferences.getString(FirstOrderProver.class, "searches", "");
@@ -82,159 +83,157 @@ public class FirstOrderProverParametersView extends GridPaneView {
     }
 
     @Override
-    public void setObject(Object displayObject) {
+    public void setObject(FirstOrderProverParameters params) {
         this.getChildren().clear();
-        if (displayObject != null) {
-            FirstOrderProverParameters params = (FirstOrderProverParameters) displayObject;
-            this.setVgap(8);
-            this.setHgap(10);
+        if (params == null)
+            return;
+        this.setVgap(8);
+        this.setHgap(10);
 
-            Label label = new Label("Formula:");
-            label.setMinWidth(USE_PREF_SIZE);
-            setConstraints(label, 0, 0);
+        Label label = new Label("Formula:");
+        label.setMinWidth(USE_PREF_SIZE);
+        setConstraints(label, 0, 0);
 
-            TextField formulaField = new TextField(params.parameter);
-            setConstraints(formulaField, 1, 0);
-            formulaField.promptTextProperty().set("Please enter a first-order formula");
-            formulaField.setPrefWidth(1000);
+        TextField formulaField = new TextField(params.parameter);
+        setConstraints(formulaField, 1, 0);
+        formulaField.promptTextProperty().set("Please enter a first-order formula");
+        formulaField.setPrefWidth(1000);
 
-            TextArea textArea = new TextArea();
-            textArea.clear();
+        TextArea textArea = new TextArea();
+        textArea.clear();
 
-            for (String s : getUniqueSearches()) {
-                textArea.appendText(s);
-                textArea.appendText("\n");
-            }
+        for (String s : getUniqueSearches()) {
+            textArea.appendText(s);
+            textArea.appendText("\n");
+        }
 
-            Text hint = new Text();
+        Text hint = new Text();
+        syntaxCheck(formulaField, hint);
+        setConstraints(hint, 0, 2, 2, 1);
+
+        params.parameter = formulaField.getText();
+        formulaField.textProperty().addListener(e -> {
             syntaxCheck(formulaField, hint);
-            setConstraints(hint, 0, 2, 2, 1);
-
             params.parameter = formulaField.getText();
-            formulaField.textProperty().addListener(e -> {
-                syntaxCheck(formulaField, hint);
-                params.parameter = formulaField.getText();
-            });
+        });
 
-            textArea.setEditable(false);
-            textArea.setWrapText(false);
+        textArea.setEditable(false);
+        textArea.setWrapText(false);
 
-            setConstraints(textArea, 1, 1);
-            Button load = new Button("load");
-            Button save = new Button("save");
-            Button delete = new Button("delete");
-            Button clear = new Button("clear");
-            Button substitute = new Button("Substitute");
-            VBox vbox = new VBox(5);
-            vbox.getChildren().addAll(load, save, delete, clear, substitute);
-            vbox.setMinWidth(USE_PREF_SIZE);
-            setConstraints(vbox, 4, 1);
+        setConstraints(textArea, 1, 1);
+        Button load = new Button("load");
+        Button save = new Button("save");
+        Button delete = new Button("delete");
+        Button clear = new Button("clear");
+        Button substitute = new Button("Substitute");
+        VBox vbox = new VBox(5);
+        vbox.getChildren().addAll(load, save, delete, clear, substitute);
+        vbox.setMinWidth(USE_PREF_SIZE);
+        setConstraints(vbox, 4, 1);
 
-            substitute.setOnAction(e -> {
-                if ((textArea.getSelectedText()) != null) {
-                    String text = textArea.getSelectedText();
-                    String tfText = formulaField.getText();
+        substitute.setOnAction(e -> {
+            if ((textArea.getSelectedText()) != null) {
+                String text = textArea.getSelectedText();
+                String tfText = formulaField.getText();
 
-                    FirstOrderParser parser = new FirstOrderParser();
+                FirstOrderParser parser = new FirstOrderParser();
 
-                    FirstOrderFormula phi = null;
-                    try {
-                        phi = parser.parseString(text);
-                        Set<String> usedInFormula = phi.variables();
-                        Set<String> usedInField;
-                        try {
-                            FirstOrderFormula phi2 = parser.parseString(tfText);
-                            usedInField = phi2.variables();
-                        }
-                        catch (Exception ex) {
-                            usedInField = getUsedVariables(tfText);
-                        }
-                        HashMap<String, String> replace = new HashMap<>();
-                        String ch = "a";
-                        char c = 'a';
-                        while (usedInField.contains(ch)) {
-                            ch = String.valueOf(++c);
-                        }
-                        int cnt = 1;
-                        for (String s : usedInFormula) {
-                            replace.put(s, ch + String.valueOf(cnt++));
-                        }
-                        String subformula = phi.substitute(replace);
-                        formulaField.setText(tfText + "( " + subformula + ")");
-                    }
-                    catch (Exception ex) {
-                        Alert alert = new Alert(AlertType.INFORMATION);
-                        alert.setTitle("Information Dialog");
-                        alert.setHeaderText(null);
-                        alert.setContentText("Please select a valid formula to substitute");
-
-                        alert.showAndWait();
-                    }
-                }
-            });
-
-            /*load.setOnAction(e -> {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Open Resource File");
-                fileChooser.getExtensionFilters().addAll(
-                        new ExtensionFilter("Text Files", "*.txt"));
-                Stage stage = new Stage();
-                File f = fileChooser.showOpenDialog(stage);
-                if (f != null) {
-                    textArea.clear();
-                    Set<String> uniqueSearch;
-                    try {
-                        uniqueSearch = getUniqueSearches(f);
-                        for (String s : uniqueSearch) {
-                            textArea.appendText(s);
-                            textArea.appendText("\n");
-                        }
-                    }
-                    catch (Exception ex) {
-                        Logger.getLogger(FirstOrderProverParametersView.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            });*/
-
-            save.setOnAction(e -> {
-                String text = textArea.getText();
-                String fileName = "Formulae" + new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()) + ".txt";
-                PrintWriter out;
+                FirstOrderFormula phi = null;
                 try {
-                    out = new PrintWriter(new BufferedWriter(
-                            new FileWriter(fileName, true)));
-                    out.println(text);
-                    out.close();
+                    phi = parser.parseString(text);
+                    Set<String> usedInFormula = phi.variables();
+                    Set<String> usedInField;
+                    try {
+                        FirstOrderFormula phi2 = parser.parseString(tfText);
+                        usedInField = phi2.variables();
+                    }
+                    catch (Exception ex) {
+                        usedInField = getUsedVariables(tfText);
+                    }
+                    HashMap<String, String> replace = new HashMap<>();
+                    String ch = "a";
+                    char c = 'a';
+                    while (usedInField.contains(ch)) {
+                        ch = String.valueOf(++c);
+                    }
+                    int cnt = 1;
+                    for (String s : usedInFormula) {
+                        replace.put(s, ch + String.valueOf(cnt++));
+                    }
+                    String subformula = phi.substitute(replace);
+                    formulaField.setText(tfText + "( " + subformula + ")");
                 }
-                catch (IOException ex) {
+                catch (Exception ex) {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Dialog");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Please select a valid formula to substitute");
+
+                    alert.showAndWait();
+                }
+            }
+        });
+
+        /*load.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Resource File");
+            fileChooser.getExtensionFilters().addAll(
+                    new ExtensionFilter("Text Files", "*.txt"));
+            Stage stage = new Stage();
+            File f = fileChooser.showOpenDialog(stage);
+            if (f != null) {
+                textArea.clear();
+                Set<String> uniqueSearch;
+                try {
+                    uniqueSearch = getUniqueSearches(f);
+                    for (String s : uniqueSearch) {
+                        textArea.appendText(s);
+                        textArea.appendText("\n");
+                    }
+                }
+                catch (Exception ex) {
                     Logger.getLogger(FirstOrderProverParametersView.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+        });*/
+        save.setOnAction(e -> {
+            String text = textArea.getText();
+            String fileName = "Formulae" + new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()) + ".txt";
+            PrintWriter out;
+            try {
+                out = new PrintWriter(new BufferedWriter(
+                        new FileWriter(fileName, true)));
+                out.println(text);
+                out.close();
+            }
+            catch (IOException ex) {
+                Logger.getLogger(FirstOrderProverParametersView.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Information Dialog");
-                alert.setHeaderText(null);
-                alert.setContentText("File saved successfully as " + fileName);
+            Alert alert = new Alert(AlertType.INFORMATION);
+            alert.setTitle("Information Dialog");
+            alert.setHeaderText(null);
+            alert.setContentText("File saved successfully as " + fileName);
 
-                alert.showAndWait();
-            });
+            alert.showAndWait();
+        });
 
-            delete.setOnAction((ActionEvent e) -> {
-                textArea.replaceSelection("");
-            });
-            clear.setOnAction((ActionEvent e) -> {
-                textArea.clear();
-            });
+        delete.setOnAction((ActionEvent e) -> {
+            textArea.replaceSelection("");
+        });
+        clear.setOnAction((ActionEvent e) -> {
+            textArea.clear();
+        });
 
-            ColumnConstraints textAreaColumn = new ColumnConstraints();
-            textAreaColumn.setHgrow(Priority.ALWAYS);
-            getColumnConstraints().addAll(new ColumnConstraints(), textAreaColumn, new ColumnConstraints());
+        ColumnConstraints textAreaColumn = new ColumnConstraints();
+        textAreaColumn.setHgrow(Priority.ALWAYS);
+        getColumnConstraints().addAll(new ColumnConstraints(), textAreaColumn, new ColumnConstraints());
 
-            RowConstraints textAreaRow = new RowConstraints();
-            textAreaRow.setVgrow(Priority.ALWAYS);
-            getRowConstraints().addAll(new RowConstraints(), textAreaRow, new RowConstraints());
+        RowConstraints textAreaRow = new RowConstraints();
+        textAreaRow.setVgrow(Priority.ALWAYS);
+        getRowConstraints().addAll(new RowConstraints(), textAreaRow, new RowConstraints());
 
-            this.getChildren().addAll(label, formulaField, textArea, vbox, hint);
-        }
+        this.getChildren().addAll(label, formulaField, textArea, vbox, hint);
     }
 
     private void syntaxCheck(TextField valueField, Text hint) {

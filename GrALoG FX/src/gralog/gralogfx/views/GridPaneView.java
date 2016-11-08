@@ -10,7 +10,7 @@ import javafx.scene.layout.GridPane;
 /**
  *
  */
-public abstract class GridPaneView extends GridPane implements View {
+public abstract class GridPaneView<T> extends GridPane implements View<T> {
 
     protected StructurePane structurePane = null;
 

@@ -8,8 +8,9 @@ import gralog.gralogfx.StructurePane;
 
 /**
  *
+ * @param <T> The object to display.
  */
-public interface View {
-    void setObject(Object obj);
+public interface View<T> {
+    void setObject(T obj);
     void setStructurePane(StructurePane structurePane);
 }

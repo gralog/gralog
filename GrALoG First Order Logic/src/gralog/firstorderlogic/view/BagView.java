@@ -23,7 +23,7 @@ import javafx.scene.text.Text;
  */
 @ViewDescription(
         forClass = gralog.firstorderlogic.prover.TreeDecomposition.Bag.class)
-public class BagView extends GridPaneView {
+public class BagView extends GridPaneView<Bag> {
 
     protected void FillTreeView(TreeItem node, Bag bag) {
         node.setValue(bag);
@@ -36,71 +36,68 @@ public class BagView extends GridPaneView {
     }
 
     @Override
-    public void setObject(Object displayObject) {
+    public void setObject(Bag treedecomp) {
         this.getChildren().clear();
+        if(treedecomp == null)
+            return;
 
-        if (displayObject != null) {
+        TreeItem root = new TreeItem("root");
 
-            Bag treedecomp = (Bag) displayObject;
+        FillTreeView(root, treedecomp);
+        root.setExpanded(true);
+        TreeView treeView = new TreeView(root);
 
-            TreeItem root = new TreeItem("root");
+        treeView.setCellFactory(tv -> {
+            return new TreeCell<Bag>() {
 
-            FillTreeView(root, treedecomp);
-            root.setExpanded(true);
-            TreeView treeView = new TreeView(root);
+                private final Text assignment;
+                private final Text caption;
+                HBox hbox;
 
-            treeView.setCellFactory(tv -> {
-                return new TreeCell<Bag>() {
+                {
+                    assignment = new Text();
+                    caption = new Text();
+                    assignment.setStyle("-fx-fill:blue");
+                    hbox = new HBox(4, assignment, caption);
+                }
 
-                    private final Text assignment;
-                    private final Text caption;
-                    HBox hbox;
-
-                    {
-                        assignment = new Text();
-                        caption = new Text();
-                        assignment.setStyle("-fx-fill:blue");
-                        hbox = new HBox(4, assignment, caption);
+                @Override
+                protected void updateItem(Bag item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setGraphic(null);
                     }
-
-                    @Override
-                    protected void updateItem(Bag item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || item == null) {
-                            setGraphic(null);
+                    else {
+                        assignment.setText(item.assignment);
+                        caption.setText(item.caption);
+                        caption.setStyle(null);
+                        if (item.eval) {
+                            caption.setStyle("-fx-fill:green");
                         }
-                        else {
-                            assignment.setText(item.assignment);
-                            caption.setText(item.caption);
-                            caption.setStyle(null);
-                            if (item.eval) {
-                                caption.setStyle("-fx-fill:green");
-                            }
-                            setGraphic(hbox);
-                        }
+                        setGraphic(hbox);
                     }
+                }
 
-                };
-            });
+            };
+        });
 
-            treeView.getSelectionModel()
-                    .selectedItemProperty()
-                    .addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
-                        TreeItem selectedItem = (TreeItem) newValue;
-                        Bag bag = (Bag) selectedItem.getValue();
-                        structurePane.clearSelection();
-                        structurePane.selectAll(bag.Nodes);
-                    });
+        treeView.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+                    TreeItem selectedItem = (TreeItem) newValue;
+                    Bag bag = (Bag) selectedItem.getValue();
+                    structurePane.clearSelection();
+                    structurePane.selectAll(bag.Nodes);
+                });
 
-            ColumnConstraints columnConstraints = new ColumnConstraints();
-            columnConstraints.setPercentWidth(100);
-            this.getColumnConstraints().add(columnConstraints);
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setPercentWidth(100);
+        this.getColumnConstraints().add(columnConstraints);
 
-            RowConstraints rowConstraints = new RowConstraints();
-            rowConstraints.setPercentHeight(100);
-            this.getRowConstraints().add(rowConstraints);
+        RowConstraints rowConstraints = new RowConstraints();
+        rowConstraints.setPercentHeight(100);
+        this.getRowConstraints().add(rowConstraints);
 
-            this.add(treeView, 0, 0);
-        }
+        this.add(treeView, 0, 0);
     }
 }

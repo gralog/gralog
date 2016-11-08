@@ -14,15 +14,14 @@ import javafx.scene.text.Text;
  * Asks the user for string with live syntax checking.
  */
 @ViewDescription(forClass = StringAlgorithmParameter.class)
-public class StringAlgorithmParameterView extends GridPaneView {
+public class StringAlgorithmParameterView extends GridPaneView<StringAlgorithmParameter> {
 
     @Override
-    public void setObject(Object displayObject) {
+    public void setObject(StringAlgorithmParameter param) {
         this.getChildren().clear();
-        if (displayObject == null)
+        if (param == null)
             return;
 
-        StringAlgorithmParameter param = (StringAlgorithmParameter) displayObject;
         TextField valueField = new TextField(param.parameter);
         valueField.setPrefWidth(1000);
 
@@ -39,11 +38,12 @@ public class StringAlgorithmParameterView extends GridPaneView {
         add(hint, 0, 1, 2, 1);
 
         String explanation = param.getExplanation();
-        if(!explanation.isEmpty())
+        if (!explanation.isEmpty())
             add(new Text(explanation), 0, 2, 2, 1);
     }
 
-    private void syntaxCheck(StringAlgorithmParameter param, TextField valueField, Text hint) {
+    private void syntaxCheck(StringAlgorithmParameter param,
+            TextField valueField, Text hint) {
         SyntaxChecker.Result syntax = param.syntaxCheck();
         if (syntax.syntaxCorrect)
             valueField.setStyle("-fx-text-inner-color: black;");

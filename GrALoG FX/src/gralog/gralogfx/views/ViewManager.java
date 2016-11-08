@@ -22,7 +22,7 @@ import javafx.scene.Node;
  */
 public class ViewManager {
 
-    private final static HashMap<Class, Constructor> viewRegister = new HashMap<>();
+    private final static HashMap<Class, Constructor<? extends View>> viewRegister = new HashMap<>();
 
     public static void initialize() throws Exception {
         File f = new File(ViewManager.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -32,8 +32,8 @@ public class ViewManager {
     public static View instantiateView(Class<?> forClass) throws Exception {
         for (Class sup = forClass; sup != null; sup = sup.getSuperclass()) {
             if (viewRegister.containsKey(sup)) {
-                Constructor ctor = viewRegister.get(sup);
-                return (View) ctor.newInstance();
+                Constructor<? extends View> ctor = viewRegister.get(sup);
+                return ctor.newInstance();
             }
         }
 
@@ -82,7 +82,7 @@ public class ViewManager {
 
             if (isNode && isView) {
                 // okay, it is a view. (try to) register it
-                Constructor ctor = c.getConstructor(new Class[]{});
+                Constructor<? extends View> ctor = (Constructor<? extends View>) c.getConstructor(new Class[]{});
                 if (ctor == null)
                     throw new Exception("class \"" + c.getName() + "\" has no empty constructor");
 

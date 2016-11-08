@@ -15,7 +15,7 @@ import javafx.scene.control.TreeItem;
 /**
  */
 @ViewDescription(forClass = TreeDecomposition.class)
-public class TreeDecompositionView extends GridPaneView {
+public class TreeDecompositionView extends GridPaneView<TreeDecomposition> {
 
     protected void fillTreeView(TreeItem node, Bag bag) {
         node.setValue(bag);
@@ -28,33 +28,31 @@ public class TreeDecompositionView extends GridPaneView {
     }
 
     @Override
-    public void setObject(Object displayObject) {
+    public void setObject(TreeDecomposition treedecomp) {
         this.getChildren().clear();
+        if (treedecomp == null)
+            return;
 
-        if (displayObject != null) {
-            TreeDecomposition treedecomp = (TreeDecomposition) displayObject;
+        TreeItem root = new TreeItem("root");
+        fillTreeView(root, treedecomp.rootBag);
+        TreeView treeView = new TreeView(root);
 
-            TreeItem root = new TreeItem("root");
-            fillTreeView(root, treedecomp.rootBag);
-            TreeView treeView = new TreeView(root);
+        treeView.getSelectionModel().selectedItemProperty().addListener(
+                (ObservableValue observable, Object oldValue, Object newValue) -> {
+                    TreeItem selectedItem = (TreeItem) newValue;
+                    Bag bag = (Bag) selectedItem.getValue();
+                    structurePane.clearSelection();
+                    structurePane.selectAll(bag.Nodes);
+                });
 
-            treeView.getSelectionModel().selectedItemProperty().addListener(
-                    (ObservableValue observable, Object oldValue, Object newValue) -> {
-                        TreeItem selectedItem = (TreeItem) newValue;
-                        Bag bag = (Bag) selectedItem.getValue();
-                        structurePane.clearSelection();
-                        structurePane.selectAll(bag.Nodes);
-                    });
+        ColumnConstraints columnConstraints = new ColumnConstraints();
+        columnConstraints.setPercentWidth(100);
+        this.getColumnConstraints().add(columnConstraints);
 
-            ColumnConstraints columnConstraints = new ColumnConstraints();
-            columnConstraints.setPercentWidth(100);
-            this.getColumnConstraints().add(columnConstraints);
+        RowConstraints rowConstraints = new RowConstraints();
+        rowConstraints.setPercentHeight(100);
+        this.getRowConstraints().add(rowConstraints);
 
-            RowConstraints rowConstraints = new RowConstraints();
-            rowConstraints.setPercentHeight(100);
-            this.getRowConstraints().add(rowConstraints);
-
-            this.add(treeView, 0, 0);
-        }
+        this.add(treeView, 0, 0);
     }
 }
