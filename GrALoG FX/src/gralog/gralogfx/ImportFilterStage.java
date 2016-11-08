@@ -45,6 +45,7 @@ public class ImportFilterStage extends Stage {
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Import");
+        runButton.setDefaultButton(true);
         runButton.setOnAction(e -> {
             this.DialogResult = true;
             this.close();

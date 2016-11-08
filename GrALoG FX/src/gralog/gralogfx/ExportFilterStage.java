@@ -45,6 +45,7 @@ public class ExportFilterStage extends Stage {
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Export");
+        runButton.setDefaultButton(true);
         runButton.setOnAction(e -> {
             this.dialogResult = true;
             this.close();

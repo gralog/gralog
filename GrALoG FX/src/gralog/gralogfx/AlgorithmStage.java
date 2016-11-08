@@ -42,6 +42,7 @@ public class AlgorithmStage extends Stage {
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Run");
+        runButton.setDefaultButton(true);
         runButton.setOnAction(e -> {
             this.dialogResult = true;
             this.close();
