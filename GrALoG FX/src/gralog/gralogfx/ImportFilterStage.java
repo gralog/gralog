@@ -45,22 +45,23 @@ public class ImportFilterStage extends Stage {
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Import");
+        runButton.setPrefWidth(UIConstants.SUBMIT_BUTTON_WIDTH);
         runButton.setDefaultButton(true);
         runButton.setOnAction(e -> {
             this.DialogResult = true;
             this.close();
         });
-        hBox = new HBox();
+        hBox = new HBox(UIConstants.HBOX_SPACING);
         infoButton = null;
         ImportFilterDescription descr = importfilter.getDescription();
         String url = descr.url();
         if (url != null && !url.trim().equals("")) {
             infoButton = new Button("Info");
             infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
-            hBox.getChildren().addAll(infoButton, cancelButton, runButton);
+            hBox.getChildren().addAll(runButton, cancelButton, infoButton);
         }
         else
-            hBox.getChildren().addAll(cancelButton, runButton);
+            hBox.getChildren().addAll(runButton, cancelButton);
 
         root = new BorderPane();
         root.setCenter(objectInspector);

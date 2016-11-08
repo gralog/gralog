@@ -40,13 +40,14 @@ public class GeneratorStage extends Stage {
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Run");
+        runButton.setPrefWidth(UIConstants.SUBMIT_BUTTON_WIDTH);
         runButton.setDefaultButton(true);
         runButton.setOnAction(e -> {
             this.dialogResult = true;
             this.close();
         });
-        hBox = new HBox();
-        hBox.getChildren().addAll(cancelButton, runButton);
+        hBox = new HBox(UIConstants.HBOX_SPACING);
+        hBox.getChildren().addAll(runButton, cancelButton);
         infoButton = null;
         GeneratorDescription descr = gen.getDescription();
         String url = descr.url();

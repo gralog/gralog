@@ -45,11 +45,13 @@ public class DirectInputStage extends Stage {
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
         runButton = new Button("Input");
+        runButton.setPrefWidth(UIConstants.SUBMIT_BUTTON_WIDTH);
+        runButton.setDefaultButton(true);
         runButton.setOnAction(e -> runActivated());
         infoButton = new Button("Info");
         infoButton.setOnAction(e -> infoActivated());
-        hBox = new HBox();
-        hBox.getChildren().addAll(infoButton, cancelButton, runButton);
+        hBox = new HBox(UIConstants.HBOX_SPACING);
+        hBox.getChildren().addAll(runButton, cancelButton, infoButton);
 
         inputArea = new TextArea();
 

@@ -149,7 +149,7 @@ public class MainWindow extends Application {
         menu.getMenus().addAll(menuFile, menuEdit, menuAlgo, menuHelp);
 
         // Button Bar
-        HBox buttonBar = new HBox();
+        HBox buttonBar = new HBox(UIConstants.HBOX_SPACING);
         buttonSelectMode = new Button("Select");
         buttonSelectMode.setOnAction(e -> setSelectMode());
         buttonSelectMode.tooltipProperty().setValue(new Tooltip("Shortcut: s"));
