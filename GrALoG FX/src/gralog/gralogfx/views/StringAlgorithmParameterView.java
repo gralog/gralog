@@ -5,7 +5,7 @@
 package gralog.gralogfx.views;
 
 import gralog.algorithm.StringAlgorithmParameter;
-import gralog.algorithm.SyntaxChecker;
+import gralog.parser.SyntaxChecker;
 import java.util.function.Consumer;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;

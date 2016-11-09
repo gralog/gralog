@@ -4,7 +4,7 @@
  */
 package gralog.modallogic.algorithm;
 
-import gralog.modallogic.ModalLogicSyntaxChecker;
+import gralog.modallogic.parser.ModalLogicSyntaxChecker;
 import gralog.modallogic.*;
 import gralog.modallogic.formula.*;
 import gralog.modallogic.parser.*;

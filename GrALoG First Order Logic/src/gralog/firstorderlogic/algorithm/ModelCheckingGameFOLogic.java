@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import gralog.finitegame.structure.*;
-import gralog.firstorderlogic.view.FirstOrderSyntaxChecker;
+import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderSyntaxChecker;
 import gralog.preferences.Preferences;
 import gralog.rendering.Vector2D;
 

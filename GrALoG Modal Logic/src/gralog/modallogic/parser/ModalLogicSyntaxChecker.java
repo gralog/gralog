@@ -3,9 +3,9 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later.
  */
 
-package gralog.modallogic;
+package gralog.modallogic.parser;
 
-import gralog.algorithm.SyntaxChecker;
+import gralog.parser.SyntaxChecker;
 import gralog.modallogic.parser.ModalLogicParser;
 
 /**

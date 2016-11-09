@@ -5,7 +5,7 @@
 package gralog.generator;
 
 import gralog.algorithm.AlgorithmParameters;
-import gralog.algorithm.IntSyntaxChecker;
+import gralog.parser.IntSyntaxChecker;
 import gralog.algorithm.StringAlgorithmParameter;
 import gralog.preferences.Preferences;
 import gralog.rendering.Vector2D;

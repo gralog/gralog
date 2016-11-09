@@ -4,6 +4,7 @@
  */
 package gralog.modalmucalculus.algorithm;
 
+import gralog.modalmucalculus.parser.ModalMuCalculusSyntaxChecker;
 import gralog.modallogic.*;
 import gralog.modalmucalculus.formula.*;
 import gralog.modalmucalculus.parser.*;

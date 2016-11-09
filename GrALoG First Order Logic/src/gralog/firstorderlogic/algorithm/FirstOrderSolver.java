@@ -8,7 +8,7 @@ import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 
 import gralog.algorithm.*;
-import gralog.firstorderlogic.view.FirstOrderSyntaxChecker;
+import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderSyntaxChecker;
 import gralog.structure.*;
 import gralog.progresshandler.*;
 import gralog.preferences.Preferences;

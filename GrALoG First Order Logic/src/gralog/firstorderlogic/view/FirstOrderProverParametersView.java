@@ -4,7 +4,8 @@
  */
 package gralog.firstorderlogic.view;
 
-import gralog.algorithm.SyntaxChecker;
+import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderSyntaxChecker;
+import gralog.parser.SyntaxChecker;
 import gralog.firstorderlogic.algorithm.FirstOrderProver;
 import gralog.firstorderlogic.algorithm.FirstOrderProverParameters;
 import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;

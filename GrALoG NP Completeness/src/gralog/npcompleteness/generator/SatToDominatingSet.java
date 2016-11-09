@@ -4,6 +4,7 @@
  */
 package gralog.npcompleteness.generator;
 
+import gralog.npcompleteness.propositionallogic.parser.PropositionalLogicSyntaxChecker;
 import gralog.algorithm.AlgorithmParameters;
 import gralog.algorithm.StringAlgorithmParameter;
 import gralog.structure.*;

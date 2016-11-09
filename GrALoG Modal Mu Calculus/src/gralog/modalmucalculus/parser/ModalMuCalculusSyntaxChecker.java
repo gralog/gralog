@@ -2,10 +2,10 @@
  * This file is part of GrALoG FX, Copyright (c) 2016 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later.
  */
-package gralog.modalmucalculus.algorithm;
+package gralog.modalmucalculus.parser;
 
-import gralog.algorithm.SyntaxChecker;
-import gralog.modallogic.ModalLogicSyntaxChecker;
+import gralog.parser.SyntaxChecker;
+import gralog.modallogic.parser.ModalLogicSyntaxChecker;
 import gralog.modalmucalculus.parser.ModalMuCalculusParser;
 
 /**

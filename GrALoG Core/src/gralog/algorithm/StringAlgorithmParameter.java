@@ -4,6 +4,8 @@
  */
 package gralog.algorithm;
 
+import gralog.parser.SyntaxChecker;
+
 /**
  *
  */

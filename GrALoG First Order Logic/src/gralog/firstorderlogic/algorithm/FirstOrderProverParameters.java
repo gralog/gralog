@@ -5,7 +5,7 @@
 package gralog.firstorderlogic.algorithm;
 
 import gralog.algorithm.StringAlgorithmParameter;
-import gralog.firstorderlogic.view.FirstOrderSyntaxChecker;
+import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderSyntaxChecker;
 
 /**
  *
