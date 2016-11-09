@@ -10,6 +10,7 @@ import gralog.structure.*;
 import gralog.generator.*;
 import gralog.npcompleteness.propositionallogic.parser.*;
 import gralog.npcompleteness.propositionallogic.formula.*;
+import gralog.preferences.Preferences;
 import gralog.rendering.Vector2D;
 import java.util.Set;
 import java.util.HashSet;
@@ -29,12 +30,15 @@ public class SatToDominatingSet extends Generator {
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
                 "A propositional formula",
-                "(a \\vee b \\vee c) \\wedge (\\neg a \\vee \\neg b \\vee c) \\wedge (a \\vee \\neg b \\vee \\neg c)");
+                Preferences.getString(getClass(), "formula", "(a ∨ b ∨ c) ∧ (¬a ∨ ¬b ∨ c) ∧ (a ∨ ¬b ∨ ¬c)"),
+                new PropositionalLogicSyntaxChecker(),
+                PropositionalLogicSyntaxChecker.explanation());
     }
 
     @Override
     public Structure generate(AlgorithmParameters p) throws Exception {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
+        Preferences.setString(getClass(), "formula", sp.parameter);
 
         PropositionalLogicParser parser = new PropositionalLogicParser();
         PropositionalLogicFormula phi = parser.parseString(sp.parameter);
