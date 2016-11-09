@@ -4,7 +4,6 @@
  */
 package gralog.npcompleteness.generator;
 
-import gralog.algorithm.ParseError;
 import gralog.algorithm.SyntaxChecker;
 import gralog.npcompleteness.propositionallogic.parser.PropositionalLogicParser;
 
@@ -12,26 +11,10 @@ import gralog.npcompleteness.propositionallogic.parser.PropositionalLogicParser;
  *
  */
 public class PropositionalLogicSyntaxChecker extends SyntaxChecker {
+
     @Override
     public SyntaxChecker.Result check(String formula) {
-        SyntaxChecker.Result result = new SyntaxChecker.Result();
-        result.hint = "";
-        result.syntaxCorrect = false;
-        if (formula.isEmpty())
-            result.syntaxCorrect = true;
-        else {
-            try {
-                PropositionalLogicParser parser = new PropositionalLogicParser();
-                result.syntaxCorrect = parser.parseString(formula) != null;
-            }
-            catch (ParseError e) {
-                result.hint = e.getMessage();
-            }
-            catch (Exception e) {
-                result.hint = "Parse error";
-            }
-        }
-        return result;
+        return checkWith(formula, (new PropositionalLogicParser())::parseString);
     }
 
     public static String explanation() {
