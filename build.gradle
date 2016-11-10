@@ -70,7 +70,7 @@ project(':gralog-computation-tree-logic') {
     workingDir = 'gralog/computationtreelogic/parser/'
     baseName = 'ComputationTreeLogic'
   }
-  jar.dependsOn(parser)
+  compileJava.dependsOn(parser)
 }
 
 project(':gralog-finite-game') {
@@ -89,7 +89,7 @@ project(':gralog-first-order-logic') {
     workingDir = 'gralog/firstorderlogic/logic/firstorder/parser'
     baseName = 'FirstOrder'
   }
-  jar.dependsOn(parser)
+  compileJava.dependsOn(parser)
 }
 
 project(':gralog-modal-logic') {
@@ -101,7 +101,7 @@ project(':gralog-modal-logic') {
     workingDir = 'gralog/modallogic/parser'
     baseName = 'ModalLogic'
   }
-  jar.dependsOn(parser)
+  compileJava.dependsOn(parser)
 }
 
 project(':gralog-modal-mu-calculus') {
@@ -115,7 +115,7 @@ project(':gralog-modal-mu-calculus') {
     workingDir = 'gralog/modalmucalculus/parser'
     baseName = 'ModalMuCalculus'
   }
-  jar.dependsOn(parser)
+  compileJava.dependsOn(parser)
 }
 
 project(':gralog-np-completeness') {
@@ -127,7 +127,7 @@ project(':gralog-np-completeness') {
     workingDir = 'gralog/npcompleteness/propositionallogic/parser/'
     baseName = 'PropositionalLogic'
   }
-  jar.dependsOn(parser)
+  compileJava.dependsOn(parser)
 }
 
 project(':JGraphTBridge') {
