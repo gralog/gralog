@@ -14,7 +14,7 @@ public class PropositionalLogicSyntaxChecker extends SyntaxChecker {
 
     @Override
     public SyntaxChecker.Result check(String formula) {
-        return checkWith(formula, (new PropositionalLogicParser())::parseString);
+        return checkWith(formula, PropositionalLogicParser::parseString);
     }
 
     public static String explanation() {

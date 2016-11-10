@@ -41,8 +41,7 @@ public class SatToDominatingSet extends Generator {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(getClass(), "formula", sp.parameter);
 
-        PropositionalLogicParser parser = new PropositionalLogicParser();
-        PropositionalLogicFormula phi = parser.parseString(sp.parameter);
+        PropositionalLogicFormula phi = PropositionalLogicParser.parseString(sp.parameter);
         PropositionalLogicFormula cnf = phi;
         if (!phi.hasConjunctiveNormalForm())
             cnf = phi.conjunctiveNormalForm();

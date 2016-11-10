@@ -118,6 +118,11 @@ project(':gralog-np-completeness') {
     gralog project(':gralog-core')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
+  task parser(type: CupJFlex) {
+    workingDir = 'gralog/npcompleteness/propositionallogic/parser/'
+    baseName = 'PropositionalLogic'
+  }
+  jar.dependsOn(parser)
 }
 
 project(':JGraphTBridge') {

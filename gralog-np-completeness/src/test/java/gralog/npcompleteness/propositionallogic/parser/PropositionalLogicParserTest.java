@@ -16,8 +16,7 @@ public class PropositionalLogicParserTest {
     }
 
     private void parseAndCompare(String toParse, String result) throws Exception {
-        PropositionalLogicParser parser = new PropositionalLogicParser();
-        assertEquals(result, parser.parseString(toParse).toString());
+        assertEquals(result, PropositionalLogicParser.parseString(toParse).toString());
     }
 
     /**

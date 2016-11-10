@@ -3,7 +3,7 @@ package gralog.npcompleteness.propositionallogic.parser;
 import java_cup.runtime.*;
 import gralog.algorithm.ParseError;
 import gralog.npcompleteness.propositionallogic.formula.*;
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 
 parser code {:
 
@@ -41,17 +41,13 @@ parser code {:
         throw new ParseError("Unexpected " + symbol.getName(), inputString, symbol.xleft.getColumn());
     }
 
-    public PropositionalLogicFormula parseString(String str) throws Exception
+    static public PropositionalLogicFormula parseString(String str) throws Exception
     {
-        String charset = "UTF8";
-        byte[] bytes = str.getBytes(charset);
-        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
-
-        inputString = str;
-        PropositionalLogicScanner scanner = new PropositionalLogicScanner(stringstream);
-        this.setScanner(scanner);
-
-        Symbol parserresult = this.parse();
+        PropositionalLogicParser parser = new PropositionalLogicParser(
+                new PropositionalLogicScanner(new StringReader(str)),
+                new java_cup.runtime.ComplexSymbolFactory());
+        parser.inputString = str;
+        Symbol parserresult = parser.parse();
         return (PropositionalLogicFormula) parserresult.value;
     }
 :}
