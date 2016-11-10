@@ -6,7 +6,6 @@ package gralog.modalmucalculus.parser;
 
 import gralog.parser.SyntaxChecker;
 import gralog.modallogic.parser.ModalLogicSyntaxChecker;
-import gralog.modalmucalculus.parser.ModalMuCalculusParser;
 
 /**
  * A syntax checker for modal mu calculus formulas.
@@ -15,7 +14,7 @@ public class ModalMuCalculusSyntaxChecker extends SyntaxChecker {
 
     @Override
     public SyntaxChecker.Result check(String formula) {
-        return checkWith(formula, (new ModalMuCalculusParser())::parseString);
+        return checkWith(formula, ModalMuCalculusParser::parseString);
     }
 
     public static String explanation() {

@@ -44,8 +44,7 @@ public class ModalMuCalculusToParityGame extends Algorithm {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);
 
-        ModalMuCalculusParser parser = new ModalMuCalculusParser();
-        ModalMuCalculusFormula phi = parser.parseString(sp.parameter);
+        ModalMuCalculusFormula phi = ModalMuCalculusParser.parseString(sp.parameter);
         ModalMuCalculusFormula nnf = phi.NegationNormalForm();
 
         ParityGame result = new ParityGame();

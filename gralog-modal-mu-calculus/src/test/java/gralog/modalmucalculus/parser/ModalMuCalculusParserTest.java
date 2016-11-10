@@ -17,8 +17,7 @@ public class ModalMuCalculusParserTest {
     }
 
     private void parseAndCompare(String toParse, String result) throws Exception {
-        ModalMuCalculusParser parser = new ModalMuCalculusParser();
-        assertEquals(result, parser.parseString(toParse).toString());
+        assertEquals(result, ModalMuCalculusParser.parseString(toParse).toString());
     }
 
     /**

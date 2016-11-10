@@ -3,7 +3,7 @@ package gralog.modalmucalculus.parser;
 import java_cup.runtime.*;
 import gralog.algorithm.ParseError;
 import gralog.modalmucalculus.formula.*;
-import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,17 +43,13 @@ parser code {:
         throw new ParseError("Unexpected " + symbol.getName(), inputString, symbol.xleft.getColumn());
     }
 
-    public ModalMuCalculusFormula parseString(String str) throws Exception
+    static public ModalMuCalculusFormula parseString(String str) throws Exception
     {
-        String charset = "UTF8";
-        byte[] bytes = str.getBytes(charset);
-        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
-
-        inputString = str;
-        ModalMuCalculusScanner scanner = new ModalMuCalculusScanner(stringstream);
-        this.setScanner(scanner);
-
-        Symbol parserresult = this.parse();
+        ModalMuCalculusParser parser = new ModalMuCalculusParser(
+                new ModalMuCalculusScanner(new StringReader(str)),
+                new java_cup.runtime.ComplexSymbolFactory());
+        parser.inputString = str;
+        Symbol parserresult = parser.parse();
         return (ModalMuCalculusFormula) parserresult.value;
     }
 :}
