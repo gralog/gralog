@@ -6,4 +6,10 @@ Interactively explore graphs, algorithms, logics and games.
 Build
 -----
 
-This is a NetBeans 8.2 project.
+This is a gradle project.  Build and run GrALoG with
+
+    gradle :run
+
+To run the test suite:
+
+    gradle :test
