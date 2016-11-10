@@ -34,8 +34,7 @@ public class ComputationTreeLogicModelChecker extends Algorithm {
             Set<Object> selection, ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
 
-        ComputationTreeLogicParser parser = new ComputationTreeLogicParser();
-        ComputationTreeLogicFormula phi = parser.parseString(sp.parameter);
+        ComputationTreeLogicFormula phi = ComputationTreeLogicParser.parseString(sp.parameter);
         HashSet<World> result = phi.interpretation(s);
 
         return result;

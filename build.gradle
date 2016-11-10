@@ -66,6 +66,11 @@ project(':gralog-computation-tree-logic') {
     gralog project(':gralog-modal-logic')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
+  task parser(type: CupJFlex) {
+    workingDir = 'gralog/computationtreelogic/parser/'
+    baseName = 'ComputationTreeLogic'
+  }
+  jar.dependsOn(parser)
 }
 
 project(':gralog-finite-game') {

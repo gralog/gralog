@@ -2,11 +2,12 @@ package gralog.computationtreelogic.parser;
 
 import java_cup.runtime.*;
 import gralog.computationtreelogic.formula.*;
-import java.io.ByteArrayInputStream;
-
+import gralog.algorithm.ParseError;
+import java.io.StringReader;
 
 parser code {:
 
+    String inputString;
     String errorMsg = null;
 
     public Boolean hasError()
@@ -21,32 +22,34 @@ parser code {:
         else
             return errorMsg;
     }
-    
+
+    @Override
+    public void report_error(String message, Object info) {
+    }
+
+    @Override
     public void syntax_error(Symbol cur_token)
     {
         if(errorMsg == null)
             errorMsg = "Syntax Error: " + cur_token.toString();
     }
 
-    public void report_fatal_error(String message, Object info) throws Exception
+    @Override
+    public void report_fatal_error(String message, Object info) throws ParseError
     {
-        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+        java_cup.runtime.ComplexSymbolFactory.ComplexSymbol symbol = (java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)info;
+        throw new ParseError("Unexpected " + symbol.getName(), inputString, symbol.xleft.getColumn());
     }
 
-    public ComputationTreeLogicFormula parseString(String str) throws Exception
+    static public ComputationTreeLogicFormula parseString(String str) throws Exception
     {
-        String charset = "UTF8";
-        byte[] bytes = str.getBytes(charset);
-        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
-                
-        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
-        ComputationTreeLogicScanner scanner = new ComputationTreeLogicScanner(stringstream, symbolfactory);
-        this.setScanner(scanner);
-        
-        Symbol parserresult = this.parse();
+        ComputationTreeLogicParser parser = new ComputationTreeLogicParser(
+                new ComputationTreeLogicScanner(new StringReader(str)),
+                new java_cup.runtime.ComplexSymbolFactory());
+        parser.inputString = str;
+        Symbol parserresult = parser.parse();
         return (ComputationTreeLogicFormula) parserresult.value;
     }
-
 :}
 
 
