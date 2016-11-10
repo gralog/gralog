@@ -42,8 +42,7 @@ public class ModalLogicModelChecker extends Algorithm {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);
 
-        ModalLogicParser parser = new ModalLogicParser();
-        ModalLogicFormula phi = parser.parseString(sp.parameter);
+        ModalLogicFormula phi = ModalLogicParser.parseString(sp.parameter);
         HashSet<World> result = phi.interpretation(s);
 
         return result;

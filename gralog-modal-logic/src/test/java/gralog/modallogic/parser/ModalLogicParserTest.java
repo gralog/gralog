@@ -17,8 +17,7 @@ public class ModalLogicParserTest {
     }
 
     private void parseAndCompare(String toParse, String result) throws Exception {
-        ModalLogicParser parser = new ModalLogicParser();
-        assertEquals(result, parser.parseString(toParse).toString());
+        assertEquals(result, ModalLogicParser.parseString(toParse).toString());
     }
 
     /**

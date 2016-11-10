@@ -6,7 +6,6 @@
 package gralog.modallogic.parser;
 
 import gralog.parser.SyntaxChecker;
-import gralog.modallogic.parser.ModalLogicParser;
 
 /**
  * A syntax checker for modal logic formulas.
@@ -15,7 +14,7 @@ public class ModalLogicSyntaxChecker extends SyntaxChecker {
 
     @Override
     public SyntaxChecker.Result check(String formula) {
-        return checkWith(formula, (new ModalLogicParser())::parseString);
+        return checkWith(formula, ModalLogicParser::parseString);
     }
 
     public static String explanation() {

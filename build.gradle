@@ -92,6 +92,11 @@ project(':gralog-modal-logic') {
     gralog project(':gralog-core')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
+  task parser(type: CupJFlex) {
+    workingDir = 'gralog/modallogic/parser'
+    baseName = 'ModalLogic'
+  }
+  jar.dependsOn(parser)
 }
 
 project(':gralog-modal-mu-calculus') {
