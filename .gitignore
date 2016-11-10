@@ -1,3 +1,8 @@
+# Generated parser
+**/parser/*Scanner.java
+**/parser/*ScannerToken.java
+**/parser/*Parser.java
+
 # gradle
 /.gradle
 /build
