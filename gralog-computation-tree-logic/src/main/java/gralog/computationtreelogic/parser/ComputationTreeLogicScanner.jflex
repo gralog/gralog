@@ -1,65 +1,53 @@
 package gralog.computationtreelogic.parser;
 
-import java_cup.runtime.SymbolFactory;
-import java.lang.StringBuffer;
+import java_cup.runtime.Symbol;
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 
 %%
+%class ComputationTreeLogicScanner
 %unicode
 %cup
-%class ComputationTreeLogicScanner
+%column
+
 %{
-    public ComputationTreeLogicScanner(java.io.InputStream r, SymbolFactory sf){
-        this(r);
-        this.sf=sf;
+    private ComplexSymbolFactory sf = new ComplexSymbolFactory();
+
+    private Symbol symbol(String name, int type) {
+        return symbol(name, type, null);
     }
-    private SymbolFactory sf;
-    private StringBuffer string = new StringBuffer();
+
+    private Symbol symbol(String name, int type, Object value) {
+        return sf.newSymbol(name, type,
+            new Location(0, yycolumn, yychar),
+            new Location(0, yycolumn + yylength(), yychar + yylength()),
+            value);
+    }
 %}
 
-
-
-
 %eofval{
-    return sf.newSymbol("EOF",ComputationTreeLogicScannerToken.EOF);
+    return symbol("EOF", ComputationTreeLogicScannerToken.EOF);
 %eofval}
 
-
-
-
-%state STRING
-
-
-
-
 %%
-<YYINITIAL> 
-{
 [ \t\r\n\f]   { /* ignore white space. */ }
 
-"("           { return sf.newSymbol("(",ComputationTreeLogicScannerToken.PARENTHESISLEFT); }
-")"           { return sf.newSymbol(")",ComputationTreeLogicScannerToken.PARENTHESISRIGHT); }
+"("           { return symbol("(",ComputationTreeLogicScannerToken.PARENTHESISLEFT); }
+")"           { return symbol(")",ComputationTreeLogicScannerToken.PARENTHESISRIGHT); }
 
-"A"           { return sf.newSymbol("A",ComputationTreeLogicScannerToken.ALWAYS); }
-"E"           { return sf.newSymbol("E",ComputationTreeLogicScannerToken.EXISTS); }
+"A"           { return symbol("A",ComputationTreeLogicScannerToken.ALWAYS); }
+"E"           { return symbol("E",ComputationTreeLogicScannerToken.EXISTS); }
 
-"X"           { return sf.newSymbol("X",ComputationTreeLogicScannerToken.NEXT); }
-"G"           { return sf.newSymbol("G",ComputationTreeLogicScannerToken.GLOBALLY); }
-"F"           { return sf.newSymbol("F",ComputationTreeLogicScannerToken.FINALLY); }
-"U"           { return sf.newSymbol("U",ComputationTreeLogicScannerToken.UNTIL); }
+"X"           { return symbol("X",ComputationTreeLogicScannerToken.NEXT); }
+"G"           { return symbol("G",ComputationTreeLogicScannerToken.GLOBALLY); }
+"F"           { return symbol("F",ComputationTreeLogicScannerToken.FINALLY); }
+"U"           { return symbol("U",ComputationTreeLogicScannerToken.UNTIL); }
 
-"\\neg"       { return sf.newSymbol("\\neg",ComputationTreeLogicScannerToken.NEG); }
-"\\wedge"     { return sf.newSymbol("\\wedge",ComputationTreeLogicScannerToken.WEDGE); }
-"\\vee"       { return sf.newSymbol("\\vee",ComputationTreeLogicScannerToken.VEE); }
-"\\bot"       { return sf.newSymbol("\\bot",ComputationTreeLogicScannerToken.BOT); }
-"\\top"       { return sf.newSymbol("\\top",ComputationTreeLogicScannerToken.TOP); }
+"\\neg"       { return symbol("\\neg",ComputationTreeLogicScannerToken.NEG); }
+"\\wedge"     { return symbol("\\wedge",ComputationTreeLogicScannerToken.WEDGE); }
+"\\vee"       { return symbol("\\vee",ComputationTreeLogicScannerToken.VEE); }
+"\\bot"       { return symbol("\\bot",ComputationTreeLogicScannerToken.BOT); }
+"\\top"       { return symbol("\\top",ComputationTreeLogicScannerToken.TOP); }
 
-\"            { string.setLength(0); yybegin(STRING); }
-[A-Za-z0-9]+  { string.setLength(0); string.append(yytext()); return sf.newSymbol("simple", ComputationTreeLogicScannerToken.STRING, string.toString()); }
-.             { System.err.println("Illegal character: "+yytext()); }
-}
-
-<STRING>
-{
-\"            { yybegin(YYINITIAL); return sf.newSymbol("complex", ComputationTreeLogicScannerToken.STRING, string.toString()); }
-.             { string.append(yytext()); }
-}
+[A-Za-z][A-Za-z0-9]* { return symbol("STRING", ComputationTreeLogicScannerToken.STRING, yytext()); }
+.                    { return symbol("UNEXPECTED CHARACTER", ComputationTreeLogicScannerToken.error, yytext()); }
