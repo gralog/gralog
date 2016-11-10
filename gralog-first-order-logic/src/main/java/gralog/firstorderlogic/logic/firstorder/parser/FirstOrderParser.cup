@@ -4,9 +4,9 @@ import java_cup.runtime.*;
 import gralog.algorithm.ParseError;
 import gralog.firstorderlogic.logic.firstorder.formula.*;
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-
 
 parser code {:
 
@@ -44,17 +44,13 @@ parser code {:
         throw new ParseError("Unexpected " + symbol.getName(), inputString, symbol.xleft.getColumn());
     }
 
-    public FirstOrderFormula parseString(String str) throws Exception
+    static public FirstOrderFormula parseString(String str) throws Exception
     {
-        String charset = "UTF8";
-        byte[] bytes = str.getBytes(charset);
-        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
-
-        inputString = str;
-        FirstOrderScanner scanner = new FirstOrderScanner(stringstream);
-        this.setScanner(scanner);
-
-        Symbol parserresult = this.parse();
+        FirstOrderParser parser = new FirstOrderParser(
+                new FirstOrderScanner(new StringReader(str)),
+                new java_cup.runtime.ComplexSymbolFactory());
+        parser.inputString = str;
+        Symbol parserresult = parser.parse();
         return (FirstOrderFormula) parserresult.value;
     }
 :}

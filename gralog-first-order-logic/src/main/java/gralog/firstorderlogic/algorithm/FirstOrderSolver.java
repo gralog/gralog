@@ -42,8 +42,7 @@ public class FirstOrderSolver extends Algorithm {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);
 
-        FirstOrderParser parser = new FirstOrderParser();
-        FirstOrderFormula phi = parser.parseString(sp.parameter);
+        FirstOrderFormula phi = FirstOrderParser.parseString(sp.parameter);
 
         HashMap<String, Vertex> varassign = new HashMap<>();
         return phi.evaluate(s, varassign, onprogress) ? "true" : "false";

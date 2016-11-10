@@ -9,8 +9,10 @@ import java_cup.runtime.*;
 import gralog.algorithm.ParseError;
 import gralog.firstorderlogic.logic.firstorder.formula.*;
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -179,17 +181,13 @@ public class FirstOrderParser extends java_cup.runtime.lr_parser {
         throw new ParseError("Unexpected " + symbol.getName(), inputString, symbol.xleft.getColumn());
     }
 
-    public FirstOrderFormula parseString(String str) throws Exception
+    static public FirstOrderFormula parseString(String str) throws Exception
     {
-        String charset = "UTF8";
-        byte[] bytes = str.getBytes(charset);
-        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
-
-        inputString = str;
-        FirstOrderScanner scanner = new FirstOrderScanner(stringstream);
-        this.setScanner(scanner);
-
-        Symbol parserresult = this.parse();
+        FirstOrderParser parser = new FirstOrderParser(
+                new FirstOrderScanner(new StringReader(str)),
+                new java_cup.runtime.ComplexSymbolFactory());
+        parser.inputString = str;
+        Symbol parserresult = parser.parse();
         return (FirstOrderFormula) parserresult.value;
     }
 
@@ -222,8 +220,8 @@ class CUP$FirstOrderParser$actions {
           case 0: // formula ::= quantifiedformula 
             {
               FirstOrderFormula RESULT =null;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = f; 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("formula",0, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -234,8 +232,8 @@ class CUP$FirstOrderParser$actions {
           case 1: // $START ::= formula EOF 
             {
               Object RESULT =null;
-		int start_valleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).left;
-		int start_valright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).right;
+		Location start_valxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xleft;
+		Location start_valxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xright;
 		FirstOrderFormula start_val = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).value;
 		RESULT = start_val;
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("$START",0, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -248,11 +246,11 @@ class CUP$FirstOrderParser$actions {
           case 2: // formula ::= disjunction OR quantifiedformula 
             {
               FirstOrderFormula RESULT =null;
-		int leftleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).left;
-		int leftright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).right;
+		Location leftxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xleft;
+		Location leftxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xright;
 		FirstOrderFormula left = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).value;
-		int rightleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int rightright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location rightxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location rightxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula right = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderOr(left, right); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("formula",0, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -263,11 +261,11 @@ class CUP$FirstOrderParser$actions {
           case 3: // formula ::= conjunction AND quantifiedformula 
             {
               FirstOrderFormula RESULT =null;
-		int leftleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).left;
-		int leftright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).right;
+		Location leftxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xleft;
+		Location leftxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xright;
 		FirstOrderFormula left = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).value;
-		int rightleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int rightright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location rightxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location rightxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula right = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderAnd(left, right); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("formula",0, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -278,14 +276,14 @@ class CUP$FirstOrderParser$actions {
           case 4: // formula ::= disjunction OR conjunction AND quantifiedformula 
             {
               FirstOrderFormula RESULT =null;
-		int leftleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-4)).left;
-		int leftright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-4)).right;
+		Location leftxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-4)).xleft;
+		Location leftxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-4)).xright;
 		FirstOrderFormula left = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-4)).value;
-		int middleleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).left;
-		int middleright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).right;
+		Location middlexleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xleft;
+		Location middlexright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xright;
 		FirstOrderFormula middle = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).value;
-		int rightleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int rightright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location rightxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location rightxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula right = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderOr(left, new FirstOrderAnd(middle, right)); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("formula",0, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-4)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -296,8 +294,8 @@ class CUP$FirstOrderParser$actions {
           case 5: // formula ::= disjunction 
             {
               FirstOrderFormula RESULT =null;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = f; 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("formula",0, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -308,11 +306,11 @@ class CUP$FirstOrderParser$actions {
           case 6: // disjunction ::= disjunction OR conjunction 
             {
               FirstOrderFormula RESULT =null;
-		int leftleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).left;
-		int leftright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).right;
+		Location leftxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xleft;
+		Location leftxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xright;
 		FirstOrderFormula left = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).value;
-		int rightleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int rightright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location rightxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location rightxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula right = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderOr(left, right); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("disjunction",3, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -323,8 +321,8 @@ class CUP$FirstOrderParser$actions {
           case 7: // disjunction ::= conjunction 
             {
               FirstOrderFormula RESULT =null;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = f; 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("disjunction",3, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -335,11 +333,11 @@ class CUP$FirstOrderParser$actions {
           case 8: // conjunction ::= conjunction AND basicformula 
             {
               FirstOrderFormula RESULT =null;
-		int leftleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).left;
-		int leftright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).right;
+		Location leftxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xleft;
+		Location leftxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xright;
 		FirstOrderFormula left = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).value;
-		int rightleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int rightright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location rightxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location rightxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula right = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderAnd(left, right); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("conjunction",4, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -350,8 +348,8 @@ class CUP$FirstOrderParser$actions {
           case 9: // conjunction ::= basicformula 
             {
               FirstOrderFormula RESULT =null;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = f; 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("conjunction",4, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -362,8 +360,8 @@ class CUP$FirstOrderParser$actions {
           case 10: // basicformula ::= NEG basicformula 
             {
               FirstOrderFormula RESULT =null;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderNot(f); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("basicformula",2, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -374,8 +372,8 @@ class CUP$FirstOrderParser$actions {
           case 11: // basicformula ::= OPEN formula CLOSE 
             {
               FirstOrderFormula RESULT =null;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).value;
 		 RESULT = f; 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("basicformula",2, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -386,11 +384,11 @@ class CUP$FirstOrderParser$actions {
           case 12: // basicformula ::= STRING OPEN parameters CLOSE 
             {
               FirstOrderFormula RESULT =null;
-		int relleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-3)).left;
-		int relright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-3)).right;
+		Location relxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-3)).xleft;
+		Location relxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-3)).xright;
 		String rel = (String)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-3)).value;
-		int paramsleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).left;
-		int paramsright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).right;
+		Location paramsxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xleft;
+		Location paramsxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xright;
 		List<String> params = (List<String>)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).value;
 		 RESULT = new FirstOrderRelation(rel, params); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("basicformula",2, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-3)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -401,8 +399,8 @@ class CUP$FirstOrderParser$actions {
           case 13: // quantifiedformula ::= NEG quantifiedformula 
             {
               FirstOrderFormula RESULT =null;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderNot(f); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("quantifiedformula",1, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -413,11 +411,11 @@ class CUP$FirstOrderParser$actions {
           case 14: // quantifiedformula ::= EXISTS STRING DOT formula 
             {
               FirstOrderFormula RESULT =null;
-		int varleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).left;
-		int varright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).right;
+		Location varxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xleft;
+		Location varxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xright;
 		String var = (String)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).value;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderExists(var, f); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("quantifiedformula",1, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-3)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -428,11 +426,11 @@ class CUP$FirstOrderParser$actions {
           case 15: // quantifiedformula ::= EXISTS STRING formula 
             {
               FirstOrderFormula RESULT =null;
-		int varleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).left;
-		int varright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).right;
+		Location varxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xleft;
+		Location varxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xright;
 		String var = (String)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).value;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderExists(var, f); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("quantifiedformula",1, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -443,11 +441,11 @@ class CUP$FirstOrderParser$actions {
           case 16: // quantifiedformula ::= FORALL STRING DOT formula 
             {
               FirstOrderFormula RESULT =null;
-		int varleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).left;
-		int varright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).right;
+		Location varxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xleft;
+		Location varxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xright;
 		String var = (String)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).value;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderForall(var, f); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("quantifiedformula",1, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-3)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -458,11 +456,11 @@ class CUP$FirstOrderParser$actions {
           case 17: // quantifiedformula ::= FORALL STRING formula 
             {
               FirstOrderFormula RESULT =null;
-		int varleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).left;
-		int varright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).right;
+		Location varxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xleft;
+		Location varxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).xright;
 		String var = (String)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-1)).value;
-		int fleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int fright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location fxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location fxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		FirstOrderFormula f = (FirstOrderFormula)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new FirstOrderForall(var, f); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("quantifiedformula",1, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -473,8 +471,8 @@ class CUP$FirstOrderParser$actions {
           case 18: // parameters ::= STRING 
             {
               List<String> RESULT =null;
-		int sleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int sright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location sxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location sxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		String s = (String)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = new ArrayList<String>(); RESULT.add(s); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("parameters",5, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);
@@ -485,11 +483,11 @@ class CUP$FirstOrderParser$actions {
           case 19: // parameters ::= parameters COMMA STRING 
             {
               List<String> RESULT =null;
-		int paramsleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).left;
-		int paramsright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).right;
+		Location paramsxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xleft;
+		Location paramsxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).xright;
 		List<String> params = (List<String>)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)).value;
-		int sleft = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).left;
-		int sright = ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()).right;
+		Location sxleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xleft;
+		Location sxright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)CUP$FirstOrderParser$stack.peek()).xright;
 		String s = (String)((java_cup.runtime.Symbol) CUP$FirstOrderParser$stack.peek()).value;
 		 RESULT = params; RESULT.add(s); 
               CUP$FirstOrderParser$result = parser.getSymbolFactory().newSymbol("parameters",5, ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.elementAt(CUP$FirstOrderParser$top-2)), ((java_cup.runtime.Symbol)CUP$FirstOrderParser$stack.peek()), RESULT);

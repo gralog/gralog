@@ -5,7 +5,6 @@
 package gralog.firstorderlogic.logic.firstorder.parser;
 
 import gralog.parser.SyntaxChecker;
-import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 
 /**
  * A syntax checker for first-order formulas.
@@ -14,7 +13,7 @@ public class FirstOrderSyntaxChecker extends SyntaxChecker {
 
     @Override
     public Result check(String formula) {
-        return checkWith(formula, (new FirstOrderParser())::parseString);
+        return checkWith(formula, FirstOrderParser::parseString);
     }
 
     public static String explanation() {

@@ -62,8 +62,7 @@ public class ModelCheckingGameFOLogic extends Algorithm {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);
 
-        FirstOrderParser parser = new FirstOrderParser();
-        FirstOrderFormula phi = parser.parseString(sp.parameter);
+        FirstOrderFormula phi = FirstOrderParser.parseString(sp.parameter);
 
         Set<Vertex> V = s.getVertices();
         int i = 0;

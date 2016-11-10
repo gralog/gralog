@@ -53,10 +53,9 @@ public class FirstOrderProver extends Algorithm {
         if (V.isEmpty())
             return "Please input a graph";
 
-        FirstOrderParser parser = new FirstOrderParser();
         FirstOrderFormula phi;
         try {
-            phi = parser.parseString(sp.parameter);
+            phi = FirstOrderParser.parseString(sp.parameter);
         }
         catch (Exception ex) {
             return ex.getMessage();

@@ -94,8 +94,7 @@ public class FirstOrderFormulaTest {
     }
 
     private void parseAndCompare(String toParse, String result) throws Exception {
-        FirstOrderParser parser = new FirstOrderParser();
-        assertEquals(result, parser.parseString(toParse).toString());
+        assertEquals(result, FirstOrderParser.parseString(toParse).toString());
     }
 
     /**
