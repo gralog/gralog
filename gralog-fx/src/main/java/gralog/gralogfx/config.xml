@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gralog>
+  <plugin location="gralog-automaton.jar" />
+  <plugin location="gralog-modal-logic.jar" />
+  <plugin location="gralog-first-order-logic.jar" />
+  <plugin location="gralog-np-completeness.jar" />
+  <plugin location="gralog-computation-tree-logic.jar" />
+  <plugin location="gralog-modal-mu-calculus.jar" />
+  <plugin location="JGraphTBridge.jar" />
+</gralog>

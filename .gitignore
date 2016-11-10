@@ -1,11 +1,10 @@
-# netbeans
-*/dist/
+# gradle
+/.gradle
+/build
 */build/
-*/nbproject/private/
-*/nbproject/build-impl.xml
-*/nbproject/genfiles.properties
-*/nbproject/jfx-impl_backup*.xml
-*/nbproject/UPDATED.TXT
+
+# netbeans
+/.nb-gradle/
 
 # jflex backups
 *.java~
