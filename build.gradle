@@ -1,14 +1,14 @@
 defaultTasks 'run'
 
+apply plugin: 'java'
+
 subprojects {
   repositories { mavenCentral() }
   apply plugin: 'java'
 }
 
-task test
 test.dependsOn(subprojects.test)
 
-task clean
 clean.dependsOn(subprojects.clean)
 
 task run
@@ -182,7 +182,6 @@ task copySubprojects(type: Copy) {
   into new File(rootProject.buildDir, distDir)
 }
 
-task build
 build.dependsOn(copySubprojects)
 
 // We need to start gralog as a jar because it uses some crazy
