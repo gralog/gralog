@@ -10,8 +10,11 @@ Build
 
 This is a gradle project.  Build and run GrALoG with
 
-    gradle :run
+    ./gradlew :run
 
 To run the test suite:
 
-    gradle :test
+    ./gradlew :test
+
+On Windows you probably need to call the batch file `gradlew.bat`
+instead.
