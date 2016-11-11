@@ -63,8 +63,8 @@ subprojects {
 
 project(':gralog-fx') {
   dependencies {
-    compile project(':gralog-core')
-    compile project(':gralog-finite-game')
+    gralog project(':gralog-core')
+    gralog project(':gralog-finite-game')
   }
   // This subproject contains the main class.
   jar {
@@ -164,13 +164,14 @@ subprojects {
 }
 
 def distDir = 'dist'
+def libsDir = distDir + '/libs'
 
 // Copy the true (not gralog-internal) dependencies of subprojects
-// into the root build/dist dir.
+// into the root build/dist/libs dir.
 subprojects {
   task collectSubprojectDependencies(type: Copy, dependsOn: jar) {
     from ((configurations.runtime - configurations.gralog).files)
-    into new File(rootProject.buildDir, distDir)
+    into new File(rootProject.buildDir, libsDir)
   }
 }
 
@@ -178,11 +179,30 @@ subprojects {
 task copySubprojects(type: Copy) {
   dependsOn subprojects.collectSubprojectDependencies
   from (subprojects.buildDir.collect { new File(it, 'libs') })
-  from rootProject.file('gralog-fx/src/main/java/gralog/gralogfx/config.xml')
-  into new File(rootProject.buildDir, distDir)
+  into new File(rootProject.buildDir, libsDir)
+  exclude 'gralog-fx.jar'
 }
 
-build.dependsOn(copySubprojects)
+// The main projects needs a special configuration: First, we want to
+// copy it and its configuration directly to the dist directory and
+// not to dist/libs.  Second, we need to fix the class-path for the
+// dependencies of the main project to point to the libs directory.
+project(':gralog-fx') {
+  task copyMainProject(type: Copy) {
+    from new File(project.buildDir, 'libs/gralog-fx.jar')
+    from project.file('src/main/java/gralog/gralogfx/config.xml')
+    into new File(rootProject.buildDir, distDir)
+  }
+  jar.finalizedBy(copyMainProject)
+  jar {
+    manifest {
+      attributes 'Class-Path':
+        configurations.gralog.files.collect { 'libs/' + it.getName() }.join(' ')
+    }
+  }
+}
+
+compileJava.dependsOn(copySubprojects)
 
 // We need to start gralog as a jar because it uses some crazy
 // reflection.
