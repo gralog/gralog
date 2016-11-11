@@ -145,7 +145,7 @@ project(':gralog-np-completeness') {
     baseName: 'PropositionalLogic')
 }
 
-project(':JGraphTBridge') {
+project(':gralog-jgrapht-bridge') {
   dependencies {
     gralog project(':gralog-core')
     compile 'org.jgrapht:jgrapht-core:0.9.2'

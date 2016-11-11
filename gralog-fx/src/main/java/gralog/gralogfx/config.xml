@@ -6,5 +6,5 @@
   <plugin location="libs/gralog-np-completeness.jar" />
   <plugin location="libs/gralog-computation-tree-logic.jar" />
   <plugin location="libs/gralog-modal-mu-calculus.jar" />
-  <plugin location="libs/JGraphTBridge.jar" />
+  <plugin location="libs/gralog-jgrapht-bridge.jar" />
 </gralog>
