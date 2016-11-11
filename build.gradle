@@ -1,10 +1,24 @@
 defaultTasks 'run'
 
-allprojects {
-  repositories {
-    mavenCentral()
-  }
+subprojects {
+  repositories { mavenCentral() }
   apply plugin: 'java'
+}
+
+task test
+test.dependsOn(subprojects.test)
+
+task clean
+clean.dependsOn(subprojects.clean)
+
+task run
+
+subprojects {
+  // All subprojects use junit and hamcrest for their tests.
+  dependencies {
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+    testCompile 'junit:junit:4.12'
+  }
 
   // Dependencies marked as "gralog" are considered to be internal and
   // will not be explicitly required (via classpath or linking) by the
@@ -16,6 +30,7 @@ allprojects {
     compile.extendsFrom gralog
   }
 
+  // Set up the parser/lexer generator.
   configurations {
     javaCup
     jflex
@@ -24,12 +39,25 @@ allprojects {
     javaCup 'com.github.vbmacher:java-cup:11b-20160615'
     jflex 'de.jflex:jflex:1.6.1'
   }
-  ant.taskdef(classname: 'java_cup.anttask.CUPTask', name: 'cup', classpath: configurations.javaCup.asPath)
-  ant.taskdef(classname: 'jflex.anttask.JFlexTask', name: 'flex', classpath: configurations.jflex.asPath)
+  ant.taskdef(
+    classname: 'java_cup.anttask.CUPTask',
+    name: 'cup', 
+    classpath: configurations.javaCup.asPath)
+  ant.taskdef(
+    classname: 'jflex.anttask.JFlexTask',
+    name: 'flex',
+    classpath: configurations.jflex.asPath)
 
-  dependencies {
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
-    testCompile 'junit:junit:4.12'
+  project.ext.declareParserTasks = { params ->
+    project.task('parser' + params.baseName, type: CupJFlex) {
+      workingDir = params.workingDir
+      baseName = params.baseName
+    }
+    project.task('parserClean' + params.baseName, type: Delete) {
+      delete project.('parser' + params.baseName).generatedFiles()
+    }
+    project.clean.dependsOn('parserClean' + params.baseName)
+    project.compileJava.dependsOn('parser' + params.baseName)
   }
 }
 
@@ -38,20 +66,17 @@ project(':gralog-fx') {
     compile project(':gralog-core')
     compile project(':gralog-finite-game')
   }
+  // This subproject contains the main class.
   jar {
-    baseName = 'gralog-fx'
     manifest {
       attributes 'Main-Class': 'gralog.gralogfx.MainWindow'
-    }
-    from {
-        configurations.runtime.collect {
-          it.isDirectory() ? it : zipTree(it)
-      }
     }
   }
 }
 
-// Configure the dependencies of the individual subprojects.
+// Configure the dependencies of the individual subprojects.  Rule:
+// Use the "gralog" configuration for "gralog-" internal dependencies.
+// Use the "compile" configuration for external dependencies.
 
 project(':gralog-automaton') {
   dependencies {
@@ -66,11 +91,9 @@ project(':gralog-computation-tree-logic') {
     gralog project(':gralog-modal-logic')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
-  task parser(type: CupJFlex) {
-    workingDir = 'gralog/computationtreelogic/parser/'
-    baseName = 'ComputationTreeLogic'
-  }
-  compileJava.dependsOn(parser)
+  declareParserTasks(
+    workingDir: 'gralog/computationtreelogic/parser/',
+    baseName: 'ComputationTreeLogic')
 }
 
 project(':gralog-finite-game') {
@@ -85,11 +108,9 @@ project(':gralog-first-order-logic') {
     gralog project(':gralog-core')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
-  task parser(type: CupJFlex) {
-    workingDir = 'gralog/firstorderlogic/logic/firstorder/parser'
-    baseName = 'FirstOrder'
-  }
-  compileJava.dependsOn(parser)
+  declareParserTasks(
+    workingDir: 'gralog/firstorderlogic/logic/firstorder/parser',
+    baseName: 'FirstOrder')
 }
 
 project(':gralog-modal-logic') {
@@ -97,11 +118,9 @@ project(':gralog-modal-logic') {
     gralog project(':gralog-core')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
-  task parser(type: CupJFlex) {
-    workingDir = 'gralog/modallogic/parser'
-    baseName = 'ModalLogic'
-  }
-  compileJava.dependsOn(parser)
+  declareParserTasks(
+    workingDir: 'gralog/modallogic/parser',
+    baseName: 'ModalLogic')
 }
 
 project(':gralog-modal-mu-calculus') {
@@ -111,11 +130,9 @@ project(':gralog-modal-mu-calculus') {
     gralog project(':gralog-modal-logic')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
-  task parser(type: CupJFlex) {
-    workingDir = 'gralog/modalmucalculus/parser'
-    baseName = 'ModalMuCalculus'
-  }
-  compileJava.dependsOn(parser)
+  declareParserTasks(
+    workingDir: 'gralog/modalmucalculus/parser',
+    baseName: 'ModalMuCalculus')
 }
 
 project(':gralog-np-completeness') {
@@ -123,11 +140,9 @@ project(':gralog-np-completeness') {
     gralog project(':gralog-core')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
-  task parser(type: CupJFlex) {
-    workingDir = 'gralog/npcompleteness/propositionallogic/parser/'
-    baseName = 'PropositionalLogic'
-  }
-  compileJava.dependsOn(parser)
+  declareParserTasks(
+    workingDir: 'gralog/npcompleteness/propositionallogic/parser/',
+    baseName: 'PropositionalLogic')
 }
 
 project(':JGraphTBridge') {
@@ -148,54 +163,75 @@ subprojects {
   }
 }
 
+def distDir = 'dist'
+
 // Copy the true (not gralog-internal) dependencies of subprojects
-// into the root build/libs dir.
+// into the root build/dist dir.
 subprojects {
-  task collectJars(type: Copy, dependsOn: jar) {
+  task collectSubprojectDependencies(type: Copy, dependsOn: jar) {
     from ((configurations.runtime - configurations.gralog).files)
-    into rootProject.file('build/libs')
+    into new File(rootProject.buildDir, distDir)
   }
 }
 
 // Collect all subproject jars and the central config file.
-task copySubprojects(type: Copy, dependsOn: subprojects.collectJars) {
-  from (subprojects.buildDir.collect { it.toString() + '/libs' })
+task copySubprojects(type: Copy) {
+  dependsOn subprojects.collectSubprojectDependencies
+  from (subprojects.buildDir.collect { new File(it, 'libs') })
   from rootProject.file('gralog-fx/src/main/java/gralog/gralogfx/config.xml')
-  into new File(rootProject.buildDir, 'libs')
+  into new File(rootProject.buildDir, distDir)
 }
+
+task build
+build.dependsOn(copySubprojects)
 
 // We need to start gralog as a jar because it uses some crazy
 // reflection.
-task run(dependsOn:copySubprojects, overwrite: true) << {
-  javaexec { main='-jar'; args 'build/libs/gralog-fx.jar' }
+run.dependsOn(copySubprojects)
+run.doLast {
+  javaexec {
+    main = '-jar'
+    args new File(rootProject.buildDir, distDir + '/gralog-fx.jar')
+  }
 }
 
 // Copy subproject test reports to the root so that netbeans (and
 // maybe other tools) can find them.
 subprojects {
   task copyReport(type: Copy) {
-    from project.file('build/test-results')
+    from new File(project.buildDir, 'test-results')
     into new File(rootProject.buildDir, 'test-results')
   }
   test.finalizedBy(copyReport)
 }
 
-test.dependsOn(subprojects.test)
-
+// A custom task to generate a parser/lexer with cup/jflex.
 class CupJFlex extends DefaultTask {
-    String workingDir
-    String baseName;
+  String workingDir
+  String baseName;
 
-    @TaskAction
-    def runCupJFlex() {
-      def parserFile = baseName + 'Parser'
-      def scannerTokenFile = baseName + 'ScannerToken'
-      def jflexFile = baseName + 'Scanner.jflex'
-      ant.cup(
-        srcfile: [ project.file('src/main/java'), workingDir, parserFile + '.cup' ].join('/'),
-        destdir: project.file('src/main/java'),
-        parser: parserFile,
-        symbols: scannerTokenFile)
-      ant.flex(file: [ project.file('src/main/java'), workingDir, jflexFile ].join('/'))
+  def jflexFile() { baseName + 'Scanner.jflex' }
+  def parserFile() { baseName + 'Parser' }
+  def cupFile() { parserFile() + '.cup' }
+  def scannerTokenFile() { baseName + 'ScannerToken' }
+
+  // The list of generated files that will be deleted during "clean".
+  def generatedFiles() {
+    [ parserFile() + '.java',
+      baseName + 'Scanner.java',
+      baseName + 'Scanner.java~',
+      scannerTokenFile() + '.java' ].collect {
+      project.file('src/main/java' + '/' + workingDir + '/' + it)
     }
+  }
+
+  @TaskAction
+  def runCupJFlex() {
+    ant.cup(
+      srcfile: [ project.file('src/main/java'), workingDir, cupFile() ].join('/'),
+      destdir: project.file('src/main/java'),
+      parser: parserFile(),
+      symbols: scannerTokenFile())
+    ant.flex(file: [ project.file('src/main/java'), workingDir, jflexFile() ].join('/'))
+  }
 }

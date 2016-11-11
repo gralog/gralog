@@ -1,11 +1,10 @@
-include \
-  'gralog-automaton', \
-  'gralog-computation-tree-logic', \
-  'gralog-core', \
-  'gralog-finite-game', \
-  'gralog-first-order-logic', \
-  'gralog-fx', \
-  'gralog-modal-logic', \
-  'gralog-modal-mu-calculus', \
-  'gralog-np-completeness', \
-  'JGraphTBridge'
+include 'gralog-automaton'
+include 'gralog-computation-tree-logic'
+include 'gralog-core'
+include 'gralog-finite-game'
+include 'gralog-first-order-logic'
+include 'gralog-fx'
+include 'gralog-modal-logic'
+include 'gralog-modal-mu-calculus'
+include 'gralog-np-completeness'
+include 'JGraphTBridge'
