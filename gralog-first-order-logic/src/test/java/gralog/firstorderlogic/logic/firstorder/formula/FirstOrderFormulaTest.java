@@ -163,9 +163,8 @@ public class FirstOrderFormulaTest {
     }
 
     private void parseAndFail(String toParse) throws Exception {
-        FirstOrderParser parser = new FirstOrderParser();
         try {
-            parser.parseString(toParse);
+            FirstOrderParser.parseString(toParse);
         }
         catch(ParseError e) {
             return; // Everything is fine, this is what we expect.

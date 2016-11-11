@@ -12,10 +12,7 @@ import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 import gralog.gralogfx.views.*;
 import gralog.preferences.Preferences;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,9 +38,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Stage;
 
 /**
  *
@@ -139,15 +133,13 @@ public class FirstOrderProverParametersView
                 String text = textArea.getSelectedText();
                 String tfText = formulaField.getText();
 
-                FirstOrderParser parser = new FirstOrderParser();
-
                 FirstOrderFormula phi = null;
                 try {
-                    phi = parser.parseString(text);
+                    phi = FirstOrderParser.parseString(text);
                     Set<String> usedInFormula = phi.variables();
                     Set<String> usedInField;
                     try {
-                        FirstOrderFormula phi2 = parser.parseString(tfText);
+                        FirstOrderFormula phi2 = FirstOrderParser.parseString(tfText);
                         usedInField = phi2.variables();
                     }
                     catch (Exception ex) {

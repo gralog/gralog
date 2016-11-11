@@ -49,7 +49,7 @@ public class ViewManager {
         Class sysclass = URLClassLoader.class;
         Method method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
         method.setAccessible(true);
-        method.invoke(sysloader, new Object[]{plugin.toURL()});
+        method.invoke(sysloader, new Object[]{plugin.toURI().toURL()});
 
         // Load the classes
         Collection<Class<?>> classes = new ArrayList<>();
