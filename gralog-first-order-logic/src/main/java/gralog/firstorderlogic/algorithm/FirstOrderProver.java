@@ -12,9 +12,6 @@ import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.structure.*;
 import gralog.progresshandler.*;
 import gralog.preferences.Preferences;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 
 import java.util.HashMap;
 import java.util.Set;
