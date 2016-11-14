@@ -10,7 +10,7 @@ Build
 
 This is a gradle project.  Build and run GrALoG with
 
-    ./gradlew :run
+    ./gradlew
 
 To run the test suite:
 
