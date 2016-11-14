@@ -36,6 +36,36 @@ public class BagView extends GridPaneView<Bag> {
         node.setExpanded(false);
     }
 
+    private static class Cell extends TreeCell<Bag> {
+
+        private final Text assignment;
+        private final Text caption;
+        HBox hbox;
+
+        Cell() {
+            assignment = new Text();
+            caption = new Text();
+            assignment.setStyle("-fx-fill:blue");
+            hbox = new HBox(4, assignment, caption);
+        }
+
+        @Override
+        protected void updateItem(Bag item, boolean empty) {
+            super.updateItem(item, empty);
+            if (empty || item == null) {
+                setGraphic(null);
+            } else {
+                assignment.setText(item.assignment);
+                caption.setText(item.caption);
+                caption.setStyle(null);
+                if (item.eval) {
+                    caption.setStyle("-fx-fill:green");
+                }
+                setGraphic(hbox);
+            }
+        }
+    }
+
     @Override
     public void setObject(Bag treedecomp, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
@@ -48,38 +78,7 @@ public class BagView extends GridPaneView<Bag> {
         root.setExpanded(true);
         TreeView treeView = new TreeView(root);
 
-        treeView.setCellFactory(tv -> {
-            return new TreeCell<Bag>() {
-
-                private final Text assignment;
-                private final Text caption;
-                HBox hbox;
-
-                {
-                    assignment = new Text();
-                    caption = new Text();
-                    assignment.setStyle("-fx-fill:blue");
-                    hbox = new HBox(4, assignment, caption);
-                }
-
-                @Override
-                protected void updateItem(Bag item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (empty || item == null) {
-                        setGraphic(null);
-                    } else {
-                        assignment.setText(item.assignment);
-                        caption.setText(item.caption);
-                        caption.setStyle(null);
-                        if (item.eval) {
-                            caption.setStyle("-fx-fill:green");
-                        }
-                        setGraphic(hbox);
-                    }
-                }
-
-            };
-        });
+        treeView.setCellFactory(tv -> new Cell());
 
         treeView.getSelectionModel()
             .selectedItemProperty()
