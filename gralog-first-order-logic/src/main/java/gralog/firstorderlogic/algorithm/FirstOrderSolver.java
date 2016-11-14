@@ -42,7 +42,6 @@ public class FirstOrderSolver extends Algorithm {
 
         FirstOrderFormula phi = FirstOrderParser.parseString(sp.parameter);
 
-        HashMap<String, Vertex> varassign = new HashMap<>();
-        return phi.evaluate(s, varassign, onprogress) ? "true" : "false";
+        return phi.evaluate(s, new HashMap<>(), onprogress) ? "true" : "false";
     }
 }

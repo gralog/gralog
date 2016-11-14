@@ -59,18 +59,15 @@ public class FirstOrderOr extends FirstOrderFormula {
         Bag b = new Bag();
         Bag sep = new Bag();
         sep.caption = "OR";
-        String assignment = "";
-        for (String str : varassign.keySet()) {
-            assignment += " [ " + str + " | " + varassign.get(str).label + " ] ";
-        }
+
         b.childBags.add(sep);
         Bag b1 = subformula1.evaluateProver(s, varassign, onprogress);
-        b1.assignment = assignment;
+        b1.assignment = variableAssignmentToString(varassign);
         b1.caption = subformula1.toString();
         sep.childBags.add(b1);
 
         Bag b2 = subformula2.evaluateProver(s, varassign, onprogress);
-        b2.assignment = assignment;
+        b2.assignment = b1.assignment;
         b2.caption = subformula2.toString();
         sep.childBags.add(b2);
         b.eval = (b1.eval || b2.eval);

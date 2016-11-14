@@ -74,10 +74,6 @@ public class FirstOrderForall extends FirstOrderFormula {
 
         Boolean result = true;
         Vertex oldvalue = varassign.get(variable);
-        String assignment = "";
-        for (String str : varassign.keySet()) {
-            assignment += " [ " + str + " | " + varassign.get(str).label + " ] ";
-        }
 
         Set<Vertex> V = s.getVertices();
         Bag b = new Bag();
@@ -88,7 +84,7 @@ public class FirstOrderForall extends FirstOrderFormula {
                 b.nodes.add(v);
             else
                 result = false;
-            t.assignment = assignment + " [ " + variable + " | " + v.label + " ] ";
+            t.assignment = variableAssignmentToString(varassign);
             t.caption = subformula1.toString();
             b.childBags.add(t);
         }

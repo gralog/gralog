@@ -77,10 +77,6 @@ public class FirstOrderExists extends FirstOrderFormula {
         Vertex oldvalue = varassign.get(variable);
         Bag b = new Bag();
         Set<Vertex> V = s.getVertices();
-        String assignment = "";
-        for (String str : varassign.keySet()) {
-            assignment += " [ " + str + " | " + varassign.get(str).label + " ] ";
-        }
 
         for (Vertex v : V) {
             varassign.put(variable, v);
@@ -89,7 +85,7 @@ public class FirstOrderExists extends FirstOrderFormula {
                 b.nodes.add(v);
                 result = true;
             }
-            t.assignment = assignment + " [ " + variable + " | " + v.label + " ] ";
+            t.assignment = variableAssignmentToString(varassign);
             t.caption = subformula1.toString();
             b.childBags.add(t);
         }

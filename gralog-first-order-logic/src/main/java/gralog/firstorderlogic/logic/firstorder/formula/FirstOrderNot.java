@@ -42,15 +42,11 @@ public class FirstOrderNot extends FirstOrderFormula {
     public Bag evaluateProver(Structure s, HashMap<String, Vertex> varassign,
         ProgressHandler onprogress) throws Exception {
 
-        Bag b = new Bag();
-        String assignment = "";
-        for (String str : varassign.keySet()) {
-            assignment += " [ " + str + " | " + varassign.get(str).label + " ] ";
-        }
-
         Bag b1 = subformula1.evaluateProver(s, varassign, onprogress);
-        b1.assignment = assignment;
+        b1.assignment = variableAssignmentToString(varassign);
         b1.caption = " (" + subformula1.toString() + " )";
+
+        Bag b = new Bag();
         b.eval = !b1.eval;
         b.childBags.add(b1);
         return b;
