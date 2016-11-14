@@ -60,7 +60,7 @@ public class StronglyConnectedComponentsTest {
             verticesInComponent.get(0),
             equalsVertexSet(structure.getVertices()));
         assertEquals("Components of v and w", componentOfVertex.get(v), componentOfVertex.get(w));
-        assertEquals("Components of v", componentOfVertex.get(v), new Integer(0));
+        assertEquals("Components of v", componentOfVertex.get(v), Integer.valueOf(0));
     }
 
     @Test

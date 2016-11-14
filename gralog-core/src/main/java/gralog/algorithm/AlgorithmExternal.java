@@ -44,7 +44,7 @@ public abstract class AlgorithmExternal extends Algorithm {
             return command;
 
         File temp = File.createTempFile("GrALoG", "." + exportFilter.getDescription().fileExtension());
-        exportFilter.exportGraph(structure, new OutputStreamWriter(new FileOutputStream(temp)), null);
+        exportFilter.exportGraph(structure, new OutputStreamWriter(new FileOutputStream(temp), "UTF-8"), null);
         List<String> effectiveCommand = new LinkedList<>();
         for (String s : command)
             effectiveCommand.add(s.replaceAll("%u", "\"" + temp.getAbsolutePath() + "\""));
@@ -57,13 +57,13 @@ public abstract class AlgorithmExternal extends Algorithm {
 
         ProcessBuilder pb = new ProcessBuilder(effectiveCommand);
         Process proc = pb.start();
-        Scanner in = new Scanner(proc.getInputStream());
+        Scanner in = new Scanner(proc.getInputStream(), "UTF-8");
 
         Map<String, Vertex> vertexIndex = exportFilter.getVertexNames(structure, null);
         Map<String, Edge> edgeIndex = exportFilter.getEdgeNames(structure, null);
 
         if (!passStructureViaFile) {
-            try (OutputStreamWriter out = new OutputStreamWriter(proc.getOutputStream())) {
+            try (OutputStreamWriter out = new OutputStreamWriter(proc.getOutputStream(), "UTF-8")) {
                 exportFilter.exportGraph(structure, out, null);
             }
         }
@@ -104,6 +104,8 @@ public abstract class AlgorithmExternal extends Algorithm {
                 case "QUIT":
                     quit = true;
                     break;
+                default:
+                    throw new Exception("Unknown command: " + parts[0]);
             }
             if (onProgress != null)
                 onProgress.onProgress(structure);

@@ -24,7 +24,7 @@ public abstract class ExportFilter {
     public void exportGraph(Structure structure, String fileName,
         ExportFilterParameters params) throws Exception {
         FileOutputStream stream = new FileOutputStream(fileName);
-        try (OutputStreamWriter writer = new OutputStreamWriter(stream)) {
+        try (OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8")) {
             exportGraph(structure, writer, params);
         }
     }

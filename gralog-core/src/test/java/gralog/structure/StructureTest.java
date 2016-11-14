@@ -46,7 +46,8 @@ public class StructureTest {
         try {
             StringWriter writer = new StringWriter();
             structure.writeToStream(new StreamResult(writer));
-            Structure structureRead = Structure.loadFromStream(new ByteArrayInputStream(writer.toString().getBytes()));
+            Structure structureRead = Structure.loadFromStream(
+                new ByteArrayInputStream(writer.toString().getBytes("UTF-8")));
             assertThat(structureRead, equalsStructure(structure));
         } catch (Exception ex) {
             throw new AssertionError(ex);

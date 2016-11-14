@@ -106,14 +106,15 @@ public final class PluginManager {
 
         // Load the classes
         Collection<Class<?>> classes = new ArrayList<>();
-        JarFile jar = new JarFile(pathToPlugin);
-        for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
-            JarEntry entry = entries.nextElement();
-            String file = entry.getName();
-            if (file.endsWith(".class")) {
-                String classname = file.replace('/', '.').substring(0, file.length() - 6);
-                Class<?> c = Class.forName(classname, false, sysloader);
-                classes.add(c);
+        try (JarFile jar = new JarFile(pathToPlugin)) {
+            for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
+                JarEntry entry = entries.nextElement();
+                String file = entry.getName();
+                if (file.endsWith(".class")) {
+                    String classname = file.replace('/', '.').substring(0, file.length() - 6);
+                    Class<?> c = Class.forName(classname, false, sysloader);
+                    classes.add(c);
+                }
             }
         }
 

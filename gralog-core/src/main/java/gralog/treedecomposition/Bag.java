@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.ArrayList;
 import gralog.structure.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -20,15 +21,8 @@ public class Bag {
 
     @Override
     public String toString() {
-        String result = "{";
-        String glue = "";
-
-        for (Vertex v : nodes) {
-            result += glue + v.label;
-            glue = ",";
-        }
-
-        return result + "}";
+        return "{"
+            + nodes.stream().map((v) -> v.label).collect(Collectors.joining(","))
+            + "}";
     }
-
 }

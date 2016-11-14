@@ -19,12 +19,12 @@ public abstract class ImportFilter {
     }
 
     public Structure importGraph(String fileName, ImportFilterParameters params) throws Exception {
-        FileInputStream stream = new FileInputStream(fileName);
-        return importGraph(stream, params);
+        try (FileInputStream stream = new FileInputStream(fileName)) {
+            return importGraph(stream, params);
+        }
     }
 
-    public Structure importGraph(InputStream stream,
-        ImportFilterParameters params) throws Exception {
+    public Structure importGraph(InputStream stream, ImportFilterParameters params) throws Exception {
         throw new Exception("class " + this.getClass().getName() + " has no Stream-based importGraph Method");
     }
 
@@ -33,5 +33,4 @@ public abstract class ImportFilter {
             throw new Exception("class " + this.getClass().getName() + " has no @ImportFilterDescription Annotation");
         return this.getClass().getAnnotation(ImportFilterDescription.class);
     }
-
 }

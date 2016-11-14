@@ -39,8 +39,7 @@ public final class Preferences {
         } else
             path = System.getProperty("user.dir") + "/." + myname;
 
-        try {
-            FileInputStream in = new FileInputStream(path + "/" + FILENAME);
+        try (FileInputStream in = new FileInputStream(path + "/" + FILENAME)) {
             PROPERTIES.load(in);
         } catch (IOException e) {
             // Most likely the config file does not exist, so we can ignore
@@ -95,8 +94,9 @@ public final class Preferences {
     private static void flush() {
         try {
             Files.createDirectories(Paths.get(PREFERENCE_PATH));
-            FileOutputStream out = new FileOutputStream(PREFERENCE_PATH + "/" + FILENAME);
-            PROPERTIES.store(out, "GrALoG preferences");
+            try (FileOutputStream out = new FileOutputStream(PREFERENCE_PATH + "/" + FILENAME)) {
+                PROPERTIES.store(out, "GrALoG preferences");
+            }
         } catch (IOException e) {
         }
     }

@@ -28,7 +28,7 @@ public class TrivialGraphFormatImport extends ImportFilter {
     public Structure importGraph(InputStream stream,
         ImportFilterParameters params) throws Exception {
         DirectedGraph result = new DirectedGraph();
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, "UTF-8"))) {
             String s = br.readLine();
 
             HashMap<String, Vertex> nodeIndex = new HashMap<>();
