@@ -28,8 +28,8 @@ import javax.xml.transform.OutputKeys;
 public abstract class Structure<V extends Vertex, E extends Edge>
         extends XmlMarshallable implements IMovable {
 
-    protected Set<Vertex> vertices;
-    protected Set<Edge> edges;
+    protected Set<V> vertices;
+    protected Set<E> edges;
 
     private final Set<StructureListener> listeners = new HashSet<>();
 
@@ -41,14 +41,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     /**
      * @return An unmodifiable set of vertices.
      */
-    public Set<Vertex> getVertices() {
+    public Set<V> getVertices() {
         return Collections.unmodifiableSet(vertices);
     }
 
     /**
      * @return An unmodifiable set of edges.
      */
-    public Set<Edge> getEdges() {
+    public Set<E> getEdges() {
         return Collections.unmodifiableSet(edges);
     }
 
@@ -312,7 +312,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         for (Edge e : TempEdges) {
             e.fromXml(LoadedFrom.get(e), VertexRegister);
-            edges.add(e);
+            edges.add((E) e);
         }
     }
 

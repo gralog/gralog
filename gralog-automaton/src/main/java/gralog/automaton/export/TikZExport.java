@@ -41,7 +41,7 @@ public class TikZExport extends ExportFilter {
 
         HashMap<State, Integer> NodeIndex = new HashMap<>();
         int i = 1;
-        Set<Vertex> V = structure.getVertices();
+        Set<State> V = structure.getVertices();
         for (Vertex v : V) {
             State s = (State) v;
             NodeIndex.put(s, i);
@@ -56,7 +56,7 @@ public class TikZExport extends ExportFilter {
 
         stream.write("        " + linefeed);
 
-        Set<Edge> E = structure.getEdges();
+        Set<Transition> E = structure.getEdges();
         for (Edge e : E) {
             Transition t = (Transition) e;
 

@@ -27,7 +27,7 @@ public class WinningRegionPlayer0 extends Algorithm {
     protected HashMap<FiniteGamePosition, Integer> WinningRegions(
             FiniteGame game) {
         HashMap<FiniteGamePosition, Integer> result = new HashMap<>();
-        Set<Vertex> V = game.getVertices();
+        Set<FiniteGamePosition> V = game.getVertices();
         Set<FiniteGamePosition> LastIteration = new HashSet<>();
         Set<FiniteGamePosition> CurrentIteration = new HashSet<>();
 

@@ -30,8 +30,8 @@ public class PowersetConstruction extends Algorithm {
         PowersetConstructionTreeNode tree = new PowersetConstructionTreeNode(null, null, null);
 
         Set<State> Q0 = new HashSet<>();
-        Set<Vertex> Q = a.getVertices();
-        Set<Edge> delta = a.getEdges();
+        Set<State> Q = a.getVertices();
+        Set<Transition> delta = a.getEdges();
         for (Vertex v : Q)
             if (v instanceof State && ((State) v).startState)
                 Q0.add((State) v);

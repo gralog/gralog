@@ -52,7 +52,7 @@ public class PowersetConstructionTreeNode {
 
     public State getContentForSet(Automaton sourceAutomaton,
             Automaton resultAutomaton, Set<State> statesSubset) {
-        Set<Vertex> allStates = sourceAutomaton.getVertices();
+        Set<State> allStates = sourceAutomaton.getVertices();
         PowersetConstructionTreeNode run = this;
 
         for (Vertex v : allStates) {
