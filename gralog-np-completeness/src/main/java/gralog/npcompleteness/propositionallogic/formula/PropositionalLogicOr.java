@@ -68,12 +68,12 @@ public class PropositionalLogicOr extends PropositionalLogicFormula {
     protected PropositionalLogicFormula conjunctiveNormalForm(Integer varId,
         HashMap<PropositionalLogicFormula, String> varIdx) {
         String myName = "v" + varId;
-        varId++;
+        ++varId;
         varIdx.put(this, myName);
         PropositionalLogicFormula leftCnf = left.conjunctiveNormalForm(varId, varIdx);
-        String leftName = varIdx.get(left);
+        final String leftName = varIdx.get(left);
         PropositionalLogicFormula rightCnf = right.conjunctiveNormalForm(varId, varIdx);
-        String rightName = varIdx.get(right);
+        final String rightName = varIdx.get(right);
 
         PropositionalLogicFormula result
             = new PropositionalLogicAnd(

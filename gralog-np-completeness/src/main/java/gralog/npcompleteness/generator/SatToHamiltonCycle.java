@@ -69,7 +69,7 @@ public class SatToHamiltonCycle extends Generator {
         }
 
         Vertex start = result.createVertex(); // start node
-        start.coordinates = new Vector2D(3d + (5 * clauses.size()) / 2, 1d);
+        start.coordinates = new Vector2D(3d + (5d * clauses.size()) / 2d, 1d);
         start.label = "start";
         result.addVertex(start);
         Set<Vertex> lastRow = new HashSet<>();
@@ -159,7 +159,7 @@ public class SatToHamiltonCycle extends Generator {
         }
 
         Vertex end = result.createVertex(); // the end-node
-        end.coordinates = new Vector2D(3d + (5 * clauses.size()) / 2, 5d * vars.size());
+        end.coordinates = new Vector2D(3d + (5d * clauses.size()) / 2d, 5d * vars.size());
         end.label = "end";
         result.addVertex(end);
         for (Vertex l : lastRow) {

@@ -18,7 +18,6 @@ import javafx.scene.web.WebEngine;
  */
 public class AboutStage extends Stage {
 
-    Application host;
     Scene scene;
     BorderPane root;
     WebView webView;
@@ -26,7 +25,6 @@ public class AboutStage extends Stage {
     Button okButton;
 
     public AboutStage(Application host) {
-        this.host = host;
         okButton = new Button("OK");
         okButton.setOnAction(e -> this.close());
 

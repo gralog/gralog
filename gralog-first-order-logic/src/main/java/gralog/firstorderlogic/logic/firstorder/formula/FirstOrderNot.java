@@ -43,7 +43,7 @@ public class FirstOrderNot extends FirstOrderFormula {
         ProgressHandler onprogress) throws Exception {
 
         Bag b = new Bag();
-        String assignment = new String();
+        String assignment = "";
         for (String str : varassign.keySet()) {
             assignment += " [ " + str + " | " + varassign.get(str).label + " ] ";
         }

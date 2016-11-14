@@ -55,7 +55,7 @@ public class FirstOrderAnd extends FirstOrderFormula {
         b.childBags.add(sep);
 
         Bag b1 = subformula1.evaluateProver(s, varassign, onprogress);
-        String assignment = new String();
+        String assignment = "";
         for (String str : varassign.keySet()) {
             assignment += " [ " + str + " | " + varassign.get(str).label + " ] ";
         }
@@ -85,13 +85,13 @@ public class FirstOrderAnd extends FirstOrderFormula {
         game.addVertex(parent);
 
         GameGraphResult c1 = subformula1.constructGameGraph(
-            s, varassign, game, new Vector2D(coor.getX() + xOffset, coor.getY()));
+            s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY()));
         game.addVertex(c1.position);
 
         game.addEdge(game.createEdge(parent, c1.position));
 
         GameGraphResult c2 = subformula2.constructGameGraph(
-            s, varassign, game, new Vector2D(coor.getX() + xOffset, coor.getY() + c1.height + 1));
+            s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY() + c1.height + 1));
         game.addVertex(c2.position);
 
         game.addEdge(game.createEdge(parent, c2.position));

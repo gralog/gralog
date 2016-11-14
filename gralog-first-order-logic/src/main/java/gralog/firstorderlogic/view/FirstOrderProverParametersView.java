@@ -191,12 +191,9 @@ public class FirstOrderProverParametersView
         save.setOnAction(e -> {
             String text = textArea.getText();
             String fileName = "Formulae" + new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()) + ".txt";
-            PrintWriter out;
-            try {
-                out = new PrintWriter(new BufferedWriter(
-                    new FileWriter(fileName, true)));
+            try (PrintWriter out = new PrintWriter(new BufferedWriter(
+                    new FileWriter(fileName, true)))) {
                 out.println(text);
-                out.close();
             } catch (IOException ex) {
                 Logger.getLogger(FirstOrderProverParametersView.class.getName()).log(Level.SEVERE, null, ex);
             }

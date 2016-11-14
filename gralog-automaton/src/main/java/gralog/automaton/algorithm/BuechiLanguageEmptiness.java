@@ -10,6 +10,7 @@ import gralog.automaton.*;
 import gralog.progresshandler.ProgressHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Set;
 
 @AlgorithmDescription(
@@ -63,9 +64,9 @@ public class BuechiLanguageEmptiness extends Algorithm {
 
             // only proceed with components that are reachable from a start state
             State componentStartState = null;
-            for (State start : startStateReach.keySet())
-                if (startStateReach.get(start).containsKey(componentFinalState))
-                    componentStartState = start;
+            for (Entry<State, HashMap<Vertex, Vertex>> start : startStateReach.entrySet())
+                if (start.getValue().containsKey(componentFinalState))
+                    componentStartState = start.getKey();
             if (componentStartState == null)
                 continue;
 

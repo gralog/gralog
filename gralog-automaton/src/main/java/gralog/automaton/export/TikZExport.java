@@ -62,7 +62,6 @@ public class TikZExport extends ExportFilter {
 
             Double halfLength = t.length() / 2.0;
             Vector2D from = t.getSource().coordinates;
-            Vector2D to = t.getTarget().coordinates;
             Double distance = 0.0;
 
             stream.write("        \\draw (q" + nodeIndex.get(e.getSource()) + ")");

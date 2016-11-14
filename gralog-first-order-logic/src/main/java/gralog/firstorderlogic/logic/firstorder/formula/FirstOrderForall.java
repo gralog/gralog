@@ -74,7 +74,7 @@ public class FirstOrderForall extends FirstOrderFormula {
 
         Boolean result = true;
         Vertex oldvalue = varassign.get(variable);
-        String assignment = new String();
+        String assignment = "";
         for (String str : varassign.keySet()) {
             assignment += " [ " + str + " | " + varassign.get(str).label + " ] ";
         }
@@ -120,7 +120,7 @@ public class FirstOrderForall extends FirstOrderFormula {
         for (Vertex v : V) {
             varassign.put(variable, v);
             GameGraphResult gp = subformula1.constructGameGraph(
-                s, varassign, game, new Vector2D(coor.getX() + xOffset, coor.getY() + yOffset));
+                s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY() + yOffset));
             yOffset += gp.height + 1;
             game.addVertex(gp.position);
             game.addEdge(game.createEdge(parent, gp.position));

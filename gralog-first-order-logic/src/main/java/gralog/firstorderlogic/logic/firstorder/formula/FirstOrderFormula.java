@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  */
 public abstract class FirstOrderFormula {
 
-    public class GameGraphResult {
+    public static class GameGraphResult {
 
         GameGraphResult(FiniteGamePosition pos, int h) {
             position = pos;
@@ -29,7 +29,7 @@ public abstract class FirstOrderFormula {
         public final int height;
     }
 
-    protected final int xOffset = 9;
+    protected static final int X_OFFSET = 9;
 
     public abstract Bag evaluateProver(Structure s,
         HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;

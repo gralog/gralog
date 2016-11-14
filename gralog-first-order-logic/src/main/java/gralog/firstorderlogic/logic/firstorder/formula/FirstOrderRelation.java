@@ -31,15 +31,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
 
     @Override
     public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
-        String result = "";
-        String glue = "";
-
-        for (String p : parameters) {
-            result += glue + p;
-            glue = ",";
-        }
-
-        return relation + "(" + result + ")";
+        return relation + "(" + String.join(",", parameters) + ")";
     }
 
     @Override

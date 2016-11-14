@@ -19,21 +19,21 @@ import java.io.*;
  */
 public class LoadFromFile extends ImportFilter {
 
-    public static int count = 1;
+    private static int count = 1;
 
     @Override
     public Structure importGraph(InputStream stream,
         ImportFilterParameters params) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
         String line;
-        PrintWriter out = new PrintWriter(new BufferedWriter(
-            new FileWriter("Formulae" + count + ".txt", true)));
-        count++;
-        while ((line = reader.readLine()) != null) {
-            out.println(line);
+        try (PrintWriter out = new PrintWriter(new BufferedWriter(
+            new FileWriter("Formulae" + count + ".txt", true)))) {
+            count++;
+            while ((line = reader.readLine()) != null) {
+                out.println(line);
 
+            }
         }
-        out.close();
         return new DirectedGraph();
     }
 }

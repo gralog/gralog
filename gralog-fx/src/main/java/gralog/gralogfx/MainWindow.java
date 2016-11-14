@@ -52,7 +52,6 @@ public class MainWindow extends Application {
     BorderPane root;
     MenuBar menu;
     Menu menuFile;
-    MenuItem menuFilePlugin;
     Menu menuFileNew;
     Menu menuFileGenerators;
     Menu menuAlgo;
@@ -240,7 +239,7 @@ public class MainWindow extends Application {
                 setLastDirectory(file);
                 // has the user selected the native file-type or an export-filter?
                 String extension = file.getName(); // unclean way of getting file extension
-                int idx = extension.lastIndexOf(".");
+                int idx = extension.lastIndexOf('.');
                 extension = idx > 0 ? extension.substring(idx + 1) : "";
 
                 ExportFilter exportFilter = ExportFilterManager.instantiateExportFilterByExtension(structure.getClass(), extension);
@@ -306,7 +305,7 @@ public class MainWindow extends Application {
     public void doOpenFile(File file) {
         try {
             // unclean way of getting file extension
-            int idx = file.getName().lastIndexOf(".");
+            int idx = file.getName().lastIndexOf('.');
             String extension = idx > 0 ? file.getName().substring(idx + 1) : "";
 
             ImportFilter importFilter = ImportFilterManager.instantiateImportFilterByExtension(extension);
@@ -602,9 +601,11 @@ public class MainWindow extends Application {
             if (configFile.exists()) {
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(new FileInputStream(configFile));
-                doc.getDocumentElement().normalize();
-                children = doc.getDocumentElement().getChildNodes();
+                try (FileInputStream input = new FileInputStream(configFile)) {
+                    Document doc = dBuilder.parse(input);
+                    doc.getDocumentElement().normalize();
+                    children = doc.getDocumentElement().getChildNodes();
+                }
             }
         } catch (IOException | URISyntaxException | ParserConfigurationException | SAXException ex) {
         }

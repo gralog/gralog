@@ -99,17 +99,12 @@ public class Col2 extends Algorithm {
     private int contradictions = 1;
 
     public Object run(DirectedGraph s, AlgorithmParameters p,
-        Set<Object> selection, ProgressHandler onprogress)
-        throws Exception {
-        Integer nIter, nVertices;
-        double prob;
-        Scanner in = new Scanner(System.in);
-        System.out.println("enter number of iterations");
-        nIter = in.nextInt();
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Scanner in = new Scanner(System.in, "UTF-8");
         System.out.println("enter the number of vertices");
-        nVertices = in.nextInt();
+        final int nVertices = in.nextInt();
         System.out.println("enter the edge density");
-        prob = in.nextDouble();
+        final double prob = in.nextDouble();
         for (int iter = 1; iter <= 100; iter++) {
             s = generate(s, nVertices, prob);
             /*SpringEmbedder embedder = new SpringEmbedder();

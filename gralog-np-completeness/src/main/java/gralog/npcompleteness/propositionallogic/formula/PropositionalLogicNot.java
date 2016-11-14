@@ -52,10 +52,10 @@ public class PropositionalLogicNot extends PropositionalLogicFormula {
     protected PropositionalLogicFormula conjunctiveNormalForm(Integer varId,
         HashMap<PropositionalLogicFormula, String> varIdx) {
         String myName = "v" + varId;
-        varId++;
+        ++varId;
         varIdx.put(this, myName);
         PropositionalLogicFormula subCnf = subformula.conjunctiveNormalForm(varId, varIdx);
-        String subName = varIdx.get(subformula);
+        final String subName = varIdx.get(subformula);
 
         PropositionalLogicFormula result
             = new PropositionalLogicAnd(
