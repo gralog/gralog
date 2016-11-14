@@ -1,37 +1,42 @@
 package gralog.automaton.regularexpression.parser;
 
-import java_cup.runtime.SymbolFactory;
-import java.lang.StringBuffer;
+import java_cup.runtime.Symbol;
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 
 %%
+%class RegularExpressionScanner
 %unicode
 %cup
-%class RegularExpressionScanner
+%column
+
 %{
-    public RegularExpressionScanner(java.io.InputStream r, SymbolFactory sf){
-        this(r);
-        this.sf=sf;
+    private ComplexSymbolFactory sf = new ComplexSymbolFactory();
+
+    private Symbol symbol(String name, int type) {
+        return symbol(name, type, null);
     }
-    private SymbolFactory sf;
-    private StringBuffer string = new StringBuffer();
+
+    private Symbol symbol(String name, int type, Object value) {
+        return sf.newSymbol(name, type,
+            new Location(0, yycolumn, yychar),
+            new Location(0, yycolumn + yylength(), yychar + yylength()),
+            value);
+    }
 %}
 
-
-
 %eofval{
-    return sf.newSymbol("EOF",RegularExpressionScannerToken.EOF);
+    return symbol("END-OF-STRING", RegularExpressionScannerToken.EOF);
 %eofval}
-
-
 
 %%
 
 [ \t\r\n\f]   { /* ignore white space. */ }
 
-"("           { return sf.newSymbol("(",RegularExpressionScannerToken.PARENTHESISLEFT); }
-")"           { return sf.newSymbol(")",RegularExpressionScannerToken.PARENTHESISRIGHT); }
-"*"           { return sf.newSymbol("[",RegularExpressionScannerToken.KLEENESTAR); }
-"+"|"\|"      { return sf.newSymbol("]",RegularExpressionScannerToken.ALTERNATION); }
+"("           { return symbol("(", RegularExpressionScannerToken.PARENTHESISLEFT); }
+")"           { return symbol(")", RegularExpressionScannerToken.PARENTHESISRIGHT); }
+"*"           { return symbol("[", RegularExpressionScannerToken.KLEENESTAR); }
+"+"|"\|"      { return symbol("]", RegularExpressionScannerToken.ALTERNATION); }
 
-[A-Za-z0-9]+  { string.setLength(0); string.append(yytext()); return sf.newSymbol("simple", RegularExpressionScannerToken.STRING, string.toString()); }
-.             { System.err.println("Illegal character: "+yytext()); }
+[A-Za-z0-9]+  { return symbol("string", RegularExpressionScannerToken.STRING, yytext()); }
+.             { return symbol("UNEXPECTED CHARACTER", RegularExpressionScannerToken.error, yytext()); }

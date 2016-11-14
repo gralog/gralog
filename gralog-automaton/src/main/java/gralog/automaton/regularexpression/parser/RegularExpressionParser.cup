@@ -1,12 +1,13 @@
 package gralog.automaton.regularexpression.parser;
 
 import java_cup.runtime.*;
+import gralog.algorithm.ParseError;
 import gralog.automaton.regularexpression.*;
-import java.io.ByteArrayInputStream;
-
+import java.io.StringReader;
 
 parser code {:
 
+    private String inputString;
     String errorMsg = null;
 
     public Boolean hasError()
@@ -21,57 +22,57 @@ parser code {:
         else
             return errorMsg;
     }
-    
+
+    @Override
+    public void report_error(String message, Object info) {
+    }
+
+    @Override
     public void syntax_error(Symbol cur_token)
     {
         if(errorMsg == null)
             errorMsg = "Syntax Error: " + cur_token.toString();
     }
 
-    public void report_fatal_error(String message, Object info) throws Exception
+    @Override
+    public void report_fatal_error(String message, Object info) throws ParseError
     {
-        throw new Exception("Fatal parsing error: " + message + "\n" + info.toString());
+        java_cup.runtime.ComplexSymbolFactory.ComplexSymbol symbol = (java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)info;
+        throw new ParseError("Unexpected " + symbol.getName(), inputString, symbol.xleft.getColumn());
     }
 
-    public RegularExpression parseString(String str) throws Exception
+    static public RegularExpression parseString(String str) throws Exception
     {
-        String charset = "UTF8";
-        byte[] bytes = str.getBytes(charset);
-        ByteArrayInputStream stringstream = new ByteArrayInputStream(bytes);
-                
-        DefaultSymbolFactory symbolfactory = new DefaultSymbolFactory();
-        RegularExpressionScanner scanner = new RegularExpressionScanner(stringstream, symbolfactory);
-        this.setScanner(scanner);
-        
-        Symbol parserresult = this.parse();
+        RegularExpressionParser parser = new RegularExpressionParser(
+                new RegularExpressionScanner(new StringReader(str)),
+                new java_cup.runtime.ComplexSymbolFactory());
+        parser.inputString = str;
+        Symbol parserresult = parser.parse();
         return (RegularExpression) parserresult.value;
     }
-
 :}
 
-
-
-terminal PARENTHESISLEFT, PARENTHESISRIGHT, KLEENESTAR, ALTERNATION;   // (, ), *, |
+terminal PARENTHESISLEFT, PARENTHESISRIGHT, KLEENESTAR, ALTERNATION;
 terminal String STRING;
 non terminal RegularExpression regexp, regexps;
 
 precedence left ALTERNATION;
 precedence nonassoc KLEENESTAR;
 
+regexps ::=
+    regexp:r
+        {: RESULT = r; :}
+    | regexps:l regexp:r
+        {: RESULT = new RegularExpressionConcatenation(l, r); :}
+    ;
 
-regexps ::= regexp:r
-                {: RESULT = r; :}
-          | regexps:l regexp:r
-                {: RESULT = new RegularExpressionConcatenation(l,r); :} 
-          ;
-                      
-regexp ::= STRING:s
-                {: RESULT = new RegularExpressionString(s); :}
-          | regexp:f KLEENESTAR
-                {: RESULT = new RegularExpressionKleeneStar(f); :} 
-          | regexp:l ALTERNATION regexp:r
-                {: RESULT = new RegularExpressionAlternation(l,r); :}
-          | PARENTHESISLEFT regexps:f PARENTHESISRIGHT
-                {: RESULT = f; :}
-          ;
-
+regexp ::=
+    STRING:s
+        {: RESULT = new RegularExpressionString(s); :}
+    | regexp:f KLEENESTAR
+        {: RESULT = new RegularExpressionKleeneStar(f); :}
+    | regexp:l ALTERNATION regexp:r
+        {: RESULT = new RegularExpressionAlternation(l, r); :}
+    | PARENTHESISLEFT regexps:f PARENTHESISRIGHT
+        {: RESULT = f; :}
+    ;

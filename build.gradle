@@ -83,6 +83,9 @@ project(':gralog-automaton') {
     gralog project(':gralog-core')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
+  declareParserTasks(
+    workingDir: 'gralog/automaton/regularexpression/parser/',
+    baseName: 'RegularExpression')
 }
 
 project(':gralog-computation-tree-logic') {

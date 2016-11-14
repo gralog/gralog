@@ -10,6 +10,7 @@ import gralog.generator.*;
 import gralog.automaton.*;
 import gralog.automaton.regularexpression.*;
 import gralog.automaton.regularexpression.parser.*;
+import gralog.preferences.Preferences;
 import gralog.structure.Structure;
 
 /**
@@ -24,15 +25,19 @@ public class GeneratorRegularExpression extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
-        return new StringAlgorithmParameter("Regular expression", "");
+        return new StringAlgorithmParameter(
+                "Regular expression",
+                Preferences.getString(this.getClass(), "regex", "a*b"),
+                new RegularExpressionSyntaxChecker(),
+                RegularExpressionSyntaxChecker.explanation());
     }
 
     @Override
     public Structure generate(AlgorithmParameters p) throws Exception {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
+        Preferences.setString(this.getClass(), "regex", sp.parameter);
 
-        RegularExpressionParser parser = new RegularExpressionParser();
-        RegularExpression regexp = parser.parseString(sp.parameter);
+        RegularExpression regexp = RegularExpressionParser.parseString(sp.parameter);
         Automaton result = regexp.thompsonConstruction();
 
         return result;
