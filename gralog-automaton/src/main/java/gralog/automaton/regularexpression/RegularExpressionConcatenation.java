@@ -68,11 +68,10 @@ public class RegularExpressionConcatenation extends RegularExpression {
             ((State) w).startState = false;
 
         // make a the union of a and b
-        a.getVertices().addAll(b.getVertices());
-        a.getEdges().addAll(b.getEdges());
-        // clear b
-        b.getVertices().clear();
-        b.getEdges().clear();
+        a.addVertices(b.getVertices());
+        a.addEdges(b.getEdges());
+
+        b.clear();
 
         return a;
     }

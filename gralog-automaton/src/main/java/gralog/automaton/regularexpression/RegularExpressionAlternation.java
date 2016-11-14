@@ -65,11 +65,10 @@ public class RegularExpressionAlternation extends RegularExpression {
         );
 
         // make a the union of a and b
-        a.getVertices().addAll(b.getVertices());
-        a.getEdges().addAll(b.getEdges());
+        a.addVertices(b.getVertices());
+        a.addEdges(b.getEdges());
         // clear b
-        b.getVertices().clear();
-        b.getEdges().clear();
+        b.clear();
 
         // Connect the old start and final states to the new start and final states
         for (Vertex v : a.getVertices()) {

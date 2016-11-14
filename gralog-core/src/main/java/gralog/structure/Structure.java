@@ -105,6 +105,15 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     /**
+     * Adds a set of vertices to the structure.
+     *
+     * @param vs The vertices to be added.
+     */
+    public void addVertices(Collection<V> vs) {
+        vertices.addAll(vs);
+    }
+
+    /**
      * Clear the structure. Removes all vertices and all edges.
      */
     public void clear() {
@@ -160,6 +169,15 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     /**
+     * Adds a set of edges to the structure.
+     *
+     * @param es The edges to be added.
+     */
+    public void addEdges(Collection<E> es) {
+        edges.addAll(es);
+    }
+
+    /**
      * Creates a new edge and adds it to the structure. This is a convenience
      * function combining createEdge and addEdge.
      *
@@ -200,10 +218,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         if (source == target && source != null) {
             edge.intermediatePoints.add(
                     new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
-                                              source.coordinates.getY() - 1.5d));
+                            source.coordinates.getY() - 1.5d));
             edge.intermediatePoints.add(
                     new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
-                                              source.coordinates.getY() - 1.5d));
+                            source.coordinates.getY() - 1.5d));
         }
         return edge;
     }
