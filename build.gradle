@@ -5,6 +5,17 @@ apply plugin: 'java'
 subprojects {
   repositories { mavenCentral() }
   apply plugin: 'java'
+  apply plugin: 'checkstyle'
+  checkstyle {
+    configFile = rootProject.file('config/checkstyle.xml')
+    configProperties = [samedir: rootProject.file('config')]
+    toolVersion = '7.2'
+  }
+  checkstyleMain {
+    exclude '**/parser/*Scanner.java'
+    exclude '**/parser/*ScannerToken.java'
+    exclude '**/parser/*Parser.java'
+  }
 }
 
 test.dependsOn(subprojects.test)
