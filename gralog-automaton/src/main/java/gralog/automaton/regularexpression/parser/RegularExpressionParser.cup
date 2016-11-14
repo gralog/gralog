@@ -53,26 +53,33 @@ parser code {:
 :}
 
 terminal PARENTHESISLEFT, PARENTHESISRIGHT, KLEENESTAR, ALTERNATION;
-terminal String STRING;
-non terminal RegularExpression regexp, regexps;
+terminal Character LETTER;
+non terminal RegularExpression alternation, concatenation, starred, atomic;
 
-precedence left ALTERNATION;
-precedence nonassoc KLEENESTAR;
-
-regexps ::=
-    regexp:r
+alternation ::=
+    alternation:l ALTERNATION concatenation:r
+        {: RESULT = new RegularExpressionAlternation(l, r); :}
+    | concatenation:r
         {: RESULT = r; :}
-    | regexps:l regexp:r
-        {: RESULT = new RegularExpressionConcatenation(l, r); :}
     ;
 
-regexp ::=
-    STRING:s
-        {: RESULT = new RegularExpressionString(s); :}
-    | regexp:f KLEENESTAR
-        {: RESULT = new RegularExpressionKleeneStar(f); :}
-    | regexp:l ALTERNATION regexp:r
-        {: RESULT = new RegularExpressionAlternation(l, r); :}
-    | PARENTHESISLEFT regexps:f PARENTHESISRIGHT
-        {: RESULT = f; :}
+concatenation ::=
+    concatenation:l starred:r
+        {: RESULT = new RegularExpressionConcatenation(l, r); :}
+    | starred:r
+        {: RESULT = r; :}
+    ;
+
+starred ::=
+    atomic:r KLEENESTAR
+        {: RESULT = new RegularExpressionKleeneStar(r); :}
+    | atomic:r
+        {: RESULT = r; :}
+    ;
+
+atomic ::=
+    LETTER:c
+        {: RESULT = new RegularExpressionLetter(c); :}
+    | PARENTHESISLEFT alternation:r PARENTHESISRIGHT
+        {: RESULT = r; :}
     ;

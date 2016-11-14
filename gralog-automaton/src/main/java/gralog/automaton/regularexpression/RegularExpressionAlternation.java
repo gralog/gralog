@@ -13,24 +13,27 @@ import gralog.structure.Vertex;
  */
 public class RegularExpressionAlternation extends RegularExpression {
 
-    RegularExpression regexp1 = null;
-    RegularExpression regexp2 = null;
+    RegularExpression left = null;
+    RegularExpression right = null;
 
-    public RegularExpressionAlternation(RegularExpression regexp1,
-            RegularExpression regexp2) {
-        this.regexp1 = regexp1;
-        this.regexp2 = regexp2;
+    public RegularExpressionAlternation(RegularExpression left,
+            RegularExpression right) {
+        this.left = left;
+        this.right = right;
     }
 
     @Override
     public String toString() {
-        return "(" + regexp1.toString() + ")+(" + regexp2.toString() + ")";
+        String r = right.toString();
+        if (right instanceof RegularExpressionAlternation)
+            r = "(" + r + ")";
+        return left.toString() + " | " + r;
     }
 
     @Override
     public Automaton thompsonConstruction(double scale) {
-        Automaton a = regexp1.thompsonConstruction(scale);
-        Automaton b = regexp2.thompsonConstruction(scale);
+        Automaton a = left.thompsonConstruction(scale);
+        Automaton b = right.thompsonConstruction(scale);
 
         // Determine new positions for the states
         double aMaxX = a.maximumCoordinate(0);

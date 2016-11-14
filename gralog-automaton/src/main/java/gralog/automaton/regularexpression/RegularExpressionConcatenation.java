@@ -24,7 +24,7 @@ public class RegularExpressionConcatenation extends RegularExpression {
 
     @Override
     public String toString() {
-        return "(" + regexp1.toString() + ")(" + regexp2.toString() + ")";
+        return regexp1.toString() + regexp2.toString();
     }
 
     @Override

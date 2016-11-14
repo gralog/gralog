@@ -21,6 +21,8 @@ public class RegularExpressionKleeneStar extends RegularExpression {
 
     @Override
     public String toString() {
+        if(regexp instanceof RegularExpressionLetter)
+            return regexp.toString() + "*";
         return "(" + regexp.toString() + ")*";
     }
 

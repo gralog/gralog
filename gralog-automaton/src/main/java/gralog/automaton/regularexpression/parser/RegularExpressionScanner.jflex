@@ -38,5 +38,5 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 "*"           { return symbol("[", RegularExpressionScannerToken.KLEENESTAR); }
 "+"|"\|"      { return symbol("]", RegularExpressionScannerToken.ALTERNATION); }
 
-[A-Za-z0-9]+  { return symbol("string", RegularExpressionScannerToken.STRING, yytext()); }
+[A-Za-z0-9]   { return symbol("letter", RegularExpressionScannerToken.LETTER, yytext().charAt(0)); }
 .             { return symbol("UNEXPECTED CHARACTER", RegularExpressionScannerToken.error, yytext()); }

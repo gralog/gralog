@@ -10,12 +10,12 @@ import gralog.rendering.Vector2D;
 /**
  *
  */
-public class RegularExpressionString extends RegularExpression {
+public class RegularExpressionLetter extends RegularExpression {
 
     String string;
 
-    public RegularExpressionString(String string) {
-        this.string = string;
+    public RegularExpressionLetter(Character letter) {
+        this.string = "" + letter;
     }
 
     @Override
