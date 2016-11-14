@@ -105,6 +105,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     /**
+     * Clear the structure. Removes all vertices and all edges.
+     */
+    public void clear() {
+        vertices.clear();
+        edges.clear();
+    }
+
+    /**
      * Creates a new vertex with the given label and adds it to the structure.
      * This is a convenience function combining createVertex and addVertex.
      * Adding multiple vertices with the same name adds multiple vertices.
