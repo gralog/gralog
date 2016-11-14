@@ -77,9 +77,9 @@ public class Edge extends XmlMarshallable implements IMovable {
             between.move(offset);
     }
 
-    public void snapToGrid(double GridSize) {
+    public void snapToGrid(double gridSize) {
         for (EdgeIntermediatePoint between : intermediatePoints)
-            between.snapToGrid(GridSize);
+            between.snapToGrid(gridSize);
     }
 
     public IMovable findObject(double x, double y) {
@@ -141,7 +141,6 @@ public class Edge extends XmlMarshallable implements IMovable {
             //if(highlights != null && highlights.contains(this))
                 for(EdgeIntermediatePoint between : intermediatePoints)
                     gc.Rectangle(between.get(0)-0.1, between.get(1)-0.1, between.get(0)+0.1, between.get(1)+0.1, this.Color, 2.54/96);
-                
         } else {
             gc.Line(fromX, fromY, toX, toY, this.Color, this.Width);
         }
@@ -166,9 +165,8 @@ public class Edge extends XmlMarshallable implements IMovable {
 
         if (isDirected) {
             Vector2D intersection = target.intersection(new Vector2D(tempX, tempY), new Vector2D(toX, toY));
-            gc.arrow(tempX, tempY, intersection.getX(), intersection.getY(), arrowHeadAngle, arrowHeadLength, edgeColor, width);
-        }
-        else {
+            gc.arrow(new Vector2D(tempX, tempY), intersection, arrowHeadAngle, arrowHeadLength, edgeColor, width);
+        } else {
             gc.line(tempX, tempY, toX, toY, edgeColor, width);
         }
     }
@@ -200,7 +198,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         double nextfromY = fromY;
 
         int i = 0, insertionIndex = 0;
-        double MinDistance = Double.MAX_VALUE;
+        double minDistance = Double.MAX_VALUE;
 
         for (EdgeIntermediatePoint between : intermediatePoints) {
             fromX = nextfromX;
@@ -209,9 +207,9 @@ public class Edge extends XmlMarshallable implements IMovable {
             nextfromY = between.getY();
 
             double distanceTemp = Vector2D.distancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY);
-            if (distanceTemp < MinDistance) {
+            if (distanceTemp < minDistance) {
                 insertionIndex = i;
-                MinDistance = distanceTemp;
+                minDistance = distanceTemp;
             }
             i++;
         }
@@ -220,7 +218,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         double toY = target.coordinates.getY();
 
         double distanceTemp = Vector2D.distancePointToLine(x, y, nextfromX, nextfromY, toX, toY);
-        if (distanceTemp < MinDistance) {
+        if (distanceTemp < minDistance) {
             insertionIndex = intermediatePoints.size();
         }
 
@@ -304,7 +302,7 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     protected void notifyEdgeListeners() {
         for (EdgeListener listener : listeners)
-            listener.EdgeChanged(new EdgeEvent(this));
+            listener.edgeChanged(new EdgeEvent(this));
     }
 
     public void addEdgeListener(EdgeListener listener) {

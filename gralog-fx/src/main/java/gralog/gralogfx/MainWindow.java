@@ -96,25 +96,25 @@ public class MainWindow extends Application {
         menuFileGenerators = new Menu("Generators");
         updateGenerators();
         menuFile.getItems().addAll(
-                menuFileNew, menuFileGenerators,
-                createMenuItem("Open graph...", this::menuFileOpenActivated),
-                createMenuItem("Direct input...", this::menuFileDirectInputActivated),
-                createMenuItem("Save graph as...", this::menuFileSaveActivated),
-                createMenuItem("Close graph", this::menuFileCloseActivated),
-                new SeparatorMenuItem(),
-                createMenuItem("Load plugin...", this::menuFilePluginActivated),
-                new SeparatorMenuItem(),
-                createMenuItem("Exit", this::menuFileExitActivated));
+            menuFileNew, menuFileGenerators,
+            createMenuItem("Open graph...", this::menuFileOpenActivated),
+            createMenuItem("Direct input...", this::menuFileDirectInputActivated),
+            createMenuItem("Save graph as...", this::menuFileSaveActivated),
+            createMenuItem("Close graph", this::menuFileCloseActivated),
+            new SeparatorMenuItem(),
+            createMenuItem("Load plugin...", this::menuFilePluginActivated),
+            new SeparatorMenuItem(),
+            createMenuItem("Exit", this::menuFileExitActivated));
 
         // Edit Menu
         Menu menuEdit = new Menu("Edit");
         menuEdit.getItems().addAll(
-                createDisabledMenuItem("Undo"),
-                createDisabledMenuItem("Redo"),
-                createDisabledMenuItem("Cut"),
-                createDisabledMenuItem("Copy"),
-                createDisabledMenuItem("Paste"),
-                createDisabledMenuItem("Delete"));
+            createDisabledMenuItem("Undo"),
+            createDisabledMenuItem("Redo"),
+            createDisabledMenuItem("Cut"),
+            createDisabledMenuItem("Copy"),
+            createDisabledMenuItem("Paste"),
+            createDisabledMenuItem("Delete"));
 
         // Algorithm Menu
         menuAlgo = new Menu("Algorithms");
@@ -122,15 +122,13 @@ public class MainWindow extends Application {
         // Help Menu
         Menu menuHelp = new Menu("Help");
         menuHelp.getItems().addAll(
-                createMenuItem(
-                        "About GrALoG", ()
-                        -> {
+            createMenuItem(
+                "About GrALoG", () -> {
                     AboutStage aboutstage = new AboutStage(this);
                     aboutstage.showAndWait();
                 }),
-                createMenuItem(
-                        "About the current graph", ()
-                        -> {
+            createMenuItem(
+                "About the current graph", () -> {
                     StructurePane structurePane = this.getCurrentStructurePane();
                     if (structurePane == null)
                         return;
@@ -139,8 +137,7 @@ public class MainWindow extends Application {
                         String url = descr.url();
                         if (url != null && !url.trim().equals(""))
                             this.getHostServices().showDocument(url);
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         ExceptionBox exbox = new ExceptionBox();
                         exbox.showAndWait(ex);
                     }
@@ -171,7 +168,6 @@ public class MainWindow extends Application {
         statusBarMessage = new Label("");
         statusBar.getChildren().add(statusBarMessage);
 
-        // 
         root = new BorderPane();
         //root.setFocusTraversable(true);
         root.setTop(topPane);
@@ -185,7 +181,7 @@ public class MainWindow extends Application {
         fileChooser.setInitialDirectory(new File(getLastDirectory()));
         fileChooser.setTitle("Load Plugins");
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
+            new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
         );
         List<File> list = fileChooser.showOpenMultipleDialog(stage);
         if (list != null && !list.isEmpty()) {
@@ -200,8 +196,7 @@ public class MainWindow extends Application {
             this.setStatus("Loading Plugin " + filename + "...");
             PluginManager.loadPlugin(filename);
             ViewManager.loadPlugin(filename);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -216,8 +211,7 @@ public class MainWindow extends Application {
             Structure structure = StructureManager.instantiateStructure(str);
             addTab(str, structure);
             setStatus("created a " + str + "...");
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -230,7 +224,7 @@ public class MainWindow extends Application {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File(getLastDirectory()));
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
+                new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
 
             // add export-filters to list of extensions
@@ -260,14 +254,12 @@ public class MainWindow extends Application {
                             return;
                     }
                     exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
-                }
-                else {
+                } else {
                     structure.writeToFile(file.getAbsolutePath());
                 }
                 setCurrentStructureTitle(file.getName());
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -277,8 +269,8 @@ public class MainWindow extends Application {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(getLastDirectory()));
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("All (*.*)", "*.*"),
-                new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
+            new FileChooser.ExtensionFilter("All (*.*)", "*.*"),
+            new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
         );
 
         // add export-filters to list of extensions
@@ -305,8 +297,7 @@ public class MainWindow extends Application {
             Structure s = directinputstage.dialogResult;
             if (s != null)
                 this.addTab("", s);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -327,21 +318,19 @@ public class MainWindow extends Application {
                 if (params != null) {
                     ImportFilterStage importStage = new ImportFilterStage(importFilter, params, this);
                     importStage.showAndWait();
-                    if (!importStage.DialogResult) {
+                    if (!importStage.dialogResult) {
                         this.setStatus("");
                         return;
                     }
                 }
                 structure = importFilter.importGraph(file.getAbsolutePath(), params);
-            }
-            else {
+            } else {
                 structure = Structure.loadFromFile(file.getAbsolutePath());
             }
 
             if (structure != null)
                 addTab(file.getName(), structure);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -351,8 +340,7 @@ public class MainWindow extends Application {
     public void menuFileExitActivated() {
         try {
             stage.close();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -364,8 +352,7 @@ public class MainWindow extends Application {
             if (tab != null)
                 tabPane.getTabs().remove(tab);
 
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -440,10 +427,9 @@ public class MainWindow extends Application {
                 selection = sender.selection;
                 sender.requestRedraw();
             }
-            if(selection != null && selection.size() == 1)
+            if (selection != null && selection.size() == 1)
                 objectInspector.setObject(selection.iterator().next(), sender);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -467,8 +453,7 @@ public class MainWindow extends Application {
                 return;
             this.addTab(gen.getDescription().name(), genResult);
 
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -476,7 +461,7 @@ public class MainWindow extends Application {
     }
 
     public void algorithmCompleted(StructurePane structurePane,
-            AlgorithmThread algoThread) {
+        AlgorithmThread algoThread) {
         try {
             if (algoThread.exception != null)
                 throw algoThread.exception;
@@ -492,8 +477,7 @@ public class MainWindow extends Application {
 
             if (algoResult instanceof Structure) {
                 this.addTab("Algorithm result", (Structure) algoResult);
-            }
-            else if (algoResult instanceof Set) {
+            } else if (algoResult instanceof Set) {
                 boolean isSelection = true;
                 for (Object o : (Set) algoResult)
                     if (!(o instanceof Vertex)
@@ -504,26 +488,23 @@ public class MainWindow extends Application {
                     structurePane.selection = (Set) algoResult;
                     structurePane.requestRedraw();
                 }
-            }
-            else if (algoResult instanceof String) {
+            } else if (algoResult instanceof String) {
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Algorithm Result");
                 alert.setHeaderText(null);
                 alert.setContentText((String) algoResult);
                 alert.showAndWait();
-            }
-            else {
+            } else {
                 AlgorithmResultStage resultStage = new AlgorithmResultStage(
-                        algoThread.algo,
-                        algoThread.structure,
-                        algoThread.params,
-                        structurePane,
-                        algoResult
+                    algoThread.algo,
+                    algoThread.structure,
+                    algoThread.params,
+                    structurePane,
+                    algoResult
                 );
                 resultStage.show();
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -553,13 +534,11 @@ public class MainWindow extends Application {
             }));
             this.setStatus("Running Algorithm \"" + str + "\"...");
             algoThread.start();
-        }
-        catch (InvocationTargetException ex) {
+        } catch (InvocationTargetException ex) {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait((Exception) ex.getCause());
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -575,8 +554,7 @@ public class MainWindow extends Application {
             PluginManager.initialize();
             ViewManager.initialize();
             launch(args);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -584,9 +562,9 @@ public class MainWindow extends Application {
     @Override
     public void start(Stage primaryStage) {
         Scene scene = new Scene(
-                root,
-                Preferences.getInteger(getClass(), "main-window-width", 1000),
-                Preferences.getInteger(getClass(), "main-window-height", 800));
+            root,
+            Preferences.getInteger(getClass(), "main-window-width", 1000),
+            Preferences.getInteger(getClass(), "main-window-height", 800));
         this.stage = primaryStage;
         primaryStage.setTitle("GrALoG FX");
         primaryStage.setScene(scene);
@@ -628,8 +606,7 @@ public class MainWindow extends Application {
                 doc.getDocumentElement().normalize();
                 children = doc.getDocumentElement().getChildNodes();
             }
-        }
-        catch (IOException | URISyntaxException | ParserConfigurationException | SAXException ex) {
+        } catch (IOException | URISyntaxException | ParserConfigurationException | SAXException ex) {
         }
 
         // Load Plugins from Config

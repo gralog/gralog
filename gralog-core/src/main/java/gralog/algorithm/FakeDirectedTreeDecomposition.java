@@ -11,9 +11,9 @@ import gralog.structure.*;
 import gralog.treedecomposition.*;
 
 @AlgorithmDescription(
-        name = "Fake Directed Tree Decomposition",
-        text = "Creates a (fake) directed tree decomposition",
-        url = "http://dx.doi.org/10.1006/jctb.2000.2031"
+    name = "Fake Directed Tree Decomposition",
+    text = "Creates a (fake) directed tree decomposition",
+    url = "http://dx.doi.org/10.1006/jctb.2000.2031"
 )
 public class FakeDirectedTreeDecomposition extends Algorithm {
 
@@ -23,7 +23,7 @@ public class FakeDirectedTreeDecomposition extends Algorithm {
     }
 
     protected Bag fakeTreeDecomposition(Structure s, int depth, int width,
-            int children) {
+        int children) {
         Bag result = new Bag();
         Set<Vertex> V = s.getVertices();
 
@@ -31,20 +31,20 @@ public class FakeDirectedTreeDecomposition extends Algorithm {
             int idx = (int) (Math.random() * V.size());
             for (Vertex v : V)
                 if (--idx < 0) {
-                    result.Nodes.add(v);
+                    result.nodes.add(v);
                     break;
                 }
         }
 
         if (depth > 0)
             for (int i = 0; i < children; i++)
-                result.ChildBags.add(fakeTreeDecomposition(s, depth - 1, width, children));
+                result.childBags.add(fakeTreeDecomposition(s, depth - 1, width, children));
 
         return result;
     }
 
     public Object run(Structure s, AlgorithmParameters ap, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         // DirectedTreeDecompositionParameters p = (DirectedTreeDecompositionParameters)ap;
 
         TreeDecomposition dtdecomp = new TreeDecomposition();

@@ -50,24 +50,24 @@ public class PropositionalLogicNot extends PropositionalLogicFormula {
 
     @Override
     protected PropositionalLogicFormula conjunctiveNormalForm(Integer varId,
-            HashMap<PropositionalLogicFormula, String> VarIdx) {
+        HashMap<PropositionalLogicFormula, String> varIdx) {
         String myName = "v" + varId;
         varId++;
-        VarIdx.put(this, myName);
-        PropositionalLogicFormula subCnf = subformula.conjunctiveNormalForm(varId, VarIdx);
-        String subName = VarIdx.get(subformula);
+        varIdx.put(this, myName);
+        PropositionalLogicFormula subCnf = subformula.conjunctiveNormalForm(varId, varIdx);
+        String subName = varIdx.get(subformula);
 
         PropositionalLogicFormula result
-                = new PropositionalLogicAnd(
-                        new PropositionalLogicOr(
-                                new PropositionalLogicVariable(subName),
-                                new PropositionalLogicVariable(myName)
-                        ),
-                        new PropositionalLogicOr(
-                                new PropositionalLogicNot(new PropositionalLogicVariable(subName)),
-                                new PropositionalLogicNot(new PropositionalLogicVariable(myName))
-                        )
-                );
+            = new PropositionalLogicAnd(
+                new PropositionalLogicOr(
+                    new PropositionalLogicVariable(subName),
+                    new PropositionalLogicVariable(myName)
+                ),
+                new PropositionalLogicOr(
+                    new PropositionalLogicNot(new PropositionalLogicVariable(subName)),
+                    new PropositionalLogicNot(new PropositionalLogicVariable(myName))
+                )
+            );
 
         if (subCnf != null)
             result = new PropositionalLogicAnd(subCnf, result);

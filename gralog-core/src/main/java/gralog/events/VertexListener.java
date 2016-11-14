@@ -5,12 +5,12 @@
 package gralog.events;
 
 import gralog.structure.*;
-import java.util.EventObject;
 import java.util.EventListener;
 
 /**
  *
  */
 public interface VertexListener<V extends Vertex> extends EventListener {
-    public void VertexChanged(VertexEvent<V> e);
+
+    void vertexChanged(VertexEvent<V> e);
 }

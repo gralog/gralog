@@ -42,10 +42,9 @@ public class ModalMuCalculusNot extends ModalMuCalculusFormula {
     }
 
     @Override
-    public void createParityGamePositions(double scale, double x, double y,
-            double w, double h, KripkeStructure s, ParityGame p,
-            int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
+    public void createParityGamePositions(double scale, Vector2D pos,
+        Vector2D size, KripkeStructure s, ParityGame p, int nextPriority,
+        Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
         // Parity game can only be constructed from NNF formulas.
         if (!(formula instanceof ModalMuCalculusProposition))
             throw new Exception("Formula is not in Negation Normal Form");
@@ -53,10 +52,9 @@ public class ModalMuCalculusNot extends ModalMuCalculusFormula {
 
         for (Vertex v : s.getVertices()) {
             ParityGamePosition node = p.createVertex();
-            node.coordinates = new Vector2D(
-                    scale * w * v.coordinates.getX() + x,
-                    scale * h * v.coordinates.getY() + y
-            );
+            node.coordinates = pos.plus(new Vector2D(
+                scale * size.getX() * v.coordinates.getX(),
+                scale * size.getY() * v.coordinates.getY()));
             node.label = prop.proposition;
             node.player1Position = ((World) v).satisfiesProposition(prop.proposition);
             p.addVertex(node);
@@ -70,8 +68,8 @@ public class ModalMuCalculusNot extends ModalMuCalculusFormula {
 
     @Override
     public void createParityGameTransitions(KripkeStructure s, ParityGame p,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
+        Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
+        Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
         if (!(formula instanceof ModalMuCalculusProposition))
             throw new Exception("Formula is not in Negation Normal Form");
 

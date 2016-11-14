@@ -25,19 +25,18 @@ import java.util.Set;
  *
  */
 @GeneratorDescription(
-        name = "SAT to Clique Instance",
-        text = "Constructs a Clique Instance from a SAT Formula",
-        url = "https://en.wikipedia.org/wiki/Clique_problem"
-)
+    name = "SAT to Clique Instance",
+    text = "Constructs a Clique Instance from a SAT Formula",
+    url = "https://en.wikipedia.org/wiki/Clique_problem")
 public class SatToClique extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-                "A propositional formula",
-                Preferences.getString(getClass(), "formula", "(a ∨ b ∨ c) ∧ (¬a ∨ ¬b ∨ c) ∧ (a ∨ ¬b ∨ ¬c)"),
-                new PropositionalLogicSyntaxChecker(),
-                PropositionalLogicSyntaxChecker.explanation());
+            "A propositional formula",
+            Preferences.getString(getClass(), "formula", "(a ∨ b ∨ c) ∧ (¬a ∨ ¬b ∨ c) ∧ (a ∨ ¬b ∨ ¬c)"),
+            new PropositionalLogicSyntaxChecker(),
+            PropositionalLogicSyntaxChecker.explanation());
     }
 
     @Override
@@ -53,8 +52,8 @@ public class SatToClique extends Generator {
         UndirectedGraph result = new UndirectedGraph();
 
         Set<String> vars = new HashSet<>();
-        HashMap<String, Vertex> PosNode = new HashMap();
-        HashMap<String, Vertex> NegNode = new HashMap();
+        HashMap<String, Vertex> posNode = new HashMap();
+        HashMap<String, Vertex> negNode = new HashMap();
         cnf.getVariables(vars);
 
         // create gadgets for the literals
@@ -62,19 +61,19 @@ public class SatToClique extends Generator {
         for (String var : vars) {
             Vertex pos = result.createVertex(); // the positive literal
             pos.coordinates = new Vector2D(
-                    6d * i,
-                    10d - 2 * Math.sin(2 * i * Math.PI / (2 * vars.size() - 1))
+                6d * i,
+                10d - 2 * Math.sin(2 * i * Math.PI / (2 * vars.size() - 1))
             );
             pos.label = var;
-            PosNode.put(var, pos);
+            posNode.put(var, pos);
 
             Vertex neg = result.createVertex(); // the negative literal
             neg.coordinates = new Vector2D(
-                    6d * i + 2,
-                    10d - 2 * Math.sin((2 * i + 1) * Math.PI / (2 * vars.size() - 1))
+                6d * i + 2,
+                10d - 2 * Math.sin((2 * i + 1) * Math.PI / (2 * vars.size() - 1))
             );
             neg.label = "¬" + var;
-            NegNode.put(var, neg);
+            negNode.put(var, neg);
 
             // connect them to all other nodes, but NOT each other (cannot set
             // x=true and x=false at the same time)
@@ -103,8 +102,8 @@ public class SatToClique extends Generator {
             for (PropositionalLogicFormula literal : literals) {
                 Vertex clauseVert = result.createVertex();
                 clauseVert.coordinates = new Vector2D(
-                        8d * i + 2 * Math.cos(j * Math.PI / (literals.size() - 1)),
-                        3d - Math.sin(j * Math.PI / (literals.size() - 1))
+                    8d * i + 2 * Math.cos(j * Math.PI / (literals.size() - 1)),
+                    3d - Math.sin(j * Math.PI / (literals.size() - 1))
                 );
                 clauseVert.label = literal.toString();
                 result.addVertex(clauseVert);
@@ -117,15 +116,13 @@ public class SatToClique extends Generator {
                 Vertex inverseLiteralVert = null;
                 if (literal instanceof PropositionalLogicVariable) {
                     PropositionalLogicVariable v = (PropositionalLogicVariable) literal;
-                    inverseLiteralVert = NegNode.get(v.variable);
-                }
-                else if (literal instanceof PropositionalLogicNot
-                         && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
+                    inverseLiteralVert = negNode.get(v.variable);
+                } else if (literal instanceof PropositionalLogicNot
+                    && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
                     PropositionalLogicNot plnot = (PropositionalLogicNot) literal;
                     PropositionalLogicVariable v = (PropositionalLogicVariable) plnot.subformula;
-                    inverseLiteralVert = PosNode.get(v.variable);
-                }
-                else
+                    inverseLiteralVert = posNode.get(v.variable);
+                } else
                     throw new Exception("Formula is not in Conjunctive Normal Form");
 
                 // connect vert to all verts except those in the same clause

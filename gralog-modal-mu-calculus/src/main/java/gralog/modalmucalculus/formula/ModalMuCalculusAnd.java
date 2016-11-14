@@ -19,7 +19,7 @@ public class ModalMuCalculusAnd extends ModalMuCalculusFormula {
     ModalMuCalculusFormula right;
 
     public ModalMuCalculusAnd(ModalMuCalculusFormula left,
-            ModalMuCalculusFormula right) {
+        ModalMuCalculusFormula right) {
         this.left = left;
         this.right = right;
     }
@@ -35,7 +35,7 @@ public class ModalMuCalculusAnd extends ModalMuCalculusFormula {
     @Override
     protected ModalMuCalculusFormula negateVariable(String variable) {
         return new ModalMuCalculusAnd(left.negateVariable(variable),
-                                      right.negateVariable(variable));
+            right.negateVariable(variable));
     }
 
     @Override
@@ -50,22 +50,23 @@ public class ModalMuCalculusAnd extends ModalMuCalculusFormula {
 
     @Override
     public void createParityGamePositions(double scale,
-            double x, double y, double w, double h,
-            KripkeStructure s, ParityGame p, int nextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
+        Vector2D pos, Vector2D size, KripkeStructure s, ParityGame p,
+        int nextPriority, Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
         Double lw = left.formulaWidth();
-        left.createParityGamePositions(scale, x, y + scale, w, h,
-                                       s, p, nextPriority, index);
-        right.createParityGamePositions(scale, x + scale * lw + scale, y + scale, w, h,
-                                        s, p, nextPriority, index);
+        left.createParityGamePositions(scale,
+            pos.plus(new Vector2D(0, scale)), size,
+            s, p, nextPriority, index);
+        right.createParityGamePositions(scale,
+            pos.plus(new Vector2D(scale * lw + scale, scale)), size,
+            s, p, nextPriority, index);
 
         for (Vertex v : s.getVertices()) {
             ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x + scale*(lw + 0.5d));
             node.coordinates = new Vector2D(
-                    (index.get((World) v).get(left).coordinates.getX()
-                     + index.get((World) v).get(right).coordinates.getX()) / 2d,
-                    scale * h * v.coordinates.getY() + y);
+                (index.get((World) v).get(left).coordinates.getX()
+                + index.get((World) v).get(right).coordinates.getX()) / 2d,
+                scale * size.getY() * v.coordinates.getY() + pos.getY());
             node.label = "∧";
             node.player1Position = false;
             p.addVertex(node);
@@ -78,8 +79,8 @@ public class ModalMuCalculusAnd extends ModalMuCalculusFormula {
 
     @Override
     public void createParityGameTransitions(KripkeStructure s, ParityGame p,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
+        Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
+        Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
         left.createParityGameTransitions(s, p, index, variableDefinitionPoints);
         right.createParityGameTransitions(s, p, index, variableDefinitionPoints);
 
@@ -93,8 +94,8 @@ public class ModalMuCalculusAnd extends ModalMuCalculusFormula {
     public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
         if (pos == FormulaPosition.BoxDiamondNot)
             return "(" + left.toString(FormulaPosition.AndLeft, FormulaEndPosition.MIDDLE) + " ∧ "
-                   + right.toString(FormulaPosition.AndRight, FormulaEndPosition.AT_END) + ")";
+                + right.toString(FormulaPosition.AndRight, FormulaEndPosition.AT_END) + ")";
         return left.toString(FormulaPosition.AndLeft, FormulaEndPosition.AT_END) + " ∧ "
-               + right.toString(FormulaPosition.AndRight, endPos);
+            + right.toString(FormulaPosition.AndRight, endPos);
     }
 }

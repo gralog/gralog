@@ -21,16 +21,16 @@ public abstract class ExportFilter {
         return null;
     }
 
-    public void exportGraph(Structure structure, String FileName,
-            ExportFilterParameters params) throws Exception {
-        FileOutputStream stream = new FileOutputStream(FileName);
+    public void exportGraph(Structure structure, String fileName,
+        ExportFilterParameters params) throws Exception {
+        FileOutputStream stream = new FileOutputStream(fileName);
         try (OutputStreamWriter writer = new OutputStreamWriter(stream)) {
             exportGraph(structure, writer, params);
         }
     }
 
     public void exportGraph(Structure structure, OutputStreamWriter stream,
-            ExportFilterParameters params) throws Exception {
+        ExportFilterParameters params) throws Exception {
         Method[] methods = this.getClass().getMethods();
         for (Method method : methods) {
             if (!method.getName().equals("export"))
@@ -45,12 +45,12 @@ public abstract class ExportFilter {
     }
 
     public Map<String, Vertex> getVertexNames(Structure structure,
-            ExportFilterParameters params) throws Exception {
+        ExportFilterParameters params) throws Exception {
         throw new Exception("class " + this.getClass().getName() + " has no method \"getVertexNames\"");
     }
 
     public Map<String, Edge> getEdgeNames(Structure structure,
-            ExportFilterParameters params) throws Exception {
+        ExportFilterParameters params) throws Exception {
         throw new Exception("class " + this.getClass().getName() + " has no method \"getEdgeNames\"");
     }
 

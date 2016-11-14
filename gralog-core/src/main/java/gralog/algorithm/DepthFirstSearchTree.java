@@ -14,15 +14,15 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-        name = "Depth-First Search-Tree",
-        text = "Constructs a Depth-First Search-Tree",
-        url = "https://en.wikipedia.org/wiki/Depth-first_search"
+    name = "Depth-First Search-Tree",
+    text = "Constructs a Depth-First Search-Tree",
+    url = "https://en.wikipedia.org/wiki/Depth-first_search"
 )
 public class DepthFirstSearchTree extends Algorithm {
 
-    public static void DepthFirstSearch(Vertex v,
-            HashMap<Vertex, Vertex> predecessor,
-            HashMap<Vertex, Edge> edgeFromPredecessor) {
+    public static void depthFirstSearch(Vertex v,
+        HashMap<Vertex, Vertex> predecessor,
+        HashMap<Vertex, Edge> edgeFromPredecessor) {
         for (Edge e : v.getConnectedEdges()) {
             if (e.getSource() != v && e.isDirected) // incoming (directed) edge
                 continue;
@@ -36,12 +36,12 @@ public class DepthFirstSearchTree extends Algorithm {
 
             predecessor.put(other, v);
             edgeFromPredecessor.put(other, e);
-            DepthFirstSearch(other, predecessor, edgeFromPredecessor);
+            depthFirstSearch(other, predecessor, edgeFromPredecessor);
         }
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
-            ProgressHandler onprogress) {
+        ProgressHandler onprogress) {
         HashMap<Vertex, Vertex> predecessor = new HashMap<>();
         HashMap<Vertex, Edge> edgeFromPredecessor = new HashMap<>();
         Vertex v = null;
@@ -53,7 +53,7 @@ public class DepthFirstSearchTree extends Algorithm {
             v = (Vertex) ((s.getVertices().toArray())[0]);
         predecessor.put(v, null);
         edgeFromPredecessor.put(v, null);
-        DepthFirstSearch(v, predecessor, edgeFromPredecessor);
+        depthFirstSearch(v, predecessor, edgeFromPredecessor);
 
         HashSet<Edge> tree = new HashSet<>();
         tree.addAll(edgeFromPredecessor.values());

@@ -15,9 +15,9 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-        name = "Spring Embedder",
-        text = "Assigns coordinates to the vertices using the spring-embedding techinque",
-        url = "https://en.wikipedia.org/wiki/Force-directed_graph_drawing"
+    name = "Spring Embedder",
+    text = "Assigns coordinates to the vertices using the spring-embedding techinque",
+    url = "https://en.wikipedia.org/wiki/Force-directed_graph_drawing"
 )
 public class SpringEmbedder extends Algorithm {
 
@@ -26,10 +26,10 @@ public class SpringEmbedder extends Algorithm {
         return new SpringEmbedderParameters();
     }
 
-    protected Vector2D dimension_limits;
+    protected Vector2D dimensionLimits;
 
     public SpringEmbedder() {
-        dimension_limits = new Vector2D(30d, 20d);
+        dimensionLimits = new Vector2D(30d, 20d);
     }
 
     public Vector2D coulomb(Vector2D u, Vector2D v, SpringEmbedderParameters p) {
@@ -38,12 +38,12 @@ public class SpringEmbedder extends Algorithm {
         // f_repel(u,v) = ----- * -------
         //                |u-v|   |u-v|²
 
-        double distance = u.minus(v).length() / p.unstressed_spring_length;
+        double distance = u.minus(v).length() / p.unstressedSpringLength;
         if (distance < 0.00001) // to avoid (near) infinite force
-            return u.normalized().multiply(p.unstressed_spring_length);
-        Vector2D e = (u.minus(v)).normalized().multiply(p.unstressed_spring_length);
+            return u.normalized().multiply(p.unstressedSpringLength);
+        Vector2D e = (u.minus(v)).normalized().multiply(p.unstressedSpringLength);
 
-        Double factor = p.c_repel / (distance * distance);
+        Double factor = p.cRepel / (distance * distance);
         return e.multiply(factor);
     }
 
@@ -52,23 +52,23 @@ public class SpringEmbedder extends Algorithm {
         // attraction force of a spring is proportional to distance
 
         Double distance = u.minus(v).length();
-        if (distance < p.unstressed_spring_length)
+        if (distance < p.unstressedSpringLength)
             return u.multiply(0d);
-        distance = (distance / p.unstressed_spring_length) - 1d;
+        distance = (distance / p.unstressedSpringLength) - 1d;
 
-        Vector2D e = (u.minus(v)).normalized().multiply(p.unstressed_spring_length);
+        Vector2D e = (u.minus(v)).normalized().multiply(p.unstressedSpringLength);
         // e is normalized vector between the two points
 
-        return e.multiply(-p.c_spring * distance);
+        return e.multiply(-p.cSpring * distance);
     }
 
     public Object run(Structure s, AlgorithmParameters ap, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         SpringEmbedderParameters p = (SpringEmbedderParameters) ap;
         ArrayList<Vector2D> tractions = new ArrayList<>();
 
-        double maxDim = s.getVertices().size() * p.unstressed_spring_length;
-        dimension_limits = new Vector2D(maxDim, maxDim);
+        double maxDim = s.getVertices().size() * p.unstressedSpringLength;
+        dimensionLimits = new Vector2D(maxDim, maxDim);
 
         /*
         p.unstressed_spring_length = dimension_limits.elementAt(0);
@@ -81,8 +81,8 @@ public class SpringEmbedder extends Algorithm {
         Set<Vertex> vertices = s.getVertices();
         for (Vertex a : vertices) {
             Vector2D coordinates = new Vector2D(
-                    Math.random() * dimension_limits.getX(),
-                    Math.random() * dimension_limits.getY()
+                Math.random() * dimensionLimits.getX(),
+                Math.random() * dimensionLimits.getY()
             );
             a.coordinates = coordinates;
             // should make sure that no two vertices have the same position
@@ -95,12 +95,12 @@ public class SpringEmbedder extends Algorithm {
         for (Edge e : edges)
             e.intermediatePoints.clear();
 
-        double max_movement = 0d;
+        double maxMovement;
         int iteration = 0;
         int nextincrease = 50;
         do {
             // compute movement
-            max_movement = 0d;
+            maxMovement = 0d;
             int i = 0;
             for (Vertex a : vertices) {
                 Vector2D traction = tractions.get(i).multiply(p.friction);
@@ -123,35 +123,35 @@ public class SpringEmbedder extends Algorithm {
             // execute movement
             i = 0;
             for (Vertex a : vertices) {
-                Vector2D OldCoordinates = a.coordinates;
-                Vector2D NewCoordinates = new Vector2D(
-                        Math.max(0.0d,
-                                 Math.min(dimension_limits.getX(), OldCoordinates.getX()) + p.delta * tractions.get(i).getX()),
-                        Math.max(0.0d,
-                                 Math.min(dimension_limits.getY(), OldCoordinates.getY()) + p.delta * tractions.get(i).getY())
+                Vector2D oldCoordinates = a.coordinates;
+                Vector2D newCoordinates = new Vector2D(
+                    Math.max(0.0d,
+                        Math.min(dimensionLimits.getX(), oldCoordinates.getX()) + p.delta * tractions.get(i).getX()),
+                    Math.max(0.0d,
+                        Math.min(dimensionLimits.getY(), oldCoordinates.getY()) + p.delta * tractions.get(i).getY())
                 );
-                a.coordinates = NewCoordinates;
+                a.coordinates = newCoordinates;
 
                 // for the loop condition
                 double current_movement
-                        = (OldCoordinates.getX() - NewCoordinates.getX()) * (OldCoordinates.getX() - NewCoordinates.getX())
-                          + (OldCoordinates.getY() - NewCoordinates.getY()) * (OldCoordinates.getY() - NewCoordinates.getY());
-                if (Math.sqrt(current_movement) > max_movement)
-                    max_movement = Math.sqrt(current_movement);
+                    = (oldCoordinates.getX() - newCoordinates.getX()) * (oldCoordinates.getX() - newCoordinates.getX())
+                    + (oldCoordinates.getY() - newCoordinates.getY()) * (oldCoordinates.getY() - newCoordinates.getY());
+                if (Math.sqrt(current_movement) > maxMovement)
+                    maxMovement = Math.sqrt(current_movement);
 
                 ++i;
             }
 
             if (++iteration > nextincrease) {
-                p.movement_threshold += 0.01d;
+                p.movementThreshold += 0.01d;
                 nextincrease *= 4;
             }
-            if (iteration > p.max_iterations)
+            if (iteration > p.maxIterations)
                 break;
 
             if (onprogress != null)
                 onprogress.onProgress(s);
-        } while (max_movement > p.movement_threshold * p.unstressed_spring_length);
+        } while (maxMovement > p.movementThreshold * p.unstressedSpringLength);
 
         return null;
     }

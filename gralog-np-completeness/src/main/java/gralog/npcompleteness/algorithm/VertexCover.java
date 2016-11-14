@@ -14,14 +14,14 @@ import java.util.HashSet;
  *
  */
 @AlgorithmDescription(
-        name = "Vertex Cover",
-        text = "Finds a minimum Vertex Cover",
-        url = "https://en.wikipedia.org/wiki/Vertex_cover"
+    name = "Vertex Cover",
+    text = "Finds a minimum Vertex Cover",
+    url = "https://en.wikipedia.org/wiki/Vertex_cover"
 )
 public class VertexCover extends Algorithm {
 
     protected boolean findVertexCover(UndirectedGraph s, int k,
-            Set<Vertex> vertexcover) {
+        Set<Vertex> vertexcover) {
         boolean allEdgesCovered = true;
         for (Edge e : s.getEdges())
             if (!vertexcover.contains(e.getSource())
@@ -54,11 +54,11 @@ public class VertexCover extends Algorithm {
     }
 
     public Object run(UndirectedGraph s, AlgorithmParameters p,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
         for (int k = 1;; k++) {
-            Set<Vertex> VertexCover = new HashSet<>();
-            if (findVertexCover(s, k, VertexCover))
-                return VertexCover;
+            Set<Vertex> vertexCover = new HashSet<>();
+            if (findVertexCover(s, k, vertexCover))
+                return vertexCover;
         }
     }
 }

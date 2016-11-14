@@ -16,7 +16,7 @@ public class PropositionalLogicOr extends PropositionalLogicFormula {
     public PropositionalLogicFormula right;
 
     public PropositionalLogicOr(PropositionalLogicFormula left,
-            PropositionalLogicFormula right) {
+        PropositionalLogicFormula right) {
         this.left = left;
         this.right = right;
     }
@@ -66,50 +66,50 @@ public class PropositionalLogicOr extends PropositionalLogicFormula {
 
     @Override
     protected PropositionalLogicFormula conjunctiveNormalForm(Integer varId,
-            HashMap<PropositionalLogicFormula, String> VarIdx) {
+        HashMap<PropositionalLogicFormula, String> varIdx) {
         String myName = "v" + varId;
         varId++;
-        VarIdx.put(this, myName);
-        PropositionalLogicFormula leftCnf = left.conjunctiveNormalForm(varId, VarIdx);
-        String leftName = VarIdx.get(left);
-        PropositionalLogicFormula rightCnf = right.conjunctiveNormalForm(varId, VarIdx);
-        String rightName = VarIdx.get(right);
+        varIdx.put(this, myName);
+        PropositionalLogicFormula leftCnf = left.conjunctiveNormalForm(varId, varIdx);
+        String leftName = varIdx.get(left);
+        PropositionalLogicFormula rightCnf = right.conjunctiveNormalForm(varId, varIdx);
+        String rightName = varIdx.get(right);
 
         PropositionalLogicFormula result
-                = new PropositionalLogicAnd(
-                        new PropositionalLogicAnd(
-                                new PropositionalLogicOr(
-                                        new PropositionalLogicOr(
-                                                new PropositionalLogicVariable(leftName),
-                                                new PropositionalLogicVariable(rightName)
-                                        ),
-                                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
-                                ),
-                                new PropositionalLogicOr(
-                                        new PropositionalLogicOr(
-                                                new PropositionalLogicVariable(leftName),
-                                                new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
-                                        ),
-                                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
-                                )
+            = new PropositionalLogicAnd(
+                new PropositionalLogicAnd(
+                    new PropositionalLogicOr(
+                        new PropositionalLogicOr(
+                            new PropositionalLogicVariable(leftName),
+                            new PropositionalLogicVariable(rightName)
                         ),
-                        new PropositionalLogicAnd(
-                                new PropositionalLogicOr(
-                                        new PropositionalLogicOr(
-                                                new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
-                                                new PropositionalLogicVariable(rightName)
-                                        ),
-                                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
-                                ),
-                                new PropositionalLogicOr(
-                                        new PropositionalLogicOr(
-                                                new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
-                                                new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
-                                        ),
-                                        new PropositionalLogicVariable(myName)
-                                )
-                        )
-                );
+                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
+                    ),
+                    new PropositionalLogicOr(
+                        new PropositionalLogicOr(
+                            new PropositionalLogicVariable(leftName),
+                            new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
+                        ),
+                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
+                    )
+                ),
+                new PropositionalLogicAnd(
+                    new PropositionalLogicOr(
+                        new PropositionalLogicOr(
+                            new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
+                            new PropositionalLogicVariable(rightName)
+                        ),
+                        new PropositionalLogicNot(new PropositionalLogicVariable(myName))
+                    ),
+                    new PropositionalLogicOr(
+                        new PropositionalLogicOr(
+                            new PropositionalLogicNot(new PropositionalLogicVariable(leftName)),
+                            new PropositionalLogicNot(new PropositionalLogicVariable(rightName))
+                        ),
+                        new PropositionalLogicVariable(myName)
+                    )
+                )
+            );
 
         if (leftCnf != null)
             result = new PropositionalLogicAnd(leftCnf, result);

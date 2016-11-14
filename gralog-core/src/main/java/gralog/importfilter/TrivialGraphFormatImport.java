@@ -17,21 +17,21 @@ import java.util.StringTokenizer;
  *
  */
 @ImportFilterDescription(
-        name = "Trivial Graph Format",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
-        fileExtension = "tgf"
+    name = "Trivial Graph Format",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
+    fileExtension = "tgf"
 )
 public class TrivialGraphFormatImport extends ImportFilter {
 
     @Override
     public Structure importGraph(InputStream stream,
-            ImportFilterParameters params) throws Exception {
+        ImportFilterParameters params) throws Exception {
         DirectedGraph result = new DirectedGraph();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
             String s = br.readLine();
 
-            HashMap<String, Vertex> NodeIndex = new HashMap<>();
+            HashMap<String, Vertex> nodeIndex = new HashMap<>();
 
             while (s != null) {
 
@@ -56,13 +56,12 @@ public class TrivialGraphFormatImport extends ImportFilter {
                 if (to == null) {
                     Vertex newnode = result.createVertex();
                     newnode.label = from;
-                    if (NodeIndex.containsKey(from))
+                    if (nodeIndex.containsKey(from))
                         throw new Exception("Vertex-identifier \"" + from + "\" multiply defined");
-                    NodeIndex.put(from, newnode);
-                }
-                else {
-                    Vertex nodeA = NodeIndex.containsKey(from) ? NodeIndex.get(from) : null;
-                    Vertex nodeB = NodeIndex.containsKey(to) ? NodeIndex.get(to) : null;
+                    nodeIndex.put(from, newnode);
+                } else {
+                    Vertex nodeA = nodeIndex.containsKey(from) ? nodeIndex.get(from) : null;
+                    Vertex nodeB = nodeIndex.containsKey(to) ? nodeIndex.get(to) : null;
 
                     if (nodeA == null)
                         throw new Exception("Edge containing undefined Vertex-identifier \"" + from + "\"");
@@ -75,10 +74,10 @@ public class TrivialGraphFormatImport extends ImportFilter {
                 s = br.readLine();
             }
 
-            for (Vertex newnode : NodeIndex.values()) {
+            for (Vertex newnode : nodeIndex.values()) {
                 newnode.coordinates = new Vector2D(
-                        Math.random() * 3d * NodeIndex.size(),
-                        Math.random() * 3d * NodeIndex.size());
+                    Math.random() * 3d * nodeIndex.size(),
+                    Math.random() * 3d * nodeIndex.size());
                 result.addVertex(newnode);
             }
         }

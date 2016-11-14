@@ -10,10 +10,9 @@ import gralog.plugins.XmlName;
  *
  */
 @StructureDescription(
-        name = "Undirected Graph",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)#Undirected_graph"
-)
+    name = "Undirected Graph",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Graph_(discrete_mathematics)#Undirected_graph")
 @XmlName(name = "graph")
 public class UndirectedGraph extends Structure<Vertex, Edge> {
 

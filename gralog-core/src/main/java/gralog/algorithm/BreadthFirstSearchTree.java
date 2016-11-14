@@ -15,15 +15,15 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-        name = "Breadth-First Search-Tree",
-        text = "Constructs a Breadth-First Search-Tree",
-        url = "https://en.wikipedia.org/wiki/Breadth-first_search"
+    name = "Breadth-First Search-Tree",
+    text = "Constructs a Breadth-First Search-Tree",
+    url = "https://en.wikipedia.org/wiki/Breadth-first_search"
 )
 public class BreadthFirstSearchTree extends Algorithm {
 
-    public static void BreadthFirstSearch(Vertex start,
-            HashMap<Vertex, Vertex> predecessor,
-            HashMap<Vertex, Edge> edgeFromPredecessor) {
+    public static void breadthFirstSearch(Vertex start,
+        HashMap<Vertex, Vertex> predecessor,
+        HashMap<Vertex, Edge> edgeFromPredecessor) {
         ArrayDeque<Vertex> queue = new ArrayDeque<>();
         queue.addLast(start);
         predecessor.put(start, null);
@@ -50,7 +50,7 @@ public class BreadthFirstSearchTree extends Algorithm {
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
-            ProgressHandler onprogress) {
+        ProgressHandler onprogress) {
         HashMap<Vertex, Vertex> predecessor = new HashMap<>();
         HashMap<Vertex, Edge> edgeFromPredecessor = new HashMap<>();
         Vertex v = null;
@@ -60,7 +60,7 @@ public class BreadthFirstSearchTree extends Algorithm {
                     v = (Vertex) o;
         if (v == null)
             v = (Vertex) ((s.getVertices().toArray())[0]);
-        BreadthFirstSearch(v, predecessor, edgeFromPredecessor);
+        breadthFirstSearch(v, predecessor, edgeFromPredecessor);
 
         HashSet<Edge> tree = new HashSet<>();
         tree.addAll(edgeFromPredecessor.values());

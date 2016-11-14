@@ -17,21 +17,21 @@ public class PowersetConstructionTreeNode {
 
     PowersetConstructionTreeNode left;
     PowersetConstructionTreeNode right;
-    State Content;
+    State content;
 
-    public PowersetConstructionTreeNode(PowersetConstructionTreeNode left,
-            PowersetConstructionTreeNode right, State Content) {
-        this.left = left;
-        this.right = right;
-        this.Content = Content;
+    public PowersetConstructionTreeNode(PowersetConstructionTreeNode l,
+        PowersetConstructionTreeNode r, State c) {
+        this.left = l;
+        this.right = r;
+        this.content = c;
     }
 
     public State getContent() {
-        return Content;
+        return content;
     }
 
-    public void setContent(State Content) {
-        this.Content = Content;
+    public void setContent(State c) {
+        this.content = c;
     }
 
     public PowersetConstructionTreeNode getLeft() {
@@ -51,7 +51,7 @@ public class PowersetConstructionTreeNode {
     }
 
     public State getContentForSet(Automaton sourceAutomaton,
-            Automaton resultAutomaton, Set<State> statesSubset) {
+        Automaton resultAutomaton, Set<State> statesSubset) {
         Set<State> allStates = sourceAutomaton.getVertices();
         PowersetConstructionTreeNode run = this;
 
@@ -60,8 +60,7 @@ public class PowersetConstructionTreeNode {
                 if (run.getRight() == null)
                     run.setRight(new PowersetConstructionTreeNode(null, null, null));
                 run = run.getRight();
-            }
-            else {
+            } else {
                 if (run.getLeft() == null)
                     run.setLeft(new PowersetConstructionTreeNode(null, null, null));
                 run = run.getLeft();

@@ -85,8 +85,7 @@ public class DirectInputStage extends Stage {
             dialogResult = importfilter.importGraph(input, null);
 
             this.close();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -101,8 +100,7 @@ public class DirectInputStage extends Stage {
             ImportFilterDescription descr = importfilter.getDescription();
             String url = descr.url();
             app.getHostServices().showDocument(url);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }

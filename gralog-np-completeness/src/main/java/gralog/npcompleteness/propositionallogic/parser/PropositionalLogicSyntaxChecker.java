@@ -5,7 +5,6 @@
 package gralog.npcompleteness.propositionallogic.parser;
 
 import gralog.parser.SyntaxChecker;
-import gralog.npcompleteness.propositionallogic.parser.PropositionalLogicParser;
 
 /**
  *
@@ -19,7 +18,7 @@ public class PropositionalLogicSyntaxChecker extends SyntaxChecker {
 
     public static String explanation() {
         return "Conjunction (and): P ∧ Q, P * Q\n"
-               + "Disjunction (or): P ∨ Q, P + Q\n"
-               + "Negation: ¬P, -P, ~P";
+            + "Disjunction (or): P ∨ Q, P + Q\n"
+            + "Negation: ¬P, -P, ~P";
     }
 }

@@ -14,14 +14,14 @@ import java.util.HashSet;
  *
  */
 @AlgorithmDescription(
-        name = "Independent Set",
-        text = "Finds a maximum Independent Set",
-        url = "https://en.wikipedia.org/wiki/Independent_set_(graph_theory)"
+    name = "Independent Set",
+    text = "Finds a maximum Independent Set",
+    url = "https://en.wikipedia.org/wiki/Independent_set_(graph_theory)"
 )
 public class IndependentSet extends Algorithm {
 
     protected boolean findIndependentSet(UndirectedGraph s, int k,
-            Set<Vertex> independentset, Set<Vertex> candidates) {
+        Set<Vertex> independentset, Set<Vertex> candidates) {
         if (k < 1)
             return true;
         if (candidates.isEmpty())
@@ -50,19 +50,19 @@ public class IndependentSet extends Algorithm {
     }
 
     public Object run(UndirectedGraph s, AlgorithmParameters p,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
         Set<Vertex> result = new HashSet<>();
         for (int k = 1;; k++) {
             Set<Vertex> V = new HashSet<>();
             for (Vertex v : s.getVertices())
                 V.add(v);
 
-            Set<Vertex> IndependentSet = new HashSet<>();
-            if (!findIndependentSet(s, k, IndependentSet, V))
+            Set<Vertex> independentSet = new HashSet<>();
+            if (!findIndependentSet(s, k, independentSet, V))
                 break;
 
             result.clear();
-            result.addAll(IndependentSet);
+            result.addAll(independentSet);
         }
         return result;
     }

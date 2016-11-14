@@ -21,7 +21,7 @@ public abstract class Algorithm {
     }
 
     public Object doRun(Structure structure, AlgorithmParameters params,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
         Object algoResult = null;
         Method[] methods = this.getClass().getMethods();
         for (Method method : methods) {

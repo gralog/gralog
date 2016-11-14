@@ -10,9 +10,9 @@ import gralog.exportfilter.*;
  *
  */
 @AlgorithmDescription(
-        name = "External Algorithm Test",
-        text = "Test-Class for running external algorithms",
-        url = ""
+    name = "External Algorithm Test",
+    text = "Test-Class for running external algorithms",
+    url = ""
 )
 public class AlgorithmExternalTest extends AlgorithmExternal {
 

@@ -18,14 +18,14 @@ import gralog.progresshandler.ProgressHandler;
  *
  */
 @AlgorithmDescription(
-        name = "Rabin-Scott Powerset Construction",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Powerset_construction"
+    name = "Rabin-Scott Powerset Construction",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Powerset_construction"
 )
 public class PowersetConstruction extends Algorithm {
 
     public Object run(Automaton a, AlgorithmParameters p, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         Automaton result = new Automaton();
         PowersetConstructionTreeNode tree = new PowersetConstructionTreeNode(null, null, null);
 
@@ -39,12 +39,12 @@ public class PowersetConstruction extends Algorithm {
         State q0 = tree.getContentForSet(a, result, Q0);
         q0.startState = true;
 
-        Set<Character> Alphabet = new HashSet<>();
+        Set<Character> alphabet = new HashSet<>();
         for (Edge e : delta)
             if (e instanceof Transition) {
-                String s = ((Transition) e).Symbol;
+                String s = ((Transition) e).symbol;
                 for (int i = 0; i < s.length(); i++)
-                    Alphabet.add(s.charAt(i));
+                    alphabet.add(s.charAt(i));
             }
 
         Queue<Set<State>> queue = new LinkedList<>();
@@ -54,10 +54,10 @@ public class PowersetConstruction extends Algorithm {
         while (!queue.isEmpty()) {
             Set<State> front = queue.remove();
 
-            for (Character c : Alphabet) {
+            for (Character c : alphabet) {
                 Set<State> cSuccessor = new HashSet<>();
                 for (Edge e : delta) {
-                    if (e instanceof Transition && front.contains(e.getSource()) && ((Transition) e).Symbol.equals(c.toString()))
+                    if (e instanceof Transition && front.contains(e.getSource()) && ((Transition) e).symbol.equals(c.toString()))
                         cSuccessor.add((State) e.getTarget());
                 }
                 cSuccessor = a.epsilonHull(cSuccessor);
@@ -74,7 +74,7 @@ public class PowersetConstruction extends Algorithm {
                 }
 
                 Transition trans = result.createEdge(src, dst);
-                trans.Symbol = c.toString();
+                trans.symbol = c.toString();
                 result.addEdge(trans);
             }
         }

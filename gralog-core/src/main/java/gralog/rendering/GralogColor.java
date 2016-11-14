@@ -27,8 +27,8 @@ public class GralogColor {
 
     public GralogColor(int rgb) {
         this((short) ((rgb >> 16) & 0xFF),
-             (short) ((rgb >> 8) & 0xFF),
-             (short) (rgb & 0xFF));
+            (short) ((rgb >> 8) & 0xFF),
+            (short) (rgb & 0xFF));
     }
 
     @Override
@@ -60,19 +60,19 @@ public class GralogColor {
     public String toHtmlString() {
         final String hex = "0123456789ABCDEF";
         return "#" + hex.charAt(r >> 4 & 0x0F) + hex.charAt(r & 0x0F)
-               + hex.charAt(g >> 4 & 0x0F) + hex.charAt(g & 0x0F)
-               + hex.charAt(b >> 4 & 0x0F) + hex.charAt(b & 0x0F);
+            + hex.charAt(g >> 4 & 0x0F) + hex.charAt(g & 0x0F)
+            + hex.charAt(b >> 4 & 0x0F) + hex.charAt(b & 0x0F);
     }
 
-    public static GralogColor parseColor(String HtmlString) {
+    public static GralogColor parseColor(String htmlString) {
         int colorCode = 0;
         int i = 0;
-        if (HtmlString.charAt(i) == '#')
+        if (htmlString.charAt(i) == '#')
             i++;
 
-        for (; i < HtmlString.length(); i++) {
+        for (; i < htmlString.length(); i++) {
             int temp = 0;
-            char ci = HtmlString.charAt(i);
+            char ci = htmlString.charAt(i);
             if ('0' <= ci && ci <= '9')
                 temp = ci - '0';
             else if ('a' <= ci && ci <= 'f')

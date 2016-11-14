@@ -17,15 +17,15 @@ import java.util.Set;
  *
  */
 @ExportFilterDescription(
-        name = "TikZ ist kein Zeichenprogramm",
-        text = "",
-        url = "http://www.texample.net/tikz/",
-        fileExtension = "tikz"
+    name = "TikZ ist kein Zeichenprogramm",
+    text = "",
+    url = "http://www.texample.net/tikz/",
+    fileExtension = "tikz"
 )
 public class TikZExport extends ExportFilter {
 
     public void export(Automaton structure, OutputStreamWriter stream,
-            ExportFilterParameters params) throws Exception {
+        ExportFilterParameters params) throws Exception {
         String linefeed = System.getProperty("line.separator");
 
         stream.write("%\\documentclass{article}" + linefeed);
@@ -39,12 +39,12 @@ public class TikZExport extends ExportFilter {
         stream.write("    \\begin{tikzpicture}[->]" + linefeed);
         stream.write("        \\tikzstyle{every state}=[fill=white,draw=black,text=black]" + linefeed + linefeed);
 
-        HashMap<State, Integer> NodeIndex = new HashMap<>();
+        HashMap<State, Integer> nodeIndex = new HashMap<>();
         int i = 1;
         Set<State> V = structure.getVertices();
         for (Vertex v : V) {
             State s = (State) v;
-            NodeIndex.put(s, i);
+            nodeIndex.put(s, i);
             stream.write("        \\node[state");
             if (s.finalState)
                 stream.write(",accepting");
@@ -65,14 +65,14 @@ public class TikZExport extends ExportFilter {
             Vector2D to = t.getTarget().coordinates;
             Double distance = 0.0;
 
-            stream.write("        \\draw (q" + NodeIndex.get(e.getSource()) + ")");
+            stream.write("        \\draw (q" + nodeIndex.get(e.getSource()) + ")");
             for (EdgeIntermediatePoint c : e.intermediatePoints) {
                 Vector2D betw = new Vector2D(c.getX(), c.getY());
                 Double segmentlength = betw.minus(from).length();
 
                 stream.write(" --");
                 if (distance < halfLength && halfLength <= distance + segmentlength)
-                    stream.write(" node[above] {$" + (t.Symbol.equals("") ? "\\varepsilon" : t.Symbol) + "$}");
+                    stream.write(" node[above] {$" + (t.symbol.equals("") ? "\\varepsilon" : t.symbol) + "$}");
                 stream.write(" (" + c.getX() + "cm," + c.getY() + "cm)");
 
                 distance += segmentlength;
@@ -81,8 +81,8 @@ public class TikZExport extends ExportFilter {
 
             stream.write(" --");
             if (distance < halfLength)
-                stream.write(" node[above] {$" + (t.Symbol.equals("") ? "\\varepsilon" : t.Symbol) + "$}");
-            stream.write(" (q" + NodeIndex.get(e.getTarget()) + ");" + linefeed);
+                stream.write(" node[above] {$" + (t.symbol.equals("") ? "\\varepsilon" : t.symbol) + "$}");
+            stream.write(" (q" + nodeIndex.get(e.getTarget()) + ");" + linefeed);
         }
 
         stream.write("    \\end{tikzpicture}" + linefeed);

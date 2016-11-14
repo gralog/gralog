@@ -32,7 +32,7 @@ public class GeneratorStage extends Stage {
     boolean dialogResult;
 
     public GeneratorStage(Generator gen, AlgorithmParameters params,
-            Application app) throws Exception {
+        Application app) throws Exception {
         this.gen = gen;
         this.params = params;
         this.dialogResult = false;
@@ -60,8 +60,7 @@ public class GeneratorStage extends Stage {
         objectInspector = new ObjectInspector();
         try {
             objectInspector.setObject(params, null, (b) -> runButton.setDisable(!b));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
         }
 
         root = new BorderPane();

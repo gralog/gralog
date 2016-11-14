@@ -8,7 +8,7 @@ public class ComputationTreeLogicExistsFinally extends ComputationTreeLogicForwa
     // EF phi = E true U phi
 
     public ComputationTreeLogicExistsFinally(
-            ComputationTreeLogicFormula subformula) {
+        ComputationTreeLogicFormula subformula) {
         super(new ComputationTreeLogicExistsUntil(new ComputationTreeLogicTop(), subformula));
     }
 }

@@ -21,9 +21,12 @@ import java.util.*;
 /**
  *
  */
-public class PluginManager {
+public final class PluginManager {
 
-    private final static HashMap<String, Constructor> ClassRegister = new HashMap<String, Constructor>();
+    private PluginManager() {
+    }
+
+    private static final HashMap<String, Constructor> CLASS_REGISTER = new HashMap<String, Constructor>();
 
     public static void initialize() throws Exception {
         File f = new File(PluginManager.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -31,44 +34,44 @@ public class PluginManager {
     }
 
     public static Object instantiateClass(String className) throws Exception {
-        if (!ClassRegister.containsKey(className))
+        if (!CLASS_REGISTER.containsKey(className))
             throw new Exception("class \"" + className + "\" is unknown, has no @XmlName annotation or has no empty constructor");
 
-        Constructor ctor = ClassRegister.get(className);
+        Constructor ctor = CLASS_REGISTER.get(className);
         return ctor.newInstance();
     }
 
-    public static void registerClass(String ClassName) throws Exception {
-        Class<?> c = Class.forName(ClassName);
+    public static void registerClass(String className) throws Exception {
+        Class<?> c = Class.forName(className);
         PluginManager.registerClass(c);
     }
 
     public static void registerClass(Class<?> c) throws Exception {
-        String XmlAlias = null;
+        String xmlAlias = null;
         if (c.isAnnotationPresent(XmlName.class)) {
             XmlName xmlname = c.getAnnotation(XmlName.class);
-            XmlAlias = xmlname.name();
+            xmlAlias = xmlname.name();
         }
-        registerClass(c.getName(), XmlAlias, c);
+        registerClass(c.getName(), xmlAlias, c);
     }
 
     public static void registerClass(String classname, String xmlAlias,
-            Class<?> aClass) throws Exception {
+        Class<?> aClass) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
             return;
 
-        if (ClassRegister.containsKey(classname))
+        if (CLASS_REGISTER.containsKey(classname))
             throw new Exception("class name \"" + classname + "\" already exists!");
         if (xmlAlias != null)
-            if (ClassRegister.containsKey(xmlAlias))
+            if (CLASS_REGISTER.containsKey(xmlAlias))
                 throw new Exception("class name \"" + xmlAlias + "\" already exists!");
 
         try {
             Constructor ctor = aClass.getConstructor(new Class[]{});
             // Register the Class
-            ClassRegister.put(classname, ctor);
+            CLASS_REGISTER.put(classname, ctor);
             if (xmlAlias != null)
-                ClassRegister.put(xmlAlias, ctor);
+                CLASS_REGISTER.put(xmlAlias, ctor);
 
             // Register the classes in the corresponding managers
             for (Class sup = aClass; sup != null; sup = sup.getSuperclass()) {
@@ -87,8 +90,7 @@ public class PluginManager {
                 if (sup == ExportFilter.class) // Export Filter
                     ExportFilterManager.registerExportFilterClass(aClass, classname);
             }
-        }
-        catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e) {
         }
     }
 

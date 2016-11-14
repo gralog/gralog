@@ -44,7 +44,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
 
     @Override
     public boolean evaluate(Structure s, HashMap<String, Vertex> varassign,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         switch (parameters.size()) {
             case 1:
                 Vertex v = varassign.get(parameters.get(0));
@@ -62,11 +62,12 @@ public class FirstOrderRelation extends FirstOrderFormula {
                 Set<Edge> E = from.getConnectedEdges();
                 for (Edge e : E) {
                     if (e.getSource() == from && e.getTarget() == to // same direction
-                        || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) // opposite direction, but undirected edge
-                    {
+                        || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) {
+                        // opposite direction, but undirected edge
                         if (relation.equals("E") // generic query - matches any edge!
-                            || relation.equals(e.label)) // specific query - matches current edge?
+                            || relation.equals(e.label)) { // specific query - matches current edge?
                             return true;
+                        }
                     }
                 }
                 break;
@@ -80,7 +81,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
 
     @Override
     public Bag evaluateProver(Structure s, HashMap<String, Vertex> varassign,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         Bag b = new Bag();
         b.eval = evaluate(s, varassign, onprogress);
         return b;
@@ -88,13 +89,13 @@ public class FirstOrderRelation extends FirstOrderFormula {
 
     @Override
     public GameGraphResult constructGameGraph(Structure s,
-            HashMap<String, Vertex> varassign, FiniteGame game,
-            Vector2D coor) {
+        HashMap<String, Vertex> varassign, FiniteGame game,
+        Vector2D coor) {
         FiniteGamePosition parent = new FiniteGamePosition();
 
         parent.coordinates = coor;
         parent.label = toString() + ", "
-                       + FirstOrderFormula.variableAssignmentToString(varassign);
+            + FirstOrderFormula.variableAssignmentToString(varassign);
 
         Boolean res = false;
         Vertex from = varassign.get(parameters.get(0));
@@ -103,11 +104,12 @@ public class FirstOrderRelation extends FirstOrderFormula {
         Set<Edge> E = from.getConnectedEdges();
         for (Edge e : E) {
             if (e.getSource() == from && e.getTarget() == to // same direction
-                || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) // opposite direction, but undirected edge
-            {
+                || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) {
+                // opposite direction, but undirected edge
                 if (relation.equals("E") // generic query - matches any edge!
-                    || relation.equals(e.label)) // specific query - matches current edge?
+                    || relation.equals(e.label)) { // specific query - matches current edge?
                     res = true;
+                }
             }
         }
         parent.player1Position = res;

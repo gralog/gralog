@@ -14,14 +14,13 @@ import java.util.HashSet;
  *
  */
 @AlgorithmDescription(
-        name = "Clique",
-        text = "Finds a maximum Clique",
-        url = "https://en.wikipedia.org/wiki/Clique_problem"
-)
+    name = "Clique",
+    text = "Finds a maximum Clique",
+    url = "https://en.wikipedia.org/wiki/Clique_problem")
 public class Clique extends Algorithm {
 
     static boolean findClique(UndirectedGraph s, int k, Set<Vertex> clique,
-            Set<Vertex> candidates) {
+        Set<Vertex> candidates) {
         if (k < 1)
             return true;
         if (candidates.isEmpty())
@@ -32,8 +31,7 @@ public class Clique extends Algorithm {
                 continue;
 
             Set<Vertex> nextCandidates = new HashSet<>();
-            for (Edge e : candidate.getConnectedEdges()) // candidates ∩ N[candidate]
-            {
+            for (Edge e : candidate.getConnectedEdges()) { // candidates ∩ N[candidate]
                 if (candidates.contains(e.getSource()))
                     nextCandidates.add(e.getSource());
                 if (candidates.contains(e.getTarget()))
@@ -56,18 +54,18 @@ public class Clique extends Algorithm {
             for (Vertex v : s.getVertices())
                 V.add(v);
 
-            Set<Vertex> Clique = new HashSet<>();
-            if (!findClique(s, k, Clique, V))
+            Set<Vertex> clique = new HashSet<>();
+            if (!findClique(s, k, clique, V))
                 break;
 
             result.clear();
-            result.addAll(Clique);
+            result.addAll(clique);
         }
         return result;
     }
 
     public Object run(UndirectedGraph s, AlgorithmParameters p,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
         return findMaximumClique(s);
     }
 }

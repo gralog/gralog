@@ -31,7 +31,7 @@ public class ExportFilterStage extends Stage {
     boolean dialogResult;
 
     public ExportFilterStage(ExportFilter exportfilter,
-            ExportFilterParameters params, Application app) throws Exception {
+        ExportFilterParameters params, Application app) throws Exception {
         this.exportfilter = exportfilter;
         this.params = params;
         this.dialogResult = false;
@@ -39,8 +39,7 @@ public class ExportFilterStage extends Stage {
         objectInspector = new ObjectInspector();
         try {
             objectInspector.setObject(params, null);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
         }
         cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> this.close());
@@ -59,8 +58,7 @@ public class ExportFilterStage extends Stage {
             infoButton = new Button("Info");
             infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
             hBox.getChildren().addAll(runButton, cancelButton, infoButton);
-        }
-        else
+        } else
             hBox.getChildren().addAll(runButton, cancelButton);
 
         root = new BorderPane();

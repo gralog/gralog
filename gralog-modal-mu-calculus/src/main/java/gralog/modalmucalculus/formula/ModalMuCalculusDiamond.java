@@ -24,7 +24,7 @@ public class ModalMuCalculusDiamond extends ModalMuCalculusFormula {
     }
 
     public ModalMuCalculusDiamond(String transitiontype,
-            ModalMuCalculusFormula subformula) {
+        ModalMuCalculusFormula subformula) {
         this.transitiontype = transitiontype;
         this.subformula = subformula;
     }
@@ -53,18 +53,16 @@ public class ModalMuCalculusDiamond extends ModalMuCalculusFormula {
     }
 
     @Override
-    public void createParityGamePositions(double scale, double x, double y,
-            double w, double h, KripkeStructure s, ParityGame p,
-            int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
-        subformula.createParityGamePositions(scale, x, y + scale, w, h, s, p, NextPriority, index);
+    public void createParityGamePositions(double scale, Vector2D pos, Vector2D size, KripkeStructure s, ParityGame p, int nextPriority, Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
+        subformula.createParityGamePositions(scale,
+            pos.plus(new Vector2D(0, scale)), size, s, p, nextPriority, index);
 
         for (Vertex v : s.getVertices()) {
             ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
             node.coordinates = new Vector2D(
-                    index.get((World) v).get(subformula).coordinates.getX(),
-                    scale * h * v.coordinates.getY() + y
+                index.get((World) v).get(subformula).coordinates.getX(),
+                scale * size.getY() * v.coordinates.getY() + pos.getY()
             );
             node.label = transitiontype == null ? "◇" : ("<" + transitiontype + ">");
             node.player1Position = true;
@@ -78,8 +76,8 @@ public class ModalMuCalculusDiamond extends ModalMuCalculusFormula {
 
     @Override
     public void createParityGameTransitions(KripkeStructure s, ParityGame p,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
+        Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
+        Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
         subformula.createParityGameTransitions(s, p, index, variableDefinitionPoints);
 
         for (Vertex v : s.getVertices()) {
@@ -89,7 +87,7 @@ public class ModalMuCalculusDiamond extends ModalMuCalculusFormula {
                 Action a = (Action) e;
                 if (e.getSource() != v)
                     continue;
-                if (this.transitiontype != null && !a.Name.equals(transitiontype))
+                if (this.transitiontype != null && !a.name.equals(transitiontype))
                     continue;
 
                 ParityGamePosition tp = index.get((World) e.getTarget()).get(subformula);

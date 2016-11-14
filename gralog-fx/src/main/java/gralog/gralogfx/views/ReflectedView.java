@@ -41,39 +41,33 @@ public class ReflectedView extends GridPaneView<Object> {
                             try {
                                 f.set(displayObject, Double.parseDouble(valueField.getText()));
                                 requestRedraw();
-                            }
-                            catch (Exception ex) {
+                            } catch (IllegalAccessException | IllegalArgumentException ex) {
                             }
                         });
                         valueControl = valueField;
-                    }
-                    else if (type.equals(Integer.class)) {
+                    } else if (type.equals(Integer.class)) {
                         String valueString = value.toString();
                         TextField valueField = new TextField(valueString);
                         valueField.textProperty().addListener(e -> {
                             try {
                                 f.set(displayObject, Integer.parseInt(valueField.getText()));
                                 requestRedraw();
-                            }
-                            catch (Exception ex) {
+                            } catch (IllegalAccessException | IllegalArgumentException ex) {
                             }
                         });
                         valueControl = valueField;
-                    }
-                    else if (type.equals(GralogColor.class)) {
+                    } else if (type.equals(GralogColor.class)) {
                         String valueString = ((GralogColor) value).toHtmlString();
                         TextField valueField = new TextField(valueString);
                         valueField.textProperty().addListener(e -> {
                             try {
                                 f.set(displayObject, GralogColor.parseColor(valueField.getText()));
                                 requestRedraw();
-                            }
-                            catch (Exception ex) {
+                            } catch (IllegalAccessException | IllegalArgumentException ex) {
                             }
                         });
                         valueControl = valueField;
-                    }
-                    else if (type.equals(Boolean.class)) {
+                    } else if (type.equals(Boolean.class)) {
                         CheckBox valueField = new CheckBox();
                         if ((Boolean) value)
                             valueField.setSelected(true);
@@ -81,21 +75,18 @@ public class ReflectedView extends GridPaneView<Object> {
                             try {
                                 f.set(displayObject, valueField.isSelected());
                                 requestRedraw();
-                            }
-                            catch (Exception ex) {
+                            } catch (IllegalAccessException | IllegalArgumentException ex) {
                             }
                         });
                         valueControl = valueField;
-                    }
-                    else if (type.isAssignableFrom(String.class)) {
+                    } else if (type.isAssignableFrom(String.class)) {
                         String valueString = value.toString();
                         TextField valueField = new TextField(valueString);
                         valueField.textProperty().addListener(e -> {
                             try {
                                 f.set(displayObject, valueField.getText());
                                 requestRedraw();
-                            }
-                            catch (Exception ex) {
+                            } catch (IllegalAccessException | IllegalArgumentException ex) {
                             }
                         });
                         valueControl = valueField;
@@ -108,8 +99,7 @@ public class ReflectedView extends GridPaneView<Object> {
                     }
                 }
             }
-        }
-        catch (Exception ex) {
+        } catch (IllegalAccessException | IllegalArgumentException | SecurityException ex) {
             getChildren().clear();
         }
     }

@@ -9,7 +9,7 @@ import gralog.algorithm.ParseError;
 /**
  * A syntax checker for strings.
  */
-abstract public class SyntaxChecker {
+public abstract class SyntaxChecker {
 
     public static class Result {
 
@@ -23,7 +23,7 @@ abstract public class SyntaxChecker {
      * @param toCheck The string to check.
      * @return The result of syntax checking the given string.
      */
-    abstract public SyntaxChecker.Result check(String toCheck);
+    public abstract SyntaxChecker.Result check(String toCheck);
 
     /**
      * This function should parse the given formula and in case of an error it
@@ -33,13 +33,13 @@ abstract public class SyntaxChecker {
      * @param <T> The type produced by the parser.
      */
     @FunctionalInterface
-    public static interface Parser<T> {
+    public interface Parser<T> {
 
-        public T test(String formula) throws Exception;
+        T test(String formula) throws Exception;
     }
 
     protected SyntaxChecker.Result checkWith(String toCheck,
-            Parser parser) {
+        Parser parser) {
         SyntaxChecker.Result result = new SyntaxChecker.Result();
         result.hint = "";
         result.syntaxCorrect = false;
@@ -48,11 +48,9 @@ abstract public class SyntaxChecker {
         else {
             try {
                 result.syntaxCorrect = parser.test(toCheck) != null;
-            }
-            catch (ParseError e) {
+            } catch (ParseError e) {
                 result.hint = e.getMessage();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 result.hint = "Parse error";
             }
         }

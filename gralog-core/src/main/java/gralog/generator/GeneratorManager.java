@@ -13,10 +13,13 @@ import static gralog.plugins.PluginManager.instantiateClass;
 /**
  *
  */
-public class GeneratorManager {
+public final class GeneratorManager {
 
-    private final static HashMap<String, String> generatorNames = new HashMap<>();
-    private final static HashMap<String, GeneratorDescription> generatorDescriptions = new HashMap<>();
+    private GeneratorManager() {
+    }
+
+    private static final HashMap<String, String> GENERATOR_NAMES = new HashMap<>();
+    private static final HashMap<String, GeneratorDescription> GENERATOR_DESCRIPTIONS = new HashMap<>();
 
     public static void registerGeneratorClass(Class<?> aClass, String classname) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
@@ -25,22 +28,22 @@ public class GeneratorManager {
         if (!aClass.isAnnotationPresent(GeneratorDescription.class))
             throw new Exception("class " + aClass.getName() + " has no @GeneratorDescription annotation");
         GeneratorDescription descr = aClass.getAnnotation(GeneratorDescription.class);
-        generatorNames.put(descr.name(), classname);
-        generatorDescriptions.put(descr.name(), descr);
+        GENERATOR_NAMES.put(descr.name(), classname);
+        GENERATOR_DESCRIPTIONS.put(descr.name(), descr);
     }
 
     public static List<String> getGeneratorClasses() {
-        ArrayList<String> result = new ArrayList<>(generatorNames.keySet());
+        ArrayList<String> result = new ArrayList<>(GENERATOR_NAMES.keySet());
         result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }
 
     public static GeneratorDescription getGeneratorDescription(String identifier) {
-        return generatorDescriptions.get(identifier);
+        return GENERATOR_DESCRIPTIONS.get(identifier);
     }
 
     public static Generator instantiateGenerator(String identifier) throws Exception {
-        String classname = generatorNames.get(identifier);
+        String classname = GENERATOR_NAMES.get(identifier);
         return (Generator) instantiateClass(classname);
     }
 }

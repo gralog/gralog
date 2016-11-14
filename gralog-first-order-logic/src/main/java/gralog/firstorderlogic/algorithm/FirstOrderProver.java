@@ -20,21 +20,19 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-        name = "First Order Logic Prover",
-        text = "",
-        url = "First_Order_Prover_Manual.pdf"
-)
-
+    name = "First Order Logic Prover",
+    text = "",
+    url = "First_Order_Prover_Manual.pdf")
 public class FirstOrderProver extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new FirstOrderProverParameters(Preferences.getString(
-                this.getClass(), "formula", "!x. ?y. E(x,y)"));
+            this.getClass(), "formula", "!x. ?y. E(x,y)"));
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         FirstOrderProverParameters sp = (FirstOrderProverParameters) (p);
 
         Preferences.setString(this.getClass(), "formula", sp.parameter);
@@ -53,8 +51,7 @@ public class FirstOrderProver extends Algorithm {
         FirstOrderFormula phi;
         try {
             phi = FirstOrderParser.parseString(sp.parameter);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             return ex.getMessage();
         }
 

@@ -23,19 +23,19 @@ import gralog.rendering.Vector2D;
  *
  */
 @AlgorithmDescription(
-        name = "Model Checking Game for first Order Logic",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Game_semantics#Classical_logic"
+    name = "Model Checking Game for first Order Logic",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Game_semantics#Classical_logic"
 )
 public class ModelCheckingGameFOLogic extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
-                "Formula",
-                Preferences.getString(this.getClass(), "formula", "!x. ?y. E(y,x) ∨ E(x,z)"),
-                new FirstOrderSyntaxChecker(),
-                FirstOrderSyntaxChecker.explanation());
+            "Formula",
+            Preferences.getString(this.getClass(), "formula", "!x. ?y. E(y,x) ∨ E(x,z)"),
+            new FirstOrderSyntaxChecker(),
+            FirstOrderSyntaxChecker.explanation());
     }
 
     /* public void getUniqueGamePositions(FiniteGame game){
@@ -58,7 +58,7 @@ public class ModelCheckingGameFOLogic extends Algorithm {
    }
      */
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);
 

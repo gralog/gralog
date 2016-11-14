@@ -12,10 +12,9 @@ import gralog.structure.StructureDescription;
  *
  */
 @StructureDescription(
-        name = "Büchi Automaton",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/B%C3%BCchi_automaton"
-)
+    name = "Büchi Automaton",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/B%C3%BCchi_automaton")
 @XmlName(name = "buechiautomaton")
 public class BuechiAutomaton extends Structure<State, Transition> {
 

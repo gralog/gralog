@@ -80,6 +80,7 @@ public class ModalMuCalculusParserTest {
         parseAndCompare("mu X. P", "μX. P");
         parseAndCompare("nu X. P", "νX. P");
     }
+
     /**
      * Test parsing of fixpoint operators.
      */

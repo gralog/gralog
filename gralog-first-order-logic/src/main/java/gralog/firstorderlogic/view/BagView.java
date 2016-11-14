@@ -23,15 +23,15 @@ import javafx.scene.text.Text;
  *
  */
 @ViewDescription(
-        forClass = gralog.firstorderlogic.prover.TreeDecomposition.Bag.class)
+    forClass = gralog.firstorderlogic.prover.TreeDecomposition.Bag.class)
 public class BagView extends GridPaneView<Bag> {
 
-    protected void FillTreeView(TreeItem node, Bag bag) {
+    protected void fillTreeView(TreeItem node, Bag bag) {
         node.setValue(bag);
-        for (Bag b : bag.ChildBags) {
+        for (Bag b : bag.childBags) {
             TreeItem child = new TreeItem("bag");
             node.getChildren().add(child);
-            FillTreeView(child, b);
+            fillTreeView(child, b);
         }
         node.setExpanded(false);
     }
@@ -39,12 +39,12 @@ public class BagView extends GridPaneView<Bag> {
     @Override
     public void setObject(Bag treedecomp, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
-        if(treedecomp == null)
+        if (treedecomp == null)
             return;
 
         TreeItem root = new TreeItem("root");
 
-        FillTreeView(root, treedecomp);
+        fillTreeView(root, treedecomp);
         root.setExpanded(true);
         TreeView treeView = new TreeView(root);
 
@@ -67,8 +67,7 @@ public class BagView extends GridPaneView<Bag> {
                     super.updateItem(item, empty);
                     if (empty || item == null) {
                         setGraphic(null);
-                    }
-                    else {
+                    } else {
                         assignment.setText(item.assignment);
                         caption.setText(item.caption);
                         caption.setStyle(null);
@@ -83,13 +82,13 @@ public class BagView extends GridPaneView<Bag> {
         });
 
         treeView.getSelectionModel()
-                .selectedItemProperty()
-                .addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
-                    TreeItem selectedItem = (TreeItem) newValue;
-                    Bag bag = (Bag) selectedItem.getValue();
-                    structurePane.clearSelection();
-                    structurePane.selectAll(bag.Nodes);
-                });
+            .selectedItemProperty()
+            .addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+                TreeItem selectedItem = (TreeItem) newValue;
+                Bag bag = (Bag) selectedItem.getValue();
+                structurePane.clearSelection();
+                structurePane.selectAll(bag.nodes);
+            });
 
         ColumnConstraints columnConstraints = new ColumnConstraints();
         columnConstraints.setPercentWidth(100);

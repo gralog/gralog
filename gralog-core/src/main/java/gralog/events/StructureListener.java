@@ -5,14 +5,16 @@
 package gralog.events;
 
 import gralog.structure.*;
-import java.util.EventObject;
 import java.util.EventListener;
 
 /**
  *
  */
 public interface StructureListener<V extends Vertex, E extends Edge> extends EventListener {
-    public void structureChanged(StructureEvent<V,E> e);
-    public void vertexChanged(VertexEvent<V> e);
-    public void edgeChanged(EdgeEvent<E> e);
+
+    void structureChanged(StructureEvent<V, E> e);
+
+    void vertexChanged(VertexEvent<V> e);
+
+    void edgeChanged(EdgeEvent<E> e);
 }

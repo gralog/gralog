@@ -48,8 +48,7 @@ public class RegularExpressionParserTest {
     private void parseAndFail(String toParse) throws Exception {
         try {
             RegularExpressionParser.parseString(toParse);
-        }
-        catch(ParseError e) {
+        } catch (ParseError e) {
             return; // Everything is fine, this is what we expect.
         }
         throw new Exception("Parsing should have failed on: " + toParse);

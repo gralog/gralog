@@ -26,8 +26,8 @@ public class AlgorithmThread extends Thread {
     Object result = null;
 
     public AlgorithmThread(Algorithm algo, Structure structure,
-            AlgorithmParameters params, Set<Object> selection,
-            ProgressHandler onprogress) {
+        AlgorithmParameters params, Set<Object> selection,
+        ProgressHandler onprogress) {
         setDaemon(true);
         setName(algo.getClass().getName() + " Thread");
 
@@ -46,8 +46,7 @@ public class AlgorithmThread extends Thread {
     public void run() {
         try {
             result = this.algo.doRun(structure, params, selection, onprogress);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             this.exception = ex;
         }
         if (handler != null)
@@ -55,7 +54,6 @@ public class AlgorithmThread extends Thread {
 
         /*
         while (!this.isInterrupted()) {
-             
             // UI updaten
                 Platform.runLater(new Runnable() {
                 @Override
@@ -64,7 +62,7 @@ public class AlgorithmThread extends Thread {
                     list.getItems().add(0, getName() + " sagt Hallo!");
                 }
             });
-            
+
             // Thread schlafen
             try {
                 // fuer 3 Sekunden
@@ -72,6 +70,6 @@ public class AlgorithmThread extends Thread {
             } catch (InterruptedException ex) {
             }
         }
-        */
+         */
     }
 }

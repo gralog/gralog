@@ -14,15 +14,15 @@ import java.util.Set;
  *
  */
 @ExportFilterDescription(
-        name = "TikZ ist kein Zeichenprogramm",
-        text = "",
-        url = "http://www.texample.net/tikz/",
-        fileExtension = "tikz"
+    name = "TikZ ist kein Zeichenprogramm",
+    text = "",
+    url = "http://www.texample.net/tikz/",
+    fileExtension = "tikz"
 )
 public class TikZExport extends ExportFilter {
 
     public void export(DirectedGraph structure, OutputStreamWriter stream,
-            ExportFilterParameters params) throws Exception {
+        ExportFilterParameters params) throws Exception {
         String linefeed = System.getProperty("line.separator");
 
         stream.write("%\\documentclass{article}" + linefeed);
@@ -36,14 +36,14 @@ public class TikZExport extends ExportFilter {
         stream.write("    \\begin{tikzpicture}[scale=1.0]" + linefeed);
         stream.write("        \\tikzstyle{every node}=[circle,fill=blue!20,draw=black,text=black]" + linefeed + linefeed);
 
-        HashMap<Vertex, Integer> NodeIndex = new HashMap<>();
+        HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
         int i = 1;
         Set<Vertex> V = structure.getVertices();
         for (Vertex v : V) {
-            NodeIndex.put(v, i);
+            nodeIndex.put(v, i);
             stream.write("        \\node (n" + i + ") at ("
-                         + v.coordinates.getX() + "cm,"
-                         + v.coordinates.getY() + "cm) {};" + linefeed);
+                + v.coordinates.getX() + "cm,"
+                + v.coordinates.getY() + "cm) {};" + linefeed);
             ++i;
         }
 
@@ -51,10 +51,10 @@ public class TikZExport extends ExportFilter {
 
         Set<Edge> E = structure.getEdges();
         for (Edge e : E) {
-            stream.write("        \\draw (n" + NodeIndex.get(e.getSource()) + ")");
+            stream.write("        \\draw (n" + nodeIndex.get(e.getSource()) + ")");
             for (EdgeIntermediatePoint c : e.intermediatePoints)
                 stream.write(" edge[-] (" + c.getX() + "cm," + c.getY() + "cm)");
-            stream.write(" edge[-] (n" + NodeIndex.get(e.getTarget()) + ");" + linefeed);
+            stream.write(" edge[-] (n" + nodeIndex.get(e.getTarget()) + ");" + linefeed);
         }
 
         stream.write("    \\end{tikzpicture}" + linefeed);

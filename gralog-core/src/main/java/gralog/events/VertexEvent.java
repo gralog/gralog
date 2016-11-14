@@ -11,6 +11,7 @@ import java.util.EventObject;
  *
  */
 public class VertexEvent<V extends Vertex> extends EventObject {
+
     public VertexEvent(V source) {
         super(source);
     }

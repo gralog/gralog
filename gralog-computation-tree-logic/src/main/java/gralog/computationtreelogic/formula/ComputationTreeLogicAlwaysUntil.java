@@ -13,23 +13,23 @@ public class ComputationTreeLogicAlwaysUntil extends ComputationTreeLogicForward
     //                                                          AND  psi is actually reached
     //                                                               (not an infinite path of phis)
     public ComputationTreeLogicAlwaysUntil(ComputationTreeLogicFormula before,
-            ComputationTreeLogicFormula after) {
+        ComputationTreeLogicFormula after) {
         super(
-                new ComputationTreeLogicAnd(
+            new ComputationTreeLogicAnd(
+                new ComputationTreeLogicNot(
+                    new ComputationTreeLogicExistsUntil(
+                        new ComputationTreeLogicNot(after),
                         new ComputationTreeLogicNot(
-                                new ComputationTreeLogicExistsUntil(
-                                        new ComputationTreeLogicNot(after),
-                                        new ComputationTreeLogicNot(
-                                                new ComputationTreeLogicOr(before, after)
-                                        )
-                                )
-                        ),
-                        new ComputationTreeLogicNot(
-                                new ComputationTreeLogicExistsGlobally(
-                                        new ComputationTreeLogicNot(after)
-                                )
+                            new ComputationTreeLogicOr(before, after)
                         )
+                    )
+                ),
+                new ComputationTreeLogicNot(
+                    new ComputationTreeLogicExistsGlobally(
+                        new ComputationTreeLogicNot(after)
+                    )
                 )
+            )
         );
     }
 }

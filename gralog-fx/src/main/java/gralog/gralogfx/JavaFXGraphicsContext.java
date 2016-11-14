@@ -28,7 +28,7 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
 
     @Override
     public void line(double x1, double y1, double x2, double y2, GralogColor c,
-            double width) {
+        double width) {
         Point2D p1 = pane.modelToScreen(new Point2D(x1, y1));
         Point2D p2 = pane.modelToScreen(new Point2D(x2, y2));
 
@@ -41,7 +41,7 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
 
     @Override
     public void circle(double centerx, double centery, double radius,
-            GralogColor c) {
+        GralogColor c) {
         Point2D p1 = pane.modelToScreen(new Point2D(centerx - radius, centery - radius));
         Point2D p2 = pane.modelToScreen(new Point2D(centerx + radius, centery + radius));
 
@@ -54,13 +54,13 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
 
     @Override
     public void putText(double centerx, double centery, String text,
-            double LineHeightCM, GralogColor c) {
+        double lineHeightCM, GralogColor c) {
         Point2D p1 = pane.modelToScreen(new Point2D(centerx, centery));
 
         Font font = gc.getFont();
         // I have no idea, why this is 1959.5... I hate magic numbers
-        double newSize = 2.54d * LineHeightCM * pane.zoomFactor * 1959.5
-                         / (pane.screenResolutionY);
+        double newSize = 2.54d * lineHeightCM * pane.zoomFactor * 1959.5
+            / (pane.screenResolutionY);
         gc.setFont(new Font(font.getName(), newSize));
 
         gc.setTextAlign(TextAlignment.CENTER);
@@ -72,7 +72,7 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
 
     @Override
     public void fillRectangle(double x1, double y1, double x2, double y2,
-            GralogColor c) {
+        GralogColor c) {
         Point2D p1 = pane.modelToScreen(new Point2D(x1, y1));
         Point2D p2 = pane.modelToScreen(new Point2D(x2, y2));
 

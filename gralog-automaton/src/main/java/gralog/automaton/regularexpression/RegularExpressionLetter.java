@@ -43,7 +43,7 @@ public class RegularExpressionLetter extends RegularExpression {
             Transition e = a.createEdge();
             e.setSource(s);
             e.setTarget(t);
-            e.Symbol = "" + string.charAt(i);
+            e.symbol = "" + string.charAt(i);
             a.addEdge(e);
         }
         t.finalState = true;

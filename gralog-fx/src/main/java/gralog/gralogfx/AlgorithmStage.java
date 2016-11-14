@@ -33,7 +33,7 @@ public class AlgorithmStage extends Stage {
     boolean dialogResult;
 
     public AlgorithmStage(Algorithm algo, Structure structure,
-            AlgorithmParameters params, Application app) throws Exception {
+        AlgorithmParameters params, Application app) throws Exception {
         this.algo = algo;
         this.structure = structure;
         this.params = params;
@@ -62,8 +62,7 @@ public class AlgorithmStage extends Stage {
         objectInspector = new ObjectInspector();
         try {
             objectInspector.setObject(params, null, (b) -> runButton.setDisable(!b));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
         }
 
         root = new BorderPane();

@@ -14,6 +14,6 @@ public class FirstOrderProverParameters extends StringAlgorithmParameter {
 
     public FirstOrderProverParameters(String initialValue) {
         super("Formula", initialValue,
-              new FirstOrderSyntaxChecker(), FirstOrderSyntaxChecker.explanation());
+            new FirstOrderSyntaxChecker(), FirstOrderSyntaxChecker.explanation());
     }
 }

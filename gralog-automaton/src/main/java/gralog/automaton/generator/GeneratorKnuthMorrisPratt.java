@@ -18,9 +18,9 @@ import gralog.structure.Structure;
  *
  */
 @GeneratorDescription(
-        name = "Knuth Morris Pratt Algorithm",
-        text = "Directly constructs a minimal, deterministic automaton that accepts inputs which contain a given word",
-        url = "https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm"
+    name = "Knuth Morris Pratt Algorithm",
+    text = "Directly constructs a minimal, deterministic automaton that accepts inputs which contain a given word",
+    url = "https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm"
 )
 public class GeneratorKnuthMorrisPratt extends Generator {
 
@@ -33,7 +33,7 @@ public class GeneratorKnuthMorrisPratt extends Generator {
     public Structure generate(AlgorithmParameters p) throws Exception {
         KnuthMorrisPrattParameters kmpp = (KnuthMorrisPrattParameters) (p);
         String str = kmpp.word;
-        String Alphabet = kmpp.alphabet;
+        String alphabet = kmpp.alphabet;
 
         Automaton result = new Automaton();
         int n = str.length();
@@ -78,24 +78,24 @@ public class GeneratorKnuthMorrisPratt extends Generator {
         }
 
         // loop transitions for final state
-        for (int a = 0; a < Alphabet.length(); a++) {
+        for (int a = 0; a < alphabet.length(); a++) {
             int l = str.length();
-            delta.get(l).put(Alphabet.charAt(a), l);
+            delta.get(l).put(alphabet.charAt(a), l);
         }
 
         // construct automaton
         for (int i = 0; i < str.length() + 1; i++) {
             State statei = states.get(i);
-            for (int a = 0; a < Alphabet.length(); a++) {
+            for (int a = 0; a < alphabet.length(); a++) {
                 int j;
-                if (delta.get(i).containsKey(Alphabet.charAt(a)))
-                    j = delta.get(i).get(Alphabet.charAt(a));
+                if (delta.get(i).containsKey(alphabet.charAt(a)))
+                    j = delta.get(i).get(alphabet.charAt(a));
                 else
                     j = 0; // no transition for a => back to start
 
                 State statej = states.get(j);
                 Transition trans = result.createEdge(statei, statej);
-                trans.Symbol = "" + Alphabet.charAt(a);
+                trans.symbol = "" + alphabet.charAt(a);
                 result.addEdge(trans);
             }
         }

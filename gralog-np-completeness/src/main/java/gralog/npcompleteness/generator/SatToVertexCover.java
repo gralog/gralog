@@ -26,19 +26,18 @@ import java.util.Set;
  *
  */
 @GeneratorDescription(
-        name = "SAT to Vertex Cover Instance",
-        text = "Constructs a Vertex-Cover Instance from a SAT Formula",
-        url = ""
-)
+    name = "SAT to Vertex Cover Instance",
+    text = "Constructs a Vertex-Cover Instance from a SAT Formula",
+    url = "")
 public class SatToVertexCover extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-                "A propositional formula",
-                Preferences.getString(getClass(), "formula", "(a ∨ b ∨ c) ∧ (¬a ∨ ¬b ∨ c) ∧ (a ∨ ¬b ∨ ¬c)"),
-                new PropositionalLogicSyntaxChecker(),
-                PropositionalLogicSyntaxChecker.explanation());
+            "A propositional formula",
+            Preferences.getString(getClass(), "formula", "(a ∨ b ∨ c) ∧ (¬a ∨ ¬b ∨ c) ∧ (a ∨ ¬b ∨ ¬c)"),
+            new PropositionalLogicSyntaxChecker(),
+            PropositionalLogicSyntaxChecker.explanation());
     }
 
     // notice that the size of a min vertex cover becomes |vars| + 2*|clauses|
@@ -55,8 +54,8 @@ public class SatToVertexCover extends Generator {
         UndirectedGraph result = new UndirectedGraph();
 
         Set<String> vars = new HashSet<>();
-        HashMap<String, Vertex> PosNode = new HashMap();
-        HashMap<String, Vertex> NegNode = new HashMap();
+        HashMap<String, Vertex> posNode = new HashMap();
+        HashMap<String, Vertex> negNode = new HashMap();
         cnf.getVariables(vars);
 
         // create gadgets for the literals
@@ -66,13 +65,13 @@ public class SatToVertexCover extends Generator {
             pos.coordinates = new Vector2D(6d * i, 10d);
             pos.label = var;
             result.addVertex(pos);
-            PosNode.put(var, pos);
+            posNode.put(var, pos);
 
             Vertex neg = result.createVertex(); // the negative literal
             neg.coordinates = new Vector2D(6d * i + 2, 10d);
             neg.label = "¬" + var;
             result.addVertex(neg);
-            NegNode.put(var, neg);
+            negNode.put(var, neg);
 
             result.addEdge(result.createEdge(pos, neg));
 
@@ -118,15 +117,13 @@ public class SatToVertexCover extends Generator {
 
                 if (literal instanceof PropositionalLogicVariable) {
                     PropositionalLogicVariable v = (PropositionalLogicVariable) literal;
-                    result.addEdge(result.createEdge(clauseVert, PosNode.get(v.variable)));
-                }
-                else if (literal instanceof PropositionalLogicNot
-                         && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
+                    result.addEdge(result.createEdge(clauseVert, posNode.get(v.variable)));
+                } else if (literal instanceof PropositionalLogicNot
+                    && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
                     PropositionalLogicNot plnot = (PropositionalLogicNot) literal;
                     PropositionalLogicVariable v = (PropositionalLogicVariable) plnot.subformula;
-                    result.addEdge(result.createEdge(clauseVert, NegNode.get(v.variable)));
-                }
-                else
+                    result.addEdge(result.createEdge(clauseVert, negNode.get(v.variable)));
+                } else
                     throw new Exception("Formula is not in Conjunctive Normal Form");
             }
             ++i;

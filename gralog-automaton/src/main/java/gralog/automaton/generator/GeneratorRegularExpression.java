@@ -17,19 +17,19 @@ import gralog.structure.Structure;
  *
  */
 @GeneratorDescription(
-        name = "Thompson's Construction",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Thompson%27s_construction"
+    name = "Thompson's Construction",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Thompson%27s_construction"
 )
 public class GeneratorRegularExpression extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-                "Regular expression",
-                Preferences.getString(this.getClass(), "regex", "a*b"),
-                new RegularExpressionSyntaxChecker(),
-                RegularExpressionSyntaxChecker.explanation());
+            "Regular expression",
+            Preferences.getString(this.getClass(), "regex", "a*b"),
+            new RegularExpressionSyntaxChecker(),
+            RegularExpressionSyntaxChecker.explanation());
     }
 
     @Override

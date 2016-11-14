@@ -15,12 +15,12 @@ import org.w3c.dom.Element;
 @XmlName(name = "world")
 public class World extends Vertex {
 
-    public String Propositions = "";
+    public String propositions = "";
 
     @Override
     public Element toXml(Document doc, String id) throws Exception {
         Element vnode = super.toXml(doc, id);
-        vnode.setAttribute("propositions", Propositions);
+        vnode.setAttribute("propositions", propositions);
         return vnode;
     }
 
@@ -28,13 +28,13 @@ public class World extends Vertex {
     public String fromXml(Element vnode) {
         String id = super.fromXml(vnode);
         if (vnode.hasAttribute("propositions"))
-            Propositions = vnode.getAttribute("propositions");
+            propositions = vnode.getAttribute("propositions");
         return id;
     }
 
     public boolean satisfiesProposition(String proposition) {
         proposition = proposition.trim();
-        String[] props = Propositions.split(",");
+        String[] props = propositions.split(",");
         for (String prop : props)
             if (proposition.equalsIgnoreCase(prop.trim()))
                 return true;

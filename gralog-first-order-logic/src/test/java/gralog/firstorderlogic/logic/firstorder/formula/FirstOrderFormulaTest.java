@@ -165,8 +165,7 @@ public class FirstOrderFormulaTest {
     private void parseAndFail(String toParse) throws Exception {
         try {
             FirstOrderParser.parseString(toParse);
-        }
-        catch(ParseError e) {
+        } catch (ParseError e) {
             return; // Everything is fine, this is what we expect.
         }
         throw new Exception("Parsing should have failed on: " + toParse);

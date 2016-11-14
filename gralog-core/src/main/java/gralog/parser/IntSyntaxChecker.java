@@ -35,8 +35,7 @@ public class IntSyntaxChecker extends SyntaxChecker {
                 r.hint = "Please enter an integer smaller or equal to " + upperBound;
                 return r;
             }
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             r.hint = "Please enter an integer";
             return r;
         }

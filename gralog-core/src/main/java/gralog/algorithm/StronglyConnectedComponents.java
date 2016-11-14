@@ -17,15 +17,15 @@ import gralog.progresshandler.*;
  *
  */
 @AlgorithmDescription(
-        name = "Strongly Connected Components",
-        text = "Finds the strongly connected components of a (mixed) graph",
-        url = "https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm"
+    name = "Strongly Connected Components",
+    text = "Finds the strongly connected components of a (mixed) graph",
+    url = "https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm"
 )
 public class StronglyConnectedComponents extends Algorithm {
 
     public static void tarjanStrongComponents(Structure s,
-            HashMap<Vertex, Integer> componentOfVertex,
-            ArrayList<ArrayList<Vertex>> verticesInComponent) {
+        HashMap<Vertex, Integer> componentOfVertex,
+        ArrayList<ArrayList<Vertex>> verticesInComponent) {
         int numScc = 0;
         int index = 0;
         Stack<Vertex> tarStack = new Stack<>();
@@ -63,12 +63,10 @@ public class StronglyConnectedComponents extends Algorithm {
 
             while (current != null) {
                 Integer currentChildIdx = childIterationPos.get(current);
-                if (currentChildIdx < children.get(current).size()) // <current> has more children
-                {
+                if (currentChildIdx < children.get(current).size()) { // <current> has more children
                     Vertex child = children.get(current).get(currentChildIdx);
                     childIterationPos.put(current, currentChildIdx + 1);
-                    if (!dfs.containsKey(child)) // child wasn't processed yet
-                    {
+                    if (!dfs.containsKey(child)) { // child wasn't processed yet
                         parent.put(child, current);
 
                         ArrayList<Vertex> grandChildren = new ArrayList<>();
@@ -86,13 +84,10 @@ public class StronglyConnectedComponents extends Algorithm {
                         tarStack.push(child);
                         onStack.add(child);
                         current = child; // recursion
-                    }
-                    else if (onStack.contains(child)) {
+                    } else if (onStack.contains(child)) {
                         lowlink.put(current, Math.min(lowlink.get(current), dfs.get(child)));
                     }
-                }
-                else // collect current scc and go up one recursive call
-                {
+                } else { // collect current scc and go up one recursive call
                     if (lowlink.get(current).equals(dfs.get(current))) {
                         Vertex top = null;
                         ArrayList<Vertex> scc = new ArrayList<>();
@@ -116,7 +111,7 @@ public class StronglyConnectedComponents extends Algorithm {
     }
 
     public Object run(Structure s, AlgorithmParameters ap, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
         tarjanStrongComponents(s, componentOfVertex, verticesInComponent);

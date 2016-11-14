@@ -15,15 +15,15 @@ import java.util.List;
  */
 public class Bag {
 
-    public Set<Vertex> Nodes = new HashSet<>();
-    public List<Bag> ChildBags = new ArrayList<>();
+    public Set<Vertex> nodes = new HashSet<>();
+    public List<Bag> childBags = new ArrayList<>();
 
     @Override
     public String toString() {
         String result = "{";
         String glue = "";
 
-        for (Vertex v : Nodes) {
+        for (Vertex v : nodes) {
             result += glue + v.label;
             glue = ",";
         }

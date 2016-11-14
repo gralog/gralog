@@ -14,22 +14,22 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-        name = "Assign Labels",
-        text = "Assigns consecutive labels to the vertices",
-        url = ""
+    name = "Assign Labels",
+    text = "Assigns consecutive labels to the vertices",
+    url = ""
 )
 public class AssignLabels extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
-                "Prefix",
-                Preferences.getString(this.getClass(), "prefix", ""),
-                "Vertices will be labeled prefix0, prefix1, etc.");
+            "Prefix",
+            Preferences.getString(this.getClass(), "prefix", ""),
+            "Vertices will be labeled prefix0, prefix1, etc.");
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter stringparam = (StringAlgorithmParameter) p;
         Preferences.setString(this.getClass(), "prefix", stringparam.parameter);
 

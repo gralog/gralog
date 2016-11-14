@@ -19,7 +19,7 @@ public class StringAlgorithmParameterView extends GridPaneView<StringAlgorithmPa
 
     @Override
     public void setObject(StringAlgorithmParameter param,
-            Consumer<Boolean> submitPossible) {
+        Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
         if (param == null)
             return;
@@ -45,13 +45,12 @@ public class StringAlgorithmParameterView extends GridPaneView<StringAlgorithmPa
     }
 
     private void syntaxCheck(StringAlgorithmParameter param,
-            TextField valueField, Text hint, Consumer<Boolean> submitPossible) {
+        TextField valueField, Text hint, Consumer<Boolean> submitPossible) {
         SyntaxChecker.Result syntax = param.syntaxCheck();
         if (syntax.syntaxCorrect) {
             valueField.setStyle("-fx-text-inner-color: black;");
             submitPossible.accept(true);
-        }
-        else {
+        } else {
             valueField.setStyle("-fx-text-inner-color: red;");
             submitPossible.accept(false);
         }

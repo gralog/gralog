@@ -16,18 +16,18 @@ import org.w3c.dom.Element;
 @XmlName(name = "transition")
 public class Transition extends Edge {
 
-    public String Symbol = "";
+    public String symbol = "";
 
     @Override
     public Element toXml(Document doc, HashMap<Vertex, String> ids) throws Exception {
         Element enode = super.toXml(doc, ids);
-        enode.setAttribute("symbol", Symbol);
+        enode.setAttribute("symbol", symbol);
         return enode;
     }
 
     @Override
     public void fromXml(Element enode, HashMap<String, Vertex> ids) throws Exception {
         super.fromXml(enode, ids);
-        Symbol = enode.getAttribute("symbol");
+        symbol = enode.getAttribute("symbol");
     }
 }

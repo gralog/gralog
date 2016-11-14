@@ -12,7 +12,8 @@ import java.util.EventObject;
  *
  */
 public class StructureEvent<V extends Vertex, E extends Edge> extends EventObject {
-    public StructureEvent(Structure<V,E> source) {
+
+    public StructureEvent(Structure<V, E> source) {
         super(source);
     }
 }

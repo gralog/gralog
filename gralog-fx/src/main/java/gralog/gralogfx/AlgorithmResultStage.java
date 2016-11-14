@@ -30,8 +30,8 @@ public class AlgorithmResultStage extends Stage {
     Object result;
 
     public AlgorithmResultStage(Algorithm algo, Structure structure,
-            AlgorithmParameters params, StructurePane structurePane,
-            Object result) throws Exception {
+        AlgorithmParameters params, StructurePane structurePane,
+        Object result) throws Exception {
         this.algo = algo;
         this.structure = structure;
         this.params = params;
@@ -42,8 +42,7 @@ public class AlgorithmResultStage extends Stage {
 
         try {
             objectInspector.setObject(result, structurePane);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
         }
         closeButton = new Button("Close");
         closeButton.setOnAction(e -> this.close());

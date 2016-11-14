@@ -8,11 +8,10 @@ package gralog.importfilter;
  *
  */
 @ImportFilterDescription(
-        name = "Tab Separated Values",
-        text = "",
-        url = "https://reference.wolfram.com/language/ref/format/TSV.html",
-        fileExtension = "tsv"
-)
+    name = "Tab Separated Values",
+    text = "",
+    url = "https://reference.wolfram.com/language/ref/format/TSV.html",
+    fileExtension = "tsv")
 public class TabSeparatedValuesImport extends CommaSeparatedValuesImport {
 
     public TabSeparatedValuesImport() {

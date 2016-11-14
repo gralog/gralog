@@ -18,8 +18,8 @@ public class Bag {
     public String caption = "";
     public String assignment = "";
     public Boolean eval = false;
-    public Set<Vertex> Nodes = new HashSet<>();
-    public List<Bag> ChildBags = new ArrayList<>();
+    public Set<Vertex> nodes = new HashSet<>();
+    public List<Bag> childBags = new ArrayList<>();
 
     @Override
     public String toString() {

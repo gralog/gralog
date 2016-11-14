@@ -33,8 +33,8 @@ public class Vector2D {
         if (getClass() != obj.getClass())
             return false;
         final Vector2D other = (Vector2D) obj;
-        return Double.doubleToLongBits(this.x) == Double.doubleToLongBits(other.x) &&
-               Double.doubleToLongBits(this.y) == Double.doubleToLongBits(other.y);
+        return Double.doubleToLongBits(this.x) == Double.doubleToLongBits(other.x)
+            && Double.doubleToLongBits(this.y) == Double.doubleToLongBits(other.y);
     }
 
     @Override
@@ -102,13 +102,12 @@ public class Vector2D {
                 return alpha;
             else
                 return 360d + alpha; // alpha is negative
-        }
-        else
+        } else
             return 180d - alpha;
     }
 
     public static Vector2D closestPointOnLine(double px, double py, double l1x,
-            double l1y, double l2x, double l2y) {
+        double l1y, double l2x, double l2y) {
         Vector2D p = new Vector2D(px, py);
         Vector2D l1 = new Vector2D(l1x, l1y);
         Vector2D l2 = new Vector2D(l2x, l2y);
@@ -125,7 +124,7 @@ public class Vector2D {
     }
 
     public static double distancePointToLine(double px, double py, double l1x,
-            double l1y, double l2x, double l2y) {
+        double l1y, double l2x, double l2y) {
         Vector2D p = new Vector2D(px, py);
         Vector2D l1 = new Vector2D(l1x, l1y);
         Vector2D l2 = new Vector2D(l2x, l2y);
@@ -135,7 +134,7 @@ public class Vector2D {
             return l1.minus(p).length(); // l1==l2 so "the line" is actually just the point l1
 
         Vector2D perpendicular = closestPointOnLine(px, py, l1x, l1y, l2x, l2y);
-        double lScaleToPerpendicular = 0.0;
+        double lScaleToPerpendicular;
         if (l.getX() != 0)
             lScaleToPerpendicular = (perpendicular.getX() - l1.getX()) / l.getX();
         else // if(l.getY() != 0) // true, because of (*)
@@ -148,15 +147,15 @@ public class Vector2D {
         return perpendicular.minus(p).length();
     }
 
-    private static double snap(double GridSize, double value) {
-        double newCoord = value + GridSize / 2d;
-        double temp = newCoord % GridSize;
+    private static double snap(double gridSize, double value) {
+        double newCoord = value + gridSize / 2d;
+        double temp = newCoord % gridSize;
         if (temp < 0)
-            temp += GridSize;
+            temp += gridSize;
         return newCoord - temp;
     }
 
-    public Vector2D snapToGrid(double GridSize) {
-        return new Vector2D(snap(GridSize, x), snap(GridSize, y));
+    public Vector2D snapToGrid(double gridSize) {
+        return new Vector2D(snap(gridSize, x), snap(gridSize, y));
     }
 }

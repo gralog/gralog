@@ -18,11 +18,11 @@ public class FirstOrderSyntaxChecker extends SyntaxChecker {
 
     public static String explanation() {
         return "Edge from x to y: E(x,y)\n"
-               + "x has label P: P(x)\n"
-               + "Conjunction (and): E(x,y) ∧ E(y,z), E(x,y) * E(y,z)\n"
-               + "Disjunction (or): E(x,y) ∨ E(y,z), E(x,y) + E(y,z)\n"
-               + "Negation: ¬E(x,y), -E(x,y), ~E(x,y)\n"
-               + "For all: ∀x. E(x,x), !x. E(x,x)\n"
-               + "Exists: ∃x. E(x,x), ?x. E(x,x)";
+            + "x has label P: P(x)\n"
+            + "Conjunction (and): E(x,y) ∧ E(y,z), E(x,y) * E(y,z)\n"
+            + "Disjunction (or): E(x,y) ∨ E(y,z), E(x,y) + E(y,z)\n"
+            + "Negation: ¬E(x,y), -E(x,y), ~E(x,y)\n"
+            + "For all: ∀x. E(x,x), !x. E(x,x)\n"
+            + "Exists: ∃x. E(x,x), ?x. E(x,x)";
     }
 }

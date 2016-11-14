@@ -33,7 +33,7 @@ public class FirstOrderExists extends FirstOrderFormula {
     @Override
     public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
         String result = "∃" + variable + ". "
-                        + subformula1.toString(FormulaPosition.Quantifier, FormulaEndPosition.AT_END);
+            + subformula1.toString(FormulaPosition.Quantifier, FormulaEndPosition.AT_END);
         if (endPos == FormulaEndPosition.MIDDLE) {
             return "(" + result + ")";
         }
@@ -42,7 +42,7 @@ public class FirstOrderExists extends FirstOrderFormula {
 
     @Override
     public boolean evaluate(Structure s, HashMap<String, Vertex> varassign,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         Vertex oldvalue = varassign.get(variable);
         boolean result = false;
 
@@ -72,7 +72,7 @@ public class FirstOrderExists extends FirstOrderFormula {
 
     @Override
     public Bag evaluateProver(Structure s, HashMap<String, Vertex> varassign,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         Boolean result = false;
         Vertex oldvalue = varassign.get(variable);
         Bag b = new Bag();
@@ -86,12 +86,12 @@ public class FirstOrderExists extends FirstOrderFormula {
             varassign.put(variable, v);
             Bag t = subformula1.evaluateProver(s, varassign, onprogress);
             if (t.eval) {
-                b.Nodes.add(v);
+                b.nodes.add(v);
                 result = true;
             }
             t.assignment = assignment + " [ " + variable + " | " + v.label + " ] ";
             t.caption = subformula1.toString();
-            b.ChildBags.add(t);
+            b.childBags.add(t);
         }
         b.eval = result;
         varassign.remove(variable);
@@ -103,14 +103,14 @@ public class FirstOrderExists extends FirstOrderFormula {
 
     @Override
     public GameGraphResult constructGameGraph(Structure s,
-            HashMap<String, Vertex> varassign, FiniteGame game,
-            Vector2D coor) {
+        HashMap<String, Vertex> varassign, FiniteGame game,
+        Vector2D coor) {
         Vertex oldvalue = varassign.get(variable);
         FiniteGamePosition parent = new FiniteGamePosition();
 
         parent.coordinates = coor;
         parent.label = toString() + ", "
-                       + FirstOrderFormula.variableAssignmentToString(varassign);
+            + FirstOrderFormula.variableAssignmentToString(varassign);
         // "exists", so this is a player 0 position.
         parent.player1Position = false;
         game.addVertex(parent);
@@ -120,13 +120,13 @@ public class FirstOrderExists extends FirstOrderFormula {
         for (Vertex v : V) {
             varassign.put(variable, v);
             GameGraphResult gp = subformula1.constructGameGraph(
-                    s, varassign, game, new Vector2D(coor.getX() + xOffset, coor.getY() + yOffset));
+                s, varassign, game, new Vector2D(coor.getX() + xOffset, coor.getY() + yOffset));
             yOffset += gp.height + 1;
             game.addVertex(gp.position);
             game.addEdge(game.createEdge(parent, gp.position));
             // Set label for this vertex.
             gp.position.label = subformula1.toString() + ", "
-                                + FirstOrderFormula.variableAssignmentToString(varassign);
+                + FirstOrderFormula.variableAssignmentToString(varassign);
         }
         varassign.remove(variable);
         if (oldvalue != null)

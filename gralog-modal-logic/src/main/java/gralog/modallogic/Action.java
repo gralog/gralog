@@ -17,20 +17,20 @@ import org.w3c.dom.Element;
 @XmlName(name = "action")
 public class Action extends Edge {
 
-    public String Name = null;
+    public String name = null;
 
     @Override
     public Element toXml(Document doc, HashMap<Vertex, String> ids) throws Exception {
         Element enode = super.toXml(doc, ids);
-        if (Name != null)
-            enode.setAttribute("name", "" + Name);
+        if (name != null)
+            enode.setAttribute("name", "" + name);
         return enode;
     }
 
     @Override
     public void fromXml(Element enode, HashMap<String, Vertex> ids) throws Exception {
         super.fromXml(enode, ids);
-        Name = enode.getAttribute("name");
+        name = enode.getAttribute("name");
     }
 
 }

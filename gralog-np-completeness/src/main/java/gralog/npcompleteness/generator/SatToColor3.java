@@ -26,19 +26,18 @@ import java.util.Set;
  *
  */
 @GeneratorDescription(
-        name = "SAT to 3-Colorability Instance",
-        text = "Constructs a 3-Colorability Instance from a SAT Formula",
-        url = "https://en.wikipedia.org/wiki/Graph_coloring"
-)
+    name = "SAT to 3-Colorability Instance",
+    text = "Constructs a 3-Colorability Instance from a SAT Formula",
+    url = "https://en.wikipedia.org/wiki/Graph_coloring")
 public class SatToColor3 extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-                "A propositional formula",
-                Preferences.getString(getClass(), "formula", "(a ∨ b ∨ c) ∧ (¬a ∨ ¬b ∨ c) ∧ (a ∨ ¬b ∨ ¬c)"),
-                new PropositionalLogicSyntaxChecker(),
-                PropositionalLogicSyntaxChecker.explanation());
+            "A propositional formula",
+            Preferences.getString(getClass(), "formula", "(a ∨ b ∨ c) ∧ (¬a ∨ ¬b ∨ c) ∧ (a ∨ ¬b ∨ ¬c)"),
+            new PropositionalLogicSyntaxChecker(),
+            PropositionalLogicSyntaxChecker.explanation());
     }
 
     // if a literal-node gets the same color as the "true" node, it means
@@ -57,8 +56,8 @@ public class SatToColor3 extends Generator {
         UndirectedGraph result = new UndirectedGraph();
 
         Set<String> vars = new HashSet<>();
-        HashMap<String, Vertex> PosNode = new HashMap();
-        HashMap<String, Vertex> NegNode = new HashMap();
+        HashMap<String, Vertex> posNode = new HashMap();
+        HashMap<String, Vertex> negNode = new HashMap();
         cnf.getVariables(vars);
 
         // create the bottom gadget (triangle true-false-dummy)
@@ -86,13 +85,13 @@ public class SatToColor3 extends Generator {
             pos.coordinates = new Vector2D(6d * i, 8d);
             pos.label = var;
             result.addVertex(pos);
-            PosNode.put(var, pos);
+            posNode.put(var, pos);
 
             Vertex neg = result.createVertex(); // the negative literal
             neg.coordinates = new Vector2D(6d * i + 2, 8d);
             neg.label = "¬" + var;
             result.addVertex(neg);
-            NegNode.put(var, neg);
+            negNode.put(var, neg);
 
             result.addEdge(result.createEdge(pos, neg));
             result.addEdge(result.createEdge(pos, dummyVert));
@@ -166,15 +165,13 @@ public class SatToColor3 extends Generator {
 
                 if (literal instanceof PropositionalLogicVariable) {
                     PropositionalLogicVariable v = (PropositionalLogicVariable) literal;
-                    result.addEdge(result.createEdge(connector, PosNode.get(v.variable)));
-                }
-                else if (literal instanceof PropositionalLogicNot
-                         && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
+                    result.addEdge(result.createEdge(connector, posNode.get(v.variable)));
+                } else if (literal instanceof PropositionalLogicNot
+                    && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
                     PropositionalLogicNot plnot = (PropositionalLogicNot) literal;
                     PropositionalLogicVariable v = (PropositionalLogicVariable) plnot.subformula;
-                    result.addEdge(result.createEdge(connector, NegNode.get(v.variable)));
-                }
-                else
+                    result.addEdge(result.createEdge(connector, negNode.get(v.variable)));
+                } else
                     throw new Exception("Formula is not in Conjunctive Normal Form");
             }
 

@@ -15,10 +15,9 @@ import gralog.rendering.Vector2D;
 import java.util.*;
 
 @AlgorithmDescription(
-        name = "Col2",
-        text = "",
-        url = ""
-)
+    name = "Col2",
+    text = "",
+    url = "")
 public class Col2 extends Algorithm {
 
     public static StringBuilder convertToBase3(long n, int nVertices) {
@@ -100,8 +99,8 @@ public class Col2 extends Algorithm {
     private int contradictions = 1;
 
     public Object run(DirectedGraph s, AlgorithmParameters p,
-            Set<Object> selection, ProgressHandler onprogress)
-            throws Exception {
+        Set<Object> selection, ProgressHandler onprogress)
+        throws Exception {
         Integer nIter, nVertices;
         double prob;
         Scanner in = new Scanner(System.in);
@@ -143,7 +142,7 @@ public class Col2 extends Algorithm {
                     }
                     Thread.sleep(3000);
                     break;
-                    // return "Arrangement possible"; 
+                    // return "Arrangement possible";
                 }
             }
             if (onprogress != null) {

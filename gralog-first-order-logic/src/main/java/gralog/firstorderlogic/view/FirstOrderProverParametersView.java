@@ -44,7 +44,7 @@ import javafx.scene.text.Text;
  */
 @ViewDescription(forClass = FirstOrderProverParameters.class)
 public class FirstOrderProverParametersView
-        extends GridPaneView<FirstOrderProverParameters> {
+    extends GridPaneView<FirstOrderProverParameters> {
 
     public Set<String> getUniqueSearches() {
         String searches = Preferences.getString(FirstOrderProver.class, "searches", "");
@@ -65,8 +65,7 @@ public class FirstOrderProverParametersView
             for (i = 0; i < token.length(); i++) {
                 if (!Character.isLetterOrDigit(token.charAt(i))) {
                     break;
-                }
-                else if (Character.isDigit(token.charAt(i)) && !found) {
+                } else if (Character.isDigit(token.charAt(i)) && !found) {
                     end = i;
                     found = true;
                 }
@@ -80,7 +79,7 @@ public class FirstOrderProverParametersView
 
     @Override
     public void setObject(FirstOrderProverParameters params,
-            Consumer<Boolean> submitPossible) {
+        Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
         if (params == null)
             return;
@@ -133,7 +132,7 @@ public class FirstOrderProverParametersView
                 String text = textArea.getSelectedText();
                 String tfText = formulaField.getText();
 
-                FirstOrderFormula phi = null;
+                FirstOrderFormula phi;
                 try {
                     phi = FirstOrderParser.parseString(text);
                     Set<String> usedInFormula = phi.variables();
@@ -141,8 +140,7 @@ public class FirstOrderProverParametersView
                     try {
                         FirstOrderFormula phi2 = FirstOrderParser.parseString(tfText);
                         usedInField = phi2.variables();
-                    }
-                    catch (Exception ex) {
+                    } catch (Exception ex) {
                         usedInField = getUsedVariables(tfText);
                     }
                     HashMap<String, String> replace = new HashMap<>();
@@ -157,8 +155,7 @@ public class FirstOrderProverParametersView
                     }
                     String subformula = phi.substitute(replace);
                     formulaField.setText(tfText + "( " + subformula + ")");
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     Alert alert = new Alert(AlertType.INFORMATION);
                     alert.setTitle("Information Dialog");
                     alert.setHeaderText(null);
@@ -197,11 +194,10 @@ public class FirstOrderProverParametersView
             PrintWriter out;
             try {
                 out = new PrintWriter(new BufferedWriter(
-                        new FileWriter(fileName, true)));
+                    new FileWriter(fileName, true)));
                 out.println(text);
                 out.close();
-            }
-            catch (IOException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(FirstOrderProverParametersView.class.getName()).log(Level.SEVERE, null, ex);
             }
 
@@ -232,14 +228,13 @@ public class FirstOrderProverParametersView
     }
 
     private void syntaxCheck(TextField valueField, Text hint,
-            Consumer<Boolean> submitPossible) {
+        Consumer<Boolean> submitPossible) {
         FirstOrderSyntaxChecker check = new FirstOrderSyntaxChecker();
         SyntaxChecker.Result syntax = check.check(valueField.getText());
         if (syntax.syntaxCorrect) {
             valueField.setStyle("-fx-text-inner-color: black;");
             submitPossible.accept(true);
-        }
-        else {
+        } else {
             valueField.setStyle("-fx-text-inner-color: red;");
             submitPossible.accept(false);
         }

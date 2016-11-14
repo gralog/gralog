@@ -14,7 +14,7 @@ public class ComputationTreeLogicAnd extends ComputationTreeLogicFormula {
     ComputationTreeLogicFormula right;
 
     public ComputationTreeLogicAnd(ComputationTreeLogicFormula left,
-            ComputationTreeLogicFormula right) {
+        ComputationTreeLogicFormula right) {
         this.left = left;
         this.right = right;
     }

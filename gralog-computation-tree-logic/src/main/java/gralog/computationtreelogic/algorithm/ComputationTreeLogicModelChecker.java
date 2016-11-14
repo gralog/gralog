@@ -20,23 +20,23 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-        name = "Computation-Tree-Logic Model-Checking",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Computation_tree_logic"
+    name = "Computation-Tree-Logic Model-Checking",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Computation_tree_logic"
 )
 public class ComputationTreeLogicModelChecker extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
-                "Formula",
-                Preferences.getString(this.getClass(), "formula", "A X (P \\wedge Q)"),
-                new ComputationTreeLogicSyntaxChecker(),
-                ComputationTreeLogicSyntaxChecker.explanation());
+            "Formula",
+            Preferences.getString(this.getClass(), "formula", "A X (P \\wedge Q)"),
+            new ComputationTreeLogicSyntaxChecker(),
+            ComputationTreeLogicSyntaxChecker.explanation());
     }
 
     public Object run(KripkeStructure s, AlgorithmParameters p,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);
 

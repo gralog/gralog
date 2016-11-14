@@ -13,18 +13,18 @@ import java.util.HashMap;
 import java.util.Set;
 
 @AlgorithmDescription(
-        name = "Language-Emptiness",
-        text = "Tests whether the language defined by the Büchi Automaton is empty or not.",
-        url = "https://en.wikipedia.org/wiki/B%C3%BCchi_automaton#Algorithms"
+    name = "Language-Emptiness",
+    text = "Tests whether the language defined by the Büchi Automaton is empty or not.",
+    url = "https://en.wikipedia.org/wiki/B%C3%BCchi_automaton#Algorithms"
 )
 
 public class BuechiLanguageEmptiness extends Algorithm {
 
     public String languageEmptiness(BuechiAutomaton s) {
-        HashMap<Vertex, Integer> ComponentOfVertex = new HashMap<>();
-        ArrayList<ArrayList<Vertex>> VerticesInComponent = new ArrayList<>();
+        HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
+        ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
 
-        StronglyConnectedComponents.tarjanStrongComponents(s, ComponentOfVertex, VerticesInComponent);
+        StronglyConnectedComponents.tarjanStrongComponents(s, componentOfVertex, verticesInComponent);
 
         HashMap<State, HashMap<Vertex, Vertex>> startStateReach = new HashMap();
         HashMap<State, HashMap<Vertex, Edge>> startStateReachEdges = new HashMap();
@@ -33,12 +33,12 @@ public class BuechiLanguageEmptiness extends Algorithm {
                 if (((State) v).startState) {
                     HashMap<Vertex, Vertex> reach = new HashMap<>();
                     HashMap<Vertex, Edge> reachEdges = new HashMap<>();
-                    BreadthFirstSearchTree.BreadthFirstSearch(v, reach, reachEdges);
+                    BreadthFirstSearchTree.breadthFirstSearch(v, reach, reachEdges);
                     startStateReach.put((State) v, reach);
                     startStateReachEdges.put((State) v, reachEdges);
                 }
 
-        for (ArrayList<Vertex> component : VerticesInComponent) {
+        for (ArrayList<Vertex> component : verticesInComponent) {
             // only proceed with components that contain a final state
             State componentFinalState = null;
             for (Vertex v : component)
@@ -76,13 +76,13 @@ public class BuechiLanguageEmptiness extends Algorithm {
             for (Vertex it = componentFinalState; it != null; it = componentStartStateReach.get(it)) {
                 Transition e = (Transition) componentStartStateReachEdges.get(it);
                 if (e != null)
-                    path = e.Symbol + path;
+                    path = e.symbol + path;
             }
 
             // find a cycle that contains the final state
             HashMap<Vertex, Vertex> finalStateReach = new HashMap<>();
             HashMap<Vertex, Edge> finalStateReachEdges = new HashMap<>();
-            BreadthFirstSearchTree.BreadthFirstSearch(componentFinalState, finalStateReach, finalStateReachEdges);
+            BreadthFirstSearchTree.breadthFirstSearch(componentFinalState, finalStateReach, finalStateReachEdges);
 
             Vertex lastCycleMember = null;
             Transition lastCycleEdge = null;
@@ -102,11 +102,11 @@ public class BuechiLanguageEmptiness extends Algorithm {
             }
 
             // TODO: Check if lastCycleEdge can be null.
-            String cycle = lastCycleEdge.Symbol;
+            String cycle = lastCycleEdge.symbol;
             for (Vertex it = lastCycleMember; it != null; it = finalStateReach.get(it)) {
                 Transition e = (Transition) finalStateReachEdges.get(it);
                 if (e != null)
-                    cycle = e.Symbol + cycle;
+                    cycle = e.symbol + cycle;
             }
 
             return path + "(" + cycle + ")ω";
@@ -116,7 +116,7 @@ public class BuechiLanguageEmptiness extends Algorithm {
     }
 
     public Object run(BuechiAutomaton s, AlgorithmParameters p,
-            Set<Object> selection, ProgressHandler onprogress) {
+        Set<Object> selection, ProgressHandler onprogress) {
         String result = languageEmptiness(s);
         if (result == null)
             return "Language is empty";

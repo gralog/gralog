@@ -31,8 +31,7 @@ public class StructureTest {
             PluginManager.registerClass(Edge.class);
             PluginManager.registerClass(UndirectedGraph.class);
             PluginManager.registerClass(DirectedGraph.class);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Logger.getLogger("StructureTest").log(Level.SEVERE, null, ex);
         }
     }
@@ -49,8 +48,7 @@ public class StructureTest {
             structure.writeToStream(new StreamResult(writer));
             Structure structureRead = Structure.loadFromStream(new ByteArrayInputStream(writer.toString().getBytes()));
             assertThat(structureRead, equalsStructure(structure));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new AssertionError(ex);
         }
     }

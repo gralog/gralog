@@ -20,7 +20,7 @@ public class TreeDecompositionView extends GridPaneView<TreeDecomposition> {
 
     protected void fillTreeView(TreeItem node, Bag bag) {
         node.setValue(bag);
-        for (Bag b : bag.ChildBags) {
+        for (Bag b : bag.childBags) {
             TreeItem child = new TreeItem("bag");
             node.getChildren().add(child);
             fillTreeView(child, b);
@@ -39,12 +39,12 @@ public class TreeDecompositionView extends GridPaneView<TreeDecomposition> {
         TreeView treeView = new TreeView(root);
 
         treeView.getSelectionModel().selectedItemProperty().addListener(
-                (ObservableValue observable, Object oldValue, Object newValue) -> {
-                    TreeItem selectedItem = (TreeItem) newValue;
-                    Bag bag = (Bag) selectedItem.getValue();
-                    structurePane.clearSelection();
-                    structurePane.selectAll(bag.Nodes);
-                });
+            (ObservableValue observable, Object oldValue, Object newValue) -> {
+                TreeItem selectedItem = (TreeItem) newValue;
+                Bag bag = (Bag) selectedItem.getValue();
+                structurePane.clearSelection();
+                structurePane.selectAll(bag.nodes);
+            });
 
         ColumnConstraints columnConstraints = new ColumnConstraints();
         columnConstraints.setPercentWidth(100);

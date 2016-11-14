@@ -19,7 +19,7 @@ public class RegularExpressionSyntaxChecker extends SyntaxChecker {
 
     public static String explanation() {
         return "Simple strings: a, b, ab\n"
-                + "Alternation: a | b, a + b\n"
-                + "Kleene star (zero or more matches): a*, (ab)*";
+            + "Alternation: a | b, a + b\n"
+            + "Kleene star (zero or more matches): a*, (ab)*";
     }
 }

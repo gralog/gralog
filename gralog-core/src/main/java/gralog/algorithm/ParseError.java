@@ -14,8 +14,8 @@ public class ParseError extends Exception {
 
     public ParseError(String message, String inputString, int errorIndex) {
         super("Parse error: " + message + " at: "
-              + inputString.substring(0, errorIndex) + " <HERE> "
-              + inputString.substring(errorIndex));
+            + inputString.substring(0, errorIndex) + " <HERE> "
+            + inputString.substring(errorIndex));
         this.inputString = inputString;
         this.errorIndex = errorIndex;
     }

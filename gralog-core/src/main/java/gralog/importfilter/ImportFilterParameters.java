@@ -4,7 +4,6 @@
  */
 package gralog.importfilter;
 
-
 /**
  *
  */

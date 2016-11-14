@@ -11,10 +11,9 @@ import gralog.plugins.*;
  *
  */
 @StructureDescription(
-        name = "Kripke Structure",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Kripke_structure_(model_checking)"
-)
+    name = "Kripke Structure",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Kripke_structure_(model_checking)")
 @XmlName(name = "kripkestructure")
 public class KripkeStructure extends Structure<World, Action> {
 

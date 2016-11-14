@@ -34,13 +34,13 @@ public class FirstOrderNot extends FirstOrderFormula {
 
     @Override
     public boolean evaluate(Structure s, HashMap<String, Vertex> varassign,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         return !subformula1.evaluate(s, varassign, onprogress);
     }
 
     @Override
     public Bag evaluateProver(Structure s, HashMap<String, Vertex> varassign,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
 
         Bag b = new Bag();
         String assignment = new String();
@@ -52,14 +52,14 @@ public class FirstOrderNot extends FirstOrderFormula {
         b1.assignment = assignment;
         b1.caption = " (" + subformula1.toString() + " )";
         b.eval = !b1.eval;
-        b.ChildBags.add(b1);
+        b.childBags.add(b1);
         return b;
     }
 
     @Override
     public GameGraphResult constructGameGraph(Structure s,
-            HashMap<String, Vertex> varassign, FiniteGame game,
-            Vector2D coor) {
+        HashMap<String, Vertex> varassign, FiniteGame game,
+        Vector2D coor) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

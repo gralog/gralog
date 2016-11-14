@@ -85,8 +85,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
         gc.putText(coordinates, label, textHeight, fillColor.inverse());
     }
 
-    public void snapToGrid(double GridSize) {
-        coordinates = coordinates.snapToGrid(GridSize);
+    public void snapToGrid(double gridSize) {
+        coordinates = coordinates.snapToGrid(gridSize);
     }
 
     /**
@@ -117,8 +117,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     public String fromXml(Element vnode) {
         coordinates = new Vector2D(
-                Double.parseDouble(vnode.getAttribute("x")),
-                Double.parseDouble(vnode.getAttribute("y"))
+            Double.parseDouble(vnode.getAttribute("x")),
+            Double.parseDouble(vnode.getAttribute("y"))
         );
         if (vnode.hasAttribute("label"))
             label = vnode.getAttribute("label");
@@ -138,7 +138,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     protected void notifyVertexListeners() {
         for (VertexListener listener : listeners)
-            listener.VertexChanged(new VertexEvent(this));
+            listener.vertexChanged(new VertexEvent(this));
     }
 
     public void addVertexListener(VertexListener listener) {

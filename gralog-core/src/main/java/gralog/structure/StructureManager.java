@@ -13,11 +13,16 @@ import static gralog.plugins.PluginManager.instantiateClass;
 /**
  *
  */
-public class StructureManager {
+public final class StructureManager {
+
+    private StructureManager() {
+    }
 
     // The XNames HashMaps are maps from description-name -> fully qualified class name
-    private final static HashMap<String, String> structureNames = new HashMap<>();
-    private final static HashMap<String, StructureDescription> structureDescriptions = new HashMap<>();
+    private static final HashMap<String, String> STRUCTURE_NAMES
+        = new HashMap<>();
+    private static final HashMap<String, StructureDescription> STRUCTURE_DESCRIPTIONS
+        = new HashMap<>();
 
     public static void registerStructureClass(Class<?> aClass, String className) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
@@ -26,22 +31,22 @@ public class StructureManager {
         if (!aClass.isAnnotationPresent(StructureDescription.class))
             throw new Exception("class " + aClass.getName() + " has no @StructureDescription annotation");
         StructureDescription descr = aClass.getAnnotation(StructureDescription.class);
-        structureNames.put(descr.name(), className);
-        structureDescriptions.put(descr.name(), descr);
+        STRUCTURE_NAMES.put(descr.name(), className);
+        STRUCTURE_DESCRIPTIONS.put(descr.name(), descr);
     }
 
     public static List<String> getStructureClasses() {
-        ArrayList<String> result = new ArrayList<>(structureNames.keySet());
+        ArrayList<String> result = new ArrayList<>(STRUCTURE_NAMES.keySet());
         result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }
 
     public static Structure instantiateStructure(String identifier) throws Exception {
-        String classname = structureNames.get(identifier);
+        String classname = STRUCTURE_NAMES.get(identifier);
         return (Structure) instantiateClass(classname);
     }
 
     public static StructureDescription getStructureDescription(String identifier) {
-        return structureDescriptions.get(identifier);
+        return STRUCTURE_DESCRIPTIONS.get(identifier);
     }
 }

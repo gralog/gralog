@@ -21,23 +21,22 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-        name = "Modal Logic Model-Checking",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Modal_logic"
-)
+    name = "Modal Logic Model-Checking",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Modal_logic")
 public class ModalLogicModelChecker extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
-                "Formula",
-                Preferences.getString(this.getClass(), "formula", "□(P ∧ Q)"),
-                new ModalLogicSyntaxChecker(),
-                ModalLogicSyntaxChecker.explanation());
+            "Formula",
+            Preferences.getString(this.getClass(), "formula", "□(P ∧ Q)"),
+            new ModalLogicSyntaxChecker(),
+            ModalLogicSyntaxChecker.explanation());
     }
 
     public Object run(KripkeStructure s, AlgorithmParameters p,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
 
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);

@@ -33,10 +33,10 @@ public class AboutStage extends Stage {
         webView = new WebView();
         webEngine = webView.getEngine();
         webEngine.loadContent(
-                "<b>GrALoG FX</b><br/>"
-                + "Graphs, Algorithms, Logic and Games<br/>"
-                + "©2015-2016 Technische Universität Berlin<br/>"
-                + "Lehrstuhl für Logik und Semantik"
+            "<b>GrALoG FX</b><br/>"
+            + "Graphs, Algorithms, Logic and Games<br/>"
+            + "©2015-2016 Technische Universität Berlin<br/>"
+            + "Lehrstuhl für Logik und Semantik"
         );
 
         root = new BorderPane();

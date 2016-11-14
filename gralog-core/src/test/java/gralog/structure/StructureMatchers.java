@@ -16,7 +16,10 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import static org.junit.Assert.*;
 
-public class StructureMatchers {
+public final class StructureMatchers {
+
+    private StructureMatchers() {
+    }
 
     /**
      * @param v The expected vertex.
@@ -29,12 +32,12 @@ public class StructureMatchers {
             @Override
             protected boolean matchesSafely(Vertex w) {
                 return v.label.equals(w.label)
-                       && Double.doubleToLongBits(v.radius) == Double.doubleToLongBits(w.radius)
-                       && v.fillColor.equals(w.fillColor)
-                       && v.strokeWidth == w.strokeWidth
-                       && v.textHeight == w.textHeight
-                       && v.strokeColor.equals(w.strokeColor)
-                       && v.coordinates.equals(w.coordinates);
+                    && Double.doubleToLongBits(v.radius) == Double.doubleToLongBits(w.radius)
+                    && v.fillColor.equals(w.fillColor)
+                    && v.strokeWidth == w.strokeWidth
+                    && v.textHeight == w.textHeight
+                    && v.strokeColor.equals(w.strokeColor)
+                    && v.coordinates.equals(w.coordinates);
             }
 
             @Override
@@ -117,8 +120,8 @@ public class StructureMatchers {
                 for (Vertex v : sV) {
                     final Vertex w = tVertexMap.get(v.label);
                     assertThat("Adjacency sets",
-                               v.getAdjacentVertices(),
-                               equalsVertexSet(w.getAdjacentVertices()));
+                        v.getAdjacentVertices(),
+                        equalsVertexSet(w.getAdjacentVertices()));
                 }
 
                 return true;

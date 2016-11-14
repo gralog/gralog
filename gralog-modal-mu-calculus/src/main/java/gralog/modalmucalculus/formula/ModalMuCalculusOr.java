@@ -19,7 +19,7 @@ public class ModalMuCalculusOr extends ModalMuCalculusFormula {
     ModalMuCalculusFormula right;
 
     public ModalMuCalculusOr(ModalMuCalculusFormula left,
-            ModalMuCalculusFormula right) {
+        ModalMuCalculusFormula right) {
         this.left = left;
         this.right = right;
     }
@@ -35,7 +35,7 @@ public class ModalMuCalculusOr extends ModalMuCalculusFormula {
     @Override
     protected ModalMuCalculusFormula negateVariable(String variable) {
         return new ModalMuCalculusOr(left.negateVariable(variable),
-                                     right.negateVariable(variable));
+            right.negateVariable(variable));
     }
 
     @Override
@@ -49,21 +49,22 @@ public class ModalMuCalculusOr extends ModalMuCalculusFormula {
     }
 
     @Override
-    public void createParityGamePositions(double scale, double x, double y,
-            double w, double h, KripkeStructure s, ParityGame p,
-            int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
+    public void createParityGamePositions(double scale, Vector2D pos,
+        Vector2D size, KripkeStructure s, ParityGame p, int nextPriority,
+        Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) throws Exception {
         Double lw = left.formulaWidth();
-        left.createParityGamePositions(scale, x, y + scale, w, h, s, p, NextPriority, index);
-        right.createParityGamePositions(scale, x + scale * lw + scale, y + scale, w, h, s, p, NextPriority, index);
+        left.createParityGamePositions(scale,
+            pos.plus(new Vector2D(0, scale)), size, s, p, nextPriority, index);
+        right.createParityGamePositions(scale,
+            pos.plus(new Vector2D(scale * lw + scale, scale)), size, s, p, nextPriority, index);
 
         for (Vertex v : s.getVertices()) {
             ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x + scale*(lw + 0.5d));
             node.coordinates = new Vector2D(
-                    (index.get((World) v).get(left).coordinates.getX()
-                     + index.get((World) v).get(right).coordinates.getX()) / 2d,
-                    scale * h * v.coordinates.getY() + y
+                (index.get((World) v).get(left).coordinates.getX()
+                + index.get((World) v).get(right).coordinates.getX()) / 2d,
+                scale * size.getY() * v.coordinates.getY() + pos.getY()
             );
             node.label = "∨";
             node.player1Position = true;
@@ -77,8 +78,8 @@ public class ModalMuCalculusOr extends ModalMuCalculusFormula {
 
     @Override
     public void createParityGameTransitions(KripkeStructure s, ParityGame p,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
+        Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
+        Map<String, ModalMuCalculusFormula> variableDefinitionPoints) throws Exception {
         left.createParityGameTransitions(s, p, index, variableDefinitionPoints);
         right.createParityGameTransitions(s, p, index, variableDefinitionPoints);
 
@@ -95,10 +96,10 @@ public class ModalMuCalculusOr extends ModalMuCalculusFormula {
             case AndLeft:
             case AndRight:
                 return "(" + left.toString(FormulaPosition.OrLeft, FormulaEndPosition.MIDDLE) + " ∨ "
-                       + right.toString(FormulaPosition.OrRight, FormulaEndPosition.AT_END) + ")";
+                    + right.toString(FormulaPosition.OrRight, FormulaEndPosition.AT_END) + ")";
             default:
                 return left.toString(FormulaPosition.OrLeft, FormulaEndPosition.AT_END) + " ∨ "
-                       + right.toString(FormulaPosition.OrRight, endPos);
+                    + right.toString(FormulaPosition.OrRight, endPos);
         }
     }
 }

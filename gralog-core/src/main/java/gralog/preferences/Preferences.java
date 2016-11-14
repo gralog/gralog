@@ -14,34 +14,35 @@ import java.nio.file.Paths;
  * Stores user-specific preferences. In contrast to the Java Preferences API,
  * this class stores everything in a single file in the user's home directory.
  */
-public class Preferences {
+public final class Preferences {
 
     private static final String FILENAME = "preferences";
-    private static final java.util.Properties properties = new java.util.Properties();
+    private static final java.util.Properties PROPERTIES = new java.util.Properties();
     private static final String PREFERENCE_PATH = buildPreferencePath();
+
+    private Preferences() {
+    }
 
     private static String buildPreferencePath() {
         String path;
-        final String OS = System.getProperty("os.name").toUpperCase();
+        final String os = System.getProperty("os.name").toUpperCase();
         final String myname = "GrALoG FX";
-        if (OS.contains("WIN"))
+        if (os.contains("WIN"))
             path = System.getenv("APPDATA") + "/" + myname;
-        else if (OS.contains("MAC"))
+        else if (os.contains("MAC"))
             path = System.getProperty("user.home") + "/Library/Application Support/" + myname;
-        else if (OS.contains("NUX")) {
+        else if (os.contains("NUX")) {
             path = System.getenv("XDG_CONFIG_HOME");
             if (path == null)
                 path = System.getProperty("user.home") + "/.config";
             path += "/" + myname;
-        }
-        else
+        } else
             path = System.getProperty("user.dir") + "/." + myname;
 
         try {
             FileInputStream in = new FileInputStream(path + "/" + FILENAME);
-            properties.load(in);
-        }
-        catch (IOException e) {
+            PROPERTIES.load(in);
+        } catch (IOException e) {
             // Most likely the config file does not exist, so we can ignore
             // this exception.
         }
@@ -53,7 +54,7 @@ public class Preferences {
     }
 
     public static String getString(String key, String defaultValue) {
-        return properties.getProperty(key, defaultValue);
+        return PROPERTIES.getProperty(key, defaultValue);
     }
 
     public static Integer getInteger(Class c, String key, int defaultValue) {
@@ -63,9 +64,8 @@ public class Preferences {
     public static Integer getInteger(String key, int defaultValue) {
         try {
             return Integer.parseInt(
-                    properties.getProperty(key, Integer.toString(defaultValue)));
-        }
-        catch (NumberFormatException e) {
+                PROPERTIES.getProperty(key, Integer.toString(defaultValue)));
+        } catch (NumberFormatException e) {
             return defaultValue;
         }
     }
@@ -75,7 +75,7 @@ public class Preferences {
     }
 
     public static void setString(String key, String value) {
-        properties.setProperty(key, value);
+        PROPERTIES.setProperty(key, value);
         flush();
     }
 
@@ -84,7 +84,7 @@ public class Preferences {
     }
 
     public static void setInteger(String key, int value) {
-        properties.setProperty(key, Integer.toString(value));
+        PROPERTIES.setProperty(key, Integer.toString(value));
         flush();
     }
 
@@ -96,9 +96,8 @@ public class Preferences {
         try {
             Files.createDirectories(Paths.get(PREFERENCE_PATH));
             FileOutputStream out = new FileOutputStream(PREFERENCE_PATH + "/" + FILENAME);
-            properties.store(out, "GrALoG preferences");
-        }
-        catch (IOException e) {
+            PROPERTIES.store(out, "GrALoG preferences");
+        } catch (IOException e) {
         }
     }
 }

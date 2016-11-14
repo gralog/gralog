@@ -8,9 +8,9 @@ public class ComputationTreeLogicAlwaysFinally extends ComputationTreeLogicForwa
     // AF phi = not EG not phi
 
     public ComputationTreeLogicAlwaysFinally(
-            ComputationTreeLogicFormula subformula) {
+        ComputationTreeLogicFormula subformula) {
         super(new ComputationTreeLogicNot(
-                new ComputationTreeLogicExistsGlobally(
-                        new ComputationTreeLogicNot(subformula))));
+            new ComputationTreeLogicExistsGlobally(
+                new ComputationTreeLogicNot(subformula))));
     }
 }

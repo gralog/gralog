@@ -11,6 +11,7 @@ import java.util.EventObject;
  *
  */
 public class EdgeEvent<E extends Edge> extends EventObject {
+
     public EdgeEvent(E source) {
         super(source);
     }

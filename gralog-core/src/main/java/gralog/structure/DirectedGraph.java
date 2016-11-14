@@ -10,10 +10,9 @@ import gralog.plugins.XmlName;
  *
  */
 @StructureDescription(
-        name = "Directed Graph",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Directed_graph"
-)
+    name = "Directed Graph",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Directed_graph")
 @XmlName(name = "digraph")
 public class DirectedGraph extends Structure<Vertex, Edge> {
 

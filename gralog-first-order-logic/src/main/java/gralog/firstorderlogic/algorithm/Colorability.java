@@ -14,10 +14,9 @@ import gralog.rendering.GralogColor;
 import java.util.*;
 
 @AlgorithmDescription(
-        name = "Colorability",
-        text = "",
-        url = ""
-)
+    name = "Colorability",
+    text = "",
+    url = "")
 public class Colorability extends Algorithm {
 
     public static StringBuilder convertToBase3(long n, int nVertices) {
@@ -67,7 +66,7 @@ public class Colorability extends Algorithm {
     }
 
     public Object run(DirectedGraph s, AlgorithmParameters p,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
         Set<Vertex> vertices = s.getVertices();
         int nVertices = vertices.size();
         int k = 0;
@@ -78,7 +77,7 @@ public class Colorability extends Algorithm {
 
         for (long i = 1; i <= Math.pow(3, nVertices); i++) {
             StringBuilder str = convertToBase3(i, nVertices);
-            if (check(str, s) == true) {
+            if (check(str, s)) {
                 int j = 0;
                 for (Vertex v : vertices) {
                     String x = Character.toString(str.charAt(j));

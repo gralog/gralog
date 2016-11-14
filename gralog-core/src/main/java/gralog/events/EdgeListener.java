@@ -5,12 +5,12 @@
 package gralog.events;
 
 import gralog.structure.*;
-import java.util.EventObject;
 import java.util.EventListener;
 
 /**
  *
  */
 public interface EdgeListener<E extends Edge> extends EventListener {
-    public void EdgeChanged(EdgeEvent<E> e);
+
+    void edgeChanged(EdgeEvent<E> e);
 }

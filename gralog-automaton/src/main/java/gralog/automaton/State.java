@@ -77,14 +77,15 @@ public class State extends Vertex {
 
         if (startState) {
             Vector2D center = coordinates;
-            Vector2D intersectionOffset = new Vector2D(-radius * Math.cos(initialMarkAngle / 180 * Math.PI),
-                                                       -radius * Math.sin(initialMarkAngle / 180 * Math.PI));
+            Vector2D intersectionOffset = new Vector2D(
+                -radius * Math.cos(initialMarkAngle / 180 * Math.PI),
+                -radius * Math.sin(initialMarkAngle / 180 * Math.PI));
             Vector2D intersection = center.plus(intersectionOffset);
             Vector2D headStart = intersection.plus(intersectionOffset.normalized().multiply(initialMarkLength));
 
             gc.arrow(headStart, intersection,
-                     initialMarkHeadAngle, initialMarkHeadLength,
-                     initialMarkColor, initialMarkWidth);
+                initialMarkHeadAngle, initialMarkHeadLength,
+                initialMarkColor, initialMarkWidth);
         }
 
         gc.putText(coordinates, label, textHeight, fillColor.inverse());

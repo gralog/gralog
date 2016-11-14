@@ -11,13 +11,14 @@ import static org.junit.Assert.*;
  *
  */
 public class WorldTest {
+
     /**
      * Test of SatisfiesProposition method, of class World.
      */
     @Test
     public void testSatisfiesProposition() {
         World v = new World();
-        v.Propositions = "A,B,C";
+        v.propositions = "A,B,C";
         assertEquals(true, v.satisfiesProposition("A"));
         assertEquals(true, v.satisfiesProposition("B"));
         assertEquals(true, v.satisfiesProposition("C"));

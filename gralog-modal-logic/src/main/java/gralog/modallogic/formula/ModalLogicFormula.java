@@ -17,14 +17,14 @@ public abstract class ModalLogicFormula {
     public ModalLogicFormula() {
     }
 
-    abstract public HashSet<World> interpretation(KripkeStructure structure);
+    public abstract HashSet<World> interpretation(KripkeStructure structure);
 
     @Override
     public String toString() {
         return toString(FormulaPosition.Or);
     }
 
-    abstract public String toString(FormulaPosition pos);
+    public abstract String toString(FormulaPosition pos);
 
     // For the toString method, we track the position in the formula in order
     // to produce a string with a minimum number of parentheses.

@@ -25,19 +25,18 @@ import java.util.Set;
  *
  */
 @GeneratorDescription(
-        name = "SAT to Hamiltonian Cycle",
-        text = "Constructs a Hamiltonian-Cycle Instance from a SAT Formula",
-        url = "https://en.wikipedia.org/wiki/Hamiltonian_path_problem"
-)
+    name = "SAT to Hamiltonian Cycle",
+    text = "Constructs a Hamiltonian-Cycle Instance from a SAT Formula",
+    url = "https://en.wikipedia.org/wiki/Hamiltonian_path_problem")
 public class SatToHamiltonCycle extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-                "A propositional formula",
-                Preferences.getString(getClass(), "formula", "(a ∨ b ∨ c) ∧ (¬a ∨ ¬b ∨ c) ∧ (a ∨ ¬b ∨ ¬c)"),
-                new PropositionalLogicSyntaxChecker(),
-                PropositionalLogicSyntaxChecker.explanation());
+            "A propositional formula",
+            Preferences.getString(getClass(), "formula", "(a ∨ b ∨ c) ∧ (¬a ∨ ¬b ∨ c) ∧ (a ∨ ¬b ∨ ¬c)"),
+            new PropositionalLogicSyntaxChecker(),
+            PropositionalLogicSyntaxChecker.explanation());
     }
 
     @Override
@@ -58,14 +57,14 @@ public class SatToHamiltonCycle extends Generator {
         cnf.getClauses(clauses);
 
         // create nodes for clauses
-        HashMap<PropositionalLogicFormula, Vertex> ClauseNodes = new HashMap<>();
+        HashMap<PropositionalLogicFormula, Vertex> clauseNodes = new HashMap<>();
         int clausej = 0;
         for (PropositionalLogicFormula clause : clauses) {
             Vertex cnode = result.createVertex();
             cnode.coordinates = new Vector2D(5d + 5d * clausej, -2d);
             cnode.label = clause.toString();
             result.addVertex(cnode);
-            ClauseNodes.put(clause, cnode);
+            clauseNodes.put(clause, cnode);
             clausej++;
         }
 
@@ -113,7 +112,7 @@ public class SatToHamiltonCycle extends Generator {
 
                 // connect them to the node for the clause (edges may go in
                 // both directions, if clause contains x and !x
-                Vertex clauseNode = ClauseNodes.get(clause);
+                Vertex clauseNode = clauseNodes.get(clause);
 
                 Set<PropositionalLogicFormula> literals = new HashSet<>();
                 clause.getLiterals(literals);
@@ -124,17 +123,15 @@ public class SatToHamiltonCycle extends Generator {
                             result.addEdge(result.createEdge(a, clauseNode));
                             result.addEdge(result.createEdge(clauseNode, b));
                         }
-                    }
-                    else if (literal instanceof PropositionalLogicNot
-                             && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
+                    } else if (literal instanceof PropositionalLogicNot
+                        && ((PropositionalLogicNot) literal).subformula instanceof PropositionalLogicVariable) {
                         PropositionalLogicNot plnot = (PropositionalLogicNot) literal;
                         PropositionalLogicVariable v = (PropositionalLogicVariable) plnot.subformula;
                         if (var.equals(v.variable)) {
                             result.addEdge(result.createEdge(b, clauseNode));
                             result.addEdge(result.createEdge(clauseNode, a));
                         }
-                    }
-                    else
+                    } else
                         throw new Exception("Formula is not in Conjunctive Normal Form");
                 }
 

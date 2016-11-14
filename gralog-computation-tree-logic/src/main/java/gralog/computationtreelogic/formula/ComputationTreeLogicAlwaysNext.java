@@ -9,7 +9,7 @@ public class ComputationTreeLogicAlwaysNext extends ComputationTreeLogicForwarde
 
     public ComputationTreeLogicAlwaysNext(ComputationTreeLogicFormula subformula) {
         super(new ComputationTreeLogicNot(
-                new ComputationTreeLogicExistsNext(
-                        new ComputationTreeLogicNot(subformula))));
+            new ComputationTreeLogicExistsNext(
+                new ComputationTreeLogicNot(subformula))));
     }
 }

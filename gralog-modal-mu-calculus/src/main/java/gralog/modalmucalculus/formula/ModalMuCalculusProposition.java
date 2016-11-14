@@ -38,16 +38,14 @@ public class ModalMuCalculusProposition extends ModalMuCalculusFormula {
     }
 
     @Override
-    public void createParityGamePositions(double scale, double x, double y,
-            double w, double h, KripkeStructure s, ParityGame p,
-            int NextPriority,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) {
+    public void createParityGamePositions(double scale, Vector2D pos,
+        Vector2D size, KripkeStructure s, ParityGame p, int nextPriority,
+        Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index) {
         for (Vertex v : s.getVertices()) {
             ParityGamePosition node = p.createVertex();
-            node.coordinates = new Vector2D(
-                    scale * w * v.coordinates.getX() + x,
-                    scale * h * v.coordinates.getY() + y
-            );
+            node.coordinates = pos.plus(new Vector2D(
+                scale * size.getX() * v.coordinates.getX(),
+                scale * size.getY() * v.coordinates.getY()));
             node.label = proposition;
             node.player1Position = !((World) v).satisfiesProposition(proposition);
             p.addVertex(node);
@@ -60,8 +58,8 @@ public class ModalMuCalculusProposition extends ModalMuCalculusFormula {
 
     @Override
     public void createParityGameTransitions(KripkeStructure s, ParityGame p,
-            Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
-            Map<String, ModalMuCalculusFormula> variableDefinitionPoints) {
+        Map<World, Map<ModalMuCalculusFormula, ParityGamePosition>> index,
+        Map<String, ModalMuCalculusFormula> variableDefinitionPoints) {
         if (!variableDefinitionPoints.containsKey(proposition))
             return; // simple proposition
 

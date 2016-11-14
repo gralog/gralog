@@ -38,9 +38,9 @@ public class StructurePane extends StackPane implements StructureListener {
     Lock needsRepaintLock = new ReentrantLock();
 
     static final EventType<StructurePaneEvent> ALL_STRUCTUREPANE_EVENTS
-            = new EventType<>("ALL_STRUCTUREPANE_EVENTS");
+        = new EventType<>("ALL_STRUCTUREPANE_EVENTS");
     static final EventType<StructurePaneEvent> STRUCTUREPANE_SELECTIONCHANGED
-            = new EventType<>(ALL_STRUCTUREPANE_EVENTS, "STRUCTUREPANE_SELECTIONCHANGED");
+        = new EventType<>(ALL_STRUCTUREPANE_EVENTS, "STRUCTUREPANE_SELECTIONCHANGED");
 
     public void setOnSelectionChanged(EventHandler<StructurePaneEvent> handler) {
         this.setEventHandler(STRUCTUREPANE_SELECTIONCHANGED, handler);
@@ -100,8 +100,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 });
                 needsRepaint = true;
             }
-        }
-        finally {
+        } finally {
             needsRepaintLock.unlock();
         }
     }
@@ -115,8 +114,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 });
                 needsRepaint = true;
             }
-        }
-        finally {
+        } finally {
             needsRepaintLock.unlock();
         }
     }
@@ -153,8 +151,8 @@ public class StructurePane extends StackPane implements StructureListener {
                 for (Object o : dragging)
                     if (o instanceof IMovable) {
                         Vector2D offset = new Vector2D(
-                                mousePositionModel.getX() - lastMouseX,
-                                mousePositionModel.getY() - lastMouseY
+                            mousePositionModel.getX() - lastMouseX,
+                            mousePositionModel.getY() - lastMouseY
                         );
                         ((IMovable) o).move(offset);
                     }
@@ -162,8 +160,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 // this must not be done when we are dragging the screen!!!!!
                 lastMouseX = mousePositionModel.getX();
                 lastMouseY = mousePositionModel.getY();
-            }
-            else {                                                 // draging the screen
+            } else {                                                 // draging the screen
                 offsetX -= (mousePositionModel.getX() - lastMouseX);
                 offsetY -= (mousePositionModel.getY() - lastMouseY);
             }
@@ -199,8 +196,8 @@ public class StructurePane extends StackPane implements StructureListener {
 
             Vertex v = structure.createVertex();
             v.coordinates = new Vector2D(
-                    mousePositionModel.getX(),
-                    mousePositionModel.getY()
+                mousePositionModel.getX(),
+                mousePositionModel.getY()
             );
             if (snapToGrid)
                 v.snapToGrid(gridSize);
@@ -229,16 +226,16 @@ public class StructurePane extends StackPane implements StructureListener {
             lastMouseX = mousePositionModel.getX();
             lastMouseY = mousePositionModel.getY();
 
-            Object SelectionTemp = structure.findObject(lastMouseX, lastMouseY);
-            if (SelectionTemp == null)
+            Object selectionTemp = structure.findObject(lastMouseX, lastMouseY);
+            if (selectionTemp == null)
                 return;
 
             clearSelection();
             dragging = null;
-            if (SelectionTemp instanceof Vertex)
-                select(SelectionTemp);
-            else if (SelectionTemp instanceof Edge) {
-                EdgeIntermediatePoint intermediatepoint = ((Edge) SelectionTemp).addIntermediatePoint(lastMouseX, lastMouseY);
+            if (selectionTemp instanceof Vertex)
+                select(selectionTemp);
+            else if (selectionTemp instanceof Edge) {
+                EdgeIntermediatePoint intermediatepoint = ((Edge) selectionTemp).addIntermediatePoint(lastMouseX, lastMouseY);
                 select(intermediatepoint);
                 dragging = selection;
             }
@@ -268,15 +265,14 @@ public class StructurePane extends StackPane implements StructureListener {
             MouseEvent me = (MouseEvent) e;
             if (!selection.isEmpty() && dragging == null) {
                 this.requestRedraw(me.getX(), me.getY());
-            }
-            else {
+            } else {
                 Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
                 if (dragging != null) {
                     for (Object o : dragging)
                         if (o instanceof IMovable) {
                             Vector2D offset = new Vector2D(
-                                    mousePositionModel.getX() - lastMouseX,
-                                    mousePositionModel.getY() - lastMouseY
+                                mousePositionModel.getX() - lastMouseX,
+                                mousePositionModel.getY() - lastMouseY
                             );
                             ((IMovable) o).move(offset);
                         }
@@ -284,8 +280,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     // this must not be done when we are dragging the screen!!!!!
                     lastMouseX = mousePositionModel.getX();
                     lastMouseY = mousePositionModel.getY();
-                }
-                else {                                                 // draging the screen
+                } else {                                                 // draging the screen
                     offsetX -= (mousePositionModel.getX() - lastMouseX);
                     offsetY -= (mousePositionModel.getY() - lastMouseY);
                 }
@@ -309,8 +304,8 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public Point2D modelToScreen(Point2D point) {
         Point2D result = new Point2D(
-                (point.getX() - offsetX) * zoomFactor * (screenResolutionX / 2.54),
-                (point.getY() - offsetY) * zoomFactor * (screenResolutionY / 2.54)
+            (point.getX() - offsetX) * zoomFactor * (screenResolutionX / 2.54),
+            (point.getY() - offsetY) * zoomFactor * (screenResolutionY / 2.54)
         // dots per inch -> dots per cm
         );
         return result;
@@ -318,8 +313,8 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public Point2D screenToModel(Point2D point) {
         Point2D result = new Point2D(
-                (point.getX() / (screenResolutionX / 2.54) / zoomFactor) + offsetX,
-                (point.getY() / (screenResolutionY / 2.54) / zoomFactor) + offsetY
+            (point.getX() / (screenResolutionX / 2.54) / zoomFactor) + offsetX,
+            (point.getY() / (screenResolutionY / 2.54) / zoomFactor) + offsetY
         // dots per inch -> dots per cm
         );
         return result;
@@ -343,8 +338,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
                 needsRepaint = false;
             }
-        }
-        finally {
+        } finally {
             this.needsRepaintLock.unlock();
         }
     }
@@ -356,8 +350,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 draw(canvas.getGraphicsContext2D());
                 needsRepaint = false;
             }
-        }
-        finally {
+        } finally {
             this.needsRepaintLock.unlock();
         }
     }

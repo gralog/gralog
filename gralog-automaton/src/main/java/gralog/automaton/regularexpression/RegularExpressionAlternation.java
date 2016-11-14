@@ -17,7 +17,7 @@ public class RegularExpressionAlternation extends RegularExpression {
     RegularExpression right = null;
 
     public RegularExpressionAlternation(RegularExpression left,
-            RegularExpression right) {
+        RegularExpression right) {
         this.left = left;
         this.right = right;
     }
@@ -43,12 +43,12 @@ public class RegularExpressionAlternation extends RegularExpression {
 
         // Set the new positions of the states
         Vector2D aOffset = new Vector2D(
-                (bMaxX > aMaxX ? (bMaxX - aMaxX) / 2d : 0d) + scale, 0d);
+            (bMaxX > aMaxX ? (bMaxX - aMaxX) / 2d : 0d) + scale, 0d);
         a.move(aOffset);
 
         Vector2D bOffset = new Vector2D(
-                (aMaxX > bMaxX ? (aMaxX - bMaxX) / 2d : 0d) + scale,
-                (aMaxY > bMaxY ? (2 * aMaxY - bMaxY) : bMaxY) + scale
+            (aMaxX > bMaxX ? (aMaxX - bMaxX) / 2d : 0d) + scale,
+            (aMaxY > bMaxY ? (2 * aMaxY - bMaxY) : bMaxY) + scale
         );
         b.move(bOffset);
 
@@ -60,8 +60,8 @@ public class RegularExpressionAlternation extends RegularExpression {
         State t = a.createVertex();
         t.finalState = true;
         t.coordinates = new Vector2D(
-                Math.max(aMaxX, bMaxX) + scale * 2d,
-                Math.max(aMaxY, bMaxY) + scale / 2d
+            Math.max(aMaxX, bMaxX) + scale * 2d,
+            Math.max(aMaxY, bMaxY) + scale / 2d
         );
 
         // make a the union of a and b
@@ -74,12 +74,12 @@ public class RegularExpressionAlternation extends RegularExpression {
         for (Vertex v : a.getVertices()) {
             if (((State) v).startState) {
                 Transition e = a.createEdge(s, (State) v);
-                e.Symbol = ""; // epsilon transition
+                e.symbol = ""; // epsilon transition
                 a.addEdge(e);
             }
             if (((State) v).finalState) {
                 Transition e = a.createEdge((State) v, t);
-                e.Symbol = ""; // epsilon transition
+                e.symbol = ""; // epsilon transition
                 a.addEdge(e);
             }
             ((State) v).finalState = false;

@@ -20,9 +20,13 @@ import javafx.scene.Node;
 /**
  *
  */
-public class ViewManager {
+public final class ViewManager {
 
-    private final static HashMap<Class, Constructor<? extends View>> viewRegister = new HashMap<>();
+    private ViewManager() {
+    }
+
+    private static final HashMap<Class, Constructor<? extends View>> VIEW_REGISTER
+        = new HashMap<>();
 
     public static void initialize() throws Exception {
         File f = new File(ViewManager.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -31,8 +35,8 @@ public class ViewManager {
 
     public static View instantiateView(Class<?> forClass) throws Exception {
         for (Class sup = forClass; sup != null; sup = sup.getSuperclass()) {
-            if (viewRegister.containsKey(sup)) {
-                Constructor<? extends View> ctor = viewRegister.get(sup);
+            if (VIEW_REGISTER.containsKey(sup)) {
+                Constructor<? extends View> ctor = VIEW_REGISTER.get(sup);
                 return ctor.newInstance();
             }
         }
@@ -40,7 +44,7 @@ public class ViewManager {
         return null;
     }
 
-    // copy-n-paste of Gralogs 
+    // copy-n-paste of Gralogs
     public static void loadPlugin(String pathToPlugin) throws Exception {
         File plugin = new File(pathToPlugin);
 
@@ -91,7 +95,7 @@ public class ViewManager {
                 ViewDescription descr = c.getAnnotation(ViewDescription.class);
 
                 // Register it
-                viewRegister.put(descr.forClass(), ctor);
+                VIEW_REGISTER.put(descr.forClass(), ctor);
             }
         }
     }

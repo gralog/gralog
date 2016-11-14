@@ -17,7 +17,7 @@ public class RegularExpressionConcatenation extends RegularExpression {
     RegularExpression regexp2 = null;
 
     public RegularExpressionConcatenation(RegularExpression regexp1,
-            RegularExpression regexp2) {
+        RegularExpression regexp2) {
         this.regexp1 = regexp1;
         this.regexp2 = regexp2;
     }
@@ -40,13 +40,13 @@ public class RegularExpressionConcatenation extends RegularExpression {
 
         // Set the new positions of the states
         Vector2D aOffset = new Vector2D(
-                0d, bMaxY > aMaxY ? (bMaxY - aMaxY) / 2d : 0d
+            0d, bMaxY > aMaxY ? (bMaxY - aMaxY) / 2d : 0d
         );
         a.move(aOffset);
 
         Vector2D bOffset = new Vector2D(
-                aMaxX + scale,
-                aMaxY > bMaxY ? (aMaxY - bMaxY) / 2d : 0d
+            aMaxX + scale,
+            aMaxY > bMaxY ? (aMaxY - bMaxY) / 2d : 0d
         );
         b.move(bOffset);
 
@@ -56,7 +56,7 @@ public class RegularExpressionConcatenation extends RegularExpression {
                 for (Vertex w : b.getVertices())
                     if (((State) w).startState) {
                         Transition t = a.createEdge((State) v, (State) w);
-                        t.Symbol = ""; // epsilon transition
+                        t.symbol = ""; // epsilon transition
                         a.addEdge(t);
                     }
             }

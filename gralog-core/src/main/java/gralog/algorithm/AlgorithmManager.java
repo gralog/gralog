@@ -14,11 +14,16 @@ import static gralog.plugins.PluginManager.instantiateClass;
 /**
  *
  */
-public class AlgorithmManager {
+public final class AlgorithmManager {
+
+    private AlgorithmManager() {
+    }
 
     // for algorithms and export, have different maps for each class they are applicable to
-    private final static HashMap<Class, HashMap<String, String>> algorithmNames = new HashMap<>();
-    private final static HashMap<Class, HashMap<String, AlgorithmDescription>> algorithmDescriptions = new HashMap<>();
+    private static final HashMap<Class, HashMap<String, String>> ALGORITHM_NAMES
+        = new HashMap<>();
+    private static final HashMap<Class, HashMap<String, AlgorithmDescription>> ALGORITHM_DESCRIPTIONS
+        = new HashMap<>();
 
     public static void registerAlgorithmClass(Class<?> aClass, String className) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
@@ -42,28 +47,28 @@ public class AlgorithmManager {
             throw new Exception("class " + aClass.getName() + " has no @AlgorithmDescription annotation");
 
         AlgorithmDescription descr = aClass.getAnnotation(AlgorithmDescription.class);
-        if (!algorithmNames.containsKey(applicableToClass)) {
-            algorithmNames.put(applicableToClass, new HashMap<>());
-            algorithmDescriptions.put(applicableToClass, new HashMap<>());
+        if (!ALGORITHM_NAMES.containsKey(applicableToClass)) {
+            ALGORITHM_NAMES.put(applicableToClass, new HashMap<>());
+            ALGORITHM_DESCRIPTIONS.put(applicableToClass, new HashMap<>());
         }
-        algorithmNames.get(applicableToClass).put(descr.name(), className);
-        algorithmDescriptions.get(applicableToClass).put(descr.name(), descr);
+        ALGORITHM_NAMES.get(applicableToClass).put(descr.name(), className);
+        ALGORITHM_DESCRIPTIONS.get(applicableToClass).put(descr.name(), descr);
     }
 
     public static List<String> getAlgorithms(Class<?> forClass) {
         List<String> result = new ArrayList<>();
         for (Class i = forClass; i != null; i = i.getSuperclass())
-            if (algorithmNames.containsKey(i))
-                result.addAll(algorithmNames.get(i).keySet());
+            if (ALGORITHM_NAMES.containsKey(i))
+                result.addAll(ALGORITHM_NAMES.get(i).keySet());
         result.sort(String.CASE_INSENSITIVE_ORDER);
         return result;
     }
 
     public static Algorithm instantiateAlgorithm(Class<?> forClass,
-            String identifier) throws Exception {
+        String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
-            if (algorithmNames.containsKey(c)) {
-                HashMap<String, String> algos = algorithmNames.get(c);
+            if (ALGORITHM_NAMES.containsKey(c)) {
+                HashMap<String, String> algos = ALGORITHM_NAMES.get(c);
                 if (algos.containsKey(identifier))
                     return (Algorithm) instantiateClass(algos.get(identifier));
             }
@@ -71,10 +76,10 @@ public class AlgorithmManager {
     }
 
     public static AlgorithmDescription getAlgorithmDescription(Class<?> forClass,
-            String identifier) throws Exception {
+        String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
-            if (algorithmDescriptions.containsKey(c)) {
-                HashMap<String, AlgorithmDescription> algos = algorithmDescriptions.get(c);
+            if (ALGORITHM_DESCRIPTIONS.containsKey(c)) {
+                HashMap<String, AlgorithmDescription> algos = ALGORITHM_DESCRIPTIONS.get(c);
                 if (algos.containsKey(identifier))
                     return algos.get(identifier);
             }

@@ -8,10 +8,9 @@ import gralog.plugins.XmlName;
 import gralog.structure.*;
 
 @StructureDescription(
-        name = "Finite Game",
-        text = "A Finite, two-player game-graph",
-        url = "http://mathworld.wolfram.com/FiniteGame.html"
-)
+    name = "Finite Game",
+    text = "A Finite, two-player game-graph",
+    url = "http://mathworld.wolfram.com/FiniteGame.html")
 @XmlName(name = "finitegame")
 public class FiniteGame extends Structure<FiniteGamePosition, FiniteGameMove> {
 

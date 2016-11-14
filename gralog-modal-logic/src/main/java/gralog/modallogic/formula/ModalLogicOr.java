@@ -30,8 +30,8 @@ public class ModalLogicOr extends ModalLogicFormula {
     public String toString(FormulaPosition pos) {
         if (pos == FormulaPosition.BoxDiamondNot || pos == FormulaPosition.And)
             return "(" + left.toString(FormulaPosition.Or) + " ∨ "
-                   + right.toString(FormulaPosition.Or) + ")";
+                + right.toString(FormulaPosition.Or) + ")";
         return left.toString(FormulaPosition.Or) + " ∨ "
-               + right.toString(FormulaPosition.Or);
+            + right.toString(FormulaPosition.Or);
     }
 }

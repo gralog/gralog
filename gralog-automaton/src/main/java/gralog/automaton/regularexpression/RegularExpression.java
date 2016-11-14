@@ -9,9 +9,9 @@ import gralog.automaton.*;
 /**
  *
  */
-abstract public class RegularExpression {
+public abstract class RegularExpression {
 
-    abstract public Automaton thompsonConstruction(double scale);
+    public abstract Automaton thompsonConstruction(double scale);
 
     public Automaton thompsonConstruction() {
         return thompsonConstruction(2.0d);

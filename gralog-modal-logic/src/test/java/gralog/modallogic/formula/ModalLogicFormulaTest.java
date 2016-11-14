@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
  *
  */
 public class ModalLogicFormulaTest {
+
     private static KripkeStructure structure;
     private static World a, b, c, d;
 
@@ -33,16 +34,15 @@ public class ModalLogicFormulaTest {
         addEdge(a, c);
         addEdge(d, a);
     }
-    
-    private static World addVertex(String propositions)
-    {
+
+    private static World addVertex(String propositions) {
         World v = structure.createVertex();
-        v.Propositions = propositions;
+        v.propositions = propositions;
         structure.addVertex(v);
         return v;
     }
-    private static Action addEdge(World source, World target)
-    {
+
+    private static Action addEdge(World source, World target) {
         Action e = structure.createEdge();
         e.setSource(source);
         e.setTarget(target);
@@ -81,7 +81,7 @@ public class ModalLogicFormulaTest {
     @Test
     public void testOr() {
         ModalLogicFormula formula = new ModalLogicOr(
-                new ModalLogicProposition("P"), new ModalLogicProposition("R"));
+            new ModalLogicProposition("P"), new ModalLogicProposition("R"));
         HashSet<World> expResult = new HashSet<>(Arrays.asList(a, b, d));
         assertEquals(expResult, formula.interpretation(structure));
     }
@@ -89,7 +89,7 @@ public class ModalLogicFormulaTest {
     @Test
     public void testAnd() {
         ModalLogicFormula formula = new ModalLogicAnd(
-                new ModalLogicProposition("P"), new ModalLogicProposition("R"));
+            new ModalLogicProposition("P"), new ModalLogicProposition("R"));
         HashSet<World> expResult = new HashSet<>(Arrays.asList(d));
         assertEquals(expResult, formula.interpretation(structure));
     }

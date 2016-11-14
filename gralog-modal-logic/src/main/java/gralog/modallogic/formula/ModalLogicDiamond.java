@@ -42,7 +42,7 @@ public class ModalLogicDiamond extends ModalLogicFormula {
                     continue;
                 Action a = (Action) e;
                 if (this.transitiontype != null)
-                    if (!this.transitiontype.equals(a.Name))
+                    if (!this.transitiontype.equals(a.name))
                         continue;
 
                 if (subresult.contains(a.getTarget())) {

@@ -36,35 +36,34 @@ public class FiniteGamePosition extends Vertex {
     public void render(GralogGraphicsContext gc, Set<Object> highlights) {
         if (player1Position) {
             super.render(gc, highlights);
-        }
-        else {
+        } else {
             if (highlights != null && highlights.contains(this))
                 gc.fillRectangle(coordinates.getX() - radius - 0.07, // outer
-                                 coordinates.getY() - radius - 0.07,
-                                 coordinates.getX() + radius + 0.07,
-                                 coordinates.getY() + radius + 0.07,
-                                 GralogColor.RED);
+                    coordinates.getY() - radius - 0.07,
+                    coordinates.getX() + radius + 0.07,
+                    coordinates.getY() + radius + 0.07,
+                    GralogColor.RED);
 
             gc.fillRectangle(coordinates.getX() - radius, // outer
-                             coordinates.getY() - radius,
-                             coordinates.getX() + radius,
-                             coordinates.getY() + radius,
-                             strokeColor);
+                coordinates.getY() - radius,
+                coordinates.getX() + radius,
+                coordinates.getY() + radius,
+                strokeColor);
             gc.fillRectangle(coordinates.getX() - radius + strokeWidth, // inner
-                             coordinates.getY() - radius + strokeWidth,
-                             coordinates.getX() + radius - strokeWidth,
-                             coordinates.getY() + radius - strokeWidth,
-                             fillColor);
+                coordinates.getY() - radius + strokeWidth,
+                coordinates.getX() + radius - strokeWidth,
+                coordinates.getY() + radius - strokeWidth,
+                fillColor);
             gc.putText(coordinates, label,
-                       textHeight, fillColor.inverse());
+                textHeight, fillColor.inverse());
         }
     }
 
     @Override
     public boolean containsCoordinate(double x, double y) {
         return (coordinates.get(0) - radius <= x)
-               && (x <= coordinates.get(0) + radius)
-               && (coordinates.get(1) - radius <= y)
-               && (y <= coordinates.get(1) + radius);
+            && (x <= coordinates.get(0) + radius)
+            && (coordinates.get(1) - radius <= y)
+            && (y <= coordinates.get(1) + radius);
     }
 }

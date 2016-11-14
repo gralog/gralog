@@ -17,5 +17,5 @@ public abstract class ComputationTreeLogicFormula {
     public ComputationTreeLogicFormula() {
     }
 
-    abstract public HashSet<World> interpretation(KripkeStructure structure);
+    public abstract HashSet<World> interpretation(KripkeStructure structure);
 }

@@ -26,7 +26,7 @@ import javax.xml.transform.OutputKeys;
  *
  */
 public abstract class Structure<V extends Vertex, E extends Edge>
-        extends XmlMarshallable implements IMovable {
+    extends XmlMarshallable implements IMovable {
 
     protected Set<V> vertices;
     protected Set<E> edges;
@@ -59,11 +59,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             v.render(gc, highlights);
     }
 
-    public void snapToGrid(double GridSize) {
+    public void snapToGrid(double gridSize) {
         for (Edge e : edges)
-            e.snapToGrid(GridSize);
+            e.snapToGrid(gridSize);
         for (Vertex v : vertices)
-            v.snapToGrid(GridSize);
+            v.snapToGrid(gridSize);
     }
 
     /**
@@ -92,7 +92,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @return The new vertex.
      */
-    abstract public V createVertex();
+    public abstract V createVertex();
 
     /**
      * Adds a vertex to the structure. Has no effect if the vertex already
@@ -156,7 +156,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @return The new edge.
      */
-    abstract public E createEdge();
+    public abstract E createEdge();
 
     /**
      * Add an edge to the structure. Has no effect if the edge already exists in
@@ -217,11 +217,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         if (source == target && source != null) {
             edge.intermediatePoints.add(
-                    new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
-                            source.coordinates.getY() - 1.5d));
+                new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
+                    source.coordinates.getY() - 1.5d));
             edge.intermediatePoints.add(
-                    new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
-                            source.coordinates.getY() - 1.5d));
+                new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
+                    source.coordinates.getY() - 1.5d));
         }
         return edge;
     }
@@ -312,9 +312,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     public void fromXml(Element gnode) throws Exception {
-        HashMap<String, Vertex> VertexRegister = new HashMap<>();
-        HashMap<Edge, Element> LoadedFrom = new HashMap<>();
-        ArrayList<Edge> TempEdges = new ArrayList<>();
+        HashMap<String, Vertex> vertexRegister = new HashMap<>();
+        HashMap<Edge, Element> loadedFrom = new HashMap<>();
+        ArrayList<Edge> tempEdges = new ArrayList<>();
 
         NodeList children = gnode.getChildNodes();
         for (int i = 0; i < children.getLength(); ++i) {
@@ -327,17 +327,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             if (obj instanceof Vertex) {
                 V v = (V) obj;
                 String id = v.fromXml(child);
-                VertexRegister.put(id, v);
+                vertexRegister.put(id, v);
                 addVertex(v);
-            }
-            else if (obj instanceof Edge) {
-                TempEdges.add((E) obj);
-                LoadedFrom.put((E) obj, child);
+            } else if (obj instanceof Edge) {
+                tempEdges.add((E) obj);
+                loadedFrom.put((E) obj, child);
             }
         }
 
-        for (Edge e : TempEdges) {
-            e.fromXml(LoadedFrom.get(e), VertexRegister);
+        for (Edge e : tempEdges) {
+            e.fromXml(loadedFrom.get(e), vertexRegister);
             edges.add((E) e);
         }
     }

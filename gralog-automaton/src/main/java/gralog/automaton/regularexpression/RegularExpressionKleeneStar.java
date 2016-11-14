@@ -21,7 +21,7 @@ public class RegularExpressionKleeneStar extends RegularExpression {
 
     @Override
     public String toString() {
-        if(regexp instanceof RegularExpressionLetter)
+        if (regexp instanceof RegularExpressionLetter)
             return regexp.toString() + "*";
         return "(" + regexp.toString() + ")*";
     }
@@ -47,19 +47,19 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         State t = a.createVertex();
         t.finalState = true;
         t.coordinates = new Vector2D(
-                aMaxX + 2d * scale,
-                aMaxY / 2d + scale
+            aMaxX + 2d * scale,
+            aMaxY / 2d + scale
         );
 
         // Connect the new start and final states with epsilon transitions
         Transition st = a.createEdge(s, t);
-        st.Symbol = ""; // epsilon transition
+        st.symbol = ""; // epsilon transition
         a.addEdge(st);
         st.intermediatePoints.add(new EdgeIntermediatePoint(scale, 0d));
         st.intermediatePoints.add(new EdgeIntermediatePoint(aMaxX + scale, 0d));
 
         Transition ts = a.createEdge(t, s);
-        ts.Symbol = ""; // epsilon transition
+        ts.symbol = ""; // epsilon transition
         a.addEdge(ts);
         ts.intermediatePoints.add(new EdgeIntermediatePoint(aMaxX + scale, aMaxY + 2d * scale));
         ts.intermediatePoints.add(new EdgeIntermediatePoint(scale, aMaxY + 2d * scale));
@@ -68,12 +68,12 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         for (Vertex v : a.getVertices()) {
             if (((State) v).startState) {
                 Transition e = a.createEdge(s, (State) v);
-                e.Symbol = ""; // epsilon transition
+                e.symbol = ""; // epsilon transition
                 a.addEdge(e);
             }
             if (((State) v).finalState) {
                 Transition e = a.createEdge((State) v, t);
-                e.Symbol = ""; // epsilon transition
+                e.symbol = ""; // epsilon transition
                 a.addEdge(e);
             }
             ((State) v).finalState = false;

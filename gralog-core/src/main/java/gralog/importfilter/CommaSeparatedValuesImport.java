@@ -17,11 +17,10 @@ import java.util.StringTokenizer;
  *
  */
 @ImportFilterDescription(
-        name = "Comma Separated Values",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
-        fileExtension = "csv"
-)
+    name = "Comma Separated Values",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
+    fileExtension = "csv")
 public class CommaSeparatedValuesImport extends ImportFilter {
 
     String cellSeparator = ",";
@@ -29,12 +28,12 @@ public class CommaSeparatedValuesImport extends ImportFilter {
 
     @Override
     public Structure importGraph(InputStream stream,
-            ImportFilterParameters params) throws Exception {
+        ImportFilterParameters params) throws Exception {
         DirectedGraph result = new DirectedGraph();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(stream))) {
             String s = br.readLine();
 
-            HashMap<String, Vertex> NodeIndex = new HashMap<>();
+            HashMap<String, Vertex> nodeIndex = new HashMap<>();
 
             while (s != null) {
                 s = s.trim();
@@ -56,23 +55,23 @@ public class CommaSeparatedValuesImport extends ImportFilter {
                 String sto = tokenizer.nextToken();
 
                 for (String vertstring : new String[]{sfrom, sto}) {
-                    if (!NodeIndex.containsKey(vertstring)) {
+                    if (!nodeIndex.containsKey(vertstring)) {
                         Vertex newnode = result.createVertex();
-                        NodeIndex.put(vertstring, newnode);
+                        nodeIndex.put(vertstring, newnode);
                     }
                 }
 
-                Vertex vfrom = NodeIndex.get(sfrom);
-                Vertex vto = NodeIndex.get(sto);
+                Vertex vfrom = nodeIndex.get(sfrom);
+                Vertex vto = nodeIndex.get(sto);
                 result.addEdge(result.createEdge(vfrom, vto));
 
                 s = br.readLine();
             }
 
-            for (Vertex newnode : NodeIndex.values()) {
+            for (Vertex newnode : nodeIndex.values()) {
                 newnode.coordinates = new Vector2D(
-                        Math.random() * 3d * NodeIndex.size(),
-                        Math.random() * 3d * NodeIndex.size());
+                    Math.random() * 3d * nodeIndex.size(),
+                    Math.random() * 3d * nodeIndex.size());
                 result.addVertex(newnode);
             }
         }

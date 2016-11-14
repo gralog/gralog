@@ -16,19 +16,19 @@ import java.util.ArrayList;
  *
  */
 @GeneratorDescription(
-        name = "Grid",
-        text = "Generates a Grid-Graph",
-        url = "https://en.wikipedia.org/wiki/Lattice_graph"
+    name = "Grid",
+    text = "Generates a Grid-Graph",
+    url = "https://en.wikipedia.org/wiki/Lattice_graph"
 )
 public class Grid extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-                "Size",
-                Preferences.getInteger(this.getClass(), "size", 5).toString(),
-                new IntSyntaxChecker(1, Integer.MAX_VALUE),
-                "");
+            "Size",
+            Preferences.getInteger(this.getClass(), "size", 5).toString(),
+            new IntSyntaxChecker(1, Integer.MAX_VALUE),
+            "");
     }
 
     @Override

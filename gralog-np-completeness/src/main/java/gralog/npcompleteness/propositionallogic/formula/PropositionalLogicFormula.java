@@ -5,13 +5,12 @@
 package gralog.npcompleteness.propositionallogic.formula;
 
 import java.util.Set;
-import java.util.HashSet;
 import java.util.HashMap;
 
 /**
  *
  */
-abstract public class PropositionalLogicFormula {
+public abstract class PropositionalLogicFormula {
 
     public boolean isLiteral() {
         return false;
@@ -29,23 +28,23 @@ abstract public class PropositionalLogicFormula {
         return isAClause3();
     }
 
-    public void getClauses(Set<PropositionalLogicFormula> clauses) throws Exception // only works on cnf formulas
-    {
+    // only works on cnf formulas
+    public void getClauses(Set<PropositionalLogicFormula> clauses) throws Exception {
         if (!isAClause())
             throw new Exception("Formula is not in Conjunctive Normal Form");
         clauses.add(this);
     }
 
-    public void getLiterals(Set<PropositionalLogicFormula> literals) // only works on cnf clauses
-    {
+    // only works on cnf clauses
+    public void getLiterals(Set<PropositionalLogicFormula> literals) {
         literals.add(this);
     }
 
     public void getVariables(Set<String> vars) {
     }
 
-    abstract protected PropositionalLogicFormula conjunctiveNormalForm(
-            Integer varId, HashMap<PropositionalLogicFormula, String> VarIdx);
+    protected abstract PropositionalLogicFormula conjunctiveNormalForm(
+        Integer varId, HashMap<PropositionalLogicFormula, String> varIdx);
 
     public PropositionalLogicFormula conjunctiveNormalForm() {
         if (hasConjunctiveNormalForm())
@@ -57,13 +56,13 @@ abstract public class PropositionalLogicFormula {
         if (hasConjunctiveNormalForm3())
             return this;
 
-        HashMap<PropositionalLogicFormula, String> VarIdx = new HashMap<>();
+        HashMap<PropositionalLogicFormula, String> varIdx = new HashMap<>();
         Integer id = 0;
 
-        PropositionalLogicFormula sub = conjunctiveNormalForm(id, VarIdx);
+        PropositionalLogicFormula sub = conjunctiveNormalForm(id, varIdx);
 
         return new PropositionalLogicAnd(
-                sub,
-                new PropositionalLogicVariable(VarIdx.get(this)));
+            sub,
+            new PropositionalLogicVariable(varIdx.get(this)));
     }
 }

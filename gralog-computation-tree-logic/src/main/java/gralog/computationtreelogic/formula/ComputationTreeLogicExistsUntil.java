@@ -15,7 +15,7 @@ public class ComputationTreeLogicExistsUntil extends ComputationTreeLogicFormula
     ComputationTreeLogicFormula after;
 
     public ComputationTreeLogicExistsUntil(ComputationTreeLogicFormula before,
-            ComputationTreeLogicFormula after) {
+        ComputationTreeLogicFormula after) {
         this.before = before;
         this.after = after;
     }

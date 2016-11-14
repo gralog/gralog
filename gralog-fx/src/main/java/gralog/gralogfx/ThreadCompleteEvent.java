@@ -8,5 +8,6 @@ package gralog.gralogfx;
  *
  */
 public interface ThreadCompleteEvent {
-    public void onThreadCompleted(AlgorithmThread sender);
+
+    void onThreadCompleted(AlgorithmThread sender);
 }

@@ -45,9 +45,9 @@ public class PropositionalLogicVariable extends PropositionalLogicFormula {
 
     @Override
     protected PropositionalLogicFormula conjunctiveNormalForm(Integer varId,
-            HashMap<PropositionalLogicFormula, String> VarIdx) {
+        HashMap<PropositionalLogicFormula, String> varIdx) {
         varId++;
-        VarIdx.put(this, variable);
+        varIdx.put(this, variable);
         return null;
     }
 }

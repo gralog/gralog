@@ -16,14 +16,14 @@ import java.util.HashMap;
  *
  */
 @AlgorithmDescription(
-        name = "Coloring",
-        text = "Finds a Coloring with a minimum number of colors",
-        url = "https://en.wikipedia.org/wiki/Graph_coloring"
+    name = "Coloring",
+    text = "Finds a Coloring with a minimum number of colors",
+    url = "https://en.wikipedia.org/wiki/Graph_coloring"
 )
 public class Coloring extends Algorithm {
 
     protected boolean findColoring(UndirectedGraph s, int k,
-            HashMap<Vertex, Integer> clique) {
+        HashMap<Vertex, Integer> clique) {
         Vertex minChoicesVertex = null;
         int minChoicesCount = Integer.MAX_VALUE;
         for (Vertex candidate : s.getVertices()) {
@@ -78,7 +78,7 @@ public class Coloring extends Algorithm {
     }
 
     public Object run(UndirectedGraph s, AlgorithmParameters p,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
         HashMap<Vertex, Integer> result = new HashMap<>();
 
         Set<Vertex> clique = Clique.findMaximumClique(s);

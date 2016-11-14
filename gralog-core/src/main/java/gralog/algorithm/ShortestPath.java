@@ -14,17 +14,17 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-        name = "Shortest Path",
-        text = "Finds a shortest path between two selected vertice, using Dijkstra's Algorithm",
-        url = "https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm"
+    name = "Shortest Path",
+    text = "Finds a shortest path between two selected vertice, using Dijkstra's Algorithm",
+    url = "https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm"
 )
 public class ShortestPath extends Algorithm {
 
     public static void dijkstraShortestPath(Structure s, Vertex start,
-            Vertex target,
-            HashMap<Vertex, Vertex> predecessor,
-            HashMap<Vertex, Edge> edgeFromPredecessor,
-            HashMap<Vertex, Double> distances) {
+        Vertex target,
+        HashMap<Vertex, Vertex> predecessor,
+        HashMap<Vertex, Edge> edgeFromPredecessor,
+        HashMap<Vertex, Double> distances) {
         HashSet<Vertex> Q = new HashSet<>();
         Q.addAll(s.getVertices());
         predecessor.put(start, null);
@@ -68,14 +68,14 @@ public class ShortestPath extends Algorithm {
     }
 
     public static void dijkstraShortestPath(Structure s, Vertex start,
-            HashMap<Vertex, Vertex> predecessor,
-            HashMap<Vertex, Edge> edgeFromPredecessor,
-            HashMap<Vertex, Double> distances) {
+        HashMap<Vertex, Vertex> predecessor,
+        HashMap<Vertex, Edge> edgeFromPredecessor,
+        HashMap<Vertex, Double> distances) {
         ShortestPath.dijkstraShortestPath(s, start, null, predecessor, edgeFromPredecessor, distances);
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
         for (Edge e : (Set<Edge>) s.getEdges())
             if (e.cost < 0d)
                 throw new Exception("Dijkstra's Algorithm requires positive edge weights");

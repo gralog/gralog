@@ -20,24 +20,22 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-        name = "First Order Logic Solver",
-        text = "A Solver for First-Order Logic Queries",
-        url = "https://en.wikipedia.org/wiki/First-order_logic"
-)
-
+    name = "First Order Logic Solver",
+    text = "A Solver for First-Order Logic Queries",
+    url = "https://en.wikipedia.org/wiki/First-order_logic")
 public class FirstOrderSolver extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
-                "Formula",
-                Preferences.getString(this.getClass(), "formula", "!x. ?y. E(x,y)"),
-                new FirstOrderSyntaxChecker(),
-                FirstOrderSyntaxChecker.explanation());
+            "Formula",
+            Preferences.getString(this.getClass(), "formula", "!x. ?y. E(x,y)"),
+            new FirstOrderSyntaxChecker(),
+            FirstOrderSyntaxChecker.explanation());
     }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception {
+        ProgressHandler onprogress) throws Exception {
 
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);

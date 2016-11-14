@@ -11,20 +11,20 @@ import java.io.FileInputStream;
 /**
  *
  */
-abstract public class ImportFilter {
+public abstract class ImportFilter {
 
     // null means it has no parameters
     public ImportFilterParameters getParameters() {
         return null;
     }
 
-    public Structure importGraph(String FileName, ImportFilterParameters params) throws Exception {
-        FileInputStream stream = new FileInputStream(FileName);
+    public Structure importGraph(String fileName, ImportFilterParameters params) throws Exception {
+        FileInputStream stream = new FileInputStream(fileName);
         return importGraph(stream, params);
     }
 
     public Structure importGraph(InputStream stream,
-            ImportFilterParameters params) throws Exception {
+        ImportFilterParameters params) throws Exception {
         throw new Exception("class " + this.getClass().getName() + " has no Stream-based importGraph Method");
     }
 

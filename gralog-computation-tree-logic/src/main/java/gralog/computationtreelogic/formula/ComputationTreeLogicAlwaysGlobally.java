@@ -8,10 +8,10 @@ public class ComputationTreeLogicAlwaysGlobally extends ComputationTreeLogicForw
     // AG phi = not EF not phi
 
     public ComputationTreeLogicAlwaysGlobally(
-            ComputationTreeLogicFormula subformula) {
+        ComputationTreeLogicFormula subformula) {
         super(new ComputationTreeLogicNot(
-                new ComputationTreeLogicExistsFinally(
-                        new ComputationTreeLogicNot(subformula)
-                )));
+            new ComputationTreeLogicExistsFinally(
+                new ComputationTreeLogicNot(subformula)
+            )));
     }
 }

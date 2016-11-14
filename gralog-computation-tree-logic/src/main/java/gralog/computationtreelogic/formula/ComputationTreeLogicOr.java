@@ -14,7 +14,7 @@ public class ComputationTreeLogicOr extends ComputationTreeLogicFormula {
     ComputationTreeLogicFormula right;
 
     public ComputationTreeLogicOr(ComputationTreeLogicFormula left,
-            ComputationTreeLogicFormula right) {
+        ComputationTreeLogicFormula right) {
         this.left = left;
         this.right = right;
     }

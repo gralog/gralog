@@ -18,18 +18,18 @@ import gralog.structure.*;
  *
  */
 @AlgorithmDescription(
-        name = "Player 0 Winning Region",
-        text = "Finds the winning-region of player 0",
-        url = ""
+    name = "Player 0 Winning Region",
+    text = "Finds the winning-region of player 0",
+    url = ""
 )
 public class WinningRegionPlayer0 extends Algorithm {
 
-    protected HashMap<FiniteGamePosition, Integer> WinningRegions(
-            FiniteGame game) {
+    protected HashMap<FiniteGamePosition, Integer> winningRegions(
+        FiniteGame game) {
         HashMap<FiniteGamePosition, Integer> result = new HashMap<>();
         Set<FiniteGamePosition> V = game.getVertices();
-        Set<FiniteGamePosition> LastIteration = new HashSet<>();
-        Set<FiniteGamePosition> CurrentIteration = new HashSet<>();
+        Set<FiniteGamePosition> lastIteration = new HashSet<>();
+        Set<FiniteGamePosition> currentIteration = new HashSet<>();
 
         // collect terminal positions
         for (Vertex v : V) {
@@ -46,13 +46,12 @@ public class WinningRegionPlayer0 extends Algorithm {
 
             if (isTerminal) {
                 result.put(p, p.player1Position ? 0 : 1);
-                LastIteration.add(p);
+                lastIteration.add(p);
             }
         }
 
-        // 
-        while (LastIteration.size() > 0) {
-            for (FiniteGamePosition p : LastIteration) {
+        while (lastIteration.size() > 0) {
+            for (FiniteGamePosition p : lastIteration) {
                 for (Edge e : p.getConnectedEdges()) {
                     FiniteGamePosition s = (FiniteGamePosition) e.getSource();
                     if (s == p) // only examine incoming edges
@@ -63,9 +62,8 @@ public class WinningRegionPlayer0 extends Algorithm {
                     if ((s.player1Position && result.get(p) == 1) // player can move into his winning region
                         || ((!s.player1Position) && result.get(p) == 0)) {
                         result.put(s, s.player1Position ? 1 : 0);
-                        CurrentIteration.add(s);
-                    }
-                    else {
+                        currentIteration.add(s);
+                    } else {
                         boolean allOutgoingEdgesGoToOppositeWinningRegion = true;
                         for (Edge o : s.getConnectedEdges()) {
                             if (o.getSource() != s) // not outgoing
@@ -76,8 +74,7 @@ public class WinningRegionPlayer0 extends Algorithm {
                                     allOutgoingEdgesGoToOppositeWinningRegion = false;
                                     break;
                                 }
-                            }
-                            else {
+                            } else {
                                 allOutgoingEdgesGoToOppositeWinningRegion = false;
                                 break;
                             }
@@ -85,24 +82,24 @@ public class WinningRegionPlayer0 extends Algorithm {
 
                         if (allOutgoingEdgesGoToOppositeWinningRegion) {
                             result.put(s, s.player1Position ? 0 : 1);
-                            CurrentIteration.add(s);
+                            currentIteration.add(s);
                         }
                     }
                 }
             }
 
-            Set<FiniteGamePosition> temp = CurrentIteration;
-            CurrentIteration = LastIteration;
-            LastIteration = temp;
-            CurrentIteration.clear();
+            Set<FiniteGamePosition> temp = currentIteration;
+            currentIteration = lastIteration;
+            lastIteration = temp;
+            currentIteration.clear();
         }
 
         return result;
     }
 
     public Object run(FiniteGame game, AlgorithmParameters ap,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
-        HashMap<FiniteGamePosition, Integer> winningRegions = WinningRegions(game);
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        HashMap<FiniteGamePosition, Integer> winningRegions = winningRegions(game);
         HashSet<Vertex> result = new HashSet<>();
         for (Vertex v : game.getVertices())
             if (winningRegions.containsKey((FiniteGamePosition) v))

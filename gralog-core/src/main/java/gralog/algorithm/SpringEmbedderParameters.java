@@ -9,11 +9,11 @@ package gralog.algorithm;
  */
 public class SpringEmbedderParameters extends AlgorithmParameters {
 
-    public Double c_repel                  =     3.0d;
-    public Double c_spring                 =     2.0d;
-    public Double friction                 =     0.5d; // lower value = more friction (0 = no preservation of momentum)
-    public Double unstressed_spring_length =     3.0d;
-    public Double delta                    =     0.04d;
-    public Double movement_threshold       =     0.01d; // percentage of unstressed_spring_length
-    public Integer max_iterations          = 10000;
+    public Double cRepel = 3.0d;
+    public Double cSpring = 2.0d;
+    public Double friction = 0.5d; // lower value = more friction (0 = no preservation of momentum)
+    public Double unstressedSpringLength = 3.0d;
+    public Double delta = 0.04d;
+    public Double movementThreshold = 0.01d; // percentage of unstressed_spring_length
+    public Integer maxIterations = 10000;
 }

@@ -7,8 +7,11 @@ package gralog.gralogfx;
 /**
  * Some constants for the user interface.
  */
-public class UIConstants {
+public final class UIConstants {
 
-    public final static int SUBMIT_BUTTON_WIDTH = 150;
-    public final static int HBOX_SPACING = 10;
+    private UIConstants() {
+    }
+
+    public static final int SUBMIT_BUTTON_WIDTH = 150;
+    public static final int HBOX_SPACING = 10;
 }

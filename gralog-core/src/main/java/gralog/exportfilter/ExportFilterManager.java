@@ -15,17 +15,20 @@ import static gralog.plugins.PluginManager.instantiateClass;
 /**
  *
  */
-public class ExportFilterManager {
+public final class ExportFilterManager {
 
-    private final static HashMap<Class, HashMap<String, String>> exportFilterNames
-            = new HashMap<>();
-    private final static HashMap<Class, HashMap<String, String>> exportFilterExtensions
-            = new HashMap<>();
-    private final static HashMap<Class, HashMap<String, ExportFilterDescription>> exportFilterDescriptions
-            = new HashMap<>();
+    private ExportFilterManager() {
+    }
+
+    private static final HashMap<Class, HashMap<String, String>> EXPORT_FILTER_NAMES
+        = new HashMap<>();
+    private static final HashMap<Class, HashMap<String, String>> EXPORT_FILTER_EXTENSIONS
+        = new HashMap<>();
+    private static final HashMap<Class, HashMap<String, ExportFilterDescription>> EXPORT_FILTER_DESCRIPTIONS
+        = new HashMap<>();
 
     public static void registerExportFilterClass(Class<?> aClass,
-            String className) throws Exception {
+        String className) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
             return;
 
@@ -48,26 +51,26 @@ public class ExportFilterManager {
             throw new Exception("class " + aClass.getName() + " has no @ExportFilterDescription annotation");
 
         ExportFilterDescription descr = aClass.getAnnotation(ExportFilterDescription.class);
-        if (!exportFilterNames.containsKey(applicableToClass)) {
-            exportFilterNames.put(applicableToClass, new HashMap<>());
-            exportFilterExtensions.put(applicableToClass, new HashMap<>());
-            exportFilterDescriptions.put(applicableToClass, new HashMap<>());
+        if (!EXPORT_FILTER_NAMES.containsKey(applicableToClass)) {
+            EXPORT_FILTER_NAMES.put(applicableToClass, new HashMap<>());
+            EXPORT_FILTER_EXTENSIONS.put(applicableToClass, new HashMap<>());
+            EXPORT_FILTER_DESCRIPTIONS.put(applicableToClass, new HashMap<>());
         }
-        exportFilterNames.get(applicableToClass).put(descr.name(), className);
-        exportFilterExtensions.get(applicableToClass).put(descr.fileExtension(), className);
-        exportFilterDescriptions.get(applicableToClass).put(descr.name(), descr);
+        EXPORT_FILTER_NAMES.get(applicableToClass).put(descr.name(), className);
+        EXPORT_FILTER_EXTENSIONS.get(applicableToClass).put(descr.fileExtension(), className);
+        EXPORT_FILTER_DESCRIPTIONS.get(applicableToClass).put(descr.name(), descr);
     }
 
     public static List<String> getExportFilters(Class<?> forClass) {
         HashSet<String> extensions = new HashSet<>();
         List<String> result = new ArrayList<>();
         for (Class i = forClass; i != null; i = i.getSuperclass())
-            if (exportFilterNames.containsKey(i))
-                for (String f : exportFilterNames.get(i).keySet()) {
+            if (EXPORT_FILTER_NAMES.containsKey(i))
+                for (String f : EXPORT_FILTER_NAMES.get(i).keySet()) {
                     // if a derived class has an export-filter for the same
                     // file-extension, the derived one overrides the base one
-                    if (exportFilterDescriptions.get(i).containsKey(f)) {
-                        ExportFilterDescription descr = exportFilterDescriptions.get(i).get(f);
+                    if (EXPORT_FILTER_DESCRIPTIONS.get(i).containsKey(f)) {
+                        ExportFilterDescription descr = EXPORT_FILTER_DESCRIPTIONS.get(i).get(f);
                         if (extensions.contains(descr.fileExtension())) // the export filter was overridden
                             continue;
                         extensions.add(descr.fileExtension());
@@ -79,10 +82,10 @@ public class ExportFilterManager {
     }
 
     public static ExportFilter instantiateExportFilter(Class<?> forClass,
-            String identifier) throws Exception {
+        String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
-            if (exportFilterNames.containsKey(c)) {
-                HashMap<String, String> filters = exportFilterNames.get(c);
+            if (EXPORT_FILTER_NAMES.containsKey(c)) {
+                HashMap<String, String> filters = EXPORT_FILTER_NAMES.get(c);
                 if (filters.containsKey(identifier))
                     return (ExportFilter) instantiateClass(filters.get(identifier));
             }
@@ -90,10 +93,10 @@ public class ExportFilterManager {
     }
 
     public static ExportFilter instantiateExportFilterByExtension(
-            Class<?> forClass, String identifier) throws Exception {
+        Class<?> forClass, String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
-            if (exportFilterExtensions.containsKey(c)) {
-                HashMap<String, String> filters = exportFilterExtensions.get(c);
+            if (EXPORT_FILTER_EXTENSIONS.containsKey(c)) {
+                HashMap<String, String> filters = EXPORT_FILTER_EXTENSIONS.get(c);
                 if (filters.containsKey(identifier))
                     return (ExportFilter) instantiateClass(filters.get(identifier));
             }
@@ -101,10 +104,10 @@ public class ExportFilterManager {
     }
 
     public static ExportFilterDescription getExportFilterDescription(
-            Class<?> forClass, String identifier) throws Exception {
+        Class<?> forClass, String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
-            if (exportFilterDescriptions.containsKey(c)) {
-                HashMap<String, ExportFilterDescription> filters = exportFilterDescriptions.get(c);
+            if (EXPORT_FILTER_DESCRIPTIONS.containsKey(c)) {
+                HashMap<String, ExportFilterDescription> filters = EXPORT_FILTER_DESCRIPTIONS.get(c);
                 if (filters.containsKey(identifier))
                     return filters.get(identifier);
             }

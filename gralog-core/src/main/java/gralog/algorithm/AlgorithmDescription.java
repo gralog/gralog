@@ -15,7 +15,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface AlgorithmDescription {
+
     String name();
+
     String text();
+
     String url();
 }

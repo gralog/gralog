@@ -19,7 +19,7 @@ public class ModalMuCalculusSyntaxChecker extends SyntaxChecker {
 
     public static String explanation() {
         return ModalLogicSyntaxChecker.explanation() + "\n"
-               + "mu: μX. P, mu X. P\n"
-               + "nu: νX. P, nu X. P";
+            + "mu: μX. P, mu X. P\n"
+            + "nu: νX. P, nu X. P";
     }
 }

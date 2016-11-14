@@ -16,9 +16,9 @@ import java.util.ArrayList;
  *
  */
 @GeneratorDescription(
-        name = "Cylindrical Grid",
-        text = "Generates a Cylindrical Grid (the directed equivalent of an undirected grid)",
-        url = ""
+    name = "Cylindrical Grid",
+    text = "Generates a Cylindrical Grid (the directed equivalent of an undirected grid)",
+    url = ""
 )
 public class CylindricalGrid extends Generator {
 
@@ -26,10 +26,10 @@ public class CylindricalGrid extends Generator {
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-                "Size",
-                Preferences.getInteger(this.getClass(), "size", 5).toString(),
-                new IntSyntaxChecker(1, Integer.MAX_VALUE),
-                "");
+            "Size",
+            Preferences.getInteger(this.getClass(), "size", 5).toString(),
+            new IntSyntaxChecker(1, Integer.MAX_VALUE),
+            "");
     }
 
     @Override
@@ -44,8 +44,8 @@ public class CylindricalGrid extends Generator {
             Vertex temp = result.createVertex();
             first.add(temp);
             temp.coordinates = new Vector2D(
-                    Math.sin(0 * 2 * Math.PI / n) * 2 * (j + 2),
-                    Math.cos(0 * 2 * Math.PI / n) * 2 * (j + 2)
+                Math.sin(0 * 2 * Math.PI / n) * 2 * (j + 2),
+                Math.cos(0 * 2 * Math.PI / n) * 2 * (j + 2)
             );
             if (j > 0)
                 result.addEdge(result.createEdge(first.get(j - 1), temp));
@@ -60,8 +60,8 @@ public class CylindricalGrid extends Generator {
                 Vertex temp = result.createVertex();
                 next.add(temp);
                 temp.coordinates = new Vector2D(
-                        Math.sin(i * 2 * Math.PI / n) * 2 * (j + 2),
-                        Math.cos(i * 2 * Math.PI / n) * 2 * (j + 2)
+                    Math.sin(i * 2 * Math.PI / n) * 2 * (j + 2),
+                    Math.cos(i * 2 * Math.PI / n) * 2 * (j + 2)
                 );
                 if (lasttemp != null)
                     if (i % 2 == 0)

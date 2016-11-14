@@ -28,7 +28,7 @@ public class StringAlgorithmParameter extends AlgorithmParameters {
     }
 
     public StringAlgorithmParameter(String label, String initialValue,
-            SyntaxChecker syntaxChecker, String explanation) {
+        SyntaxChecker syntaxChecker, String explanation) {
         this.label = label;
         this.explanation = explanation;
         this.parameter = initialValue;
@@ -38,6 +38,7 @@ public class StringAlgorithmParameter extends AlgorithmParameters {
     /**
      * Returns the result of syntax checking the parameter. Never returns null,
      * even if no syntax checker was given.
+     *
      * @return The result of the syntax check.
      */
     public SyntaxChecker.Result syntaxCheck() {

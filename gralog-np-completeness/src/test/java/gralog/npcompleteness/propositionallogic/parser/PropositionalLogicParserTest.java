@@ -11,6 +11,7 @@ import org.junit.Test;
  *
  */
 public class PropositionalLogicParserTest {
+
     private void parseAndCompare(String toParse) throws Exception {
         parseAndCompare(toParse, toParse);
     }

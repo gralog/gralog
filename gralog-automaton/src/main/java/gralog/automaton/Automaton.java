@@ -14,10 +14,9 @@ import java.util.HashSet;
  *
  */
 @StructureDescription(
-        name = "Automaton",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Automata_theory"
-)
+    name = "Automaton",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Automata_theory")
 @XmlName(name = "automaton")
 public class Automaton extends Structure<State, Transition> {
 
@@ -44,7 +43,7 @@ public class Automaton extends Structure<State, Transition> {
             for (State s : lastiteration)
                 for (Edge e : s.getConnectedEdges())
                     if (e instanceof Transition)
-                        if (((Transition) e).Symbol.equals("")) // epsilon transition
+                        if (((Transition) e).symbol.equals("")) // epsilon transition
                             if (!result.contains((State) e.getTarget()))
                                 currentiteration.add((State) e.getTarget());
 

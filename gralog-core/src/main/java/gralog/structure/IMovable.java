@@ -10,5 +10,6 @@ import gralog.rendering.Vector2D;
  *
  */
 public interface IMovable {
-    public void move(Vector2D coords);
+
+    void move(Vector2D coords);
 }

@@ -7,7 +7,6 @@ package gralog.gralogfx;
 import gralog.gralogfx.views.View;
 import gralog.gralogfx.views.ViewManager;
 
-import java.util.Set;
 import java.util.function.Consumer;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.Node;
@@ -23,11 +22,11 @@ public class ObjectInspector extends AnchorPane {
 
     public void setObject(Object obj, StructurePane structurePane) throws Exception {
         setObject(obj, structurePane, (b) -> {
-          });
+        });
     }
 
     public void setObject(Object obj, StructurePane structurePane,
-            Consumer<Boolean> submitPossible) throws Exception {
+        Consumer<Boolean> submitPossible) throws Exception {
         this.getChildren().clear();
         if (obj == null)
             return;

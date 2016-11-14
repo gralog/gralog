@@ -33,7 +33,7 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
 
     public boolean containsCoordinate(double x, double y) {
         return (getX() - x) * (getX() - x)
-               + (getY() - y) * (getY() - y) < 0.15 * 0.15;
+            + (getY() - y) * (getY() - y) < 0.15 * 0.15;
     }
 
     @Override
@@ -41,8 +41,8 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
         coordinates = coordinates.plus(offset);
     }
 
-    public void snapToGrid(double GridSize) {
-        coordinates = coordinates.snapToGrid(GridSize);
+    public void snapToGrid(double gridSize) {
+        coordinates = coordinates.snapToGrid(gridSize);
     }
 
     public double get(int dimension) {

@@ -16,21 +16,21 @@ import gralog.progresshandler.ProgressHandler;
 public abstract class JGraphTAlgorithm extends Algorithm {
 
     public abstract Object jGraphTRun(
-            org.jgrapht.Graph<gralog.structure.Vertex, org.jgrapht.graph.DefaultEdge> g,
-            AlgorithmParameters ap, Set<Object> selection,
-            ProgressHandler onprogress) throws Exception;
+        org.jgrapht.Graph<gralog.structure.Vertex, org.jgrapht.graph.DefaultEdge> g,
+        AlgorithmParameters ap, Set<Object> selection,
+        ProgressHandler onprogress) throws Exception;
 
     public Object run(gralog.structure.DirectedGraph s, AlgorithmParameters ap,
-            Set<Object> selection, ProgressHandler onprogress) throws Exception {
+        Set<Object> selection, ProgressHandler onprogress) throws Exception {
         org.jgrapht.DirectedGraph<gralog.structure.Vertex, org.jgrapht.graph.DefaultEdge> jgraph
-                = new org.jgrapht.graph.SimpleDirectedGraph<>(org.jgrapht.graph.DefaultEdge.class);
+            = new org.jgrapht.graph.SimpleDirectedGraph<>(org.jgrapht.graph.DefaultEdge.class);
 
-        Set<gralog.structure.Vertex> Vs = s.getVertices();
-        for (gralog.structure.Vertex v : Vs)
+        Set<gralog.structure.Vertex> V = s.getVertices();
+        for (gralog.structure.Vertex v : V)
             jgraph.addVertex(v);
 
-        Set<gralog.structure.Edge> Es = s.getEdges();
-        for (gralog.structure.Edge e : Es)
+        Set<gralog.structure.Edge> E = s.getEdges();
+        for (gralog.structure.Edge e : E)
             jgraph.addEdge(e.getSource(), e.getTarget());
 
         return jGraphTRun(jgraph, ap, selection, onprogress);

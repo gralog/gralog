@@ -34,14 +34,14 @@ public class StronglyConnectedComponentsTest {
         StronglyConnectedComponents.tarjanStrongComponents(structure, componentOfVertex, verticesInComponent);
         assertSame("Number of components", verticesInComponent.size(), 2);
         assertThat("First component",
-                   verticesInComponent.get(componentOfVertex.get(w)),
-                   equalsVertexSet(Arrays.asList(w)));
+            verticesInComponent.get(componentOfVertex.get(w)),
+            equalsVertexSet(Arrays.asList(w)));
         assertThat("Second component",
-                   verticesInComponent.get(componentOfVertex.get(v)),
-                   equalsVertexSet(Arrays.asList(v)));
+            verticesInComponent.get(componentOfVertex.get(v)),
+            equalsVertexSet(Arrays.asList(v)));
         assertNotEquals("Components of v and w",
-                        componentOfVertex.get(v),
-                        componentOfVertex.get(w));
+            componentOfVertex.get(v),
+            componentOfVertex.get(w));
     }
 
     @Test
@@ -57,8 +57,8 @@ public class StronglyConnectedComponentsTest {
         StronglyConnectedComponents.tarjanStrongComponents(structure, componentOfVertex, verticesInComponent);
         assertSame("Number of components", verticesInComponent.size(), 1);
         assertThat("First component",
-                   verticesInComponent.get(0),
-                   equalsVertexSet(structure.getVertices()));
+            verticesInComponent.get(0),
+            equalsVertexSet(structure.getVertices()));
         assertEquals("Components of v and w", componentOfVertex.get(v), componentOfVertex.get(w));
         assertEquals("Components of v", componentOfVertex.get(v), new Integer(0));
     }
@@ -75,14 +75,14 @@ public class StronglyConnectedComponentsTest {
         StronglyConnectedComponents.tarjanStrongComponents(structure, componentOfVertex, verticesInComponent);
         assertSame("Number of components", verticesInComponent.size(), 2);
         assertThat("First component",
-                   verticesInComponent.get(componentOfVertex.get(w)),
-                   equalsVertexSet(Arrays.asList(w)));
+            verticesInComponent.get(componentOfVertex.get(w)),
+            equalsVertexSet(Arrays.asList(w)));
         assertThat("Second component",
-                   verticesInComponent.get(componentOfVertex.get(v)),
-                   equalsVertexSet(Arrays.asList(v)));
+            verticesInComponent.get(componentOfVertex.get(v)),
+            equalsVertexSet(Arrays.asList(v)));
         assertNotEquals("Components of v and w",
-                        componentOfVertex.get(v),
-                        componentOfVertex.get(w));
+            componentOfVertex.get(v),
+            componentOfVertex.get(w));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class StronglyConnectedComponentsTest {
         StronglyConnectedComponents.tarjanStrongComponents(structure, componentOfVertex, verticesInComponent);
         assertSame("Number of components", verticesInComponent.size(), 1);
         assertThat("First component",
-                   verticesInComponent.get(0),
-                   equalsVertexSet(structure.getVertices()));
+            verticesInComponent.get(0),
+            equalsVertexSet(structure.getVertices()));
     }
 }

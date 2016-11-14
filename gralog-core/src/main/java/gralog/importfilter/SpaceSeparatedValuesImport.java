@@ -8,11 +8,10 @@ package gralog.importfilter;
  *
  */
 @ImportFilterDescription(
-        name = "Space Separated Values",
-        text = "",
-        url = "https://reference.wolfram.com/language/ref/format/TSV.html",
-        fileExtension = "ssv"
-)
+    name = "Space Separated Values",
+    text = "",
+    url = "https://reference.wolfram.com/language/ref/format/TSV.html",
+    fileExtension = "ssv")
 public class SpaceSeparatedValuesImport extends CommaSeparatedValuesImport {
 
     public SpaceSeparatedValuesImport() {
