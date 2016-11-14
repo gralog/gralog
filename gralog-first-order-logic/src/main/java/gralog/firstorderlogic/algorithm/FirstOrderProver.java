@@ -34,19 +34,9 @@ public class FirstOrderProver extends Algorithm {
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
         ProgressHandler onprogress) throws Exception {
         FirstOrderProverParameters sp = (FirstOrderProverParameters) (p);
-
         Preferences.setString(this.getClass(), "formula", sp.parameter);
 
-        Set<Vertex> V = s.getVertices();
-        int i = 0;
-        for (Vertex v : V) {
-            v.label = String.valueOf(i);
-            i++;
-        }
         onprogress.onProgress(s);
-
-        if (V.isEmpty())
-            return "Please input a graph";
 
         FirstOrderFormula phi;
         try {
@@ -55,13 +45,8 @@ public class FirstOrderProver extends Algorithm {
             return ex.getMessage();
         }
 
-        HashMap<String, Vertex> varassign = new HashMap<>();
-
-        //FOQueryResult result=new FOQueryResult();
-        Bag rootBag = phi.evaluateProver(s, varassign, onprogress);
-
+        Bag rootBag = phi.evaluateProver(s, new HashMap<>(), onprogress);
         rootBag.caption = phi.toString();
-
         return rootBag;
     }
 }
