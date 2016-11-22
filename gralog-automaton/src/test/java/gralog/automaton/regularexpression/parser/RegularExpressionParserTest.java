@@ -4,8 +4,7 @@
  */
 package gralog.automaton.regularexpression.parser;
 
-import gralog.algorithm.ParseError;
-import static org.junit.Assert.assertEquals;
+import gralog.parser.ParserTestHelper;
 import org.junit.Test;
 
 /**
@@ -13,27 +12,21 @@ import org.junit.Test;
  */
 public class RegularExpressionParserTest {
 
-    private void parseAndCompare(String toParse) throws Exception {
-        parseAndCompare(toParse, toParse);
-    }
-
-    private void parseAndCompare(String toParse, String result) throws Exception {
-        assertEquals(result, RegularExpressionParser.parseString(toParse).toString());
-    }
+    private final ParserTestHelper p = new ParserTestHelper(RegularExpressionParser::parseString);
 
     /**
      * Test that parsing a formula and printing it produces the same result.
      */
     @Test
     public void testParse() throws Exception {
-        parseAndCompare("a");
-        parseAndCompare("a*");
-        parseAndCompare("a | b");
+        p.parseAndCompare("a");
+        p.parseAndCompare("a*");
+        p.parseAndCompare("a | b");
 
-        parseAndCompare("abc");
-        parseAndCompare("abc*");
-        parseAndCompare("ab | cd | ef");
-        parseAndCompare("ab + cd + ef", "ab | cd | ef");
+        p.parseAndCompare("abc");
+        p.parseAndCompare("abc*");
+        p.parseAndCompare("ab | cd | ef");
+        p.parseAndCompare("ab + cd + ef", "ab | cd | ef");
     }
 
     /**
@@ -41,17 +34,8 @@ public class RegularExpressionParserTest {
      */
     @Test
     public void testPrettyPrinting() throws Exception {
-        parseAndCompare("(ab)(c*)", "abc*");
-        parseAndCompare("((ab) | (cd)) | (ef)", "ab | cd | ef");
-    }
-
-    private void parseAndFail(String toParse) throws Exception {
-        try {
-            RegularExpressionParser.parseString(toParse);
-        } catch (ParseError e) {
-            return; // Everything is fine, this is what we expect.
-        }
-        throw new Exception("Parsing should have failed on: " + toParse);
+        p.parseAndCompare("(ab)(c*)", "abc*");
+        p.parseAndCompare("((ab) | (cd)) | (ef)", "ab | cd | ef");
     }
 
     /**
@@ -59,11 +43,11 @@ public class RegularExpressionParserTest {
      */
     @Test
     public void testParseFails() throws Exception {
-        parseAndFail("");
-        parseAndFail("*");
-        parseAndFail("|");
-        parseAndFail("a |");
-        parseAndFail("| b");
-        parseAndFail("a**");
+        p.parseAndFail("");
+        p.parseAndFail("*");
+        p.parseAndFail("|");
+        p.parseAndFail("a |");
+        p.parseAndFail("| b");
+        p.parseAndFail("a**");
     }
 }

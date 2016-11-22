@@ -4,9 +4,9 @@
  */
 package gralog.firstorderlogic.logic.firstorder.formula;
 
-import gralog.algorithm.ParseError;
 import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 import gralog.structure.Vertex;
+import gralog.parser.ParserTestHelper;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import org.junit.Test;
@@ -16,6 +16,9 @@ import static org.junit.Assert.*;
  *
  */
 public class FirstOrderFormulaTest {
+
+    private final ParserTestHelper p = new ParserTestHelper(FirstOrderParser::parseString);
+    private final FirstOrderFormula relation;
 
     public FirstOrderFormulaTest() {
         ArrayList<String> params = new ArrayList<>();
@@ -89,56 +92,48 @@ public class FirstOrderFormulaTest {
         assertEquals("E(x,y) ∧ ∀x. E(x,y)", (new FirstOrderAnd(relation, new FirstOrderForall("x", relation))).toString());
     }
 
-    private void parseAndCompare(String toParse) throws Exception {
-        parseAndCompare(toParse, toParse);
-    }
-
-    private void parseAndCompare(String toParse, String result) throws Exception {
-        assertEquals(result, FirstOrderParser.parseString(toParse).toString());
-    }
-
     /**
      * Test that parsing a formula and printing it produces the same (or
      * equivalent) result.
      */
     @Test
     public void testParse() throws Exception {
-        parseAndCompare("¬E(x,y)");
+        p.parseAndCompare("¬E(x,y)");
         // Check that ∧ and ∨ are left-associative.
-        parseAndCompare("E(x,y) ∧ E(y,x) ∧ E(z,z)");
-        parseAndCompare("E(x,y) ∨ E(y,x) ∨ E(z,z)");
-        parseAndCompare("(E(x,y) ∧ E(y,x)) ∧ E(z,z)", "E(x,y) ∧ E(y,x) ∧ E(z,z)");
-        parseAndCompare("(E(x,y) ∨ E(y,x)) ∨ E(z,z)", "E(x,y) ∨ E(y,x) ∨ E(z,z)");
+        p.parseAndCompare("E(x,y) ∧ E(y,x) ∧ E(z,z)");
+        p.parseAndCompare("E(x,y) ∨ E(y,x) ∨ E(z,z)");
+        p.parseAndCompare("(E(x,y) ∧ E(y,x)) ∧ E(z,z)", "E(x,y) ∧ E(y,x) ∧ E(z,z)");
+        p.parseAndCompare("(E(x,y) ∨ E(y,x)) ∨ E(z,z)", "E(x,y) ∨ E(y,x) ∨ E(z,z)");
         // Check overriding the left-associativity with parentheses.
-        parseAndCompare("E(x,y) ∧ (E(y,x) ∧ E(z,z))");
-        parseAndCompare("E(x,y) ∨ (E(y,x) ∨ E(z,z))");
+        p.parseAndCompare("E(x,y) ∧ (E(y,x) ∧ E(z,z))");
+        p.parseAndCompare("E(x,y) ∨ (E(y,x) ∨ E(z,z))");
 
         // Check quantifiers.
-        parseAndCompare("∀x. ∃y. E(x,y)");
-        parseAndCompare("E(x,y) ∧ ∃y. E(y,y)");
-        parseAndCompare("E(x,y) ∨ ∃y. E(y,y)");
-        parseAndCompare("E(x,y) ∨ (∀x. ∃y. E(y,y) ∧ E(z,z)) ∨ E(x,x)");
-        parseAndCompare("E(x,y) ∧ E(x,y) ∨ ∃y. E(y,y)");
-        parseAndCompare("E(x,y) ∨ E(x,y) ∧ ∃y. E(y,y)");
-        parseAndCompare("∀x.∃y.E(x,y)", "∀x. ∃y. E(x,y)");
+        p.parseAndCompare("∀x. ∃y. E(x,y)");
+        p.parseAndCompare("E(x,y) ∧ ∃y. E(y,y)");
+        p.parseAndCompare("E(x,y) ∨ ∃y. E(y,y)");
+        p.parseAndCompare("E(x,y) ∨ (∀x. ∃y. E(y,y) ∧ E(z,z)) ∨ E(x,x)");
+        p.parseAndCompare("E(x,y) ∧ E(x,y) ∨ ∃y. E(y,y)");
+        p.parseAndCompare("E(x,y) ∨ E(x,y) ∧ ∃y. E(y,y)");
+        p.parseAndCompare("∀x.∃y.E(x,y)", "∀x. ∃y. E(x,y)");
         // Check that the dot after the quantifiers is optional.
-        parseAndCompare("∀x∃y E(x,y)", "∀x. ∃y. E(x,y)");
+        p.parseAndCompare("∀x∃y E(x,y)", "∀x. ∃y. E(x,y)");
         // Check that quantifiers go as far as possible.
-        parseAndCompare("∀x. E(x,y) ∧ E(x,y)");
-        parseAndCompare("∀x. E(x,y) ∨ E(x,y)");
-        parseAndCompare("∀x. (E(x,x) ∧ E(y,y))", "∀x. E(x,x) ∧ E(y,y)");
-        parseAndCompare("(∀x. E(x,x)) ∧ E(y,y)", "(∀x. E(x,x)) ∧ E(y,y)");
-        parseAndCompare("∀x. ¬E(x,y) ∨ E(x,y)");
-        parseAndCompare("(∀x. ¬E(x,y)) ∨ E(x,y)");
-        parseAndCompare("∀x. ¬(E(x,y) ∨ E(x,y))");
-        parseAndCompare("∀x. (¬E(x,y) ∨ E(x,y))", "∀x. ¬E(x,y) ∨ E(x,y)");
+        p.parseAndCompare("∀x. E(x,y) ∧ E(x,y)");
+        p.parseAndCompare("∀x. E(x,y) ∨ E(x,y)");
+        p.parseAndCompare("∀x. (E(x,x) ∧ E(y,y))", "∀x. E(x,x) ∧ E(y,y)");
+        p.parseAndCompare("(∀x. E(x,x)) ∧ E(y,y)", "(∀x. E(x,x)) ∧ E(y,y)");
+        p.parseAndCompare("∀x. ¬E(x,y) ∨ E(x,y)");
+        p.parseAndCompare("(∀x. ¬E(x,y)) ∨ E(x,y)");
+        p.parseAndCompare("∀x. ¬(E(x,y) ∨ E(x,y))");
+        p.parseAndCompare("∀x. (¬E(x,y) ∨ E(x,y))", "∀x. ¬E(x,y) ∨ E(x,y)");
 
         // Check negations with quantifiers.
-        parseAndCompare("¬∀x¬∃y¬E(x,x) ∧ E(y,y)", "¬∀x. ¬∃y. ¬E(x,x) ∧ E(y,y)");
-        parseAndCompare("¬∀x¬∃y¬E(x,x) ∧ E(y,y)", "¬∀x. ¬∃y. ¬E(x,x) ∧ E(y,y)");
+        p.parseAndCompare("¬∀x¬∃y¬E(x,x) ∧ E(y,y)", "¬∀x. ¬∃y. ¬E(x,x) ∧ E(y,y)");
+        p.parseAndCompare("¬∀x¬∃y¬E(x,x) ∧ E(y,y)", "¬∀x. ¬∃y. ¬E(x,x) ∧ E(y,y)");
 
         // Test excessive parentheses.
-        parseAndCompare("((∀x. ((E(x,y)))))", "∀x. E(x,y)");
+        p.parseAndCompare("((∀x. ((E(x,y)))))", "∀x. E(x,y)");
     }
 
     /**
@@ -147,28 +142,19 @@ public class FirstOrderFormulaTest {
     @Test
     public void testParseAlternateNotation() throws Exception {
         // LaTeX notation
-        parseAndCompare("\\neg E(x,y)", "¬E(x,y)");
-        parseAndCompare("E(x,x) \\vee E(y,y)", "E(x,x) ∨ E(y,y)");
-        parseAndCompare("E(x,x) \\wedge E(y,y)", "E(x,x) ∧ E(y,y)");
-        parseAndCompare("\\forall x. E(x,y)", "∀x. E(x,y)");
-        parseAndCompare("\\exists x. E(x,y)", "∃x. E(x,y)");
+        p.parseAndCompare("\\neg E(x,y)", "¬E(x,y)");
+        p.parseAndCompare("E(x,x) \\vee E(y,y)", "E(x,x) ∨ E(y,y)");
+        p.parseAndCompare("E(x,x) \\wedge E(y,y)", "E(x,x) ∧ E(y,y)");
+        p.parseAndCompare("\\forall x. E(x,y)", "∀x. E(x,y)");
+        p.parseAndCompare("\\exists x. E(x,y)", "∃x. E(x,y)");
 
         // ASCII notation
-        parseAndCompare("-E(x,y)", "¬E(x,y)");
-        parseAndCompare("~E(x,y)", "¬E(x,y)");
-        parseAndCompare("E(x,x) + E(y,y)", "E(x,x) ∨ E(y,y)");
-        parseAndCompare("E(x,x) * E(y,y)", "E(x,x) ∧ E(y,y)");
-        parseAndCompare("!x. E(x,y)", "∀x. E(x,y)");
-        parseAndCompare("?x. E(x,y)", "∃x. E(x,y)");
-    }
-
-    private void parseAndFail(String toParse) throws Exception {
-        try {
-            FirstOrderParser.parseString(toParse);
-        } catch (ParseError e) {
-            return; // Everything is fine, this is what we expect.
-        }
-        throw new Exception("Parsing should have failed on: " + toParse);
+        p.parseAndCompare("-E(x,y)", "¬E(x,y)");
+        p.parseAndCompare("~E(x,y)", "¬E(x,y)");
+        p.parseAndCompare("E(x,x) + E(y,y)", "E(x,x) ∨ E(y,y)");
+        p.parseAndCompare("E(x,x) * E(y,y)", "E(x,x) ∧ E(y,y)");
+        p.parseAndCompare("!x. E(x,y)", "∀x. E(x,y)");
+        p.parseAndCompare("?x. E(x,y)", "∃x. E(x,y)");
     }
 
     /**
@@ -176,16 +162,14 @@ public class FirstOrderFormulaTest {
      */
     @Test
     public void testParseFails() throws Exception {
-        parseAndFail("E(x,y) ∧∧ E(x,y)");
-        parseAndFail("E(x,y) ∨∨ E(x,y)");
-        parseAndFail("E(x,y) !∧ E(x,y)");
-        parseAndFail("∧ E(x,y)");
-        parseAndFail("∨ E(x,y)");
-        parseAndFail("∀ E(x,y)");
-        parseAndFail("∀∀x. E(x,y)");
-        parseAndFail("(E(x,y)");
-        parseAndFail("E(x,y))");
+        p.parseAndFail("E(x,y) ∧∧ E(x,y)");
+        p.parseAndFail("E(x,y) ∨∨ E(x,y)");
+        p.parseAndFail("E(x,y) !∧ E(x,y)");
+        p.parseAndFail("∧ E(x,y)");
+        p.parseAndFail("∨ E(x,y)");
+        p.parseAndFail("∀ E(x,y)");
+        p.parseAndFail("∀∀x. E(x,y)");
+        p.parseAndFail("(E(x,y)");
+        p.parseAndFail("E(x,y))");
     }
-
-    private final FirstOrderFormula relation;
 }

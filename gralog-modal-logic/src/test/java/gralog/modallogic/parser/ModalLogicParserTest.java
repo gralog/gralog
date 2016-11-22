@@ -4,21 +4,15 @@
  */
 package gralog.modallogic.parser;
 
+import gralog.parser.ParserTestHelper;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
  */
 public class ModalLogicParserTest {
 
-    private void parseAndCompare(String toParse) throws Exception {
-        parseAndCompare(toParse, toParse);
-    }
-
-    private void parseAndCompare(String toParse, String result) throws Exception {
-        assertEquals(result, ModalLogicParser.parseString(toParse).toString());
-    }
+    private final ParserTestHelper p = new ParserTestHelper(ModalLogicParser::parseString);
 
     /**
      * Test that parsing a formula and printing it produces the same (or
@@ -26,34 +20,34 @@ public class ModalLogicParserTest {
      */
     @Test
     public void testParse() throws Exception {
-        parseAndCompare("abc");
-        parseAndCompare("P ∧ Q");
-        parseAndCompare("P ∨ Q");
-        parseAndCompare("P ∧ Q ∨ R");
-        parseAndCompare("(P ∧ Q) ∨ R", "P ∧ Q ∨ R");
-        parseAndCompare("P ∧ (Q ∨ R)");
+        p.parseAndCompare("abc");
+        p.parseAndCompare("P ∧ Q");
+        p.parseAndCompare("P ∨ Q");
+        p.parseAndCompare("P ∧ Q ∨ R");
+        p.parseAndCompare("(P ∧ Q) ∨ R", "P ∧ Q ∨ R");
+        p.parseAndCompare("P ∧ (Q ∨ R)");
 
         // Negation
-        parseAndCompare("¬P");
-        parseAndCompare("¬P ∧ Q");
-        parseAndCompare("(¬P) ∧ Q", "¬P ∧ Q");
-        parseAndCompare("¬(P ∧ Q)");
-        parseAndCompare("¬¬P ∨ Q");
+        p.parseAndCompare("¬P");
+        p.parseAndCompare("¬P ∧ Q");
+        p.parseAndCompare("(¬P) ∧ Q", "¬P ∧ Q");
+        p.parseAndCompare("¬(P ∧ Q)");
+        p.parseAndCompare("¬¬P ∨ Q");
 
         // Box and diamond
-        parseAndCompare("□P");
-        parseAndCompare("□P ∧ Q");
-        parseAndCompare("(□P) ∧ Q", "□P ∧ Q");
-        parseAndCompare("□(P ∧ Q)");
-        parseAndCompare("□□P ∨ Q");
-        parseAndCompare("[abc]P");
+        p.parseAndCompare("□P");
+        p.parseAndCompare("□P ∧ Q");
+        p.parseAndCompare("(□P) ∧ Q", "□P ∧ Q");
+        p.parseAndCompare("□(P ∧ Q)");
+        p.parseAndCompare("□□P ∨ Q");
+        p.parseAndCompare("[abc]P");
 
-        parseAndCompare("◊P");
-        parseAndCompare("◊P ∧ Q");
-        parseAndCompare("(◊P) ∧ Q", "◊P ∧ Q");
-        parseAndCompare("◊(P ∧ Q)");
-        parseAndCompare("◊◊P ∨ Q");
-        parseAndCompare("<abc>P");
+        p.parseAndCompare("◊P");
+        p.parseAndCompare("◊P ∧ Q");
+        p.parseAndCompare("(◊P) ∧ Q", "◊P ∧ Q");
+        p.parseAndCompare("◊(P ∧ Q)");
+        p.parseAndCompare("◊◊P ∨ Q");
+        p.parseAndCompare("<abc>P");
     }
 
     /**
@@ -62,18 +56,18 @@ public class ModalLogicParserTest {
     @Test
     public void testParseAlternateNotation() throws Exception {
         // LaTeX notation
-        parseAndCompare("\\neg P", "¬P");
-        parseAndCompare("P \\vee Q", "P ∨ Q");
-        parseAndCompare("P \\wedge Q", "P ∧ Q");
-        parseAndCompare("\\diamond P", "◊P");
-        parseAndCompare("\\box P", "□P");
+        p.parseAndCompare("\\neg P", "¬P");
+        p.parseAndCompare("P \\vee Q", "P ∨ Q");
+        p.parseAndCompare("P \\wedge Q", "P ∧ Q");
+        p.parseAndCompare("\\diamond P", "◊P");
+        p.parseAndCompare("\\box P", "□P");
 
         // ASCII notation
-        parseAndCompare("-P", "¬P");
-        parseAndCompare("~P", "¬P");
-        parseAndCompare("P + Q", "P ∨ Q");
-        parseAndCompare("P * Q", "P ∧ Q");
-        parseAndCompare("<>P", "◊P");
-        parseAndCompare("[]P", "□P");
+        p.parseAndCompare("-P", "¬P");
+        p.parseAndCompare("~P", "¬P");
+        p.parseAndCompare("P + Q", "P ∨ Q");
+        p.parseAndCompare("P * Q", "P ∧ Q");
+        p.parseAndCompare("<>P", "◊P");
+        p.parseAndCompare("[]P", "□P");
     }
 }

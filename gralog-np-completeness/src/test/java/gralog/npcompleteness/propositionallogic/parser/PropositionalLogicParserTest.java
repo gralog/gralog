@@ -4,7 +4,7 @@
  */
 package gralog.npcompleteness.propositionallogic.parser;
 
-import static org.junit.Assert.assertEquals;
+import gralog.parser.ParserTestHelper;
 import org.junit.Test;
 
 /**
@@ -12,13 +12,7 @@ import org.junit.Test;
  */
 public class PropositionalLogicParserTest {
 
-    private void parseAndCompare(String toParse) throws Exception {
-        parseAndCompare(toParse, toParse);
-    }
-
-    private void parseAndCompare(String toParse, String result) throws Exception {
-        assertEquals(result, PropositionalLogicParser.parseString(toParse).toString());
-    }
+    private final ParserTestHelper p = new ParserTestHelper(PropositionalLogicParser::parseString);
 
     /**
      * Test that parsing a formula and printing it produces the same (or
@@ -26,20 +20,20 @@ public class PropositionalLogicParserTest {
      */
     @Test
     public void testParse() throws Exception {
-        parseAndCompare("P");
-        parseAndCompare("¬P");
-        parseAndCompare("P ∧ Q");
-        parseAndCompare("P ∨ Q");
-        parseAndCompare("P ∧ Q ∨ R");
-        parseAndCompare("P ∨ Q ∧ R");
-        parseAndCompare("P ∧ (Q ∨ R)");
-        parseAndCompare("(P ∨ Q) ∧ R");
-        parseAndCompare("¬P ∧ Q ∧ R");
-        parseAndCompare("¬P ∧ (Q ∧ R)");
-        parseAndCompare("((¬P) ∧ Q) ∧ R", "¬P ∧ Q ∧ R");
-        parseAndCompare("¬P ∨ Q ∨ R");
-        parseAndCompare("¬P ∨ (Q ∨ R)");
-        parseAndCompare("((¬P) ∨ Q) ∨ R", "¬P ∨ Q ∨ R");
+        p.parseAndCompare("P");
+        p.parseAndCompare("¬P");
+        p.parseAndCompare("P ∧ Q");
+        p.parseAndCompare("P ∨ Q");
+        p.parseAndCompare("P ∧ Q ∨ R");
+        p.parseAndCompare("P ∨ Q ∧ R");
+        p.parseAndCompare("P ∧ (Q ∨ R)");
+        p.parseAndCompare("(P ∨ Q) ∧ R");
+        p.parseAndCompare("¬P ∧ Q ∧ R");
+        p.parseAndCompare("¬P ∧ (Q ∧ R)");
+        p.parseAndCompare("((¬P) ∧ Q) ∧ R", "¬P ∧ Q ∧ R");
+        p.parseAndCompare("¬P ∨ Q ∨ R");
+        p.parseAndCompare("¬P ∨ (Q ∨ R)");
+        p.parseAndCompare("((¬P) ∨ Q) ∨ R", "¬P ∨ Q ∨ R");
     }
 
     /**
@@ -48,14 +42,14 @@ public class PropositionalLogicParserTest {
     @Test
     public void testParseAlternateNotation() throws Exception {
         // LaTeX notation
-        parseAndCompare("\\neg P", "¬P");
-        parseAndCompare("P \\vee Q", "P ∨ Q");
-        parseAndCompare("P \\wedge Q", "P ∧ Q");
+        p.parseAndCompare("\\neg P", "¬P");
+        p.parseAndCompare("P \\vee Q", "P ∨ Q");
+        p.parseAndCompare("P \\wedge Q", "P ∧ Q");
 
         // ASCII notation
-        parseAndCompare("-P", "¬P");
-        parseAndCompare("~P", "¬P");
-        parseAndCompare("P + Q", "P ∨ Q");
-        parseAndCompare("P * Q", "P ∧ Q");
+        p.parseAndCompare("-P", "¬P");
+        p.parseAndCompare("~P", "¬P");
+        p.parseAndCompare("P + Q", "P ∨ Q");
+        p.parseAndCompare("P * Q", "P ∧ Q");
     }
 }
