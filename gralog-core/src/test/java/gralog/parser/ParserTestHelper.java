@@ -18,10 +18,10 @@ public class ParserTestHelper {
         Object parse(String s) throws Exception;
     }
 
-    private final Parser p;
+    private final Parser parser;
 
     public ParserTestHelper(Parser p) {
-        this.p = p;
+        this.parser = p;
     }
 
     public void parseAndCompare(String toParse) throws Exception {
@@ -29,12 +29,12 @@ public class ParserTestHelper {
     }
 
     public void parseAndCompare(String toParse, String result) throws Exception {
-        assertEquals(result, p.parse(toParse).toString());
+        assertEquals(result, parser.parse(toParse).toString());
     }
 
     public void parseAndFail(String toParse) throws Exception {
         try {
-            p.parse(toParse);
+            parser.parse(toParse);
         } catch (ParseError e) {
             return; // Everything is fine, this is what we expect.
         }
