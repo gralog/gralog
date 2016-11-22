@@ -24,6 +24,14 @@ clean.dependsOn(subprojects.clean)
 
 task run
 
+// gralog-core provides some helper classes for the unit tests,
+// so every other subproject depends on this.
+configure(subprojects.findAll {it.name != 'gralog-core'}) {
+  dependencies {
+    testCompile project(':gralog-core').sourceSets.test.output
+  }
+}
+
 subprojects {
   // All subprojects use junit and hamcrest for their tests.
   dependencies {
