@@ -8,6 +8,8 @@ import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
 import gralog.gralogfx.views.GridPaneView;
 import gralog.gralogfx.views.ViewDescription;
+import gralog.structure.Vertex;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import javafx.beans.value.ObservableValue;
@@ -87,8 +89,16 @@ public class BagView extends GridPaneView<Bag> {
             .addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
                 TreeItem selectedItem = (TreeItem) newValue;
                 Bag bag = (Bag) selectedItem.getValue();
+
                 structurePane.clearSelection();
                 structurePane.selectAll(bag.nodes);
+
+                structurePane.clearAnnotations();
+                for (Vertex v : (Set<Vertex>) structurePane.getStructure().getVertices()) {
+                    String assignment = bag.getVertexAssignment(v);
+                    if (!assignment.equals(""))
+                        structurePane.annotate(v, assignment);
+                }
             });
 
         ColumnConstraints columnConstraints = new ColumnConstraints();
@@ -100,5 +110,11 @@ public class BagView extends GridPaneView<Bag> {
         this.getRowConstraints().add(rowConstraints);
 
         this.add(treeView, 0, 0);
+    }
+
+    @Override
+    public void onClose() {
+        structurePane.clearAnnotations();
+        structurePane.clearSelection();
     }
 }
