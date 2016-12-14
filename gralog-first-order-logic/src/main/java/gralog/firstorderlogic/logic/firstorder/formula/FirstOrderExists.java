@@ -85,7 +85,7 @@ public class FirstOrderExists extends FirstOrderFormula {
                 b.nodes.add(v);
                 result = true;
             }
-            t.assignment = variableAssignmentToString(varassign);
+            t.assignment = new HashMap<>(varassign);
             t.caption = subformula1.toString();
             b.childBags.add(t);
         }

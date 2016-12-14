@@ -45,7 +45,7 @@ public abstract class FirstOrderFormula {
     public abstract boolean evaluate(Structure s,
         HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
 
-    protected static String variableAssignmentToString(
+    public static String variableAssignmentToString(
         Map<String, Vertex> assignment) {
         if (assignment.isEmpty())
             return "{ }";

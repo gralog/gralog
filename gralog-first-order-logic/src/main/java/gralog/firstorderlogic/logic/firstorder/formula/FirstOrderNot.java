@@ -43,7 +43,7 @@ public class FirstOrderNot extends FirstOrderFormula {
         ProgressHandler onprogress) throws Exception {
 
         Bag b1 = subformula1.evaluateProver(s, varassign, onprogress);
-        b1.assignment = variableAssignmentToString(varassign);
+        b1.assignment = new HashMap<>(varassign);
         b1.caption = " (" + subformula1.toString() + " )";
 
         Bag b = new Bag();

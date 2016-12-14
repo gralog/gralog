@@ -55,7 +55,7 @@ public class FirstOrderAnd extends FirstOrderFormula {
         b.childBags.add(sep);
 
         Bag b1 = subformula1.evaluateProver(s, varassign, onprogress);
-        b1.assignment = variableAssignmentToString(varassign);
+        b1.assignment = new HashMap<>(varassign);
         b1.caption = subformula1.toString();
         sep.childBags.add(b1);
 

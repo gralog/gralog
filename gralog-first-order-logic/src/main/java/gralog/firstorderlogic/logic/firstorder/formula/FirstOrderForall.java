@@ -84,7 +84,7 @@ public class FirstOrderForall extends FirstOrderFormula {
                 b.nodes.add(v);
             else
                 result = false;
-            t.assignment = variableAssignmentToString(varassign);
+            t.assignment = new HashMap<>(varassign);
             t.caption = subformula1.toString();
             b.childBags.add(t);
         }

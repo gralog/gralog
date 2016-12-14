@@ -4,6 +4,7 @@
  */
 package gralog.firstorderlogic.view;
 
+import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
 import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
 import gralog.gralogfx.views.GridPaneView;
 import gralog.gralogfx.views.ViewDescription;
@@ -55,7 +56,8 @@ public class BagView extends GridPaneView<Bag> {
             if (empty || item == null) {
                 setGraphic(null);
             } else {
-                assignment.setText(item.assignment);
+                assignment.setText(
+                    FirstOrderFormula.variableAssignmentToString(item.assignment));
                 caption.setText(item.caption);
                 caption.setStyle(null);
                 if (item.eval) {
