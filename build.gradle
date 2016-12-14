@@ -236,6 +236,12 @@ run.doLast {
   }
 }
 
+task(debug, dependsOn: copySubprojects, type: JavaExec) {
+    main = '-jar'
+    args new File(rootProject.buildDir, distDir + '/gralog-fx.jar')
+    jvmArgs = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
+}
+
 // Copy subproject test reports to the root so that netbeans (and
 // maybe other tools) can find them.
 subprojects {
