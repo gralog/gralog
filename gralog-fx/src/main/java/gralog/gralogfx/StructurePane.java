@@ -403,6 +403,24 @@ public class StructurePane extends StackPane implements StructureListener {
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
 
+    /**
+     * Annotates the given vertex or edge with the given string. Overrides the
+     * old annotation for this vertex/edge if present.
+     *
+     * @param o A vertex or an edge.
+     * @param annotation The annotation.
+     */
+    public void annotate(Object o, String annotation) {
+        highlights.annotate(o, annotation);
+    }
+
+    /**
+     * Removes all annotations from all vertices and all edges.
+     */
+    public void clearAnnotations() {
+        highlights.clearAnnotations();
+    }
+
     @Override
     public void structureChanged(StructureEvent e) {
         this.requestRedraw();

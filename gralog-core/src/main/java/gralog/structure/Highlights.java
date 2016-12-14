@@ -5,7 +5,9 @@
 package gralog.structure;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,6 +16,7 @@ import java.util.Set;
 public class Highlights {
 
     private final Set<Object> selection = new HashSet<>();
+    private final Map<Object, String> annotations = new HashMap<>();
 
     public void select(Object o) {
         selection.add(o);
@@ -45,5 +48,33 @@ public class Highlights {
      */
     public boolean isSelected(Object o) {
         return selection.contains(o);
+    }
+
+    /**
+     * Annotates the given vertex or edge with the given string. Overrides the
+     * old annotation for this vertex/edge if present.
+     *
+     * @param o A vertex or an edge.
+     * @param annotation The annotation.
+     */
+    public void annotate(Object o, String annotation) {
+        annotations.put(o, annotation);
+    }
+
+    /**
+     * Removes all annotations from all vertices and all edges.
+     */
+    public void clearAnnotations() {
+        annotations.clear();
+    }
+
+    /**
+     * Returns the string annotation for the given vertex or edge.
+     *
+     * @param o A vertex or an edge.
+     * @return The string annotation for the given vertex or edge.
+     */
+    public String getAnnotation(Object o) {
+        return annotations.get(o);
     }
 }

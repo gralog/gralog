@@ -83,6 +83,12 @@ public class Vertex extends XmlMarshallable implements IMovable {
         gc.circle(coordinates, radius, strokeColor);
         gc.circle(coordinates, radius - strokeWidth, fillColor);
         gc.putText(coordinates, label, textHeight, fillColor.inverse());
+
+        String annotation = highlights.getAnnotation(this);
+        if (annotation != null) {
+            gc.putText(coordinates.plus(new Vector2D(0, 1)),
+                annotation, textHeight, GralogColor.RED);
+        }
     }
 
     public void snapToGrid(double gridSize) {
