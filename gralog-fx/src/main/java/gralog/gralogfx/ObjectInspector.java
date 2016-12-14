@@ -16,6 +16,8 @@ import javafx.scene.Node;
  */
 public class ObjectInspector extends AnchorPane {
 
+    private View view;
+
     public ObjectInspector() {
         this.setMinWidth(200.0d);
     }
@@ -31,7 +33,7 @@ public class ObjectInspector extends AnchorPane {
         if (obj == null)
             return;
 
-        View view = ViewManager.instantiateView(obj.getClass());
+        view = ViewManager.instantiateView(obj.getClass());
         if (view == null)
             return;
         if (!(view instanceof Node))
@@ -45,5 +47,13 @@ public class ObjectInspector extends AnchorPane {
         AnchorPane.setRightAnchor((Node) view, 3.0);
         AnchorPane.setBottomAnchor((Node) view, 3.0);
         AnchorPane.setLeftAnchor((Node) view, 3.0);
+    }
+
+    /**
+     * This event handler is called when the stage is about to be closed.
+     */
+    public final void onClose() {
+        if (view != null)
+            view.onClose();
     }
 }

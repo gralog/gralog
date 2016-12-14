@@ -12,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -55,5 +56,7 @@ public class AlgorithmResultStage extends Stage {
 
         this.setScene(scene);
         this.setTitle("Algorithm Result");
+
+        this.addEventHandler(WindowEvent.WINDOW_HIDDEN, (e) -> objectInspector.onClose());
     }
 }

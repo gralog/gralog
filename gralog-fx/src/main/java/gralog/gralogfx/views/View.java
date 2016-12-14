@@ -16,4 +16,6 @@ public interface View<T> {
     void setObject(T obj, Consumer<Boolean> submitPossible);
 
     void setStructurePane(StructurePane structurePane);
+
+    void onClose();
 }

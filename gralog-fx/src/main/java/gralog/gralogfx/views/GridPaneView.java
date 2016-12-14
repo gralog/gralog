@@ -23,4 +23,8 @@ public abstract class GridPaneView<T> extends GridPane implements View<T> {
         if (structurePane != null)
             structurePane.requestRedraw();
     }
+
+    @Override
+    public void onClose() {
+    }
 }

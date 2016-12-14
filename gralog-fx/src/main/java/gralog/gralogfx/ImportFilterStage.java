@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -70,5 +71,7 @@ public class ImportFilterStage extends Stage {
         this.setScene(scene);
         this.setTitle("Import from " + descr.name());
         this.initModality(Modality.APPLICATION_MODAL);
+
+        this.addEventHandler(WindowEvent.WINDOW_HIDDEN, (e) -> objectInspector.onClose());
     }
 }
