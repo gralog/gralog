@@ -10,7 +10,6 @@ import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 
 import java.util.Set;
-import java.util.HashSet;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -49,7 +48,7 @@ public class StructurePane extends StackPane implements StructureListener {
     Structure structure;
     Canvas canvas;
 
-    Set<Object> selection = new HashSet<>();
+    Highlights highlights = new Highlights();
     Set<Object> dragging = null;
     double lastMouseX = -1d;
     double lastMouseY = -1d;
@@ -134,7 +133,7 @@ public class StructurePane extends StackPane implements StructureListener {
             IMovable selected = structure.findObject(lastMouseX, lastMouseY);
             if (selected != null) {
                 select(selected);
-                dragging = selection;
+                dragging = highlights.getSelection();
             }
         });
         canvas.setOnMouseReleased(e -> {
@@ -171,7 +170,7 @@ public class StructurePane extends StackPane implements StructureListener {
             KeyEvent ke = (KeyEvent) e;
             switch (ke.getCode()) {
                 case DELETE:
-                    for (Object o : selection) {
+                    for (Object o : highlights.getSelection()) {
                         if (o instanceof Vertex)
                             structure.removeVertex((Vertex) o);
                         else if (o instanceof Edge)
@@ -237,7 +236,7 @@ public class StructurePane extends StackPane implements StructureListener {
             else if (selectionTemp instanceof Edge) {
                 EdgeIntermediatePoint intermediatepoint = ((Edge) selectionTemp).addIntermediatePoint(lastMouseX, lastMouseY);
                 select(intermediatepoint);
-                dragging = selection;
+                dragging = highlights.getSelection();
             }
 
             this.requestRedraw();
@@ -251,7 +250,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
             Object releasedOver = structure.findObject(lastMouseX, lastMouseY);
             if (releasedOver != null && (releasedOver instanceof Vertex)) {
-                for (Object o : selection) {
+                for (Object o : highlights.getSelection()) {
                     if (!(o instanceof Vertex))
                         continue;
                     Edge edge = structure.createEdge((Vertex) o, (Vertex) releasedOver);
@@ -263,7 +262,7 @@ public class StructurePane extends StackPane implements StructureListener {
         });
         canvas.setOnMouseDragged(e -> {
             MouseEvent me = (MouseEvent) e;
-            if (!selection.isEmpty() && dragging == null) {
+            if (!highlights.isSelectionEmpty() && dragging == null) {
                 this.requestRedraw(me.getX(), me.getY());
             } else {
                 Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
@@ -328,7 +327,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 draw(gc);
 
                 gc.setStroke(Color.BLACK);
-                for (Object o : selection) {
+                for (Object o : highlights.getSelection()) {
                     if (!(o instanceof Vertex))
                         continue;
                     Vertex v = (Vertex) o;
@@ -386,22 +385,21 @@ public class StructurePane extends StackPane implements StructureListener {
 
         // draw the graph
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
-        structure.render(ggc, this.selection);
+        structure.render(ggc, highlights);
     }
 
     public void select(Object obj) {
-        selection.add(obj);
+        highlights.select(obj);
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
 
     public void selectAll(Collection elems) {
-        for (Object o : elems)
-            selection.add(o);
+        highlights.selectAll(elems);
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
 
     public void clearSelection() {
-        selection.clear();
+        highlights.clearSelection();
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
 

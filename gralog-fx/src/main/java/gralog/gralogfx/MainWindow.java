@@ -423,7 +423,7 @@ public class MainWindow extends Application {
         try {
             Set<Object> selection = null;
             if (sender != null) {
-                selection = sender.selection;
+                selection = sender.highlights.getSelection();
                 sender.requestRedraw();
             }
             if (selection != null && selection.size() == 1)
@@ -484,7 +484,7 @@ public class MainWindow extends Application {
                         && !(o instanceof EdgeIntermediatePoint))
                         isSelection = false;
                 if (isSelection) {
-                    structurePane.selection = (Set) algoResult;
+                    structurePane.selectAll((Set) algoResult);
                     structurePane.requestRedraw();
                 }
             } else if (algoResult instanceof String) {
@@ -527,7 +527,9 @@ public class MainWindow extends Application {
             }
 
             // Run
-            AlgorithmThread algoThread = new AlgorithmThread(algo, structure, params, structurePane.selection, new RedrawOnProgress(structurePane, 1d / 60d));
+            AlgorithmThread algoThread = new AlgorithmThread(
+                algo, structure, params, structurePane.highlights.getSelection(),
+                new RedrawOnProgress(structurePane, 1d / 60d));
             algoThread.setOnThreadComplete(t -> Platform.runLater(() -> {
                 algorithmCompleted(structurePane, t);
             }));

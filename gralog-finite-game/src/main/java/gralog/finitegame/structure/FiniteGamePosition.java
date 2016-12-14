@@ -8,7 +8,6 @@ import gralog.structure.*;
 import gralog.plugins.XmlName;
 import gralog.rendering.GralogColor;
 import gralog.rendering.GralogGraphicsContext;
-import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -33,11 +32,11 @@ public class FiniteGamePosition extends Vertex {
     }
 
     @Override
-    public void render(GralogGraphicsContext gc, Set<Object> highlights) {
+    public void render(GralogGraphicsContext gc, Highlights highlights) {
         if (player1Position) {
             super.render(gc, highlights);
         } else {
-            if (highlights != null && highlights.contains(this))
+            if (highlights.isSelected(this))
                 gc.fillRectangle(coordinates.getX() - radius - 0.07, // outer
                     coordinates.getY() - radius - 0.07,
                     coordinates.getX() + radius + 0.07,

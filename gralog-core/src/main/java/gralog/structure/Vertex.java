@@ -76,8 +76,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
         coordinates = coordinates.plus(offset);
     }
 
-    public void render(GralogGraphicsContext gc, Set<Object> highlights) {
-        if (highlights != null && highlights.contains(this))
+    public void render(GralogGraphicsContext gc, Highlights highlights) {
+        if (highlights.isSelected(this))
             gc.circle(coordinates, radius + 0.07, GralogColor.RED);
 
         gc.circle(coordinates, radius, strokeColor);

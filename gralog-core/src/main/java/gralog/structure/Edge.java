@@ -116,7 +116,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         return result;
     }
 
-    public void render(GralogGraphicsContext gc, Set<Object> highlights) {
+    public void render(GralogGraphicsContext gc, Highlights highlights) {
         double fromX = source.coordinates.getX();
         double fromY = source.coordinates.getY();
         double toX = target.coordinates.getX();
@@ -149,7 +149,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         double tempY = fromY;
 
         GralogColor edgeColor = this.color;
-        if (highlights != null && highlights.contains(this))
+        if (highlights.isSelected(this))
             edgeColor = GralogColor.RED;
 
         for (EdgeIntermediatePoint between : intermediatePoints) {
@@ -159,7 +159,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             tempY = between.getY();
             gc.line(fromX, fromY, tempX, tempY, edgeColor, width);
 
-            if (highlights != null && highlights.contains(this))
+            if (highlights.isSelected(this))
                 gc.rectangle(tempX - 0.1, tempY - 0.1, tempX + 0.1, tempY + 0.1, edgeColor, 2.54 / 96);
         }
 

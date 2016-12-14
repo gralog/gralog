@@ -8,7 +8,6 @@ import gralog.plugins.XmlName;
 import gralog.rendering.*;
 import gralog.structure.*;
 
-import java.util.Set;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -64,8 +63,8 @@ public class State extends Vertex {
     }
 
     @Override
-    public void render(GralogGraphicsContext gc, Set<Object> highlights) {
-        if (highlights != null && highlights.contains(this))
+    public void render(GralogGraphicsContext gc, Highlights highlights) {
+        if (highlights.isSelected(this))
             gc.circle(coordinates, radius + 0.07, GralogColor.RED);
 
         gc.circle(coordinates, radius, strokeColor);

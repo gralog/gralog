@@ -52,7 +52,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return Collections.unmodifiableSet(edges);
     }
 
-    public void render(GralogGraphicsContext gc, Set<Object> highlights) {
+    public void render(GralogGraphicsContext gc, Highlights highlights) {
         for (Edge e : edges)
             e.render(gc, highlights);
         for (Vertex v : vertices)
