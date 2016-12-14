@@ -90,6 +90,10 @@ public class StructurePane extends StackPane implements StructureListener {
         setSelectMode();
     }
 
+    public Structure getStructure() {
+        return structure;
+    }
+
     public void requestRedraw() {
         needsRepaintLock.lock();
         try {
