@@ -5,12 +5,16 @@ apply plugin: 'java'
 subprojects {
   repositories { mavenCentral() }
   apply plugin: 'java'
+
+  // Set up the style checker that checks indentation, naming
+  // conventions, etc.
   apply plugin: 'checkstyle'
   checkstyle {
     configFile = rootProject.file('config/checkstyle.xml')
     configProperties = [samedir: rootProject.file('config')]
     toolVersion = '7.2'
   }
+  // Do not check generated files for programming style.
   checkstyleMain {
     exclude '**/parser/*Scanner.java'
     exclude '**/parser/*ScannerToken.java'
@@ -18,9 +22,9 @@ subprojects {
   }
 }
 
-test.dependsOn(subprojects.test)
-
+check.dependsOn(subprojects.check)
 clean.dependsOn(subprojects.clean)
+test.dependsOn(subprojects.test)
 
 task run
 
@@ -205,7 +209,7 @@ task copySubprojects(type: Copy) {
   exclude 'gralog-fx.jar'
 }
 
-// The main projects needs a special configuration: First, we want to
+// The main project needs a special configuration: First, we want to
 // copy it and its configuration directly to the dist directory and
 // not to dist/libs.  Second, we need to fix the class-path for the
 // dependencies of the main project to point to the libs directory.
@@ -237,9 +241,9 @@ run.doLast {
 }
 
 task(debug, dependsOn: copySubprojects, type: JavaExec) {
-    main = '-jar'
-    args new File(rootProject.buildDir, distDir + '/gralog-fx.jar')
-    jvmArgs = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
+  main = '-jar'
+  args new File(rootProject.buildDir, distDir + '/gralog-fx.jar')
+  jvmArgs = ['-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005']
 }
 
 // Copy subproject test reports to the root so that netbeans (and
