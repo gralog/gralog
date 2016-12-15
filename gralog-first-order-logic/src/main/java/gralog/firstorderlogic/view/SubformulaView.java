@@ -5,7 +5,7 @@
 package gralog.firstorderlogic.view;
 
 import gralog.firstorderlogic.formula.FirstOrderFormula;
-import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
+import gralog.firstorderlogic.formula.Subformula;
 import gralog.gralogfx.views.GridPaneView;
 import gralog.gralogfx.views.ViewDescription;
 import gralog.structure.Vertex;
@@ -25,21 +25,20 @@ import javafx.scene.text.Text;
 /**
  *
  */
-@ViewDescription(
-    forClass = gralog.firstorderlogic.prover.TreeDecomposition.Bag.class)
-public class BagView extends GridPaneView<Bag> {
+@ViewDescription(forClass = Subformula.class)
+public class SubformulaView extends GridPaneView<Subformula> {
 
-    protected void fillTreeView(TreeItem node, Bag bag) {
-        node.setValue(bag);
-        for (Bag b : bag.childBags) {
-            TreeItem child = new TreeItem("bag");
+    protected void fillTreeView(TreeItem node, Subformula subformula) {
+        node.setValue(subformula);
+        for (Subformula b : subformula.children) {
+            TreeItem child = new TreeItem();
             node.getChildren().add(child);
             fillTreeView(child, b);
         }
         node.setExpanded(false);
     }
 
-    private static class Cell extends TreeCell<Bag> {
+    private static class Cell extends TreeCell<Subformula> {
 
         private final Text assignment;
         private final Text caption;
@@ -53,7 +52,7 @@ public class BagView extends GridPaneView<Bag> {
         }
 
         @Override
-        protected void updateItem(Bag item, boolean empty) {
+        protected void updateItem(Subformula item, boolean empty) {
             super.updateItem(item, empty);
             if (empty || item == null) {
                 setGraphic(null);
@@ -62,7 +61,7 @@ public class BagView extends GridPaneView<Bag> {
                     FirstOrderFormula.variableAssignmentToString(item.assignment));
                 caption.setText(item.subformula);
                 caption.setStyle(null);
-                if (item.eval) {
+                if (item.value) {
                     caption.setStyle("-fx-fill:green");
                 }
                 setGraphic(hbox);
@@ -71,7 +70,7 @@ public class BagView extends GridPaneView<Bag> {
     }
 
     @Override
-    public void setObject(Bag treedecomp, Consumer<Boolean> submitPossible) {
+    public void setObject(Subformula treedecomp, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
         if (treedecomp == null)
             return;
@@ -88,14 +87,14 @@ public class BagView extends GridPaneView<Bag> {
             .selectedItemProperty()
             .addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
                 TreeItem selectedItem = (TreeItem) newValue;
-                Bag bag = (Bag) selectedItem.getValue();
+                Subformula subformula = (Subformula) selectedItem.getValue();
 
                 structurePane.clearSelection();
-                structurePane.selectAll(bag.nodes);
+                structurePane.selectAll(subformula.validVertices);
 
                 structurePane.clearAnnotations();
                 for (Vertex v : (Set<Vertex>) structurePane.getStructure().getVertices()) {
-                    String assignment = bag.getVertexAssignment(v);
+                    String assignment = subformula.getVertexAssignment(v);
                     if (!assignment.equals(""))
                         structurePane.annotate(v, assignment);
                 }

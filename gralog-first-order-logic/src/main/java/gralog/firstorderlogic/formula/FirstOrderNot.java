@@ -4,8 +4,6 @@
  */
 package gralog.firstorderlogic.formula;
 
-import gralog.firstorderlogic.prover.TreeDecomposition.*;
-
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
@@ -39,16 +37,16 @@ public class FirstOrderNot extends FirstOrderFormula {
     }
 
     @Override
-    public Bag evaluateProver(Structure s, HashMap<String, Vertex> varassign,
+    public Subformula evaluateProver(Structure s, HashMap<String, Vertex> varassign,
         ProgressHandler onprogress) throws Exception {
 
-        Bag b1 = subformula1.evaluateProver(s, varassign, onprogress);
+        Subformula b1 = subformula1.evaluateProver(s, varassign, onprogress);
         b1.assignment = new HashMap<>(varassign);
         b1.subformula = " (" + subformula1.toString() + " )";
 
-        Bag b = new Bag();
-        b.eval = !b1.eval;
-        b.childBags.add(b1);
+        Subformula b = new Subformula();
+        b.value = !b1.value;
+        b.children.add(b1);
         return b;
     }
 

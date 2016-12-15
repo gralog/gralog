@@ -7,7 +7,6 @@ package gralog.firstorderlogic.formula;
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
 import java.util.HashMap;
-import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.finitegame.structure.*;
 import gralog.rendering.Vector2D;
 import java.util.Map;
@@ -31,7 +30,7 @@ public abstract class FirstOrderFormula {
 
     protected static final int X_OFFSET = 9;
 
-    public abstract Bag evaluateProver(Structure s,
+    public abstract Subformula evaluateProver(Structure s,
         HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
 
     public abstract GameGraphResult constructGameGraph(Structure s,

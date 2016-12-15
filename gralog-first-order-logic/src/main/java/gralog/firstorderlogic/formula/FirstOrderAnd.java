@@ -9,7 +9,6 @@ import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashMap;
-import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.rendering.Vector2D;
 
 import java.util.HashSet;
@@ -47,23 +46,23 @@ public class FirstOrderAnd extends FirstOrderFormula {
     }
 
     @Override
-    public Bag evaluateProver(Structure s, HashMap<String, Vertex> varassign,
+    public Subformula evaluateProver(Structure s, HashMap<String, Vertex> varassign,
         ProgressHandler onprogress) throws Exception {
-        Bag b = new Bag();
-        Bag sep = new Bag();
+        Subformula b = new Subformula();
+        Subformula sep = new Subformula();
         sep.subformula = "AND";
-        b.childBags.add(sep);
+        b.children.add(sep);
 
-        Bag b1 = subformula1.evaluateProver(s, varassign, onprogress);
+        Subformula b1 = subformula1.evaluateProver(s, varassign, onprogress);
         b1.assignment = new HashMap<>(varassign);
         b1.subformula = subformula1.toString();
-        sep.childBags.add(b1);
+        sep.children.add(b1);
 
-        Bag b2 = subformula2.evaluateProver(s, varassign, onprogress);
+        Subformula b2 = subformula2.evaluateProver(s, varassign, onprogress);
         b2.assignment = b1.assignment;
         b2.subformula = subformula2.toString();
-        sep.childBags.add(b2);
-        b.eval = (b1.eval && b2.eval);
+        sep.children.add(b2);
+        b.value = (b1.value && b2.value);
         return b;
     }
 

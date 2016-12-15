@@ -5,7 +5,6 @@
 package gralog.firstorderlogic.formula;
 
 import gralog.finitegame.structure.*;
-import gralog.firstorderlogic.prover.TreeDecomposition.*;
 
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Structure;
@@ -71,25 +70,25 @@ public class FirstOrderExists extends FirstOrderFormula {
     }
 
     @Override
-    public Bag evaluateProver(Structure s, HashMap<String, Vertex> varassign,
+    public Subformula evaluateProver(Structure s, HashMap<String, Vertex> varassign,
         ProgressHandler onprogress) throws Exception {
         Boolean result = false;
         Vertex oldvalue = varassign.get(variable);
-        Bag b = new Bag();
+        Subformula b = new Subformula();
         Set<Vertex> V = s.getVertices();
 
         for (Vertex v : V) {
             varassign.put(variable, v);
-            Bag t = subformula1.evaluateProver(s, varassign, onprogress);
-            if (t.eval) {
-                b.nodes.add(v);
+            Subformula t = subformula1.evaluateProver(s, varassign, onprogress);
+            if (t.value) {
+                b.validVertices.add(v);
                 result = true;
             }
             t.assignment = new HashMap<>(varassign);
             t.subformula = subformula1.toString();
-            b.childBags.add(t);
+            b.children.add(t);
         }
-        b.eval = result;
+        b.value = result;
         varassign.remove(variable);
         if (oldvalue != null)
             varassign.put(variable, oldvalue);

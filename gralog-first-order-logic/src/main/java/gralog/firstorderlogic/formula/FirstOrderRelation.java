@@ -4,8 +4,6 @@
  */
 package gralog.firstorderlogic.formula;
 
-import gralog.firstorderlogic.prover.TreeDecomposition.*;
-
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
 import java.util.HashMap;
@@ -72,10 +70,10 @@ public class FirstOrderRelation extends FirstOrderFormula {
     }
 
     @Override
-    public Bag evaluateProver(Structure s, HashMap<String, Vertex> varassign,
+    public Subformula evaluateProver(Structure s, HashMap<String, Vertex> varassign,
         ProgressHandler onprogress) throws Exception {
-        Bag b = new Bag();
-        b.eval = evaluate(s, varassign, onprogress);
+        Subformula b = new Subformula();
+        b.value = evaluate(s, varassign, onprogress);
         return b;
     }
 

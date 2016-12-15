@@ -5,10 +5,10 @@
 package gralog.firstorderlogic.algorithm;
 
 import gralog.firstorderlogic.formula.FirstOrderFormula;
+import gralog.firstorderlogic.formula.Subformula;
 import gralog.firstorderlogic.parser.FirstOrderParser;
 
 import gralog.algorithm.*;
-import gralog.firstorderlogic.prover.TreeDecomposition.*;
 import gralog.gralogfx.RecentQueries;
 import gralog.structure.*;
 import gralog.progresshandler.*;
@@ -48,8 +48,8 @@ public class FirstOrderProver extends Algorithm {
             return ex.getMessage();
         }
 
-        Bag rootBag = phi.evaluateProver(s, new HashMap<>(), onprogress);
-        rootBag.subformula = phi.toString();
-        return rootBag;
+        Subformula root = phi.evaluateProver(s, new HashMap<>(), onprogress);
+        root.subformula = phi.toString();
+        return root;
     }
 }
