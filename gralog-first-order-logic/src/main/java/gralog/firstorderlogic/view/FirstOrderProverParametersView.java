@@ -13,11 +13,11 @@ import gralog.gralogfx.UIConstants;
 import gralog.gralogfx.views.*;
 import java.util.function.Consumer;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.geometry.VPos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -53,19 +53,15 @@ public class FirstOrderProverParametersView
         formulaField.promptTextProperty().set("Please enter a first-order formula");
         formulaField.setPrefWidth(1000);
 
-        TreeItem root = new TreeItem();
-        for (String query : RecentQueries.get(FirstOrderProver.class))
-            root.getChildren().add(new TreeItem(query));
-        root.setExpanded(true);
-        TreeView recentQueriesList = new TreeView(root);
-        recentQueriesList.setShowRoot(false);
+        ListView<String> recentQueriesList = new ListView<>(
+            FXCollections.observableList(RecentQueries.get(FirstOrderProver.class)));
         setConstraints(recentQueriesList, 1, 1);
 
         // Update the formula when the user selects one of the recent queries.
         recentQueriesList.getSelectionModel()
             .selectedItemProperty()
-            .addListener((ObservableValue observable, Object oldValue, Object newValue)
-                -> formulaField.setText((String) ((TreeItem) newValue).getValue())
+            .addListener((ObservableValue<? extends String> observable, String oldValue, String newValue)
+                -> formulaField.setText(newValue)
             );
 
         Text hint = new Text();
