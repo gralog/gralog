@@ -48,6 +48,10 @@ public class FirstOrderProverParametersView
         recentQueriesLabel.setMinWidth(USE_PREF_SIZE);
         setConstraints(recentQueriesLabel, 0, 1);
 
+        Label hintLabel = new Label("Syntax:");
+        hintLabel.setMinWidth(USE_PREF_SIZE);
+        setConstraints(hintLabel, 0, 2);
+
         TextField formulaField = new TextField(params.parameter);
         setConstraints(formulaField, 1, 0);
         formulaField.promptTextProperty().set("Please enter a first-order formula");
@@ -69,7 +73,7 @@ public class FirstOrderProverParametersView
 
         HBox hints = new HBox(new Text(FirstOrderSyntaxChecker.explanation()), hint);
         hints.setSpacing(UIConstants.HBOX_SPACING);
-        setConstraints(hints, 1, 3);
+        setConstraints(hints, 1, 2);
 
         params.parameter = formulaField.getText();
         formulaField.textProperty().addListener(e -> {
@@ -84,9 +88,11 @@ public class FirstOrderProverParametersView
         RowConstraints textAreaRow = new RowConstraints();
         textAreaRow.setVgrow(Priority.ALWAYS);
         textAreaRow.setValignment(VPos.TOP);
-        getRowConstraints().addAll(new RowConstraints(), textAreaRow, new RowConstraints());
+        RowConstraints hintRow = new RowConstraints();
+        hintRow.setValignment(VPos.TOP);
+        getRowConstraints().addAll(new RowConstraints(), textAreaRow, hintRow);
 
-        this.getChildren().addAll(label, recentQueriesLabel,
+        this.getChildren().addAll(label, recentQueriesLabel, hintLabel,
             formulaField, recentQueriesList, hints);
     }
 
