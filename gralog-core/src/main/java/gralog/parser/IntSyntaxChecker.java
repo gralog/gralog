@@ -11,11 +11,23 @@ public class IntSyntaxChecker extends SyntaxChecker {
 
     int lowerBound, upperBound;
 
+    /**
+     * Constructs a syntax checker which accepts all strings representing an
+     * integer. Rejects strings representing integers that would cause an
+     * overflow for the int datatype.
+     */
     public IntSyntaxChecker() {
         this.lowerBound = Integer.MIN_VALUE;
         this.upperBound = Integer.MAX_VALUE;
     }
 
+    /**
+     * Constructs a syntax checker which accepts all strings representing an
+     * integer in the range [lowerBound, upperBound].
+     *
+     * @param lowerBound The smallest acceptable value.
+     * @param upperBound The largest acceptable value.
+     */
     public IntSyntaxChecker(int lowerBound, int upperBound) {
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
