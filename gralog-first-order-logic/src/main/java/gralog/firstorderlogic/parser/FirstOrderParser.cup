@@ -1,8 +1,8 @@
-package gralog.firstorderlogic.logic.firstorder.parser;
+package gralog.firstorderlogic.parser;
 
 import java_cup.runtime.*;
 import gralog.algorithm.ParseError;
-import gralog.firstorderlogic.logic.firstorder.formula.*;
+import gralog.firstorderlogic.formula.*;
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.util.ArrayList;

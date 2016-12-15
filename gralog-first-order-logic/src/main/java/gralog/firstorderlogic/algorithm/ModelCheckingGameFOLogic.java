@@ -4,8 +4,8 @@
  */
 package gralog.firstorderlogic.algorithm;
 
-import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
-import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
+import gralog.firstorderlogic.formula.FirstOrderFormula;
+import gralog.firstorderlogic.parser.FirstOrderParser;
 
 import gralog.algorithm.*;
 
@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import gralog.finitegame.structure.*;
-import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderSyntaxChecker;
+import gralog.firstorderlogic.parser.FirstOrderSyntaxChecker;
 import gralog.preferences.Preferences;
 import gralog.rendering.Vector2D;
 

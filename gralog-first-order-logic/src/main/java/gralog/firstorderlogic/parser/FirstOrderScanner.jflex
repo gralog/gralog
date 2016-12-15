@@ -1,4 +1,4 @@
-package gralog.firstorderlogic.logic.firstorder.parser;
+package gralog.firstorderlogic.parser;
 
 import java_cup.runtime.Symbol;
 import java_cup.runtime.ComplexSymbolFactory;

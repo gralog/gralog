@@ -135,7 +135,7 @@ project(':gralog-first-order-logic') {
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
   declareParserTasks(
-    workingDir: 'gralog/firstorderlogic/logic/firstorder/parser',
+    workingDir: 'gralog/firstorderlogic/parser',
     baseName: 'FirstOrder')
 }
 

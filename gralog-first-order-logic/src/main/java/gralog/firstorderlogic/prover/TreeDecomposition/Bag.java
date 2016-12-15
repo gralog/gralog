@@ -4,7 +4,7 @@
  */
 package gralog.firstorderlogic.prover.TreeDecomposition;
 
-import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
+import gralog.firstorderlogic.formula.FirstOrderFormula;
 import gralog.structure.Vertex;
 import java.util.HashSet;
 import java.util.Set;

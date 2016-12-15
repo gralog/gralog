@@ -4,8 +4,8 @@
  */
 package gralog.firstorderlogic.algorithm;
 
-import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
-import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
+import gralog.firstorderlogic.formula.FirstOrderFormula;
+import gralog.firstorderlogic.parser.FirstOrderParser;
 
 import gralog.algorithm.*;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;

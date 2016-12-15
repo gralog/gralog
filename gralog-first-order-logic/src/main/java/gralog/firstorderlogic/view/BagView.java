@@ -4,7 +4,7 @@
  */
 package gralog.firstorderlogic.view;
 
-import gralog.firstorderlogic.logic.firstorder.formula.FirstOrderFormula;
+import gralog.firstorderlogic.formula.FirstOrderFormula;
 import gralog.firstorderlogic.prover.TreeDecomposition.Bag;
 import gralog.gralogfx.views.GridPaneView;
 import gralog.gralogfx.views.ViewDescription;

@@ -6,7 +6,7 @@ package gralog.firstorderlogic.view;
 
 import gralog.firstorderlogic.algorithm.FirstOrderProver;
 import gralog.gralogfx.RecentQueries;
-import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderSyntaxChecker;
+import gralog.firstorderlogic.parser.FirstOrderSyntaxChecker;
 import gralog.parser.SyntaxChecker;
 import gralog.firstorderlogic.algorithm.FirstOrderProverParameters;
 import gralog.gralogfx.UIConstants;
