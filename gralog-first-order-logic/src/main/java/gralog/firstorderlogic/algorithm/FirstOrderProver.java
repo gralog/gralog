@@ -9,6 +9,7 @@ import gralog.firstorderlogic.logic.firstorder.parser.FirstOrderParser;
 
 import gralog.algorithm.*;
 import gralog.firstorderlogic.prover.TreeDecomposition.*;
+import gralog.gralogfx.RecentQueries;
 import gralog.structure.*;
 import gralog.progresshandler.*;
 import gralog.preferences.Preferences;
@@ -35,6 +36,8 @@ public class FirstOrderProver extends Algorithm {
         ProgressHandler onprogress) throws Exception {
         FirstOrderProverParameters sp = (FirstOrderProverParameters) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);
+
+        RecentQueries.add(FirstOrderProver.class, sp.parameter);
 
         onprogress.onProgress(s);
 
