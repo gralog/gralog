@@ -8,7 +8,7 @@ import gralog.algorithm.StringAlgorithmParameter;
 import gralog.firstorderlogic.parser.FirstOrderSyntaxChecker;
 
 /**
- *
+ * An extension of StringAlgorithmParameter in order to provide a custom view.
  */
 public class FirstOrderProverParameters extends StringAlgorithmParameter {
 

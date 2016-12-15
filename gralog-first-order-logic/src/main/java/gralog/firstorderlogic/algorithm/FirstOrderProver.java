@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 /**
- *
+ * An interactive solver for first-order logic queries.
  */
 @AlgorithmDescription(
     name = "First Order Logic Prover",
