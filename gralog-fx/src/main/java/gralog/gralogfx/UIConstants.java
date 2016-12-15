@@ -14,4 +14,6 @@ public final class UIConstants {
 
     public static final int SUBMIT_BUTTON_WIDTH = 150;
     public static final int HBOX_SPACING = 10;
+    // The number of recent queries to save.
+    public static final int MAX_RECENT_QUERIES = 20;
 }
