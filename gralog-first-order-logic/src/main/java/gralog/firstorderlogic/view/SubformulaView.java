@@ -63,6 +63,8 @@ public class SubformulaView extends GridPaneView<Subformula> {
                 caption.setStyle(null);
                 if (item.value) {
                     caption.setStyle("-fx-fill:green");
+                } else {
+                    caption.setStyle("-fx-fill:red");
                 }
                 setGraphic(hbox);
             }
@@ -80,6 +82,7 @@ public class SubformulaView extends GridPaneView<Subformula> {
         fillTreeView(root, treedecomp);
         root.setExpanded(true);
         TreeView treeView = new TreeView(root);
+        treeView.setStyle("-fx-accent: #c7e1ff");
 
         treeView.setCellFactory(tv -> new Cell());
 
