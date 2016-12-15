@@ -21,8 +21,8 @@ import java.util.Set;
  */
 @AlgorithmDescription(
     name = "First Order Logic Prover",
-    text = "",
-    url = "First_Order_Prover_Manual.pdf")
+    text = "An interactive solver for first-order logic queries",
+    url = "https://en.wikipedia.org/wiki/First-order_logic")
 public class FirstOrderProver extends Algorithm {
 
     @Override
