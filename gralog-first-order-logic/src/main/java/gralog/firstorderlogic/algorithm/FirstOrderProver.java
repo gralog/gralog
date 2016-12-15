@@ -49,7 +49,7 @@ public class FirstOrderProver extends Algorithm {
         }
 
         Bag rootBag = phi.evaluateProver(s, new HashMap<>(), onprogress);
-        rootBag.caption = phi.toString();
+        rootBag.subformula = phi.toString();
         return rootBag;
     }
 }

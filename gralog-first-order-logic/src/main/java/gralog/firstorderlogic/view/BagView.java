@@ -60,7 +60,7 @@ public class BagView extends GridPaneView<Bag> {
             } else {
                 assignment.setText(
                     FirstOrderFormula.variableAssignmentToString(item.assignment));
-                caption.setText(item.caption);
+                caption.setText(item.subformula);
                 caption.setStyle(null);
                 if (item.eval) {
                     caption.setStyle("-fx-fill:green");

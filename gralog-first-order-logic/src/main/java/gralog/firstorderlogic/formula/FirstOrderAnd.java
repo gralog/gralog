@@ -51,17 +51,17 @@ public class FirstOrderAnd extends FirstOrderFormula {
         ProgressHandler onprogress) throws Exception {
         Bag b = new Bag();
         Bag sep = new Bag();
-        sep.caption = "AND";
+        sep.subformula = "AND";
         b.childBags.add(sep);
 
         Bag b1 = subformula1.evaluateProver(s, varassign, onprogress);
         b1.assignment = new HashMap<>(varassign);
-        b1.caption = subformula1.toString();
+        b1.subformula = subformula1.toString();
         sep.childBags.add(b1);
 
         Bag b2 = subformula2.evaluateProver(s, varassign, onprogress);
         b2.assignment = b1.assignment;
-        b2.caption = subformula2.toString();
+        b2.subformula = subformula2.toString();
         sep.childBags.add(b2);
         b.eval = (b1.eval && b2.eval);
         return b;

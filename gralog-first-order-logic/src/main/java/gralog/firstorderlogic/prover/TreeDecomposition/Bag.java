@@ -19,7 +19,7 @@ import java.util.Map.Entry;
  */
 public class Bag {
 
-    public String caption = "";
+    public String subformula = "";
     public Map<String, Vertex> assignment = new HashMap<>();
     public Boolean eval = false;
     public Set<Vertex> nodes = new HashSet<>();
@@ -27,7 +27,7 @@ public class Bag {
 
     @Override
     public String toString() {
-        return FirstOrderFormula.variableAssignmentToString(assignment) + " " + caption;
+        return FirstOrderFormula.variableAssignmentToString(assignment) + " " + subformula;
     }
 
     /**

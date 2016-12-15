@@ -44,7 +44,7 @@ public class FirstOrderNot extends FirstOrderFormula {
 
         Bag b1 = subformula1.evaluateProver(s, varassign, onprogress);
         b1.assignment = new HashMap<>(varassign);
-        b1.caption = " (" + subformula1.toString() + " )";
+        b1.subformula = " (" + subformula1.toString() + " )";
 
         Bag b = new Bag();
         b.eval = !b1.eval;
