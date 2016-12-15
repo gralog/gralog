@@ -21,4 +21,18 @@ Tests
 
 To run the test suite, call:
 
-    ./gradlew :test
+    ./gradlew test
+
+Contributing
+------------
+
+We use github for issue tracking and pull requests.
+
+Continuous integration on github runs a style checker that checks the
+indentation, the capitalization of variable names and similar aspects.
+If you would like to submit a pull request, it would be greatly
+appreciated if your code passes the style checker.
+
+You can run this check yourself by calling:
+
+    ./gradlew check
