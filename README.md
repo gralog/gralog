@@ -1,5 +1,5 @@
-GrALoG FX
-=========
+GrALoG
+======
 
 [![Build Status](https://travis-ci.org/gralog/gralog.svg?branch=master)](https://travis-ci.org/gralog/gralog)
 
@@ -14,7 +14,7 @@ This is a gradle project.  You can build and run GrALoG by following these steps
 
 2. Run `./gradlew`.
 
-  Note: On Windows you probably need to call `gradlew.bat` nstead.
+  Note: On Windows you probably need to call `gradlew.bat` instead.
 
 Tests
 -----
