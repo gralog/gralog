@@ -1,0 +1,86 @@
+= Gralog Plugin Development
+
+This document describes how to develop a simple Gralog plugin.  It is a
+work-in-progress.
+
+Gralog consists of a couple of subprojects, each in their own directory in the
+project root.  Among these, two are special:
+
+- *gralog-fx*, this contains the main class which is called on startup.
+
+- *gralog-core*, this contains basic classes required by essentially every plugin.
+
+== Creating a Simple Plugin
+
+Creating a new plugin is easiest if you copy an existing plugin, for example
+"gralog-modal-logic".  Let us assume that you copied `gralog-modal-logic/` to
+`my-awesome-plugin/`.
+
+After copying the directory, you need to tell the gradle build system about your
+new plugin.  You do this by adding the following section to `build.gradle` in
+the project root.
+
+----
+project(':my-awesome-plugin') {
+  dependencies {
+    gralog project(':gralog-core')
+  }
+}
+----
+
+The file `build.gradle` contains on such section for each plugin.  Each such
+section declares the dependencies of the plugin.  If a plugin depends on other
+gralog plugins, you need to declare the dependency as `gralog
+project(something)`.  If the dependency is an external dependency, you should
+use `compile` instead of `gralog` (you will see an example when we come to the
+parser generator).
+
+Note that essentially every plugin will depend on "gralog-core".
+
+
+== Generating a Parser
+
+As another example we will show how you can generate a parser.  Many plugins
+need a parser in order to parse logical formulas or regular expressions.  For
+this, the plugins use the parser generater "jcup" and the lexer generator
+"jflex".
+
+If a plugin needs to generate a parser, you need to tell gradle how to do this.
+If you use jcup/jflex, this is very easy to do.  If you want to use something
+else, you are on your own.  With jcup/jflex, all you need to do is to extend the
+`project` section of your plugin in `build.gradle`:
+
+----
+project(':my-awesome-plugin') {
+  dependencies {
+    gralog project(':gralog-core')
+    compile 'com.github.vbmacher:java-cup-runtime:11b'
+  }
+  declareParserTasks(
+    workingDir: 'gralog/myawesomeplugin/parser',
+    baseName: 'MyAwesomePlugin')
+}
+----
+
+Comparing this to our first example, we added an external dependency on the jcup
+runtime and we now call `declareParserTasks`.  This function is defined in
+`build.gradle` and sets up jcup/jflex.
+
+The generated tasks expect two files in the source directory
+`gralog/myawesomeplugin/parser`:
+
+- *MyAwesomePluginParser.jcup*, the jcup source file for the parser.
+- *MyAwesomePluginScanner.jflex*, the jflex source file for the tokenizer.
+
+The generated tasks will generate three files:
+
+- *MyAwesomePluginParser.java*, the parser.
+- *MyAwesomePluginScanner.java*, the tokenizer.
+- *MyAwesomePluginScannerToken.java*, a helper file for the tokenizer.
+
+The filenames and paths are constructed from the parameters you give to
+`declareParserTasks`.  These generated files will automatically be ignored by
+the `.gitignore` file in the project root.
+
+Please see one of the existing plugins, for example `gralog-modal-logic`, for an
+example of a parser/tokenizer.
