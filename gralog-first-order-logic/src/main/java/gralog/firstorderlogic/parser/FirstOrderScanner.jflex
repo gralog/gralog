@@ -43,6 +43,7 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
 ")"                   { return symbol(")", FirstOrderScannerToken.CLOSE); }
 ","                   { return symbol(",", FirstOrderScannerToken.COMMA); }
 "."                   { return symbol(".", FirstOrderScannerToken.DOT); }
+"="                   { return symbol(".", FirstOrderScannerToken.EQUALS); }
 
 [A-Za-z][A-Za-z0-9]*  { return symbol("string", FirstOrderScannerToken.STRING, yytext()); }
 .                     { return symbol("UNEXPECTED CHARACTER", FirstOrderScannerToken.error, yytext()); }
