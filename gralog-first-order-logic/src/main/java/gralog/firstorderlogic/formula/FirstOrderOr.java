@@ -56,19 +56,16 @@ public class FirstOrderOr extends FirstOrderFormula {
         ProgressHandler onprogress) throws Exception {
 
         Subformula b = new Subformula();
-        Subformula sep = new Subformula();
-        sep.subformula = "OR";
 
-        b.children.add(sep);
         Subformula b1 = subformula1.evaluateProver(s, varassign, onprogress);
         b1.assignment = new HashMap<>(varassign);
         b1.subformula = subformula1.toString();
-        sep.children.add(b1);
+        b.children.add(b1);
 
         Subformula b2 = subformula2.evaluateProver(s, varassign, onprogress);
         b2.assignment = b1.assignment;
         b2.subformula = subformula2.toString();
-        sep.children.add(b2);
+        b.children.add(b2);
         b.value = (b1.value || b2.value);
         return b;
     }
