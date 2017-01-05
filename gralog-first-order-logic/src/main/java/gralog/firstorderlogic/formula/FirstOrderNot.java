@@ -42,7 +42,7 @@ public class FirstOrderNot extends FirstOrderFormula {
 
         Subformula b1 = subformula1.evaluateProver(s, varassign, onprogress);
         b1.assignment = new HashMap<>(varassign);
-        b1.subformula = " (" + subformula1.toString() + " )";
+        b1.subformula = subformula1.toString();
 
         Subformula b = new Subformula();
         b.value = !b1.value;
