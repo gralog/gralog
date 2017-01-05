@@ -15,7 +15,10 @@ import gralog.rendering.Vector2D;
 import java.util.List;
 
 /**
+ * A relation in first-order logic.
  *
+ * The relation "=" has special treatment: It is valid in every graph, it always
+ * means equality of vertices, and it will always be shown in infix notation.
  */
 public class FirstOrderRelation extends FirstOrderFormula {
 
@@ -29,7 +32,10 @@ public class FirstOrderRelation extends FirstOrderFormula {
 
     @Override
     public String toString(FormulaPosition pos, FormulaEndPosition endPos) {
-        return relation + "(" + String.join(",", parameters) + ")";
+        if (relation.equals("="))
+            return parameters.get(0) + " = " + parameters.get(1);
+        else
+            return relation + "(" + String.join(",", parameters) + ")";
     }
 
     @Override
@@ -45,9 +51,8 @@ public class FirstOrderRelation extends FirstOrderFormula {
                 Vertex from = varassign.get(parameters.get(0));
                 Vertex to = varassign.get(parameters.get(1));
 
-                if (relation.equals("equals")) {
+                if (relation.equals("="))
                     return from.equals(to);
-                }
 
                 Set<Edge> E = from.getConnectedEdges();
                 for (Edge e : E) {

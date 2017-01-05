@@ -59,6 +59,7 @@ terminal OPEN, CLOSE;      // "(", ")"
 terminal NEG, AND, OR;     // \neg, \wedge, \vee
 terminal EXISTS, FORALL;   // \exists \forall
 terminal COMMA, DOT;       // ",", "."
+terminal EQUALS;           // "="
 terminal String STRING;
 
 non terminal FirstOrderFormula formula;
@@ -102,6 +103,10 @@ basicformula ::=
         {: RESULT = f; :}
     | STRING:rel OPEN parameters:params CLOSE
         {: RESULT = new FirstOrderRelation(rel, params); :}
+    | STRING:x EQUALS STRING:y
+        {: ArrayList<String> params = new ArrayList<>();
+           params.add(x); params.add(y);
+           RESULT = new FirstOrderRelation("=", params); :}
     ;
 
 quantifiedformula ::=
