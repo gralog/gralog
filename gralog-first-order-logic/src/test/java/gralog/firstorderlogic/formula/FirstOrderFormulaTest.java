@@ -18,13 +18,14 @@ import static org.junit.Assert.*;
 public class FirstOrderFormulaTest {
 
     private final ParserTestHelper p = new ParserTestHelper(FirstOrderParser::parseString);
-    private final FirstOrderFormula relation;
+    private final FirstOrderFormula relation, equalityRelation;
 
     public FirstOrderFormulaTest() {
         ArrayList<String> params = new ArrayList<>();
         params.add("x");
         params.add("y");
         relation = new FirstOrderRelation("E", params);
+        equalityRelation = new FirstOrderRelation("=", params);
     }
 
     private Vertex createVertex(String label) {
@@ -54,9 +55,11 @@ public class FirstOrderFormulaTest {
     @Test
     public void testToStringSimple() {
         assertEquals("E(x,y)", relation.toString());
+        assertEquals("x = y", equalityRelation.toString());
         assertEquals("E(x,y) ∧ E(x,y)", (new FirstOrderAnd(relation, relation)).toString());
         assertEquals("E(x,y) ∨ E(x,y)", (new FirstOrderOr(relation, relation)).toString());
         assertEquals("¬E(x,y)", (new FirstOrderNot(relation)).toString());
+        assertEquals("¬x = y", (new FirstOrderNot(equalityRelation)).toString());
     }
 
     /**
@@ -171,5 +174,6 @@ public class FirstOrderFormulaTest {
         p.parseAndFail("∀∀x. E(x,y)");
         p.parseAndFail("(E(x,y)");
         p.parseAndFail("E(x,y))");
+        p.parseAndFail("x = y = z");
     }
 }
