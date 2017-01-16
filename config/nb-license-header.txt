@@ -1,8 +1,0 @@
-<#if licenseFirst??>
-${licenseFirst}
-</#if>
-${licensePrefix}This file is part of Gralog, Copyright (c) 2016-${date?date?string("yyyy")} LaS group, TU Berlin.
-${licensePrefix}License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later.
-<#if licenseLast??>
-${licenseLast}
-</#if>
