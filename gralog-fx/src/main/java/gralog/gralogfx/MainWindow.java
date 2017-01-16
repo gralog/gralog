@@ -122,7 +122,7 @@ public class MainWindow extends Application {
         Menu menuHelp = new Menu("Help");
         menuHelp.getItems().addAll(
             createMenuItem(
-                "About GrALoG", () -> {
+                "About Gralog", () -> {
                     AboutStage aboutstage = new AboutStage(this);
                     aboutstage.showAndWait();
                 }),
@@ -567,7 +567,7 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-width", 1000),
             Preferences.getInteger(getClass(), "main-window-height", 800));
         this.stage = primaryStage;
-        primaryStage.setTitle("GrALoG FX");
+        primaryStage.setTitle("Gralog");
         primaryStage.setScene(scene);
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());
         scene.setOnKeyPressed(event -> {

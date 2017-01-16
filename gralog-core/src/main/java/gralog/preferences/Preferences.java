@@ -26,7 +26,7 @@ public final class Preferences {
     private static String buildPreferencePath() {
         String path;
         final String os = System.getProperty("os.name").toUpperCase();
-        final String myname = "GrALoG FX";
+        final String myname = "gralog";
         if (os.contains("WIN"))
             path = System.getenv("APPDATA") + "/" + myname;
         else if (os.contains("MAC"))
@@ -95,7 +95,7 @@ public final class Preferences {
         try {
             Files.createDirectories(Paths.get(PREFERENCE_PATH));
             try (FileOutputStream out = new FileOutputStream(PREFERENCE_PATH + "/" + FILENAME)) {
-                PROPERTIES.store(out, "GrALoG preferences");
+                PROPERTIES.store(out, "Gralog preferences");
             }
         } catch (IOException e) {
         }

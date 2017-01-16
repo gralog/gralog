@@ -31,7 +31,7 @@ public class AboutStage extends Stage {
         webView = new WebView();
         webEngine = webView.getEngine();
         webEngine.loadContent(
-            "<b>GrALoG FX</b><br/>"
+            "<b>Gralog</b><br/>"
             + "Graphs, Algorithms, Logic and Games<br/>"
             + "©2015-2016 Technische Universität Berlin<br/>"
             + "Lehrstuhl für Logik und Semantik"
@@ -43,7 +43,7 @@ public class AboutStage extends Stage {
         scene = new Scene(root, 350, 200);
 
         this.setScene(scene);
-        this.setTitle("About GrALoG");
+        this.setTitle("About Gralog");
         this.initModality(Modality.APPLICATION_MODAL);
     }
 }

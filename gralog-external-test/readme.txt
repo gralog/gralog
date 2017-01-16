@@ -1,6 +1,6 @@
- 
-This c++ program is a test-application for GrALoGs invokation of
+This C++ program is a test-application for Gralog's invokation of
 external applications.
+
 To make an external application:
 
  - Write your application, (e.g. foo.cpp),
@@ -10,7 +10,7 @@ To make an external application:
  - Compile your application and put the binary (e.g. foo) into a directory
    which is in your systems $PATH variable - (e.g. /usr/bin/)
    
- - Derive a class from gralog.algorithm.AlgorithmExternal (GrALoG Core Package)
+ - Derive a class from gralog.algorithm.AlgorithmExternal (Gralog core package)
    and have a Constructor which calls the base-constructor with the following
    parameters:
    1. a gralog.export.ExportFilter instance for the format that your
@@ -46,4 +46,3 @@ To make an external application:
                super(new TrivialGraphFormatExport(), true, "foo", "-f=%u", "-bar");
            }
        }
-       

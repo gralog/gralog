@@ -43,7 +43,7 @@ public abstract class AlgorithmExternal extends Algorithm {
         if (!passStructureViaFile)
             return command;
 
-        File temp = File.createTempFile("GrALoG", "." + exportFilter.getDescription().fileExtension());
+        File temp = File.createTempFile("gralog", "." + exportFilter.getDescription().fileExtension());
         exportFilter.exportGraph(structure, new OutputStreamWriter(new FileOutputStream(temp), "UTF-8"), null);
         List<String> effectiveCommand = new LinkedList<>();
         for (String s : command)
