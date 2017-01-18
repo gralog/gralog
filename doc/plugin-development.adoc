@@ -28,7 +28,7 @@ project(':my-awesome-plugin') {
 }
 ----
 
-The file `build.gradle` contains on such section for each plugin.  Each such
+The file `build.gradle` contains one such section for each plugin.  Each such
 section declares the dependencies of the plugin.  If a plugin depends on other
 gralog plugins, you need to declare the dependency as `gralog
 project(something)`.  If the dependency is an external dependency, you should
