@@ -112,4 +112,14 @@ public final class ExportFilterManager {
             }
         return null;
     }
+
+    /**
+     * Removes all registered filters.  After calling this method, the static
+     * state of this class will be the same as when you started the program.
+     */
+    public static void clear() {
+        EXPORT_FILTER_NAMES.clear();
+        EXPORT_FILTER_EXTENSIONS.clear();
+        EXPORT_FILTER_DESCRIPTIONS.clear();
+    }
 }

@@ -56,4 +56,14 @@ public final class ImportFilterManager {
         String identifier) {
         return IMPORT_FILTER_DESCRIPTIONS.get(identifier);
     }
+
+    /**
+     * Removes all registered filters.  After calling this method, the static
+     * state of this class will be the same as when you started the program.
+     */
+    public static void clear() {
+        IMPORT_FILTER_NAMES.clear();
+        IMPORT_FILTER_EXTENSIONS.clear();
+        IMPORT_FILTER_DESCRIPTIONS.clear();
+    }
 }
