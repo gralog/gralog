@@ -51,6 +51,7 @@ public class MainWindow extends Application {
     MenuBar menu;
     Menu menuFile;
     Menu menuFileNew;
+    MenuItem menuFileSave;
     Menu menuFileGenerators;
     Menu menuAlgo;
     VBox topPane;
@@ -92,11 +93,14 @@ public class MainWindow extends Application {
         updateStructures();
         menuFileGenerators = new Menu("Generators");
         updateGenerators();
+        // "Save" is initially disabled because we do not have a structure.
+        menuFileSave = createMenuItem("Save graph as...", this::menuFileSaveActivated);
+        menuFileSave.setDisable(true);
         menuFile.getItems().addAll(
             menuFileNew, menuFileGenerators,
             createMenuItem("Open graph...", this::menuFileOpenActivated),
             createMenuItem("Direct input...", this::menuFileDirectInputActivated),
-            createMenuItem("Save graph as...", this::menuFileSaveActivated),
+            menuFileSave,
             createMenuItem("Close graph", this::menuFileCloseActivated),
             new SeparatorMenuItem(),
             createMenuItem("Load plugin...", this::menuFilePluginActivated),
@@ -346,9 +350,10 @@ public class MainWindow extends Application {
     public void menuFileCloseActivated() {
         try {
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab != null)
+            if (tab != null) {
                 tabPane.getTabs().remove(tab);
-
+                currentStructureChanged();
+            }
         } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -368,6 +373,8 @@ public class MainWindow extends Application {
         tabPane.getSelectionModel().select(t);
         structurePane.draw();
         structurePane.setOnSelectionChanged(e -> updateSelection(structurePane));
+
+        currentStructureChanged();
     }
 
     protected final void updateStructures() {
@@ -426,6 +433,7 @@ public class MainWindow extends Application {
             }
             if (selection != null && selection.size() == 1)
                 objectInspector.setObject(selection.iterator().next(), sender);
+            currentStructureChanged();
         } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -659,6 +667,10 @@ public class MainWindow extends Application {
         if (tab == null)
             return null;
         return (StructurePane) tab.getContent();
+    }
+
+    private void currentStructureChanged() {
+        menuFileSave.setDisable(getCurrentStructurePane() == null);
     }
 
     private void checkMode() {
