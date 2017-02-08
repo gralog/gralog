@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import static gralog.plugins.PluginManager.instantiateClass;
+import gralog.structure.Structure;
 
 /**
  *
@@ -41,9 +42,9 @@ public final class ExportFilterManager {
             applicableToClass = params[0];
         }
 
-        // must have a method Export(FOO x) where FOO is derived from Structure!
-        if (applicableToClass == null)
-            throw new Exception("class " + aClass.getName() + " is derived from ExportFilter, but has no valid exportGraph method!");
+        // Must have a method export(FOO x) where FOO is derived from Structure.
+        if (applicableToClass == null || !Structure.class.isAssignableFrom(applicableToClass))
+            throw new Exception("class " + aClass.getName() + " is derived from ExportFilter, but has no valid export method!");
 
         if (!aClass.isAnnotationPresent(ExportFilterDescription.class))
             throw new Exception("class " + aClass.getName() + " has no @ExportFilterDescription annotation");
