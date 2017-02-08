@@ -33,7 +33,7 @@ public final class ExportFilterManager {
         Method[] methods = aClass.getMethods();
         Class applicableToClass = null;
         for (Method method : methods) {
-            if (!method.getName().equals("exportGraph"))
+            if (!method.getName().equals("export"))
                 continue;
             Class[] params = method.getParameterTypes();
             if (params.length != 3)
