@@ -9,7 +9,6 @@ import gralog.rendering.Vector2D;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.Set;
 
 /**
  *
@@ -24,65 +23,69 @@ public class TikZExport extends ExportFilter {
 
     public void export(Automaton structure, OutputStreamWriter stream,
         ExportFilterParameters params) throws Exception {
-        String linefeed = System.getProperty("line.separator");
+        IndentedWriter out = new IndentedWriter(stream, 4);
 
-        stream.write("%\\documentclass{article}" + linefeed);
-        stream.write("%\\usepackage{pgf}" + linefeed);
-        stream.write("%\\usepackage{tikz}" + linefeed);
-        stream.write("%\\usepackage{amsmath, amssymb}" + linefeed);
-        stream.write("%\\usetikzlibrary{arrows,automata}" + linefeed);
-        stream.write("%\\usepackage[utf8]{inputenc}" + linefeed + linefeed);
+        out.writeLine("%\\documentclass{article}");
+        out.writeLine("%\\usepackage{pgf}");
+        out.writeLine("%\\usepackage{tikz}");
+        out.writeLine("%\\usepackage{amsmath, amssymb}");
+        out.writeLine("%\\usetikzlibrary{arrows.meta,automata}");
+        out.writeLine("%\\usepackage[utf8]{inputenc}");
 
-        stream.write("%\\begin{document}" + linefeed);
-        stream.write("    \\begin{tikzpicture}[->]" + linefeed);
-        stream.write("        \\tikzstyle{every state}=[fill=white,draw=black,text=black]" + linefeed + linefeed);
+        out.writeLine("%\\begin{document}");
+        out.increaseIndent();
+        out.writeLine("\\begin{tikzpicture}[scale=0.8,auto]");
+        out.increaseIndent();
+        out.writeLine("\\tikzset{>=Stealth}");
+        out.writeLine("\\tikzstyle{every path}=[->,thick]");
+        out.writeLine("\\tikzstyle{every state}=[circle,fill=white,draw=black,text=black,thin]");
 
         HashMap<State, Integer> nodeIndex = new HashMap<>();
         int i = 1;
-        Set<State> V = structure.getVertices();
-        for (Vertex v : V) {
-            State s = (State) v;
+        for (State s : structure.getVertices()) {
             nodeIndex.put(s, i);
-            stream.write("        \\node[state");
+            out.write("\\node[state");
             if (s.finalState)
-                stream.write(",accepting");
+                out.writeNoIndent(",accepting");
             if (s.startState)
-                stream.write(",initial");
-            stream.write("] (q" + i + ") at (" + s.coordinates.get(0) + "cm," + s.coordinates.get(1) + "cm) {$q_{" + i + "}$};" + linefeed);
+                out.writeNoIndent(",initial");
+            final String label = s.label.isEmpty() ? "" : "$" + s.label + "$";
+            out.writeLineNoIndent("] (q" + i + ") at ("
+                + s.coordinates.getX() + "cm,"
+                + (-s.coordinates.getY()) + "cm) {" + label + "};");
             ++i;
         }
 
-        stream.write("        " + linefeed);
+        out.writeLine("");
 
-        Set<Transition> E = structure.getEdges();
-        for (Edge e : E) {
-            Transition t = (Transition) e;
-
-            Double halfLength = t.length() / 2.0;
+        for (Transition t : structure.getEdges()) {
+            double halfLength = t.length() / 2.0;
             Vector2D from = t.getSource().coordinates;
-            Double distance = 0.0;
+            double distance = 0.0;
 
-            stream.write("        \\draw (q" + nodeIndex.get(e.getSource()) + ")");
-            for (EdgeIntermediatePoint c : e.intermediatePoints) {
+            out.write("\\draw (q" + nodeIndex.get(t.getSource()) + ")");
+            for (EdgeIntermediatePoint c : t.intermediatePoints) {
                 Vector2D betw = new Vector2D(c.getX(), c.getY());
                 Double segmentlength = betw.minus(from).length();
 
-                stream.write(" --");
+                out.writeNoIndent(" --");
                 if (distance < halfLength && halfLength <= distance + segmentlength)
-                    stream.write(" node[above] {$" + (t.symbol.equals("") ? "\\varepsilon" : t.symbol) + "$}");
-                stream.write(" (" + c.getX() + "cm," + c.getY() + "cm)");
+                    out.writeNoIndent(" node {$" + (t.symbol.isEmpty() ? "\\varepsilon" : t.symbol) + "$}");
+                out.writeNoIndent(" (" + c.getX() + "cm," + (-c.getY()) + "cm)");
 
                 distance += segmentlength;
                 from = betw;
             }
 
-            stream.write(" --");
+            out.writeNoIndent(" --");
             if (distance < halfLength)
-                stream.write(" node[above] {$" + (t.symbol.equals("") ? "\\varepsilon" : t.symbol) + "$}");
-            stream.write(" (q" + nodeIndex.get(e.getTarget()) + ");" + linefeed);
+                out.writeNoIndent(" node {$" + (t.symbol.isEmpty() ? "\\varepsilon" : t.symbol) + "$}");
+            out.writeLineNoIndent(" (q" + nodeIndex.get(t.getTarget()) + ");");
         }
 
-        stream.write("    \\end{tikzpicture}" + linefeed);
-        stream.write("%\\end{document}" + linefeed);
+        out.decreaseIndent();
+        out.writeLine("\\end{tikzpicture}");
+        out.decreaseIndent();
+        out.writeLine("%\\end{document}");
     }
 }

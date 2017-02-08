@@ -6,7 +6,6 @@ import gralog.structure.*;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
-import java.util.Set;
 
 /**
  *
@@ -21,41 +20,50 @@ public class TikZExport extends ExportFilter {
 
     public void export(DirectedGraph structure, OutputStreamWriter stream,
         ExportFilterParameters params) throws Exception {
-        String linefeed = System.getProperty("line.separator");
+        IndentedWriter out = new IndentedWriter(stream, 4);
 
-        stream.write("%\\documentclass{article}" + linefeed);
-        stream.write("%\\usepackage{pgf}" + linefeed);
-        stream.write("%\\usepackage{tikz}" + linefeed);
-        stream.write("%\\usepackage{amsmath, amssymb}" + linefeed);
-        stream.write("%\\usetikzlibrary{arrows}" + linefeed);
-        stream.write("%\\usepackage[utf8]{inputenc}" + linefeed + linefeed);
+        out.writeLine("%\\documentclass{article}");
+        out.writeLine("%\\usepackage{pgf}");
+        out.writeLine("%\\usepackage{tikz}");
+        out.writeLine("%\\usepackage{amsmath, amssymb}");
+        out.writeLine("%\\usetikzlibrary{arrows.meta}");
+        out.writeLine("%\\usepackage[utf8]{inputenc}");
 
-        stream.write("%\\begin{document}" + linefeed);
-        stream.write("    \\begin{tikzpicture}[scale=1.0]" + linefeed);
-        stream.write("        \\tikzstyle{every node}=[circle,fill=blue!20,draw=black,text=black]" + linefeed + linefeed);
+        out.writeLine("%\\begin{document}");
+        out.increaseIndent();
+        out.writeLine("\\begin{tikzpicture}[scale=0.6]");
+        out.increaseIndent();
+        out.writeLine("\\tikzset{>=Stealth}");
+        out.writeLine("\\tikzstyle{every path}=[->,thick]");
+        out.writeLine("\\tikzstyle{every node}=[circle,fill=blue!20,draw=black,text=black,thin]");
 
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
         int i = 1;
-        Set<Vertex> V = structure.getVertices();
-        for (Vertex v : V) {
+        for (Vertex v : structure.getVertices()) {
             nodeIndex.put(v, i);
-            stream.write("        \\node (n" + i + ") at ("
+            final String label = v.label.isEmpty() ? "" : "$" + v.label + "$";
+            out.writeLine("\\node (n" + i + ") at ("
                 + v.coordinates.getX() + "cm,"
-                + v.coordinates.getY() + "cm) {};" + linefeed);
+                + (-v.coordinates.getY()) + "cm) {" + label + "};");
             ++i;
         }
 
-        stream.write("        " + linefeed);
+        out.writeLine("");
 
-        Set<Edge> E = structure.getEdges();
-        for (Edge e : E) {
-            stream.write("        \\draw (n" + nodeIndex.get(e.getSource()) + ")");
+        for (Edge e : structure.getEdges()) {
+            if (e.isDirected)
+                out.write("\\draw");
+            else
+                out.write("\\draw [-]");
+            out.writeNoIndent(" (n" + nodeIndex.get(e.getSource()) + ")");
             for (EdgeIntermediatePoint c : e.intermediatePoints)
-                stream.write(" edge[-] (" + c.getX() + "cm," + c.getY() + "cm)");
-            stream.write(" edge[-] (n" + nodeIndex.get(e.getTarget()) + ");" + linefeed);
+                out.writeNoIndent(" to (" + c.getX() + "cm," + (-c.getY()) + "cm)");
+            out.writeLineNoIndent(" to (n" + nodeIndex.get(e.getTarget()) + ");");
         }
 
-        stream.write("    \\end{tikzpicture}" + linefeed);
-        stream.write("%\\end{document}" + linefeed);
+        out.decreaseIndent();
+        out.writeLine("\\end{tikzpicture}");
+        out.decreaseIndent();
+        out.writeLine("%\\end{document}");
     }
 }
