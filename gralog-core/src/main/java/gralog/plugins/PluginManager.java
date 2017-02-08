@@ -26,11 +26,27 @@ public final class PluginManager {
 
     private static final HashMap<String, Constructor> CLASS_REGISTER = new HashMap<String, Constructor>();
 
+    /**
+     * Registers all classes in the current jar file. Requires that the program
+     * is running from a jar file.
+     *
+     * @throws Exception Throws if there are duplicate XML names or if a class
+     * does not satisfy the requirements imposed by the manager class (for
+     * example, it is an export class without an "export" method).
+     */
     public static void initialize() throws Exception {
         File f = new File(PluginManager.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         loadPlugin(f.getAbsolutePath());
     }
 
+    /**
+     * Instantiates a class from its name or XML name. Only considers classes
+     * that have been registered before with one of the other methods.
+     *
+     * @param className The name or the XML name of the class to instantiate.
+     * @return A new instance of the requested class.
+     * @throws Exception Throws if the class has not been registered.
+     */
     public static Object instantiateClass(String className) throws Exception {
         if (!CLASS_REGISTER.containsKey(className))
             throw new Exception("class \"" + className + "\" is unknown, has no @XmlName annotation or has no empty constructor");
@@ -39,6 +55,16 @@ public final class PluginManager {
         return ctor.newInstance();
     }
 
+    /**
+     * Registers a single class to the respective manager class. Ignores
+     * abstract classes. Determines the XML name from the XmlName annotation.
+     *
+     * @param c The class to register.
+     * @throws Exception Throws if the class name or the XML name has already
+     * been registered or if the class does not satisfy the requirements imposed
+     * by the manager class (for example, it is an export class without an
+     * "export" method).
+     */
     public static void registerClass(Class<?> c) throws Exception {
         String xmlAlias = null;
         if (c.isAnnotationPresent(XmlName.class)) {
@@ -48,6 +74,18 @@ public final class PluginManager {
         registerClass(c.getName(), xmlAlias, c);
     }
 
+    /**
+     * Registers a single class to the respective manager class. Ignores
+     * abstract classes.
+     *
+     * @param classname The name of the class to register.
+     * @param xmlAlias The XML name of the class to register.
+     * @param aClass The class to register.
+     * @throws Exception Throws if the class name or the XML name has already
+     * been registered or if the class does not satisfy the requirements imposed
+     * by the manager class (for example, it is an export class without an
+     * "export" method).
+     */
     public static void registerClass(String classname, String xmlAlias,
         Class<?> aClass) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
@@ -87,6 +125,12 @@ public final class PluginManager {
         }
     }
 
+    /**
+     * Load a jar file and register all its classes.
+     *
+     * @param pathToPlugin The path to the jar file.
+     * @throws Exception Throws if the jar file cannot be loaded.
+     */
     public static void loadPlugin(String pathToPlugin) throws Exception {
         File plugin = new File(pathToPlugin);
 
@@ -111,7 +155,7 @@ public final class PluginManager {
             }
         }
 
-        // Register the classes
+        // Register all the classes we found.
         for (Class<?> c : classes)
             PluginManager.registerClass(c);
     }
