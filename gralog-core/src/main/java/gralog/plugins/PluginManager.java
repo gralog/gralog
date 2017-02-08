@@ -39,11 +39,6 @@ public final class PluginManager {
         return ctor.newInstance();
     }
 
-    public static void registerClass(String className) throws Exception {
-        Class<?> c = Class.forName(className);
-        PluginManager.registerClass(c);
-    }
-
     public static void registerClass(Class<?> c) throws Exception {
         String xmlAlias = null;
         if (c.isAnnotationPresent(XmlName.class)) {
