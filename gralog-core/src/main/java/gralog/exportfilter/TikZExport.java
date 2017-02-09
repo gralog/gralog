@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.exportfilter;
 
+import gralog.rendering.GralogColor;
 import gralog.structure.*;
 
 import java.io.OutputStreamWriter;
@@ -42,7 +43,12 @@ public class TikZExport extends ExportFilter {
         for (Vertex v : structure.getVertices()) {
             nodeIndex.put(v, i);
             final String label = v.label.isEmpty() ? "" : "$" + v.label + "$";
-            out.writeLine("\\node (n" + i + ") at ("
+            String color = "";
+            if (!v.fillColor.equals(GralogColor.WHITE)) {
+                out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+                color = "[fill=gralog-fill-color] ";
+            }
+            out.writeLine("\\node " + color + "(n" + i + ") at ("
                 + v.coordinates.getX() + "cm,"
                 + (-v.coordinates.getY()) + "cm) {" + label + "};");
             ++i;
