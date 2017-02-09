@@ -20,7 +20,8 @@ import java.util.HashMap;
 )
 public class TikZExport extends ExportFilter {
 
-    public void export(DirectedGraph structure, OutputStreamWriter stream,
+    public void export(Structure<Vertex, Edge> structure,
+        OutputStreamWriter stream,
         ExportFilterParameters params) throws Exception {
         IndentedWriter out = new IndentedWriter(stream, 4);
 
