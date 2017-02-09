@@ -36,7 +36,8 @@ public class TikZExport extends ExportFilter {
         out.increaseIndent();
         out.writeLine("\\tikzset{>=Stealth}");
         out.writeLine("\\tikzstyle{every path}=[->,thick]");
-        out.writeLine("\\tikzstyle{every node}=[circle,fill=blue!20,draw=black,text=black,thin]");
+        out.writeLine("\\tikzstyle{every node}=[circle,fill=white,draw=black,text=black,thin,minimum size=16pt,inner sep=1.5pt]");
+        out.writeLine("");
 
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
         int i = 1;
