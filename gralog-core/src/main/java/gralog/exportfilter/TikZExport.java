@@ -69,7 +69,7 @@ public class TikZExport extends ExportFilter {
             else
                 out.write("\\draw [-]");
 
-            out.writeNoIndent("(n" + nodeIndex.get(e.getSource()) + ")");
+            out.writeNoIndent(" (n" + nodeIndex.get(e.getSource()) + ")");
             for (EdgeIntermediatePoint c : e.intermediatePoints) {
                 Vector2D betw = new Vector2D(c.getX(), c.getY());
                 double segmentlength = betw.minus(from).length();
