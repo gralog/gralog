@@ -57,7 +57,7 @@ public class MainWindow extends Application {
     VBox topPane;
     TabPane tabPane;
     ObjectInspector objectInspector;
-    Label statusBarMessage;
+    Label statusBarMessage, graphTypeLabel;
 
     Button buttonSelectMode, buttonVertexMode, buttonEdgeMode;
 
@@ -167,7 +167,10 @@ public class MainWindow extends Application {
         // Status Bar
         HBox statusBar = new HBox();
         statusBarMessage = new Label("");
-        statusBar.getChildren().add(statusBarMessage);
+        graphTypeLabel = new Label("");
+        Region buttonBarSpacer = new Region();
+        HBox.setHgrow(buttonBarSpacer, Priority.ALWAYS);
+        statusBar.getChildren().addAll(statusBarMessage, buttonBarSpacer, graphTypeLabel);
 
         root = new BorderPane();
         //root.setFocusTraversable(true);
@@ -670,7 +673,14 @@ public class MainWindow extends Application {
     }
 
     private void currentStructureChanged() {
-        menuFileSave.setDisable(getCurrentStructurePane() == null);
+        StructurePane pane = getCurrentStructurePane();
+        if (pane == null) {
+            menuFileSave.setDisable(true);
+            graphTypeLabel.setText("");
+        } else {
+            menuFileSave.setDisable(false);
+            graphTypeLabel.setText(pane.structure.getClass().getSimpleName());
+        }
     }
 
     private void checkMode() {
