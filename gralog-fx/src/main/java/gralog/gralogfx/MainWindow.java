@@ -74,7 +74,6 @@ public class MainWindow extends Application {
         handlers.onOpen = this::menuFileOpenActivated;
         handlers.onSave = this::menuFileSaveActivated;
         handlers.onDirectInput = this::menuFileDirectInputActivated;
-        handlers.onClose = this::menuFileCloseActivated;
         handlers.onLoadPlugin = this::menuFilePluginActivated;
         handlers.onExit = this::menuFileExitActivated;
         handlers.onRunAlgorithm = this::menuAlgorithmActivated;
@@ -296,19 +295,6 @@ public class MainWindow extends Application {
     public void menuFileExitActivated() {
         try {
             stage.close();
-        } catch (Exception ex) {
-            ExceptionBox exbox = new ExceptionBox();
-            exbox.showAndWait(ex);
-        }
-    }
-
-    public void menuFileCloseActivated() {
-        try {
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            if (tab != null) {
-                tabPane.getTabs().remove(tab);
-                currentStructureChanged();
-            }
         } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);

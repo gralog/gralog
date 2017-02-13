@@ -23,7 +23,7 @@ public class MainMenu {
      */
     public static class Handlers {
 
-        Runnable onOpen, onSave, onDirectInput, onClose, onLoadPlugin, onExit;
+        Runnable onOpen, onSave, onDirectInput, onLoadPlugin, onExit;
         Runnable onUndo, onRedo, onCut, onCopy, onPaste, onDelete;
         Runnable onAboutGralog, onAboutGraph;
 
@@ -78,7 +78,6 @@ public class MainMenu {
             createMenuItem("Open graph...", handlers.onOpen),
             createMenuItem("Direct input...", handlers.onDirectInput),
             menuFileSave,
-            createMenuItem("Close graph", handlers.onClose),
             new SeparatorMenuItem(),
             createMenuItem("Load plugin...", handlers.onLoadPlugin),
             new SeparatorMenuItem(),
