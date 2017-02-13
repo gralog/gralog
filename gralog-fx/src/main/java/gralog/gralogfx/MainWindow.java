@@ -42,18 +42,13 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- *
+ * The gralog main window.
  */
 public class MainWindow extends Application {
 
     Stage stage;
     BorderPane root;
-    MenuBar menu;
-    Menu menuFile;
-    Menu menuFileNew;
-    MenuItem menuFileSave;
-    Menu menuFileGenerators;
-    Menu menuAlgo;
+    MainMenu menu;
     VBox topPane;
     TabPane tabPane;
     ObjectInspector objectInspector;
@@ -61,90 +56,49 @@ public class MainWindow extends Application {
 
     Button buttonSelectMode, buttonVertexMode, buttonEdgeMode;
 
-    private static MenuItem createMenuItem(String label, Runnable handler) {
-        MenuItem item = new MenuItem(label);
-        item.setOnAction(e -> handler.run());
-        return item;
-    }
-
-    private static MenuItem createDisabledMenuItem(String label) {
-        MenuItem item = new MenuItem(label);
-        item.setDisable(true);
-        return item;
-    }
-
     public MainWindow() {
         stage = null;
 
         // Tab Panel
         tabPane = new TabPane();
         tabPane.getSelectionModel().selectedItemProperty().addListener(e -> {
-            updateAlgorithms();
+            menu.update();
             updateSelection();
         });
         //tabPane.setFocusTraversable(true);
 
         // Menu
-        menu = new MenuBar();
+        MainMenu.Handlers handlers = new MainMenu.Handlers();
+        handlers.onNew = this::menuFileNewActivated;
+        handlers.onGenerate = this::menuFileGeneratorActivated;
+        handlers.onOpen = this::menuFileOpenActivated;
+        handlers.onSave = this::menuFileSaveActivated;
+        handlers.onDirectInput = this::menuFileDirectInputActivated;
+        handlers.onClose = this::menuFileCloseActivated;
+        handlers.onLoadPlugin = this::menuFilePluginActivated;
+        handlers.onExit = this::menuFileExitActivated;
+        handlers.onRunAlgorithm = this::menuAlgorithmActivated;
 
-        // File Menu
-        menuFile = new Menu("File");
-        menuFileNew = new Menu("New");
-        updateStructures();
-        menuFileGenerators = new Menu("Generators");
-        updateGenerators();
-        // "Save" is initially disabled because we do not have a structure.
-        menuFileSave = createMenuItem("Save graph as...", this::menuFileSaveActivated);
-        menuFileSave.setDisable(true);
-        menuFile.getItems().addAll(
-            menuFileNew, menuFileGenerators,
-            createMenuItem("Open graph...", this::menuFileOpenActivated),
-            createMenuItem("Direct input...", this::menuFileDirectInputActivated),
-            menuFileSave,
-            createMenuItem("Close graph", this::menuFileCloseActivated),
-            new SeparatorMenuItem(),
-            createMenuItem("Load plugin...", this::menuFilePluginActivated),
-            new SeparatorMenuItem(),
-            createMenuItem("Exit", this::menuFileExitActivated));
+        handlers.onAboutGralog = () -> {
+            AboutStage aboutstage = new AboutStage(this);
+            aboutstage.showAndWait();
+        };
+        handlers.onAboutGraph = () -> {
+            StructurePane structurePane = this.getCurrentStructurePane();
+            if (structurePane == null)
+                return;
+            try {
+                StructureDescription descr = structurePane.structure.getDescription();
+                String url = descr.url();
+                if (url != null && !url.trim().equals(""))
+                    this.getHostServices().showDocument(url);
+            } catch (Exception ex) {
+                ExceptionBox exbox = new ExceptionBox();
+                exbox.showAndWait(ex);
+            }
+        };
 
-        // Edit Menu
-        Menu menuEdit = new Menu("Edit");
-        menuEdit.getItems().addAll(
-            createDisabledMenuItem("Undo"),
-            createDisabledMenuItem("Redo"),
-            createDisabledMenuItem("Cut"),
-            createDisabledMenuItem("Copy"),
-            createDisabledMenuItem("Paste"),
-            createDisabledMenuItem("Delete"));
-
-        // Algorithm Menu
-        menuAlgo = new Menu("Algorithms");
-
-        // Help Menu
-        Menu menuHelp = new Menu("Help");
-        menuHelp.getItems().addAll(
-            createMenuItem(
-                "About Gralog", () -> {
-                    AboutStage aboutstage = new AboutStage(this);
-                    aboutstage.showAndWait();
-                }),
-            createMenuItem(
-                "About the current graph", () -> {
-                    StructurePane structurePane = this.getCurrentStructurePane();
-                    if (structurePane == null)
-                        return;
-                    try {
-                        StructureDescription descr = structurePane.structure.getDescription();
-                        String url = descr.url();
-                        if (url != null && !url.trim().equals(""))
-                            this.getHostServices().showDocument(url);
-                    } catch (Exception ex) {
-                        ExceptionBox exbox = new ExceptionBox();
-                        exbox.showAndWait(ex);
-                    }
-                }));
-
-        menu.getMenus().addAll(menuFile, menuEdit, menuAlgo, menuHelp);
+        menu = new MainMenu(handlers);
 
         // Button Bar
         HBox buttonBar = new HBox(UIConstants.HBOX_SPACING);
@@ -159,7 +113,7 @@ public class MainWindow extends Application {
         buttonEdgeMode.tooltipProperty().setValue(new Tooltip("Shortcut: e"));
         buttonBar.getChildren().addAll(buttonSelectMode, buttonVertexMode, buttonEdgeMode);
         topPane = new VBox();
-        topPane.getChildren().addAll(menu, buttonBar);
+        topPane.getChildren().addAll(menu.getMenuBar(), buttonBar);
 
         // Object Inspector
         objectInspector = new ObjectInspector();
@@ -204,9 +158,7 @@ public class MainWindow extends Application {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
-        updateStructures();
-        updateGenerators();
-        updateAlgorithms();
+        menu.update();
         this.setStatus("");
     }
 
@@ -378,41 +330,6 @@ public class MainWindow extends Application {
         structurePane.setOnSelectionChanged(e -> updateSelection(structurePane));
 
         currentStructureChanged();
-    }
-
-    protected final void updateStructures() {
-        menuFileNew.getItems().clear();
-        for (String str : StructureManager.getStructureClasses()) {
-            MenuItem item = new MenuItem(str);
-            item.setOnAction(e -> menuFileNewActivated(str));
-            menuFileNew.getItems().add(item);
-        }
-    }
-
-    protected final void updateGenerators() {
-        menuFileGenerators.getItems().clear();
-        for (String str : GeneratorManager.getGeneratorClasses()) {
-            MenuItem item = new MenuItem(str);
-            item.setOnAction(e -> menuFileGeneratorActivated(str));
-            menuFileGenerators.getItems().add(item);
-        }
-    }
-
-    protected final void updateAlgorithms() {
-        menuAlgo.getItems().clear();
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == null)
-            return;
-        if (!(tab.getContent() instanceof StructurePane))
-            return;
-        StructurePane structurePane = (StructurePane) tab.getContent();
-        Structure structure = structurePane.structure;
-
-        for (String str : AlgorithmManager.getAlgorithms(structure.getClass())) {
-            MenuItem item = new MenuItem(str);
-            item.setOnAction(e -> menuAlgorithmActivated(str));
-            menuAlgo.getItems().add(item);
-        }
     }
 
     protected void updateSelection() {
@@ -675,10 +592,10 @@ public class MainWindow extends Application {
     private void currentStructureChanged() {
         StructurePane pane = getCurrentStructurePane();
         if (pane == null) {
-            menuFileSave.setDisable(true);
+            menu.setCurrentStructure(null);
             graphTypeLabel.setText("");
         } else {
-            menuFileSave.setDisable(false);
+            menu.setCurrentStructure(pane.structure);
             graphTypeLabel.setText(pane.structure.getClass().getSimpleName());
         }
     }
