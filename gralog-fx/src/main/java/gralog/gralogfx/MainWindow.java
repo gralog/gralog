@@ -69,14 +69,14 @@ public class MainWindow extends Application {
 
         // Menu
         MainMenu.Handlers handlers = new MainMenu.Handlers();
-        handlers.onNew = this::menuFileNewActivated;
-        handlers.onGenerate = this::menuFileGeneratorActivated;
-        handlers.onOpen = this::menuFileOpenActivated;
-        handlers.onSave = this::menuFileSaveActivated;
-        handlers.onDirectInput = this::menuFileDirectInputActivated;
-        handlers.onLoadPlugin = this::menuFilePluginActivated;
+        handlers.onNew = this::onNew;
+        handlers.onGenerate = this::onGenerate;
+        handlers.onOpen = this::onOpen;
+        handlers.onSave = this::onSave;
+        handlers.onDirectInput = this::onDirectInput;
+        handlers.onLoadPlugin = this::onLoadPlugin;
         handlers.onExit = () -> stage.close();
-        handlers.onRunAlgorithm = this::menuAlgorithmActivated;
+        handlers.onRunAlgorithm = this::onRunAlgorithm;
 
         handlers.onAboutGralog = () -> (new AboutStage(this)).showAndWait();
         handlers.onAboutGraph = () -> {
@@ -125,7 +125,7 @@ public class MainWindow extends Application {
         root.setBottom(statusBar);
     }
 
-    public void menuFilePluginActivated() {
+    public void onLoadPlugin() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(getLastDirectory()));
         fileChooser.setTitle("Load Plugins");
@@ -153,18 +153,13 @@ public class MainWindow extends Application {
         this.setStatus("");
     }
 
-    public void menuFileNewActivated(String str) {
-        try {
-            Structure structure = StructureManager.instantiateStructure(str);
-            addTab(str, structure);
-            setStatus("created a " + str + "...");
-        } catch (Exception ex) {
-            ExceptionBox exbox = new ExceptionBox();
-            exbox.showAndWait(ex);
-        }
+    public void onNew(String structureName) throws Exception {
+        Structure structure = StructureManager.instantiateStructure(structureName);
+        addTab(structureName, structure);
+        setStatus("created a " + structureName + "...");
     }
 
-    public void menuFileSaveActivated() {
+    public void onSave() {
         try {
             Structure structure = getCurrentStructurePane().structure;
 
@@ -177,7 +172,9 @@ public class MainWindow extends Application {
             // add export-filters to list of extensions
             for (String format : ExportFilterManager.getExportFilters(structure.getClass())) {
                 ExportFilterDescription descr = ExportFilterManager.getExportFilterDescription(structure.getClass(), format);
-                ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileExtension() + ")", "*." + descr.fileExtension());
+                ExtensionFilter filter = new FileChooser.ExtensionFilter(
+                    descr.name() + " (*." + descr.fileExtension() + ")",
+                    "*." + descr.fileExtension());
                 fileChooser.getExtensionFilters().add(filter);
             }
 
@@ -212,7 +209,7 @@ public class MainWindow extends Application {
         }
     }
 
-    public void menuFileOpenActivated() {
+    public void onOpen() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(new File(getLastDirectory()));
         fileChooser.getExtensionFilters().addAll(
@@ -223,7 +220,9 @@ public class MainWindow extends Application {
         // add export-filters to list of extensions
         for (String format : ImportFilterManager.getImportFilterClasses()) {
             ImportFilterDescription descr = ImportFilterManager.getImportFilterDescription(format);
-            ExtensionFilter filter = new FileChooser.ExtensionFilter(descr.name() + " (*." + descr.fileExtension() + ")", "*." + descr.fileExtension());
+            ExtensionFilter filter = new FileChooser.ExtensionFilter(
+                descr.name() + " (*." + descr.fileExtension() + ")",
+                "*." + descr.fileExtension());
             fileChooser.getExtensionFilters().add(filter);
         }
 
@@ -237,17 +236,12 @@ public class MainWindow extends Application {
         }
     }
 
-    public void menuFileDirectInputActivated() {
-        try {
-            DirectInputStage directinputstage = new DirectInputStage(this);
-            directinputstage.showAndWait();
-            Structure s = directinputstage.dialogResult;
-            if (s != null)
-                this.addTab("", s);
-        } catch (Exception ex) {
-            ExceptionBox exbox = new ExceptionBox();
-            exbox.showAndWait(ex);
-        }
+    public void onDirectInput() throws Exception {
+        DirectInputStage directinputstage = new DirectInputStage(this);
+        directinputstage.showAndWait();
+        Structure s = directinputstage.dialogResult;
+        if (s != null)
+            this.addTab("", s);
     }
 
     public void doOpenFile(File file) {
@@ -329,10 +323,14 @@ public class MainWindow extends Application {
         }
     }
 
-    public void menuFileGeneratorActivated(String str) {
+    /**
+     * Handler to generate a new graph.
+     * @param generatorName The name of the structure to generate.
+     */
+    public void onGenerate(String generatorName) {
         try {
             // prepare
-            Generator gen = GeneratorManager.instantiateGenerator(str);
+            Generator gen = GeneratorManager.instantiateGenerator(generatorName);
             AlgorithmParameters params = gen.getParameters();
             if (params != null) {
                 GeneratorStage genstage = new GeneratorStage(gen, params, this);
@@ -405,13 +403,13 @@ public class MainWindow extends Application {
         }
     }
 
-    public void menuAlgorithmActivated(String str) {
+    public void onRunAlgorithm(String algorithmName) {
         try {
             // Prepare
             Tab tab = tabPane.getSelectionModel().getSelectedItem();
             StructurePane structurePane = (StructurePane) tab.getContent();
             Structure structure = structurePane.structure;
-            Algorithm algo = AlgorithmManager.instantiateAlgorithm(structure.getClass(), str);
+            Algorithm algo = AlgorithmManager.instantiateAlgorithm(structure.getClass(), algorithmName);
 
             AlgorithmParameters params = algo.getParameters(structure);
             if (params != null) {
@@ -428,7 +426,7 @@ public class MainWindow extends Application {
             algoThread.setOnThreadComplete(t -> Platform.runLater(() -> {
                 algorithmCompleted(structurePane, t);
             }));
-            this.setStatus("Running Algorithm \"" + str + "\"...");
+            this.setStatus("Running Algorithm \"" + algorithmName + "\"...");
             algoThread.start();
         } catch (InvocationTargetException ex) {
             this.setStatus("");
