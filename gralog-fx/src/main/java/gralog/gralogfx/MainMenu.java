@@ -50,11 +50,17 @@ public class MainMenu {
     }
 
     private final MenuBar menu;
-    private final Menu menuFile;
-    private final Menu menuFileNew;
-    private final MenuItem menuFileSave;
-    private final Menu menuFileGenerators;
-    private final Menu menuAlgo;
+
+    // We remember some menu items because we want to disable them when there
+    // is no structure available.
+    private MenuItem menuFileSave;
+
+    // We need to keep track of the following submenus because they are
+    // dynamically generated.
+    private Menu menuFileNew;
+    private Menu menuFileGenerators;
+    private Menu menuAlgorithms;
+
     private final Handlers handlers;
 
     private Structure currentStructure;
@@ -93,17 +99,10 @@ public class MainMenu {
         return item;
     }
 
-    MainMenu(Handlers handlers) {
-        this.handlers = handlers;
-
-        menu = new MenuBar();
-
-        // File Menu
-        menuFile = new Menu("File");
+    private Menu createFileMenu() {
+        Menu menuFile = new Menu("File");
         menuFileNew = new Menu("New");
-        updateStructures();
         menuFileGenerators = new Menu("Generators");
-        updateGenerators();
 
         // "Save" is initially disabled because we do not have a structure.
         menuFileSave = createMenuItem("Save graph as...", handlers.onSave);
@@ -118,7 +117,10 @@ public class MainMenu {
             new SeparatorMenuItem(),
             createMenuItem("Exit", handlers.onExit));
 
-        // Edit Menu
+        return menuFile;
+    }
+
+    private Menu createEditMenu() {
         Menu menuEdit = new Menu("Edit");
         menuEdit.getItems().addAll(
             createMenuItem("Undo", handlers.onUndo),
@@ -127,17 +129,34 @@ public class MainMenu {
             createMenuItem("Copy", handlers.onCopy),
             createMenuItem("Paste", handlers.onPaste),
             createMenuItem("Delete", handlers.onDelete));
+        return menuEdit;
+    }
 
-        // Algorithm Menu
-        menuAlgo = new Menu("Algorithms");
+    private Menu createAlgorithmMenu() {
+        menuAlgorithms = new Menu("Algorithms");
+        return menuAlgorithms;
+    }
 
-        // Help Menu
+    private Menu createHelpMenu() {
         Menu menuHelp = new Menu("Help");
         menuHelp.getItems().addAll(
             createMenuItem("About Gralog", handlers.onAboutGralog),
             createMenuItem("About the current graph", handlers.onAboutGraph));
+        return menuHelp;
+    }
 
-        menu.getMenus().addAll(menuFile, menuEdit, menuAlgo, menuHelp);
+    MainMenu(Handlers handlers) {
+        this.handlers = handlers;
+
+        menu = new MenuBar();
+        menu.getMenus().addAll(
+            createFileMenu(),
+            createEditMenu(),
+            createAlgorithmMenu(),
+            createHelpMenu());
+
+        updateStructures();
+        updateGenerators();
     }
 
     /**
@@ -159,28 +178,28 @@ public class MainMenu {
         updateAlgorithms();
     }
 
-    protected final void updateStructures() {
+    private void updateStructures() {
         menuFileNew.getItems().clear();
         for (String str : StructureManager.getStructureClasses())
             menuFileNew.getItems().add(
                 createMenuItem(str, handlers.onNew));
     }
 
-    protected final void updateGenerators() {
+    private void updateGenerators() {
         menuFileGenerators.getItems().clear();
         for (String str : GeneratorManager.getGeneratorClasses())
             menuFileGenerators.getItems().add(
                 createMenuItem(str, handlers.onGenerate));
     }
 
-    protected final void updateAlgorithms() {
-        menuAlgo.getItems().clear();
+    private void updateAlgorithms() {
+        menuAlgorithms.getItems().clear();
 
         if (currentStructure == null)
             return;
 
         for (String str : AlgorithmManager.getAlgorithms(currentStructure.getClass()))
-            menuAlgo.getItems().add(
+            menuAlgorithms.getItems().add(
                 createMenuItem(str, handlers.onRunAlgorithm));
     }
 
