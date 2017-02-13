@@ -75,26 +75,18 @@ public class MainWindow extends Application {
         handlers.onSave = this::menuFileSaveActivated;
         handlers.onDirectInput = this::menuFileDirectInputActivated;
         handlers.onLoadPlugin = this::menuFilePluginActivated;
-        handlers.onExit = this::menuFileExitActivated;
+        handlers.onExit = () -> stage.close();
         handlers.onRunAlgorithm = this::menuAlgorithmActivated;
 
-        handlers.onAboutGralog = () -> {
-            AboutStage aboutstage = new AboutStage(this);
-            aboutstage.showAndWait();
-        };
+        handlers.onAboutGralog = () -> (new AboutStage(this)).showAndWait();
         handlers.onAboutGraph = () -> {
             StructurePane structurePane = this.getCurrentStructurePane();
             if (structurePane == null)
                 return;
-            try {
-                StructureDescription descr = structurePane.structure.getDescription();
-                String url = descr.url();
-                if (url != null && !url.trim().equals(""))
-                    this.getHostServices().showDocument(url);
-            } catch (Exception ex) {
-                ExceptionBox exbox = new ExceptionBox();
-                exbox.showAndWait(ex);
-            }
+            StructureDescription descr = structurePane.structure.getDescription();
+            String url = descr.url();
+            if (url != null && !url.trim().equals(""))
+                this.getHostServices().showDocument(url);
         };
 
         menu = new MainMenu(handlers);
@@ -290,15 +282,6 @@ public class MainWindow extends Application {
             exbox.showAndWait(ex);
         }
         this.setStatus("");
-    }
-
-    public void menuFileExitActivated() {
-        try {
-            stage.close();
-        } catch (Exception ex) {
-            ExceptionBox exbox = new ExceptionBox();
-            exbox.showAndWait(ex);
-        }
     }
 
     public void setStatus(String status) {
