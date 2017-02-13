@@ -6,7 +6,6 @@ import gralog.algorithm.AlgorithmManager;
 import gralog.generator.GeneratorManager;
 import gralog.structure.Structure;
 import gralog.structure.StructureManager;
-import java.util.function.Consumer;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -18,16 +17,36 @@ import javafx.scene.control.SeparatorMenuItem;
 public class MainMenu {
 
     /**
+     * A handler which can be called when a menu item is activated.
+     */
+    @FunctionalInterface
+    public interface MenuAction {
+
+        void run() throws Exception;
+    }
+
+    /**
+     * A handler which can be called when a menu item is activated and which
+     * receives the name of the menu item as a parameter.
+     */
+    @FunctionalInterface
+    public interface MenuStringAction {
+
+        void accept(String menuItemName) throws Exception;
+    }
+
+    /**
      * The handlers for the menu actions. Null handlers disable the
-     * corresponding menu entry permanently.
+     * corresponding menu entry permanently. If a handler throws an exception,
+     * the exception will be shown to the user.
      */
     public static class Handlers {
 
-        Runnable onOpen, onSave, onDirectInput, onLoadPlugin, onExit;
-        Runnable onUndo, onRedo, onCut, onCopy, onPaste, onDelete;
-        Runnable onAboutGralog, onAboutGraph;
+        MenuAction onOpen, onSave, onDirectInput, onLoadPlugin, onExit;
+        MenuAction onUndo, onRedo, onCut, onCopy, onPaste, onDelete;
+        MenuAction onAboutGralog, onAboutGraph;
 
-        Consumer<String> onNew, onGenerate, onRunAlgorithm;
+        MenuStringAction onNew, onGenerate, onRunAlgorithm;
     }
 
     private final MenuBar menu;
@@ -40,19 +59,35 @@ public class MainMenu {
 
     private Structure currentStructure;
 
-    private static MenuItem createMenuItem(String label, Runnable handler) {
+    private static void handleException(Exception exception) {
+        (new ExceptionBox()).showAndWait(exception);
+    }
+
+    private static MenuItem createMenuItem(String label, MenuAction handler) {
         MenuItem item = new MenuItem(label);
         if (handler != null)
-            item.setOnAction(e -> handler.run());
+            item.setOnAction(e -> {
+                try {
+                    handler.run();
+                } catch (Exception exception) {
+                    handleException(exception);
+                }
+            });
         else
             item.setDisable(true);
         return item;
     }
 
-    private static MenuItem createMenuItem(String label, Consumer<String> handler) {
+    private static MenuItem createMenuItem(String label, MenuStringAction handler) {
         MenuItem item = new MenuItem(label);
         if (handler != null)
-            item.setOnAction(e -> handler.accept(label));
+            item.setOnAction(e -> {
+                try {
+                    handler.accept(label);
+                } catch (Exception exception) {
+                    handleException(exception);
+                }
+            });
         else
             item.setDisable(true);
         return item;
