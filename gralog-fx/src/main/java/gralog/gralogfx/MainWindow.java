@@ -52,7 +52,7 @@ public class MainWindow extends Application {
     VBox topPane;
     TabPane tabPane;
     ObjectInspector objectInspector;
-    Label statusBarMessage, graphTypeLabel;
+    StatusBar statusBar;
 
     Button buttonSelectMode, buttonVertexMode, buttonEdgeMode;
 
@@ -110,19 +110,14 @@ public class MainWindow extends Application {
         objectInspector = new ObjectInspector();
 
         // Status Bar
-        HBox statusBar = new HBox();
-        statusBarMessage = new Label("");
-        graphTypeLabel = new Label("");
-        Region buttonBarSpacer = new Region();
-        HBox.setHgrow(buttonBarSpacer, Priority.ALWAYS);
-        statusBar.getChildren().addAll(statusBarMessage, buttonBarSpacer, graphTypeLabel);
+        statusBar = new StatusBar();
 
         root = new BorderPane();
         //root.setFocusTraversable(true);
         root.setTop(topPane);
         root.setCenter(tabPane);
         root.setRight(objectInspector);
-        root.setBottom(statusBar);
+        root.setBottom(statusBar.getStatusBar());
     }
 
     public void onLoadPlugin() {
@@ -279,7 +274,7 @@ public class MainWindow extends Application {
     }
 
     public void setStatus(String status) {
-        statusBarMessage.setText(status);
+        statusBar.setStatus(status);
     }
 
     public void addTab(String text, Structure structure) {
@@ -556,15 +551,15 @@ public class MainWindow extends Application {
         return (StructurePane) tab.getContent();
     }
 
-    private void currentStructureChanged() {
+    private Structure getCurrentStructure() {
         StructurePane pane = getCurrentStructurePane();
-        if (pane == null) {
-            menu.setCurrentStructure(null);
-            graphTypeLabel.setText("");
-        } else {
-            menu.setCurrentStructure(pane.structure);
-            graphTypeLabel.setText(pane.structure.getClass().getSimpleName());
-        }
+        return pane == null ? null : pane.structure;
+    }
+
+    private void currentStructureChanged() {
+        Structure structure = getCurrentStructure();
+        menu.setCurrentStructure(structure);
+        statusBar.setCurrentStructure(structure);
     }
 
     private void checkMode() {
