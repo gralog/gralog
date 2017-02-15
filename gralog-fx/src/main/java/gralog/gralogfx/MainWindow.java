@@ -52,9 +52,10 @@ public class MainWindow extends Application {
     VBox topPane;
     TabPane tabPane;
     ObjectInspector objectInspector;
-    StatusBar statusBar;
 
-    Button buttonSelectMode, buttonVertexMode, buttonEdgeMode;
+    ModeButtons modeButtons;
+
+    StatusBar statusBar;
 
     public MainWindow() {
         stage = null;
@@ -89,28 +90,15 @@ public class MainWindow extends Application {
                 this.getHostServices().showDocument(url);
         };
 
-        menu = new MainMenu(handlers);
-
-        // Button Bar
-        HBox buttonBar = new HBox(UIConstants.HBOX_SPACING);
-        buttonSelectMode = new Button("Select");
-        buttonSelectMode.setOnAction(e -> setSelectMode());
-        buttonSelectMode.tooltipProperty().setValue(new Tooltip("Shortcut: s"));
-        buttonVertexMode = new Button("New vertex");
-        buttonVertexMode.setOnAction(e -> setVertexCreationMode());
-        buttonVertexMode.tooltipProperty().setValue(new Tooltip("Shortcut: v"));
-        buttonEdgeMode = new Button("New edge");
-        buttonEdgeMode.setOnAction(e -> setEdgeCreationMode());
-        buttonEdgeMode.tooltipProperty().setValue(new Tooltip("Shortcut: e"));
-        buttonBar.getChildren().addAll(buttonSelectMode, buttonVertexMode, buttonEdgeMode);
-        topPane = new VBox();
-        topPane.getChildren().addAll(menu.getMenuBar(), buttonBar);
-
-        // Object Inspector
-        objectInspector = new ObjectInspector();
-
-        // Status Bar
         statusBar = new StatusBar();
+
+        menu = new MainMenu(handlers);
+        modeButtons = new ModeButtons(statusBar::setStatus);
+
+        topPane = new VBox();
+        topPane.getChildren().addAll(menu.getMenuBar(), modeButtons.getButtonBar());
+
+        objectInspector = new ObjectInspector();
 
         root = new BorderPane();
         //root.setFocusTraversable(true);
@@ -291,15 +279,7 @@ public class MainWindow extends Application {
     }
 
     protected void updateSelection() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        StructurePane structurePane = null;
-
-        if (tab != null)
-            if (tab.getContent() instanceof StructurePane)
-                structurePane = (StructurePane) tab.getContent();
-
-        updateSelection(structurePane);
-        checkMode();
+        updateSelection(getCurrentStructurePane());
     }
 
     protected void updateSelection(StructurePane sender) {
@@ -461,13 +441,13 @@ public class MainWindow extends Application {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case S:
-                    setSelectMode();
+                    modeButtons.setSelectMode();
                     break;
                 case V:
-                    setVertexCreationMode();
+                    modeButtons.setVertexCreationMode();
                     break;
                 case E:
-                    setEdgeCreationMode();
+                    modeButtons.setEdgeCreationMode();
                     break;
             }
         });
@@ -560,50 +540,7 @@ public class MainWindow extends Application {
         Structure structure = getCurrentStructure();
         menu.setCurrentStructure(structure);
         statusBar.setCurrentStructure(structure);
-    }
-
-    private void checkMode() {
-        buttonSelectMode.setStyle("");
-        buttonVertexMode.setStyle("");
-        buttonEdgeMode.setStyle("");
-        StructurePane pane = getCurrentStructurePane();
-        if (pane != null) {
-            switch (pane.getMouseMode()) {
-                case SELECT_MODE:
-                    buttonSelectMode.setStyle("-fx-base: #0000FF;");
-                    setStatus("Selection mode");
-                    break;
-                case VERTEX_MODE:
-                    buttonVertexMode.setStyle("-fx-base: #0000FF;");
-                    setStatus("Vertex creation mode");
-                    break;
-                case EDGE_MODE:
-                    buttonEdgeMode.setStyle("-fx-base: #0000FF;");
-                    setStatus("Edge creation mode");
-                    break;
-            }
-        }
-    }
-
-    private void setSelectMode() {
-        StructurePane pane = getCurrentStructurePane();
-        if (pane != null)
-            pane.setSelectMode();
-        checkMode();
-    }
-
-    private void setVertexCreationMode() {
-        StructurePane pane = getCurrentStructurePane();
-        if (pane != null)
-            pane.setVertexCreationMode();
-        checkMode();
-    }
-
-    private void setEdgeCreationMode() {
-        StructurePane pane = getCurrentStructurePane();
-        if (pane != null)
-            pane.setEdgeCreationMode();
-        checkMode();
+        modeButtons.setCurrentStructurePane(getCurrentStructurePane());
     }
 
     private String getLastDirectory() {
