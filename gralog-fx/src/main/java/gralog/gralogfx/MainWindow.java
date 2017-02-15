@@ -85,7 +85,7 @@ public class MainWindow extends Application {
         topPane = new VBox();
         topPane.getChildren().addAll(menu.getMenuBar(), modeButtons.getButtonBar());
 
-        tabs = new Tabs(this::currentStructureChanged);
+        tabs = new Tabs(this::onChangeCurrentStructure);
 
         root = new BorderPane();
         //root.setFocusTraversable(true);
@@ -477,7 +477,7 @@ public class MainWindow extends Application {
         return pane == null ? null : pane.structure;
     }
 
-    private void currentStructureChanged() {
+    private void onChangeCurrentStructure() {
         Structure structure = getCurrentStructure();
         menu.setCurrentStructure(structure);
         statusBar.setCurrentStructure(structure);
