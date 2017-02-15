@@ -50,25 +50,13 @@ public class MainWindow extends Application {
     BorderPane root;
     MainMenu menu;
     VBox topPane;
-    TabPane tabPane;
-    ObjectInspector objectInspector;
+    Tabs tabs;
 
     ModeButtons modeButtons;
 
     StatusBar statusBar;
 
     public MainWindow() {
-        stage = null;
-
-        // Tab Panel
-        tabPane = new TabPane();
-        tabPane.getSelectionModel().selectedItemProperty().addListener(e -> {
-            menu.update();
-            updateSelection();
-        });
-        //tabPane.setFocusTraversable(true);
-
-        // Menu
         MainMenu.Handlers handlers = new MainMenu.Handlers();
         handlers.onNew = this::onNew;
         handlers.onGenerate = this::onGenerate;
@@ -81,11 +69,10 @@ public class MainWindow extends Application {
 
         handlers.onAboutGralog = () -> (new AboutStage(this)).showAndWait();
         handlers.onAboutGraph = () -> {
-            StructurePane structurePane = this.getCurrentStructurePane();
-            if (structurePane == null)
+            Structure structure = getCurrentStructure();
+            if (structure == null)
                 return;
-            StructureDescription descr = structurePane.structure.getDescription();
-            String url = descr.url();
+            String url = structure.getDescription().url();
             if (url != null && !url.trim().equals(""))
                 this.getHostServices().showDocument(url);
         };
@@ -98,13 +85,13 @@ public class MainWindow extends Application {
         topPane = new VBox();
         topPane.getChildren().addAll(menu.getMenuBar(), modeButtons.getButtonBar());
 
-        objectInspector = new ObjectInspector();
+        tabs = new Tabs(this::currentStructureChanged);
 
         root = new BorderPane();
         //root.setFocusTraversable(true);
         root.setTop(topPane);
-        root.setCenter(tabPane);
-        root.setRight(objectInspector);
+        root.setCenter(tabs.getTabPane());
+        root.setRight(tabs.getObjectInspector());
         root.setBottom(statusBar.getStatusBar());
     }
 
@@ -138,13 +125,13 @@ public class MainWindow extends Application {
 
     public void onNew(String structureName) throws Exception {
         Structure structure = StructureManager.instantiateStructure(structureName);
-        addTab(structureName, structure);
+        tabs.addTab(structureName, structure);
         setStatus("created a " + structureName + "...");
     }
 
     public void onSave() {
         try {
-            Structure structure = getCurrentStructurePane().structure;
+            Structure structure = getCurrentStructure();
 
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File(getLastDirectory()));
@@ -184,7 +171,7 @@ public class MainWindow extends Application {
                 } else {
                     structure.writeToFile(file.getAbsolutePath());
                 }
-                setCurrentStructureTitle(file.getName());
+                tabs.setCurrentTabName(file.getName());
             }
         } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
@@ -224,7 +211,7 @@ public class MainWindow extends Application {
         directinputstage.showAndWait();
         Structure s = directinputstage.dialogResult;
         if (s != null)
-            this.addTab("", s);
+            tabs.addTab("", s);
     }
 
     public void doOpenFile(File file) {
@@ -253,7 +240,7 @@ public class MainWindow extends Application {
             }
 
             if (structure != null)
-                addTab(file.getName(), structure);
+                tabs.addTab(file.getName(), structure);
         } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -265,41 +252,9 @@ public class MainWindow extends Application {
         statusBar.setStatus(status);
     }
 
-    public void addTab(String text, Structure structure) {
-        Tab t = new Tab(text);
-        StructurePane structurePane = new StructurePane(structure);
-        t.setContent(structurePane);
-
-        tabPane.getTabs().add(t);
-        tabPane.getSelectionModel().select(t);
-        structurePane.draw();
-        structurePane.setOnSelectionChanged(e -> updateSelection(structurePane));
-
-        currentStructureChanged();
-    }
-
-    protected void updateSelection() {
-        updateSelection(getCurrentStructurePane());
-    }
-
-    protected void updateSelection(StructurePane sender) {
-        try {
-            Set<Object> selection = null;
-            if (sender != null) {
-                selection = sender.highlights.getSelection();
-                sender.requestRedraw();
-            }
-            if (selection != null && selection.size() == 1)
-                objectInspector.setObject(selection.iterator().next(), sender);
-            currentStructureChanged();
-        } catch (Exception ex) {
-            ExceptionBox exbox = new ExceptionBox();
-            exbox.showAndWait(ex);
-        }
-    }
-
     /**
      * Handler to generate a new graph.
+     *
      * @param generatorName The name of the structure to generate.
      */
     public void onGenerate(String generatorName) {
@@ -318,7 +273,7 @@ public class MainWindow extends Application {
             Structure genResult = gen.generate(params);
             if (genResult == null)
                 return;
-            this.addTab(gen.getDescription().name(), genResult);
+            tabs.addTab(gen.getDescription().name(), genResult);
 
         } catch (Exception ex) {
             this.setStatus("");
@@ -343,7 +298,7 @@ public class MainWindow extends Application {
             }
 
             if (algoResult instanceof Structure) {
-                this.addTab("Algorithm result", (Structure) algoResult);
+                tabs.addTab("Algorithm result", (Structure) algoResult);
             } else if (algoResult instanceof Set) {
                 boolean isSelection = true;
                 for (Object o : (Set) algoResult)
@@ -381,8 +336,7 @@ public class MainWindow extends Application {
     public void onRunAlgorithm(String algorithmName) {
         try {
             // Prepare
-            Tab tab = tabPane.getSelectionModel().getSelectedItem();
-            StructurePane structurePane = (StructurePane) tab.getContent();
+            StructurePane structurePane = tabs.getCurrentStructurePane();
             Structure structure = structurePane.structure;
             Algorithm algo = AlgorithmManager.instantiateAlgorithm(structure.getClass(), algorithmName);
 
@@ -518,21 +472,8 @@ public class MainWindow extends Application {
                 doOpenFile(new File(s));
     }
 
-    private void setCurrentStructureTitle(String title) {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab != null)
-            tab.setText(title);
-    }
-
-    private StructurePane getCurrentStructurePane() {
-        Tab tab = tabPane.getSelectionModel().getSelectedItem();
-        if (tab == null)
-            return null;
-        return (StructurePane) tab.getContent();
-    }
-
     private Structure getCurrentStructure() {
-        StructurePane pane = getCurrentStructurePane();
+        StructurePane pane = tabs.getCurrentStructurePane();
         return pane == null ? null : pane.structure;
     }
 
@@ -540,7 +481,7 @@ public class MainWindow extends Application {
         Structure structure = getCurrentStructure();
         menu.setCurrentStructure(structure);
         statusBar.setCurrentStructure(structure);
-        modeButtons.setCurrentStructurePane(getCurrentStructurePane());
+        modeButtons.setCurrentStructurePane(tabs.getCurrentStructurePane());
     }
 
     private String getLastDirectory() {
