@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import static gralog.plugins.PluginManager.instantiateClass;
 
 /**
@@ -30,6 +31,7 @@ public final class AlgorithmManager {
 
         try{
             methods = aClass.getMethods();
+            System.out.println("Has been found");
         }catch(NoClassDefFoundError e){
             System.out.println("WARNING: algorithm class def not found..."+className);
 
