@@ -47,11 +47,8 @@ public final class ViewManager {
         File plugin = new File(pathToPlugin);
 
         // Add the plugin to the classpath
-        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-        Class sysclass = URLClassLoader.class;
-        Method method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
-        method.setAccessible(true);
-        method.invoke(sysloader, new Object[]{plugin.toURI().toURL()});
+
+        URLClassLoader sysloader = new URLClassLoader(new URL[] {plugin.toURL()}, ClassLoader.getSystemClassLoader());
 
         // Load the classes
         Collection<Class<?>> classes = new ArrayList<>();
@@ -61,8 +58,14 @@ public final class ViewManager {
                 String file = entry.getName();
                 if (file.endsWith(".class")) {
                     String classname = file.replace('/', '.').substring(0, file.length() - 6);
-                    Class<?> c = Class.forName(classname, false, sysloader);
-                    classes.add(c);
+
+                    //catches classdeferrors from jflex generated classes
+                    try {
+                        Class<?> c = Class.forName(classname, false, sysloader);
+                        classes.add(c);
+                    }catch (NoClassDefFoundError e){
+                        System.out.println(classname);
+                    }
                 }
             }
         }

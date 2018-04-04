@@ -26,8 +26,16 @@ public final class AlgorithmManager {
     public static void registerAlgorithmClass(Class<?> aClass, String className) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
             return;
+        Method[] methods = new Method[0];
 
-        Method[] methods = aClass.getMethods();
+        try{
+            methods = aClass.getMethods();
+        }catch(NoClassDefFoundError e){
+            System.out.println("WARNING: algorithm class def not found..."+className);
+
+            return;
+        }
+
         Class applicableToClass = null;
         for (Method method : methods) {
             if (!method.getName().equals("run"))
