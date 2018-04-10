@@ -15,6 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.StackPane;
 import javafx.geometry.Point2D;
@@ -22,7 +23,6 @@ import javafx.geometry.Point2D;
 import javafx.event.EventType;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.ScrollEvent;
 
 /**
@@ -45,11 +45,20 @@ public class StructurePane extends StackPane implements StructureListener {
 
     Structure structure;
     Canvas canvas;
-
     Highlights highlights = new Highlights();
-    Set<Object> dragging = null;
-    double lastMouseX = -1d;
-    double lastMouseY = -1d;
+
+
+    //temporary drawing state variables
+    private Set<Object> dragging = null;
+    private boolean wasDraggingPrimary = false;
+    private boolean wasDraggingSecondary = false;
+    private boolean wasDraggingMiddle = false;
+
+    private IMovable currentEdgeStartingPoint;
+
+    private double lastMouseX = -1d;
+    private double lastMouseY = -1d;
+
 
     double gridSize = 1.0; // cm
     boolean snapToGrid = true;
@@ -85,7 +94,7 @@ public class StructurePane extends StackPane implements StructureListener {
         canvas.setFocusTraversable(true);
         canvas.addEventFilter(MouseEvent.ANY, (e) -> canvas.requestFocus());
 
-        setSelectMode();
+        setMouseEvents();
     }
 
     public Structure getStructure() {
@@ -106,12 +115,12 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public void requestRedraw(double screenX, double screenY) {
+    public void requestRedraw(Point2D from, Point2D to) {
         needsRepaintLock.lock();
         try {
             if (!needsRepaint) {
                 Platform.runLater(() -> {
-                    this.draw(screenX, screenY);
+                    this.draw(from, to);
                 });
                 needsRepaint = true;
             }
@@ -120,35 +129,24 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public final void setSelectMode() {
-        mouseMode = MouseMode.SELECT_MODE;
+    public final void setMouseEvents() {
 
-        canvas.setOnMousePressed(e -> {
-            MouseEvent me = (MouseEvent) e;
-            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
-            lastMouseX = (double) mousePositionModel.getX();
-            lastMouseY = (double) mousePositionModel.getY();
+        canvas.setOnMouseClicked(e -> { });
+        canvas.setOnMousePressed(this::onMousePressed);
 
-            if (!e.isControlDown())
-                clearSelection();
-
-            IMovable selected = structure.findObject(lastMouseX, lastMouseY);
-            if (selected != null) {
-                select(selected);
-                dragging = highlights.getSelection();
-            }
-        });
-        canvas.setOnMouseReleased(e -> {
-            if (dragging != null && snapToGrid) {
-                structure.snapToGrid(gridSize);
-                this.requestRedraw();
-            }
-            dragging = null;
-        });
+        canvas.setOnMouseReleased(this::onMouseReleased);
         canvas.setOnMouseDragged(e -> {
-            MouseEvent me = (MouseEvent) e;
-            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
-            if (dragging != null) {
+
+            if(e.isPrimaryButtonDown()){
+                wasDraggingPrimary = true;
+            }
+            if(e.isSecondaryButtonDown()){
+                wasDraggingSecondary = true;
+            }
+
+            Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
+            // Drag objects only with primary button
+            if (dragging != null && !e.isMiddleButtonDown()) {
                 for (Object o : dragging)
                     if (o instanceof IMovable) {
                         Vector2D offset = new Vector2D(
@@ -161,7 +159,17 @@ public class StructurePane extends StackPane implements StructureListener {
                 // this must not be done when we are dragging the screen!!!!!
                 lastMouseX = mousePositionModel.getX();
                 lastMouseY = mousePositionModel.getY();
-            } else {                                                 // draging the screen
+            }
+            else if(e.isSecondaryButtonDown()){
+                //if edge is being drawn currently, draw a line between start and mouse
+                if(currentEdgeStartingPoint != null){
+                    Vertex v = (Vertex) currentEdgeStartingPoint;
+                    Point2D vScreenCords = modelToScreen(new Point2D(v.coordinates.getX(), v.coordinates.getY()));
+                    this.requestRedraw(vScreenCords, new Point2D(e.getX(), e.getY()));
+                }
+            }
+            // Drag only with middle mouse button
+            else if(e.isMiddleButtonDown()){
                 offsetX -= (mousePositionModel.getX() - lastMouseX);
                 offsetY -= (mousePositionModel.getY() - lastMouseY);
             }
@@ -169,8 +177,8 @@ public class StructurePane extends StackPane implements StructureListener {
             this.requestRedraw();
         });
         canvas.setOnKeyPressed(e -> {
-            KeyEvent ke = (KeyEvent) e;
-            switch (ke.getCode()) {
+
+            switch (e.getCode()) {
                 case DELETE:
                     for (Object o : highlights.getSelection()) {
                         if (o instanceof Vertex)
@@ -185,114 +193,76 @@ public class StructurePane extends StackPane implements StructureListener {
             }
         });
     }
+    void onMousePressed(MouseEvent e){
+        Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
+        lastMouseX = mousePositionModel.getX();
+        lastMouseY = mousePositionModel.getY();
+        IMovable selected = structure.findObject(lastMouseX, lastMouseY);
 
-    public final void setVertexCreationMode() {
-        mouseMode = MouseMode.VERTEX_MODE;
-
-        canvas.setOnMousePressed(e -> {
-            MouseEvent me = (MouseEvent) e;
-            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
-            lastMouseX = mousePositionModel.getX();
-            lastMouseY = mousePositionModel.getY();
-
-            Vertex v = structure.createVertex();
-            v.coordinates = new Vector2D(
-                mousePositionModel.getX(),
-                mousePositionModel.getY()
-            );
-            if (snapToGrid)
-                v.snapToGrid(gridSize);
-
-            structure.addVertex(v);
-            clearSelection();
-            select(v);
-
-            this.requestRedraw();
-        });
-        canvas.setOnMouseReleased(e -> {
-        });
-        canvas.setOnMouseDragged(e -> {
-        });
-        canvas.setOnKeyReleased(e -> {
-        });
-
-    }
-
-    public final void setEdgeCreationMode() {
-        mouseMode = MouseMode.EDGE_MODE;
-
-        canvas.setOnMousePressed(e -> {
-            MouseEvent me = (MouseEvent) e;
-            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
-            lastMouseX = mousePositionModel.getX();
-            lastMouseY = mousePositionModel.getY();
-
-            Object selectionTemp = structure.findObject(lastMouseX, lastMouseY);
-            if (selectionTemp == null)
-                return;
-
-            clearSelection();
-            dragging = null;
-            if (selectionTemp instanceof Vertex)
-                select(selectionTemp);
-            else if (selectionTemp instanceof Edge) {
-                EdgeIntermediatePoint intermediatepoint = ((Edge) selectionTemp).addIntermediatePoint(lastMouseX, lastMouseY);
-                select(intermediatepoint);
-                dragging = highlights.getSelection();
-            }
-
-            this.requestRedraw();
-        });
-        canvas.setOnMouseReleased(e -> {
-            MouseEvent me = (MouseEvent) e;
-            Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
-            lastMouseX = mousePositionModel.getX();
-            lastMouseY = mousePositionModel.getY();
-            dragging = null;
-
-            Object releasedOver = structure.findObject(lastMouseX, lastMouseY);
-            if (releasedOver != null && (releasedOver instanceof Vertex)) {
-                for (Object o : highlights.getSelection()) {
-                    if (!(o instanceof Vertex))
-                        continue;
-                    Edge edge = structure.createEdge((Vertex) o, (Vertex) releasedOver);
-                    structure.addEdge(edge);
-                }
+        //group selection handling for primary mouse button
+        if(e.isPrimaryButtonDown()){
+            if(!e.isControlDown() && !highlights.isSelected(selected)){
                 clearSelection();
             }
-            this.requestRedraw();
-        });
-        canvas.setOnMouseDragged(e -> {
-            MouseEvent me = (MouseEvent) e;
-            if (!highlights.isSelectionEmpty() && dragging == null) {
-                this.requestRedraw(me.getX(), me.getY());
-            } else {
-                Point2D mousePositionModel = screenToModel(new Point2D(me.getX(), me.getY()));
-                if (dragging != null) {
-                    for (Object o : dragging)
-                        if (o instanceof IMovable) {
-                            Vector2D offset = new Vector2D(
-                                mousePositionModel.getX() - lastMouseX,
-                                mousePositionModel.getY() - lastMouseY
-                            );
-                            ((IMovable) o).move(offset);
-                        }
-                    // update model position under mouse
-                    // this must not be done when we are dragging the screen!!!!!
-                    lastMouseX = mousePositionModel.getX();
-                    lastMouseY = mousePositionModel.getY();
-                } else {                                                 // draging the screen
-                    offsetX -= (mousePositionModel.getX() - lastMouseX);
-                    offsetY -= (mousePositionModel.getY() - lastMouseY);
+            if (selected != null) {
+                select(selected);
+                dragging = highlights.getSelection();
+            }else if(!e.isControlDown()){
+                clearSelection();
+            }
+        }else if(e.isSecondaryButtonDown()){
+            //start an edge if secondary mouse down on a vertex
+            if(selected instanceof Vertex){
+                currentEdgeStartingPoint = selected;
+            }else if(selected == null){
+                Vertex v = structure.createVertex();
+                v.coordinates = new Vector2D(
+                        mousePositionModel.getX(),
+                        mousePositionModel.getY()
+                );
+                if (snapToGrid){
+                    v.snapToGrid(gridSize);
                 }
 
-                this.requestRedraw();
+                structure.addVertex(v);
             }
-        });
-        canvas.setOnKeyReleased(e -> {
-        });
+        }
+        this.requestRedraw();
     }
+    private void onMouseReleased(MouseEvent e){
+        MouseButton b = e.getButton();
 
+        Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
+        lastMouseX = mousePositionModel.getX();
+        lastMouseY = mousePositionModel.getY();
+        IMovable selected = structure.findObject(lastMouseX, lastMouseY);
+
+        if (dragging != null && snapToGrid) {
+            structure.snapToGrid(gridSize);
+            this.requestRedraw();
+        }
+
+        //mouse release dissolves selection group, but not when
+        //1) the selection group has been moved = wasDraggingPrimary
+        //2) another item has been added to the selection = isControlDown
+        //3) the button released wasn't primary
+        if(b == MouseButton.PRIMARY && !e.isControlDown() && !wasDraggingPrimary){
+            Object lastAdded = highlights.lastAdded();
+            clearSelection();
+            select(lastAdded);
+        }
+        //right release on a vertex while drawing an edge = add edge
+        else if(b == MouseButton.SECONDARY && selected instanceof Vertex && currentEdgeStartingPoint != null){
+            Edge edge = structure.createEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
+            structure.addEdge(edge);
+        }
+        wasDraggingPrimary = false;
+        wasDraggingSecondary = false;
+        dragging = null;
+        currentEdgeStartingPoint = null;
+
+        this.requestRedraw();
+    }
     public MouseMode getMouseMode() {
         return mouseMode;
     }
@@ -321,7 +291,7 @@ public class StructurePane extends StackPane implements StructureListener {
         return result;
     }
 
-    public void draw(double mouseScreenX, double mouseScreenY) {
+    public void draw(Point2D from, Point2D to) {
         this.needsRepaintLock.lock();
         try {
             if (needsRepaint) {
@@ -329,13 +299,8 @@ public class StructurePane extends StackPane implements StructureListener {
                 draw(gc);
 
                 gc.setStroke(Color.BLACK);
-                for (Object o : highlights.getSelection()) {
-                    if (!(o instanceof Vertex))
-                        continue;
-                    Vertex v = (Vertex) o;
-                    Point2D selectionScreen = modelToScreen(new Point2D(v.coordinates.get(0), v.coordinates.get(1)));
-                    gc.strokeLine(selectionScreen.getX(), selectionScreen.getY(), mouseScreenX, mouseScreenY);
-                }
+                gc.strokeLine(from.getX(), from.getY(), to.getX(), to.getY());
+
 
                 needsRepaint = false;
             }
@@ -405,6 +370,9 @@ public class StructurePane extends StackPane implements StructureListener {
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
 
+    private boolean wasDragging(){
+        return wasDraggingPrimary || wasDraggingSecondary || wasDraggingMiddle;
+    }
     /**
      * Annotates the given vertex or edge with the given string. Overrides the
      * old annotation for this vertex/edge if present.

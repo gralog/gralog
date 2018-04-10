@@ -41,13 +41,10 @@ public class ModeButtons {
 
         buttonBar = new HBox(UIConstants.HBOX_SPACING);
         buttonSelectMode = new Button("Select");
-        buttonSelectMode.setOnAction(e -> setSelectMode());
         buttonSelectMode.tooltipProperty().setValue(new Tooltip("Shortcut: s"));
         buttonVertexMode = new Button("New vertex");
-        buttonVertexMode.setOnAction(e -> setVertexCreationMode());
         buttonVertexMode.tooltipProperty().setValue(new Tooltip("Shortcut: v"));
         buttonEdgeMode = new Button("New edge");
-        buttonEdgeMode.setOnAction(e -> setEdgeCreationMode());
         buttonEdgeMode.tooltipProperty().setValue(new Tooltip("Shortcut: e"));
         buttonBar.getChildren().addAll(buttonSelectMode, buttonVertexMode, buttonEdgeMode);
 
@@ -75,38 +72,6 @@ public class ModeButtons {
         }
     }
 
-    /**
-     * Sets the mode for the current StructurePane to selection mode. Does
-     * nothing if there is no current StructurePane.
-     */
-    public void setSelectMode() {
-        if (structurePane != null) {
-            structurePane.setSelectMode();
-            checkMode();
-        }
-    }
-
-    /**
-     * Sets the mode for the current StructurePane to vertex creation mode. Does
-     * nothing if there is no current StructurePane.
-     */
-    public void setVertexCreationMode() {
-        if (structurePane != null) {
-            structurePane.setVertexCreationMode();
-            checkMode();
-        }
-    }
-
-    /**
-     * Sets the mode for the current StructurePane to edge creation mode. Does
-     * nothing if there is no current StructurePane.
-     */
-    public void setEdgeCreationMode() {
-        if (structurePane != null) {
-            structurePane.setEdgeCreationMode();
-            checkMode();
-        }
-    }
 
     private void checkMode() {
         buttonSelectMode.setStyle(INACTIVE_BUTTON_STYLE);

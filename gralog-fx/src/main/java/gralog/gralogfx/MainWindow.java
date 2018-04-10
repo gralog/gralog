@@ -46,15 +46,11 @@ import org.xml.sax.SAXException;
  */
 public class MainWindow extends Application {
 
-    Stage stage;
-    BorderPane root;
-    MainMenu menu;
-    VBox topPane;
-    Tabs tabs;
-
-    ModeButtons modeButtons;
-
-    StatusBar statusBar;
+    private Stage stage;
+    private BorderPane root;
+    private MainMenu menu;
+    private Tabs tabs;
+    private StatusBar statusBar;
 
     public MainWindow() {
         MainMenu.Handlers handlers = new MainMenu.Handlers();
@@ -80,10 +76,9 @@ public class MainWindow extends Application {
         statusBar = new StatusBar();
 
         menu = new MainMenu(handlers);
-        modeButtons = new ModeButtons(statusBar::setStatus);
 
-        topPane = new VBox();
-        topPane.getChildren().addAll(menu.getMenuBar(), modeButtons.getButtonBar());
+        VBox topPane = new VBox();
+        topPane.getChildren().addAll(menu.getMenuBar());
 
         tabs = new Tabs(this::onChangeCurrentStructure);
 
@@ -392,19 +387,10 @@ public class MainWindow extends Application {
         primaryStage.setTitle("Gralog");
         primaryStage.setScene(scene);
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());
-        scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case S:
-                    modeButtons.setSelectMode();
-                    break;
-                case V:
-                    modeButtons.setVertexCreationMode();
-                    break;
-                case E:
-                    modeButtons.setEdgeCreationMode();
-                    break;
-            }
-        });
+
+        //TODO: implement hot keys here
+        //scene.setOnKeyPressed(event -> {
+
         // Remember the size of the window.
         primaryStage.setOnCloseRequest((e) -> {
             Preferences.setInteger(getClass(), "main-window-width", (int) scene.getWidth());
@@ -481,7 +467,6 @@ public class MainWindow extends Application {
         Structure structure = getCurrentStructure();
         menu.setCurrentStructure(structure);
         statusBar.setCurrentStructure(structure);
-        modeButtons.setCurrentStructurePane(tabs.getCurrentStructurePane());
     }
 
     private String getLastDirectory() {

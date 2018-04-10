@@ -15,11 +15,14 @@ public class Highlights {
 
     private final Set<Object> selection = new HashSet<>();
     private final Map<Object, String> annotations = new HashMap<>();
-
+    private Object lastAdded;
     public void select(Object o) {
+        lastAdded = o;
         selection.add(o);
     }
-
+    public Object lastAdded(){
+        return lastAdded;
+    }
     public void selectAll(Collection elems) {
         for (Object o : elems)
             selection.add(o);
@@ -27,6 +30,7 @@ public class Highlights {
 
     public void clearSelection() {
         selection.clear();
+        lastAdded = null;
     }
 
     public Set<Object> getSelection() {
