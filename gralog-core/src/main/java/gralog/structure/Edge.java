@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 
+import javafx.geometry.Point2D;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

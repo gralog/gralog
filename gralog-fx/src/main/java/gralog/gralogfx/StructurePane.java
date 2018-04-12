@@ -7,6 +7,7 @@ import gralog.events.*;
 import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
@@ -56,6 +57,7 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean wasDraggingSecondary = false;
     private boolean wasDraggingMiddle = false;
     private Point2D boxingStartingPosition;
+    private boolean selectionBoxingActive = false;
     private IMovable currentEdgeStartingPoint;
 
     private double lastMouseX = -1d;
@@ -176,6 +178,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 dragging = highlights.getSelection();
             }else if(!e.isControlDown()){
                 boxingStartingPosition = new Point2D(e.getX(), e.getY());
+                selectionBoxingActive = true;
                 clearSelection();
             }
         }else if(e.isSecondaryButtonDown()){
@@ -209,12 +212,15 @@ public class StructurePane extends StackPane implements StructureListener {
             structure.snapToGrid(gridSize);
             this.requestRedraw();
         }
-
+        else if(b == MouseButton.PRIMARY && selectionBoxingActive){
+            List<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
+            select(objs);
+        }
         //mouse release dissolves selection group, but not when
         //1) the selection group has been moved = wasDraggingPrimary
         //2) another item has been added to the selection = isControlDown
         //3) the button released wasn't primary
-        if(b == MouseButton.PRIMARY && !e.isControlDown() && !wasDraggingPrimary){
+        else if(b == MouseButton.PRIMARY && !e.isControlDown() && !wasDraggingPrimary){
             Object lastAdded = highlights.lastAdded();
             clearSelection();
             select(lastAdded);
@@ -226,6 +232,7 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         wasDraggingPrimary = false;
         wasDraggingSecondary = false;
+        selectionBoxingActive = false;
         dragging = null;
         currentEdgeStartingPoint = null;
 
@@ -392,7 +399,12 @@ public class StructurePane extends StackPane implements StructureListener {
         highlights.select(obj);
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
-
+    public void select(List<IMovable> list) {
+        for(IMovable obj : list){
+            highlights.select(obj);
+        }
+        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+    }
     public void selectAll(Collection elems) {
         highlights.selectAll(elems);
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));

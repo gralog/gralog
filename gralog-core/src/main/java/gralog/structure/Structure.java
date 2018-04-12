@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
+import gralog.importfilter.ImportFilter;
 import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
 import gralog.events.*;
@@ -11,6 +12,8 @@ import java.util.*;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
+import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -262,6 +265,37 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return result;
     }
 
+    /**
+     * Returns an array of movable objects that lie within bounds of a given rectangle.
+     * TODO: Implement an overloaded findObjects that returns only filtered movable obj.
+     * @param from one corner of the rectangle
+     * @param to the corner diagonal to the first one
+     * @return A collection of movables that are within bounds of the given rectangle
+     */
+    public List<IMovable> findObjects(Point2D from, Point2D to){
+        List<IMovable> objects = new ArrayList<>();
+
+        double px = from.getX();
+        double qx = to.getX();
+        double py = from.getY();
+        double qy = to.getY();
+
+        double cx = qx - px;
+        double cy = qy - py;
+
+        for (Vertex v : vertices){
+            double vx = v.coordinates.getX();
+            double vy = v.coordinates.getY();
+            // checking if x coordinate is in bounds of the rect (for x and y respectively)
+            // |q-v|>|c|  and  sgn(c)|q-v|>0
+            if(Math.abs(qx - vx) <= Math.abs(cx) && Math.signum(cx) * Math.abs(qx - vx) >= 0 &&
+               Math.abs(qy - vy) <= Math.abs(cy) && Math.signum(cy) * Math.abs(qy - vy) >= 0){
+                objects.add(v);
+            }
+        }
+
+        return objects;
+    }
     @Override
     public Element toXml(Document doc) throws Exception {
         Element snode = super.toXml(doc);
