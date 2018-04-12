@@ -79,4 +79,17 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.fillRect(p1.getX(), p1.getY(), p2.getX() - p1.getX(), p2.getY() - p1.getY());
     }
 
+    @Override
+    public void selectionRectangle(Point2D from, Point2D to, Color color) {
+
+        Point2D topLeft = new Point2D(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()));
+        double width = Math.abs(from.getX() - to.getX());
+        double height = Math.abs(from.getY() - to.getY());
+
+        gc.setFill(color);
+        gc.fillRect(topLeft.getX(), topLeft.getY(), width, height);
+        //stroke outline
+        gc.setStroke(Color.BLACK);
+        gc.strokeRect(topLeft.getX(), topLeft.getY(), width, height);
+    }
 }

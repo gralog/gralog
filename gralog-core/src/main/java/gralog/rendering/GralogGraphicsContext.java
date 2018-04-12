@@ -2,7 +2,13 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.rendering;
 
+import javafx.geometry.Point2D;
+import javafx.scene.paint.*;
+
 /**
+ * This class offers abstract drawing and drawing utility methods.
+ *
+ * Utilities include drawing tooltips and transparent rectangles for selection boxes.
  *
  */
 public abstract class GralogGraphicsContext {
@@ -44,7 +50,6 @@ public abstract class GralogGraphicsContext {
     public void circle(Vector2D center, double radius, GralogColor color) {
         circle(center.getX(), center.getY(), radius, color);
     }
-
     public void rectangle(double x1, double y1, double x2, double y2,
         GralogColor color, double width) {
         line(x1, y1, x2, y1, color, width);
@@ -69,6 +74,8 @@ public abstract class GralogGraphicsContext {
             corner2.getX(), corner2.getY(),
             color);
     }
+
+    public abstract void selectionRectangle(Point2D from, Point2D to, Color color);
 
     public abstract void putText(double centerx, double centery, String text,
         double lineHeightCm, GralogColor color);

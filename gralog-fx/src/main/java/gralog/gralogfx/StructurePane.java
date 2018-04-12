@@ -31,12 +31,14 @@ import javafx.scene.input.ScrollEvent;
 //public class StructurePane extends ScrollPane implements StructureListener {
 public class StructurePane extends StackPane implements StructureListener {
 
-    boolean needsRepaint = true;
-    Lock needsRepaintLock = new ReentrantLock();
 
-    static final EventType<StructurePaneEvent> ALL_STRUCTUREPANE_EVENTS
+    private boolean needsRepaint = true;
+    private Lock needsRepaintLock = new ReentrantLock();
+
+    private static Color selectionBoxColor = Color.rgb(40, 110, 160, 0.3);
+    private static final EventType<StructurePaneEvent> ALL_STRUCTUREPANE_EVENTS
         = new EventType<>("ALL_STRUCTUREPANE_EVENTS");
-    static final EventType<StructurePaneEvent> STRUCTUREPANE_SELECTIONCHANGED
+    private static final EventType<StructurePaneEvent> STRUCTUREPANE_SELECTIONCHANGED
         = new EventType<>(ALL_STRUCTUREPANE_EVENTS, "STRUCTUREPANE_SELECTIONCHANGED");
 
     public void setOnSelectionChanged(EventHandler<StructurePaneEvent> handler) {
@@ -53,20 +55,20 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean wasDraggingPrimary = false;
     private boolean wasDraggingSecondary = false;
     private boolean wasDraggingMiddle = false;
-
+    private Point2D boxingStartingPosition;
     private IMovable currentEdgeStartingPoint;
 
     private double lastMouseX = -1d;
     private double lastMouseY = -1d;
 
 
-    double gridSize = 1.0; // cm
-    boolean snapToGrid = true;
+    private double gridSize = 1.0; // cm
+    private boolean snapToGrid = true;
 
     public enum MouseMode {
         SELECT_MODE, VERTEX_MODE, EDGE_MODE
     };
-    MouseMode mouseMode = MouseMode.SELECT_MODE;
+    private MouseMode mouseMode = MouseMode.SELECT_MODE;
 
     public StructurePane(Structure structure) {
         this.structure = structure;
@@ -105,9 +107,7 @@ public class StructurePane extends StackPane implements StructureListener {
         needsRepaintLock.lock();
         try {
             if (!needsRepaint) {
-                Platform.runLater(() -> {
-                    this.draw();
-                });
+                Platform.runLater(this::draw);
                 needsRepaint = true;
             }
         } finally {
@@ -119,63 +119,30 @@ public class StructurePane extends StackPane implements StructureListener {
         needsRepaintLock.lock();
         try {
             if (!needsRepaint) {
-                Platform.runLater(() -> {
-                    this.draw(from, to);
-                });
+                Platform.runLater(() -> this.draw(from, to));
                 needsRepaint = true;
             }
         } finally {
             needsRepaintLock.unlock();
         }
     }
-
+    private void requestRedrawRectangle(Point2D from, Point2D to, Color color){
+        needsRepaintLock.lock();
+        try {
+            if (!needsRepaint) {
+                Platform.runLater(() -> this.drawRectangle(from, to, color));
+                needsRepaint = true;
+            }
+        } finally {
+            needsRepaintLock.unlock();
+        }
+    }
     public final void setMouseEvents() {
 
         canvas.setOnMouseClicked(e -> { });
         canvas.setOnMousePressed(this::onMousePressed);
-
         canvas.setOnMouseReleased(this::onMouseReleased);
-        canvas.setOnMouseDragged(e -> {
-
-            if(e.isPrimaryButtonDown()){
-                wasDraggingPrimary = true;
-            }
-            if(e.isSecondaryButtonDown()){
-                wasDraggingSecondary = true;
-            }
-
-            Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
-            // Drag objects only with primary button
-            if (dragging != null && !e.isMiddleButtonDown()) {
-                for (Object o : dragging)
-                    if (o instanceof IMovable) {
-                        Vector2D offset = new Vector2D(
-                            mousePositionModel.getX() - lastMouseX,
-                            mousePositionModel.getY() - lastMouseY
-                        );
-                        ((IMovable) o).move(offset);
-                    }
-                // update model position under mouse
-                // this must not be done when we are dragging the screen!!!!!
-                lastMouseX = mousePositionModel.getX();
-                lastMouseY = mousePositionModel.getY();
-            }
-            else if(e.isSecondaryButtonDown()){
-                //if edge is being drawn currently, draw a line between start and mouse
-                if(currentEdgeStartingPoint != null){
-                    Vertex v = (Vertex) currentEdgeStartingPoint;
-                    Point2D vScreenCords = modelToScreen(new Point2D(v.coordinates.getX(), v.coordinates.getY()));
-                    this.requestRedraw(vScreenCords, new Point2D(e.getX(), e.getY()));
-                }
-            }
-            // Drag only with middle mouse button
-            else if(e.isMiddleButtonDown()){
-                offsetX -= (mousePositionModel.getX() - lastMouseX);
-                offsetY -= (mousePositionModel.getY() - lastMouseY);
-            }
-
-            this.requestRedraw();
-        });
+        canvas.setOnMouseDragged(this::onMouseDragged);
         canvas.setOnKeyPressed(e -> {
 
             switch (e.getCode()) {
@@ -208,6 +175,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 select(selected);
                 dragging = highlights.getSelection();
             }else if(!e.isControlDown()){
+                boxingStartingPosition = new Point2D(e.getX(), e.getY());
                 clearSelection();
             }
         }else if(e.isSecondaryButtonDown()){
@@ -263,6 +231,55 @@ public class StructurePane extends StackPane implements StructureListener {
 
         this.requestRedraw();
     }
+
+    private void onMouseDragged(MouseEvent e)
+    {
+        if(e.isPrimaryButtonDown()){
+            wasDraggingPrimary = true;
+        }
+        if(e.isSecondaryButtonDown()){
+            wasDraggingSecondary = true;
+        }
+
+        Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
+        // Drag objects only with primary button
+        if (e.isPrimaryButtonDown()) {
+            //If dragging is null, start drawing a box for box selection
+            if(dragging == null){
+                requestRedrawRectangle(boxingStartingPosition, new Point2D(e.getX(), e.getY()), selectionBoxColor);
+            }
+            //else just move the dragging object
+            else{
+                for (Object o : dragging)
+                    if (o instanceof IMovable) {
+                        Vector2D offset = new Vector2D(
+                                mousePositionModel.getX() - lastMouseX,
+                                mousePositionModel.getY() - lastMouseY
+                        );
+                        ((IMovable) o).move(offset);
+                    }
+                // update model position under mouse
+                // this must not be done when we are dragging the screen!!!!!
+                lastMouseX = mousePositionModel.getX();
+                lastMouseY = mousePositionModel.getY();
+            }
+        }
+        else if(e.isSecondaryButtonDown()){
+            //if edge is being drawn currently, draw a line between start and mouse
+            if(currentEdgeStartingPoint != null){
+                Vertex v = (Vertex) currentEdgeStartingPoint;
+                Point2D vScreenCords = modelToScreen(new Point2D(v.coordinates.getX(), v.coordinates.getY()));
+                this.requestRedraw(vScreenCords, new Point2D(e.getX(), e.getY()));
+            }
+        }
+        // Drag only with middle mouse button
+        else if(e.isMiddleButtonDown()){
+            offsetX -= (mousePositionModel.getX() - lastMouseX);
+            offsetY -= (mousePositionModel.getY() - lastMouseY);
+        }
+
+        this.requestRedraw();
+    }
     public MouseMode getMouseMode() {
         return mouseMode;
     }
@@ -291,7 +308,7 @@ public class StructurePane extends StackPane implements StructureListener {
         return result;
     }
 
-    public void draw(Point2D from, Point2D to) {
+    private void draw(Point2D from, Point2D to) {
         this.needsRepaintLock.lock();
         try {
             if (needsRepaint) {
@@ -309,7 +326,7 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public void draw() {
+    protected void draw() {
         this.needsRepaintLock.lock();
         try {
             if (needsRepaint) {
@@ -320,8 +337,24 @@ public class StructurePane extends StackPane implements StructureListener {
             this.needsRepaintLock.unlock();
         }
     }
+    private void drawRectangle(Point2D from, Point2D to, Color color){
+        this.needsRepaintLock.lock();
+        try {
+            if (needsRepaint) {
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+                draw(gc);
 
-    protected void draw(GraphicsContext gc) {
+                GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
+                ggc.selectionRectangle(from, to, color);
+
+                needsRepaint = false;
+            }
+        } finally {
+            this.needsRepaintLock.unlock();
+        }
+    }
+
+    private void draw(GraphicsContext gc) {
         // clear
         double w = gc.getCanvas().getWidth();
         double h = gc.getCanvas().getHeight();
