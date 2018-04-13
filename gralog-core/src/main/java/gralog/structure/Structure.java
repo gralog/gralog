@@ -2,7 +2,6 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
-import gralog.importfilter.ImportFilter;
 import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
 import gralog.events.*;
@@ -13,7 +12,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -275,6 +273,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public List<IMovable> findObjects(Point2D from, Point2D to){
         List<IMovable> objects = new ArrayList<>();
 
+        Vector2D vecFrom = new Vector2D(from.getX(), from.getY());
+        Vector2D vecTo = new Vector2D(to.getX(), to.getY());
         double px = from.getX();
         double qx = to.getX();
         double py = from.getY();
@@ -286,15 +286,89 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         for (Vertex v : vertices){
             double vx = v.coordinates.getX();
             double vy = v.coordinates.getY();
-            // checking if x coordinate is in bounds of the rect (for x and y respectively)
-            // |q-v|<|c|  and  sgn(c)|q-v|>0
-            if(Math.signum(cx) * (qx - vx) <= Math.abs(cx) && Math.signum(cx) * (qx - vx) >= 0 &&
-               Math.signum(cy) * (qy - vy) <= Math.abs(cy) && Math.signum(cy) * (qy - vy) >= 0){
+            if(insideSelection(qx, qy, cx, cy, vx, vy)){
                 objects.add(v);
             }
         }
 
+        for (Edge e : edges){
+            Vector2D source = e.getSource().coordinates;
+            Vector2D target = e.getTarget().coordinates;
+
+            if(separatingAxisTest(vecFrom, vecTo, source, target)){
+                continue;
+            }
+            Vector2D sel1 = new Vector2D(from.getX(), from.getY())  .minus(source);
+            Vector2D sel2 = new Vector2D(to.getX(), from.getY())    .minus(source);
+            Vector2D sel3 = new Vector2D(from.getX(), to.getY())    .minus(source);
+            Vector2D sel4 = new Vector2D(to.getX(), to.getY())    .minus(source);
+
+            Vector2D dir = target.minus(source);
+            double lsquared = dir.length() * dir.length();
+
+            Vector2D proj1 = dir.multiply(dir.multiply(sel1) / lsquared).minus(sel1);
+            Vector2D proj2 = dir.multiply(dir.multiply(sel2) / lsquared).minus(sel2);
+            Vector2D proj3 = dir.multiply(dir.multiply(sel3) / lsquared).minus(sel3);
+            Vector2D proj4 = dir.multiply(dir.multiply(sel4) / lsquared).minus(sel4);
+
+            if(!arePositivelyProportional(proj1, proj2)){
+                objects.add(e);
+            }else if(!arePositivelyProportional(proj1, proj3)){
+                objects.add(e);
+            }else if(!arePositivelyProportional(proj1, proj4)){
+                objects.add(e);
+            }
+
+        }
         return objects;
+    }
+
+    //TODO: write comprehensive, more general SAT colision test
+    /** Returns true if projections are separate
+     */
+    private boolean separatingAxisTest(Vector2D rectFrom, Vector2D rectTo, Vector2D edgeFrom, Vector2D edgeTo){
+        //x axis
+        if(Math.max(rectFrom.getX(), rectTo.getX()) < Math.min(edgeFrom.getX(), edgeTo.getX())){
+            System.out.println("x1");
+            return true;
+        }
+        if(Math.min(rectFrom.getX(), rectTo.getX()) > Math.max(edgeFrom.getX(), edgeTo.getX())){
+            System.out.println("x2");
+            return true;
+        }
+        //y axis
+        if(Math.max(rectFrom.getY(), rectTo.getY()) < Math.min(edgeFrom.getY(), edgeTo.getY())){
+            System.out.println("y1");
+            return true;
+        }
+        if(Math.min(rectFrom.getY(), rectTo.getY()) > Math.max(edgeFrom.getY(), edgeTo.getY())){
+            System.out.println("y2");
+            return true;
+        }
+
+        return false;
+    }
+    private boolean arePositivelyProportional(Vector2D a, Vector2D b){
+        double ax = a.getX();
+        double ay = a.getY();
+
+        double bx = b.getX();
+        double by = b.getY();
+
+        if(ax != 0){
+            return Math.signum(ax) == Math.signum(bx);
+        }else{
+            return Math.signum(ay) == Math.signum(by);
+        }
+    }
+    /* checking if x coordinate is in bounds of the rect (for x and y respectively)
+     * |q-v|<|c|  and  sgn(c)|q-v|>0
+     */
+    private boolean insideSelection(double qx, double qy, double cx, double cy, double vx, double vy){
+        return  Math.signum(cx) * (qx - vx) <= Math.abs(cx) &&
+                Math.signum(cy) * (qy - vy) <= Math.abs(cy) &&
+                Math.signum(cx) * (qx - vx) >= 0 &&
+                Math.signum(cy) * (qy - vy) >= 0;
     }
     @Override
     public Element toXml(Document doc) throws Exception {

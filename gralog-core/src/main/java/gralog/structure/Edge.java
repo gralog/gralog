@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 @XmlName(name = "edge")
 public class Edge extends XmlMarshallable implements IMovable {
 
+    private static final double SELECTION_WIDTH = 0.3;
     Set<EdgeListener> listeners = new HashSet<>();
 
     public String label = "";
