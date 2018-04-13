@@ -58,6 +58,7 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean wasDraggingMiddle = false;
     private Point2D boxingStartingPosition;
     private boolean selectionBoxingActive = false;
+    private boolean selectionBoxDragging = false;
     private IMovable currentEdgeStartingPoint;
 
     private double lastMouseX = -1d;
@@ -212,7 +213,7 @@ public class StructurePane extends StackPane implements StructureListener {
             structure.snapToGrid(gridSize);
             this.requestRedraw();
         }
-        else if(b == MouseButton.PRIMARY && selectionBoxingActive){
+        else if(b == MouseButton.PRIMARY && selectionBoxDragging){
             List<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
             select(objs);
         }
@@ -233,6 +234,7 @@ public class StructurePane extends StackPane implements StructureListener {
         wasDraggingPrimary = false;
         wasDraggingSecondary = false;
         selectionBoxingActive = false;
+        selectionBoxDragging = false;
         dragging = null;
         currentEdgeStartingPoint = null;
 
@@ -253,6 +255,7 @@ public class StructurePane extends StackPane implements StructureListener {
         if (e.isPrimaryButtonDown()) {
             //If dragging is null, start drawing a box for box selection
             if(dragging == null){
+                selectionBoxDragging = true;
                 requestRedrawRectangle(boxingStartingPosition, new Point2D(e.getX(), e.getY()), selectionBoxColor);
             }
             //else just move the dragging object

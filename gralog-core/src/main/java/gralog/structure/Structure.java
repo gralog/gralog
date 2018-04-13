@@ -287,9 +287,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             double vx = v.coordinates.getX();
             double vy = v.coordinates.getY();
             // checking if x coordinate is in bounds of the rect (for x and y respectively)
-            // |q-v|>|c|  and  sgn(c)|q-v|>0
-            if(Math.abs(qx - vx) <= Math.abs(cx) && Math.signum(cx) * Math.abs(qx - vx) >= 0 &&
-               Math.abs(qy - vy) <= Math.abs(cy) && Math.signum(cy) * Math.abs(qy - vy) >= 0){
+            // |q-v|<|c|  and  sgn(c)|q-v|>0
+            if(Math.signum(cx) * (qx - vx) <= Math.abs(cx) && Math.signum(cx) * (qx - vx) >= 0 &&
+               Math.signum(cy) * (qy - vy) <= Math.abs(cy) && Math.signum(cy) * (qy - vy) >= 0){
                 objects.add(v);
             }
         }
