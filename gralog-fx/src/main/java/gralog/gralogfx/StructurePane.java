@@ -7,6 +7,7 @@ import gralog.events.*;
 import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.Collection;
@@ -156,8 +157,15 @@ public class StructurePane extends StackPane implements StructureListener {
                         else if (o instanceof Edge)
                             structure.removeEdge((Edge) o);
                     }
-
                     clearSelection();
+                    this.requestRedraw();
+                    break;
+                case V:
+                    highlights.filterType(Vertex.class);
+                    this.requestRedraw();
+                    break;
+                case E:
+                    highlights.filterType(Edge.class);
                     this.requestRedraw();
                     break;
             }

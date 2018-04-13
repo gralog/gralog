@@ -329,20 +329,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     private boolean separatingAxisTest(Vector2D rectFrom, Vector2D rectTo, Vector2D edgeFrom, Vector2D edgeTo){
         //x axis
         if(Math.max(rectFrom.getX(), rectTo.getX()) < Math.min(edgeFrom.getX(), edgeTo.getX())){
-            System.out.println("x1");
             return true;
         }
         if(Math.min(rectFrom.getX(), rectTo.getX()) > Math.max(edgeFrom.getX(), edgeTo.getX())){
-            System.out.println("x2");
             return true;
         }
         //y axis
         if(Math.max(rectFrom.getY(), rectTo.getY()) < Math.min(edgeFrom.getY(), edgeTo.getY())){
-            System.out.println("y1");
             return true;
         }
         if(Math.min(rectFrom.getY(), rectTo.getY()) > Math.max(edgeFrom.getY(), edgeTo.getY())){
-            System.out.println("y2");
             return true;
         }
 

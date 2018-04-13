@@ -2,11 +2,8 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * Manages highlights and annotations of vertices and edges.
@@ -24,15 +21,28 @@ public class Highlights {
         return lastAdded;
     }
     public void selectAll(Collection elems) {
-        for (Object o : elems)
-            selection.add(o);
+        selection.addAll(elems);
     }
 
     public void clearSelection() {
         selection.clear();
         lastAdded = null;
     }
-
+    public void remove(Object o){
+        selection.remove(o);
+    }
+    public void removeAll(List o){
+        selection.removeAll(o);
+    }
+    public void filterType(Class<?> t){
+        List<Object> l = new LinkedList<>();
+        for(Object o : selection){
+            if(!(t.isInstance(o))){
+                l.add(o);
+            }
+        }
+        selection.removeAll(l);
+    }
     public Set<Object> getSelection() {
         return selection;
     }
