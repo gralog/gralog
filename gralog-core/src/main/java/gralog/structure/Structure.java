@@ -53,7 +53,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     public void render(GralogGraphicsContext gc, Highlights highlights) {
         for (Edge e : edges)
-            e.render(gc, highlights);
+            e.render(gc, highlights, false);
         for (Vertex v : vertices)
             v.render(gc, highlights);
     }
@@ -164,6 +164,42 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param e The edge to be added.
      */
     public void addEdge(E e) {
+        //correct siblings first
+        e.siblings.clear();
+        int k = 0;
+        for(Edge edge : e.getSource().getConnectedEdges()){
+            if(edge == e){
+                continue;
+            }
+            if(edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()){
+                k++;
+            }
+        }
+        //max amount of edges.
+        //TODO: Maybe make that an option
+        if(k >= 4){
+            removeEdge(e);
+            return;
+        }
+        for(Edge edge : e.getSource().getConnectedEdges()){
+            if(edge == e){
+                continue;
+            }
+            if(edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()){
+                edge.siblings.add(e);
+                e.siblings.add(edge);
+            }
+        }
+        e.siblings.add(e);
+        //very special case: if the two outer edges of a 3-edge multi edge connection are
+        //oriented the opposite way of the middle one
+        if(e.siblings.size() == 3){
+            if(!e.siblings.get(0).sameOrientationAs(e.siblings.get(1)) && !e.siblings.get(1).sameOrientationAs(e)){
+                Collections.swap(e.siblings.get(0).siblings, 1, 2);
+                Collections.swap(e.siblings.get(1).siblings, 1, 2);
+                Collections.swap(e.siblings, 1, 2);
+            }
+        }
         edges.add(e);
     }
 
@@ -199,6 +235,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public void removeEdge(Edge e) {
         e.setSource(null);
         e.setTarget(null);
+        for (int i = 0; i < e.siblings.size(); i++)
+        {
+            if(e != e.siblings.get(i)){
+                e.siblings.get(i).siblings.remove(e);
+            }
+        }
         edges.remove(e);
     }
 
@@ -214,6 +256,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edge.setSource(source);
         edge.setTarget(target);
 
+        //add correct siblings
         if (source == target && source != null) {
             edge.intermediatePoints.add(
                 new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
@@ -311,11 +354,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             Vector2D proj3 = dir.multiply(dir.multiply(sel3) / lsquared).minus(sel3);
             Vector2D proj4 = dir.multiply(dir.multiply(sel4) / lsquared).minus(sel4);
 
-            if(!arePositivelyProportional(proj1, proj2)){
+            if(areNegativelyProportional(proj1, proj2)){
                 objects.add(e);
-            }else if(!arePositivelyProportional(proj1, proj3)){
+            }else if(areNegativelyProportional(proj1, proj3)){
                 objects.add(e);
-            }else if(!arePositivelyProportional(proj1, proj4)){
+            }else if(areNegativelyProportional(proj1, proj4)){
                 objects.add(e);
             }
 
@@ -344,7 +387,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         return false;
     }
-    private boolean arePositivelyProportional(Vector2D a, Vector2D b){
+    private boolean areNegativelyProportional(Vector2D a, Vector2D b){
         double ax = a.getX();
         double ay = a.getY();
 
@@ -352,9 +395,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         double by = b.getY();
 
         if(ax != 0){
-            return Math.signum(ax) == Math.signum(bx);
+            return Math.signum(ax) != Math.signum(bx);
         }else{
-            return Math.signum(ay) == Math.signum(by);
+            return Math.signum(ay) != Math.signum(by);
         }
     }
     /* checking if x coordinate is in bounds of the rect (for x and y respectively)

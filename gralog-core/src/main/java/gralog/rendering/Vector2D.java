@@ -66,7 +66,9 @@ public class Vector2D {
     public Vector2D orthogonal() {
         return new Vector2D(-this.y, this.x);
     }
-
+    public Vector2D orthogonal(int sign){
+        return new Vector2D(sign * this.y, -sign * this.x);
+    }
     public Vector2D plus(Vector2D other) {
         return new Vector2D(this.x + other.x, this.y + other.y);
     }

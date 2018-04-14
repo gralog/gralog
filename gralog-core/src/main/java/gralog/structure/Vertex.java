@@ -7,6 +7,8 @@ import gralog.events.*;
 import gralog.rendering.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -26,7 +28,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public Vector2D coordinates = new Vector2D(0.0, 0.0);
     private final Set<VertexListener> listeners = new HashSet<>();
 
-    private final Set<Edge> connectedEdges = new HashSet<>();
+    private final ArrayList<Edge> connectedEdges = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -41,7 +43,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
         this.connectedEdges.remove(e);
     }
 
-    public Set<Edge> getConnectedEdges() {
+    public ArrayList<Edge> getConnectedEdges() {
         return connectedEdges;
     }
 

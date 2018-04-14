@@ -185,6 +185,9 @@ public class StructurePane extends StackPane implements StructureListener {
             if (selected != null) {
                 select(selected);
                 dragging = highlights.getSelection();
+                if(selected instanceof Vertex){
+                    System.out.println(((Vertex)selected).getConnectedEdges().size());
+                }
             }else if(!e.isControlDown()){
                 boxingStartingPosition = new Point2D(e.getX(), e.getY());
                 selectionBoxingActive = true;
@@ -236,8 +239,7 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         //right release on a vertex while drawing an edge = add edge
         else if(b == MouseButton.SECONDARY && selected instanceof Vertex && currentEdgeStartingPoint != null){
-            Edge edge = structure.createEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
-            structure.addEdge(edge);
+            structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
         }
         wasDraggingPrimary = false;
         wasDraggingSecondary = false;

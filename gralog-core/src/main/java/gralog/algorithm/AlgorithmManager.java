@@ -31,7 +31,6 @@ public final class AlgorithmManager {
 
         try{
             methods = aClass.getMethods();
-            System.out.println("Has been found");
         }catch(NoClassDefFoundError e){
             System.out.println("WARNING: algorithm class def not found..."+className);
 

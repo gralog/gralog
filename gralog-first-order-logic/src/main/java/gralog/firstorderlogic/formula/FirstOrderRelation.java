@@ -4,13 +4,11 @@ package gralog.firstorderlogic.formula;
 
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
-import java.util.HashMap;
-import java.util.Set;
 
-import java.util.HashSet;
+import java.util.*;
+
 import gralog.finitegame.structure.*;
 import gralog.rendering.Vector2D;
-import java.util.List;
 
 /**
  * A relation in first-order logic.
@@ -52,7 +50,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
                 if (relation.equals("="))
                     return from.equals(to);
 
-                Set<Edge> E = from.getConnectedEdges();
+                ArrayList<Edge> E = from.getConnectedEdges();
                 for (Edge e : E) {
                     if (e.getSource() == from && e.getTarget() == to // same direction
                         || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) {
@@ -94,7 +92,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
         Vertex from = varassign.get(parameters.get(0));
         Vertex to = varassign.get(parameters.get(1));
 
-        Set<Edge> E = from.getConnectedEdges();
+        ArrayList<Edge> E = from.getConnectedEdges();
         for (Edge e : E) {
             if (e.getSource() == from && e.getTarget() == to // same direction
                 || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) {

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 
-import javafx.geometry.Point2D;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,7 +21,9 @@ import org.w3c.dom.NodeList;
 @XmlName(name = "edge")
 public class Edge extends XmlMarshallable implements IMovable {
 
+    public static double multiEdgeOffset = 0.25;
     private static final double SELECTION_WIDTH = 0.3;
+
     Set<EdgeListener> listeners = new HashSet<>();
 
     public String label = "";
@@ -35,6 +36,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public double width = 2.54 / 96; // cm
     public GralogColor color = GralogColor.BLACK;
 
+    public ArrayList<Edge> siblings = new ArrayList<>();
     public ArrayList<EdgeIntermediatePoint> intermediatePoints = new ArrayList<>();
 
     private Vertex source = null;
@@ -170,7 +172,81 @@ public class Edge extends XmlMarshallable implements IMovable {
             gc.line(tempX, tempY, toX, toY, edgeColor, width);
         }
     }
+    public void render(GralogGraphicsContext gc, Highlights highlights, boolean collapse){
+        double offset = getOffset();
 
+        Vector2D diff = target.coordinates.minus(source.coordinates);
+        Vector2D perpendicularToEdge = diff.orthogonal(1).normalized().multiply(offset);
+
+        Vector2D sourceOffset = source.coordinates.plus(perpendicularToEdge);
+        Vector2D targetOffset = target.coordinates.plus(perpendicularToEdge);
+
+        double fromX = sourceOffset.getX();
+        double fromY = sourceOffset.getY();
+        double toX = targetOffset.getX();
+        double toY = targetOffset.getY();
+
+        double tempX = fromX;
+        double tempY = fromY;
+
+        GralogColor edgeColor = this.color;
+        if (highlights.isSelected(this))
+            edgeColor = GralogColor.RED;
+        if (isDirected) {
+            Vector2D intersection = target.intersection(new Vector2D(tempX, tempY), new Vector2D(toX, toY));
+            gc.arrow(new Vector2D(tempX, tempY), intersection, arrowHeadAngle, arrowHeadLength, edgeColor, width);
+        } else {
+            gc.line(tempX, tempY, toX, toY, edgeColor, width);
+        }
+    }
+    public double getOffset(){
+        double offset = 0;
+        int index = siblings.indexOf(this);
+        //offset both edges orthogonally, offsets differently when both face same direction
+        if(siblings.size() == 2){
+            offset = 0.5 * multiEdgeOffset;
+            if(index == 1){
+                if(siblings.get(0).sameOrientationAs(this)){
+                    offset *= -1;
+                }
+            }
+
+        }
+        if(siblings.size() == 3){
+            if(index == 1){
+                offset = 0;
+            }else if(index == 0){
+                offset = multiEdgeOffset;
+            }else if(index == 2){
+                offset = (siblings.get(0).sameOrientationAs(this) ? -1 : 1) * multiEdgeOffset;
+            }
+        }
+        if(siblings.size() == 4){
+            int sameOrientationCount = 0;
+            double offsetMultiplier;
+            for (int i = 0; i < siblings.size(); i++)
+            {
+                if(i == index){
+                    int correctedOffsetCounter = (sameOrientationCount >= 2 ? -(i - 1) : (sameOrientationCount + 1));
+                    if(Math.abs(correctedOffsetCounter) > 1){
+                        offsetMultiplier = 0.75;
+                    }else{
+                        offsetMultiplier = 0.5;
+                    }
+                    offset = offsetMultiplier * correctedOffsetCounter * multiEdgeOffset;
+                    break;
+                }
+                if(siblings.get(i).sameOrientationAs(this)){
+                    sameOrientationCount++;
+                }
+
+            }
+        }
+        return offset;
+    }
+    public boolean sameOrientationAs(Edge other){
+        return getSource() == other.getSource();
+    }
     public boolean containsCoordinate(double x, double y) {
         double fromX = source.coordinates.getX();
         double fromY = source.coordinates.getY();
