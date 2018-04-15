@@ -172,41 +172,52 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public void addEdge(E e) {
         //correct siblings first
         e.siblings.clear();
-        int k = 0;
+        int nonLoopEdges = 0;
         for(Edge edge : e.getSource().getConnectedEdges()){
             if(edge == e){
                 continue;
             }
             if(edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()){
-                k++;
+
+                if(edge.getSource() != edge.getTarget()){
+                    nonLoopEdges++;
+                }
+                //if vertex has loop, don't add another loop e
+                else if(e.getSource() == e.getTarget()){
+                    removeEdge(e);
+                    return;
+                }
             }
         }
         //max amount of edges.
         //TODO: Maybe make that an option
-        if(k >= 4){
+        if(nonLoopEdges >= 4 && e.getSource() != e.getTarget()){
             removeEdge(e);
-            return;
-        }
-        for(Edge edge : e.getSource().getConnectedEdges()){
-            if(edge == e){
-                continue;
+        }else if (e.getSource() == e.getTarget()){
+            edges.add(e);
+        }else{
+            for(Edge edge : e.getSource().getConnectedEdges()){
+                if(edge == e){
+                    continue;
+                }
+                if(edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()){
+                    edge.siblings.add(e);
+                    e.siblings.add(edge);
+                }
             }
-            if(edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()){
-                edge.siblings.add(e);
-                e.siblings.add(edge);
+            e.siblings.add(e);
+            //very special case: if the two outer edges of a 3-edge multi edge connection are
+            //oriented the opposite way of the middle one
+            if(e.siblings.size() == 3){
+                if(!e.siblings.get(0).sameOrientationAs(e.siblings.get(1)) && !e.siblings.get(1).sameOrientationAs(e)){
+                    Collections.swap(e.siblings.get(0).siblings, 1, 2);
+                    Collections.swap(e.siblings.get(1).siblings, 1, 2);
+                    Collections.swap(e.siblings, 1, 2);
+                }
             }
+            edges.add(e);
         }
-        e.siblings.add(e);
-        //very special case: if the two outer edges of a 3-edge multi edge connection are
-        //oriented the opposite way of the middle one
-        if(e.siblings.size() == 3){
-            if(!e.siblings.get(0).sameOrientationAs(e.siblings.get(1)) && !e.siblings.get(1).sameOrientationAs(e)){
-                Collections.swap(e.siblings.get(0).siblings, 1, 2);
-                Collections.swap(e.siblings.get(1).siblings, 1, 2);
-                Collections.swap(e.siblings, 1, 2);
-            }
-        }
-        edges.add(e);
+
     }
 
     /**
