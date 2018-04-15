@@ -325,6 +325,12 @@ public class StructurePane extends StackPane implements StructureListener {
         );
         return result;
     }
+    public double modelToScreenX(double x){
+        return (x - offsetX) * zoomFactor * (screenResolutionX / 2.54);
+    }
+    public double modelToScreenY(double y){
+        return (y - offsetY) * zoomFactor * (screenResolutionY / 2.54);
+    }
 
     public Point2D screenToModel(Point2D point) {
         Point2D result = new Point2D(

@@ -38,6 +38,16 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
     }
 
     @Override
+    public void polygon(double[] x, double[] y, int count, GralogColor c){
+        gc.setFill(Color.rgb(c.r, c.g, c.b));
+        for (int i = 0; i < count; i++)
+        {
+            x[i] = pane.modelToScreenX(x[i]);
+            y[i] = pane.modelToScreenY(y[i]);
+        }
+        gc.fillPolygon(x, y, count);
+    }
+    @Override
     public void circle(double centerx, double centery, double radius,
         GralogColor c) {
         Point2D p1 = pane.modelToScreen(new Point2D(centerx - radius, centery - radius));

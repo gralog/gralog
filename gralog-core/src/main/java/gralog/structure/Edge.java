@@ -31,7 +31,8 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     public Boolean isDirected = true;
 
-    public double arrowHeadLength = 0.4d; // cm
+    public Arrow arrowType = Arrow.TYPE1;
+    public double arrowHeadLength = 0.3d; // cm
     public double arrowHeadAngle = 40d; // degrees
     public double width = 2.54 / 96; // cm
     public GralogColor color = GralogColor.BLACK;
@@ -124,29 +125,6 @@ public class Edge extends XmlMarshallable implements IMovable {
         double toX = target.coordinates.getX();
         double toY = target.coordinates.getY();
 
-        /*
-        if(intermediatePoints.size() > 0)
-        {
-            double steps = 1/40d;
-
-            for(double t = steps; t < 1; t += steps) {
-                VectorND next = BezierCurve(t);
-                double tempX = next.get(0);
-                double tempY = next.get(1);
-
-                gc.Line(fromX, fromY, tempX, tempY, this.Color, this.Width);
-                fromX = tempX;
-                fromY = tempY;
-            }
-            gc.Line(fromX, fromY, toX, toY, this.Color, this.Width);
-
-            //if(highlights != null && highlights.contains(this))
-                for(EdgeIntermediatePoint between : intermediatePoints)
-                    gc.Rectangle(between.get(0)-0.1, between.get(1)-0.1, between.get(0)+0.1, between.get(1)+0.1, this.Color, 2.54/96);
-        } else {
-            gc.Line(fromX, fromY, toX, toY, this.Color, this.Width);
-        }
-         */
         double tempX = fromX;
         double tempY = fromY;
 
@@ -193,10 +171,11 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (highlights.isSelected(this))
             edgeColor = GralogColor.RED;
         if (isDirected) {
-            double retreatDistance = target.radius * (1 - Math.cos(Math.asin(offset/target.radius)));
-            Vector2D intersection = target.intersectionAdjusted(new Vector2D(tempX, tempY),
-                    new Vector2D(toX, toY), retreatDistance);
-            gc.arrow(new Vector2D(tempX, tempY), intersection, arrowHeadAngle, arrowHeadLength, edgeColor, width);
+            double dist = target.radius * (1 - Math.cos(Math.asin(offset/target.radius)));
+            Vector2D intersection = target.intersectionAdjusted(sourceOffset, targetOffset, dist);
+
+            gc.line(sourceOffset, intersection.plus(diff.normalized().multiply(arrowType.endPoint * arrowHeadLength)), edgeColor, width);
+            gc.arrow(diff, intersection, arrowType, arrowHeadLength, edgeColor);
         } else {
             gc.line(tempX, tempY, toX, toY, edgeColor, width);
         }

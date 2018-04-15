@@ -5,6 +5,8 @@ package gralog.rendering;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.*;
 
+import java.util.Arrays;
+
 /**
  * This class offers abstract drawing and drawing utility methods.
  *
@@ -43,6 +45,21 @@ public abstract class GralogGraphicsContext {
         line(arrowX2, arrowY2, x2, y2, color, width);
         line(arrowX1, arrowY1, arrowX2, arrowY2, color, width);
     }
+    public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color){
+        double theta = Math.toRadians(dir.theta());
+
+        double[] xs = Arrays.copyOf(arrowType.xPoints, arrowType.xPoints.length);
+        double[] ys = Arrays.copyOf(arrowType.yPoints, arrowType.yPoints.length);
+
+        for (int i = 0; i < arrowType.xPoints.length; i++)
+        {
+            double oldX = xs[i];
+            xs[i] = (xs[i] * Math.cos(theta) - ys[i] * Math.sin(theta)) * scale + pos.getX();
+            ys[i] = (oldX  * Math.sin(theta) + ys[i] * Math.cos(theta)) * scale + pos.getY();
+        }
+        polygon(xs, ys, arrowType.count, color);
+    }
+    public abstract void polygon(double[] x, double[] y, int count, GralogColor color);
 
     public abstract void circle(double centerx, double centery, double radius,
         GralogColor color);
