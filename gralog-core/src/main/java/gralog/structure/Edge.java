@@ -32,7 +32,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public Boolean isDirected = true;
 
     public Arrow arrowType = Arrow.TYPE1;
-    public double arrowHeadLength = 0.3d; // cm
+    public double arrowHeadLength = 0.28d; // cm
     public double arrowHeadAngle = 40d; // degrees
     public double width = 2.54 / 96; // cm
     public GralogColor color = GralogColor.BLACK;
@@ -150,7 +150,18 @@ public class Edge extends XmlMarshallable implements IMovable {
             gc.line(tempX, tempY, toX, toY, edgeColor, width);
         }
     }
+    private void renderLoop(){
+
+    }
     public void render(GralogGraphicsContext gc, Highlights highlights, boolean collapse){
+
+        GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
+
+        if(getSource() == getTarget()){
+            gc.loop(source.coordinates.minus(new Vector2D(source.radius, 2 * source.radius)),
+                    source.radius * 2, edgeColor, width);
+            return;
+        }
         double offset = getOffset();
 
         Vector2D diff = target.coordinates.minus(source.coordinates);
@@ -164,12 +175,6 @@ public class Edge extends XmlMarshallable implements IMovable {
         double toX = targetOffset.getX();
         double toY = targetOffset.getY();
 
-        double tempX = fromX;
-        double tempY = fromY;
-
-        GralogColor edgeColor = this.color;
-        if (highlights.isSelected(this))
-            edgeColor = GralogColor.RED;
         if (isDirected) {
             double dist = target.radius * (1 - Math.cos(Math.asin(offset/target.radius)));
             Vector2D intersection = target.intersectionAdjusted(sourceOffset, targetOffset, dist);
@@ -177,7 +182,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             gc.line(sourceOffset, intersection.plus(diff.normalized().multiply(arrowType.endPoint * arrowHeadLength)), edgeColor, width);
             gc.arrow(diff, intersection, arrowType, arrowHeadLength, edgeColor);
         } else {
-            gc.line(tempX, tempY, toX, toY, edgeColor, width);
+            gc.line(fromX, fromY, toX, toY, edgeColor, width);
         }
     }
     public double getOffset(){

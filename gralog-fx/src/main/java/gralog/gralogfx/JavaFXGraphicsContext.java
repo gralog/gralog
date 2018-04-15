@@ -8,6 +8,7 @@ import javafx.geometry.VPos;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.ArcType;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.Font;
 
@@ -47,6 +48,18 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         }
         gc.fillPolygon(x, y, count);
     }
+
+    @Override
+    public void loop(Vector2D pos, double size,  GralogColor c, double width)
+    {
+        Vector2D a = pane.modelToScreen(pos);
+        double w = size * pane.zoomFactor * pane.screenResolutionX / 2.54;
+        double h = size * pane.zoomFactor * pane.screenResolutionX / 2.54;
+        gc.setStroke(Color.rgb(c.r, c.g, c.b));
+        gc.setLineWidth(width * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        gc.strokeArc(a.getX(), a.getY(), w, h, -30, 240, ArcType.ROUND);
+    }
+
     @Override
     public void circle(double centerx, double centery, double radius,
         GralogColor c) {

@@ -7,8 +7,8 @@ package gralog.rendering;
 public class Arrow
 {
     public static final Arrow TYPE1 = new Arrow(
-            new double[]{0, -0.5, -1.0, -0.8,  -1.0,  -0.5},
-            new double[]{0, 0.12, 0.3, 0.0, -0.3, -0.12},
+            new double[]{0, -0.5, -1.0, -0.8, -1.0,  -0.5},
+            new double[]{0, 0.14,  0.35,  0.0, -0.35, -0.14},
             6,
             -0.8);
 

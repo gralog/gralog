@@ -59,7 +59,10 @@ public abstract class GralogGraphicsContext {
         }
         polygon(xs, ys, arrowType.count, color);
     }
+
     public abstract void polygon(double[] x, double[] y, int count, GralogColor color);
+
+    public abstract void loop(Vector2D pos, double size, GralogColor color, double width);
 
     public abstract void circle(double centerx, double centery, double radius,
         GralogColor color);
