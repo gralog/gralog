@@ -70,7 +70,9 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public Vector2D intersection(Vector2D p1, Vector2D p2) {
         return p1.minus(p2).normalized().multiply(this.radius).plus(p2);
     }
-
+    public Vector2D intersectionAdjusted(Vector2D p1, Vector2D p2, double adjust){
+        return p1.minus(p2).normalized().multiply(this.radius - adjust).plus(p2);
+    }
     @Override
     public void move(Vector2D offset) {
         coordinates = coordinates.plus(offset);

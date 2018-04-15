@@ -193,7 +193,9 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (highlights.isSelected(this))
             edgeColor = GralogColor.RED;
         if (isDirected) {
-            Vector2D intersection = target.intersection(new Vector2D(tempX, tempY), new Vector2D(toX, toY));
+            double retreatDistance = target.radius * (1 - Math.cos(Math.asin(offset/target.radius)));
+            Vector2D intersection = target.intersectionAdjusted(new Vector2D(tempX, tempY),
+                    new Vector2D(toX, toY), retreatDistance);
             gc.arrow(new Vector2D(tempX, tempY), intersection, arrowHeadAngle, arrowHeadLength, edgeColor, width);
         } else {
             gc.line(tempX, tempY, toX, toY, edgeColor, width);
