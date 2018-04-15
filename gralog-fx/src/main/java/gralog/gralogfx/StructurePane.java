@@ -168,6 +168,13 @@ public class StructurePane extends StackPane implements StructureListener {
                     highlights.filterType(Edge.class);
                     this.requestRedraw();
                     break;
+                case A:
+                    if(e.isControlDown() || e.isMetaDown()){
+                        highlights.selectAll(structure.getAllMovablesModifiable());
+                        this.requestRedraw();
+                    }
+                    this.requestRedraw();
+                    break;
             }
         });
     }

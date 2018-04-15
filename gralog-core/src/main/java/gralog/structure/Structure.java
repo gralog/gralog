@@ -51,6 +51,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return Collections.unmodifiableSet(edges);
     }
 
+    public Set<IMovable> getAllMovablesModifiable(){
+        Set<IMovable> result = new HashSet<>();
+        result.addAll(vertices);
+        result.addAll(edges);
+        return result;
+    }
     public void render(GralogGraphicsContext gc, Highlights highlights) {
         for (Edge e : edges)
             e.render(gc, highlights, false);
