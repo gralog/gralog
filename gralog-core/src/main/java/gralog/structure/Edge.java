@@ -32,7 +32,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public Boolean isDirected = true;
 
     public Arrow arrowType = Arrow.TYPE1;
-    public double arrowHeadLength = 0.28d; // cm
+    public double arrowHeadLength = 0.2d; // cm
     public double arrowHeadAngle = 40d; // degrees
     public double width = 2.54 / 96; // cm
     public GralogColor color = GralogColor.BLACK;
@@ -66,7 +66,9 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (target != null)
             this.target.connectEdge(this);
     }
-
+    public boolean isLoop(){
+        return getSource() == getTarget();
+    }
     public double maximumCoordinate(int dimension) {
         double result = Double.NEGATIVE_INFINITY;
         for (EdgeIntermediatePoint between : intermediatePoints)
@@ -157,9 +159,30 @@ public class Edge extends XmlMarshallable implements IMovable {
 
         GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
-        if(getSource() == getTarget()){
-            gc.loop(source.coordinates.minus(new Vector2D(source.radius, 2 * source.radius)),
-                    source.radius * 2, edgeColor, width);
+        if(isLoop()){
+
+            double angleStart = source.loopAnchor - source.loopAngle;
+            double angleEnd = source.loopAnchor + source.loopAngle;
+
+            double r = source.radius;
+
+            Vector2D intersection = Vector2D.getVectorAtAngle(angleStart, r).plus(source.coordinates);
+            Vector2D intersection2 = Vector2D.getVectorAtAngle(angleEnd, r).plus(source.coordinates);
+
+            Vector2D tangentToIntersection = Vector2D.getVectorAtAngle(angleEnd, 1).multiply(-1);
+
+            //the correction retreats the endpoint of the bezier curve orthogonally from the vertex surface
+            double correction = arrowType.endPoint * arrowHeadLength;
+            gc.arrow(tangentToIntersection, intersection2, arrowType, arrowHeadLength, edgeColor);
+
+            //Loop description, endpoints and tangents.
+            GralogGraphicsContext.Loop l = new GralogGraphicsContext.Loop();
+            l.start = intersection;
+            l.end = intersection2;
+            l.tangentStart = Vector2D.getVectorAtAngle(angleStart, 1).orthogonal();
+            l.tangentEnd = Vector2D.getVectorAtAngle(angleEnd, 1).orthogonal();
+
+            gc.loop(l,1, correction, edgeColor, width);
             return;
         }
         double offset = getOffset();

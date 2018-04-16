@@ -50,14 +50,21 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
     }
 
     @Override
-    public void loop(Vector2D pos, double size,  GralogColor c, double width)
+    public void loop(Loop l, double length, double correction, GralogColor c, double width)
     {
-        Vector2D a = pane.modelToScreen(pos);
-        double w = size * pane.zoomFactor * pane.screenResolutionX / 2.54;
-        double h = size * pane.zoomFactor * pane.screenResolutionX / 2.54;
+        Vector2D a = pane.modelToScreen(l.start);
+        Vector2D b = pane.modelToScreen(l.end.plus(l.tangentEnd.orthogonal().normalized().multiply(correction)));
+        Vector2D ctrl1 = pane.modelToScreen(l.start.plus(l.tangentStart.orthogonal(1).normalized().multiply(length)));
+        Vector2D ctrl2 = pane.modelToScreen(l.end.plus(l.tangentEnd.orthogonal(1).normalized().multiply(length)));
+
+        gc.setFill(Color.rgb(c.r, c.g, c.b));
         gc.setStroke(Color.rgb(c.r, c.g, c.b));
+
         gc.setLineWidth(width * pane.zoomFactor * pane.screenResolutionX / 2.54);
-        gc.strokeArc(a.getX(), a.getY(), w, h, -30, 240, ArcType.ROUND);
+        gc.beginPath();
+        gc.moveTo(a.getX(), a.getY());
+        gc.bezierCurveTo(ctrl1.getX(), ctrl1.getY(), ctrl2.getX(), ctrl2.getY(), b.getX(), b.getY());
+        gc.stroke();
     }
 
     @Override

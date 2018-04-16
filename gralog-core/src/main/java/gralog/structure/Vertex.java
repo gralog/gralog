@@ -19,7 +19,13 @@ import java.util.HashSet;
 public class Vertex extends XmlMarshallable implements IMovable {
 
     public String label = "";
-    public double radius = 0.5; // cm
+    public double radius = 0.7;     // cm
+    public double loopRadius = 0.3; // cm
+    //the position of the loop center on the circle
+    ///note: -90 is on top because the coordinate system is flipped horizontally
+    public double loopAnchor = -90;  // degrees
+    //the position of the endpoints of a loop
+    public double loopAngle = 20;   // degrees
     public GralogColor fillColor = GralogColor.WHITE;
     public double strokeWidth = 2.54 / 96; // cm
     public double textHeight = 0.4d; // cm

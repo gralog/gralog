@@ -62,8 +62,24 @@ public abstract class GralogGraphicsContext {
 
     public abstract void polygon(double[] x, double[] y, int count, GralogColor color);
 
-    public abstract void loop(Vector2D pos, double size, GralogColor color, double width);
+    /**
+     * Draws a curved bezier line from start to end. The control points are positively perpendicular
+     * to the line from start to end. The length of control points can be set.
+     *
+     * Can use to draw self loops of vertices.
+     * @param l all relevant vectors of loop
+     * @param length The length of the control points.
+     * @param color Color of the line
+     * @param width Line width (will be scaled according to zoom)
+     */
+    public abstract void loop(Loop l, double length, double correction, GralogColor color, double width);
 
+    public static class Loop{
+        public Vector2D start;
+        public Vector2D tangentStart;
+        public Vector2D end;
+        public Vector2D tangentEnd;
+    }
     public abstract void circle(double centerx, double centery, double radius,
         GralogColor color);
 
