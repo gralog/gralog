@@ -215,6 +215,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     Collections.swap(e.siblings, 1, 2);
                 }
             }
+            if(e.siblings.size() != 0){
+                e.isCollapsed = e.siblings.get(0).isCollapsed;
+            }
             edges.add(e);
         }
 
