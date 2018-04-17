@@ -30,6 +30,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public double cost = 1.0d;
 
     public Boolean isDirected = true;
+    public boolean isCollapsed = false;
 
     public Arrow arrowType = Arrow.TYPE1;
     public double arrowHeadLength = 0.2d; // cm
@@ -82,6 +83,15 @@ public class Edge extends XmlMarshallable implements IMovable {
             between.move(offset);
     }
 
+    public void collapse(){ collapse(true); }
+    public void inflate(){ collapse(false);}
+
+    private void collapse(boolean collapse){
+        for(Edge e : siblings){
+            e.isCollapsed = collapse;
+        }
+        isCollapsed = collapse;
+    }
     public void snapToGrid(double gridSize) {
         for (EdgeIntermediatePoint between : intermediatePoints)
             between.snapToGrid(gridSize);
@@ -121,41 +131,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         return result;
     }
 
-    public void render(GralogGraphicsContext gc, Highlights highlights) {
-        double fromX = source.coordinates.getX();
-        double fromY = source.coordinates.getY();
-        double toX = target.coordinates.getX();
-        double toY = target.coordinates.getY();
-
-        double tempX = fromX;
-        double tempY = fromY;
-
-        GralogColor edgeColor = this.color;
-        if (highlights.isSelected(this))
-            edgeColor = GralogColor.RED;
-
-        for (EdgeIntermediatePoint between : intermediatePoints) {
-            fromX = tempX;
-            fromY = tempY;
-            tempX = between.getX();
-            tempY = between.getY();
-            gc.line(fromX, fromY, tempX, tempY, edgeColor, width);
-
-            if (highlights.isSelected(this))
-                gc.rectangle(tempX - 0.1, tempY - 0.1, tempX + 0.1, tempY + 0.1, edgeColor, 2.54 / 96);
-        }
-
-        if (isDirected) {
-            Vector2D intersection = target.intersection(new Vector2D(tempX, tempY), new Vector2D(toX, toY));
-            gc.arrow(new Vector2D(tempX, tempY), intersection, arrowHeadAngle, arrowHeadLength, edgeColor, width);
-        } else {
-            gc.line(tempX, tempY, toX, toY, edgeColor, width);
-        }
-    }
-    private void renderLoop(){
-
-    }
-    public void render(GralogGraphicsContext gc, Highlights highlights, boolean collapse){
+    public void render(GralogGraphicsContext gc, Highlights highlights){
 
         GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
@@ -173,7 +149,13 @@ public class Edge extends XmlMarshallable implements IMovable {
 
             //the correction retreats the endpoint of the bezier curve orthogonally from the vertex surface
             double correction = arrowType.endPoint * arrowHeadLength;
-            gc.arrow(tangentToIntersection, intersection2, arrowType, arrowHeadLength, edgeColor);
+
+            //only draw arrow for directed graphs
+            if(isDirected){
+                gc.arrow(tangentToIntersection, intersection2, arrowType, arrowHeadLength, edgeColor);
+            }else{
+                correction = 0;
+            }
 
             //Loop description, endpoints and tangents.
             GralogGraphicsContext.Loop l = new GralogGraphicsContext.Loop();
@@ -182,10 +164,10 @@ public class Edge extends XmlMarshallable implements IMovable {
             l.tangentStart = Vector2D.getVectorAtAngle(angleStart, 1).orthogonal();
             l.tangentEnd = Vector2D.getVectorAtAngle(angleEnd, 1).orthogonal();
 
-            gc.loop(l,1, correction, edgeColor, width);
+            gc.loop(l,1.5, correction, edgeColor, width);
             return;
         }
-        double offset = getOffset();
+        double offset = isCollapsed ? 0 : getOffset();
 
         Vector2D diff = target.coordinates.minus(source.coordinates);
         Vector2D perpendicularToEdge = diff.orthogonal(1).normalized().multiply(offset);

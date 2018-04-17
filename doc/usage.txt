@@ -9,4 +9,6 @@ Mouse input
 Keyboard input OSX (windows/linux)
 
 - Select all        : Cmd+A (Ctrl+A)
-- more coming...
+- Collapse edges    : C
+- Inflate edges     : C (again)
+- Copy/Paste        : Cmd+C/V (Ctrl+C/V)

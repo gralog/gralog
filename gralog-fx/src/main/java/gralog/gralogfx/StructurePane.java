@@ -164,6 +164,10 @@ public class StructurePane extends StackPane implements StructureListener {
                     highlights.filterType(Vertex.class);
                     this.requestRedraw();
                     break;
+                case C:
+                    structure.collapseEdges(highlights.getSelection());
+                    this.requestRedraw();
+                    break;
                 case E:
                     highlights.filterType(Edge.class);
                     this.requestRedraw();

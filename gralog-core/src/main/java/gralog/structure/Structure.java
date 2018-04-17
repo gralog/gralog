@@ -59,7 +59,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
     public void render(GralogGraphicsContext gc, Highlights highlights) {
         for (Edge e : edges)
-            e.render(gc, highlights, false);
+            e.render(gc, highlights);
         for (Vertex v : vertices)
             v.render(gc, highlights);
     }
@@ -352,6 +352,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
 
         for (Edge e : edges){
+
+            if(e.isLoop()){
+                continue;
+            }
             Vector2D source = e.getSource().coordinates;
             Vector2D target = e.getTarget().coordinates;
 
@@ -425,6 +429,41 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 Math.signum(cy) * (qy - vy) <= Math.abs(cy) &&
                 Math.signum(cx) * (qx - vx) >= 0 &&
                 Math.signum(cy) * (qy - vy) >= 0;
+    }
+
+    public void collapseEdges(Set<Object> selection){
+        boolean allEdgesAreCollapsed = true;
+        HashSet<Edge> representativeEdges = new HashSet<>();
+        //linear time
+        for(Object edge : selection){
+            if(edge instanceof Edge){
+                Edge e = (Edge) edge;
+                if(!e.isLoop()){
+                    boolean nonRelated = true;
+                    //edges can only be related to siblings. Iterate over all siblings
+                    //and check if one of them is already declared a representative
+                    for(Edge sibling : e.siblings){
+                        nonRelated &= !representativeEdges.contains(sibling);
+                    }
+                    if(nonRelated){
+                        if(!e.isCollapsed){
+                            allEdgesAreCollapsed = false;
+                        }
+                        representativeEdges.add(e);
+                    }
+
+                }
+            }
+        }
+        for(Edge representative : representativeEdges){
+            //only inflate edges when every single edge is collapsed
+            if(allEdgesAreCollapsed){
+                representative.inflate();
+            }else{
+                representative.collapse();
+            }
+
+        }
     }
     @Override
     public Element toXml(Document doc) throws Exception {
