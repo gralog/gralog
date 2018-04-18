@@ -138,6 +138,12 @@ public class StructurePane extends StackPane implements StructureListener {
     }
     public void alignHorizontallyMean(){
         structure.alignHorizontallyMean(highlights.getSelection());
+        structure.snapToGrid(gridSize);
+        this.requestRedraw();
+    }
+    public void alignVerticallyMean(){
+        structure.alignVerticallyMean(highlights.getSelection());
+        structure.snapToGrid(gridSize);
         this.requestRedraw();
     }
     public final void setMouseEvents() {
@@ -159,18 +165,18 @@ public class StructurePane extends StackPane implements StructureListener {
                     clearSelection();
                     this.requestRedraw();
                     break;
-                case V:
-                    highlights.filterType(Vertex.class);
-                    this.requestRedraw();
-                    break;
+//                case V:
+//                    highlights.filterType(Vertex.class);
+//                    this.requestRedraw();
+//                    break;
                 case C:
                     structure.collapseEdges(highlights.getSelection());
                     this.requestRedraw();
                     break;
-                case E:
-                    highlights.filterType(Edge.class);
-                    this.requestRedraw();
-                    break;
+//                case E:
+//                    highlights.filterType(Edge.class);
+//                    this.requestRedraw();
+//                    break;
                 case A:
                     if(e.isControlDown() || e.isMetaDown()){
                         highlights.selectAll(structure.getAllMovablesModifiable());

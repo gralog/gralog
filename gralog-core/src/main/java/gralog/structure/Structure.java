@@ -12,6 +12,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
 import javafx.geometry.Point2D;
+import jdk.jshell.spi.ExecutionControl;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -497,6 +498,22 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public void alignHorizontallyFirst(LinkedHashSet<Object> selection){
 
+    }
+
+    public void alignVerticallyMean(LinkedHashSet<Object> selection){
+        Set<Vertex> vertices = new HashSet<>();
+        double sum = 0;
+        double count = 0;
+        for(Object o : selection){
+            if(o instanceof Vertex){
+                vertices.add((Vertex)o);
+                sum += ((Vertex)o).coordinates.getX();
+                count++;
+            }
+        }
+        for(Vertex v : vertices){
+            v.coordinates = new Vector2D(sum/count, v.coordinates.getY());
+        }
     }
     @Override
     public Element toXml(Document doc) throws Exception {

@@ -70,6 +70,11 @@ public class MainWindow extends Application {
             }
         };
 
+        handlers.onAlignVertically = () -> {
+            if(tabs.getCurrentStructurePane() != null){
+                tabs.getCurrentStructurePane().alignVerticallyMean();
+            }
+        };
 
         handlers.onAboutGralog = () -> (new AboutStage(this)).showAndWait();
         handlers.onAboutGraph = () -> {
