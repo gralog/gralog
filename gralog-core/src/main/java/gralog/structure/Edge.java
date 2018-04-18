@@ -5,10 +5,8 @@ package gralog.structure;
 import gralog.plugins.*;
 import gralog.events.*;
 import gralog.rendering.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
+
+import java.util.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,7 +28,6 @@ public class Edge extends XmlMarshallable implements IMovable {
     public double cost = 1.0d;
 
     public Boolean isDirected = true;
-    public boolean isCollapsed = false;
 
     public Arrow arrowType = Arrow.TYPE1;
     public double arrowHeadLength = 0.2d; // cm
@@ -83,14 +80,34 @@ public class Edge extends XmlMarshallable implements IMovable {
             between.move(offset);
     }
 
-    public void collapse(){ collapse(true); }
-    public void inflate(){ collapse(false);}
-
-    private void collapse(boolean collapse){
-        for(Edge e : siblings){
-            e.isCollapsed = collapse;
+    public void collapse(Structure structure){
+        //One edge that doesn't have the same direction as this edge
+        Edge e = null;
+        for(int i = 0; i < siblings.size(); i++){
+            e = siblings.get(i);
+            if(e != this && !e.sameOrientationAs(this)){
+                break;
+            }
+            e = null;
         }
-        isCollapsed = collapse;
+        for(int i = 0; i < siblings.size(); i++){
+            if(siblings.get(i) != this && siblings.get(i) != e){
+                structure.removeEdge(siblings.get(i), false);
+            }
+        }
+        siblings.clear();
+        siblings = new ArrayList<>();
+        siblings.add(this);
+
+        //correct siblings of edge e as well
+        if(e != null){
+            siblings.add(e);
+
+            e.siblings.clear();
+            e.siblings = new ArrayList<>();
+            e.siblings.add(this);
+            e.siblings.add(e);
+        }
     }
     public void snapToGrid(double gridSize) {
         for (EdgeIntermediatePoint between : intermediatePoints)
@@ -167,7 +184,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             gc.loop(l,1.5, correction, edgeColor, width);
             return;
         }
-        double offset = isCollapsed ? 0 : getOffset();
+        double offset = getOffset();
 
         Vector2D diff = target.coordinates.minus(source.coordinates);
         Vector2D perpendicularToEdge = diff.orthogonal(1).normalized().multiply(offset);

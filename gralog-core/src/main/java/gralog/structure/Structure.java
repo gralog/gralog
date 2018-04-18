@@ -216,9 +216,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     Collections.swap(e.siblings, 1, 2);
                 }
             }
-            if(e.siblings.size() != 0){
-                e.isCollapsed = e.siblings.get(0).isCollapsed;
-            }
             edges.add(e);
         }
 
@@ -253,18 +250,22 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @param e The edge to be removed.
      */
-    public void removeEdge(Edge e) {
+    public void removeEdge(Edge e, boolean removeSiblingsEntries) {
         e.setSource(null);
         e.setTarget(null);
-        for (int i = 0; i < e.siblings.size(); i++)
-        {
-            if(e != e.siblings.get(i)){
-                e.siblings.get(i).siblings.remove(e);
+        if(removeSiblingsEntries){
+            for (int i = 0; i < e.siblings.size(); i++)
+            {
+                if(e != e.siblings.get(i)){
+                    e.siblings.get(i).siblings.remove(e);
+                }
             }
         }
         edges.remove(e);
     }
-
+    public void removeEdge(Edge e){
+        removeEdge(e, true);
+    }
     /**
      * Creates an edge without adding it to the graph.
      *
@@ -440,7 +441,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * inflates every set of edges.
      */
     public void collapseEdges(Set<Object> selection){
-        boolean allEdgesAreCollapsed = true;
         HashSet<Edge> representativeEdges = new HashSet<>();
         //linear time
         for(Object edge : selection){
@@ -454,9 +454,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         nonRelated &= !representativeEdges.contains(sibling);
                     }
                     if(nonRelated){
-                        if(!e.isCollapsed){
-                            allEdgesAreCollapsed = false;
-                        }
                         representativeEdges.add(e);
                     }
 
@@ -464,12 +461,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
         }
         for(Edge representative : representativeEdges){
-            //only inflate edges when every single edge is collapsed
-            if(allEdgesAreCollapsed){
-                representative.inflate();
-            }else{
-                representative.collapse();
-            }
+            representative.collapse(this);
 
         }
     }
