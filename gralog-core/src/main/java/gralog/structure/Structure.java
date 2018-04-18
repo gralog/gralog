@@ -434,6 +434,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 Math.signum(cy) * (qy - vy) >= 0;
     }
 
+    /**
+     * Collapses edges or, when every single edge in the selection is already collapsed,
+     * inflates every set of edges.
+     */
     public void collapseEdges(Set<Object> selection){
         boolean allEdgesAreCollapsed = true;
         HashSet<Edge> representativeEdges = new HashSet<>();
@@ -467,6 +471,32 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
 
         }
+    }
+
+    /**
+     * Aligns all selected vertices along their y coordinate
+     */
+    public void alignHorizontallyMean(LinkedHashSet<Object> selection){
+        Set<Vertex> vertices = new HashSet<>();
+        double sum = 0;
+        double count = 0;
+        for(Object o : selection){
+            if(o instanceof Vertex){
+                vertices.add((Vertex)o);
+                sum += ((Vertex)o).coordinates.getY();
+                count++;
+            }
+        }
+        for(Vertex v : vertices){
+            v.coordinates = new Vector2D(v.coordinates.getX(), sum/count);
+        }
+    }
+    /**
+     * Aligns all selected vertices along the y coordinate of the first
+     * selected element
+     */
+    public void alignHorizontallyFirst(LinkedHashSet<Object> selection){
+
     }
     @Override
     public Element toXml(Document doc) throws Exception {

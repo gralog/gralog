@@ -69,11 +69,6 @@ public class StructurePane extends StackPane implements StructureListener {
     private double gridSize = 1.0; // cm
     private boolean snapToGrid = true;
 
-    public enum MouseMode {
-        SELECT_MODE, VERTEX_MODE, EDGE_MODE
-    };
-    private MouseMode mouseMode = MouseMode.SELECT_MODE;
-
     public StructurePane(Structure structure) {
         this.structure = structure;
         canvas = new Canvas(500, 500);
@@ -141,6 +136,10 @@ public class StructurePane extends StackPane implements StructureListener {
             needsRepaintLock.unlock();
         }
     }
+    public void alignHorizontallyMean(){
+        structure.alignHorizontallyMean(highlights.getSelection());
+        this.requestRedraw();
+    }
     public final void setMouseEvents() {
 
         canvas.setOnMouseClicked(e -> { });
@@ -182,7 +181,7 @@ public class StructurePane extends StackPane implements StructureListener {
             }
         });
     }
-    void onMousePressed(MouseEvent e){
+    private void onMousePressed(MouseEvent e){
         Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
@@ -235,7 +234,7 @@ public class StructurePane extends StackPane implements StructureListener {
             structure.snapToGrid(gridSize);
             this.requestRedraw();
         }
-        else if(b == MouseButton.PRIMARY && selectionBoxDragging){
+        else if(b == MouseButton.PRIMARY && selectionBoxDragging && selectionBoxingActive){
             List<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
             select(objs);
         }
@@ -261,9 +260,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
         this.requestRedraw();
     }
-
-    private void onMouseDragged(MouseEvent e)
-    {
+    private void onMouseDragged(MouseEvent e) {
         if(e.isPrimaryButtonDown()){
             wasDraggingPrimary = true;
         }
@@ -310,9 +307,6 @@ public class StructurePane extends StackPane implements StructureListener {
         }
 
         this.requestRedraw();
-    }
-    public MouseMode getMouseMode() {
-        return mouseMode;
     }
 
     double screenResolutionX = 96d; // dpi

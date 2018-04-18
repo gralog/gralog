@@ -44,6 +44,7 @@ public class MainMenu {
 
         MenuAction onOpen, onSave, onDirectInput, onLoadPlugin, onExit;
         MenuAction onUndo, onRedo, onCut, onCopy, onPaste, onDelete;
+        MenuAction onAlignHorizontally, onAlignVertically;
         MenuAction onAboutGralog, onAboutGraph;
 
         MenuStringAction onNew, onGenerate, onRunAlgorithm;
@@ -123,12 +124,14 @@ public class MainMenu {
     private Menu createEditMenu() {
         Menu menuEdit = new Menu("Edit");
         menuEdit.getItems().addAll(
-            createMenuItem("Undo", handlers.onUndo),
-            createMenuItem("Redo", handlers.onRedo),
-            createMenuItem("Cut", handlers.onCut),
-            createMenuItem("Copy", handlers.onCopy),
-            createMenuItem("Paste", handlers.onPaste),
-            createMenuItem("Delete", handlers.onDelete));
+                createMenuItem("Undo", handlers.onUndo),
+                createMenuItem("Redo", handlers.onRedo),
+                createMenuItem("Cut", handlers.onCut),
+                createMenuItem("Copy", handlers.onCopy),
+                createMenuItem("Paste", handlers.onPaste),
+                createMenuItem("Delete", handlers.onDelete),
+                new SeparatorMenuItem(),
+                createMenuItem("Align Horizontally", handlers.onAlignHorizontally));
         return menuEdit;
     }
 

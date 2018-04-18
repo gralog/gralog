@@ -63,6 +63,14 @@ public class MainWindow extends Application {
         handlers.onExit = () -> stage.close();
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
+        //controls
+        handlers.onAlignHorizontally = () -> {
+            if(tabs.getCurrentStructurePane() != null){
+                tabs.getCurrentStructurePane().alignHorizontallyMean();
+            }
+        };
+
+
         handlers.onAboutGralog = () -> (new AboutStage(this)).showAndWait();
         handlers.onAboutGraph = () -> {
             Structure structure = getCurrentStructure();
