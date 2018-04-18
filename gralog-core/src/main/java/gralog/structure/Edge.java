@@ -256,8 +256,13 @@ public class Edge extends XmlMarshallable implements IMovable {
         return getSource() == other.getSource();
     }
     public boolean containsCoordinate(double x, double y) {
-        double fromX = source.coordinates.getX();
-        double fromY = source.coordinates.getY();
+        Vector2D diff = target.coordinates.minus(source.coordinates);
+        Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(getOffset());
+        Vector2D sourceOffset = source.coordinates.plus(perpendicularToDiff);
+        Vector2D targetOffset = target.coordinates.plus(perpendicularToDiff);
+        
+        double fromX = sourceOffset.getX();
+        double fromY = sourceOffset.getY();
         double nextfromX = fromX;
         double nextfromY = fromY;
 
@@ -270,9 +275,9 @@ public class Edge extends XmlMarshallable implements IMovable {
                 return true;
         }
 
-        double toX = target.coordinates.getX();
-        double toY = target.coordinates.getY();
-        return Vector2D.distancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < 0.3;
+        double toX = targetOffset.getX();
+        double toY = targetOffset.getY();
+        return Vector2D.distancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < multiEdgeOffset * 0.5;
     }
 
     public EdgeIntermediatePoint addIntermediatePoint(double x, double y) {
