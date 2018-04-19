@@ -12,7 +12,6 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
 import javafx.geometry.Point2D;
-import jdk.jshell.spi.ExecutionControl;
 import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -31,11 +30,19 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     protected Set<V> vertices;
     protected Set<E> edges;
 
+    protected SortedSet<NumberPair> holes;
+
+    protected class NumberPair{
+        public NumberPair(int a, int b) { this.a = a; this.b = b;}
+        public int a;
+        public int b;
+    }
     private final Set<StructureListener> listeners = new HashSet<>();
 
     public Structure() {
         vertices = new HashSet<>();
         edges = new HashSet<>();
+        holes = new TreeSet<>();
     }
 
     /**
@@ -107,6 +114,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param v The vertex to be added.
      */
     public void addVertex(V v) {
+        v.id = nextFreeID();
         vertices.add(v);
     }
 
@@ -289,7 +297,38 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
         return edge;
     }
+    public List<V> duplicate(Set<Object> selection) {
+        List<V> result = new ArrayList<>();
+        HashMap<Integer, V> idToVertex = new HashMap<>();
+        HashSet<NumberPair> edgeIDs = new HashSet<>();
+        for(Object o : selection) {
+            if (o instanceof Vertex) {
+                V v = createVertex();
+                v.copy((V) o);
+                v.move(new Vector2D(v.radius, v.radius).multiply(0.5));
+                for(Edge e : v.getOutgoingEdges()){
+                    if(selection.contains(e.getTarget())){
+                        edgeIDs.add(new NumberPair(e.getSource().id, e.getTarget().id));
+                    }
+                }
+                v.connectedEdges.clear();
+                v.outgoingEdges.clear();
+                idToVertex.put(v.id, v);
+                //now we can correct v.id
+                v.id = nextFreeID();
+                result.add(v);
+            }
+        }
 
+        for(NumberPair edge : edgeIDs){
+            //TODO: instead of addEdge consider directly adding edges, since duplication occurs only
+            //with graphs that already fulfill the desired properties
+            addEdge(idToVertex.get(edge.a), idToVertex.get(edge.b));
+        }
+
+        vertices.addAll(result);
+        return result;
+    }
     /**
      * @return True if the given two vertices are adjacent.
      * @param a The first vertex.
@@ -302,6 +341,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return false;
     }
 
+    /**
+     * Returns the next free available ID, so that all vertices' ids are continuously
+     * filled on a single interval [0, n)
+     */
+    public int nextFreeID(){
+        return vertices.size();
+    }
     /**
      * Return an edge or vertex that lies at the given coordinates. If multiple
      * objects are stacked at the given location, then vertices win over edges.
@@ -335,8 +381,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param to the corner diagonal to the first one
      * @return A collection of movables that are within bounds of the given rectangle
      */
-    public List<IMovable> findObjects(Point2D from, Point2D to){
-        List<IMovable> objects = new ArrayList<>();
+    public Set<IMovable> findObjects(Point2D from, Point2D to){
+        Set<IMovable> objects = new HashSet<>();
 
         Vector2D vecFrom = new Vector2D(from.getX(), from.getY());
         Vector2D vecTo = new Vector2D(to.getX(), to.getY());
@@ -639,4 +685,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             throw new Exception("class " + this.getClass().getName() + " has no @StructureDescription Annotation");
         return this.getClass().getAnnotation(StructureDescription.class);
     }
+
+
 }

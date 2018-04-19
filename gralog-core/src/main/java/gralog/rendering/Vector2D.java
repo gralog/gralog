@@ -13,7 +13,10 @@ public class Vector2D {
         this.x = x;
         this.y = y;
     }
-
+    public Vector2D(Vector2D v){
+        this.x = v.getX();
+        this.y = v.getY();
+    }
     @Override
     public int hashCode() {
         int hash = 7;

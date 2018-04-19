@@ -177,6 +177,12 @@ public class StructurePane extends StackPane implements StructureListener {
 //                    highlights.filterType(Edge.class);
 //                    this.requestRedraw();
 //                    break;
+                case D:
+                    List<Vertex> duplicates = structure.duplicate(highlights.getSelection());
+                    highlights.clearSelection();
+                    highlights.selectAll(duplicates);
+                    this.requestRedraw();
+                    break;
                 case A:
                     if(e.isControlDown() || e.isMetaDown()){
                         highlights.selectAll(structure.getAllMovablesModifiable());
@@ -202,7 +208,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 select(selected);
                 dragging = highlights.getSelection();
                 if(selected instanceof Vertex){
-                    System.out.println(((Vertex)selected).getConnectedEdges().size());
+                    System.out.println(((Vertex)selected).getOutgoingEdges().size());
                 }
             }else if(!e.isControlDown()){
                 boxingStartingPosition = new Point2D(e.getX(), e.getY());
@@ -241,8 +247,8 @@ public class StructurePane extends StackPane implements StructureListener {
             this.requestRedraw();
         }
         else if(b == MouseButton.PRIMARY && selectionBoxDragging && selectionBoxingActive){
-            List<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
-            select(objs);
+            Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
+            highlights.selectAll(objs);
         }
         //mouse release dissolves selection group, but not when
         //1) the selection group has been moved = wasDraggingPrimary
