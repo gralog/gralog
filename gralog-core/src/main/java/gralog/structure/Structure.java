@@ -361,8 +361,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             if(e.isLoop()){
                 continue;
             }
-            Vector2D source = e.getSource().coordinates;
-            Vector2D target = e.getTarget().coordinates;
+            Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
+            Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(e.getOffset());
+            Vector2D source = e.getSource().coordinates.plus(perpendicularToDiff);
+            Vector2D target = e.getTarget().coordinates.plus(perpendicularToDiff);
 
             if(separatingAxisTest(vecFrom, vecTo, source, target)){
                 continue;
