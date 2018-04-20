@@ -301,6 +301,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         List<V> result = new ArrayList<>();
         HashMap<Integer, V> idToVertex = new HashMap<>();
         HashSet<NumberPair> edgeIDs = new HashSet<>();
+
+        int nextFreeID = nextFreeID();
         for(Object o : selection) {
             if (o instanceof Vertex) {
                 V v = createVertex();
@@ -315,7 +317,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 v.outgoingEdges.clear();
                 idToVertex.put(v.id, v);
                 //now we can correct v.id
-                v.id = nextFreeID();
+                v.id = nextFreeID;
+                nextFreeID++;
                 result.add(v);
             }
         }

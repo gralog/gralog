@@ -179,6 +179,7 @@ public class StructurePane extends StackPane implements StructureListener {
 //                    break;
                 case D:
                     List<Vertex> duplicates = structure.duplicate(highlights.getSelection());
+                    structure.snapToGrid(gridSize);
                     highlights.clearSelection();
                     highlights.selectAll(duplicates);
                     this.requestRedraw();
@@ -208,7 +209,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 select(selected);
                 dragging = highlights.getSelection();
                 if(selected instanceof Vertex){
-                    System.out.println(((Vertex)selected).getOutgoingEdges().size());
+                    System.out.println(((Vertex)selected).id);
                 }
             }else if(!e.isControlDown()){
                 boxingStartingPosition = new Point2D(e.getX(), e.getY());
