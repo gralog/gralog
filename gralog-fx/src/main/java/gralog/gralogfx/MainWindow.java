@@ -51,6 +51,7 @@ public class MainWindow extends Application {
     private MainMenu menu;
     private Tabs tabs;
     private StatusBar statusBar;
+    private Piping2 pipeline;
 
     public MainWindow() {
         MainMenu.Handlers handlers = new MainMenu.Handlers();
@@ -62,6 +63,8 @@ public class MainWindow extends Application {
         handlers.onLoadPlugin = this::onLoadPlugin;
         handlers.onExit = () -> stage.close();
         handlers.onRunAlgorithm = this::onRunAlgorithm;
+
+        pipeline = new Piping2();
 
         handlers.onAboutGralog = () -> (new AboutStage(this)).showAndWait();
         handlers.onAboutGraph = () -> {
@@ -91,17 +94,22 @@ public class MainWindow extends Application {
     }
 
     public void onLoadPlugin() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(getLastDirectory()));
-        fileChooser.setTitle("Load Plugins");
-        fileChooser.getExtensionFilters().add(
-            new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
-        );
-        List<File> list = fileChooser.showOpenMultipleDialog(stage);
-        if (list != null && !list.isEmpty()) {
-            setLastDirectory(list.get(0));
-            for (File file : list)
-                doLoadPlugin(file.getAbsolutePath());
+        // FileChooser fileChooser = new FileChooser();
+        // fileChooser.setInitialDirectory(new File(getLastDirectory()));
+        // fileChooser.setTitle("Load Plugins");
+        // fileChooser.getExtensionFilters().add(
+        //     new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
+        // );
+        // List<File> list = fileChooser.showOpenMultipleDialog(stage);
+        // if (list != null && !list.isEmpty()) {
+        //     setLastDirectory(list.get(0));
+        //     for (File file : list)
+        //         doLoadPlugin(file.getAbsolutePath());
+        // }
+        try{
+            pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
+        } catch(Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -389,7 +397,14 @@ public class MainWindow extends Application {
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());
 
         //TODO: implement hot keys here
-        //scene.setOnKeyPressed(event -> {
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()){
+                case SPACE:
+                    System.out.println("space pressed");
+                    pipeline.execWithAck();
+                    break;
+            }
+        });
 
         // Remember the size of the window.
         primaryStage.setOnCloseRequest((e) -> {

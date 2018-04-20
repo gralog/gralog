@@ -6,14 +6,17 @@
  * @author meike
  * @also felix
  */
-package gralog.algorithm;
+package gralog.gralogfx;
 import java.util.concurrent.ThreadLocalRandom;
-
+import gralog.events.*;
 import gralog.rendering.*;
 
 import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.progresshandler.*;
+import gralog.gralogfx.*;
+
+
 
 import java.util.Set;
 
@@ -27,30 +30,46 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.control.Button;
 // import gralog.gralog-core.src.main.java.gralog.rendering.*;
 
-@AlgorithmDescription(
-    name = "Felix Piping",
-    text = "text",
-    url = "https://url.com"
-)
+// @AlgorithmDescription(
+//     name = "Felix Piping",
+//     text = "text",
+//     url = "https://url.com"
+// )
 
-public class Piping2 extends Algorithm {
+public class Piping2 implements SpaceEvent{
 
-    @Override
+    private Process external;
+    private BufferedReader in;
+    private PrintStream out;
+    private Structure structure;
+    private StructurePane pane;
+
+    // @Override
     public AlgorithmParameters getParameters(Structure s) {
         return null;
     }
 
-    public Object run(Structure structure, AlgorithmParameters params,
-        Set<Object> selection, ProgressHandler onprogress) throws
+    public void spacePressed(){
+        this.spacePressed = true;
+    }
+
+    // this.spacePressed = false;
+    Boolean spacePressed = false;
+
+    public Object run(Structure structure,StructurePane pane) throws
         Exception {
         String[] commands
             = {"/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py", structure.xmlToString()};
         System.out.println("Gralog says: starting.");
-        String output = this.exec(commands, structure);
+        this.structure = structure;
+        this.pane = pane;
+        String output = this.init(commands);
         System.out.println("Finished exec.");
 
+        
         // Platform.runLater(
         //     () ->{
         //         Label label2 = new Label("Name Runlater:");
@@ -84,32 +103,55 @@ public class Piping2 extends Algorithm {
         return null;
     }
 
-    private String exec(String[] execStr, Structure structure) {
-        Platform.runLater(
-            () -> {
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Information Dialog");
-                alert.setHeaderText(null);
-                alert.setContentText("executing:" + execStr[0]);
-                alert.showAndWait();
-            }
-        );
-        System.out.println("92");
+    private String init(String[] execStr){
+
+        // String result;
+        try{
+
+            Platform.runLater(
+                () -> {
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Dialog");
+                    alert.setHeaderText(null);
+                    alert.setContentText("executing:" + execStr[0]);
+                    alert.showAndWait();
+                }
+            );
+            this.external = Runtime.getRuntime().exec(execStr);
+            this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));
+            this.out = new PrintStream(external.getOutputStream(),true);
+            exec(this.external,this.in,this.out,false);
+
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return "hello";
+
+    }
+
+    public String execWithAck(){
+        return exec(this.external,this.in,this.out,true);
+    }
+
+
+
+    private String exec(Process external, BufferedReader in, PrintStream out,Boolean sendAck) {
+        
+        System.out.println("140");
         String result = "";
-
-
-
-
 
 
         try{
 
             String line;
-            // String result;
-            Process external = Runtime.getRuntime().exec(execStr);
-            BufferedReader in = new BufferedReader(new InputStreamReader(external.getInputStream()));
-            PrintStream out = new PrintStream(external.getOutputStream(),true);
-            
+
+            if (sendAck){
+                //send ack
+                out.println("ack");
+            }
+
             
             // System.out.println("110");
             while ((line = in.readLine()) != null){//while python has not yet terminated
@@ -122,7 +164,7 @@ public class Piping2 extends Algorithm {
                         out.println("ack");
 
 
-                        Vertex v = structure.createVertex();
+                        Vertex v = this.structure.createVertex();
                         v.coordinates = new Vector2D(
                             ThreadLocalRandom.current().nextInt(0, 10+1),
                             ThreadLocalRandom.current().nextInt(0, 10+1)
@@ -130,35 +172,52 @@ public class Piping2 extends Algorithm {
                         v.fillColor = new GralogColor(204, 136, 153);
                 
 
-                        structure.addVertex(v);
+                        this.structure.addVertex(v);
 
                     }else if (externalCommandSegments[0].equals("deleteVertex")){ //user input simulation
                         System.out.println("received message to delete vertex " + externalCommandSegments[1]);
-                        out.println("ack");
 
                         
                         
                 
-                        List<Vertex> vertexList = new ArrayList<Vertex>(structure.getVertices());
-                        structure.removeVertex(vertexList.get(Integer.parseInt(externalCommandSegments[1])));
+                        List<Vertex> vertexList = new ArrayList<Vertex>(this.structure.getVertices());
+                        this.structure.removeVertex(vertexList.get(Integer.parseInt(externalCommandSegments[1])));
+
+                        out.println("ack");
+
+
+                    }else if (externalCommandSegments[0].equals("pauseUntilKeyClick")){
+                        
+                        System.out.println("hello");
+                        this.pane.requestRedraw();
+                        break;
 
                     }else{
-                        out.println(structure.xmlToString());
+                        out.println(this.structure.xmlToString());
+                        while (!this.spacePressed){
+                            System.out.println("not pressed yet boi");
+                        }
+                        out.println("ack");
+                        this.spacePressed= false;
+
+                        // wait(event){}
+
                     }
                     // System.out.println("just heard: " + line);
                     result = result + line;
+
                 }
 
             }
             // System.out.println("done with while");
-            
+            this.pane.requestRedraw();
             return result;
 
             
 
 
         }catch (Exception e){
-            System.out.println(e);
+            e.printStackTrace();
         }
         return "hooray";
     //     try {

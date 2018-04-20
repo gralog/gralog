@@ -2,6 +2,8 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
+import java.util.ArrayList;
+
 import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -27,6 +29,7 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
+
 /**
  *
  */
@@ -46,6 +49,8 @@ public class StructurePane extends StackPane implements StructureListener {
     public void setOnSelectionChanged(EventHandler<StructurePaneEvent> handler) {
         this.setEventHandler(STRUCTUREPANE_SELECTIONCHANGED, handler);
     }
+
+    private List<SpaceEvent> spaceListeners = new ArrayList<SpaceEvent>();
 
     Structure structure;
     Canvas canvas;
@@ -85,6 +90,8 @@ public class StructurePane extends StackPane implements StructureListener {
         canvas.widthProperty().addListener(e -> this.requestRedraw());
         canvas.heightProperty().addListener(e -> this.requestRedraw());
 
+
+
         canvas.setOnScroll(e -> {
             ScrollEvent se = (ScrollEvent) e;
 
@@ -101,6 +108,17 @@ public class StructurePane extends StackPane implements StructureListener {
         canvas.addEventFilter(MouseEvent.ANY, (e) -> canvas.requestFocus());
 
         setMouseEvents();
+    }
+
+    public void addSpaceListener(SpaceEvent toAdd) {
+        spaceListeners.add(toAdd);
+    }           
+
+    public void spacePressed(){
+        System.out.println("space pressed");
+        for (SpaceEvent listener : spaceListeners){
+            listener.spacePressed();
+        }
     }
 
     public Structure getStructure() {
@@ -175,6 +193,9 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
+                case SPACE:
+                    spacePressed();
+
             }
         });
     }

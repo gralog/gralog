@@ -44,6 +44,13 @@ class Graph:
 			sys.stdin.readline();
 
 
+	def pauseUntilKeyClick(self):
+		print("pauseUntilKeyClick");
+		sys.stdout.flush();
+		sys.stdin.readline();
+
+
+
 	def __str__(self):
 		return "todo: tgf"
 
@@ -63,12 +70,15 @@ g = Graph("test");
 
 ###algorithm: add 3 nodes to tha homie graph.
 # recd = "null";
-for i in range(5):
+for i in range(3):
 	# print recd; #send hello to java
 	# sys.stdout.flush()
 	g.addVertex();
 
-g.deleteVertex(0);
+g.pauseUntilKeyClick();
+
+g.addVertex();
+# g.deleteVertex(0);
 
 
 	
