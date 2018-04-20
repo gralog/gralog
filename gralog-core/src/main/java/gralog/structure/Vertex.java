@@ -86,6 +86,10 @@ public class Vertex extends XmlMarshallable implements IMovable {
         return connectedEdges;
     }
 
+    public int getId(){
+        return this.id;
+    }
+
     public Set<Edge> getOutgoingEdges(){
         return outgoingEdges;
     }

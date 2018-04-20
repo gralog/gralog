@@ -377,6 +377,21 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return result;
     }
 
+
+    /**
+    *Returns a vertex with id matching param1
+    *@param an natural number, the id of the sought vertex
+    *@return an object of type vertex with vertex.id =id, or null if none exists
+    **/
+    public Vertex getVertexById(int id){
+        for (Vertex v : this.getVertices()){
+            if (v.getId() == id){
+                return v;
+            }
+        }
+        return null;
+    }
+
     /**
      * Returns an array of movable objects that lie within bounds of a given rectangle.
      * TODO: Implement an overloaded findObjects that returns only filtered movable obj.

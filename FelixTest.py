@@ -43,13 +43,15 @@ class Graph:
 		
 
 	def addVertex(self,x=None,y=None,color=None):
-		newVertex = Vertex(self.lastIndex + 1,x,y,color);
-		self.vertices.append(newVertex);
+		# newVertex = Vertex(self.lastIndex + 1,x,y,color);
+		# self.vertices.append(newVertex);
 		self.lastIndex += 1;
 		print ("addVertex " + str(self.lastIndex));
 		sys.stdout.flush();
-		sys.stdin.readline();
-		# return 
+		idFromGralog = sys.stdin.readline();
+		newVertex = Vertex(idFromGralog,x,y,color);
+		self.vertices.append(newVertex);
+		return idFromGralog;
 
 	def deleteVertex(self,vertexIndex):
 		indices = map(lambda vertex: vertex.id, self.vertices);
@@ -60,8 +62,8 @@ class Graph:
 			sys.stdin.readline();
 
 
-	def pauseUntilKeyClick(self):
-		print("pauseUntilKeyClick");
+	def pauseUntilSpacePresed(self):
+		print("pauseUntilSpacePresed");
 		sys.stdout.flush();
 		sys.stdin.readline();
 
@@ -86,14 +88,8 @@ g = Graph("directed");#type \in buechi, directed, etc. or None
 
 ###algorithm: add 3 nodes to tha homie graph.
 # recd = "null";
-for i in range(3):
-	# print recd; #send hello to java
-	# sys.stdout.flush()
-	g.addVertex();
-
-g.pauseUntilKeyClick();
-
-g.addVertex();
+myid = g.addVertex();
+g.deleteVertex(myid);
 # g.deleteVertex(0);
 
 

@@ -236,7 +236,7 @@ public class Piping2 implements SpaceEvent{
                     String[] externalCommandSegments = line.split(" ");
                     if (externalCommandSegments[0].equals("addVertex")){ //user input simulation
                         System.out.println("received message to add vertex " + externalCommandSegments[1]);
-                        this.out.println("ack");
+                        
 
 
                         Vertex v = this.structure.createVertex();
@@ -246,7 +246,7 @@ public class Piping2 implements SpaceEvent{
                         );
                         v.fillColor = new GralogColor(204, 136, 153);
                 
-
+                        this.out.println(Integer.toString(v.getId()));
                         this.structure.addVertex(v);
 
                     }else if (externalCommandSegments[0].equals("deleteVertex")){ //user input simulation
@@ -255,13 +255,14 @@ public class Piping2 implements SpaceEvent{
                         
                         
                 
-                        List<Vertex> vertexList = new ArrayList<Vertex>(this.structure.getVertices());
-                        this.structure.removeVertex(vertexList.get(Integer.parseInt(externalCommandSegments[1])));
+                        // List<Vertex> vertexList = new ArrayList<Vertex>(this.structure.getVertices());
+                        Vertex toDelete = structure.getVertexById(Integer.parseInt(externalCommandSegments[1]));
+                        this.structure.removeVertex(toDelete);
 
                         this.out.println("ack");
 
 
-                    }else if (externalCommandSegments[0].equals("pauseUntilKeyClick")){
+                    }else if (externalCommandSegments[0].equals("pauseUntilSpacePressed")){
                         
                         System.out.println("hello");
                         this.pane.requestRedraw();
