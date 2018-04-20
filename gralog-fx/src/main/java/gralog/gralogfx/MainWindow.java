@@ -64,9 +64,7 @@ public class MainWindow extends Application {
         handlers.onExit = () -> stage.close();
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
-<<<<<<< HEAD
         pipeline = new Piping2();
-=======
         //controls
         handlers.onAlignHorizontally = () -> {
             if(tabs.getCurrentStructurePane() != null){
@@ -79,7 +77,7 @@ public class MainWindow extends Application {
                 tabs.getCurrentStructurePane().alignVerticallyMean();
             }
         };
->>>>>>> 3716aa2e240d1edbcf4808506ed3af51bd550116
+
 
         handlers.onAboutGralog = () -> (new AboutStage(this)).showAndWait();
         handlers.onAboutGraph = () -> {
