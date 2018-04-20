@@ -4,13 +4,14 @@ package gralog.structure;
 
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Manages highlights and annotations of vertices and edges.
  */
 public class Highlights {
 
-    private final Set<Object> selection = new HashSet<>();
+    private final LinkedHashSet<Object> selection = new LinkedHashSet<>();
     private final Map<Object, String> annotations = new HashMap<>();
     private Object lastAdded;
     public void select(Object o) {
@@ -43,7 +44,7 @@ public class Highlights {
         }
         selection.removeAll(l);
     }
-    public Set<Object> getSelection() {
+    public LinkedHashSet<Object> getSelection() {
         return selection;
     }
 

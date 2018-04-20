@@ -10,6 +10,9 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 /**
  * The main menu of the main window.
@@ -44,6 +47,7 @@ public class MainMenu {
 
         MenuAction onOpen, onSave, onDirectInput, onLoadPlugin, onExit;
         MenuAction onUndo, onRedo, onCut, onCopy, onPaste, onDelete;
+        MenuAction onAlignHorizontally, onAlignVertically;
         MenuAction onAboutGralog, onAboutGraph;
 
         MenuStringAction onNew, onGenerate, onRunAlgorithm;
@@ -70,6 +74,9 @@ public class MainMenu {
     }
 
     private static MenuItem createMenuItem(String label, MenuAction handler) {
+        return createMenuItem(label, handler, null);
+    }
+    private static MenuItem createMenuItem(String label, MenuAction handler, KeyCodeCombination hotkey) {
         MenuItem item = new MenuItem(label);
         if (handler != null)
             item.setOnAction(e -> {
@@ -81,6 +88,8 @@ public class MainMenu {
             });
         else
             item.setDisable(true);
+
+        item.setAccelerator(hotkey);
         return item;
     }
 
@@ -96,6 +105,7 @@ public class MainMenu {
             });
         else
             item.setDisable(true);
+
         return item;
     }
 
@@ -123,12 +133,16 @@ public class MainMenu {
     private Menu createEditMenu() {
         Menu menuEdit = new Menu("Edit");
         menuEdit.getItems().addAll(
-            createMenuItem("Undo", handlers.onUndo),
-            createMenuItem("Redo", handlers.onRedo),
-            createMenuItem("Cut", handlers.onCut),
-            createMenuItem("Copy", handlers.onCopy),
-            createMenuItem("Paste", handlers.onPaste),
-            createMenuItem("Delete", handlers.onDelete));
+                createMenuItem("Undo", handlers.onUndo),
+                createMenuItem("Redo", handlers.onRedo),
+                createMenuItem("Cut", handlers.onCut),
+                createMenuItem("Copy", handlers.onCopy),
+                createMenuItem("Paste", handlers.onPaste),
+                createMenuItem("Delete", handlers.onDelete),
+                new SeparatorMenuItem(),
+                createMenuItem("Align Horizontally", handlers.onAlignHorizontally, new KeyCodeCombination(KeyCode.H, KeyCombination.ALT_DOWN)),
+                createMenuItem("Align Vertically", handlers.onAlignVertically, new KeyCodeCombination(KeyCode.V, KeyCombination.ALT_DOWN))
+        );
         return menuEdit;
     }
 

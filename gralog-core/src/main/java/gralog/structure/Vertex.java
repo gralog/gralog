@@ -18,17 +18,50 @@ import java.util.HashSet;
 @XmlName(name = "node")
 public class Vertex extends XmlMarshallable implements IMovable {
 
+    public int id;
     public String label = "";
-    public double radius = 0.5; // cm
-    public GralogColor fillColor = GralogColor.WHITE;
+    public double radius = 0.7;     // cm
+
+    //the position of the loop center on the circle
+    ///note: -90 is on top because the coordinate system is flipped horizontally
+    public double loopAnchor = -90;  // degrees
+    //the position of the endpoints of a loop
+    public double loopAngle = 20;   // degrees
+
     public double strokeWidth = 2.54 / 96; // cm
     public double textHeight = 0.4d; // cm
+    public GralogColor fillColor = GralogColor.WHITE;
     public GralogColor strokeColor = GralogColor.BLACK;
 
     public Vector2D coordinates = new Vector2D(0.0, 0.0);
-    private final Set<VertexListener> listeners = new HashSet<>();
 
-    private final ArrayList<Edge> connectedEdges = new ArrayList<>();
+    Set<VertexListener> listeners;
+    Set<Edge> outgoingEdges;
+    ArrayList<Edge> connectedEdges;
+
+    public Vertex() {
+        listeners = new HashSet<>();
+        outgoingEdges = new HashSet<>();
+        connectedEdges = new ArrayList<>();
+    }
+
+    /**
+     * Copies a vertex information from a given vertex object.
+     *
+     */
+    public <V extends Vertex> void copy(V v){
+        this.id = v.id;
+        this.radius = v.radius;
+        this.loopAngle = v.loopAngle;
+        this.loopAnchor = v.loopAnchor;
+        this.strokeWidth = v.strokeWidth;
+        this.strokeColor = new GralogColor(v.strokeColor);
+        this.coordinates = new Vector2D(v.coordinates);
+        this.listeners = new HashSet<>(v.listeners);
+
+        this.connectedEdges = new ArrayList<>(v.connectedEdges);
+        this.outgoingEdges = new HashSet<>(v.outgoingEdges);
+    }
 
     @Override
     public String toString() {
@@ -36,15 +69,25 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     void connectEdge(Edge e) {
+        if(e.getSource() == this){
+            outgoingEdges.add(e);
+        }
         this.connectedEdges.add(e);
     }
 
     void disconnectEdge(Edge e) {
+        if(outgoingEdges.contains(e)){
+            outgoingEdges.remove(e);
+        }
         this.connectedEdges.remove(e);
     }
 
     public ArrayList<Edge> getConnectedEdges() {
         return connectedEdges;
+    }
+
+    public Set<Edge> getOutgoingEdges(){
+        return outgoingEdges;
     }
 
     /**
@@ -156,4 +199,5 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public void removeVertexListener(VertexListener listener) {
         listeners.remove(listener);
     }
+
 }

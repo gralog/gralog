@@ -74,11 +74,6 @@ public class StructurePane extends StackPane implements StructureListener {
     private double gridSize = 1.0; // cm
     private boolean snapToGrid = true;
 
-    public enum MouseMode {
-        SELECT_MODE, VERTEX_MODE, EDGE_MODE
-    };
-    private MouseMode mouseMode = MouseMode.SELECT_MODE;
-
     public StructurePane(Structure structure) {
         this.structure = structure;
         canvas = new Canvas(500, 500);
@@ -159,6 +154,16 @@ public class StructurePane extends StackPane implements StructureListener {
             needsRepaintLock.unlock();
         }
     }
+    public void alignHorizontallyMean(){
+        structure.alignHorizontallyMean(highlights.getSelection());
+        structure.snapToGrid(gridSize);
+        this.requestRedraw();
+    }
+    public void alignVerticallyMean(){
+        structure.alignVerticallyMean(highlights.getSelection());
+        structure.snapToGrid(gridSize);
+        this.requestRedraw();
+    }
     public final void setMouseEvents() {
 
         canvas.setOnMouseClicked(e -> { });
@@ -178,12 +183,23 @@ public class StructurePane extends StackPane implements StructureListener {
                     clearSelection();
                     this.requestRedraw();
                     break;
-                case V:
-                    highlights.filterType(Vertex.class);
+//                case V:
+//                    highlights.filterType(Vertex.class);
+//                    this.requestRedraw();
+//                    break;
+                case C:
+                    structure.collapseEdges(highlights.getSelection());
                     this.requestRedraw();
                     break;
-                case E:
-                    highlights.filterType(Edge.class);
+//                case E:
+//                    highlights.filterType(Edge.class);
+//                    this.requestRedraw();
+//                    break;
+                case D:
+                    List<Vertex> duplicates = structure.duplicate(highlights.getSelection());
+                    structure.snapToGrid(gridSize);
+                    highlights.clearSelection();
+                    highlights.selectAll(duplicates);
                     this.requestRedraw();
                     break;
                 case A:
@@ -199,7 +215,7 @@ public class StructurePane extends StackPane implements StructureListener {
             }
         });
     }
-    void onMousePressed(MouseEvent e){
+    private void onMousePressed(MouseEvent e){
         Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
@@ -214,7 +230,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 select(selected);
                 dragging = highlights.getSelection();
                 if(selected instanceof Vertex){
-                    System.out.println(((Vertex)selected).getConnectedEdges().size());
+                    System.out.println(((Vertex)selected).id);
                 }
             }else if(!e.isControlDown()){
                 boxingStartingPosition = new Point2D(e.getX(), e.getY());
@@ -252,9 +268,9 @@ public class StructurePane extends StackPane implements StructureListener {
             structure.snapToGrid(gridSize);
             this.requestRedraw();
         }
-        else if(b == MouseButton.PRIMARY && selectionBoxDragging){
-            List<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
-            select(objs);
+        else if(b == MouseButton.PRIMARY && selectionBoxDragging && selectionBoxingActive){
+            Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
+            highlights.selectAll(objs);
         }
         //mouse release dissolves selection group, but not when
         //1) the selection group has been moved = wasDraggingPrimary
@@ -278,9 +294,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
         this.requestRedraw();
     }
-
-    private void onMouseDragged(MouseEvent e)
-    {
+    private void onMouseDragged(MouseEvent e) {
         if(e.isPrimaryButtonDown()){
             wasDraggingPrimary = true;
         }
@@ -327,9 +341,6 @@ public class StructurePane extends StackPane implements StructureListener {
         }
 
         this.requestRedraw();
-    }
-    public MouseMode getMouseMode() {
-        return mouseMode;
     }
 
     double screenResolutionX = 96d; // dpi

@@ -1,0 +1,14 @@
+Mouse input
+
+- Select vertex/edge: Left clic
+- Add vertex        : Right-click on empty canvas
+- Add edge          : Right-drag from source vertex and release on target vertex
+- Add self loop     : Right click vertex
+- Scroll canvas     : Middle mouse drag
+
+Keyboard input OSX (windows/linux)
+
+- Select all        : Cmd+A (Ctrl+A)
+- Collapse edges    : C
+- Inflate edges     : C (again)
+- Copy/Paste        : Cmd+C/V (Ctrl+C/V)

@@ -5,10 +5,8 @@ package gralog.structure;
 import gralog.plugins.*;
 import gralog.events.*;
 import gralog.rendering.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
+
+import java.util.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -32,7 +30,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public Boolean isDirected = true;
 
     public Arrow arrowType = Arrow.TYPE1;
-    public double arrowHeadLength = 0.28d; // cm
+    public double arrowHeadLength = 0.2d; // cm
     public double arrowHeadAngle = 40d; // degrees
     public double width = 2.54 / 96; // cm
     public GralogColor color = GralogColor.BLACK;
@@ -66,7 +64,9 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (target != null)
             this.target.connectEdge(this);
     }
-
+    public boolean isLoop(){
+        return getSource() == getTarget();
+    }
     public double maximumCoordinate(int dimension) {
         double result = Double.NEGATIVE_INFINITY;
         for (EdgeIntermediatePoint between : intermediatePoints)
@@ -80,6 +80,35 @@ public class Edge extends XmlMarshallable implements IMovable {
             between.move(offset);
     }
 
+    public void collapse(Structure structure){
+        //One edge that doesn't have the same direction as this edge
+        Edge e = null;
+        for(int i = 0; i < siblings.size(); i++){
+            e = siblings.get(i);
+            if(e != this && !e.sameOrientationAs(this)){
+                break;
+            }
+            e = null;
+        }
+        for(int i = 0; i < siblings.size(); i++){
+            if(siblings.get(i) != this && siblings.get(i) != e){
+                structure.removeEdge(siblings.get(i), false);
+            }
+        }
+        siblings.clear();
+        siblings = new ArrayList<>();
+        siblings.add(this);
+
+        //correct siblings of edge e as well
+        if(e != null){
+            siblings.add(e);
+
+            e.siblings.clear();
+            e.siblings = new ArrayList<>();
+            e.siblings.add(this);
+            e.siblings.add(e);
+        }
+    }
     public void snapToGrid(double gridSize) {
         for (EdgeIntermediatePoint between : intermediatePoints)
             between.snapToGrid(gridSize);
@@ -119,47 +148,40 @@ public class Edge extends XmlMarshallable implements IMovable {
         return result;
     }
 
-    public void render(GralogGraphicsContext gc, Highlights highlights) {
-        double fromX = source.coordinates.getX();
-        double fromY = source.coordinates.getY();
-        double toX = target.coordinates.getX();
-        double toY = target.coordinates.getY();
-
-        double tempX = fromX;
-        double tempY = fromY;
-
-        GralogColor edgeColor = this.color;
-        if (highlights.isSelected(this))
-            edgeColor = GralogColor.RED;
-
-        for (EdgeIntermediatePoint between : intermediatePoints) {
-            fromX = tempX;
-            fromY = tempY;
-            tempX = between.getX();
-            tempY = between.getY();
-            gc.line(fromX, fromY, tempX, tempY, edgeColor, width);
-
-            if (highlights.isSelected(this))
-                gc.rectangle(tempX - 0.1, tempY - 0.1, tempX + 0.1, tempY + 0.1, edgeColor, 2.54 / 96);
-        }
-
-        if (isDirected) {
-            Vector2D intersection = target.intersection(new Vector2D(tempX, tempY), new Vector2D(toX, toY));
-            gc.arrow(new Vector2D(tempX, tempY), intersection, arrowHeadAngle, arrowHeadLength, edgeColor, width);
-        } else {
-            gc.line(tempX, tempY, toX, toY, edgeColor, width);
-        }
-    }
-    private void renderLoop(){
-
-    }
-    public void render(GralogGraphicsContext gc, Highlights highlights, boolean collapse){
+    public void render(GralogGraphicsContext gc, Highlights highlights){
 
         GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
-        if(getSource() == getTarget()){
-            gc.loop(source.coordinates.minus(new Vector2D(source.radius, 2 * source.radius)),
-                    source.radius * 2, edgeColor, width);
+        if(isLoop()){
+
+            double angleStart = source.loopAnchor - source.loopAngle;
+            double angleEnd = source.loopAnchor + source.loopAngle;
+
+            double r = source.radius;
+
+            Vector2D intersection = Vector2D.getVectorAtAngle(angleStart, r).plus(source.coordinates);
+            Vector2D intersection2 = Vector2D.getVectorAtAngle(angleEnd, r).plus(source.coordinates);
+
+            Vector2D tangentToIntersection = Vector2D.getVectorAtAngle(angleEnd, 1).multiply(-1);
+
+            //the correction retreats the endpoint of the bezier curve orthogonally from the vertex surface
+            double correction = arrowType.endPoint * arrowHeadLength;
+
+            //only draw arrow for directed graphs
+            if(isDirected){
+                gc.arrow(tangentToIntersection, intersection2, arrowType, arrowHeadLength, edgeColor);
+            }else{
+                correction = 0;
+            }
+
+            //Loop description, endpoints and tangents.
+            GralogGraphicsContext.Loop l = new GralogGraphicsContext.Loop();
+            l.start = intersection;
+            l.end = intersection2;
+            l.tangentStart = Vector2D.getVectorAtAngle(angleStart, 1).orthogonal();
+            l.tangentEnd = Vector2D.getVectorAtAngle(angleEnd, 1).orthogonal();
+
+            gc.loop(l,1.5, correction, edgeColor, width);
             return;
         }
         double offset = getOffset();
@@ -234,8 +256,13 @@ public class Edge extends XmlMarshallable implements IMovable {
         return getSource() == other.getSource();
     }
     public boolean containsCoordinate(double x, double y) {
-        double fromX = source.coordinates.getX();
-        double fromY = source.coordinates.getY();
+        Vector2D diff = target.coordinates.minus(source.coordinates);
+        Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(getOffset());
+        Vector2D sourceOffset = source.coordinates.plus(perpendicularToDiff);
+        Vector2D targetOffset = target.coordinates.plus(perpendicularToDiff);
+        
+        double fromX = sourceOffset.getX();
+        double fromY = sourceOffset.getY();
         double nextfromX = fromX;
         double nextfromY = fromY;
 
@@ -248,9 +275,9 @@ public class Edge extends XmlMarshallable implements IMovable {
                 return true;
         }
 
-        double toX = target.coordinates.getX();
-        double toY = target.coordinates.getY();
-        return Vector2D.distancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < 0.3;
+        double toX = targetOffset.getX();
+        double toY = targetOffset.getY();
+        return Vector2D.distancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < multiEdgeOffset * 0.5;
     }
 
     public EdgeIntermediatePoint addIntermediatePoint(double x, double y) {

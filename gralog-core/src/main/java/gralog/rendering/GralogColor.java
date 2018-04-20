@@ -29,7 +29,11 @@ public class GralogColor {
             (short) ((rgb >> 8) & 0xFF),
             (short) (rgb & 0xFF));
     }
-
+    public GralogColor(GralogColor c){
+        this.r = c.r;
+        this.g = c.g;
+        this.b = c.b;
+    }
     @Override
     public int hashCode() {
         int hash = 7;

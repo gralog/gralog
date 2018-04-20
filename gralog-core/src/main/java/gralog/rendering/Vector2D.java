@@ -13,7 +13,10 @@ public class Vector2D {
         this.x = x;
         this.y = y;
     }
-
+    public Vector2D(Vector2D v){
+        this.x = v.getX();
+        this.y = v.getY();
+    }
     @Override
     public int hashCode() {
         int hash = 7;
@@ -106,6 +109,12 @@ public class Vector2D {
             return 180d - alpha;
     }
 
+    /**
+     * Returns a vector for a given angle and length. Angle in degrees
+     */
+    public static Vector2D getVectorAtAngle(double angle, double length){
+        return new Vector2D(Math.cos(Math.toRadians(angle)), Math.sin(Math.toRadians(angle))).multiply(length);
+    }
     public static Vector2D closestPointOnLine(double px, double py, double l1x,
         double l1y, double l2x, double l2y) {
         Vector2D p = new Vector2D(px, py);

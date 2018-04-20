@@ -52,7 +52,7 @@ public class StronglyConnectedComponents extends Algorithm {
                 else if (!e.isDirected)
                     vChildren.add(e.getSource());
             children.put(v, vChildren);
-            childIterationPos.put(v, 0); // iteration starts at index 0
+            childIterationPos.put(v, 0); // iteration starts at id 0
 
             tarStack.push(v);
             parent.put(v, null);
@@ -75,7 +75,7 @@ public class StronglyConnectedComponents extends Algorithm {
                                 grandChildren.add(e.getSource());
                         children.put(child, grandChildren);
 
-                        childIterationPos.put(child, 0); // iteration (on child's children) starts at index 0
+                        childIterationPos.put(child, 0); // iteration (on child's children) starts at id 0
                         dfs.put(child, index);
                         lowlink.put(child, index);
                         index++;

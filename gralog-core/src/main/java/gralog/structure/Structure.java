@@ -30,11 +30,19 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     protected Set<V> vertices;
     protected Set<E> edges;
 
+    protected SortedSet<NumberPair> holes;
+
+    protected class NumberPair{
+        public NumberPair(int a, int b) { this.a = a; this.b = b;}
+        public int a;
+        public int b;
+    }
     private final Set<StructureListener> listeners = new HashSet<>();
 
     public Structure() {
         vertices = new HashSet<>();
         edges = new HashSet<>();
+        holes = new TreeSet<>();
     }
 
     /**
@@ -59,7 +67,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
     public void render(GralogGraphicsContext gc, Highlights highlights) {
         for (Edge e : edges)
-            e.render(gc, highlights, false);
+            e.render(gc, highlights);
         for (Vertex v : vertices)
             v.render(gc, highlights);
     }
@@ -106,6 +114,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param v The vertex to be added.
      */
     public void addVertex(V v) {
+        v.id = nextFreeID();
         vertices.add(v);
     }
 
@@ -249,18 +258,22 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @param e The edge to be removed.
      */
-    public void removeEdge(Edge e) {
+    public void removeEdge(Edge e, boolean removeSiblingsEntries) {
         e.setSource(null);
         e.setTarget(null);
-        for (int i = 0; i < e.siblings.size(); i++)
-        {
-            if(e != e.siblings.get(i)){
-                e.siblings.get(i).siblings.remove(e);
+        if(removeSiblingsEntries){
+            for (int i = 0; i < e.siblings.size(); i++)
+            {
+                if(e != e.siblings.get(i)){
+                    e.siblings.get(i).siblings.remove(e);
+                }
             }
         }
         edges.remove(e);
     }
-
+    public void removeEdge(Edge e){
+        removeEdge(e, true);
+    }
     /**
      * Creates an edge without adding it to the graph.
      *
@@ -284,7 +297,41 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
         return edge;
     }
+    public List<V> duplicate(Set<Object> selection) {
+        List<V> result = new ArrayList<>();
+        HashMap<Integer, V> idToVertex = new HashMap<>();
+        HashSet<NumberPair> edgeIDs = new HashSet<>();
 
+        int nextFreeID = nextFreeID();
+        for(Object o : selection) {
+            if (o instanceof Vertex) {
+                V v = createVertex();
+                v.copy((V) o);
+                v.move(new Vector2D(v.radius, v.radius).multiply(0.5));
+                for(Edge e : v.getOutgoingEdges()){
+                    if(selection.contains(e.getTarget())){
+                        edgeIDs.add(new NumberPair(e.getSource().id, e.getTarget().id));
+                    }
+                }
+                v.connectedEdges.clear();
+                v.outgoingEdges.clear();
+                idToVertex.put(v.id, v);
+                //now we can correct v.id
+                v.id = nextFreeID;
+                nextFreeID++;
+                result.add(v);
+            }
+        }
+
+        for(NumberPair edge : edgeIDs){
+            //TODO: instead of addEdge consider directly adding edges, since duplication occurs only
+            //with graphs that already fulfill the desired properties
+            addEdge(idToVertex.get(edge.a), idToVertex.get(edge.b));
+        }
+
+        vertices.addAll(result);
+        return result;
+    }
     /**
      * @return True if the given two vertices are adjacent.
      * @param a The first vertex.
@@ -297,6 +344,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return false;
     }
 
+    /**
+     * Returns the next free available ID, so that all vertices' ids are continuously
+     * filled on a single interval [0, n)
+     */
+    public int nextFreeID(){
+        return vertices.size();
+    }
     /**
      * Return an edge or vertex that lies at the given coordinates. If multiple
      * objects are stacked at the given location, then vertices win over edges.
@@ -330,8 +384,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param to the corner diagonal to the first one
      * @return A collection of movables that are within bounds of the given rectangle
      */
-    public List<IMovable> findObjects(Point2D from, Point2D to){
-        List<IMovable> objects = new ArrayList<>();
+    public Set<IMovable> findObjects(Point2D from, Point2D to){
+        Set<IMovable> objects = new HashSet<>();
 
         Vector2D vecFrom = new Vector2D(from.getX(), from.getY());
         Vector2D vecTo = new Vector2D(to.getX(), to.getY());
@@ -352,8 +406,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
 
         for (Edge e : edges){
-            Vector2D source = e.getSource().coordinates;
-            Vector2D target = e.getTarget().coordinates;
+
+            if(e.isLoop()){
+                continue;
+            }
+            Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
+            Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(e.getOffset());
+            Vector2D source = e.getSource().coordinates.plus(perpendicularToDiff);
+            Vector2D target = e.getTarget().coordinates.plus(perpendicularToDiff);
 
             if(separatingAxisTest(vecFrom, vecTo, source, target)){
                 continue;
@@ -425,6 +485,78 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 Math.signum(cy) * (qy - vy) <= Math.abs(cy) &&
                 Math.signum(cx) * (qx - vx) >= 0 &&
                 Math.signum(cy) * (qy - vy) >= 0;
+    }
+
+    /**
+     * Collapses edges or, when every single edge in the selection is already collapsed,
+     * inflates every set of edges.
+     */
+    public void collapseEdges(Set<Object> selection){
+        HashSet<Edge> representativeEdges = new HashSet<>();
+        //linear time
+        for(Object edge : selection){
+            if(edge instanceof Edge){
+                Edge e = (Edge) edge;
+                if(!e.isLoop()){
+                    boolean nonRelated = true;
+                    //edges can only be related to siblings. Iterate over all siblings
+                    //and check if one of them is already declared a representative
+                    for(Edge sibling : e.siblings){
+                        nonRelated &= !representativeEdges.contains(sibling);
+                    }
+                    if(nonRelated){
+                        representativeEdges.add(e);
+                    }
+
+                }
+            }
+        }
+        for(Edge representative : representativeEdges){
+            representative.collapse(this);
+
+        }
+    }
+
+    /**
+     * Aligns all selected vertices along their y coordinate
+     */
+    public void alignHorizontallyMean(LinkedHashSet<Object> selection){
+        Set<Vertex> vertices = new HashSet<>();
+        double sum = 0;
+        double count = 0;
+        for(Object o : selection){
+            if(o instanceof Vertex){
+                vertices.add((Vertex)o);
+                sum += ((Vertex)o).coordinates.getY();
+                count++;
+            }
+        }
+        for(Vertex v : vertices){
+            v.coordinates = new Vector2D(v.coordinates.getX(), sum/count);
+        }
+    }
+    /**
+     * Aligns all selected vertices along the y coordinate of the first
+     * selected element
+     */
+    public void alignHorizontallyFirst(LinkedHashSet<Object> selection){
+
+    }
+
+    public void alignVerticallyMean(LinkedHashSet<Object> selection){
+        Set<Vertex> vertices = new HashSet<>();
+        double sum = 0;
+        double count = 0;
+        for(Object o : selection){
+            if(o instanceof Vertex){
+                vertices.add((Vertex)o);
+                sum += ((Vertex)o).coordinates.getX();
+                count++;
+            }
+        }
+        for(Vertex v : vertices){
+            v.coordinates = new Vector2D(sum/count, v.coordinates.getY());
+        }
     }
     @Override
     public Element toXml(Document doc) throws Exception {
@@ -586,4 +718,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             throw new Exception("class " + this.getClass().getName() + " has no @StructureDescription Annotation");
         return this.getClass().getAnnotation(StructureDescription.class);
     }
+
+
 }
