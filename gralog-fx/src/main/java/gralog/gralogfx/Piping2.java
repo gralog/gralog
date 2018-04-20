@@ -16,6 +16,8 @@ import gralog.algorithm.*;
 import gralog.progresshandler.*;
 import gralog.gralogfx.*;
 
+// import java.Arrays.*;
+
 
 
 import java.util.Set;
@@ -59,14 +61,93 @@ public class Piping2 implements SpaceEvent{
     // this.spacePressed = false;
     Boolean spacePressed = false;
 
-    public Object run(Structure structure,StructurePane pane) throws
+    private <T> Boolean arrayContains(T[] array, T element){
+
+        for (int i = 0; i < array.length; i ++){
+            if (array[i].equals(element)){
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    public String externalProcessInit(String fileName,String initMessage){
+
+        try{
+
+            // Platform.runLater(
+            //     () -> {
+            //         Alert alert = new Alert(AlertType.INFORMATION);
+            //         alert.setTitle("Information Dialog");
+            //         alert.setHeaderText(null);
+            //         alert.setContentText("executing:" + execStr[0]);
+            //         alert.showAndWait();
+            //     }
+            // );
+            System.out.println("external yo");
+            String line;
+            String[] execStr = {fileName,initMessage};
+            this.external = Runtime.getRuntime().exec(execStr); //e.g. formatRequest
+            this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));
+            this.out = new PrintStream(external.getOutputStream(),true);
+            System.out.println("execd and shit");
+            // return "error smorgesbord";
+
+            if ((line = this.in.readLine()) != null){//assuming there is a valid line to be had
+                // System.out.println("in while");
+                // System.out.println("churnin");
+                // return "error smorgesbord";
+                if (line.length() > 0){ // if not a bogus line
+                    //handleLine()
+                    
+                    if (line.equals("useCurrentGraph")){ //user input simulation
+                        System.out.println("wants to use graph that is open");
+                        out.println("ack");
+                        return "useCurrentGraph";
+
+                    }
+                    System.out.println("before the grpahtypes");
+                    String[] graphTypes = {"automaton","buechi","directed","kripke","undirected"};
+                    if (arrayContains(graphTypes,line)){
+                        out.println("ack");
+                        return line;
+                    }
+                    in.close();
+                    out.close();
+                    return "error invalidType";
+                    // System.out.println("just heard: " + line);
+
+                }
+
+            }
+            System.out.println("returnin");
+            return "error empty program";
+
+
+            ///make first python call, get params :
+            //new graph : Boolean
+            //Automaton, Buechi, Directed, Kripke, Undirected
+            //
+            // exec(this.external,this.in,this.out,false);
+
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return "error";
+
+    }
+
+    public Object run(Structure structure, StructurePane pane) throws
         Exception {
-        String[] commands
-            = {"/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py", structure.xmlToString()};
+        // String[] commands
+            // = {fileName, structure.xmlToString()};
         System.out.println("Gralog says: starting.");
         this.structure = structure;
         this.pane = pane;
-        String output = this.init(commands);
+        // String output = this.init(commands);
+        this.exec(false);
         System.out.println("Finished exec.");
 
         
@@ -90,54 +171,47 @@ public class Piping2 implements SpaceEvent{
        
 
 
-        Platform.runLater(
-            () -> {
-                System.out.println("alerting result");
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("Information Dialog");
-                alert.setHeaderText(null);
-                alert.setContentText("result after exec\n:" + output);
-                alert.showAndWait();
-            }
-        );
+      
         return null;
     }
 
-    private String init(String[] execStr){
-
-        // String result;
-        try{
-
-            Platform.runLater(
-                () -> {
-                    Alert alert = new Alert(AlertType.INFORMATION);
-                    alert.setTitle("Information Dialog");
-                    alert.setHeaderText(null);
-                    alert.setContentText("executing:" + execStr[0]);
-                    alert.showAndWait();
-                }
-            );
-            this.external = Runtime.getRuntime().exec(execStr);
-            this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));
-            this.out = new PrintStream(external.getOutputStream(),true);
-            exec(this.external,this.in,this.out,false);
 
 
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+    // private String init(String[] execStr){
 
-        return "hello";
+    //     // String result;
+    //     try{
 
-    }
+    //         Platform.runLater(
+    //             () -> {
+    //                 Alert alert = new Alert(AlertType.INFORMATION);
+    //                 alert.setTitle("Information Dialog");
+    //                 alert.setHeaderText(null);
+    //                 alert.setContentText("executing:" + execStr[0]);
+    //                 alert.showAndWait();
+    //             }
+    //         );
+    //         this.external = Runtime.getRuntime().exec(execStr);
+    //         this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));
+    //         this.out = new PrintStream(external.getOutputStream(),true);
+    //         exec(this.external,this.in,this.out,false);
+
+
+    //     }catch(Exception e){
+    //         e.printStackTrace();
+    //     }
+
+    //     return "hello";
+
+    // }
 
     public String execWithAck(){
-        return exec(this.external,this.in,this.out,true);
+        return exec(true);
     }
 
 
 
-    private String exec(Process external, BufferedReader in, PrintStream out,Boolean sendAck) {
+    private String exec(Boolean sendAck) {
         
         System.out.println("140");
         String result = "";
@@ -150,18 +224,19 @@ public class Piping2 implements SpaceEvent{
             if (sendAck){
                 //send ack
                 out.println("ack");
+
             }
 
             
             // System.out.println("110");
-            while ((line = in.readLine()) != null){//while python has not yet terminated
+            while ((line = this.in.readLine()) != null){//while python has not yet terminated
                 // System.out.println("in while");
                 if (line.length() > 0){ // if not a bogus line
                     //handleLine()
                     String[] externalCommandSegments = line.split(" ");
                     if (externalCommandSegments[0].equals("addVertex")){ //user input simulation
                         System.out.println("received message to add vertex " + externalCommandSegments[1]);
-                        out.println("ack");
+                        this.out.println("ack");
 
 
                         Vertex v = this.structure.createVertex();
@@ -183,7 +258,7 @@ public class Piping2 implements SpaceEvent{
                         List<Vertex> vertexList = new ArrayList<Vertex>(this.structure.getVertices());
                         this.structure.removeVertex(vertexList.get(Integer.parseInt(externalCommandSegments[1])));
 
-                        out.println("ack");
+                        this.out.println("ack");
 
 
                     }else if (externalCommandSegments[0].equals("pauseUntilKeyClick")){
@@ -194,10 +269,8 @@ public class Piping2 implements SpaceEvent{
 
                     }else{
                         out.println(this.structure.xmlToString());
-                        while (!this.spacePressed){
-                            System.out.println("not pressed yet boi");
-                        }
-                        out.println("ack");
+                        
+                        this.out.println("ack");
                         this.spacePressed= false;
 
                         // wait(event){}

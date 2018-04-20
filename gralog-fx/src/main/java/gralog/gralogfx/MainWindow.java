@@ -119,8 +119,39 @@ public class MainWindow extends Application {
         //     for (File file : list)
         //         doLoadPlugin(file.getAbsolutePath());
         // }
+
+        
+
         try{
-            pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
+
+            final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
+
+            String externalProcessInitResponse = pipeline.externalProcessInit(fileName,"hello world");
+            
+            String[] externalCommandSegments = externalProcessInitResponse.split(" ");
+
+            if (externalCommandSegments[0].equals("error") || (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
+                System.out.println("error: " + externalProcessInitResponse);
+                return;
+            }
+
+
+            if (!externalProcessInitResponse.equals("useCurrentGraph")){
+                System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
+                Structure temp = StructureManager.instantiateStructure("Directed Graph");
+                tabs.addTab("new " + externalProcessInitResponse,temp);
+                System.out.println(getCurrentStructure());
+                System.out.println(tabs.getCurrentStructurePane());
+                pipeline.run(temp,tabs.getCurrentStructurePane());
+            }else{
+                pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
+
+            }
+
+           
+
+
+
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -140,6 +171,7 @@ public class MainWindow extends Application {
     }
 
     public void onNew(String structureName) throws Exception {
+        System.out.println("instantiating structrure called: " + structureName);
         Structure structure = StructureManager.instantiateStructure(structureName);
         tabs.addTab(structureName, structure);
         setStatus("created a " + structureName + "...");

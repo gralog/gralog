@@ -20,11 +20,27 @@ class Vertex:
 		return str(self.id);
 
 class Graph:
-	def __init__(self,graph):
+	def __init__(self,format):
 		#perform analysis of graph
 		self.vertices = [];
 		self.edges = [];
 		self.lastIndex = -1;
+		if format == None or format.lower() == "none":
+			#we want a new graph
+
+			print("useCurrentGraph");
+			sys.stdout.flush();
+			self.vertices = [];
+			self.edges = [];
+			self.lastIndex = -1;
+			sys.stdin.readline();
+	
+		else:
+			print(format);
+			sys.stdout.flush();
+			graph = sys.stdin.readline();
+			
+		
 
 	def addVertex(self,x=None,y=None,color=None):
 		newVertex = Vertex(self.lastIndex + 1,x,y,color);
@@ -33,7 +49,7 @@ class Graph:
 		print ("addVertex " + str(self.lastIndex));
 		sys.stdout.flush();
 		sys.stdin.readline();
-		return 
+		# return 
 
 	def deleteVertex(self,vertexIndex):
 		indices = map(lambda vertex: vertex.id, self.vertices);
@@ -66,7 +82,7 @@ class Graph:
 
 
 
-g = Graph("test");
+g = Graph("directed");#type \in buechi, directed, etc. or None
 
 ###algorithm: add 3 nodes to tha homie graph.
 # recd = "null";
