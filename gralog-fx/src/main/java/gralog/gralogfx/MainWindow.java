@@ -140,8 +140,7 @@ public class MainWindow extends Application {
                 System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
                 Structure temp = StructureManager.instantiateStructure("Directed Graph");
                 tabs.addTab("new " + externalProcessInitResponse,temp);
-                System.out.println(getCurrentStructure());
-                System.out.println(tabs.getCurrentStructurePane());
+                
                 pipeline.run(temp,tabs.getCurrentStructurePane());
             }else{
                 pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
@@ -446,7 +445,7 @@ public class MainWindow extends Application {
             switch (event.getCode()){
                 case SPACE:
                     System.out.println("space pressed");
-                    pipeline.execWithAck();
+                    System.out.println("exec says: " + pipeline.execWithAck());
                     break;
             }
         });

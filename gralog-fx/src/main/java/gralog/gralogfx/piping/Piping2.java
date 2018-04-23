@@ -49,6 +49,15 @@ public class Piping2 implements SpaceEvent{
     private Structure structure;
     private StructurePane pane;
 
+    private enum State{
+        Null,
+        Inintialized,
+        InProgress,
+        Paused
+    }
+
+    State state = State.Null;
+
     // @Override
     public AlgorithmParameters getParameters(Structure s) {
         return null;
@@ -104,6 +113,7 @@ public class Piping2 implements SpaceEvent{
                     if (line.equals("useCurrentGraph")){ //user input simulation
                         System.out.println("wants to use graph that is open");
                         out.println("ack");
+                        this.state = State.Inintialized;
                         return "useCurrentGraph";
 
                     }
@@ -111,6 +121,7 @@ public class Piping2 implements SpaceEvent{
                     String[] graphTypes = {"automaton","buechi","directed","kripke","undirected"};
                     if (arrayContains(graphTypes,line)){
                         out.println("ack");
+                        this.state = State.Inintialized;
                         return line;
                     }
                     in.close();
@@ -206,18 +217,29 @@ public class Piping2 implements SpaceEvent{
     // }
 
     public String execWithAck(){
-        return exec(true);
+        
+        if (this.state != State.Paused){
+            return "error: not paused, therefore ack in jest";
+        }
+        return this.exec(true);
     }
 
 
 
     private String exec(Boolean sendAck) {
+
+        System.out.println("exec and state is: " + this.state);
+        if (this.state == State.Null){
+            return "error: should not being execing as process has not been inintialized";
+        }
         
         System.out.println("140");
         String result = "";
 
 
+
         try{
+            System.out.println("execing " + sendAck);
 
             String line;
 
@@ -230,9 +252,11 @@ public class Piping2 implements SpaceEvent{
             
             // System.out.println("110");
             while ((line = this.in.readLine()) != null){//while python has not yet terminated
-                // System.out.println("in while");
+                System.out.println("in while");
+                
                 if (line.length() > 0){ // if not a bogus line
                     //handleLine()
+                    this.state = State.InProgress;
                     String[] externalCommandSegments = line.split(" ");
                     if (externalCommandSegments[0].equals("addVertex")){ //user input simulation
                         System.out.println("received message to add vertex " + externalCommandSegments[1]);
@@ -257,6 +281,7 @@ public class Piping2 implements SpaceEvent{
                 
                         // List<Vertex> vertexList = new ArrayList<Vertex>(this.structure.getVertices());
                         Vertex toDelete = structure.getVertexById(Integer.parseInt(externalCommandSegments[1]));
+                        System.out.println("toDelt: " + toDelete);
                         this.structure.removeVertex(toDelete);
 
                         this.out.println("ack");
@@ -266,6 +291,7 @@ public class Piping2 implements SpaceEvent{
                         
                         System.out.println("hello");
                         this.pane.requestRedraw();
+                        this.state = State.Paused;
                         break;
 
                     }else{
@@ -283,6 +309,15 @@ public class Piping2 implements SpaceEvent{
                 }
 
             }
+
+            if (line == null){
+                this.state = State.Null;
+                System.out.println("makingue null");
+            }else{
+                System.out.println("line is not null rather: " + line);
+            }
+
+
             // System.out.println("done with while");
             this.pane.requestRedraw();
             return result;

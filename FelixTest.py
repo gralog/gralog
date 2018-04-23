@@ -63,7 +63,7 @@ class Graph:
 
 
 	def pauseUntilSpacePresed(self):
-		print("pauseUntilSpacePresed");
+		print("pauseUntilSpacePressed");
 		sys.stdout.flush();
 		sys.stdin.readline();
 
@@ -84,12 +84,14 @@ class Graph:
 
 
 
-g = Graph("directed");#type \in buechi, directed, etc. or None
+g = Graph("none");#type \in buechi, directed, etc. or None
 
 ###algorithm: add 3 nodes to tha homie graph.
 # recd = "null";
 myid = g.addVertex();
 g.deleteVertex(myid);
+g.pauseUntilSpacePresed();
+helloid = g.addVertex();
 # g.deleteVertex(0);
 
 
