@@ -16,7 +16,33 @@ import java.util.jar.JarFile;
 import javafx.scene.Node;
 
 /**
+ * Views are classes are usually implemented by custom javaFX Nodes classes
+ * like the GridPaneView. The workflow is not trivial, so below is an in-depth
+ * explanation.
  *
+ * A view works tightly with the object inspector and is used to visualize
+ * or modify class properties. The workflow is as follows.
+ *
+ * 1) Create a class that implements View V and extends a Node
+ * 2) Annotate it with @ViewDescription(forClass = X.class)
+ * 3) X should be a class that can be selected, like a Vertex or Edge etc
+ * 3.1) In the View V you define what happens when you select an object of X.
+ *
+ * Example: Class - ReflectedView
+ * The method setObject(Object o,..) adds several labels and textfields to its own node for
+ * every field in o. Since its forClass annotation is Object.class, this view will be a kind
+ * of last resort for all objects.
+ * A ReflectedView object will, after calling setObject(x), create multiple UI objects and
+ * sort them according to the layout specifications of GridPane. Afterwards an external callee
+ * (say the object inspector) can now decide if and how this UI element is to be included into the
+ * scene.
+ *
+ *
+ * 4) Now, unless there is a class Y that extends X AND there is View that
+ * has a forClass=Y.class annotation, selecting an object o of class X will
+ * instantiate a view object of V.
+ * 5) In the object inspector that view object will be added to the scene and made
+ * visible.
  */
 public final class ViewManager {
 
@@ -89,6 +115,7 @@ public final class ViewManager {
             }
 
             if (isNode && isView) {
+
                 // okay, it is a view. (try to) register it
                 Constructor<? extends View> ctor = (Constructor<? extends View>) c.getConstructor(new Class[]{});
                 if (ctor == null)

@@ -105,10 +105,12 @@ public class Tabs {
                 selection = sender.highlights.getSelection();
                 sender.requestRedraw();
             }
-            if (selection != null && selection.size() == 1)
+            if (selection != null && selection.size() == 1){
                 objectInspector.setObject(selection.iterator().next(), sender);
-            else
+            }
+            else{
                 objectInspector.setObject(null, sender);
+            }
 
             onChangeTabHandler.run();
         } catch (Exception ex) {

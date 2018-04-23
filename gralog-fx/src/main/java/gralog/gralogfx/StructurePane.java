@@ -71,7 +71,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public StructurePane(Structure structure) {
         this.structure = structure;
-        canvas = new Canvas(500, 500);
+        canvas = new Canvas(500,500);
 
         this.getChildren().add(canvas);
         // resize canvas with surrounding StructurePane
