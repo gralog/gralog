@@ -127,7 +127,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param v The vertex to be added.
      */
     public void addVertex(V v) {
-        v.id = nextFreeID();
+        v.id = pollNextFreeID();
         vertices.add(v);
     }
 
@@ -138,7 +138,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public void addVertices(Collection<V> vs, boolean autoGenerateIDs) {
         if(autoGenerateIDs){
-
+            for(V v : vs){
+                v.id = pollNextFreeID();
+            }
         }
         vertices.addAll(vs);
     }
@@ -380,7 +382,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         HashMap<Integer, V> idToVertex = new HashMap<>();
         HashSet<Interval> edgeIDs = new HashSet<>();
 
-        int nextFreeID = vertices.size();
         for(Object o : selection) {
             if (o instanceof Vertex) {
                 V v = createVertex();
@@ -395,8 +396,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 v.outgoingEdges.clear();
                 idToVertex.put(v.id, v);
                 //now we can correct v.id
-                v.id = nextFreeID;
-                nextFreeID++;
+                addVertex(v);
                 result.add(v);
             }
         }
@@ -407,7 +407,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             addEdge(idToVertex.get(edge.a), idToVertex.get(edge.b));
         }
 
-        addVertices(result, false);
         return result;
     }
     /**
@@ -426,8 +425,17 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * Returns the next free available ID, so that all vertices' ids are continuously
      * filled on a single interval [0, n)
      */
-    public int nextFreeID(){
-        return vertices.size();
+    public int pollNextFreeID(){
+        if(holes.size() != 0){
+            Interval hole = holes.first();
+            hole.a++;
+            if(hole.a > hole.b){
+                holes.remove(hole);
+            }
+            return hole.a - 1;
+        }else{
+            return vertices.size();
+        }
     }
     /**
      * Return an edge or vertex that lies at the given coordinates. If multiple
