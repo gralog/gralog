@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
+import java.util.Collection;
 import java.util.Set;
 
 import gralog.progresshandler.ProgressHandler;
@@ -23,10 +24,10 @@ public class FakeDirectedTreeDecomposition extends Algorithm {
     protected Bag fakeTreeDecomposition(Structure s, int depth, int width,
         int children) {
         Bag result = new Bag();
-        Set<Vertex> V = s.getVertices();
+        Collection<Vertex> V = s.getVertices();
 
         for (int i = 0; i < width; i++) {
-            int idx = (int) (Math.random() * V.size());
+            int idx = (int) (Math.random() * ((Collection) V).size());
             for (Vertex v : V)
                 if (--idx < 0) {
                     result.nodes.add(v);

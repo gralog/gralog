@@ -7,6 +7,7 @@ import gralog.rendering.*;
 import gralog.progresshandler.*;
 import java.util.ArrayList;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -76,7 +77,7 @@ public class SpringEmbedder extends Algorithm {
         p.unstressed_spring_length = Math.pow(p.unstressed_spring_length, 1.0f/dimensions) / (dimensions * 2);
          */
         // init
-        Set<Vertex> vertices = s.getVertices();
+        Collection<Vertex> vertices = s.getVertices();
         for (Vertex a : vertices) {
             Vector2D coordinates = new Vector2D(
                 Math.random() * dimensionLimits.getX(),

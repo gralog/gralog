@@ -34,7 +34,7 @@ public class Col2 extends Algorithm {
     }
 
     boolean check(StringBuilder str, DirectedGraph s) {
-        Set<Vertex> ver = s.getVertices();
+        Collection<Vertex> ver = s.getVertices();
         Set<Edge> edge = s.getEdges();
         for (Vertex i : ver) {
             int x = Integer.parseInt(i.label);
@@ -66,7 +66,7 @@ public class Col2 extends Algorithm {
     }
 
     DirectedGraph generate(DirectedGraph s, int nVertices, double p) {
-        Set<Vertex> vertices = s.getVertices();
+        Collection<Vertex> vertices = s.getVertices();
         Set<Edge> edge = s.getEdges();
         vertices.clear();
         edge.clear();
@@ -109,7 +109,7 @@ public class Col2 extends Algorithm {
             AlgorithmParameters params = embedder.GetParameters(s);
             embedder.run(s, params, onprogress);
              */
-            Set<Vertex> vertices = s.getVertices();
+            Collection<Vertex> vertices = s.getVertices();
             long i;
             for (i = 0; i < Math.pow(3, nVertices); ++i) {
                 StringBuilder str = convertToBase3(i, nVertices);

@@ -4,6 +4,7 @@ package gralog.exportfilter;
 
 import gralog.structure.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 import java.io.OutputStreamWriter;
@@ -26,7 +27,7 @@ public class TrivialGraphFormatExport extends ExportFilter {
         Integer i = 1;
         String linefeed = System.getProperty("line.separator");
 
-        Set<Vertex> V = structure.getVertices();
+        Collection<Vertex> V = structure.getVertices();
         for (Vertex v : V) {
             nodeIndex.put(v, i);
             stream.write(i + linefeed);
@@ -47,7 +48,7 @@ public class TrivialGraphFormatExport extends ExportFilter {
         ExportFilterParameters params) throws Exception {
         Map<String, Vertex> result = new HashMap<>();
         Integer i = 1;
-        Set<Vertex> V = structure.getVertices();
+        Collection<Vertex> V = structure.getVertices();
         for (Vertex v : V)
             result.put("" + (i++), v);
         return result;
@@ -60,7 +61,7 @@ public class TrivialGraphFormatExport extends ExportFilter {
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
 
         Integer i = 1;
-        Set<Vertex> V = structure.getVertices();
+        Collection<Vertex> V = structure.getVertices();
         for (Vertex v : V)
             nodeIndex.put(v, i++);
 

@@ -9,6 +9,8 @@ import gralog.algorithm.*;
 
 import gralog.structure.*;
 import gralog.progresshandler.*;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -62,7 +64,7 @@ public class ModelCheckingGameFOLogic extends Algorithm {
 
         FirstOrderFormula phi = FirstOrderParser.parseString(sp.parameter);
 
-        Set<Vertex> V = s.getVertices();
+        Collection<Vertex> V = s.getVertices();
         int i = 0;
         for (Vertex v : V) {
             v.label = String.valueOf(i);

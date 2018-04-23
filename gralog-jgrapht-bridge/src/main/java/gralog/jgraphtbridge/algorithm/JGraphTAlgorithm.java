@@ -2,11 +2,13 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.jgraphtbridge.algorithm;
 
+import java.util.Collection;
 import java.util.Set;
 
 import gralog.algorithm.Algorithm;
 import gralog.algorithm.AlgorithmParameters;
 import gralog.progresshandler.ProgressHandler;
+import gralog.structure.Vertex;
 
 /**
  *
@@ -23,7 +25,7 @@ public abstract class JGraphTAlgorithm extends Algorithm {
         org.jgrapht.DirectedGraph<gralog.structure.Vertex, org.jgrapht.graph.DefaultEdge> jgraph
             = new org.jgrapht.graph.SimpleDirectedGraph<>(org.jgrapht.graph.DefaultEdge.class);
 
-        Set<gralog.structure.Vertex> V = s.getVertices();
+        Collection<Vertex> V = s.getVertices();
         for (gralog.structure.Vertex v : V)
             jgraph.addVertex(v);
 

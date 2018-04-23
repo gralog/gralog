@@ -27,7 +27,7 @@ import javax.xml.transform.OutputKeys;
 public abstract class Structure<V extends Vertex, E extends Edge>
     extends XmlMarshallable implements IMovable {
 
-    protected Set<V> vertices;
+    protected HashMap<Integer, V> vertices;
     protected Set<E> edges;
 
     public TreeSet<Interval> holes;
@@ -44,7 +44,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     private final Set<StructureListener> listeners = new HashSet<>();
 
     public Structure() {
-        vertices = new HashSet<>();
+        vertices = new HashMap<>();
         edges = new HashSet<>();
         holes = new TreeSet<>(new Comparator<>() {
             /**
@@ -61,10 +61,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     /**
      * @return An unmodifiable set of vertices.
      */
-    public Set<V> getVertices() {
-        return Collections.unmodifiableSet(vertices);
-    }
+    //public Set<V> getVertices() { return Collections.unmodifiableSet(vertices); }
 
+    public Collection<V> getVertices(){ return vertices.values(); }
     /**
      * @return An unmodifiable set of edges.
      */
@@ -74,21 +73,21 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     public Set<IMovable> getAllMovablesModifiable(){
         Set<IMovable> result = new HashSet<>();
-        result.addAll(vertices);
+        result.addAll(vertices.values());
         result.addAll(edges);
         return result;
     }
     public void render(GralogGraphicsContext gc, Highlights highlights) {
         for (Edge e : edges)
             e.render(gc, highlights);
-        for (Vertex v : vertices)
+        for (Vertex v : getVertices())
             v.render(gc, highlights);
     }
 
     public void snapToGrid(double gridSize) {
         for (Edge e : edges)
             e.snapToGrid(gridSize);
-        for (Vertex v : vertices)
+        for (Vertex v : getVertices())
             v.snapToGrid(gridSize);
     }
 
@@ -128,7 +127,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public void addVertex(V v) {
         v.id = pollNextFreeID();
-        vertices.add(v);
+        vertices.put(v.id, v);
     }
 
     /**
@@ -142,7 +141,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 v.id = pollNextFreeID();
             }
         }
-        vertices.addAll(vs);
+        //vertices.addAll(vs);
     }
     public void addVertices(Collection <V> vs){
         addVertices(vs, true);
@@ -171,6 +170,26 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     /**
+     * Find the vertex with a given ID. Lookup speed is O(1), since
+     * vertices are implemented as a HashMap.
+     * @param id The id of the vertex
+     * @return Returns the Vertex or null if no vertex has the ID
+     */
+    public Vertex findVertexByID(int id){
+        return vertices.get(id);
+    }
+
+    /**
+     * Removes vertex from the structure for a given ID. You can remove by
+     * Object as well
+     * @param id The id of the vertex
+     * @return True if the vertex was removed, false if either no entry could be found
+     * or the associated vertex was null to begin with (see HashMap.remove() for further details)
+     */
+    public boolean removeVertexByID(int id){
+        return vertices.remove(id) != null;
+    }
+    /**
      * Removes a vertex and its incident edges from the structure.
      *
      * @param v The vertex to be removed.
@@ -182,8 +201,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             removeEdge(e);
         }
 
-        vertices.remove(v);
-
+        vertices.remove(v.id);
 
         Interval deleteThisInterval = null;
         if(holes.size() == 0){
@@ -450,13 +468,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public IMovable findObject(double x, double y) {
         IMovable result = null;
 
-        for (Edge e : edges) {
+        for (Edge e : getEdges()) {
             IMovable temp = e.findObject(x, y);
             if (temp != null)
                 result = temp;
         }
 
-        for (Vertex v : vertices)
+        for (Vertex v : getVertices())
             if (v.containsCoordinate(x, y))
                 result = v;
 
@@ -483,7 +501,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         double cx = qx - px;
         double cy = qy - py;
 
-        for (Vertex v : vertices){
+        for (Vertex v : getVertices()){
             double vx = v.coordinates.getX();
             double vy = v.coordinates.getY();
             if(insideSelection(qx, qy, cx, cy, vx, vy)){
@@ -650,7 +668,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         HashMap<Vertex, String> ids = new HashMap<>();
         Integer i = 1;
-        for (Vertex v : vertices) {
+        for (Vertex v : getVertices()) {
             String id = "n" + (i++);
             ids.put(v, id);
             Element vnode = v.toXml(doc, id);

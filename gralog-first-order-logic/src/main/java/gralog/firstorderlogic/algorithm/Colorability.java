@@ -33,7 +33,7 @@ public class Colorability extends Algorithm {
     }
 
     boolean check(StringBuilder str, DirectedGraph s) {
-        Set<Vertex> ver = s.getVertices();
+        Collection<Vertex> ver = s.getVertices();
         Set<Edge> edge = s.getEdges();
         for (Vertex i : ver) {
             int x = Integer.parseInt(i.label);
@@ -65,7 +65,7 @@ public class Colorability extends Algorithm {
 
     public Object run(DirectedGraph s, AlgorithmParameters p,
         Set<Object> selection, ProgressHandler onprogress) throws Exception {
-        Set<Vertex> vertices = s.getVertices();
+        Collection<Vertex> vertices = s.getVertices();
         int nVertices = vertices.size();
         int k = 0;
         for (Vertex v : vertices) {

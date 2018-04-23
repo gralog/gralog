@@ -2,10 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.algorithm;
 
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.*;
 
 import gralog.structure.*;
 import gralog.algorithm.*;
@@ -28,7 +25,7 @@ public class PowersetConstruction extends Algorithm {
         PowersetConstructionTreeNode tree = new PowersetConstructionTreeNode(null, null, null);
 
         Set<State> Q0 = new HashSet<>();
-        Set<State> Q = a.getVertices();
+        Collection<State> Q = a.getVertices();
         Set<Transition> delta = a.getEdges();
         for (Vertex v : Q)
             if (v instanceof State && ((State) v).startState)

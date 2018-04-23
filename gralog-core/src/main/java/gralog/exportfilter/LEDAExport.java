@@ -4,6 +4,7 @@ package gralog.exportfilter;
 
 import gralog.structure.*;
 import java.io.OutputStreamWriter;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public class LEDAExport extends ExportFilter {
         stream.write("# -1 = directed, -2 = undirected" + linefeed + linefeed);
 
         stream.write("# nodes" + linefeed);
-        Set<Vertex> V = structure.getVertices();
+        Collection<Vertex> V = structure.getVertices();
         stream.write("" + V.size() + linefeed);
         int idx = 0;
         for (Vertex v : V) {
