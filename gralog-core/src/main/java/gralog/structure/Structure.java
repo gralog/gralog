@@ -30,19 +30,32 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     protected Set<V> vertices;
     protected Set<E> edges;
 
-    protected SortedSet<NumberPair> holes;
+    public TreeSet<Interval> holes;
 
-    protected class NumberPair{
-        public NumberPair(int a, int b) { this.a = a; this.b = b;}
+    protected static class Interval {
+        Interval(int a, int b) { this.a = a; this.b = b;}
         public int a;
         public int b;
+        @Override
+        public String toString(){
+            return "("+ a + ", " + b + ")";
+        }
     }
     private final Set<StructureListener> listeners = new HashSet<>();
 
     public Structure() {
         vertices = new HashSet<>();
         edges = new HashSet<>();
-        holes = new TreeSet<>();
+        holes = new TreeSet<>(new Comparator<>() {
+            /**
+             * Returns a positive value if number1 is larger than number 2, a
+             * negative number if number1 is less than number2, and 0 if they
+             * are equal.
+             */
+            public int compare(Interval first, Interval second) {
+                return first.a - second.a;
+            }
+        });
     }
 
     /**
@@ -123,10 +136,15 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @param vs The vertices to be added.
      */
-    public void addVertices(Collection<V> vs) {
+    public void addVertices(Collection<V> vs, boolean autoGenerateIDs) {
+        if(autoGenerateIDs){
+
+        }
         vertices.addAll(vs);
     }
-
+    public void addVertices(Collection <V> vs){
+        addVertices(vs, true);
+    }
     /**
      * Clear the structure. Removes all vertices and all edges.
      */
@@ -156,13 +174,73 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param v The vertex to be removed.
      */
     public void removeVertex(Vertex v) {
-        Set<Edge> deletedEdges = new HashSet<>();
-        for (Edge e : edges)
-            if (e.containsVertex(v))
-                deletedEdges.add(e);
-        for (Edge e : deletedEdges)
+        Set<Edge> deletedEdges = new HashSet<>(v.connectedEdges);
+
+        for(Edge e : deletedEdges){
             removeEdge(e);
+        }
+
         vertices.remove(v);
+
+
+        Interval deleteThisInterval = null;
+        if(holes.size() == 0){
+            holes.add(new Interval(v.id, v.id));
+        }else{
+            for(Interval hole : holes){
+                //find hole with[,]..v.id..[a,b]
+                if(hole.a > v.id + 1){
+                    //find the hole smaller than [a,b]
+                    Interval minInterval = holes.lower(hole);
+                    if(minInterval == null){
+                        holes.add(new Interval(v.id, v.id));
+                        return;
+                    }
+                    int min = minInterval.b;
+                    System.out.println("id: " + v.id + " _ min: " + min);
+                    if(min < v.id - 1){
+                        holes.add(new Interval(v.id, v.id));
+                        return;
+                    }else if(min == v.id - 1){
+                        minInterval.b += 1;
+                        return;
+                    }else{
+                        System.out.println("indexing error");
+                    }
+                }
+                //if v.id is exactly below the hole, extend it
+                //[,]..v.id,[a,b] -> [,]..[v.id,b]
+                else if(hole.a == v.id + 1){
+                    hole.a--;
+                    //in case the extension makes hole lie next to a different interval, merge
+                    Interval lower = holes.lower(hole);
+                    if(lower != null && lower.b == hole.a - 1){
+                        //merge
+                        lower.b = hole.b;
+                        deleteThisInterval = hole;
+                    }
+                    break;
+                }
+            }
+            //did two intervals merge
+            if(deleteThisInterval != null){
+                holes.remove(deleteThisInterval);
+            }
+            //if not, for loop exited without finding a hole that's greater
+            //than v.id. Get last hole and decide if to extend or create new interval
+            else{
+                if(holes.last().b == v.id - 1){
+                    holes.last().b += 1;
+                }else{
+                    holes.add(new Interval(v.id, v.id));
+                }
+            }
+        }
+    }
+    //TODO: implement
+    public void removeVertices(Collection<V> v){
+        //vertices.removeAll(v);
+        System.out.println("not implemented");
     }
 
     /**
@@ -300,9 +378,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public List<V> duplicate(Set<Object> selection) {
         List<V> result = new ArrayList<>();
         HashMap<Integer, V> idToVertex = new HashMap<>();
-        HashSet<NumberPair> edgeIDs = new HashSet<>();
+        HashSet<Interval> edgeIDs = new HashSet<>();
 
-        int nextFreeID = nextFreeID();
+        int nextFreeID = vertices.size();
         for(Object o : selection) {
             if (o instanceof Vertex) {
                 V v = createVertex();
@@ -310,7 +388,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 v.move(new Vector2D(v.radius, v.radius).multiply(0.5));
                 for(Edge e : v.getOutgoingEdges()){
                     if(selection.contains(e.getTarget())){
-                        edgeIDs.add(new NumberPair(e.getSource().id, e.getTarget().id));
+                        edgeIDs.add(new Interval(e.getSource().id, e.getTarget().id));
                     }
                 }
                 v.connectedEdges.clear();
@@ -323,13 +401,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
         }
 
-        for(NumberPair edge : edgeIDs){
+        for(Interval edge : edgeIDs){
             //TODO: instead of addEdge consider directly adding edges, since duplication occurs only
             //with graphs that already fulfill the desired properties
             addEdge(idToVertex.get(edge.a), idToVertex.get(edge.b));
         }
 
-        vertices.addAll(result);
+        addVertices(result, false);
         return result;
     }
     /**

@@ -157,10 +157,13 @@ public class StructurePane extends StackPane implements StructureListener {
             switch (e.getCode()) {
                 case DELETE:
                     for (Object o : highlights.getSelection()) {
-                        if (o instanceof Vertex)
+                        if (o instanceof Vertex) {
                             structure.removeVertex((Vertex) o);
-                        else if (o instanceof Edge)
+                            System.out.println(structure.holes);
+                        }
+                        else if (o instanceof Edge){
                             structure.removeEdge((Edge) o);
+                        }
                     }
                     clearSelection();
                     this.requestRedraw();
