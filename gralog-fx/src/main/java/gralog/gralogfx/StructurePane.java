@@ -181,7 +181,7 @@ public class StructurePane extends StackPane implements StructureListener {
 //                    this.requestRedraw();
 //                    break;
                 case D:
-                    List<Vertex> duplicates = structure.duplicate(highlights.getSelection());
+                    List<Vertex> duplicates = structure.duplicate(highlights.getSelection(), gridSize);
                     structure.snapToGrid(gridSize);
                     highlights.clearSelection();
                     highlights.selectAll(duplicates);
@@ -411,12 +411,12 @@ public class StructurePane extends StackPane implements StructureListener {
         double w = gc.getCanvas().getWidth();
         double h = gc.getCanvas().getHeight();
         gc.clearRect(0, 0, w, h);
-        gc.setFill(Color.rgb(0xFA, 0xFB, 0xFF));
+        gc.setFill(Color.rgb(240, 240, 240));
         gc.fillRect(0, 0, w, h);
 
         // grid
         if (zoomFactor * (screenResolutionX / 2.54) >= 10) {
-            gc.setStroke(Color.rgb(0xcc, 0xcc, 0xcc));
+            gc.setStroke(Color.rgb(225, 225, 225));
             Point2D leftupper = screenToModel(new Point2D(0d, 0d));
             Point2D rightlower = screenToModel(new Point2D(w, h));
             for (double x = leftupper.getX() - (leftupper.getX() % gridSize); x <= rightlower.getX(); x += gridSize) {

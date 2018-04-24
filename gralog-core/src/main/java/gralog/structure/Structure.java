@@ -395,7 +395,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
         return edge;
     }
-    public List<V> duplicate(Set<Object> selection) {
+    public List<V> duplicate(Set<Object> selection){ return duplicate(selection, 1); }
+    public List<V> duplicate(Set<Object> selection, double offset) {
         List<V> result = new ArrayList<>();
         HashMap<Integer, V> idToVertex = new HashMap<>();
         HashSet<Interval> edgeIDs = new HashSet<>();
@@ -404,7 +405,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             if (o instanceof Vertex) {
                 V v = createVertex();
                 v.copy((V) o);
-                v.move(new Vector2D(v.radius, v.radius).multiply(0.5));
+                v.move(new Vector2D(offset, offset));
                 for(Edge e : v.getOutgoingEdges()){
                     if(selection.contains(e.getTarget())){
                         edgeIDs.add(new Interval(e.getSource().id, e.getTarget().id));
