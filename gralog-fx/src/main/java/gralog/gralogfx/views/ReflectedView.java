@@ -24,7 +24,7 @@ public class ReflectedView extends GridPaneView<Object> {
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
-        this.setPrefWidth(290);
+        this.setPrefWidth(280);
         int i = 0;
 
         try {

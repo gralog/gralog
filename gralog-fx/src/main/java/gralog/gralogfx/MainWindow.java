@@ -14,10 +14,8 @@ import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
 
+import java.io.*;
 import java.util.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -415,6 +413,8 @@ public class MainWindow extends Application {
             root,
             Preferences.getInteger(getClass(), "main-window-width", 1000),
             Preferences.getInteger(getClass(), "main-window-height", 800));
+
+        scene.getStylesheets().add("/stylesheet.css");
         this.stage = primaryStage;
         primaryStage.setMinHeight(500);
         primaryStage.setMinWidth(400);

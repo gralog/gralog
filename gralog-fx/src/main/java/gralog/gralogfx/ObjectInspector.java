@@ -17,7 +17,7 @@ import javafx.scene.Node;
  */
 public class ObjectInspector extends AnchorPane {
 
-    public static final double MIN_HEIGHT = 300;
+    public static final double MIN_HEIGHT = 320;
 
     private View view;
 
@@ -36,14 +36,13 @@ public class ObjectInspector extends AnchorPane {
 
         ScrollPane sp = new ScrollPane();
 
-        sp.setPrefViewportHeight(MIN_HEIGHT);
+        //sp.setPrefViewportHeight(MIN_HEIGHT);
         sp.setPrefViewportWidth(290);
-        sp.setFocusTraversable(false);
 
-        AnchorPane.setTopAnchor(sp, 3.0);
-        AnchorPane.setRightAnchor(sp, 3.0);
-        AnchorPane.setBottomAnchor(sp, 3.0);
-        AnchorPane.setLeftAnchor(sp, 3.0);
+        AnchorPane.setTopAnchor(sp, 4.0);
+        AnchorPane.setRightAnchor(sp, 4.0);
+        AnchorPane.setBottomAnchor(sp, 4.0);
+        AnchorPane.setLeftAnchor(sp, 4.0);
 
         if (obj == null && structurePane != null){
             this.getChildren().add(sp);

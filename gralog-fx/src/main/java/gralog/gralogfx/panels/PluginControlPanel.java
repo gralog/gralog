@@ -1,11 +1,15 @@
 package gralog.gralogfx.panels;
 
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 
-public class PluginControlPanel extends HBox {
+public class PluginControlPanel extends AnchorPane {
 
     public PluginControlPanel(Runnable onPlay, Runnable onPause, Runnable onStep){
+        HBox hbox = new HBox();
+        hbox.prefWidthProperty().bind(this.widthProperty());
         prefWidthProperty().bind(this.widthProperty());
 
         Button b0 = createButton("\u25B6");
@@ -18,8 +22,14 @@ public class PluginControlPanel extends HBox {
         b2.setOnMouseClicked(event -> onPause.run());
 
         Button b3 = createButton("∫");
-        getChildren().addAll(b0, b1, b2, b3);
+        hbox.getChildren().addAll(b0, b1, b2, b3);
 
+        AnchorPane.setLeftAnchor(hbox, 4.0);
+        AnchorPane.setRightAnchor(hbox, 4.0);
+        AnchorPane.setBottomAnchor(hbox, 4.0);
+        AnchorPane.setTopAnchor(hbox, 1.0);
+
+        this.getChildren().add(hbox);
         setMinHeight(200);
     }
 
