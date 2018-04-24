@@ -31,7 +31,7 @@ import javafx.scene.layout.HBox;
     url = "https://url.com"
 )
 
-public class Piping extends Algorithm {
+public class PipingAlgorithm extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {

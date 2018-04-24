@@ -10,7 +10,7 @@ import gralog.structure.StructureDescription;
  *
  */
 @StructureDescription(
-    name = "Büchi Automaton",
+    name = "Buechi Automaton",
     text = "",
     url = "https://en.wikipedia.org/wiki/B%C3%BCchi_automaton")
 @XmlName(name = "buechiautomaton")

@@ -37,12 +37,14 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     Set<VertexListener> listeners;
     Set<Edge> outgoingEdges;
-    ArrayList<Edge> connectedEdges;
+    Set<Edge> incomingEdges;
+    Set<Edge> connectedEdges;
 
     public Vertex() {
         listeners = new HashSet<>();
         outgoingEdges = new HashSet<>();
-        connectedEdges = new ArrayList<>();
+        connectedEdges = new HashSet<>();
+        incomingEdges = new HashSet<>();
     }
 
     /**
@@ -59,8 +61,9 @@ public class Vertex extends XmlMarshallable implements IMovable {
         this.coordinates = new Vector2D(v.coordinates);
         this.listeners = new HashSet<>(v.listeners);
 
-        this.connectedEdges = new ArrayList<>(v.connectedEdges);
+        this.connectedEdges = new HashSet<>(v.connectedEdges);
         this.outgoingEdges = new HashSet<>(v.outgoingEdges);
+        this.incomingEdges = new HashSet<>(v.incomingEdges);
     }
 
     @Override
@@ -72,17 +75,23 @@ public class Vertex extends XmlMarshallable implements IMovable {
         if(e.getSource() == this){
             outgoingEdges.add(e);
         }
+        if (e.getTarget() == this){
+            this.incomingEdges.add(e);
+        }
         this.connectedEdges.add(e);
     }
 
     void disconnectEdge(Edge e) {
-        if(outgoingEdges.contains(e)){
+        if(e.getSource() == this){
             outgoingEdges.remove(e);
+        }
+        if (e.getTarget() == this){
+            incomingEdges.remove(e);
         }
         this.connectedEdges.remove(e);
     }
 
-    public ArrayList<Edge> getConnectedEdges() {
+    public Set<Edge> getConnectedEdges() {
         return connectedEdges;
     }
 
@@ -94,6 +103,11 @@ public class Vertex extends XmlMarshallable implements IMovable {
         return outgoingEdges;
     }
 
+    public Set<Edge> getIncomingEdges(){
+        return this.incomingEdges;
+    }
+
+//##########START depricated!!!! use getConnectedNeighbours instead#########
     /**
      * @return The set of adjacent vertices.
      */
@@ -107,6 +121,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
         }
         return result;
     }
+
+//##########END#########
 
     public double maximumCoordinate(int dimension) {
         if (coordinates.dimensions() > dimension)
@@ -138,6 +154,36 @@ public class Vertex extends XmlMarshallable implements IMovable {
             gc.putText(coordinates.plus(new Vector2D(0, 1)),
                 annotation, textHeight, GralogColor.RED);
         }
+    }
+
+
+    public Set<Vertex> getConnectedNeighbours(){
+        Set<Vertex> connectedNeighbours = new HashSet<Vertex>();
+        for (Edge e : this.getConnectedEdges()){
+            if (e.getTarget() != this){
+                connectedNeighbours.add(e.getTarget());
+            }else{
+                connectedNeighbours.add(e.getSource());
+            }
+        }
+        return connectedNeighbours;
+    }
+
+    public Set<Vertex> getOutgoingNeighbours(){
+        Set<Vertex> outgoingNeighbours = new HashSet<Vertex>();
+        for (Edge e : this.getOutgoingEdges()){
+            outgoingNeighbours.add(e.getTarget());
+        }
+        return outgoingNeighbours;
+    }
+
+
+    public Set<Vertex> getIncomingNeighbours(){
+        Set<Vertex> incomingNeighbours = new HashSet<Vertex>();
+        for (Edge e : this.getIncomingEdges()){
+            incomingNeighbours.add(e.getSource());
+        }
+        return incomingNeighbours;
     }
 
     public void snapToGrid(double gridSize) {

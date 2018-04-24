@@ -50,7 +50,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
                 if (relation.equals("="))
                     return from.equals(to);
 
-                ArrayList<Edge> E = from.getConnectedEdges();
+                Set<Edge> E = from.getConnectedEdges();
                 for (Edge e : E) {
                     if (e.getSource() == from && e.getTarget() == to // same direction
                         || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) {
@@ -92,7 +92,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
         Vertex from = varassign.get(parameters.get(0));
         Vertex to = varassign.get(parameters.get(1));
 
-        ArrayList<Edge> E = from.getConnectedEdges();
+        Set<Edge> E = from.getConnectedEdges();
         for (Edge e : E) {
             if (e.getSource() == from && e.getTarget() == to // same direction
                 || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) {

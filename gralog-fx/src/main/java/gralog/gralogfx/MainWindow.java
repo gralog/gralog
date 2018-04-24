@@ -51,7 +51,7 @@ public class MainWindow extends Application {
     private MainMenu menu;
     private Tabs tabs;
     private StatusBar statusBar;
-    private Piping2 pipeline;
+    private Piping pipeline;
 
     public MainWindow() {
         MainMenu.Handlers handlers = new MainMenu.Handlers();
@@ -64,7 +64,7 @@ public class MainWindow extends Application {
         handlers.onExit = () -> stage.close();
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
-        pipeline = new Piping2();
+        pipeline = new Piping();
         //controls
         handlers.onAlignHorizontally = () -> {
             if(tabs.getCurrentStructurePane() != null){
@@ -138,7 +138,7 @@ public class MainWindow extends Application {
 
             if (!externalProcessInitResponse.equals("useCurrentGraph")){
                 System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
-                Structure temp = StructureManager.instantiateStructure("Directed Graph");
+                Structure temp = StructureManager.instantiateStructure(externalProcessInitResponse);
                 tabs.addTab("new " + externalProcessInitResponse,temp);
                 
                 pipeline.run(temp,tabs.getCurrentStructurePane());
@@ -445,7 +445,7 @@ public class MainWindow extends Application {
             switch (event.getCode()){
                 case SPACE:
                     System.out.println("space pressed");
-                    System.out.println("exec says: " + pipeline.execWithAck());
+                    pipeline.execWithAck();
                     break;
             }
         });

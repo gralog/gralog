@@ -50,7 +50,7 @@ public class StructurePane extends StackPane implements StructureListener {
         this.setEventHandler(STRUCTUREPANE_SELECTIONCHANGED, handler);
     }
 
-    private List<SpaceEvent> spaceListeners = new ArrayList<SpaceEvent>();
+    // private List<SpaceEvent> spaceListeners = new ArrayList<SpaceEvent>();
 
     Structure structure;
     Canvas canvas;
@@ -105,16 +105,16 @@ public class StructurePane extends StackPane implements StructureListener {
         setMouseEvents();
     }
 
-    public void addSpaceListener(SpaceEvent toAdd) {
-        spaceListeners.add(toAdd);
-    }           
+    // public void addSpaceListener(SpaceEvent toAdd) {
+    //     spaceListeners.add(toAdd);
+    // }           
 
-    public void spacePressed(){
-        System.out.println("space pressed");
-        for (SpaceEvent listener : spaceListeners){
-            listener.spacePressed();
-        }
-    }
+    // public void spacePressed(){
+    //     System.out.println("space pressed");
+    //     for (SpaceEvent listener : spaceListeners){
+    //         listener.spacePressed();
+    //     }
+    // }
 
     public Structure getStructure() {
         return structure;
@@ -212,8 +212,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
-                case SPACE:
-                    spacePressed();
+                
 
             }
         });

@@ -50,7 +50,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             /**
              * Returns a positive value if number1 is larger than number 2, a
              * negative number if number1 is less than number2, and 0 if they
-             * are equal.
+             * are equal. 
              */
             public int compare(Interval first, Interval second) {
                 return first.a - second.a;
