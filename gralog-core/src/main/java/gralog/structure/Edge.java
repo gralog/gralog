@@ -24,6 +24,7 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     Set<EdgeListener> listeners = new HashSet<>();
 
+    //inspector visible
     public String label = "";
     public double cost = 1.0d;
 
@@ -33,7 +34,11 @@ public class Edge extends XmlMarshallable implements IMovable {
     public double arrowHeadLength = 0.2d; // cm
     public double arrowHeadAngle = 40d; // degrees
     public double width = 2.54 / 96; // cm
+
     public GralogColor color = GralogColor.BLACK;
+    public GralogGraphicsContext.LineType type = GralogGraphicsContext.LineType.PLAIN;
+    //end
+
 
     public ArrayList<Edge> siblings = new ArrayList<>();
     public ArrayList<EdgeIntermediatePoint> intermediatePoints = new ArrayList<>();
@@ -125,29 +130,6 @@ public class Edge extends XmlMarshallable implements IMovable {
         return null;
     }
 
-    protected double binomialCoefficients(int n, int k) {
-        double result = 1.0;
-        for (int i = 1; i <= k; i++)
-            result = result * (n + 1 - i) / i;
-        return result;
-    }
-
-    protected Vector2D bezierCurve(double t) {
-        int n = intermediatePoints.size() + 1;
-
-        Vector2D result = this.source.coordinates.multiply(Math.pow(1 - t, n));
-        result = result.plus(this.target.coordinates.multiply(Math.pow(t, n)));
-
-        int i = 1;
-        for (EdgeIntermediatePoint between : intermediatePoints) {
-            result = result.plus(between.coordinates.multiply(binomialCoefficients(n, i) * Math.pow(t, i) * Math.pow(1 - t, n - i)
-            ));
-            i++;
-        }
-
-        return result;
-    }
-
     public void render(GralogGraphicsContext gc, Highlights highlights){
 
         GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
@@ -181,7 +163,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             l.tangentStart = Vector2D.getVectorAtAngle(angleStart, 1).orthogonal();
             l.tangentEnd = Vector2D.getVectorAtAngle(angleEnd, 1).orthogonal();
 
-            gc.loop(l,1.5, correction, edgeColor, width);
+            gc.loop(l,1.5, correction, edgeColor, width, type);
             return;
         }
         double offset = getOffset();
@@ -200,13 +182,15 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (isDirected) {
             double dist = target.radius * (1 - Math.cos(Math.asin(offset/target.radius)));
             Vector2D intersection = target.intersectionAdjusted(sourceOffset, targetOffset, dist);
+            Vector2D adjustedEndpoint = intersection.plus(diff.normalized().multiply(arrowType.endPoint * arrowHeadLength));
 
-            gc.line(sourceOffset, intersection.plus(diff.normalized().multiply(arrowType.endPoint * arrowHeadLength)), edgeColor, width);
+            gc.line(sourceOffset, adjustedEndpoint, edgeColor, width, type);
             gc.arrow(diff, intersection, arrowType, arrowHeadLength, edgeColor);
         } else {
-            gc.line(fromX, fromY, toX, toY, edgeColor, width);
+            gc.line(fromX, fromY, toX, toY, edgeColor, width, type);
         }
     }
+
     public double getOffset(){
         double offset = 0;
         int index = siblings.indexOf(this);
@@ -280,41 +264,6 @@ public class Edge extends XmlMarshallable implements IMovable {
         return Vector2D.distancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < multiEdgeOffset * 0.5;
     }
 
-    public EdgeIntermediatePoint addIntermediatePoint(double x, double y) {
-        double fromX = source.coordinates.getX();
-        double fromY = source.coordinates.getY();
-        double nextfromX = fromX;
-        double nextfromY = fromY;
-
-        int i = 0, insertionIndex = 0;
-        double minDistance = Double.MAX_VALUE;
-
-        for (EdgeIntermediatePoint between : intermediatePoints) {
-            fromX = nextfromX;
-            fromY = nextfromY;
-            nextfromX = between.getX();
-            nextfromY = between.getY();
-
-            double distanceTemp = Vector2D.distancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY);
-            if (distanceTemp < minDistance) {
-                insertionIndex = i;
-                minDistance = distanceTemp;
-            }
-            i++;
-        }
-
-        double toX = target.coordinates.getX();
-        double toY = target.coordinates.getY();
-
-        double distanceTemp = Vector2D.distancePointToLine(x, y, nextfromX, nextfromY, toX, toY);
-        if (distanceTemp < minDistance) {
-            insertionIndex = intermediatePoints.size();
-        }
-
-        EdgeIntermediatePoint result = new EdgeIntermediatePoint(x, y);
-        intermediatePoints.add(insertionIndex, result);
-        return result;
-    }
 
     public boolean containsVertex(Vertex v) {
         return source == v || target == v;

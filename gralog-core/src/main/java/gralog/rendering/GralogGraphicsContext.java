@@ -5,6 +5,7 @@ package gralog.rendering;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.*;
 
+import javax.sound.sampled.Line;
 import java.util.Arrays;
 
 /**
@@ -15,13 +16,26 @@ import java.util.Arrays;
  */
 public abstract class GralogGraphicsContext {
 
-    public abstract void line(double x1, double y1, double x2, double y2,
-        GralogColor color, double width);
-
-    public void line(Vector2D from, Vector2D to, GralogColor color, double width) {
-        line(from.getX(), from.getY(), to.getX(), to.getY(), color, width);
+    public enum LineType{
+        PLAIN,
+        DOTTED,
+        DASHED;
     }
 
+    public abstract void line(double x1, double y1, double x2, double y2,
+        GralogColor color, double width, LineType type);
+
+    public void line(double x1, double y1, double x2, double y2,
+                              GralogColor color, double width){
+        line(x1, y1, x2, y2, color, width, LineType.PLAIN);
+    }
+
+    public void line(Vector2D from, Vector2D to, GralogColor color, double width) {
+        line(from.getX(), from.getY(), to.getX(), to.getY(), color, width, LineType.PLAIN);
+    }
+    public void line(Vector2D from, Vector2D to, GralogColor color, double width, LineType type) {
+        line(from.getX(), from.getY(), to.getX(), to.getY(), color, width, type);
+    }
     public void arrow(Vector2D from, Vector2D to,
         double headAngle, double headLength, GralogColor color, double width) {
         final double x1 = from.getX();
@@ -72,7 +86,11 @@ public abstract class GralogGraphicsContext {
      * @param color Color of the line
      * @param width Line width (will be scaled according to zoom)
      */
-    public abstract void loop(Loop l, double length, double correction, GralogColor color, double width);
+    public abstract void loop(Loop l, double length, double correction, GralogColor color, double width, LineType type);
+
+    public void loop(Loop l, double length, double correction, GralogColor color, double width){
+        loop(l, length, correction, color, width, LineType.PLAIN);
+    }
 
     public static class Loop{
         public Vector2D start;

@@ -40,6 +40,11 @@ public class ObjectInspector extends AnchorPane {
         sp.setPrefViewportWidth(290);
         sp.setFocusTraversable(false);
 
+        AnchorPane.setTopAnchor(sp, 3.0);
+        AnchorPane.setRightAnchor(sp, 3.0);
+        AnchorPane.setBottomAnchor(sp, 3.0);
+        AnchorPane.setLeftAnchor(sp, 3.0);
+
         if (obj == null && structurePane != null){
             this.getChildren().add(sp);
             return;
@@ -58,10 +63,6 @@ public class ObjectInspector extends AnchorPane {
         view.setObject(obj, submitPossible);
 
         Node viewNode = (Node) view;
-        AnchorPane.setTopAnchor(viewNode, 3.0);
-        AnchorPane.setRightAnchor(viewNode, 3.0);
-        AnchorPane.setBottomAnchor(viewNode, 3.0);
-        AnchorPane.setLeftAnchor(viewNode, 3.0);
 
         sp.setContent(viewNode);
 

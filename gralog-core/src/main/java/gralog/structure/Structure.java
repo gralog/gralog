@@ -466,19 +466,20 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @return An edge or vertex that lies at the given x/y coordinate.
      */
     public IMovable findObject(double x, double y) {
-        IMovable result = null;
+
+        for (Vertex v : getVertices()){
+            if (v.containsCoordinate(x, y)){
+                return v;
+            }
+        }
 
         for (Edge e : getEdges()) {
             IMovable temp = e.findObject(x, y);
             if (temp != null)
-                result = temp;
+                return temp;
         }
 
-        for (Vertex v : getVertices())
-            if (v.containsCoordinate(x, y))
-                result = v;
-
-        return result;
+        return null;
     }
 
     /**

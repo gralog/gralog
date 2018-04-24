@@ -17,7 +17,7 @@ public class PluginControlPanel extends HBox {
         Button b2 = createButton("||");
         b2.setOnMouseClicked(event -> onPause.run());
 
-        Button b3 = createButton("");
+        Button b3 = createButton("∫");
         getChildren().addAll(b0, b1, b2, b3);
 
         setMinHeight(200);
