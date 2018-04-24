@@ -53,6 +53,8 @@ public class MainWindow extends Application {
     private Tabs tabs;
     private StatusBar statusBar;
 
+    private VBox rightBox;
+
     public MainWindow() {
         MainMenu.Handlers handlers = new MainMenu.Handlers();
         handlers.onNew = this::onNew;
@@ -101,12 +103,14 @@ public class MainWindow extends Application {
                 () -> System.out.println("next step"));
 
 
-        VBox rightBox = new VBox();
+        rightBox = new VBox();
 
         ObjectInspector objectInspector = new ObjectInspector();
 
         rightBox.getChildren().add(objectInspector);
         rightBox.getChildren().add(pluginControlPanel);
+
+        rightBox.setVisible(false);
 
         tabs = new Tabs(this::onChangeCurrentStructure, objectInspector);
 
@@ -495,6 +499,7 @@ public class MainWindow extends Application {
 
     private void onChangeCurrentStructure() {
         Structure structure = getCurrentStructure();
+        rightBox.setVisible(structure != null);
         menu.setCurrentStructure(structure);
         statusBar.setCurrentStructure(structure);
     }
