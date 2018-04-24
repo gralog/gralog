@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 //test
+import gralog.gralogfx.panels.PluginControlPanel;
 import gralog.plugins.*;
 import gralog.structure.*;
 import gralog.importfilter.*;
@@ -93,13 +94,27 @@ public class MainWindow extends Application {
         VBox topPane = new VBox();
         topPane.getChildren().addAll(menu.getMenuBar());
 
-        tabs = new Tabs(this::onChangeCurrentStructure);
+        //put lambdas here for controlling stuff
+        PluginControlPanel pluginControlPanel = new PluginControlPanel(
+                () -> System.out.println("hit play"),
+                () -> System.out.println("hit pause"),
+                () -> System.out.println("next step"));
+
+
+        VBox rightBox = new VBox();
+
+        ObjectInspector objectInspector = new ObjectInspector();
+
+        rightBox.getChildren().add(objectInspector);
+        rightBox.getChildren().add(pluginControlPanel);
+
+        tabs = new Tabs(this::onChangeCurrentStructure, objectInspector);
 
         root = new BorderPane();
         //root.setFocusTraversable(true);
         root.setTop(topPane);
         root.setCenter(tabs.getTabPane());
-        root.setRight(tabs.getObjectInspector());
+        root.setRight(rightBox);
         root.setBottom(statusBar.getStatusBar());
     }
 
@@ -397,6 +412,8 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-width", 1000),
             Preferences.getInteger(getClass(), "main-window-height", 800));
         this.stage = primaryStage;
+        primaryStage.setMinHeight(500);
+        primaryStage.setMinWidth(400);
         primaryStage.setTitle("Gralog");
         primaryStage.setScene(scene);
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());

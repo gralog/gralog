@@ -20,6 +20,7 @@ public class ReflectedView extends GridPaneView<Object> {
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
+        this.setPrefWidth(290);
         int i = 0;
 
         try {
@@ -28,6 +29,7 @@ public class ReflectedView extends GridPaneView<Object> {
                 for (Field f : c.getFields()) {
                     String name = f.getName();
                     Label nameLabel = new Label(name);
+
                     Object value = f.get(displayObject);
                     Control valueControl = null;
                     Class<?> type = f.getType();
