@@ -13,6 +13,8 @@ import static gralog.plugins.PluginManager.instantiateClass;
  */
 public final class StructureManager {
 
+    private static int nextId = 0;
+
     private StructureManager() {
     }
 
@@ -41,7 +43,10 @@ public final class StructureManager {
 
     public static Structure instantiateStructure(String identifier) throws Exception {
         String classname = STRUCTURE_NAMES.get(identifier);
-        return (Structure) instantiateClass(classname);
+        Structure structure = (Structure) instantiateClass(classname);
+        structure.setId(nextId);
+        nextId = nextId + 1;
+        return structure;
     }
 
     public static StructureDescription getStructureDescription(String identifier) {

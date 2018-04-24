@@ -126,33 +126,60 @@ public class MainWindow extends Application {
 
             final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
 
-            String externalProcessInitResponse = pipeline.externalProcessInit(fileName,"hello world");
-            
-            String[] externalCommandSegments = externalProcessInitResponse.split(" ");
-
-            if (externalCommandSegments[0].equals("error") || (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
-                System.out.println("error: " + externalProcessInitResponse);
+            Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
+            if (!initSuccess){
                 return;
             }
 
+            // if (externalCommandSegments[0].equals("error") || (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
+            //     System.out.println("error: " + externalProcessInitResponse);
+            //     return;
+            // }
 
-            if (!externalProcessInitResponse.equals("useCurrentGraph")){
-                System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
-                Structure temp = StructureManager.instantiateStructure(externalProcessInitResponse);
-                tabs.addTab("new " + externalProcessInitResponse,temp);
+            pipeline.run(this::initGraph);
+            // if (!externalProcessInitResponse.equals("useCurrentGraph")){
+            //     System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
+            //     Structure temp = StructureManager.instantiateStructure(externalProcessInitResponse);
+            //     System.out.println("intsantiaed structuer with id: ");
+            //     System.out.println(temp.getId());
+            //     tabs.addTab("new " + externalProcessInitResponse,temp);
+
+            //     tabs.getAllStructures();
                 
-                pipeline.run(temp,tabs.getCurrentStructurePane());
-            }else{
-                pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
+            //     pipeline.run(temp,tabs.getCurrentStructurePane());
+            // }else{
+            //     pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
 
-            }
-
-           
-
+            // }
 
 
         } catch(Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public Structure initGraph(String graphType){
+        System.out.println("here in initgraph!!!!" + graphType);
+        if (!graphType.equals("useCurrentGraph")){
+            System.out.println("trying to make a grpah with type : " + graphType);
+            Structure temp;
+            try{
+                temp = StructureManager.instantiateStructure(graphType);
+            }catch(Exception e){
+                e.printStackTrace();
+                System.out.println("well that's an L" + graphType);
+                return null;
+            }
+            System.out.println("intsantiaed structuer with id: ");
+            System.out.println(temp.getId());
+            tabs.addTab("new " + graphType,temp);
+
+            tabs.getAllStructures();
+            
+            return temp;
+        }else{
+            return getCurrentStructure();
+
         }
     }
 

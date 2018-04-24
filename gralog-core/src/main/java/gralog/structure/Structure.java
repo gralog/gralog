@@ -30,6 +30,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     protected Set<V> vertices;
     protected Set<E> edges;
 
+    private int id;
+
     public TreeSet<Interval> holes;
 
     protected static class Interval {
@@ -56,6 +58,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 return first.a - second.a;
             }
         });
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+    public int getId(){
+        return this.id;
     }
 
     /**

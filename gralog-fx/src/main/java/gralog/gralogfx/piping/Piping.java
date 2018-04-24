@@ -16,7 +16,9 @@ import gralog.algorithm.*;
 import gralog.progresshandler.*;
 import gralog.gralogfx.*;
 
-// import java.Arrays.*;
+import java.util.function.*;
+
+import java.util.Arrays;
 
 
 
@@ -45,6 +47,8 @@ public class Piping{
     private Structure structure;
     private StructurePane pane;
 
+    private Function<String,Structure> newGraphMethod;
+
     private enum State{
         Null,
         Inintialized,
@@ -59,138 +63,90 @@ public class Piping{
     State state = State.Null;
 
 
+            //todo: hashmap<id,structure>
 
-    private <T> Boolean arrayContains(T[] array, T element){
-
-        for (int i = 0; i < array.length; i ++){
-            if (array[i].equals(element)){
-                return true;
-            }
-        }
-        return false;
-
-    }
-
-    public properGraphNames(String name){
-
-        
-        List<String> directed = ["d","directed","Directed"];
-        List<String> undirected = ["u","undirected","Undirected"];
-        List<String> buchi = ["b","buchi","buechi","b\xc3\xbcchi"];
-        List<String> kripke = ["kripke","k"];
-        List<String> parity = ["parity","p","Game"];
-        List<String> automaton = ["a","automaton"];
-        for (String piece : name.split(" ")){
+    public boolean externalProcessInit(String fileName,String initMessage){
 
 
-            piece = piece.toLowerCase();
-            if (directed.contains(piece)){
-                return "Directed Graph";
-            }
-            if (undirected.contains(piece)){
-                return "Undirected Graph";
-            }
-                
-            if (buchi.contains(piece)){
-                return "Buechi Automaton";
-            }
-                
-            if (kripke.contains(piece)){
-                return "Kripke Structure";
-            }
-                
-            if (parity.contains(piece)){
-                return "Parity Game";
-            }
-                
-            if (automaton.contains(piece)){
-                return "Automaton";
-            }
-        }
-        return (String)null;
-    }
+
             
-
-    public String externalProcessInit(String fileName,String initMessage){
-
+        System.out.println("external yo");
+        String line;
+        String[] execStr = {fileName,initMessage};
         try{
-
-            
-            System.out.println("external yo");
-            String line;
-            String[] execStr = {fileName,initMessage};
             this.external = Runtime.getRuntime().exec(execStr); //e.g. formatRequest
             this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));
             this.out = new PrintStream(external.getOutputStream(),true);
-            System.out.println("execd and shit");
-            
-            // return "error smorgesbord";
-
-            if ((line = this.in.readLine()) != null){//assuming there is a valid line to be had
-                // System.out.println("in while");
-                // System.out.println("churnin");
-                // return "error smorgesbord";
-                if (line.length() > 0){ // if not a bogus line
-                    //handleLine()
-                    
-                    if (line.equals("useCurrentGraph")){ //user input simulation
-                        System.out.println("wants to use graph that is open");
-                        out.println("ack");
-                        this.state = State.Inintialized;
-                        return "useCurrentGraph";
-
-                    }
-                    System.out.println("before the grpahtypes");
-                    
-                    if (properGraphNames(line) != null){
-
-                        this.state = State.Inintialized;
-                        return line;
-                    }
-                    in.close();
-                    out.close();
-                    return "error invalidType";
-                    // System.out.println("just heard: " + line);
-
-                }
-
-            }
-            System.out.println("returnin");
-            return "error empty program";
-
-
-            ///make first python call, get params :
-            //new graph : Boolean
-            //Automaton, Buechi, Directed, Kripke, Undirected
-            //
-            // exec(this.external,this.in,this.out,false);
-
-
         }catch(Exception e){
             e.printStackTrace();
+            return false;
         }
-        return "error";
+        System.out.println("execd and shit");
+        this.state=State.Inintialized;
+        return true;
 
+        
+        // return "error smorgesbord";
+
+        // if ((line = this.in.readLine()) != null){//assuming there is a valid line to be had
+        //     // System.out.println("in while");
+        //     // System.out.println("churnin");
+        //     // return "error smorgesbord";
+        //     if (line.length() > 0){ // if not a bogus line
+        //         //handleLine()
+                
+        //         if (line.equals("useCurrentGraph")){ //user input simulation
+        //             System.out.println("wants to use graph that is open");
+        //             out.println("ack");
+        //             this.state = State.Inintialized;
+        //             return "useCurrentGraph";
+
+        //         }
+        //         System.out.println("before the grpahtypes");
+                
+        //         if ((line = PipingMessageHandler.properGraphNames(line)) != null){
+
+        //             this.state = State.Inintialized;
+        //             out.println("ack");
+        //             return line;
+        //         }
+        //         in.close();
+        //         out.close();
+        //         return "error invalidType";
+        //         // System.out.println("just heard: " + line);
+
+        //     }
+
+        // }
+        // System.out.println("returnin");
+        // return "error empty program";
+
+
+        ///make first python call, get params :
+        //new graph : Boolean
+        //Automaton, Buechi, Directed, Kripke, Undirected
+        //
+        // exec(this.external,this.in,this.out,false);
+
+
+   
     }
 
-    public Object run(Structure structure, StructurePane pane) throws
+    public Object run(Function<String,Structure> newGraphMethod) throws
         Exception {
         // String[] commands
             // = {fileName, structure.xmlToString()};
         System.out.println("Gralog says: starting.");
         this.structure = structure;
         this.pane = pane;
-        // String output = this.init(commands);
-        this.exec(false);
-        System.out.println("Finished exec.");
+        this.newGraphMethod = newGraphMethod;
+        // newGraphMethod.apply(("hello world".split(" ")));
 
-      
-
-       
-
-
-      
+        System.out.println("starting exec");
+        this.exec(null);
+        System.out.println("exec finished");
         return null;
+        
     }
 
 
@@ -202,12 +158,12 @@ public class Piping{
         if (this.state != State.Paused){
             return "error: not paused, therefore ack in jest";
         }
-        return this.exec(true);
+        return this.exec("ack");
     }
 
 
 
-    private String exec(Boolean sendAck) {
+    private String exec(String firstMessage) {
 
         System.out.println("exec and state is: " + this.state);
         if (this.state == State.Null){
@@ -220,18 +176,21 @@ public class Piping{
 
 
         try{
-            System.out.println("execing " + sendAck);
+            System.out.println("execing " + firstMessage);
 
             String line;
 
-            if (sendAck){
+            if (!(firstMessage == null || firstMessage.length() == 0)){
                 //send ack
-                out.println("ack");
+                out.println(firstMessage);
 
+            }else{
+                System.out.println("null first message");
             }
+            // return "bla";
 
             
-            // System.out.println("110");
+            System.out.println("191");
             while ((line = this.in.readLine()) != null){//while python has not yet terminated
                 System.out.println("in while");
                 
@@ -244,7 +203,7 @@ public class Piping{
                     
                     if (externalCommandSegments[0].equals("addVertex")){ //user input simulation
                         System.out.println("received message to add vertex " + externalCommandSegments[1]);
-                        Vertex toAdd = this.handleAddVertex(externalCommandSegments);
+                        Vertex toAdd = PipingMessageHandler.handleAddVertex(externalCommandSegments,this.structure);
                         this.out.println(Integer.toString(toAdd.getId()));
                     }else if (externalCommandSegments[0].equals("deleteVertex")){ //user input simulation
                         System.out.println("received message to delete vertex " + externalCommandSegments[1]);
@@ -253,7 +212,7 @@ public class Piping{
                         
                 
                         // List<Vertex> vertexList = new ArrayList<Vertex>(this.structure.getVertices());
-                        this.handleDeleteVertex(externalCommandSegments);
+                        PipingMessageHandler.handleDeleteVertex(externalCommandSegments,this.structure);
 
                         this.out.println("ack");
 
@@ -266,24 +225,39 @@ public class Piping{
                         break;
 
                     }else if (externalCommandSegments[0].equals("setVertexFillColor")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-                        this.handleSetVertexFillColor(externalCommandSegments);
+                        PipingMessageHandler.handleSetVertexFillColor(externalCommandSegments,this.structure);
                         this.out.println("ack");
                     }else if (externalCommandSegments[0].equals("setVertexStrokeColor")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-                        this.handleSetVertexStrokeColor(externalCommandSegments);
+                        PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
                         this.out.println("ack");
                     }else if (externalCommandSegments[0].equals("setVertexRadius")){//format: setColor <vertexId> <newRadius>
-                        this.handleSetVertexRadius(externalCommandSegments);
+                        PipingMessageHandler.handleSetVertexRadius(externalCommandSegments,this.structure);
                         this.out.println("ack");
                     }else if (externalCommandSegments[0].equals("getConnectedNeighbours")){//format: setColor <vertexId>
-                        String neighbourString = this.handleGetConnectedNeighbours(externalCommandSegments);///get to know yo neighba
+                        String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
                         this.out.println(neighbourString);
                     }else if (externalCommandSegments[0].equals("addEdge")){//format: addEdge <sourceId> <targetId> <directed?>
-                        String handleEdgeResponse = this.handleAddEdge(externalCommandSegments);///get to know yo neighba
+                        String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
                         System.out.println("ackers: " + handleEdgeResponse);
                         this.out.println(handleEdgeResponse);
                         System.out.println("fini w add edge");
                         System.out.println(this.structure.getEdges());
-                    }else{
+                    }else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
+                        String currentGraphId = PipingMessageHandler.handleGetCurrentGraphId();
+                        Structure newStructure = this.newGraphMethod.apply(externalCommandSegments[0]);
+                        this.state = State.InProgress;
+                        System.out.println("about to return my structure with id: " + newStructure.getId());
+                        out.println(newStructure.getId());
+                    }else if ((line = PipingMessageHandler.properGraphNames(line)) != null){
+
+                        Structure newStructure = this.newGraphMethod.apply(line);
+                        this.state = State.InProgress;
+                        System.out.println("about to return my structure with id: " + newStructure.getId());
+                        out.println(newStructure.getId());
+                    }
+
+
+                    else{
                         System.out.println("error: not a recognized command dumbfuck did you not read the documentation");
                         out.println(this.structure.xmlToString());
                         
@@ -320,177 +294,7 @@ public class Piping{
    
     }
 
-    public Vertex handleAddVertex(String[] externalCommandSegments){
-        Vertex v = this.structure.createVertex();
-        v.coordinates = new Vector2D(
-            ThreadLocalRandom.current().nextInt(0, 10+1),
-            ThreadLocalRandom.current().nextInt(0, 10+1)
-        );
-        v.fillColor = new GralogColor(204, 136, 153);
-
-        this.structure.addVertex(v);
-
-        return v;
-
-        
-    }
-
-    public String handleDeleteVertex(String[] externalCommandSegments){
-        int deleteId;
-        try{    
-            deleteId = Integer.parseInt(externalCommandSegments[1]);
-        }catch(NumberFormatException e){
-            return e.toString();
-        }
-
-        Vertex toDelete = structure.getVertexById(deleteId);
-            
-        if (toDelete == null){
-            return "error: vertex does not exist"; //// error vertex does not exist
-        }
-
-        System.out.println("toDelete: " + toDelete);
-        this.structure.removeVertex(toDelete);
-
-        return "ack";
-
-        
-    }
-
-    public GralogColor colorConversion(String[] externalCommandSegments){
-        GralogColor changeColor;
-        if (externalCommandSegments.length == 3){
-            //hex notation
-            if (externalCommandSegments[2].length() == 7){
-                externalCommandSegments[2] = externalCommandSegments[2].substring(1);
-            }
-            changeColor = new GralogColor(Integer.parseInt(externalCommandSegments[2],16));
-            return changeColor;
-        }else if (externalCommandSegments.length == 5){
-            int r = Integer.parseInt(externalCommandSegments[2]);
-            int g = Integer.parseInt(externalCommandSegments[3]);
-            int b = Integer.parseInt(externalCommandSegments[4]);
-            return new GralogColor(r,g,b);
-        }
-        return (GralogColor)null;
-        
-    }
-
-    public String handleSetVertexFillColor(String[] externalCommandSegments){
-        int changeId;
-        try{    
-            changeId = Integer.parseInt(externalCommandSegments[1]);
-        }catch(NumberFormatException e){
-            return e.toString();
-        }
-        
-        Vertex changeVertex = this.structure.getVertexById(changeId);
-
-        if (changeVertex == null){
-            return "error: vertex does not exist"; //// error vertex does not exist
-        }
-        GralogColor changeColor = colorConversion(externalCommandSegments);
-        
-        changeVertex.fillColor = changeColor;
-
-        return "ack";
-    }
-
-    public String handleSetVertexStrokeColor(String[] externalCommandSegments){
-        int changeId;
-        try{    
-            changeId = Integer.parseInt(externalCommandSegments[1]);
-        }catch(NumberFormatException e){
-            return e.toString();
-        }
-        
-        Vertex changeVertex = this.structure.getVertexById(changeId);
-
-        if (changeVertex == null){
-            return "error: vertex does not exist"; //// error vertex does not exist
-        }
-        GralogColor changeColor = colorConversion(externalCommandSegments);
-        
-        changeVertex.strokeColor = changeColor;
-
-        return "ack";
-    }
-
-    public String handleSetVertexRadius(String[] externalCommandSegments){
-        int changeId;
-        try{    
-            changeId = Integer.parseInt(externalCommandSegments[1]);
-        }catch(NumberFormatException e){
-            return e.toString();
-        }
-
-        Vertex changeVertex = this.structure.getVertexById(changeId);
-
-        if (changeVertex == null){
-            return "error: vertex does not exist"; //// error vertex does not exist
-        }
-
-        int newRadius = Integer.parseInt(externalCommandSegments[2]);
-
-        changeVertex.radius = newRadius;
-
-        return "ack";
-    }
-
-    public String handleGetConnectedNeighbours(String[] externalCommandSegments){
-        int sourceId;
-        try{    
-            sourceId = Integer.parseInt(externalCommandSegments[1]);
-        }catch(NumberFormatException e){
-            return e.toString();
-        }
-
-        Vertex sourceVertex = this.structure.getVertexById(sourceId);
-
-        if (sourceVertex == null){
-            return "error: vertex does not exist"; //// error vertex does not exist
-        }
-
-        Set<Vertex> connectedNeighbours = sourceVertex.getConnectedNeighbours();
-
-        String neighbourString = "";
-        for (Vertex v : connectedNeighbours){
-            neighbourString = neighbourString + Integer.toString(v.getId()) + " ";
-        }
-        if (neighbourString.length() > 0 && null != neighbourString){
-            neighbourString = neighbourString.substring(0,neighbourString.length()-1);
-        }
-        return neighbourString;
-    }
-
-    public String handleAddEdge(String[] externalCommandSegments){
-        System.out.println("in add edge");
-        int sourceId;
-        try{    
-            sourceId = Integer.parseInt(externalCommandSegments[1]);
-        }catch(NumberFormatException e){
-            return e.toString();
-        }
-
-        Vertex sourceVertex = this.structure.getVertexById(sourceId);
-
-        int targetId;
-        try{    
-            targetId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
-            return e.toString();
-        }
-
-        Vertex targetVertex = this.structure.getVertexById(targetId);
-
-        Edge e = this.structure.createEdge(sourceVertex,targetVertex);
-        this.structure.addEdge(e);
-        // e.setSource(sourceVertex);
-        // e.setTarget(targetVertex);
-        e.isDirected = (externalCommandSegments[3].equals("true"));
-
-        return "ack";
-    }
+    
 
     
 }
