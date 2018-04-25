@@ -1,9 +1,8 @@
 package gralog.gralogfx.panels;
 
 import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 public class PluginControlPanel extends AnchorPane {
 
@@ -27,10 +26,17 @@ public class PluginControlPanel extends AnchorPane {
         AnchorPane.setLeftAnchor(hbox, 4.0);
         AnchorPane.setRightAnchor(hbox, 4.0);
         AnchorPane.setBottomAnchor(hbox, 4.0);
-        AnchorPane.setTopAnchor(hbox, 1.0);
+        AnchorPane.setTopAnchor(hbox, 2.0);
 
         this.getChildren().add(hbox);
         setMinHeight(200);
+
+        String cssDefault = "-fx-border-color: lightgrey;\n"
+                + "-fx-border-insets: 4;\n"
+                + "-fx-border-width: 1;\n"
+                + "-fx-border-style: solid;\n";
+        //setStyle(cssDefault);
+
     }
 
     private Button createButton(String label){

@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Orientation;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -51,7 +52,8 @@ public class MainWindow extends Application {
     private Tabs tabs;
     private StatusBar statusBar;
 
-    private VBox rightBox;
+    private HBox rightBox;
+    private SplitPane inspectorSplit;
 
     public MainWindow() {
         MainMenu.Handlers handlers = new MainMenu.Handlers();
@@ -101,13 +103,16 @@ public class MainWindow extends Application {
                 () -> System.out.println("next step"));
 
 
-        rightBox = new VBox();
+        rightBox = new HBox();
+        inspectorSplit = new SplitPane();
 
         ObjectInspector objectInspector = new ObjectInspector();
 
-        rightBox.getChildren().add(objectInspector);
-        rightBox.getChildren().add(pluginControlPanel);
+        inspectorSplit.getItems().add(objectInspector);
+        inspectorSplit.getItems().add(pluginControlPanel);
+        inspectorSplit.setOrientation(Orientation.VERTICAL);
 
+        rightBox.getChildren().add(inspectorSplit);
         rightBox.setVisible(false);
 
         tabs = new Tabs(this::onChangeCurrentStructure, objectInspector);
