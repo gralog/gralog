@@ -64,6 +64,8 @@ public class Edge extends XmlMarshallable implements IMovable {
         if(controlPoints.size() == 1){
             double c1Dist = c.getPosition().minus(target.coordinates).length();
             double c2Dist = controlPoints.get(0).getPosition().minus(target.coordinates).length();
+            //distance is not the correct metric
+            //TODO: project on edge and use x order
             controlPoints.add(c1Dist > c2Dist ? 0 : 1, c);
         }else{
             controlPoints.add(c);
@@ -174,41 +176,45 @@ public class Edge extends XmlMarshallable implements IMovable {
 
         return null;
     }
+    private void renderLoop(GralogGraphicsContext gc, Highlights highlights){
+        GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
+        double angleStart = source.loopAnchor - source.loopAngle;
+        double angleEnd = source.loopAnchor + source.loopAngle;
+
+        double r = source.radius;
+
+        Vector2D intersection = Vector2D.getVectorAtAngle(angleStart, r).plus(source.coordinates);
+        Vector2D intersection2 = Vector2D.getVectorAtAngle(angleEnd, r).plus(source.coordinates);
+
+        Vector2D tangentToIntersection = Vector2D.getVectorAtAngle(angleEnd, 1).multiply(-1);
+
+        //the correction retreats the endpoint of the bezier curve orthogonally from the vertex surface
+        double correction = arrowType.endPoint * arrowHeadLength;
+
+        //only draw arrow for directed graphs
+        if(isDirected){
+            gc.arrow(tangentToIntersection, intersection2, arrowType, arrowHeadLength, edgeColor);
+        }else{
+            correction = 0;
+        }
+
+        //Loop description, endpoints and tangents.
+        GralogGraphicsContext.Loop l = new GralogGraphicsContext.Loop();
+        l.start = intersection;
+        l.end = intersection2;
+        l.tangentStart = Vector2D.getVectorAtAngle(angleStart, 1).orthogonal();
+        l.tangentEnd = Vector2D.getVectorAtAngle(angleEnd, 1).orthogonal();
+
+        gc.loop(l,1.5, correction, edgeColor, width, type);
+
+    }
     public void render(GralogGraphicsContext gc, Highlights highlights){
 
         GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
         if(isLoop()){
-
-            double angleStart = source.loopAnchor - source.loopAngle;
-            double angleEnd = source.loopAnchor + source.loopAngle;
-
-            double r = source.radius;
-
-            Vector2D intersection = Vector2D.getVectorAtAngle(angleStart, r).plus(source.coordinates);
-            Vector2D intersection2 = Vector2D.getVectorAtAngle(angleEnd, r).plus(source.coordinates);
-
-            Vector2D tangentToIntersection = Vector2D.getVectorAtAngle(angleEnd, 1).multiply(-1);
-
-            //the correction retreats the endpoint of the bezier curve orthogonally from the vertex surface
-            double correction = arrowType.endPoint * arrowHeadLength;
-
-            //only draw arrow for directed graphs
-            if(isDirected){
-                gc.arrow(tangentToIntersection, intersection2, arrowType, arrowHeadLength, edgeColor);
-            }else{
-                correction = 0;
-            }
-
-            //Loop description, endpoints and tangents.
-            GralogGraphicsContext.Loop l = new GralogGraphicsContext.Loop();
-            l.start = intersection;
-            l.end = intersection2;
-            l.tangentStart = Vector2D.getVectorAtAngle(angleStart, 1).orthogonal();
-            l.tangentEnd = Vector2D.getVectorAtAngle(angleEnd, 1).orthogonal();
-
-            gc.loop(l,1.5, correction, edgeColor, width, type);
+            renderLoop(gc, highlights);
             return;
         }
         double offset = getOffset();
@@ -219,43 +225,52 @@ public class Edge extends XmlMarshallable implements IMovable {
         Vector2D sourceOffset = source.coordinates.plus(perpendicularToEdge);
         Vector2D targetOffset = target.coordinates.plus(perpendicularToEdge);
 
-        double fromX = sourceOffset.getX();
-        double fromY = sourceOffset.getY();
-        double toX = targetOffset.getX();
-        double toY = targetOffset.getY();
+        double dist = target.radius * (1 - Math.cos(Math.asin(offset/target.radius)));
+        Vector2D intersection = target.intersectionAdjusted(sourceOffset, targetOffset, dist);
 
-        if (isDirected) {
-            double dist = target.radius * (1 - Math.cos(Math.asin(offset/target.radius)));
-            Vector2D intersection = target.intersectionAdjusted(sourceOffset, targetOffset, dist);
-            Vector2D adjustedEndpoint = intersection.plus(diff.normalized().multiply(arrowType.endPoint * arrowHeadLength));
+        //draw edge and arrows
+        if(controlPoints.isEmpty()){
+            if(isDirected){
+                Vector2D adjustedEndpoint = intersection.plus(diff.normalized().multiply(arrowType.endPoint * arrowHeadLength));
+                gc.line(sourceOffset, adjustedEndpoint, edgeColor, width, type);
+                gc.arrow(diff, intersection, arrowType, arrowHeadLength, edgeColor);
+            }else{
+                gc.line(sourceOffset, intersection, edgeColor, width, type);
+            }
 
+
+        }else{
             GralogGraphicsContext.Bezier curve = new GralogGraphicsContext.Bezier();
-            curve.source = source.coordinates;
-            curve.target = target.coordinates;
-
             if(controlPoints.size() == 1){
                 curve.ctrl1 = controlPoints.get(0).getPosition();
                 curve.ctrl2 = controlPoints.get(0).getPosition();
-                gc.drawBezier(curve, edgeColor, width, type);
             }else if(controlPoints.size() == 2){
                 curve.ctrl1 = controlPoints.get(0).getPosition();
                 curve.ctrl2 = controlPoints.get(1).getPosition();
-                gc.drawBezier(curve, edgeColor, width, type);
-            }else{
-                gc.line(sourceOffset, adjustedEndpoint, edgeColor, width, type);
-                gc.arrow(diff, intersection, arrowType, arrowHeadLength, edgeColor);
             }
 
-        } else {
-            gc.line(fromX, fromY, toX, toY, edgeColor, width, type);
+            //correction so that the arrow and line don't overlap at the end
+            //corrections are always negative if the arrow model tip is at the origin
+            double corr = arrowType.endPoint * arrowHeadLength;
+            Vector2D sourceToCtrl1 = curve.ctrl1.minus(source.coordinates).normalized();
+            Vector2D targetToCtrl2 = curve.ctrl2.minus(target.coordinates).normalized();
+            Vector2D exactTarget = target.coordinates.plus(targetToCtrl2.multiply(target.radius));
+
+            curve.source = source.coordinates.plus(sourceToCtrl1.multiply(source.radius));
+            curve.target = target.coordinates.plus(targetToCtrl2.multiply(target.radius - corr)); //corrected target
+
+            gc.drawBezier(curve, edgeColor, width, type);
+            gc.arrow(targetToCtrl2.multiply(-1), exactTarget, arrowType, arrowHeadLength, edgeColor);
         }
 
+        //draw control points
         for(CurveControlPoint c : controlPoints){
             if(c != null){
                 if(highlights.isSelected(this)){
                     c.render(gc);
-                }else{
                     c.active = true;
+                }else{
+                    c.active = false;
                 }
             }
         }

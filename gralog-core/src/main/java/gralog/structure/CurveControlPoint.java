@@ -7,7 +7,7 @@ import gralog.rendering.Vector2D;
 public class CurveControlPoint implements IMovable{
 
     protected static final double drawRadius = 0.05;
-    protected static final double clickRadius = 0.2;
+    protected static final double clickRadius = 0.3;
 
     public Vector2D position;
 
