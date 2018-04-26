@@ -51,12 +51,23 @@ public class Edge extends XmlMarshallable implements IMovable {
     private Vertex source = null;
     private Vertex target = null;
 
-    public List<CurveControlPoint> controlPoints = new ArrayList<>();
+    public ArrayList<CurveControlPoint> controlPoints = new ArrayList<>();
 
 
     public CurveControlPoint addCurveControlPoint(Vector2D position){
+        if(controlPoints.size() >= 2){
+            return null;
+        }
+
         CurveControlPoint c =  new CurveControlPoint(position, source, target, this);
-        controlPoints.add(c);
+
+        if(controlPoints.size() == 1){
+            double c1Dist = c.getPosition().minus(target.coordinates).length();
+            double c2Dist = controlPoints.get(0).getPosition().minus(target.coordinates).length();
+            controlPoints.add(c1Dist > c2Dist ? 0 : 1, c);
+        }else{
+            controlPoints.add(c);
+        }
         return c;
     }
     public CurveControlPoint removeControlPoint(CurveControlPoint c){

@@ -7,10 +7,7 @@ import gralog.events.*;
 import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.Collection;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -64,6 +61,9 @@ public class StructurePane extends StackPane implements StructureListener {
     private IMovable currentEdgeStartingPoint;
 
     private boolean selectedCurveControlPoint = false;
+
+    private Edge holdingEdge = null;
+    private Vector2D holdingEdgeStartingPosition;
 
     private double lastMouseX = -1d;
     private double lastMouseY = -1d;
@@ -204,16 +204,6 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
-                case B:
-                    for(Object o : highlights.getSelection()){
-                        if(o instanceof Edge){
-                            Edge edge = (Edge) o;
-                            edge.addCurveControlPoint(edge.getSource().coordinates.plus(new Vector2D(0, -1)));
-                            this.requestRedraw();
-
-                        }
-                    }
-                    break;
             }
         });
     }
@@ -242,8 +232,14 @@ public class StructurePane extends StackPane implements StructureListener {
                     if(!e.isControlDown() && !highlights.isSelected(selected)){
                         clearSelection();
                     }
+
                     select(selected);
                     dragging = highlights.getSelection();
+
+                    if(selected instanceof Edge){
+                        holdingEdge = (Edge) selected;
+                        holdingEdgeStartingPosition = Vector2D.point2DToVector(mousePositionModel);
+                    }
                     if(selected instanceof Vertex){
                         System.out.println(((Vertex)selected).id);
                     }
@@ -307,6 +303,7 @@ public class StructurePane extends StackPane implements StructureListener {
         wasDraggingSecondary = false;
         selectionBoxingActive = false;
         selectionBoxDragging = false;
+        holdingEdge = null;
         dragging = null;
         currentEdgeStartingPoint = null;
 
@@ -320,7 +317,7 @@ public class StructurePane extends StackPane implements StructureListener {
             wasDraggingSecondary = true;
         }
 
-        Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
+        Vector2D mousePositionModel = screenToModel(new Vector2D(e.getX(), e.getY()));
         // Drag objects only with primary button
         if (e.isPrimaryButtonDown()) {
             //If dragging is null, start drawing a box for box selection
@@ -330,14 +327,26 @@ public class StructurePane extends StackPane implements StructureListener {
             }
             //else just move the dragging object
             else{
-                for (Object o : dragging)
-                    if (o instanceof IMovable) {
-                        Vector2D offset = new Vector2D(
-                                mousePositionModel.getX() - lastMouseX,
-                                mousePositionModel.getY() - lastMouseY
-                        );
-                        ((IMovable) o).move(offset);
+                //if holding an edge
+                if(holdingEdge != null){
+                    if(mousePositionModel.minus(holdingEdgeStartingPosition).length() > 0.2){
+                        CurveControlPoint ctrl = holdingEdge.addCurveControlPoint(mousePositionModel);
+                        clearSelection();
+                        select(ctrl);
+                        select(holdingEdge);
+                        selectedCurveControlPoint = true;
+                        holdingEdge = null;
                     }
+                }else{
+                    for (Object o : dragging)
+                        if (o instanceof IMovable) {
+                            Vector2D offset = new Vector2D(
+                                    mousePositionModel.getX() - lastMouseX,
+                                    mousePositionModel.getY() - lastMouseY
+                            );
+                            ((IMovable) o).move(offset);
+                        }
+                }
                 // update model position under mouse
                 // this must not be done when we are dragging the screen!!!!!
                 lastMouseX = mousePositionModel.getX();
@@ -392,6 +401,14 @@ public class StructurePane extends StackPane implements StructureListener {
             (point.getX() / (screenResolutionX / 2.54) / zoomFactor) + offsetX,
             (point.getY() / (screenResolutionY / 2.54) / zoomFactor) + offsetY
         // dots per inch -> dots per cm
+        );
+        return result;
+    }
+    public Vector2D screenToModel(Vector2D point) {
+        Vector2D result = new Vector2D(
+                (point.getX() / (screenResolutionX / 2.54) / zoomFactor) + offsetX,
+                (point.getY() / (screenResolutionY / 2.54) / zoomFactor) + offsetY
+                // dots per inch -> dots per cm
         );
         return result;
     }
