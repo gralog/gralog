@@ -20,7 +20,7 @@ import java.util.function.*;
 
 import java.util.Arrays;
 
-
+import java.util.HashMap;
 
 import java.util.Set;
 
@@ -47,7 +47,8 @@ public class Piping{
     private Structure structure;
     private StructurePane pane;
 
-    private Function<String,Structure> newGraphMethod;
+    private Function<String,StructurePane> newGraphMethod;
+
 
     private enum State{
         Null,
@@ -65,10 +66,12 @@ public class Piping{
 
             //todo: hashmap<id,structure>
 
+    private HashMap<Integer,Structure> idGraphMap;
+
     public boolean externalProcessInit(String fileName,String initMessage){
 
 
-
+        idGraphMap = new HashMap<Integer,Structure>();
             
         System.out.println("external yo");
         String line;
@@ -132,7 +135,11 @@ public class Piping{
    
     }
 
-    public Object run(Function<String,Structure> newGraphMethod) throws
+    private Structure getStructureWithId(int id){
+        return this.idGraphMap.get(id);
+    }
+
+    public Object run(Function<String,StructurePane> newGraphMethod) throws
         Exception {
         // String[] commands
             // = {fileName, structure.xmlToString()};
@@ -199,16 +206,34 @@ public class Piping{
                     this.state = State.InProgress;
                     String[] externalCommandSegments = line.split(" ");
 
+                    CommandForGralogToExecute currentCommand;
+
                     System.out.println("current line: " + line);
                     
                     if (externalCommandSegments[0].equals("addVertex")){ //user input simulation
-                        System.out.println("received message to add vertex " + externalCommandSegments[1]);
-                        Vertex toAdd = PipingMessageHandler.handleAddVertex(externalCommandSegments,this.structure);
-                        this.out.println(Integer.toString(toAdd.getId()));
-                    }else if (externalCommandSegments[0].equals("deleteVertex")){ //user input simulation
-                        System.out.println("received message to delete vertex " + externalCommandSegments[1]);
-
                         
+                        currentCommand = new AddVertexCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+
+                        System.out.println("structure gotten with id: " + Integer.parseInt(externalCommandSegments[1]) + " is: " + currentStructure);
+
+
+                        // currentCommand.setStructure(currentStructure);
+
+                        System.out.println("and the command thinks its structure is: " + currentCommand.structure.toString());
+
+                        ///to generalize:::
+
+
+                        System.out.println("received message to add vertex to graph #" + externalCommandSegments[1]);
+                        // Vertex toAdd = PipingMessageHandler.handleAddVertex(externalCommandSegments,this.structure);
+                        // this.out.println(Integer.toString(toAdd.getId()));
+                    }else if (externalCommandSegments[0].equals("deleteVertex")){ //user input simulation
+                        System.out.println("received message to delete vertex " + externalCommandSegments[2]);
+
+                        currentCommand = new DeleteVertexCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+                        // currentCommand.setStructure(currentStructure);
                         
                 
                         // List<Vertex> vertexList = new ArrayList<Vertex>(this.structure.getVertices());
@@ -219,52 +244,100 @@ public class Piping{
 
                     }else if (externalCommandSegments[0].equals("pauseUntilSpacePressed")){
                         
+
                         System.out.println("hello");
                         this.pane.requestRedraw();
                         this.state = State.Paused;
                         break;
 
                     }else if (externalCommandSegments[0].equals("setVertexFillColor")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-                        PipingMessageHandler.handleSetVertexFillColor(externalCommandSegments,this.structure);
-                        this.out.println("ack");
+                        // PipingMessageHandler.handleSetVertexFillColor(externalCommandSegments,this.structure);
+                        
+                        currentCommand = new SetVertexFillColorCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+                        // currentCommand.setStructure(currentStructure);
+
+                        // this.out.println("ack");
                     }else if (externalCommandSegments[0].equals("setVertexStrokeColor")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-                        PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
-                        this.out.println("ack");
+                        // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+                        
+                        currentCommand = new SetVertexStrokeColorCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+                        // currentCommand.setStructure(currentStructure);
+
+                        // this.out.println("ack");
                     }else if (externalCommandSegments[0].equals("setVertexRadius")){//format: setColor <vertexId> <newRadius>
-                        PipingMessageHandler.handleSetVertexRadius(externalCommandSegments,this.structure);
-                        this.out.println("ack");
+                        // PipingMessageHandler.handleSetVertexRadius(externalCommandSegments,this.structure);
+                        
+                        currentCommand = new SetVertexRadiusCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+                        // currentCommand.setStructure(currentStructure);
+
+                        // this.out.println("ack");
                     }else if (externalCommandSegments[0].equals("getConnectedNeighbours")){//format: setColor <vertexId>
-                        String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-                        this.out.println(neighbourString);
+                        // String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
+                            
+                        currentCommand = new GetConnectedNeighboursCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+                        currentCommand.setStructure(currentStructure);
+
+                        // this.out.println(neighbourString);
                     }else if (externalCommandSegments[0].equals("addEdge")){//format: addEdge <sourceId> <targetId> <directed?>
-                        String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
-                        System.out.println("ackers: " + handleEdgeResponse);
-                        this.out.println(handleEdgeResponse);
-                        System.out.println("fini w add edge");
-                        System.out.println(this.structure.getEdges());
+                        // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
+                        
+                        currentCommand = new AddEdgeCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+                        currentCommand.setStructure(currentStructure);
+
+                        // this.out.println(handleEdgeResponse);
                     }else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
-                        String currentGraphId = PipingMessageHandler.handleGetCurrentGraphId();
-                        Structure newStructure = this.newGraphMethod.apply(externalCommandSegments[0]);
+
+                        this.pane = this.newGraphMethod.apply(externalCommandSegments[0]);
                         this.state = State.InProgress;
-                        System.out.println("about to return my structure with id: " + newStructure.getId());
-                        out.println(newStructure.getId());
+                        System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
+
+
+                        idGraphMap.put(this.pane.getStructure().getId(),this.pane.getStructure());
+
+                        // currentCommand = new NewGraphCommand(externalCommandSegments);
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+                        // currentCommand.setStructure(currentStructure);
+                        out.println(Integer.toString(this.pane.getStructure().getId()));
+
+                        continue;
+
                     }else if ((line = PipingMessageHandler.properGraphNames(line)) != null){
 
-                        Structure newStructure = this.newGraphMethod.apply(line);
+                        this.pane = this.newGraphMethod.apply(line);
+
+                        idGraphMap.put(this.pane.getStructure().getId(),this.pane.getStructure());
+
                         this.state = State.InProgress;
-                        System.out.println("about to return my structure with id: " + newStructure.getId());
-                        out.println(newStructure.getId());
+                        System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
+                        out.println(this.pane.getStructure().getId());
+
+                        continue;
                     }
 
 
                     else{
                         System.out.println("error: not a recognized command dumbfuck did you not read the documentation");
-                        out.println(this.structure.xmlToString());
+                        // out.println(this.structure.xmlToString());
                         
-                        this.out.println("ack");
+                        this.out.println("error: not a recognized command");
+                        continue;
                         // this.spacePressed= false;
                     }
                     // System.out.println("just heard: " + line);
+
+                    currentCommand.handle();
+
+                    if (!currentCommand.didFail()){
+                        this.out.println(currentCommand.getResponse());
+                    }else{
+                        this.out.println(currentCommand.getError().toString());
+                    }
+                    
                     result = result + line;
 
                 }

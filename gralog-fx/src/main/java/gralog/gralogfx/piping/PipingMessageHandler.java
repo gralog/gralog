@@ -120,17 +120,17 @@ public class PipingMessageHandler{
 
     public static GralogColor colorConversion(String[] externalCommandSegments){
         GralogColor changeColor;
-        if (externalCommandSegments.length == 3){
+        if (externalCommandSegments.length == 4){
             //hex notation
-            if (externalCommandSegments[2].length() == 7){
-                externalCommandSegments[2] = externalCommandSegments[2].substring(1);
+            if (externalCommandSegments[3].length() == 7){
+                externalCommandSegments[3] = externalCommandSegments[3].substring(1);
             }
-            changeColor = new GralogColor(Integer.parseInt(externalCommandSegments[2],16));
+            changeColor = new GralogColor(Integer.parseInt(externalCommandSegments[3],16));
             return changeColor;
-        }else if (externalCommandSegments.length == 5){
-            int r = Integer.parseInt(externalCommandSegments[2]);
-            int g = Integer.parseInt(externalCommandSegments[3]);
-            int b = Integer.parseInt(externalCommandSegments[4]);
+        }else if (externalCommandSegments.length == 6){
+            int r = Integer.parseInt(externalCommandSegments[3]);
+            int g = Integer.parseInt(externalCommandSegments[4]);
+            int b = Integer.parseInt(externalCommandSegments[5]);
             return new GralogColor(r,g,b);
         }
         return (GralogColor)null;

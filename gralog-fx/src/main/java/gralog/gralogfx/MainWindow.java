@@ -158,10 +158,11 @@ public class MainWindow extends Application {
         }
     }
 
-    public Structure initGraph(String graphType){
+    public StructurePane initGraph(String graphType){
         System.out.println("here in initgraph!!!!" + graphType);
         if (!graphType.equals("useCurrentGraph")){
             System.out.println("trying to make a grpah with type : " + graphType);
+            System.out.println("previosly current structure pane was : " + this.tabs.getCurrentStructurePane());
             Structure temp;
             try{
                 temp = StructureManager.instantiateStructure(graphType);
@@ -175,10 +176,12 @@ public class MainWindow extends Application {
             tabs.addTab("new " + graphType,temp);
 
             tabs.getAllStructures();
+
+            System.out.println("postwardly current structure pane is : " + this.tabs.getCurrentStructurePane());
             
-            return temp;
+            return tabs.getCurrentStructurePane();
         }else{
-            return getCurrentStructure();
+            return tabs.getCurrentStructurePane();
 
         }
     }

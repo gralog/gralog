@@ -29,6 +29,7 @@ class Graph:
 		self.vertices = [];
 		self.edges = [];
 		self.lastIndex = -1;
+		self.id = -1;
 		if format == None or format.lower() == "none":
 			#we want a new graph
 
@@ -37,12 +38,13 @@ class Graph:
 			self.vertices = [];
 			self.edges = [];
 			self.lastIndex = -1;
-			sys.stdin.readline();
+			self.id = sys.stdin.readline();
+			
 	
 		else:
 			print(format);
 			sys.stdout.flush();
-			graph = sys.stdin.readline();
+			self.id = sys.stdin.readline();
 			
 		
 
@@ -50,7 +52,7 @@ class Graph:
 		# newVertex = Vertex(self.lastIndex + 1,x,y,color);
 		# self.vertices.append(newVertex);
 		self.lastIndex += 1;
-		print ("addVertex " + str(self.lastIndex));
+		print ("addVertex " + str(self.id).rstrip() + " " +  str(self.lastIndex));
 		sys.stdout.flush();
 		idFromGralog = sys.stdin.readline();
 		newVertex = Vertex(idFromGralog,x,y,color);
@@ -61,7 +63,7 @@ class Graph:
 		# indices = map(lambda vertex: vertex.id, self.vertices);
 		# if vertexIndex in indices:
 		# self.vertices.remove(self.vertices[indices.index(vertexIndex)]);
-		print "deleteVertex " + str(vertexIndex);
+		print "deleteVertex " +str(self.id).rstrip() + " " +  str(vertexIndex);
 		sys.stdout.flush();
 		sys.stdin.readline();
 
@@ -70,10 +72,10 @@ class Graph:
 		# print("colorhex: " + str(colorHex));
 	
 		if not (colorHex==-1):
-			line = "setVertexFillColor " + str(vertexIndex).rstrip() + " " + str(colorHex).rstrip();
+			line = "setVertexFillColor " + self.id + " " + str(vertexIndex).rstrip() + " " + str(colorHex).rstrip();
 			print line.rstrip();
 		elif not (colorRGB == -1) and len(colorRGB) == 3:
-			line = "setVertexFillColor " + str(vertexIndex).rstrip() + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
+			line = "setVertexFillColor "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
 			print(line.rstrip());
 		else:
 			return
@@ -86,10 +88,10 @@ class Graph:
 		# print("colorhex: " + str(colorHex));
 
 		if not (colorHex==-1):
-			line = "setVertexStrokeColor " + str(vertexIndex).rstrip() + " " + str(colorHex).rstrip();
+			line = "setVertexStrokeColor "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(colorHex).rstrip();
 			print line.rstrip();
 		elif not (colorRGB == -1) and len(colorRGB) == 3:
-			line = "setVertexStrokeColor " + str(vertexIndex).rstrip() + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
+			line = "setVertexStrokeColor "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
 			print(line.rstrip());
 		sys.stdout.flush();
 		sys.stdin.readline();
@@ -100,7 +102,7 @@ class Graph:
 		# print("colorhex: " + str(colorHex));
 		# if vertexIndex in indices:
 			
-		line = "setVertexRadius " + str(vertexIndex).rstrip() + " " + str(newRadius).rstrip();
+		line = "setVertexRadius "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(newRadius).rstrip();
 		print line.rstrip();
 	
 		sys.stdout.flush();
@@ -112,7 +114,7 @@ class Graph:
 		# print("colorhex: " + str(colorHex));
 		# if vertexIndex in indices:
 			
-		line = "getConnectedNeighbours " + str(vertexIndex).rstrip();
+		line = "getConnectedNeighbours "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip();
 		print line.rstrip();
 	
 		sys.stdout.flush();
@@ -126,7 +128,7 @@ class Graph:
 		# if vertexIndex in indices:
 
 			
-		line = "addEdge " + str(sourceVertexIndex).rstrip() + " " + str(targetVertexIndex).rstrip() + " " + str(directed).lower();
+		line = "addEdge "+str(self.id).rstrip() + " " + str(sourceVertexIndex).rstrip() + " " + str(targetVertexIndex).rstrip() + " " + str(directed).lower();
 
 
 		print line.rstrip();
