@@ -30,13 +30,6 @@ public class PluginControlPanel extends AnchorPane {
 
         this.getChildren().add(hbox);
         setMinHeight(200);
-
-        String cssDefault = "-fx-border-color: lightgrey;\n"
-                + "-fx-border-insets: 4;\n"
-                + "-fx-border-width: 1;\n"
-                + "-fx-border-style: solid;\n";
-        //setStyle(cssDefault);
-
     }
 
     private Button createButton(String label){

@@ -476,8 +476,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         for (Edge e : getEdges()) {
             IMovable temp = e.findObject(x, y);
-            if (temp != null)
+            if (temp != null){
                 return temp;
+            }
         }
 
         return null;

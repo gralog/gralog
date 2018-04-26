@@ -128,6 +128,14 @@ public abstract class GralogGraphicsContext {
             corner2.getX(), corner2.getY(),
             color);
     }
+    public abstract void drawBezier(Bezier curve, GralogColor color, double width, LineType type);
+
+    public static class Bezier{
+        public Vector2D source;
+        public Vector2D target;
+        public Vector2D ctrl1;
+        public Vector2D ctrl2;
+    }
 
     public abstract void selectionRectangle(Point2D from, Point2D to, Color color);
 

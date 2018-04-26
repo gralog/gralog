@@ -57,10 +57,13 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean wasDraggingPrimary = false;
     private boolean wasDraggingSecondary = false;
     private boolean wasDraggingMiddle = false;
+
     private Point2D boxingStartingPosition;
     private boolean selectionBoxingActive = false;
     private boolean selectionBoxDragging = false;
     private IMovable currentEdgeStartingPoint;
+
+    private boolean selectedCurveControlPoint = false;
 
     private double lastMouseX = -1d;
     private double lastMouseY = -1d;
@@ -159,13 +162,20 @@ public class StructurePane extends StackPane implements StructureListener {
                     for (Object o : highlights.getSelection()) {
                         if (o instanceof Vertex) {
                             structure.removeVertex((Vertex) o);
+                            clearSelection();
                             System.out.println(structure.holes);
                         }
-                        else if (o instanceof Edge){
+                        else if (o instanceof Edge && !selectedCurveControlPoint){
                             structure.removeEdge((Edge) o);
+                            clearSelection();
+                        }
+                        else if (o instanceof CurveControlPoint){
+                            CurveControlPoint c = ((CurveControlPoint)o);
+                            c.parent.removeControlPoint(c);
+                            highlights.remove(c);
+                            selectedCurveControlPoint = false;
                         }
                     }
-                    clearSelection();
                     this.requestRedraw();
                     break;
 //                case V:
@@ -194,6 +204,16 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
+                case B:
+                    for(Object o : highlights.getSelection()){
+                        if(o instanceof Edge){
+                            Edge edge = (Edge) o;
+                            edge.addCurveControlPoint(edge.getSource().coordinates.plus(new Vector2D(0, -1)));
+                            this.requestRedraw();
+
+                        }
+                    }
+                    break;
             }
         });
     }
@@ -205,16 +225,32 @@ public class StructurePane extends StackPane implements StructureListener {
 
         //group selection handling for primary mouse button
         if(e.isPrimaryButtonDown()){
-            if(!e.isControlDown() && !highlights.isSelected(selected)){
-                clearSelection();
-            }
+
+            //if selection hit something, select
             if (selected != null) {
-                select(selected);
-                dragging = highlights.getSelection();
-                if(selected instanceof Vertex){
-                    System.out.println(((Vertex)selected).id);
+                //only clear selection if mouse press was not on a bezier control point
+                if(selected instanceof CurveControlPoint){
+                    //select only the edge and the bezier control point.
+                    CurveControlPoint controlPoint = (CurveControlPoint) selected;
+                    clearSelection();
+                    select(controlPoint.parent);
+                    select(selected);
+                    dragging = highlights.getSelection();
+                    selectedCurveControlPoint = true;
+                }else{
+                    //reassign selection to object that was not in the list
+                    if(!e.isControlDown() && !highlights.isSelected(selected)){
+                        clearSelection();
+                    }
+                    select(selected);
+                    dragging = highlights.getSelection();
+                    if(selected instanceof Vertex){
+                        System.out.println(((Vertex)selected).id);
+                    }
                 }
-            }else if(!e.isControlDown()){
+            }
+            //if selection hit nothing, start boxing
+            else if(!e.isControlDown()){
                 boxingStartingPosition = new Point2D(e.getX(), e.getY());
                 selectionBoxingActive = true;
                 clearSelection();
@@ -457,6 +493,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public void clearSelection() {
         highlights.clearSelection();
+        selectedCurveControlPoint = false;
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
 

@@ -6,12 +6,17 @@ import gralog.plugins.*;
 import gralog.events.*;
 import gralog.rendering.*;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.naming.ldap.Control;
+import javax.sound.midi.ControllerEventListener;
 
 /**
  *
@@ -46,6 +51,29 @@ public class Edge extends XmlMarshallable implements IMovable {
     private Vertex source = null;
     private Vertex target = null;
 
+    public List<CurveControlPoint> controlPoints = new ArrayList<>();
+
+
+    public CurveControlPoint addCurveControlPoint(Vector2D position){
+        CurveControlPoint c =  new CurveControlPoint(position, source, target, this);
+        controlPoints.add(c);
+        return c;
+    }
+    public CurveControlPoint removeControlPoint(CurveControlPoint c){
+        if(controlPoints.size() == 2){
+            controlPoints.remove(c);
+            return setSingleControlPoint(controlPoints.get(0).getPosition());
+        }else{
+            controlPoints.remove(0);
+            return null;
+        }
+
+    }
+    public CurveControlPoint setSingleControlPoint(Vector2D position){
+        controlPoints.clear();
+        controlPoints.add(new CurveControlPoint(position, getSource(), getTarget(), this));
+        return controlPoints.get(0);
+    }
     public Vertex getSource() {
         return source;
     }
@@ -54,8 +82,10 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (this.source != null)
             this.source.disconnectEdge(this);
         this.source = source;
-        if (source != null)
+        if (source != null){
             this.source.connectEdge(this);
+        }
+
     }
 
     public Vertex getTarget() {
@@ -66,8 +96,9 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (this.target != null)
             this.target.disconnectEdge(this);
         this.target = target;
-        if (target != null)
+        if (target != null){
             this.target.connectEdge(this);
+        }
     }
     public boolean isLoop(){
         return getSource() == getTarget();
@@ -120,12 +151,15 @@ public class Edge extends XmlMarshallable implements IMovable {
     }
 
     public IMovable findObject(double x, double y) {
-        for (EdgeIntermediatePoint p : intermediatePoints)
-            if (p.containsCoordinate(x, y))
-                return p;
+        for(CurveControlPoint c : controlPoints){
+            if(c.active && c.containsCoordinate(x,y)){
+                return c;
+            }
+        }
 
-        if (this.containsCoordinate(x, y))
+        if (this.containsCoordinate(x, y)){
             return this;
+        }
 
         return null;
     }
@@ -184,10 +218,35 @@ public class Edge extends XmlMarshallable implements IMovable {
             Vector2D intersection = target.intersectionAdjusted(sourceOffset, targetOffset, dist);
             Vector2D adjustedEndpoint = intersection.plus(diff.normalized().multiply(arrowType.endPoint * arrowHeadLength));
 
-            gc.line(sourceOffset, adjustedEndpoint, edgeColor, width, type);
-            gc.arrow(diff, intersection, arrowType, arrowHeadLength, edgeColor);
+            GralogGraphicsContext.Bezier curve = new GralogGraphicsContext.Bezier();
+            curve.source = source.coordinates;
+            curve.target = target.coordinates;
+
+            if(controlPoints.size() == 1){
+                curve.ctrl1 = controlPoints.get(0).getPosition();
+                curve.ctrl2 = controlPoints.get(0).getPosition();
+                gc.drawBezier(curve, edgeColor, width, type);
+            }else if(controlPoints.size() == 2){
+                curve.ctrl1 = controlPoints.get(0).getPosition();
+                curve.ctrl2 = controlPoints.get(1).getPosition();
+                gc.drawBezier(curve, edgeColor, width, type);
+            }else{
+                gc.line(sourceOffset, adjustedEndpoint, edgeColor, width, type);
+                gc.arrow(diff, intersection, arrowType, arrowHeadLength, edgeColor);
+            }
+
         } else {
             gc.line(fromX, fromY, toX, toY, edgeColor, width, type);
+        }
+
+        for(CurveControlPoint c : controlPoints){
+            if(c != null){
+                if(highlights.isSelected(this)){
+                    c.render(gc);
+                }else{
+                    c.active = true;
+                }
+            }
         }
     }
 
