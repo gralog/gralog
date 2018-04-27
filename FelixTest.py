@@ -72,7 +72,7 @@ class Graph:
 		# print("colorhex: " + str(colorHex));
 	
 		if not (colorHex==-1):
-			line = "setVertexFillColor " + self.id + " " + str(vertexIndex).rstrip() + " " + str(colorHex).rstrip();
+			line = "setVertexFillColor " + str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(colorHex).rstrip();
 			print line.rstrip();
 		elif not (colorRGB == -1) and len(colorRGB) == 3:
 			line = "setVertexFillColor "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
@@ -196,7 +196,8 @@ g.pauseUntilSpacePressed();
 
 g.addEdge(source,target);
 
-	
+g.setVertexRadius(source,5);
+g.setVertexFillColor(target,434343);
 
 
 # for i in range(3):
