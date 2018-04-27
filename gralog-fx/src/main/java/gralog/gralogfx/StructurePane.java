@@ -285,7 +285,8 @@ public class StructurePane extends StackPane implements StructureListener {
             this.requestRedraw();
         }
         else if(b == MouseButton.PRIMARY && selectionBoxDragging && selectionBoxingActive){
-            if(distSquared(boxingStartingPosition, mousePositionModel) > 2){
+            if(distSquared(screenToModel(boxingStartingPosition), mousePositionModel) > 0.01){
+
                 Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
                 highlights.selectAll(objs);
             }
