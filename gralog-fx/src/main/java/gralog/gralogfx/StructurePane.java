@@ -159,7 +159,8 @@ public class StructurePane extends StackPane implements StructureListener {
 
             switch (e.getCode()) {
                 case DELETE:
-                    for (Object o : highlights.getSelection()) {
+                    Set<Object> selection = new HashSet<>(highlights.getSelection());
+                    for (Object o : selection) {
                         if (o instanceof Vertex) {
                             structure.removeVertex((Vertex) o);
                             clearSelection();
@@ -174,6 +175,7 @@ public class StructurePane extends StackPane implements StructureListener {
                             c.parent.removeControlPoint(c);
                             highlights.remove(c);
                             selectedCurveControlPoint = false;
+                            break; //if not breaking, edge will be able to be deleted
                         }
                     }
                     this.requestRedraw();
@@ -337,7 +339,8 @@ public class StructurePane extends StackPane implements StructureListener {
                         selectedCurveControlPoint = true;
                         holdingEdge = null;
                     }
-                }else{
+                }
+                else{
                     for (Object o : dragging)
                         if (o instanceof IMovable) {
                             Vector2D offset = new Vector2D(

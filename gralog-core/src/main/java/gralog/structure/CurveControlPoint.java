@@ -7,6 +7,7 @@ import gralog.rendering.Vector2D;
 public class CurveControlPoint implements IMovable{
 
     protected static final double drawRadius = 0.05;
+    protected static final double drawRadiusSelected = 0.1;
     protected static final double clickRadius = 0.3;
 
     public Vector2D position;
@@ -34,10 +35,12 @@ public class CurveControlPoint implements IMovable{
         return position;
     }
 
-    public void render(GralogGraphicsContext gc){
+    public void render(GralogGraphicsContext gc, Highlights highlights){
+        double radius = highlights.isSelected(this) ? drawRadiusSelected : drawRadius;
+
         gc.line(firstAnchor.coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
         gc.line(secondAnchor.coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
-        gc.circle(getPosition(), drawRadius, GralogColor.RED);
+        gc.circle(getPosition(), radius, GralogColor.RED);
     }
 
     public boolean containsCoordinate(double x, double y){

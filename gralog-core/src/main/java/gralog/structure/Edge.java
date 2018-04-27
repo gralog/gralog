@@ -256,19 +256,25 @@ public class Edge extends XmlMarshallable implements IMovable {
             Vector2D targetToCtrl2 = curve.ctrl2.minus(target.coordinates).normalized();
             Vector2D exactTarget = target.coordinates.plus(targetToCtrl2.multiply(target.radius));
 
+
+            if(isDirected){
+                gc.arrow(targetToCtrl2.multiply(-1), exactTarget, arrowType, arrowHeadLength, edgeColor);
+            }else{
+                corr = 0;
+            }
+
             curve.source = source.coordinates.plus(sourceToCtrl1.multiply(source.radius));
             curve.target = target.coordinates.plus(targetToCtrl2.multiply(target.radius - corr)); //corrected target
 
             gc.drawBezier(curve, edgeColor, width, type);
-            gc.arrow(targetToCtrl2.multiply(-1), exactTarget, arrowType, arrowHeadLength, edgeColor);
         }
 
         //draw control points
         for(CurveControlPoint c : controlPoints){
             if(c != null){
                 if(highlights.isSelected(this)){
-                    c.render(gc);
                     c.active = true;
+                    c.render(gc, highlights);
                 }else{
                     c.active = false;
                 }
