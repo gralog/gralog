@@ -285,8 +285,10 @@ public class StructurePane extends StackPane implements StructureListener {
             this.requestRedraw();
         }
         else if(b == MouseButton.PRIMARY && selectionBoxDragging && selectionBoxingActive){
-            Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
-            highlights.selectAll(objs);
+            if(distSquared(boxingStartingPosition, mousePositionModel) > 2){
+                Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
+                highlights.selectAll(objs);
+            }
         }
         //mouse release dissolves selection group, but not when
         //1) the selection group has been moved = wasDraggingPrimary
@@ -379,6 +381,9 @@ public class StructurePane extends StackPane implements StructureListener {
     double offsetY = -1d;
     double zoomFactor = 1d;
 
+    private double distSquared(Point2D first, Point2D second){
+        return Math.pow(first.getX() - second.getX(), 2) + Math.pow(first.getY() - second.getY(), 2);
+    }
     public Point2D modelToScreen(Point2D point) {
         Point2D result = new Point2D(
             (point.getX() - offsetX) * zoomFactor * (screenResolutionX / 2.54),

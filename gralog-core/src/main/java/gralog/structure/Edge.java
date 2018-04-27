@@ -331,28 +331,23 @@ public class Edge extends XmlMarshallable implements IMovable {
         return getSource() == other.getSource();
     }
     public boolean containsCoordinate(double x, double y) {
-        Vector2D diff = target.coordinates.minus(source.coordinates);
-        Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(getOffset());
-        Vector2D sourceOffset = source.coordinates.plus(perpendicularToDiff);
-        Vector2D targetOffset = target.coordinates.plus(perpendicularToDiff);
-        
-        double fromX = sourceOffset.getX();
-        double fromY = sourceOffset.getY();
-        double nextfromX = fromX;
-        double nextfromY = fromY;
 
-        for (EdgeIntermediatePoint between : intermediatePoints) {
-            fromX = nextfromX;
-            fromY = nextfromY;
-            nextfromX = between.getX();
-            nextfromY = between.getY();
-            if (Vector2D.distancePointToLine(x, y, fromX, fromY, nextfromX, nextfromY) < 0.3)
-                return true;
+        if(controlPoints.size() == 0){
+            Vector2D diff = target.coordinates.minus(source.coordinates);
+            Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(getOffset());
+
+            Vector2D sourceOffset = source.coordinates.plus(perpendicularToDiff);
+            Vector2D targetOffset = target.coordinates.plus(perpendicularToDiff);
+
+            double fromX = sourceOffset.getX();
+            double fromY = sourceOffset.getY();
+
+            double toX = targetOffset.getX();
+            double toY = targetOffset.getY();
+            return Vector2D.distancePointToLine(x, y, fromX, fromY, toX, toY) < multiEdgeOffset * 0.5;
+        }else{
+            return false;
         }
-
-        double toX = targetOffset.getX();
-        double toY = targetOffset.getY();
-        return Vector2D.distancePointToLine(x, y, nextfromX, nextfromY, toX, toY) < multiEdgeOffset * 0.5;
     }
 
 

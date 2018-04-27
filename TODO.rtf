@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;\red85\green142\blue40;}
-\margl1440\margr1440\margb1134\margt1417\vieww14340\viewh17940\viewkind1
+\margl1440\margr1440\margb1134\margt1417\vieww14640\viewh18240\viewkind1
 \deftab720
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
 
@@ -41,6 +41,14 @@
 - 3 context menus (vertex, edge, both, empty)\
 - helper window for current key mapping \
 \kerning1\expnd0\expndtw0 - optimize graph drawing (maybe partially update rendered structure)\
+	- ask user if they want a reduced visual representation of the graph\
+- move canvas on selection draw out of bounds\
+- visualize tree decompositions (and bags, unions etc)\
+\
+DRAWING\
+- for 1st curve control point use parabola\
+- for 2nd\
+- Collapse bezier points\
 \
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
 \cf0 FRAME\
@@ -88,11 +96,29 @@ PIPELINE\
 - gralog.setProgressBar()\
 - allow external program to display persistent variables\
 (that don\'92t scroll like terminal outputs)\
+- print python outputs\
+- catch native stderr python\
+- create integrated python console\
+- allow python to send requests and allow gralog\
+to return different datatypes (int, boolean, vertex etc)\
+\
 \
 \
 UI WINDOWS\
 - algorithm progressbar\
 - algorithm output console\
+\
+FUTURE\
+- hierarchical representation\
+	- edges between supernodes(define semantic)\
+	- \
+- hypergraphs\
+\
+OTHER\
+- logo\
+- UI skin\
+- find conference to present glares\
+- money\
 \
 Backlog:\
 - Classes aren\'92t properly read (ClassNotFoundException or similar)\
