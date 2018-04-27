@@ -38,7 +38,7 @@ public class SetVertexRadiusCommand extends CommandForGralogToExecute {
             return;
         }
 
-        this.newRadius = Integer.parseInt(externalCommandSegments[2]);
+        this.newRadius = Integer.parseInt(externalCommandSegments[3]);
 
         System.out.println("newradius: " + this.newRadius);
 
