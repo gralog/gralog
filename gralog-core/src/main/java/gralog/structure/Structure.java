@@ -503,7 +503,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         double cx = qx - px;
         double cy = qy - py;
-
+        if(Math.abs(cx) < 0.01 || Math.abs(cy) < 0.01){
+            return objects;
+        }
         for (Vertex v : getVertices()){
             double vx = v.coordinates.getX();
             double vy = v.coordinates.getY();
