@@ -57,25 +57,25 @@ class Graph:
 		idFromGralog = sys.stdin.readline();
 		newVertex = Vertex(idFromGralog,x,y,color);
 		self.vertices.append(newVertex);
-		return idFromGralog;
+		return idFromGralog.rstrip();
 
-	def deleteVertex(self,vertexIndex):
+	def deleteVertex(self,vertexId):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
-		# if vertexIndex in indices:
-		# self.vertices.remove(self.vertices[indices.index(vertexIndex)]);
-		print "deleteVertex " +str(self.id).rstrip() + " " +  str(vertexIndex);
+		# if vertexId in indices:
+		# self.vertices.remove(self.vertices[indices.index(vertexId)]);
+		print "deleteVertex " +str(self.id).rstrip() + " " +  str(vertexId);
 		sys.stdout.flush();
 		sys.stdin.readline();
 
-	def setVertexFillColor(self,vertexIndex,colorHex=-1,colorRGB=-1):
+	def setVertexFillColor(self,vertexId,colorHex=-1,colorRGB=-1):
 		indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
 	
 		if not (colorHex==-1):
-			line = "setVertexFillColor " + str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(colorHex).rstrip();
+			line = "setVertexFillColor " + str(self.id).rstrip() + " " + str(vertexId).rstrip() + " " + str(colorHex).rstrip();
 			print line.rstrip();
 		elif not (colorRGB == -1) and len(colorRGB) == 3:
-			line = "setVertexFillColor "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
+			line = "setVertexFillColor "+str(self.id).rstrip() + " " + str(vertexId).rstrip() + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
 			print(line.rstrip());
 		else:
 			return
@@ -83,38 +83,38 @@ class Graph:
 		sys.stdin.readline();
 	
 
-	def setVertexStrokeColor(self,vertexIndex,colorHex=-1,colorRGB=-1):
+	def setVertexStrokeColor(self,vertexId,colorHex=-1,colorRGB=-1):
 		indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
 
 		if not (colorHex==-1):
-			line = "setVertexStrokeColor "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(colorHex).rstrip();
+			line = "setVertexStrokeColor "+str(self.id).rstrip() + " " + str(vertexId).rstrip() + " " + str(colorHex).rstrip();
 			print line.rstrip();
 		elif not (colorRGB == -1) and len(colorRGB) == 3:
-			line = "setVertexStrokeColor "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
+			line = "setVertexStrokeColor "+str(self.id).rstrip() + " " + str(vertexId).rstrip() + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
 			print(line.rstrip());
 		sys.stdout.flush();
 		sys.stdin.readline();
 
 
-	def setVertexRadius(self,vertexIndex,newRadius):
+	def setVertexRadius(self,vertexId,newRadius):
 		indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
-		# if vertexIndex in indices:
+		# if vertexId in indices:
 			
-		line = "setVertexRadius "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip() + " " + str(newRadius).rstrip();
+		line = "setVertexRadius "+str(self.id).rstrip() + " " + str(vertexId).rstrip() + " " + str(newRadius).rstrip();
 		print line.rstrip();
 	
 		sys.stdout.flush();
 		sys.stdin.readline();
 
 
-	def getConnectedNeighbours(self,vertexIndex):
+	def getConnectedNeighbours(self,vertexId):
 		indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
-		# if vertexIndex in indices:
+		# if vertexId in indices:
 			
-		line = "getConnectedNeighbours "+str(self.id).rstrip() + " " + str(vertexIndex).rstrip();
+		line = "getConnectedNeighbours "+str(self.id).rstrip() + " " + str(vertexId).rstrip();
 		print line.rstrip();
 	
 		sys.stdout.flush();
@@ -122,13 +122,13 @@ class Graph:
 		return connectedNeighboursList;
 
 
-	def addEdge(self,sourceVertexIndex, targetVertexIndex, directed = False):
+	def addEdge(self,sourceVertexId, targetVertexId, directed = False):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
 		# if vertexIndex in indices:
 
 			
-		line = "addEdge "+str(self.id).rstrip() + " " + str(sourceVertexIndex).rstrip() + " " + str(targetVertexIndex).rstrip() + " " + str(directed).lower();
+		line = "addEdge "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip() + " " + str(directed).lower();
 
 
 		print line.rstrip();
@@ -137,6 +137,28 @@ class Graph:
 		sys.stdin.readline();
 		# return connectedNeighboursList;
 
+	def deleteEdge(self,sourceVertexId,targetVertexId):
+
+		line = "deleteEdge "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip();
+
+		print line.rstrip();
+
+		sys.stdout.flush();
+		sys.stdin.readline();
+
+	def addEdgeLabel(self,sourceVertexId, targetVertexId, label):
+		line = "addEdgeLabel "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip() + " " + label;
+		print line.rstrip();
+
+		sys.stdout.flush();
+		sys.stdin.readline();
+
+	def addVertexLabel(self,vertexId, label):
+		line = "addVertexLabel "+str(self.id).rstrip() + " " + str(vertexId).rstrip() + " " + label;
+		print line.rstrip();
+
+		sys.stdout.flush();
+		sys.stdin.readline();
 
 
 	def pauseUntilSpacePressed(self):
@@ -163,7 +185,6 @@ class Graph:
 
 
 
-g = Graph("undirected");#type \in buechi, directed, etc. or None
 
 ###algorithm: add 3 nodes to tha homie graph.
 # recd = "null";
@@ -189,15 +210,51 @@ g = Graph("undirected");#type \in buechi, directed, etc. or None
 # g.deleteVertex(0);
 
 
-source = g.addVertex();
-target = g.addVertex();
+g = Graph("directed");#type \in buechi, directed, etc. or None
+# g2 = Graph("undirected");
+
+
+
+# 
+# g.deleteVertex(v1);
+
+
+
+# source = g.addVertex();
+# target = g.addVertex();
+
+
+set1 = []
+set2 = []
+
+for x in range(2):
+	set1.append(g.addVertex());
+
+
+for x in range(2):
+	set2.append(g.addVertex());
+
+for node1 in set1:
+	for node2 in set2:
+		g.addEdge(node1,node2,True);
 
 g.pauseUntilSpacePressed();
 
-g.addEdge(source,target);
 
-g.setVertexRadius(source,5);
-g.setVertexFillColor(target,434343);
+# print(type(set1[0]).__name__);
+
+for node1 in set1:
+	for node2 in set2:
+		g.addEdgeLabel(node1,node2,"edge going from " + node1 + " to " + node2);
+
+for node in set1:
+	g.addVertexLabel(node,"node with id: " + node);
+
+g.pauseUntilSpacePressed();
+
+for node in set1:
+	g.addVertexLabel(node,"");
+
 
 
 # for i in range(3):

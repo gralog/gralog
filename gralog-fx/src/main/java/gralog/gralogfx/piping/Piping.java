@@ -237,7 +237,7 @@ public class Piping{
                         
                 
                         // List<Vertex> vertexList = new ArrayList<Vertex>(this.structure.getVertices());
-                        PipingMessageHandler.handleDeleteVertex(externalCommandSegments,this.structure);
+                        // PipingMessageHandler.handleDeleteVertex(externalCommandSegments,this.structure);
 
                         this.out.println("ack");
 
@@ -278,16 +278,40 @@ public class Piping{
                         // String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
                             
                         currentCommand = new GetConnectedNeighboursCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
-                        Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
-                        currentCommand.setStructure(currentStructure);
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+
 
                         // this.out.println(neighbourString);
                     }else if (externalCommandSegments[0].equals("addEdge")){//format: addEdge <sourceId> <targetId> <directed?>
                         // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
                         
                         currentCommand = new AddEdgeCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
-                        Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
-                        currentCommand.setStructure(currentStructure);
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+
+
+                        // this.out.println(handleEdgeResponse);
+                    }else if (externalCommandSegments[0].equals("deleteEdge")){//format: addEdge <sourceId> <targetId> <directed?>
+                        // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
+                        // System.out.println("")
+                        currentCommand = new DeleteEdgeCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+
+
+                        // this.out.println(handleEdgeResponse);
+                    }else if (externalCommandSegments[0].equals("addEdgeLabel")){//format: addEdge <sourceId> <targetId> <directed?>
+                        // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
+                        // System.out.println("")
+                        currentCommand = new AddEdgeLabelCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+
+
+                        // this.out.println(handleEdgeResponse);
+                    }else if (externalCommandSegments[0].equals("addVertexLabel")){//format: addEdge <sourceId> <targetId> <directed?>
+                        // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
+                        // System.out.println("")
+                        currentCommand = new AddVertexLabelCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+
 
                         // this.out.println(handleEdgeResponse);
                     }else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
@@ -330,12 +354,17 @@ public class Piping{
                     }
                     // System.out.println("just heard: " + line);
 
-                    currentCommand.handle();
+                    
 
                     if (!currentCommand.didFail()){
-                        this.out.println(currentCommand.getResponse());
+                        currentCommand.handle();
+                        if (! currentCommand.didFail()){
+                            this.out.println(currentCommand.getResponse());    
+                        }
+                        
                     }else{
                         this.out.println(currentCommand.getError().toString());
+                        System.out.println(currentCommand.getError().toString());
                     }
                     
                     result = result + line;

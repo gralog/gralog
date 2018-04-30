@@ -2,18 +2,19 @@ package gralog.gralogfx;
 import gralog.structure.*;
 import gralog.rendering.*;
 
-public class AddEdgeCommand extends CommandForGralogToExecute {
+public class DeleteEdgeCommand extends CommandForGralogToExecute {
 	
 
 	int sourceId;
     int targetId;
 	Vertex sourceVertex;
     Vertex targetVertex;
+    Edge edgeToDelete;
     // String neighbourString;
 
 
 
-	public AddEdgeCommand(String[] externalCommandSegments,Structure structure){
+	public DeleteEdgeCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
@@ -50,6 +51,15 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
             this.error = new Exception("error: target vertex with id " + Integer.toString(this.targetId) + " does not exist");
             return;
         }
+
+        this.edgeToDelete = this.structure.getEdgeByVertexIds(this.sourceId,this.targetId);
+        if (this.edgeToDelete == null){
+            System.out.println("fail!!!! ahahaha i love failure");
+            this.fail();
+            this.error = new Exception("error: no edge with vertex coordinates " + Integer.toString(this.sourceId) + " " + Integer.toString(this.targetId));
+            return;
+        }
+
 	}
 
 
@@ -57,11 +67,11 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         
 
-        Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
+        // Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
             
-        e.isDirected = (externalCommandSegments[4].equals("true"));
+        // e.isDirected = (externalCommandSegments[3].equals("true"));
 
-        this.structure.addEdge(e);
+        this.structure.removeEdge(this.edgeToDelete);
 
         this.setResponse("ack");
 

@@ -180,6 +180,30 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return v;
     }
 
+    /** preliminary method (to be updated with edge id's) for removing an edge
+    * very inefficient
+    *@param id's of the vertices to be removed
+    */
+    public Edge getEdgeByVertexIds(int inputSourceId, int inputTargetId){
+        for (Edge e : this.getEdges()){
+            System.out.println("iterating with edge: " + e.toString() + " with input: " + Integer.toString(inputSourceId) + " and target: " + Integer.toString(inputTargetId));
+            int sourceId = e.getSource().getId();
+            int targetId = e.getTarget().getId();
+            if (sourceId == inputSourceId){
+                if (targetId == inputTargetId){
+                    return e;
+                }
+            }else if (!e.isDirected){
+                if (sourceId == inputTargetId){
+                    if (targetId == inputSourceId){
+                        return e;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Removes a vertex and its incident edges from the structure.
      *

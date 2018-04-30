@@ -353,6 +353,10 @@ public class Edge extends XmlMarshallable implements IMovable {
         return enode;
     }
 
+    public void setLabel(String label){
+        this.label = label;
+    }
+
     public void fromXml(Element enode, HashMap<String, Vertex> ids) throws Exception {
         setSource(ids.get(enode.getAttribute("source")));
         setTarget(ids.get(enode.getAttribute("target")));
@@ -400,5 +404,11 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     public void removeEdgeListener(EdgeListener listener) {
         listeners.remove(listener);
+    }
+
+    @Override
+    public String toString(){
+        String directed = isDirected ? "Directed " : "";
+        return directed + "Edge " + Integer.toString(this.getSource().getId()) + " " + Integer.toString(this.getTarget().getId());
     }
 }

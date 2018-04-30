@@ -71,6 +71,10 @@ public class Vertex extends XmlMarshallable implements IMovable {
         return "Vertex{" + "label=" + label + ", radius=" + radius + ", fillColor=" + fillColor + ", strokeWidth=" + strokeWidth + ", textHeight=" + textHeight + ", strokeColor=" + strokeColor + ", coordinates=" + coordinates + '}';
     }
 
+    public void setLabel(String label){
+        this.label = label;
+    }
+
     void connectEdge(Edge e) {
         if(e.getSource() == this){
             outgoingEdges.add(e);

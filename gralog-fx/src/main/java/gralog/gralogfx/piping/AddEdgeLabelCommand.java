@@ -2,19 +2,21 @@ package gralog.gralogfx;
 import gralog.structure.*;
 import gralog.rendering.*;
 
-public class AddEdgeCommand extends CommandForGralogToExecute {
-	
+public class AddEdgeLabelCommand extends CommandForGralogToExecute {
+    
 
-	int sourceId;
+    int sourceId;
     int targetId;
-	Vertex sourceVertex;
+    Vertex sourceVertex;
     Vertex targetVertex;
+    Edge edgeToAddLabelTo;
+    String label;
     // String neighbourString;
 
 
 
-	public AddEdgeCommand(String[] externalCommandSegments,Structure structure){
-		this.externalCommandSegments = externalCommandSegments;
+    public AddEdgeLabelCommand(String[] externalCommandSegments,Structure structure){
+        this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
         try{    
@@ -50,18 +52,37 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
             this.error = new Exception("error: target vertex with id " + Integer.toString(this.targetId) + " does not exist");
             return;
         }
-	}
+
+        this.edgeToAddLabelTo = this.structure.getEdgeByVertexIds(this.sourceId,this.targetId);
+        if (this.edgeToAddLabelTo == null){
+            System.out.println("fail!!!! ahahaha i love failure");
+            this.fail();
+            this.error = new Exception("error: no edge with vertex coordinates " + Integer.toString(this.sourceId) + " " + Integer.toString(this.targetId));
+            return;
+        }
+
+        this.generateLabel(externalCommandSegments);
+
+    }
+
+    public void generateLabel(String[] externalCommandSegments){
+        String label = "";
+        for (int i = 4; i < externalCommandSegments.length; i += 1){
+            label = label + externalCommandSegments[i]+ " ";
+        }
+        this.label = label;
+    }
 
 
-	public void handle(){
+    public void handle(){
 
         
 
-        Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
+        // Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
             
-        e.isDirected = (externalCommandSegments[4].equals("true"));
+        // e.isDirected = (externalCommandSegments[3].equals("true"));
 
-        this.structure.addEdge(e);
+        this.edgeToAddLabelTo.setLabel(this.label);
 
         this.setResponse("ack");
 
@@ -69,6 +90,6 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
 
         // return v;
-	}
+    }
 
 }
