@@ -1,6 +1,7 @@
 package gralog.gralogfx;
 import gralog.structure.*;
 import gralog.rendering.*;
+import java.util.Arrays;
 
 public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 	
@@ -8,6 +9,7 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 	int changeId;
 	Vertex vertex;
     GralogColor changeColor;
+
 
 
 	public SetVertexStrokeColorCommand(String[] externalCommandSegments,Structure structure){
@@ -38,7 +40,13 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
         	this.error = new Exception("error: vertex does not exist");
             return;
         }
-        this.changeColor = PipingMessageHandler.colorConversion(externalCommandSegments);
+
+        if (this.externalCommandSegments.length == 4){
+            this.changeColor = PipingMessageHandler.colorConversion(Arrays.copyOfRange(externalCommandSegments, 3, 4));
+        }else{
+            this.changeColor = PipingMessageHandler.colorConversion(Arrays.copyOfRange(externalCommandSegments, 3, 6));
+        }
+        // this.changeColor = PipingMessageHandler.colorConversion(externalCommandSegments);
         
         this.vertex.strokeColor = changeColor;
 

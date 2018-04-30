@@ -266,6 +266,14 @@ public class Piping{
                         // currentCommand.setStructure(currentStructure);
 
                         // this.out.println("ack");
+                    }else if (externalCommandSegments[0].equals("setEdgeColor")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
+                        // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+                        
+                        currentCommand = new SetEdgeColorCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+                        // currentCommand.setStructure(currentStructure);
+
+                        // this.out.println("ack");
                     }else if (externalCommandSegments[0].equals("setVertexRadius")){//format: setColor <vertexId> <newRadius>
                         // PipingMessageHandler.handleSetVertexRadius(externalCommandSegments,this.structure);
                         
@@ -276,10 +284,30 @@ public class Piping{
                         // this.out.println("ack");
                     }else if (externalCommandSegments[0].equals("getConnectedNeighbours")){//format: setColor <vertexId>
                         // String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-                            
+                        System.out.println("neibas reqd");
                         currentCommand = new GetConnectedNeighboursCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
                         // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
 
+                        // this.out.println(neighbourString);
+                    }else if (externalCommandSegments[0].equals("getOutgoingNeighbours")){//format: setColor <vertexId>
+                        // String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
+                        System.out.println("neibas reqd");
+                        currentCommand = new GetOutgoingNeighboursCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+
+                        // this.out.println(neighbourString);
+                    }else if (externalCommandSegments[0].equals("getConnectedEdges")){//format: setColor <vertexId>
+                        // String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
+
+                        currentCommand = new GetConnectedEdgesCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+
+                        // this.out.println(neighbourString);
+                    }else if (externalCommandSegments[0].equals("getOutgoingEdges")){//format: setColor <vertexId>
+                        // String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
+
+                        currentCommand = new GetOutgoingEdgesCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
 
                         // this.out.println(neighbourString);
                     }else if (externalCommandSegments[0].equals("addEdge")){//format: addEdge <sourceId> <targetId> <directed?>
@@ -357,12 +385,15 @@ public class Piping{
                     
 
                     if (!currentCommand.didFail()){
+                        System.out.println("handling");
                         currentCommand.handle();
+                        System.out.println("handled");
                         if (! currentCommand.didFail()){
                             this.out.println(currentCommand.getResponse());    
                         }
                         
                     }else{
+
                         this.out.println(currentCommand.getError().toString());
                         System.out.println(currentCommand.getError().toString());
                     }

@@ -1,6 +1,7 @@
 package gralog.gralogfx;
 import gralog.structure.*;
 import gralog.rendering.*;
+import java.util.Arrays;
 
 public class SetVertexFillColorCommand extends CommandForGralogToExecute {
 	
@@ -21,6 +22,14 @@ public class SetVertexFillColorCommand extends CommandForGralogToExecute {
             this.fail();
             return;
         }
+
+        this.vertex = this.structure.getVertexById(this.changeId);
+
+        if (this.vertex == null){
+            this.fail();
+            this.error = new Exception("error: vertex with id: " + this.changeId + " does not exist");
+            return;
+        }
 	}
 
 	public void handle(){
@@ -28,14 +37,12 @@ public class SetVertexFillColorCommand extends CommandForGralogToExecute {
         // int changeId;
        
         
-        this.vertex = this.structure.getVertexById(this.changeId);
-
-        if (this.vertex == null){
-        	this.fail();
-        	this.error = new Exception("error: vertex does not exist");
-            return;
+        
+        if (this.externalCommandSegments.length == 4){
+            this.changeColor = PipingMessageHandler.colorConversion(Arrays.copyOfRange(externalCommandSegments, 3, 4));
+        }else{
+            this.changeColor = PipingMessageHandler.colorConversion(Arrays.copyOfRange(externalCommandSegments, 3, 6));
         }
-        this.changeColor = PipingMessageHandler.colorConversion(externalCommandSegments);
         
         this.vertex.fillColor = changeColor;
 

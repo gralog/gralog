@@ -84,19 +84,24 @@ public class PipingMessageHandler{
 
 
 
-    public static GralogColor colorConversion(String[] externalCommandSegments){
+    public static GralogColor colorConversion(String[] colors){
+        System.out.println("we're getting: ");
+        for (int i = 0; i < colors.length; i ++){
+            System.out.println("color: " + colors[i]);
+        }
         GralogColor changeColor;
-        if (externalCommandSegments.length == 4){
+        if (colors.length == 1){
+            String color = colors[0];
             //hex notation
-            if (externalCommandSegments[3].length() == 7){
-                externalCommandSegments[3] = externalCommandSegments[3].substring(1);
+            if (color.length() == 7){
+                color = color.substring(1);
             }
-            changeColor = new GralogColor(Integer.parseInt(externalCommandSegments[3],16));
+            changeColor = new GralogColor(Integer.parseInt(color,16));
             return changeColor;
-        }else if (externalCommandSegments.length == 6){
-            int r = Integer.parseInt(externalCommandSegments[3]);
-            int g = Integer.parseInt(externalCommandSegments[4]);
-            int b = Integer.parseInt(externalCommandSegments[5]);
+        }else if (colors.length == 3){
+            int r = Integer.parseInt(colors[0]);
+            int g = Integer.parseInt(colors[1]);
+            int b = Integer.parseInt(colors[2]);
             return new GralogColor(r,g,b);
         }
         return (GralogColor)null;

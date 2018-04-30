@@ -185,19 +185,24 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     *@param id's of the vertices to be removed
     */
     public Edge getEdgeByVertexIds(int inputSourceId, int inputTargetId){
-        for (Edge e : this.getEdges()){
+
+        Vertex sourceVertex = this.getVertexById(inputSourceId);
+        Vertex targetVertex = this.getVertexById(inputTargetId);
+        if (sourceVertex == null || targetVertex == null){
+            return null;
+        }
+
+        for (Edge e : sourceVertex.getConnectedEdges()){
             System.out.println("iterating with edge: " + e.toString() + " with input: " + Integer.toString(inputSourceId) + " and target: " + Integer.toString(inputTargetId));
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
-            if (sourceId == inputSourceId){
-                if (targetId == inputTargetId){
-                    return e;
-                }
-            }else if (!e.isDirected){
+
+            if (targetId == inputTargetId){
+                return e;
+            }
+            else if (!e.isDirected){
                 if (sourceId == inputTargetId){
-                    if (targetId == inputSourceId){
-                        return e;
-                    }
+                    return e;
                 }
             }
         }
