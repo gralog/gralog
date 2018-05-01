@@ -11,21 +11,6 @@ import java.util.Set;
 public final class BezierUtilities {
 
     /**
-     * Used for isolating polynomial roots
-     */
-    private static class Interval{
-        public double x;
-        public double y;
-    }
-
-    /**
-     * Description of univariate polynomial of degree n
-     */
-    private static class Polynomial{
-        public int n, c, k;
-        public Polynomial(int n, int c, int k){ this.n = n; this.c = c; this.k = k; }
-    }
-    /**
      * This method implements an algorithm on point projections for cubic bezier curves.
      *
      * The algorithm is outlined in
@@ -64,7 +49,8 @@ public final class BezierUtilities {
 
         double t = 0.5;
 
-        //polynomial params for objective equation for constant curve weights. Paper reference: equation (4)
+        //polynomial params for objective equation for cubic bezier curve with constant weights.
+        //Paper reference: equation (4)
         double a = - 3 * (aa + dd + 6*(ac - ab + bd - cd) - 2*ad + 9*(bb + cc - 2*bc));
         double b = - 15 * (ad - aa + 5*ab - 4*ac - 6*bb + 9*bc - 2*bd - 3*cc + cd);
         double c = - (30*aa - 120*ab + 72*ac + 12*(bd - ad) + 108*(bb - bc) + 18*cc);
@@ -82,6 +68,12 @@ public final class BezierUtilities {
 
         return new Vector2D(x, y);
     }
+
+    /**
+     * Evaluates a 5th degree polynomial with Horner's method.
+     *
+     * @see <a href=https://en.wikipedia.org/wiki/Horner%27s_method>Wikipedia article for Horner's Method</a>
+     */
     private static double evalPolynomial5(double t, double a, double b, double c, double d, double e, double f){
         double v = a;
         v = b + (t * v);
