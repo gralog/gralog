@@ -2,21 +2,17 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
+import gralog.math.BezierUtilities;
 import gralog.plugins.*;
 import gralog.events.*;
 import gralog.rendering.*;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.naming.ldap.Control;
-import javax.sound.midi.ControllerEventListener;
 
 /**
  *
@@ -98,7 +94,6 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (source != null){
             this.source.connectEdge(this);
         }
-
     }
 
     public Vertex getTarget() {
@@ -267,6 +262,18 @@ public class Edge extends XmlMarshallable implements IMovable {
             curve.target = target.coordinates.plus(targetToCtrl2.multiply(target.radius - corr)); //corrected target
 
             gc.drawBezier(curve, edgeColor, width, type);
+
+            //draw bezier projection for debug purposes
+            if(controlPoints.size() == 2){
+                /*
+                Vector2D projection = BezierUtilities.pointProjectionAlgebraic(Vector2D.one(),
+                        curve.source,
+                        curve.ctrl1,
+                        curve.ctrl2,
+                        curve.target);
+                gc.line(Vector2D.one(), projection, GralogColor.BLUE, width);
+                */
+            }
         }
 
         //draw control points
@@ -280,6 +287,7 @@ public class Edge extends XmlMarshallable implements IMovable {
                 }
             }
         }
+
     }
 
     public double getOffset(){

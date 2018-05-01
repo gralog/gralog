@@ -173,4 +173,11 @@ public class Vector2D {
     public static Vector2D point2DToVector(Point2D point){
         return new Vector2D(point.getX(), point.getY());
     }
+
+    public static Vector2D zero(){
+        return new Vector2D(0,0);
+    }
+    public static Vector2D one(){
+        return new Vector2D(1,1);
+    }
 }

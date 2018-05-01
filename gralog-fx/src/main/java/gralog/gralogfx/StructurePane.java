@@ -206,6 +206,14 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
+                case B:
+                    Object edge = highlights.getSelection().iterator().next();
+                    if(edge instanceof Edge){
+                        ((Edge) edge).addCurveControlPoint(((Edge) edge).getTarget().coordinates.plus(new Vector2D(0,-2)));
+                        ((Edge) edge).addCurveControlPoint(((Edge) edge).getSource().coordinates.plus(new Vector2D(0,-2)));
+                        this.requestRedraw();
+                    }
+                    break;
             }
         });
     }
