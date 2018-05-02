@@ -49,7 +49,7 @@ public final class BezierUtilities {
 
         double t = 0.5;
 
-        //polynomial params for objective equation for cubic bezier curve with constant weights.
+        //polynomial coeff for objective equation for cubic bezier curve with constant weights.
         //Paper reference: equation (4)
         double a = - 3 * (aa + dd + 6*(ac - ab + bd - cd) - 2*ad + 9*(bb + cc - 2*bc));
         double b = - 15 * (ad - aa + 5*ab - 4*ac - 6*bb + 9*bc - 2*bd - 3*cc + cd);
@@ -102,7 +102,7 @@ public final class BezierUtilities {
 
         double t = 0.5;
 
-        //polynomial params
+        //polynomial coeff
         double a = - 3 * (aa + dd + 6*(ac - ab + bd - cd) - 2*ad + 9*(bb + cc - 2*bc));
         double b = - 15 * (ad - aa + 5*ab - 4*ac - 6*bb + 9*bc - 2*bd - 3*cc + cd);
         double c = - (30*aa - 120*ab + 72*ac + 12*(bd - ad) + 108*(bb - bc) + 18*cc);
