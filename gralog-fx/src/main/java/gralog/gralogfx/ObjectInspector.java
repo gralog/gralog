@@ -6,7 +6,10 @@ import gralog.gralogfx.views.View;
 import gralog.gralogfx.views.ViewManager;
 
 import java.util.function.Consumer;
-import javafx.scene.layout.AnchorPane;
+
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.*;
 import javafx.scene.Node;
 
 /**
@@ -14,12 +17,13 @@ import javafx.scene.Node;
  */
 public class ObjectInspector extends AnchorPane {
 
+    public static final double MIN_HEIGHT = 320;
+
     private View view;
 
-    public ObjectInspector() {
-        this.setMinWidth(200.0d);
+    public ObjectInspector (){
+        this.setPrefWidth(310.0d);
     }
-
     public void setObject(Object obj, StructurePane structurePane) throws Exception {
         setObject(obj, structurePane, (b) -> {
         });
@@ -28,10 +32,27 @@ public class ObjectInspector extends AnchorPane {
     public void setObject(Object obj, StructurePane structurePane,
         Consumer<Boolean> submitPossible) throws Exception {
         this.getChildren().clear();
-        if (obj == null)
+
+
+        ScrollPane sp = new ScrollPane();
+
+        //sp.setPrefViewportHeight(MIN_HEIGHT);
+        sp.setPrefViewportWidth(290);
+
+        AnchorPane.setTopAnchor(sp, 4.0);
+        AnchorPane.setRightAnchor(sp, 4.0);
+        AnchorPane.setBottomAnchor(sp, 4.0);
+        AnchorPane.setLeftAnchor(sp, 4.0);
+
+        if (obj == null && structurePane != null){
+            this.getChildren().add(sp);
             return;
+        }else if(structurePane == null){
+            return;
+        }
 
         view = ViewManager.instantiateView(obj.getClass());
+
         if (view == null)
             return;
         if (!(view instanceof Node))
@@ -39,14 +60,13 @@ public class ObjectInspector extends AnchorPane {
 
         view.setStructurePane(structurePane);
         view.setObject(obj, submitPossible);
-        this.getChildren().add((Node) view);
 
-        AnchorPane.setTopAnchor((Node) view, 3.0);
-        AnchorPane.setRightAnchor((Node) view, 3.0);
-        AnchorPane.setBottomAnchor((Node) view, 3.0);
-        AnchorPane.setLeftAnchor((Node) view, 3.0);
+        Node viewNode = (Node) view;
+
+        sp.setContent(viewNode);
+
+        this.getChildren().add(sp);
     }
-
     /**
      * This event handler is called when the stage is about to be closed.
      */

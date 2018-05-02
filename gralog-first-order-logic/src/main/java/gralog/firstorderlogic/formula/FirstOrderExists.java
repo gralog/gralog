@@ -9,6 +9,8 @@ import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import gralog.rendering.GralogColor;
 import gralog.rendering.Vector2D;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -43,7 +45,7 @@ public class FirstOrderExists extends FirstOrderFormula {
         Vertex oldvalue = varassign.get(variable);
         boolean result = false;
 
-        Set<Vertex> V = s.getVertices();
+        Collection<Vertex> V = s.getVertices();
         for (Vertex v : V) {
             varassign.put(variable, v);
 
@@ -73,7 +75,7 @@ public class FirstOrderExists extends FirstOrderFormula {
         Boolean result = false;
         Vertex oldvalue = varassign.get(variable);
         Subformula b = new Subformula();
-        Set<Vertex> V = s.getVertices();
+        Collection<Vertex> V = s.getVertices();
 
         for (Vertex v : V) {
             varassign.put(variable, v);
@@ -108,7 +110,7 @@ public class FirstOrderExists extends FirstOrderFormula {
         parent.player1Position = false;
         game.addVertex(parent);
 
-        Set<Vertex> V = s.getVertices();
+        Collection<Vertex> V = s.getVertices();
         int yOffset = 0;
         for (Vertex v : V) {
             varassign.put(variable, v);

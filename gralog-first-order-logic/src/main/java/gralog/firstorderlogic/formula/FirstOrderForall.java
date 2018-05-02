@@ -6,6 +6,8 @@ import gralog.progresshandler.ProgressHandler;
 import gralog.rendering.GralogColor;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
+
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -32,7 +34,7 @@ public class FirstOrderForall extends FirstOrderFormula {
         Vertex oldvalue = varassign.get(variable);
         boolean result = true;
 
-        Set<Vertex> V = s.getVertices();
+        Collection<Vertex> V = s.getVertices();
         for (Vertex v : V) {
             varassign.put(variable, v);
 
@@ -72,7 +74,8 @@ public class FirstOrderForall extends FirstOrderFormula {
         Boolean result = true;
         Vertex oldvalue = varassign.get(variable);
 
-        Set<Vertex> V = s.getVertices();
+
+        Collection<Vertex> V = s.getVertices();
         Subformula b = new Subformula();
         for (Vertex v : V) {
             varassign.put(variable, v);
@@ -108,7 +111,7 @@ public class FirstOrderForall extends FirstOrderFormula {
         parent.player1Position = true;
         game.addVertex(parent);
 
-        Set<Vertex> V = s.getVertices();
+        Collection<Vertex> V = s.getVertices();
         int yOffset = 0;
         for (Vertex v : V) {
             varassign.put(variable, v);

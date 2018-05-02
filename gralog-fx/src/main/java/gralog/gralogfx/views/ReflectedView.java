@@ -6,10 +6,14 @@ import gralog.rendering.GralogColor;
 
 import java.lang.reflect.*;
 import java.util.function.Consumer;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Control;
+
+import gralog.rendering.GralogGraphicsContext;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.scene.control.*;
+
+import javax.sound.sampled.Line;
 
 /**
  *
@@ -20,6 +24,7 @@ public class ReflectedView extends GridPaneView<Object> {
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
+        this.setPrefWidth(280);
         int i = 0;
 
         try {
@@ -28,6 +33,7 @@ public class ReflectedView extends GridPaneView<Object> {
                 for (Field f : c.getFields()) {
                     String name = f.getName();
                     Label nameLabel = new Label(name);
+
                     Object value = f.get(displayObject);
                     Control valueControl = null;
                     Class<?> type = f.getType();
@@ -88,6 +94,21 @@ public class ReflectedView extends GridPaneView<Object> {
                             }
                         });
                         valueControl = valueField;
+                    } else if (type.isAssignableFrom(GralogGraphicsContext.LineType.class)) {
+                        ChoiceBox<GralogGraphicsContext.LineType> choiceBox =
+                                new ChoiceBox<>(FXCollections.observableArrayList(GralogGraphicsContext.LineType.values()));
+                        choiceBox.getSelectionModel().select((GralogGraphicsContext.LineType)value);
+                        choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
+                            @Override
+                            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                                try{
+                                    f.set(displayObject, GralogGraphicsContext.LineType.values()[newValue.intValue()]);
+                                    requestRedraw();
+                                }catch(IllegalAccessException | IllegalArgumentException ex) {
+                                }
+                            }
+                        });
+                        valueControl = choiceBox;
                     }
 
                     if (valueControl != null) {

@@ -29,7 +29,7 @@ public class GetConnectedNeighboursCommand extends CommandForGralogToExecute {
 
         if (this.sourceVertex == null){
             this.fail();
-            this.error = new Exception("error: source vertex does not exist");
+            this.error = new Exception("error: source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
             return;
         }
 	}

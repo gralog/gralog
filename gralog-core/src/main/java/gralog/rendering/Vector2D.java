@@ -2,6 +2,8 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.rendering;
 
+import javafx.geometry.Point2D;
+
 /**
  * A 2-dimensional immutable vector.
  */
@@ -166,5 +168,16 @@ public class Vector2D {
 
     public Vector2D snapToGrid(double gridSize) {
         return new Vector2D(snap(gridSize, x), snap(gridSize, y));
+    }
+
+    public static Vector2D point2DToVector(Point2D point){
+        return new Vector2D(point.getX(), point.getY());
+    }
+
+    public static Vector2D zero(){
+        return new Vector2D(0,0);
+    }
+    public static Vector2D one(){
+        return new Vector2D(1,1);
     }
 }

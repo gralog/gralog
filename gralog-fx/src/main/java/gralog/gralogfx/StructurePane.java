@@ -9,10 +9,7 @@ import gralog.events.*;
 import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.Collection;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -62,10 +59,16 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean wasDraggingPrimary = false;
     private boolean wasDraggingSecondary = false;
     private boolean wasDraggingMiddle = false;
+
     private Point2D boxingStartingPosition;
     private boolean selectionBoxingActive = false;
     private boolean selectionBoxDragging = false;
     private IMovable currentEdgeStartingPoint;
+
+    private boolean selectedCurveControlPoint = false;
+
+    private Edge holdingEdge = null;
+    private Vector2D holdingEdgeStartingPosition;
 
     private double lastMouseX = -1d;
     private double lastMouseY = -1d;
@@ -76,7 +79,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public StructurePane(Structure structure) {
         this.structure = structure;
-        canvas = new Canvas(500, 500);
+        canvas = new Canvas(500,500);
 
         this.getChildren().add(canvas);
         // resize canvas with surrounding StructurePane
@@ -174,16 +177,25 @@ public class StructurePane extends StackPane implements StructureListener {
 
             switch (e.getCode()) {
                 case DELETE:
-                    for (Object o : highlights.getSelection()) {
+                    Set<Object> selection = new HashSet<>(highlights.getSelection());
+                    for (Object o : selection) {
                         if (o instanceof Vertex) {
                             structure.removeVertex((Vertex) o);
+                            clearSelection();
                             System.out.println(structure.holes);
                         }
-                        else if (o instanceof Edge){
+                        else if (o instanceof Edge && !selectedCurveControlPoint){
                             structure.removeEdge((Edge) o);
+                            clearSelection();
+                        }
+                        else if (o instanceof CurveControlPoint){
+                            CurveControlPoint c = ((CurveControlPoint)o);
+                            c.parent.removeControlPoint(c);
+                            highlights.remove(c);
+                            selectedCurveControlPoint = false;
+                            break; //if not breaking, edge will be able to be deleted
                         }
                     }
-                    clearSelection();
                     this.requestRedraw();
                     break;
 //                case V:
@@ -199,7 +211,7 @@ public class StructurePane extends StackPane implements StructureListener {
 //                    this.requestRedraw();
 //                    break;
                 case D:
-                    List<Vertex> duplicates = structure.duplicate(highlights.getSelection());
+                    List<Vertex> duplicates = structure.duplicate(highlights.getSelection(), gridSize);
                     structure.snapToGrid(gridSize);
                     highlights.clearSelection();
                     highlights.selectAll(duplicates);
@@ -212,8 +224,15 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
-                
 
+                case B:
+                    Object edge = highlights.getSelection().iterator().next();
+                    if(edge instanceof Edge){
+                        ((Edge) edge).addCurveControlPoint(((Edge) edge).getTarget().coordinates.plus(new Vector2D(0,-2)));
+                        ((Edge) edge).addCurveControlPoint(((Edge) edge).getSource().coordinates.plus(new Vector2D(0,-2)));
+                        this.requestRedraw();
+                    }
+                    break;
             }
         });
     }
@@ -225,16 +244,38 @@ public class StructurePane extends StackPane implements StructureListener {
 
         //group selection handling for primary mouse button
         if(e.isPrimaryButtonDown()){
-            if(!e.isControlDown() && !highlights.isSelected(selected)){
-                clearSelection();
-            }
+
+            //if selection hit something, select
             if (selected != null) {
-                select(selected);
-                dragging = highlights.getSelection();
-                if(selected instanceof Vertex){
-                    System.out.println(((Vertex)selected).id);
+                //only clear selection if mouse press was not on a bezier control point
+                if(selected instanceof CurveControlPoint){
+                    //select only the edge and the bezier control point.
+                    CurveControlPoint controlPoint = (CurveControlPoint) selected;
+                    clearSelection();
+                    select(controlPoint.parent);
+                    select(selected);
+                    dragging = highlights.getSelection();
+                    selectedCurveControlPoint = true;
+                }else{
+                    //reassign selection to object that was not in the list
+                    if(!e.isControlDown() && !highlights.isSelected(selected)){
+                        clearSelection();
+                    }
+
+                    select(selected);
+                    dragging = highlights.getSelection();
+
+                    if(selected instanceof Edge){
+                        holdingEdge = (Edge) selected;
+                        holdingEdgeStartingPosition = Vector2D.point2DToVector(mousePositionModel);
+                    }
+                    if(selected instanceof Vertex){
+                        System.out.println(((Vertex)selected).id);
+                    }
                 }
-            }else if(!e.isControlDown()){
+            }
+            //if selection hit nothing, start boxing
+            else if(!e.isControlDown()){
                 boxingStartingPosition = new Point2D(e.getX(), e.getY());
                 selectionBoxingActive = true;
                 clearSelection();
@@ -271,8 +312,11 @@ public class StructurePane extends StackPane implements StructureListener {
             this.requestRedraw();
         }
         else if(b == MouseButton.PRIMARY && selectionBoxDragging && selectionBoxingActive){
-            Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
-            highlights.selectAll(objs);
+            if(distSquared(screenToModel(boxingStartingPosition), mousePositionModel) > 0.01){
+
+                Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
+                highlights.selectAll(objs);
+            }
         }
         //mouse release dissolves selection group, but not when
         //1) the selection group has been moved = wasDraggingPrimary
@@ -291,6 +335,7 @@ public class StructurePane extends StackPane implements StructureListener {
         wasDraggingSecondary = false;
         selectionBoxingActive = false;
         selectionBoxDragging = false;
+        holdingEdge = null;
         dragging = null;
         currentEdgeStartingPoint = null;
 
@@ -304,7 +349,7 @@ public class StructurePane extends StackPane implements StructureListener {
             wasDraggingSecondary = true;
         }
 
-        Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
+        Vector2D mousePositionModel = screenToModel(new Vector2D(e.getX(), e.getY()));
         // Drag objects only with primary button
         if (e.isPrimaryButtonDown()) {
             //If dragging is null, start drawing a box for box selection
@@ -314,14 +359,27 @@ public class StructurePane extends StackPane implements StructureListener {
             }
             //else just move the dragging object
             else{
-                for (Object o : dragging)
-                    if (o instanceof IMovable) {
-                        Vector2D offset = new Vector2D(
-                                mousePositionModel.getX() - lastMouseX,
-                                mousePositionModel.getY() - lastMouseY
-                        );
-                        ((IMovable) o).move(offset);
+                //if holding an edge
+                if(holdingEdge != null){
+                    if(mousePositionModel.minus(holdingEdgeStartingPosition).length() > 0.2){
+                        CurveControlPoint ctrl = holdingEdge.addCurveControlPoint(mousePositionModel);
+                        clearSelection();
+                        select(ctrl);
+                        select(holdingEdge);
+                        selectedCurveControlPoint = true;
+                        holdingEdge = null;
                     }
+                }
+                else{
+                    for (Object o : dragging)
+                        if (o instanceof IMovable) {
+                            Vector2D offset = new Vector2D(
+                                    mousePositionModel.getX() - lastMouseX,
+                                    mousePositionModel.getY() - lastMouseY
+                            );
+                            ((IMovable) o).move(offset);
+                        }
+                }
                 // update model position under mouse
                 // this must not be done when we are dragging the screen!!!!!
                 lastMouseX = mousePositionModel.getX();
@@ -351,6 +409,9 @@ public class StructurePane extends StackPane implements StructureListener {
     double offsetY = -1d;
     double zoomFactor = 1d;
 
+    private double distSquared(Point2D first, Point2D second){
+        return Math.pow(first.getX() - second.getX(), 2) + Math.pow(first.getY() - second.getY(), 2);
+    }
     public Point2D modelToScreen(Point2D point) {
         Point2D result = new Point2D(
             (point.getX() - offsetX) * zoomFactor * (screenResolutionX / 2.54),
@@ -376,6 +437,14 @@ public class StructurePane extends StackPane implements StructureListener {
             (point.getX() / (screenResolutionX / 2.54) / zoomFactor) + offsetX,
             (point.getY() / (screenResolutionY / 2.54) / zoomFactor) + offsetY
         // dots per inch -> dots per cm
+        );
+        return result;
+    }
+    public Vector2D screenToModel(Vector2D point) {
+        Vector2D result = new Vector2D(
+                (point.getX() / (screenResolutionX / 2.54) / zoomFactor) + offsetX,
+                (point.getY() / (screenResolutionY / 2.54) / zoomFactor) + offsetY
+                // dots per inch -> dots per cm
         );
         return result;
     }
@@ -431,12 +500,12 @@ public class StructurePane extends StackPane implements StructureListener {
         double w = gc.getCanvas().getWidth();
         double h = gc.getCanvas().getHeight();
         gc.clearRect(0, 0, w, h);
-        gc.setFill(Color.rgb(0xFA, 0xFB, 0xFF));
+        gc.setFill(Color.rgb(240, 240, 240));
         gc.fillRect(0, 0, w, h);
 
         // grid
         if (zoomFactor * (screenResolutionX / 2.54) >= 10) {
-            gc.setStroke(Color.rgb(0xcc, 0xcc, 0xcc));
+            gc.setStroke(Color.rgb(225, 225, 225));
             Point2D leftupper = screenToModel(new Point2D(0d, 0d));
             Point2D rightlower = screenToModel(new Point2D(w, h));
             for (double x = leftupper.getX() - (leftupper.getX() % gridSize); x <= rightlower.getX(); x += gridSize) {
@@ -477,6 +546,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public void clearSelection() {
         highlights.clearSelection();
+        selectedCurveControlPoint = false;
         this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
     }
 

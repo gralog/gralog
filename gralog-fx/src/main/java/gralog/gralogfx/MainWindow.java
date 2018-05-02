@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 //test
+import gralog.gralogfx.panels.*;
 import gralog.plugins.*;
 import gralog.structure.*;
 import gralog.importfilter.*;
@@ -13,10 +14,8 @@ import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
 
+import java.io.*;
 import java.util.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -24,6 +23,7 @@ import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Orientation;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -52,6 +52,10 @@ public class MainWindow extends Application {
     private Tabs tabs;
     private StatusBar statusBar;
     private Piping pipeline;
+
+    private HBox rightBox;
+    private HBox bottomBox;
+    private SplitPane inspectorSplit;
 
     public MainWindow() {
         MainMenu.Handlers handlers = new MainMenu.Handlers();
@@ -96,14 +100,41 @@ public class MainWindow extends Application {
         VBox topPane = new VBox();
         topPane.getChildren().addAll(menu.getMenuBar());
 
-        tabs = new Tabs(this::onChangeCurrentStructure);
+        //put lambdas here for controlling stuff
+        PluginControlPanel pluginControlPanel = new PluginControlPanel(
+                () -> System.out.println("hit play"),
+                () -> System.out.println("hit pause"),
+                () -> System.out.println("next step"));
+
+        ConsolePanel consolePanel = new ConsolePanel(() -> System.out.println("execed"));
+
+
+        rightBox = new HBox();
+        inspectorSplit = new SplitPane();
+
+        bottomBox = new HBox();
+
+        ObjectInspector objectInspector = new ObjectInspector();
+
+        inspectorSplit.getItems().add(objectInspector);
+        inspectorSplit.getItems().add(pluginControlPanel);
+        inspectorSplit.setOrientation(Orientation.VERTICAL);
+
+        bottomBox.getChildren().add(consolePanel);
+        bottomBox.setVisible(true);
+
+        rightBox.getChildren().add(inspectorSplit);
+        rightBox.setVisible(false);
+
+        tabs = new Tabs(this::onChangeCurrentStructure, objectInspector);
 
         root = new BorderPane();
         //root.setFocusTraversable(true);
         root.setTop(topPane);
         root.setCenter(tabs.getTabPane());
-        root.setRight(tabs.getObjectInspector());
+        root.setRight(rightBox);
         root.setBottom(statusBar.getStatusBar());
+        // root.setBottom(bottomBox);
     }
 
     public void onLoadPlugin() {
@@ -465,7 +496,11 @@ public class MainWindow extends Application {
             root,
             Preferences.getInteger(getClass(), "main-window-width", 1000),
             Preferences.getInteger(getClass(), "main-window-height", 800));
+
+        scene.getStylesheets().add("/stylesheet.css");
         this.stage = primaryStage;
+        primaryStage.setMinHeight(500);
+        primaryStage.setMinWidth(400);
         primaryStage.setTitle("Gralog");
         primaryStage.setScene(scene);
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());
@@ -554,6 +589,7 @@ public class MainWindow extends Application {
 
     private void onChangeCurrentStructure() {
         Structure structure = getCurrentStructure();
+        rightBox.setVisible(structure != null);
         menu.setCurrentStructure(structure);
         statusBar.setCurrentStructure(structure);
     }

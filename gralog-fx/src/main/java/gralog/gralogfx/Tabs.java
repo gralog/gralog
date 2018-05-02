@@ -24,14 +24,14 @@ public class Tabs {
      * @param onChangeTab Handler to be called when a new tab is selected or a
      * tab is closed.
      */
-    public Tabs(Runnable onChangeTab) {
+    public Tabs(Runnable onChangeTab, ObjectInspector obj) {
         onChangeTabHandler = onChangeTab;
 
         tabPane = new TabPane();
         tabPane.getSelectionModel().selectedItemProperty()
             .addListener(e -> onChangeTab());
 
-        objectInspector = new ObjectInspector();
+        objectInspector = obj;
     }
 
     /**
@@ -117,10 +117,12 @@ public class Tabs {
                 selection = sender.highlights.getSelection();
                 sender.requestRedraw();
             }
-            if (selection != null && selection.size() == 1)
+            if (selection != null && selection.size() == 1){
                 objectInspector.setObject(selection.iterator().next(), sender);
-            else
+            }
+            else{
                 objectInspector.setObject(null, sender);
+            }
 
             onChangeTabHandler.run();
         } catch (Exception ex) {

@@ -6,6 +6,7 @@ import gralog.preferences.Preferences;
 import gralog.structure.*;
 import gralog.progresshandler.*;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -32,7 +33,7 @@ public class AssignLabels extends Algorithm {
         Preferences.setString(this.getClass(), "prefix", stringparam.parameter);
 
         int i = 0;
-        Set<Vertex> vertices = s.getVertices();
+        Collection<Vertex> vertices = s.getVertices();
         for (Vertex a : vertices) {
             a.label = stringparam.parameter + i;
             ++i;

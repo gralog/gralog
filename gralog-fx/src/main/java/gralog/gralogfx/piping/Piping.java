@@ -303,6 +303,13 @@ public class Piping{
                         // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
 
                         // this.out.println(neighbourString);
+                    }else if (externalCommandSegments[0].equals("getNeighbouringEdges")){//format: setColor <vertexId>
+                        // String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
+
+                        currentCommand = new GetNeighbouringEdgesCommand(externalCommandSegments,getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+
+                        // this.out.println(neighbourString);
                     }else if (externalCommandSegments[0].equals("getOutgoingEdges")){//format: setColor <vertexId>
                         // String neighbourString = PipingMessageHandler.handleGetConnectedNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
 

@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.algorithm;
 
+import java.util.Collection;
 import java.util.Set;
 
 import gralog.automaton.*;
@@ -50,7 +51,7 @@ public class PowersetConstructionTreeNode {
 
     public State getContentForSet(Automaton sourceAutomaton,
         Automaton resultAutomaton, Set<State> statesSubset) {
-        Set<State> allStates = sourceAutomaton.getVertices();
+        Collection<State> allStates = sourceAutomaton.getVertices();
         PowersetConstructionTreeNode run = this;
 
         for (Vertex v : allStates) {

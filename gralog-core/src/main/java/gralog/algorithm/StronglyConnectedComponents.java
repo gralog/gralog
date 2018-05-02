@@ -2,11 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
-import java.util.ArrayList;
-import java.util.Stack;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.HashMap;
+import java.util.*;
 
 import gralog.structure.*;
 import gralog.progresshandler.*;
@@ -36,7 +32,7 @@ public class StronglyConnectedComponents extends Algorithm {
         HashMap<Vertex, ArrayList<Vertex>> children = new HashMap<>(); // children in dfs tree
         HashMap<Vertex, Integer> childIterationPos = new HashMap<>(); // children-iteration position
 
-        Set<Vertex> V = s.getVertices();
+        Collection<Vertex> V = s.getVertices();
         for (Vertex v : V) {
             if (dfs.containsKey(v)) // already processed
                 continue;

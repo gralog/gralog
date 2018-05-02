@@ -87,7 +87,7 @@ public final class StructureMatchers {
     @Factory
     public static Matcher equalsStructure(Structure s) {
         return new TypeSafeMatcher<Structure>() {
-            private Map<String, Vertex> getVertexLabelMap(Set<Vertex> vertices) {
+            private Map<String, Vertex> getVertexLabelMap(Collection<Vertex> vertices) {
                 Map<String, Vertex> vertexMap = new HashMap<>();
                 for (Vertex v : vertices) {
                     if (v.label.isEmpty())
@@ -101,8 +101,8 @@ public final class StructureMatchers {
             protected boolean matchesSafely(Structure t) {
                 assertSame("Structure type", s.getClass(), t.getClass());
 
-                final Set<Vertex> sV = s.getVertices();
-                final Set<Vertex> tV = t.getVertices();
+                final Collection<Vertex> sV = s.getVertices();
+                final Collection<Vertex> tV = t.getVertices();
                 assertSame("Number of vertices", sV.size(), tV.size());
                 assertSame("Number of edges", s.getEdges().size(), t.getEdges().size());
 

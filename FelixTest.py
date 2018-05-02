@@ -2,17 +2,6 @@
 
 import sys
 from random import randint
-#data = sys.stdin.readlines()
-# line = sys.stdin.readline()
-# while(line != "x\n"):
-#     print line+"\n"
-#     line = sys.stdin.readline()
-# print "Hello " + sys.argv[1] + ", I'm printing."
-
-
-
-
-
 
 
 class Vertex:
@@ -168,6 +157,9 @@ class Graph:
 
 		return connectedNeighboursList;
 
+	def getNeighbouringEdges(self,sourceVertexId,targetVertexId):
+		line = "getNeighbouringEdges "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() " " + str(targetVertexId).rstrip();
+
 	def getOutgoingEdges(self,vertexId):
 		# indices = map(lambda vertex: vertex.id, self.endpoints);
 		# print("colorhex: " + str(colorHex));
@@ -230,117 +222,16 @@ class Graph:
 		sys.stdin.readline();
 
 
-
-
-
 	def __str__(self):
 		return "todo: tgf"
 
 
-#####functional program #######
-# recd = "null";
-# for i in range(3):
-# 	print recd; #send hello to java
-# 	sys.stdout.flush()
-# 	line = sys.stdin.readline(); #read read response from java
-# 	recd = line;
-##############################
-
-
-
-
-###algorithm: add 3 nodes to tha homie graph.
-# recd = "null";
-# myid = g.addVertex();
-# g.pauseUntilSpacePressed();
-# # g.
-
-# g.setVertexFillColor(myid,colorHex = "423097");
-# g.pauseUntilSpacePressed();
-# g.setVertexRadius(myid,5);
-
-# myidConnectedVertices = g.getConnectedNeighbours(myid);
-
-# myidConnectedVertices = myidConnectedVertices.split(" ");
-
-# g.pauseUntilSpacePressed();
-
-# for neighbourId in myidConnectedVertices:
-# 	g.setVertexFillColor(neighbourId,colorRGB=(255,0,0));
-
-# g.pauseUntilSpacePressed();
-
-# g.deleteVertex(0);
 
 
 g = Graph("undirected");#type \in buechi, directed, etc. or None
-# g2 = Graph("undirected");
 
-
-
-# 
-# g.deleteVertex(v1);
-
-
-
-# source = g.addVertex();
-# target = g.addVertex();
-
-# g.addEdge(source,target);
-# g.setEdgeColor(source,target,colorRGB=(255,0,245));
-
-
-# set1 = []
-# set2 = []
-
-# for x in range(2):
-# 	set1.append(g.addVertex());
-
-
-# for x in range(2):
-# 	set2.append(g.addVertex());
-
-# for node1 in set1:
-# 	for node2 in set2:
-# 		g.addEdge(node1,node2,True);
-
-# g.pauseUntilSpacePressed();
-
-
-# print(type(set1[0]).__name__);
-
-# allVertices = [];
 
 numV = 3;
-
-# for x in range(numV):
-# 	curr = g.addVertex();
-# 	g.addVertexLabel(curr,str(curr));
-# 	allVertices.append(curr);
-
-# g.pauseUntilSpacePressed();
-
-# for i in range(numV*2):
-# 	source = randint(0,numV-1);
-# 	target = randint(0,numV-1);
-# 	g.addEdge(source,target);
-
-# g.pauseUntilSpacePressed();
-
-# start = allVertices[0];
-
-# queue = [start];
-
-# seen = [start];
-
-# while len(queue) > 0:
-# 	curr = queue.pop(0);
-# 	neighbours = g.getConnectedNeighbours(curr);
-# 	for neighbour in neighbours:
-# 		if not (neighbour in seen):
-# 			g.setEdgeColor(curr,neighbour,colorRGB=(255,0,245));
-# 			queue.append(neighbour);
-# 			seen.append(neighbour);
 
 vertices = [];
 for x in range(numV):
@@ -365,9 +256,3 @@ for i in vertices:
 		g.pauseUntilSpacePressed();
 
 
-
-
-
-
-# for i in range(3):
-# 	print("helloo");

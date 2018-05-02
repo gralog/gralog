@@ -4,6 +4,7 @@ package gralog.finitegame.algorithm;
 
 import gralog.finitegame.structure.*;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
@@ -25,7 +26,7 @@ public class WinningRegionPlayer0 extends Algorithm {
     protected HashMap<FiniteGamePosition, Integer> winningRegions(
         FiniteGame game) {
         HashMap<FiniteGamePosition, Integer> result = new HashMap<>();
-        Set<FiniteGamePosition> V = game.getVertices();
+        Collection<FiniteGamePosition> V = game.getVertices();
         Set<FiniteGamePosition> lastIteration = new HashSet<>();
         Set<FiniteGamePosition> currentIteration = new HashSet<>();
 

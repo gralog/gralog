@@ -1,23 +1,16 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1561\cocoasubrtf200
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-<<<<<<< HEAD
-{\colortbl;\red255\green255\blue255;\red85\green142\blue40;\red85\green142\blue40;}
-{\*\expandedcolortbl;;\csgenericrgb\c33333\c55686\c15686;\csgenericrgb\c33333\c55686\c15686;}
-\margl1440\margr1440\margb1134\margt1417\vieww13140\viewh16280\viewkind1
-=======
 {\colortbl;\red255\green255\blue255;\red85\green142\blue40;}
-\margl1440\margr1440\margb1134\margt1417\vieww13740\viewh17340\viewkind1
->>>>>>> 3716aa2e240d1edbcf4808506ed3af51bd550116
-\deftab720
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+{\*\expandedcolortbl;;\csgenericrgb\c33333\c55686\c15686;}
+\margl1440\margr1440\margb1134\margt1417\vieww14940\viewh16580\viewkind1
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
-\f0\fs24 \cf0 TODO:\
-- Toolbar classes and extensions\
+\f0\fs24 \cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 - Toolbar classes and extensions\
 \cf2 - Mouse input selection improvements\
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
-\cf3 	\'95 Improve functionality for trackpad users/mice without wheel\
+	\'95 Improve functionality for trackpad users/mice without wheel\
 	\'95 Possibly alternate keys (e.g. control), other event trackers\cf0 \
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
 \cf2 - Box selection with filter\cf0 \
 - List all selection in panel, possible to filter selection by type (or deselect groups)\
 \cf2 - Graph editing without unnecessary context switching\cf0 \
@@ -48,14 +41,25 @@
 \'a0- # multiedges\
 - tool tips\
 - help\
-\kerning1\expnd0\expndtw0 \
+- 3 context menus (vertex, edge, both, empty)\
+- helper window for current key mapping \
+\kerning1\expnd0\expndtw0 - optimize graph drawing (maybe partially update rendered structure)\
+	- ask user if they want a reduced visual representation of the graph\
+- move canvas on selection draw out of bounds\
+- visualize tree decompositions (and bags, unions etc)\
+\
+DRAWING\
+- for 1st curve control point use parabola\
+- for 2nd\
+- Collapse bezier points\
+\
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
 \cf0 FRAME\
 - show selected part graph in a separate window\
 \
 KEYS\
 - keyboard hotkeys (translation, deletion, renaming, zoom)\
-- menu keys (cmd+o/s/e/t, cmd+shift+s, cmd+c/x/v, )\
+- menu keys (cmd+o/s/e/t, cmd+shift+s, \cf2 cmd+c/x/v,\cf0  )\
 - tab buttons (add tab/)\
 - changeable tab order\
 - shift/cmd select vertices/edges- Ctrl-Z undo\
@@ -77,37 +81,46 @@ VERTICES\
 - add color palette\
 - show warning when vertices overlap\
 - overload size depending on structure class\
+- drag out-in to draw self loop\
 \
 EDGES\
 - thickness and type (dashed, dotted, both, plain)\
 - arrow tip type (triangle, concave, filled, empty)\
-<<<<<<< HEAD
-- loops as circles\
-- multi-edges\
-- option to collapse edges and back\
-(more than 4 edges looks ugly)\
-- draw edge with right mouse key drag / open context with right click\
-- avoid having edges go thru nodes they don\'92t connect (see def. of embedding :))\
-=======
-- show warning when edges overlap\
+\
 \cf2 - loops as circles\cf0 \
 \cf2 - multi-edges\
 - option to collapse edges and back (more than 4 edges looks ugly)\
 - draw edge with right mouse key drag \cf0 \
 - open context with right click\
->>>>>>> 3716aa2e240d1edbcf4808506ed3af51bd550116
-\
 \
 PIPELINE\
 - gralog.print()\
 - gralog.setProgressBar()\
 - allow external program to display persistent variables\
 (that don\'92t scroll like terminal outputs)\
+- print python outputs\
+- catch native stderr python\
+- create integrated python console\
+- allow python to send requests and allow gralog\
+to return different datatypes (int, boolean, vertex etc)\
+\
 \
 \
 UI WINDOWS\
 - algorithm progressbar\
 - algorithm output console\
+\
+FUTURE\
+- hierarchical representation\
+	- edges between supernodes(define semantic)\
+	- \
+- hypergraphs\
+\
+OTHER\
+- logo\
+- UI skin\
+- find conference to present glares\
+- money\
 \
 Backlog:\
 - Classes aren\'92t properly read (ClassNotFoundException or similar)\
