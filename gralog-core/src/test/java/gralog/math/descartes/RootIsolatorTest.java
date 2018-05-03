@@ -10,12 +10,12 @@ public class RootIsolatorTest {
     @Test
     public void testGenericDescartes5(){
         //TODO: write test to validate generic descartes intervals
+        //DescartesRootIsolator.genericDescartes5(-4, 3, -5, 6, -0.2, -1);
     }
 
     @Test
-    public void testDescartesBounds(){
-        Polynomial p = new Polynomial(1, 1, 1, -1, 1, -1);
-        DescartesRootIsolator.descartesBound5(p, new Interval(6, 0));
+    public void testSturmSequenceIsolation(){
+        DescartesRootIsolator.sturmSequenceIsolation(1, -3, 3.4, -1.8, 0.4384, -0.0384);
     }
 
     @Test
