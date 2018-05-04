@@ -2,24 +2,37 @@ package gralog.math.sturm;
 
 import static org.junit.Assert.*;
 
-import gralog.math.sturm.Interval;
-import gralog.math.sturm.Polynomial;
-import gralog.math.sturm.RootIsolator;
 import org.junit.Test;
+
+import java.util.List;
 
 public class RootIsolatorTest {
 
     private static final double epsilon = 0.00001;
 
     @Test
-    public void testGenericDescartes5(){
-        //TODO: write test to validate generic descartes intervals
-        //RootIsolator.genericDescartes5(-4, 3, -5, 6, -0.2, -1);
+    public void testRootFinding(){
+        List<ExpInterval> intervals = SturmRootIsolator.findIntervals(1, -2.9, 3.2, -1.66, 0.3984, -0.03456);
+    }
+    @Test
+    public void testSturmIsolation(){
+        //Roots are found in [k,b)
+        //5 roots are between 0 and 1
+        Polynomial[] p = SturmRootIsolator.sturmSequence(1, -2.9, 3.2, -1.66, 0.3984, -0.03456);
+        List<ExpInterval> intervals  = SturmRootIsolator.findIntervals(p);
+
+        for(ExpInterval v : intervals){
+            assertTrue(v.contains(0.2) ||
+                    v.contains(0.4) ||
+                    v.contains(0.6) ||
+                    v.contains(0.8) ||
+                    v.contains(0.9));
+        }
     }
 
     @Test
     public void testSturmSequenceIsolation(){
-        Polynomial[] sequence = RootIsolator.sturmSequence(1, -3, 3.4, -1.8, 0.4384, -0.0384);
+        Polynomial[] sequence = SturmRootIsolator.sturmSequence(1, -3, 3.4, -1.8, 0.4384, -0.0384);
         validateDoubleArrays(sequence[2].coeff, 2d/25, -18d/125, 254d/3125, -222d/15625);
         validateDoubleArrays(sequence[3].coeff, 7d/25, -42d/125, 59d/625);
         validateDoubleArrays(sequence[4].coeff, 72d/21875, -216d/109375);
@@ -30,20 +43,5 @@ public class RootIsolatorTest {
             assertEquals(input[i], expected[i], epsilon);
         }
         return true;
-    }
-    @Test
-    public void testKCPolynomial(){
-        Polynomial p = new Polynomial(1, 2, 3, 4);
-        Interval v;
-
-        v = new Interval(0,0);
-        assertEquals(6.125, RootIsolator.eval(p, v, 0.5), epsilon);
-
-
-        v = new Interval(1,1);
-        assertEquals(62.375, RootIsolator.eval(p, v, 0.5), epsilon);
-
-        v = new Interval(2,1);
-        assertEquals(349.375, RootIsolator.eval(p, v, 0.5), epsilon);
     }
 }
