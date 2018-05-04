@@ -265,14 +265,14 @@ public class Edge extends XmlMarshallable implements IMovable {
 
             //draw bezier projection for debug purposes
             if(controlPoints.size() == 2){
-                /*
+            /*
                 Vector2D projection = BezierUtilities.pointProjectionAlgebraic(Vector2D.one(),
                         curve.source,
                         curve.ctrl1,
                         curve.ctrl2,
                         curve.target);
                 gc.line(Vector2D.one(), projection, GralogColor.BLUE, width);
-                */
+            */
             }
         }
 

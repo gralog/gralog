@@ -1,6 +1,13 @@
 package gralog.math.sturm;
 
+import jdk.jshell.spi.ExecutionControl;
+
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
+
+//TODO: Use simple interval pruning to reduce intervals. Maybe implement a different findRoots, or prune roots
+//in the bezier class
 
 /**
  * This class implements algorithms for isolating the roots of univariate polynomials by
@@ -15,16 +22,17 @@ import java.util.*;
  * @see <a href=https://dl.acm.org/citation.cfm?id=972166>Efficient isolation of polynomial's real roots</a>
  */
 public class SturmRootIsolator {
-
+    private static final double eps = 0.005;
     /**
      * Returns an array of root approximations of a polynomial. The method first
      * constructs isolating intervals by using Sturm sequences and then applies
      * Newton approximation to robustly find every root of the polynomial.
      *
      * If you want to use your own subdivision algorithm, use the overloaded
-     * method that accepts a list of intervals.
-     * @param p
-     * @return
+     * method that accepts a list of intervals. You might want to implement your
+     * own Interval class as well
+     *
+     * @see Interval
      */
     public static double[] findRoots(Polynomial p){
         return findRoots(p, findIntervals(p));
@@ -44,45 +52,53 @@ public class SturmRootIsolator {
      *
      * @see ExpInterval Note the semantics of the bounds
      */
-    public static double[] findRoots(Polynomial p, List<ExpInterval> intervals){
+    public static double[] findRoots(Polynomial p, List<Interval> intervals){
         double[] roots = new double[intervals.size()];
         for(int i = 0; i < roots.length; i++){
-            ExpInterval interval = intervals.get(i);
+            Interval interval = intervals.get(i);
             roots[i] = findRoot(p, interval.lowerBound(), interval.upperBound());
         }
         return roots;
     }
     public static double findRoot(Polynomial p, double from, double to){
+        System.out.println(from + " : " + to);
+        double m;
+        double tmp;
+        for(int i = 0; i < 10; i++){
+            //System.out.print(to + " : " + from);
+            m = (to + from)/2;
+            tmp = p.eval(m);
+            System.out.println(from + " : " + to);
+            if(Math.abs(tmp) < eps){
+                return tmp;
+            }else if(tmp < 0){
+                from = m;
+            }else{
+                to = m;
+            }
+        }
 
-        return 0;
+        return (to+from)/2;
     }
 
-    /**
-     * Returns a list of isolating intervals for a given coefficient sequence.
-     * The intervals are found by constructing a sturm sequence for the given
-     * polynomial and then doing a binary search on the interval [0, 1)
-     */
-    public static List<ExpInterval> findIntervals(double... coeff){
-        return findIntervals(new Polynomial(coeff));
-    }
     /**
      * Returns a list of isolating intervals for a given polynomial. The
      * intervals are found by constructing a sturm sequence for the given
      * polynomial and then doing a binary search on the interval [0, 1)
      */
-    public static List<ExpInterval> findIntervals(Polynomial p){
+    public static List<Interval> findIntervals(Polynomial p){
         return findIntervals(sturmSequence(p));
     }
     /**
      * Computes all isolating intervals with a given Sturm sequence between 0 and 1
      */
-    public static List<ExpInterval> findIntervals(Polynomial[] sequence){
+    public static List<Interval> findIntervals(Polynomial[] sequence){
         int sigma0 = countSignChanges(sequence, 0);
         int sigma1 = countSignChanges(sequence, 1);
         int max = sigma0 - sigma1;
 
         Queue<ExpInterval> intervals = new PriorityQueue<>();
-        List<ExpInterval> isolation = new ArrayList<>();
+        List<Interval> isolation = new ArrayList<>();
 
         intervals.add(new ExpInterval(1, 0));
         intervals.add(new ExpInterval(1, 1));

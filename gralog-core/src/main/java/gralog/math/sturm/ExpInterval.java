@@ -3,7 +3,7 @@ package gralog.math.sturm;
 /**
  * Represents intervals for root isolation. The interval
  */
-public class ExpInterval implements Comparable<ExpInterval>{
+public class ExpInterval implements Interval, Comparable<ExpInterval>{
 
     int k;
     double c;

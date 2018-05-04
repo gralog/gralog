@@ -12,16 +12,17 @@ public class RootIsolatorTest {
 
     @Test
     public void testRootFinding(){
-        List<ExpInterval> intervals = SturmRootIsolator.findIntervals(1, -2.9, 3.2, -1.66, 0.3984, -0.03456);
+        Polynomial p = new Polynomial(1, -2.9, 3.2, -1.66, 0.3984, -0.03456);
+        SturmRootIsolator.findRoot(p, 0.0, 0.3);
     }
     @Test
     public void testSturmIsolation(){
         //Roots are found in [k,b)
         //5 roots are between 0 and 1
         Polynomial[] p = SturmRootIsolator.sturmSequence(1, -2.9, 3.2, -1.66, 0.3984, -0.03456);
-        List<ExpInterval> intervals  = SturmRootIsolator.findIntervals(p);
+        List<Interval> intervals  = SturmRootIsolator.findIntervals(p);
 
-        for(ExpInterval v : intervals){
+        for(Interval v : intervals){
             assertTrue(v.contains(0.2) ||
                     v.contains(0.4) ||
                     v.contains(0.6) ||

@@ -1,7 +1,13 @@
 package gralog.math;
 
+import gralog.math.sturm.ExpInterval;
+import gralog.math.sturm.Interval;
+import gralog.math.sturm.Polynomial;
+import gralog.math.sturm.SturmRootIsolator;
 import gralog.rendering.Vector2D;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -60,15 +66,54 @@ public final class BezierUtilities {
 
         //derivative of function
         double dG = evalPolynomial5(t, a, b, c, d, e, f);
-        System.out.println(dG);
+
         //return dG;
 
-        double x = Math.pow(t, 3) * p3.getX() + 3 * Math.pow(t, 2) * (1 - t) * p2.getX() + 3 * Math.pow(1-t, 2) * t *p1.getX() + Math.pow(1-t, 3) * p0.getX();
-        double y = Math.pow(t, 3) * p3.getY() + 3 * Math.pow(t, 2) * (1 - t) * p2.getY() + 3 * Math.pow(1-t, 2) * t *p1.getY() + Math.pow(1-t, 3) * p0.getY();
+        double x;
+        double y;
 
-        return new Vector2D(x, y);
+        Polynomial p = new Polynomial(a,b,c,d,e,f);
+        List<Interval> intervals = pruneIntervals(p, SturmRootIsolator.findIntervals(p));
+        //List<Interval> intervals = new ArrayList<>();
+        //intervals.add(new ExpInterval(2, 2));
+
+        System.out.println(intervals);
+        double[] roots = SturmRootIsolator.findRoots(p, intervals);
+        double min = Double.MAX_VALUE;
+        double finx = 0, finy = 0;
+
+        for(int i = 0; i < roots.length; i++){
+            System.out.print(roots[i]);
+            t = roots[i];
+            x = Math.pow(t, 3) * p3.getX() + 3 * Math.pow(t, 2) * (1 - t) * p2.getX() + 3 * Math.pow(1-t, 2) * t *p1.getX() + Math.pow(1-t, 3) * p0.getX();
+            y = Math.pow(t, 3) * p3.getY() + 3 * Math.pow(t, 2) * (1 - t) * p2.getY() + 3 * Math.pow(1-t, 2) * t *p1.getY() + Math.pow(1-t, 3) * p0.getY();
+            double dist = Math.pow(m.getX() - x,2) + Math.pow(m.getY() - y, 2);
+            if(dist < min){
+                min = dist;
+                finx = x;
+                finy = y;
+            }
+        }
+
+        System.out.println();
+
+
+        return new Vector2D(finx, finy);
     }
 
+    /**
+     * Prunes intervals so that only local minima of the difference function get selected
+     */
+    private static List<Interval> pruneIntervals(Polynomial p, List<Interval> intervals){
+        List<Interval> res = new ArrayList<>();
+        System.out.println(intervals);
+        for(Interval v : intervals){
+            if(p.eval(v.lowerBound()) < p.eval(v.upperBound())){
+                res.add(v);
+            }
+        }
+        return res;
+    }
     /**
      * Evaluates a 5th degree polynomial with Horner's method.
      *
