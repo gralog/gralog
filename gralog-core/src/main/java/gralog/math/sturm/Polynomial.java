@@ -1,4 +1,4 @@
-package gralog.math.descartes;
+package gralog.math.sturm;
 
 import java.util.Arrays;
 

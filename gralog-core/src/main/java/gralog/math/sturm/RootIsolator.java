@@ -1,7 +1,6 @@
-package gralog.math.descartes;
+package gralog.math.sturm;
 
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.TreeSet;
 
@@ -16,7 +15,7 @@ import java.util.TreeSet;
  * @see <a href=https://arxiv.org/abs/1605.00410>High-performance implementation of ANewDesc and RS hybrid</a>
  * @see <a href=https://dl.acm.org/citation.cfm?id=972166>Efficient isolation of polynomial's real roots</a>
  */
-public class DescartesRootIsolator {
+public class RootIsolator {
 
 
     /**
@@ -62,8 +61,8 @@ public class DescartesRootIsolator {
 
     }
 
-    public static void sturmSequenceIsolation(double... coeff){
-        sturmSequenceIsolation(new Polynomial(coeff));
+    public static Polynomial[] sturmSequence(double... coeff){
+        return sturmSequence(new Polynomial(coeff));
     }
 
     /**
@@ -81,11 +80,11 @@ public class DescartesRootIsolator {
      * a very high precision requirement.)
      * @see <a href=https://hal.inria.fr/inria-00518379/PDF/Xiao-DiaoChen2007c.pdf>reference</a>
      */
-    public static void sturmSequenceIsolation(Polynomial p){
+    public static Polynomial[] sturmSequence(Polynomial p){
 
         int m = p.coeff.length;
 
-        Polynomial[] sturmSequence = new Polynomial[m];
+        Polynomial[] sequence = new Polynomial[m];
         double[][] a = new double[m][];
 
         for(int i = 0; i < m; i++){
@@ -104,34 +103,17 @@ public class DescartesRootIsolator {
             T[i] = a[i-2][0]/a[i-1][0];
             M[i] = (a[i-2][1] - T[i]*a[i-1][1])/a[i-1][0];
             for(int j = 0; j< m-i-1; j++){
-                a[i][j] = a[i-2][j+2] - M[i] * a[i-1][j+1] - T[i] * a[i-1][j+2];
+                a[i][j] = -a[i-2][j+2] + M[i] * a[i-1][j+1] + T[i] * a[i-1][j+2];
             }
             //the last actual iteration of the previous loop with j=m-i-1 uses a[i-1][j+2], which
             //is not defined and therefore zero.
-            a[i][m-i-1] = a[i-2][m-i+1] - M[i] * a[i-1][m-i];
+            a[i][m-i-1] = - a[i-2][m-i+1] + M[i] * a[i-1][m-i];
 
+            //after i-th iteration, sturm sequence coefficients are in a[i]
+            sequence[i] = new Polynomial(a[i]);
         }
 
-        double u = 0.5;
-
-        //WTF
-        for(int j=0; j < m-2; j++){
-            a[2][j] *= -1;
-        }
-        for(int j=0; j < m-3; j++){
-            a[3][j] *= -1;
-        }
-        //TODO: Find out why at index 2 and 3 the coefficients are all inverted....how does that behaviour change
-        //for different sized polynomials
-
-        for(int i = 0; i<m; i++){
-            sturmSequence[i] = new Polynomial(a[i]);
-            System.out.println(sturmSequence[i]);
-            a[0][i] = sturmSequence[i].eval(u);
-        }
-
-        System.out.println(countSignChanges(a[0]));
-
+        return sequence;
 
     }
     private static Interval getNode(TreeSet<Interval> tree){
