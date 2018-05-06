@@ -60,25 +60,32 @@ public class SturmRootIsolator {
         }
         return roots;
     }
+    /**
+     * Warning:
+     *
+     * This algorithm only finds roots where the derivative is negative!
+     *
+     *
+     */
     public static double findRoot(Polynomial p, double from, double to){
-        System.out.println(from + " : " + to);
+        return findRoot(p, from, to, 10);
+    }
+    public static double findRoot(Polynomial p, double from, double to, int iterations){
         double m;
         double tmp;
-        for(int i = 0; i < 10; i++){
-            //System.out.print(to + " : " + from);
+        for(int i = 0; i < iterations; i++){
             m = (to + from)/2;
             tmp = p.eval(m);
-            System.out.println(from + " : " + to);
             if(Math.abs(tmp) < eps){
-                return tmp;
-            }else if(tmp < 0){
+                return m;
+            }else if(tmp > 0){
                 from = m;
             }else{
                 to = m;
             }
         }
 
-        return (to+from)/2;
+        return (to + from)/2;
     }
 
     /**

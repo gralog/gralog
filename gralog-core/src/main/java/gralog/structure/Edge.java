@@ -21,7 +21,7 @@ import org.w3c.dom.NodeList;
 public class Edge extends XmlMarshallable implements IMovable {
 
     public static double multiEdgeOffset = 0.25;
-    private static final double SELECTION_WIDTH = 0.3;
+    private static final double SELECTION_WIDTH = 0.15;
 
     Set<EdgeListener> listeners = new HashSet<>();
 
@@ -262,18 +262,6 @@ public class Edge extends XmlMarshallable implements IMovable {
             curve.target = target.coordinates.plus(targetToCtrl2.multiply(target.radius - corr)); //corrected target
 
             gc.drawBezier(curve, edgeColor, width, type);
-
-            //draw bezier projection for debug purposes
-            if(controlPoints.size() == 2){
-            /*
-                Vector2D projection = BezierUtilities.pointProjectionAlgebraic(Vector2D.one(),
-                        curve.source,
-                        curve.ctrl1,
-                        curve.ctrl2,
-                        curve.target);
-                gc.line(Vector2D.one(), projection, GralogColor.BLUE, width);
-            */
-            }
         }
 
         //draw control points
@@ -353,6 +341,33 @@ public class Edge extends XmlMarshallable implements IMovable {
             double toX = targetOffset.getX();
             double toY = targetOffset.getY();
             return Vector2D.distancePointToLine(x, y, fromX, fromY, toX, toY) < multiEdgeOffset * 0.5;
+        }else if(controlPoints.size() == 2){
+            Vector2D m = new Vector2D(x,y);
+
+            Vector2D ctrl1 = controlPoints.get(0).getPosition();
+            Vector2D ctrl2 = controlPoints.get(1).getPosition();
+            //correction so that the arrow and line don't overlap at the end
+            //corrections are always negative if the arrow model tip is at the origin
+            double corr = arrowType.endPoint * arrowHeadLength;
+
+            Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
+            Vector2D targetToCtrl2 = ctrl2.minus(target.coordinates).normalized();
+            if(!isDirected){
+                corr = 0;
+            }
+            Vector2D source = this.source.coordinates.plus(sourceToCtrl1.multiply(this.source.radius));
+            Vector2D target = this.target.coordinates.plus(targetToCtrl2.multiply(this.target.radius - corr)); //corrected target
+
+            BezierUtilities.ProjectionResults projection = BezierUtilities.pointProjectionAlgebraic(m,
+                    source,
+                    ctrl1,
+                    ctrl2,
+                    target);
+            if(projection.successful){
+                return projection.result.minus(m).length() < SELECTION_WIDTH;
+            }else{
+                return false;
+            }
         }else{
             return false;
         }

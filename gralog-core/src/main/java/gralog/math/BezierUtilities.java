@@ -17,6 +17,13 @@ import java.util.Set;
 public final class BezierUtilities {
 
     /**
+     * Encapsulates results of a projection operation
+     */
+    public static class ProjectionResults{
+        public boolean successful;
+        public Vector2D result;
+    }
+    /**
      * This method implements an algorithm on point projections for cubic bezier curves.
      *
      * The algorithm is outlined in
@@ -36,7 +43,7 @@ public final class BezierUtilities {
      * https://hal.inria.fr/inria-00518379/PDF/Xiao-DiaoChen2007c.pdf</a>
      * @see <a href=https://ieeexplore.ieee.org/document/4392595/>alternative IEEE link</a>
      */
-    public static Vector2D pointProjectionAlgebraic(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3){
+    public static ProjectionResults pointProjectionAlgebraic(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3){
         double aa = p0.multiply(p0);
         double ab = p0.multiply(p1);
         double ac = p0.multiply(p2);
@@ -65,9 +72,7 @@ public final class BezierUtilities {
         double f = -3 * (ab - aa - pb + pa);
 
         //derivative of function
-        double dG = evalPolynomial5(t, a, b, c, d, e, f);
-
-        //return dG;
+        //double dG = evalPolynomial5(t, a, b, c, d, e, f);
 
         double x;
         double y;
@@ -77,16 +82,14 @@ public final class BezierUtilities {
         //List<Interval> intervals = new ArrayList<>();
         //intervals.add(new ExpInterval(2, 2));
 
-        System.out.println(intervals);
         double[] roots = SturmRootIsolator.findRoots(p, intervals);
         double min = Double.MAX_VALUE;
-        double finx = 0, finy = 0;
+        double finx = Double.MAX_VALUE, finy = Double.MAX_VALUE;
 
         for(int i = 0; i < roots.length; i++){
-            System.out.print(roots[i]);
             t = roots[i];
-            x = Math.pow(t, 3) * p3.getX() + 3 * Math.pow(t, 2) * (1 - t) * p2.getX() + 3 * Math.pow(1-t, 2) * t *p1.getX() + Math.pow(1-t, 3) * p0.getX();
-            y = Math.pow(t, 3) * p3.getY() + 3 * Math.pow(t, 2) * (1 - t) * p2.getY() + 3 * Math.pow(1-t, 2) * t *p1.getY() + Math.pow(1-t, 3) * p0.getY();
+            x = ((t * p3.getX() + 3 *(1 - t) * p2.getX())*t+3*Math.pow(1-t, 2) * p1.getX()) *t + Math.pow(1-t, 3) * p0.getX();
+            y = ((t * p3.getY() + 3 *(1 - t) * p2.getY())*t+3*Math.pow(1-t, 2) * p1.getY()) *t + Math.pow(1-t, 3) * p0.getY();
             double dist = Math.pow(m.getX() - x,2) + Math.pow(m.getY() - y, 2);
             if(dist < min){
                 min = dist;
@@ -94,11 +97,15 @@ public final class BezierUtilities {
                 finy = y;
             }
         }
+        ProjectionResults result = new ProjectionResults();
+        if(roots.length == 0){
+            result.successful = false;
+        }else{
+            result.result = new Vector2D(finx, finy);
+            result.successful = true;
+        }
 
-        System.out.println();
-
-
-        return new Vector2D(finx, finy);
+        return result;
     }
 
     /**
@@ -106,59 +113,13 @@ public final class BezierUtilities {
      */
     private static List<Interval> pruneIntervals(Polynomial p, List<Interval> intervals){
         List<Interval> res = new ArrayList<>();
-        System.out.println(intervals);
+
         for(Interval v : intervals){
-            if(p.eval(v.lowerBound()) < p.eval(v.upperBound())){
+            if(p.eval(v.lowerBound()) > p.eval(v.upperBound())){
                 res.add(v);
             }
         }
         return res;
-    }
-    /**
-     * Evaluates a 5th degree polynomial with Horner's method.
-     *
-     * @see <a href=https://en.wikipedia.org/wiki/Horner%27s_method>Wikipedia article for Horner's Method</a>
-     */
-    private static double evalPolynomial5(double t, double a, double b, double c, double d, double e, double f){
-        double v = a;
-        v = b + (t * v);
-        v = c + (t * v);
-        v = d + (t * v);
-        v = e + (t * v);
-        return f + (t * v);
-
-    }
-    public static double projectionDerivativeMiddle(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3){
-        double aa = p0.multiply(p0);
-        double ab = p0.multiply(p1);
-        double ac = p0.multiply(p2);
-        double ad = p0.multiply(p3);
-        double bb = p1.multiply(p1);
-        double bc = p1.multiply(p2);
-        double bd = p1.multiply(p3);
-        double cc = p2.multiply(p2);
-        double cd = p2.multiply(p3);
-        double dd = p3.multiply(p3);
-
-        double pa = m.multiply(p0);
-        double pb = m.multiply(p1);
-        double pc = m.multiply(p2);
-        double pd = m.multiply(p3);
-
-        double t = 0.5;
-
-        //polynomial coeff
-        double a = - 3 * (aa + dd + 6*(ac - ab + bd - cd) - 2*ad + 9*(bb + cc - 2*bc));
-        double b = - 15 * (ad - aa + 5*ab - 4*ac - 6*bb + 9*bc - 2*bd - 3*cc + cd);
-        double c = - (30*aa - 120*ab + 72*ac + 12*(bd - ad) + 108*(bb - bc) + 18*cc);
-        double d = - (-30*aa + 90*ab - 36*ac - 54*bb + 27*bc - 3 * (pd - 3*pc + 3*pb - pa - ad));
-        double e = - (15*aa - 30*ab + 9*bb - 6 * (pc - 2*pb + pa - ac));
-        double f = -3 * (ab - aa - pb + pa);
-
-        //derivative, horners method
-        double dG = evalPolynomial5(t, a, b, c, d, e, f);
-
-        return dG;
     }
     /**
      * Not particularly useful! Piecewise linear approximation doesn't scale well.
