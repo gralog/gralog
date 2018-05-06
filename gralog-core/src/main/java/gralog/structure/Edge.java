@@ -260,8 +260,11 @@ public class Edge extends XmlMarshallable implements IMovable {
 
             curve.source = source.coordinates.plus(sourceToCtrl1.multiply(source.radius));
             curve.target = target.coordinates.plus(targetToCtrl2.multiply(target.radius - corr)); //corrected target
-
-            gc.drawBezier(curve, edgeColor, width, type);
+            if(controlPoints.size() == 1){
+                gc.drawQuadratic(curve, edgeColor, width, type);
+            }else{
+                gc.drawBezier(curve, edgeColor, width, type);
+            }
         }
 
         //draw control points

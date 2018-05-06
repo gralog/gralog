@@ -129,6 +129,7 @@ public abstract class GralogGraphicsContext {
             color);
     }
     public abstract void drawBezier(Bezier curve, GralogColor color, double width, LineType type);
+    public abstract void drawQuadratic(Bezier curve, GralogColor color, double width, LineType type);
 
     public static class Bezier{
         public Vector2D source;

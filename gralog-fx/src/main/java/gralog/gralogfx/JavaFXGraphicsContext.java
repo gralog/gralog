@@ -102,6 +102,27 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.closePath();
         gc.setLineDashes(0);
     }
+    public void drawQuadratic(Bezier curve, GralogColor color, double width, LineType type){
+        Vector2D a = pane.modelToScreen(curve.source);
+        Vector2D b = pane.modelToScreen(curve.target);
+        Vector2D ctrl1 = pane.modelToScreen(curve.ctrl1);
+
+        gc.setStroke(Color.rgb(color.r, color.g, color.b));
+        //setting line type
+        if(type == LineType.DOTTED){
+            gc.setLineDashes(0.03 * pane.zoomFactor * pane.screenResolutionX / 2.54, 0.15 * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        }else if(type == LineType.DASHED){
+            gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        }
+        gc.setLineWidth(width * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        gc.beginPath();
+        gc.moveTo(a.getX(), a.getY());
+        gc.quadraticCurveTo(ctrl1.getX(), ctrl1.getY(), b.getX(), b.getY());
+        gc.stroke();
+        gc.closePath();
+        gc.setLineDashes(0);
+    }
+
 
     @Override
     public void circle(double centerx, double centery, double radius,
