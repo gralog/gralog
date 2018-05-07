@@ -4,7 +4,7 @@ import gralog.rendering.*;
 import java.util.Set;
 
 
-public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
+public class GetNeighboursCommand extends CommandForGralogToExecute {
 	
 
 	int sourceId;
@@ -13,7 +13,7 @@ public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
 
 
 
-	public GetOutgoingNeighboursCommand(String[] externalCommandSegments,Structure structure){
+	public GetNeighboursCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
@@ -29,7 +29,7 @@ public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
 
         if (this.sourceVertex == null){
             this.fail();
-            this.error = new Exception("error: source vertex does not exist");
+            this.error = new Exception("error: source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
             return;
         }
 	}
@@ -42,7 +42,9 @@ public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
         // int changeId;
        
         
-        Set<Vertex> neighbours = this.sourceVertex.getOutgoingNeighbours();
+        
+
+        Set<Vertex> neighbours = this.sourceVertex.getNeighbours();
 
         String neighbourString = "";
         for (Vertex v : neighbours){

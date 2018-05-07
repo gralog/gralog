@@ -151,7 +151,14 @@ public class MainWindow extends Application {
         //         doLoadPlugin(file.getAbsolutePath());
         // }
 
-        
+        // try {
+        //     String s = null;
+        //     System.out.println(s.substring(0,1));
+        // } catch (Exception ex) {
+        //     ExceptionBox exbox = new ExceptionBox();
+        //     Exception hello = new Exception("hello world");
+        //     exbox.showAndWait(hello);
+        // }
 
         try{
 

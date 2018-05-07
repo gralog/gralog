@@ -42,7 +42,7 @@ public class StronglyConnectedComponents extends Algorithm {
             index++;
 
             ArrayList<Vertex> vChildren = new ArrayList<>();
-            for (Edge e : v.getConnectedEdges())
+            for (Edge e : v.getIncidentEdges())
                 if (e.getSource() == v)
                     vChildren.add(e.getTarget());
                 else if (!e.isDirected)
@@ -64,7 +64,7 @@ public class StronglyConnectedComponents extends Algorithm {
                         parent.put(child, current);
 
                         ArrayList<Vertex> grandChildren = new ArrayList<>();
-                        for (Edge e : child.getConnectedEdges())
+                        for (Edge e : child.getIncidentEdges())
                             if (e.getSource() == child)
                                 grandChildren.add(e.getTarget());
                             else if (!e.isDirected)

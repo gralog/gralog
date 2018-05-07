@@ -4,31 +4,21 @@ import gralog.rendering.*;
 import java.util.Set;
 
 
-public class GetNeighbouringEdgesCommand extends CommandForGralogToExecute {
+public class GetIncomingEdgesCommand extends CommandForGralogToExecute {
 	
 
 	int sourceId;
 	Vertex sourceVertex;
-    int targetId;
-    Vertex targetVertex;
     // String neighbourString;
 
 
 
-	public GetNeighbouringEdgesCommand(String[] externalCommandSegments,Structure structure){
+	public GetIncomingEdgesCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-
+        System.out.println("init GetIncomingEdgesCommand");
         try{    
             this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
-            this.error = e;
-            this.fail();
-            return;
-        }
-
-        try{    
-            this.targetId = Integer.parseInt(externalCommandSegments[3]);
         }catch(NumberFormatException e){
             this.error = e;
             this.fail();
@@ -39,19 +29,9 @@ public class GetNeighbouringEdgesCommand extends CommandForGralogToExecute {
 
         if (this.sourceVertex == null){
             this.fail();
-            this.error = new Exception("error: source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
+            this.error = new Exception("error: source vertex does not exist");
             return;
         }
-
-        this.targetVertex = this.structure.getVertexById(this.targetId);
-
-        if (this.targetVertex == null){
-            this.fail();
-            this.error = new Exception("error: target vertex with id " + Integer.toString(this.targetId) + " does not exist");
-            return;
-        }
-
-       
 	}
 
 
@@ -64,20 +44,24 @@ public class GetNeighbouringEdgesCommand extends CommandForGralogToExecute {
         
         
 
-        Set<Edge> neighbouringEdges = this.sourceVertex.getIncidentEdges();
-        neighbouringEdges.addAll(this.targetVertex.getIncidentEdges());
+        Set<Edge> conncetedEdges = this.sourceVertex.getIncomingEdges();
 
+        System.out.println("here's what we got for incoming edges: ");
+        for (Edge e : conncetedEdges){
+            System.out.println(e.toString());
+        }
+        System.out.println("fin");
 
         String edgeString = "";
-        for (Edge e : neighbouringEdges){
+        for (Edge e : conncetedEdges){
             edgeString = edgeString + "("+Integer.toString(e.getSource().getId())+","+Integer.toString(e.getTarget().getId())+")"+ " ";
         }
         if (edgeString.length() > 0 && null != edgeString){
             edgeString = edgeString.substring(0,edgeString.length()-1);
         }
 
-
-        this.setResponse(edgeString);
+        System.out.println("here we our edge string |" + edgeString+ "|");
+        this.setResponse(edgeString.trim());
 
         return;
 

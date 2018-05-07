@@ -44,8 +44,8 @@ public class ModelCheckingGameFOLogic extends Algorithm {
            for(FiniteGamePosition w: gp){
                if(v!=w){
                    if(v.Label.equals(w.Label)){
-                       Set<Edge> connectedEdges=w.getConnectedEdges();
-                       for(Edge e: connectedEdges){
+                       Set<Edge> incidentEdges=w.getIncidentEdges();
+                       for(Edge e: incidentEdges){
                            if(e.getSource()!=w){
                                Vertex temp=e.getSource();
                                game.AddEdge(game.CreateEdge(temp,v) );

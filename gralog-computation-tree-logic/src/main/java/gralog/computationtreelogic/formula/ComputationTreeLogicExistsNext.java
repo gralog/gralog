@@ -22,7 +22,7 @@ public class ComputationTreeLogicExistsNext extends ComputationTreeLogicFormula 
 
         // the result is the set of predecessors of subresult
         for (World w : subresult)
-            for (Edge e : w.getConnectedEdges())
+            for (Edge e : w.getIncidentEdges())
                 if (e.getTarget() == w)
                     result.add((World) e.getSource());
 

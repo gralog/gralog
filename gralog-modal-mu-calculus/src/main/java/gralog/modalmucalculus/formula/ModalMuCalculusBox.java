@@ -84,7 +84,7 @@ public class ModalMuCalculusBox extends ModalMuCalculusFormula {
         for (Vertex v : s.getVertices()) {
             ParityGamePosition vp = index.get((World) v).get(this);
 
-            for (Edge e : v.getConnectedEdges()) {
+            for (Edge e : v.getIncidentEdges()) {
                 Action a = (Action) e;
                 if (e.getSource() != v)
                     continue;

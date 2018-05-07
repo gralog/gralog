@@ -29,7 +29,7 @@ public class Clique extends Algorithm {
                 continue;
 
             Set<Vertex> nextCandidates = new HashSet<>();
-            for (Edge e : candidate.getConnectedEdges()) { // candidates ∩ N[candidate]
+            for (Edge e : candidate.getIncidentEdges()) { // candidates ∩ N[candidate]
                 if (candidates.contains(e.getSource()))
                     nextCandidates.add(e.getSource());
                 if (candidates.contains(e.getTarget()))

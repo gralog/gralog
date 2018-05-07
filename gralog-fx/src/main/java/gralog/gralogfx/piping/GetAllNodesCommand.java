@@ -4,7 +4,7 @@ import gralog.rendering.*;
 import java.util.Set;
 
 
-public class GetConnectedNeighboursCommand extends CommandForGralogToExecute {
+public class GetAllNodesCommand extends CommandForGralogToExecute {
 	
 
 	int sourceId;
@@ -13,7 +13,7 @@ public class GetConnectedNeighboursCommand extends CommandForGralogToExecute {
 
 
 
-	public GetConnectedNeighboursCommand(String[] externalCommandSegments,Structure structure){
+	public GetAllNodesCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
@@ -44,10 +44,10 @@ public class GetConnectedNeighboursCommand extends CommandForGralogToExecute {
         
         
 
-        Set<Vertex> connectedNeighbours = this.sourceVertex.getConnectedNeighbours();
+        Set<Vertex> neighbours = this.sourceVertex.getNeighbours();
 
         String neighbourString = "";
-        for (Vertex v : connectedNeighbours){
+        for (Vertex v : neighbours){
             neighbourString = neighbourString + Integer.toString(v.getId()) + " ";
         }
         if (neighbourString.length() > 0 && null != neighbourString){

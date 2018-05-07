@@ -4,7 +4,7 @@ import gralog.rendering.*;
 import java.util.Set;
 
 
-public class GetConnectedEdgesCommand extends CommandForGralogToExecute {
+public class GetIncomingNeighboursCommand extends CommandForGralogToExecute {
 	
 
 	int sourceId;
@@ -13,7 +13,7 @@ public class GetConnectedEdgesCommand extends CommandForGralogToExecute {
 
 
 
-	public GetConnectedEdgesCommand(String[] externalCommandSegments,Structure structure){
+	public GetIncomingNeighboursCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
@@ -42,20 +42,18 @@ public class GetConnectedEdgesCommand extends CommandForGralogToExecute {
         // int changeId;
        
         
-        
+        Set<Vertex> neighbours = this.sourceVertex.getIncomingNeighbours();
 
-        Set<Edge> conncetedEdges = this.sourceVertex.getConnectedEdges();
-
-        String edgeString = "";
-        for (Edge e : conncetedEdges){
-            edgeString = edgeString + "("+Integer.toString(e.getSource().getId())+","+Integer.toString(e.getTarget().getId())+")"+ " ";
+        String neighbourString = "";
+        for (Vertex v : neighbours){
+            neighbourString = neighbourString + Integer.toString(v.getId()) + " ";
         }
-        if (edgeString.length() > 0 && null != edgeString){
-            edgeString = edgeString.substring(0,edgeString.length()-1);
+        if (neighbourString.length() > 0 && null != neighbourString){
+            neighbourString = neighbourString.substring(0,neighbourString.length()-1);
         }
 
 
-        this.setResponse(edgeString);
+        this.setResponse(neighbourString);
 
         return;
 

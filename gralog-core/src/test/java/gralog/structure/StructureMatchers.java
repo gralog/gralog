@@ -118,8 +118,8 @@ public final class StructureMatchers {
                 for (Vertex v : sV) {
                     final Vertex w = tVertexMap.get(v.label);
                     assertThat("Adjacency sets",
-                        v.getConnectedNeighbours(),
-                        equalsVertexSet(w.getConnectedNeighbours()));
+                        v.getNeighbours(),
+                        equalsVertexSet(w.getNeighbours()));
                 }
 
                 return true;

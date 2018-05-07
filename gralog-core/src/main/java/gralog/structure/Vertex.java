@@ -39,12 +39,12 @@ public class Vertex extends XmlMarshallable implements IMovable {
     Set<VertexListener> listeners;
     Set<Edge> outgoingEdges;
     Set<Edge> incomingEdges;
-    Set<Edge> connectedEdges;
+    Set<Edge> incidentEdges;
 
     public Vertex() {
         listeners = new HashSet<>();
         outgoingEdges = new HashSet<>();
-        connectedEdges = new HashSet<>();
+        incidentEdges = new HashSet<>();
         incomingEdges = new HashSet<>();
     }
 
@@ -62,7 +62,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
         this.coordinates = new Vector2D(v.coordinates);
         this.listeners = new HashSet<>(v.listeners);
 
-        this.connectedEdges = new HashSet<>(v.connectedEdges);
+        this.incidentEdges = new HashSet<>(v.incidentEdges);
         this.outgoingEdges = new HashSet<>(v.outgoingEdges);
         this.incomingEdges = new HashSet<>(v.incomingEdges);
     }
@@ -83,7 +83,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
         if (e.getTarget() == this){
             this.incomingEdges.add(e);
         }
-        this.connectedEdges.add(e);
+        this.incidentEdges.add(e);
     }
 
     void disconnectEdge(Edge e) {
@@ -93,11 +93,11 @@ public class Vertex extends XmlMarshallable implements IMovable {
         if (e.getTarget() == this){
             incomingEdges.remove(e);
         }
-        this.connectedEdges.remove(e);
+        this.incidentEdges.remove(e);
     }
 
-    public Set<Edge> getConnectedEdges() {
-        return connectedEdges;
+    public Set<Edge> getIncidentEdges() {
+        return incidentEdges;
     }
 
     public int getId(){
@@ -112,13 +112,13 @@ public class Vertex extends XmlMarshallable implements IMovable {
         return this.incomingEdges;
     }
 
-//##########START depricated!!!! use getConnectedNeighbours instead#########
+//##########START depricated!!!! use getNeighbours instead#########
     /**
      * @return The set of adjacent vertices.
      */
     public Set<Vertex> getAdjacentVertices() {
         Set<Vertex> result = new HashSet<>();
-        for (Edge e : connectedEdges) {
+        for (Edge e : incidentEdges) {
             Vertex v = e.getSource();
             if (v == this)
                 v = e.getTarget();
@@ -162,16 +162,16 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
 
-    public Set<Vertex> getConnectedNeighbours(){
-        Set<Vertex> connectedNeighbours = new HashSet<Vertex>();
-        for (Edge e : this.getConnectedEdges()){
+    public Set<Vertex> getNeighbours(){
+        Set<Vertex> neighbours = new HashSet<Vertex>();
+        for (Edge e : this.getIncidentEdges()){
             if (e.getTarget() != this){
-                connectedNeighbours.add(e.getTarget());
+                neighbours.add(e.getTarget());
             }else{
-                connectedNeighbours.add(e.getSource());
+                neighbours.add(e.getSource());
             }
         }
-        return connectedNeighbours;
+        return neighbours;
     }
 
     public Set<Vertex> getOutgoingNeighbours(){

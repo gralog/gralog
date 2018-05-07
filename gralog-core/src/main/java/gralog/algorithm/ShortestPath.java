@@ -44,7 +44,7 @@ public class ShortestPath extends Algorithm {
 
             Double distu = distances.get(u);
 
-            for (Edge e : u.getConnectedEdges()) {
+            for (Edge e : u.getIncidentEdges()) {
                 if (e.getSource() != u && e.isDirected) // incoming (directed) edge
                     continue;
 

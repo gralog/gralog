@@ -2,7 +2,7 @@
 {\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;\red85\green142\blue40;}
 {\*\expandedcolortbl;;\csgenericrgb\c33333\c55686\c15686;}
-\margl1440\margr1440\margb1134\margt1417\vieww14940\viewh16580\viewkind1
+\margl1440\margr1440\margb1134\margt1417\vieww18220\viewh16580\viewkind1
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardirnatural\partightenfactor0
 
 \f0\fs24 \cf0 \
@@ -103,12 +103,53 @@ PIPELINE\
 - create integrated python console\
 - allow python to send requests and allow gralog\
 to return different datatypes (int, boolean, vertex etc)\
-\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+\cf0 \
+\'97from Felix and roman\'92s conversation on Friday morning:\
+-Edge id\'92s\
+\strike \strikec0 -Debug: 	g.setVertexStrokeColor(x,"#ff0000");\strike0\striked0 \
+\strike \strikec0 -Named colours\strike0\striked0 \
+-Delete edge debug\
+-Set edge contour\
+-Set vertex shape\
+-Implement buttons\
+-
+\b Ask Gralog for node/edge/set of nodes/edges/userInput(bool/int/positive/string/array) input with type testing\
+-
+\b0 terminating symbol for Gralog messages\
+-Tracking variables\
+-Pause on different key events/clicks/etc.\
+-Different pause sizes (small, medium, large)\
+-Gralog show that is waiting\
+-Network x interface for terminal \
+\strike \strikec0 -Change name of getConnectedNeighbours to getNeighbours\strike0\striked0 \
+\strike \strikec0 -Add inNeighbours\strike0\striked0 \
+\strike \strikec0 -getConnectedEdges -> getIncidentEdges\strike0\striked0 \
+-inEdges \
+-getEndPoints(EdgeID)\
+-getAllNodes()\
+-getAllEdges()\
+-getRandomVertex()\
+-getRandomEdge()\
+-getNeighbouringEdges -> getAdjacentEdges\
+-Possible: outgoingEdges -> outEdges\
+-addDirectedEdge\
+-deleteEdge(EdgeId)\
+-deleteAllEdges(sourceId,targetId)\
+-addEdgeLabel/vertexLabel -> setEdgeLabel/vertexLabel\
+-Terminate program on user command\
+-Send improper termination errors to Gralog as well (such as set fault, syntax error, etc.)\
+-Keine acks :\'92( \
+-sendGraph, receiveGraph\
+-Debug mode lineumber###command\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardeftab720\ri0\partightenfactor0
+\cf0 \'97\
 \
 \
 UI WINDOWS\
 - algorithm progressbar\
 - algorithm output console\
+- scroll through tabs with scrollbar\
 \
 FUTURE\
 - hierarchical representation\

@@ -39,7 +39,7 @@ public class Automaton extends Structure<State, Transition> {
         while (!lastiteration.isEmpty()) {
 
             for (State s : lastiteration)
-                for (Edge e : s.getConnectedEdges())
+                for (Edge e : s.getIncidentEdges())
                     if (e instanceof Transition)
                         if (((Transition) e).symbol.equals("")) // epsilon transition
                             if (!result.contains((State) e.getTarget()))

@@ -191,7 +191,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             return null;
         }
 
-        for (Edge e : sourceVertex.getConnectedEdges()){
+        for (Edge e : sourceVertex.getIncidentEdges()){
             System.out.println("iterating with edge: " + e.toString() + " with input: " + Integer.toString(inputSourceId) + " and target: " + Integer.toString(inputTargetId));
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
@@ -234,9 +234,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param v The vertex to be removed.
      */
     public void removeVertex(Vertex v) {
-        Set<Edge> deletedEdges = new HashSet<>(v.connectedEdges);
+        Set<Edge> deletedEdges = new HashSet<>(v.incidentEdges);
 
         for(Edge e : deletedEdges){
+            Vertex other;
+            e.getSource().disconnectEdge(e);
+            e.getTarget().disconnectEdge(e);
             removeEdge(e);
         }
 
@@ -319,7 +322,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         //correct siblings first
         e.siblings.clear();
         int nonLoopEdges = 0;
-        for(Edge edge : e.getSource().getConnectedEdges()){
+        for(Edge edge : e.getSource().getIncidentEdges()){
             if(edge == e){
                 continue;
             }
@@ -335,6 +338,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 }
             }
         }
+
+
         //max amount of edges.
         //TODO: Maybe make that an option
         if(nonLoopEdges >= 4 && e.getSource() != e.getTarget()){
@@ -342,7 +347,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }else if (e.getSource() == e.getTarget()){
             edges.add(e);
         }else{
-            for(Edge edge : e.getSource().getConnectedEdges()){
+            for(Edge edge : e.getSource().getIncidentEdges()){
                 if(edge == e){
                     continue;
                 }
@@ -423,6 +428,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edge.setSource(source);
         edge.setTarget(target);
 
+
+
         //add correct siblings
         if (source == target && source != null) {
             edge.intermediatePoints.add(
@@ -450,7 +457,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         edgeIDs.add(new Interval(e.getSource().id, e.getTarget().id));
                     }
                 }
-                v.connectedEdges.clear();
+                v.incidentEdges.clear();
                 v.outgoingEdges.clear();
                 idToVertex.put(v.id, v);
                 //now we can correct v.id

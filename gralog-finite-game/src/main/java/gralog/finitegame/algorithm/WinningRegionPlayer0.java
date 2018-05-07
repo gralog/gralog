@@ -37,7 +37,7 @@ public class WinningRegionPlayer0 extends Algorithm {
             FiniteGamePosition p = (FiniteGamePosition) v;
 
             boolean isTerminal = true;
-            for (Edge e : p.getConnectedEdges())
+            for (Edge e : p.getIncidentEdges())
                 if (p == e.getSource()) {
                     isTerminal = false;
                     break;
@@ -51,7 +51,7 @@ public class WinningRegionPlayer0 extends Algorithm {
 
         while (lastIteration.size() > 0) {
             for (FiniteGamePosition p : lastIteration) {
-                for (Edge e : p.getConnectedEdges()) {
+                for (Edge e : p.getIncidentEdges()) {
                     FiniteGamePosition s = (FiniteGamePosition) e.getSource();
                     if (s == p) // only examine incoming edges
                         continue;
@@ -64,7 +64,7 @@ public class WinningRegionPlayer0 extends Algorithm {
                         currentIteration.add(s);
                     } else {
                         boolean allOutgoingEdgesGoToOppositeWinningRegion = true;
-                        for (Edge o : s.getConnectedEdges()) {
+                        for (Edge o : s.getIncidentEdges()) {
                             if (o.getSource() != s) // not outgoing
                                 continue;
                             if (result.containsKey((FiniteGamePosition) o.getTarget())) {

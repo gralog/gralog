@@ -31,7 +31,7 @@ public class Coloring extends Algorithm {
             int candidateChoices = 0;
             for (int i = 0; i < k; i++) {
                 boolean NeighborHasColorI = false;
-                for (Edge e : candidate.getConnectedEdges()) {
+                for (Edge e : candidate.getIncidentEdges()) {
                     Vertex neighbor = candidate == e.getSource() ? e.getTarget() : e.getSource();
                     if (clique.containsKey(neighbor)
                         && clique.get(neighbor) == i) {
@@ -55,7 +55,7 @@ public class Coloring extends Algorithm {
 
         for (int i = 0; i < k; i++) {
             boolean NeighborHasColorI = false;
-            for (Edge e : minChoicesVertex.getConnectedEdges()) {
+            for (Edge e : minChoicesVertex.getIncidentEdges()) {
                 Vertex neighbor = minChoicesVertex == e.getSource() ? e.getTarget() : e.getSource();
                 if (clique.containsKey(neighbor)
                     && clique.get(neighbor) == i) {
