@@ -22,6 +22,11 @@ public class ObjectInspector extends AnchorPane {
     private View view;
 
     public ObjectInspector (){
+
+        setStyle( "    -fx-focus-color: transparent;\n" +
+                "    -fx-faint-focus-color: transparent;\n" +
+                "-fx-border-color: transparent;");
+
         this.setPrefWidth(310.0d);
     }
     public void setObject(Object obj, StructurePane structurePane) throws Exception {
@@ -44,10 +49,10 @@ public class ObjectInspector extends AnchorPane {
         AnchorPane.setBottomAnchor(sp, 4.0);
         AnchorPane.setLeftAnchor(sp, 4.0);
 
-        if (obj == null && structurePane != null){
+        if (obj == null && structurePane != null) {
             this.getChildren().add(sp);
             return;
-        }else if(structurePane == null){
+        } else if (structurePane == null) {
             return;
         }
 
@@ -66,6 +71,10 @@ public class ObjectInspector extends AnchorPane {
         sp.setContent(viewNode);
 
         this.getChildren().add(sp);
+
+    }
+    public Node getNode(){
+        return null;
     }
     /**
      * This event handler is called when the stage is about to be closed.

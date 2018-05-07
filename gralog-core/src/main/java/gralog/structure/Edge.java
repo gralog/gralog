@@ -34,7 +34,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public Arrow arrowType = Arrow.TYPE1;
     public double arrowHeadLength = 0.2d; // cm
     public double arrowHeadAngle = 40d; // degrees
-    public double width = 2.54 / 96; // cm
+    public Double width = 2.54 / 96; // cm
 
     public GralogColor color = GralogColor.BLACK;
     public GralogGraphicsContext.LineType type = GralogGraphicsContext.LineType.PLAIN;

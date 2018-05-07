@@ -24,6 +24,8 @@ import java.nio.file.Paths;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -35,12 +37,15 @@ import javafx.scene.control.Alert.AlertType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import org.dockfx.demo.DockFX;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import org.dockfx.*;
 /**
  * The gralog main window.
  */
@@ -117,12 +122,42 @@ public class MainWindow extends Application {
 
         tabs = new Tabs(this::onChangeCurrentStructure, objectInspector);
 
+        Image dockImage = new Image(DockFX.class.getResource("docknode.png").toExternalForm());
+
+        SplitPane dockerSplit = new SplitPane();
+        DockPane rightDocker = new DockPane();
+
+        //dock.setPrefWidth(300);
+
+        //DockNode structureDock = new DockNode(tabs.getTabPane(), "", new ImageView(dockImage));
+
+
+        DockNode objDock = new DockNode(objectInspector, "obj insp", new ImageView(dockImage));
+        DockNode pluginDock = new DockNode(pluginControlPanel, "plugin control panel", new ImageView(dockImage));
+
+        objDock.setPrefHeight(250);
+        objDock.dock(rightDocker, DockPos.TOP);
+        pluginDock.dock(rightDocker, DockPos.BOTTOM);
+        //structureDock.dock(leftDocker, DockPos.CENTER);
+
+        dockerSplit.getItems().add(tabs.getTabPane());
+        dockerSplit.getItems().add(rightDocker);
+        dockerSplit.setOrientation(Orientation.HORIZONTAL);
+        dockerSplit.setDividerPositions(0.7f);
+
+        Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
+        DockPane.initializeDefaultUserAgentStylesheet();
+
         root = new BorderPane();
-        //root.setFocusTraversable(true);
         root.setTop(topPane);
-        root.setCenter(tabs.getTabPane());
-        root.setRight(rightBox);
+        root.setCenter(dockerSplit);
         root.setBottom(statusBar.getStatusBar());
+        //root.setFocusTraversable(true);
+        //root.setTop(topPane);
+        //root.setCenter(tabs.getTabPane());
+        //root.setRight(rightBox);
+        //root.setRight(dock);
+        //root.setBottom(statusBar.getStatusBar());
     }
 
     public void onLoadPlugin() {
