@@ -51,7 +51,7 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
         this.vertex.strokeColor = changeColor;
 
 
-        this.setResponse("ack");
+        this.setResponse(null);
         return;
 
 

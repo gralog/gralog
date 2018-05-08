@@ -45,7 +45,7 @@ public class SetVertexRadiusCommand extends CommandForGralogToExecute {
         vertex.radius = this.newRadius;
 
 
-        this.setResponse("ack");
+        this.setResponse(null);
         return;
 
 

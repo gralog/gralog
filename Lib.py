@@ -3,7 +3,7 @@
 import sys
 from random import randint
 
-red = "#ff0000";
+
 
 class Vertex:
 	def __init__(self,id,x = None,y=None,color = None):
@@ -56,7 +56,7 @@ class Graph:
 		# self.vertices.remove(self.vertices[indices.index(vertexId)]);
 		print "deleteVertex " +str(self.id).rstrip() + " " +  str(vertexId);
 		sys.stdout.flush();
-		sys.stdin.readline();
+		# sys.stdin.readline();
 
 	def setVertexFillColor(self,vertexId,colorHex=-1,colorRGB=-1):
 		indices = map(lambda vertex: vertex.id, self.vertices);
@@ -71,7 +71,7 @@ class Graph:
 		else:
 			return
 		sys.stdout.flush();
-		sys.stdin.readline();
+		# sys.stdin.readline();
 	
 
 	def setVertexStrokeColor(self,vertexId,colorHex=-1,colorRGB=-1):
@@ -85,7 +85,7 @@ class Graph:
 			line = "setVertexStrokeColor "+str(self.id).rstrip() + " " + str(vertexId).rstrip()  + " " + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
 			print line.rstrip();
 		sys.stdout.flush();
-		sys.stdin.readline();
+		# sys.stdin.readline();
 
 	def setEdgeColor(self,sourceVertexId,targetVertexId,colorHex=-1,colorRGB=-1):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
@@ -98,7 +98,20 @@ class Graph:
 			line = line + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
 			print(line.rstrip());
 		sys.stdout.flush();
-		sys.stdin.readline();
+		# sys.stdin.readline();
+
+	def setEdgeColor(self,(sourceVertexId,targetVertexId),colorHex=-1,colorRGB=-1):
+		# indices = map(lambda vertex: vertex.id, self.vertices);
+		# print("colorhex: " + str(colorHex));
+		line = line = "setEdgeColor "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip() + " ";
+		if not (colorHex==-1):
+			line = line + str(colorHex).rstrip();
+			print line.rstrip();
+		elif not (colorRGB == -1) and len(colorRGB) == 3:
+			line = line + str(colorRGB[0]).rstrip() + " " + str(colorRGB[1]).rstrip() + " " + str(colorRGB[2]).rstrip();
+			print(line.rstrip());
+		sys.stdout.flush();
+		# sys.stdin.readline();
 
 
 	def setVertexRadius(self,vertexId,newRadius):
@@ -110,7 +123,34 @@ class Graph:
 		print line.rstrip();
 	
 		sys.stdout.flush();
-		sys.stdin.readline();
+		# sys.stdin.readline();
+
+	def getGraph(self,format):
+		# indices = map(lambda vertex: vertex.id, self.vertices);
+		# print("colorhex: " + str(colorHex));
+		# if vertexId in indices:
+			
+		line = "getGraph "+str(self.id).rstrip() + " " + format.rstrip();
+		print line.rstrip();
+	
+		sys.stdout.flush();
+		graph = sys.stdin.readline();
+
+		print("kk just received " + graph.rstrip());
+
+		return graph;
+
+	def getAllVertices(self):
+		# indices = map(lambda vertex: vertex.id, self.vertices);
+		# print("colorhex: " + str(colorHex));
+		# if vertexId in indices:
+			
+		line = "getAllVertices "+str(self.id).rstrip();
+		print line.rstrip();
+	
+		sys.stdout.flush();
+		vertexList = (sys.stdin.readline()).split(" ");
+		return vertexList;
 
 
 	def getNeighbours(self,vertexId):
@@ -149,6 +189,27 @@ class Graph:
 		sys.stdout.flush();
 		incomingNeighboursList = (sys.stdin.readline()).split(" ");
 		return incomingNeighboursList;
+
+	def getAllEdges(self):
+		# indices = map(lambda vertex: vertex.id, self.vertices);
+		# print("colorhex: " + str(colorHex));
+		# if vertexId in indices:
+			
+		line = "getAllEdges "+str(self.id).rstrip();
+		print line.rstrip();
+	
+		sys.stdout.flush();
+		endpointList = (sys.stdin.readline()).split(" ");
+		# print("endpointList: " , endpointList);
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1]
+			# print("current term",term);
+			endpoints = term.split(",");
+			endpointList[i] = (int(endpoints[0]),int(endpoints[1]));
+
+
+		return endpointList;
 
 	def getIncidentEdges(self,vertexId):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
@@ -241,7 +302,7 @@ class Graph:
 		print line.rstrip();
 	
 		sys.stdout.flush();
-		sys.stdin.readline();
+		# sys.stdin.readline();
 
 
 	def deleteEdge(self,sourceVertexId,targetVertexId):
@@ -251,21 +312,30 @@ class Graph:
 		print line.rstrip();
 
 		sys.stdout.flush();
-		sys.stdin.readline();
+		# sys.stdin.readline();
+
+	def deleteEdge(self,(sourceVertexId,targetVertexId)):
+
+		line = "deleteEdge "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip();
+
+		print line.rstrip();
+
+		sys.stdout.flush();
+		# sys.stdin.readline();
 
 	def addEdgeLabel(self,sourceVertexId, targetVertexId, label):
 		line = "addEdgeLabel "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip() + " " + label;
 		print line.rstrip();
 
 		sys.stdout.flush();
-		sys.stdin.readline();
+		# sys.stdin.readline();
 
 	def addVertexLabel(self,vertexId, label):
 		line = "addVertexLabel "+str(self.id).rstrip() + " " + str(vertexId).rstrip() + " " + label;
 		print line.rstrip();
 
 		sys.stdout.flush();
-		sys.stdin.readline();
+		# sys.stdin.readline();
 
 
 	def pauseUntilSpacePressed(self):

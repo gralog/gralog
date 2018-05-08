@@ -44,7 +44,33 @@ public class PipingMessageHandler{
     private Structure structure;
     private StructurePane pane;
 
-    
+    public static GraphType properGraphFormats(String format){
+
+        
+        List<String> tikz = Arrays.asList("tikz");
+        List<String> trivial = Arrays.asList("trivial","tgf");
+        List<String> xml = Arrays.asList("xml");
+     
+        GraphType graphType = GraphType.Null;
+        for (String piece : format.split(" ")){
+
+
+            piece = piece.toLowerCase();
+            if (tikz.contains(piece)){
+                graphType = GraphType.Tikz;
+            }
+            
+                
+            if (trivial.contains(piece)){
+                graphType = GraphType.Tgf;
+            }
+                
+            if (xml.contains(piece)){
+                graphType = GraphType.Xml;
+            }
+        }
+        return graphType;
+    }
 
     
     public static String properGraphNames(String name){
@@ -150,6 +176,14 @@ public class PipingMessageHandler{
             // Vertex toAdd = PipingMessageHandler.handleAddVertex(externalCommandSegments,this.structure);
             // this.out.println(Integer.toString(toAdd.getId()));
             return currentCommand;
+        }else if (externalCommandSegments[0].equals("getGraph")){ //user input simulation
+
+            currentCommand = new GetGraphCommand(externalCommandSegments,structure);
+            Structure currentStructure = structure;
+            // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+
+
         }else if (externalCommandSegments[0].equals("deleteVertex")){ //user input simulation
             System.out.println("received message to delete vertex " + externalCommandSegments[2]);
 
@@ -191,6 +225,18 @@ public class PipingMessageHandler{
             // currentCommand.setStructure(currentStructure);
             return currentCommand;
             // this.out.println("ack");
+        }else if (externalCommandSegments[0].equals("getAllEdges")){//format: setColor <vertexId>
+            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
+            currentCommand = new GetAllEdgesCommand(externalCommandSegments,structure);
+            // Structure currentStructure = structure;
+            return currentCommand;
+            // this.out.println(neighbourString);
+        }else if (externalCommandSegments[0].equals("getAllVertices")){//format: setColor <vertexId>
+            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
+            currentCommand = new GetAllVerticesCommand(externalCommandSegments,structure);
+            // Structure currentStructure = structure;
+            return currentCommand;
+            // this.out.println(neighbourString);
         }else if (externalCommandSegments[0].equals("getNeighbours")){//format: setColor <vertexId>
             // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
             System.out.println("neibas reqd");

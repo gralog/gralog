@@ -68,7 +68,7 @@ public class SetEdgeColorCommand extends CommandForGralogToExecute {
         this.edge.color = changeColor;
 
 
-        this.setResponse("ack");
+        this.setResponse(null);
         return;
 
 

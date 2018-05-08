@@ -60,7 +60,7 @@ public class AddVertexLabelCommand extends CommandForGralogToExecute {
 
         this.vertex.setLabel(this.label);
 
-        this.setResponse("ack");
+        this.setResponse(null);
 
         return;
 

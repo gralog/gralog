@@ -47,7 +47,7 @@ public class SetVertexFillColorCommand extends CommandForGralogToExecute {
         this.vertex.fillColor = changeColor;
 
 
-        this.setResponse("ack");
+        this.setResponse(null);
         return;
 
 

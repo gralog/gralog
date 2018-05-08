@@ -43,6 +43,35 @@ public class TrivialGraphFormatExport extends ExportFilter {
         stream.write("#" + linefeed);
     }
 
+    public static String exportToString(Structure structure){
+        HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
+        Integer i = 1;
+        String separator = System.getProperty("line.separator");
+
+        String retString = "";
+
+        Collection<Vertex> V = structure.getVertices();
+        for (Vertex v : V) {
+            nodeIndex.put(v, i);
+            retString += Integer.toString(i) + separator;
+            // stream.write(i + linefeed);
+            i++;
+        }
+
+        retString += "#" + separator;
+
+        // stream.write("#" + linefeed);
+
+        Set<Edge> E = structure.getEdges();
+        for (Edge e : E){
+            retString += nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + separator;
+            // stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + linefeed);
+        }
+        // stream.write("#" + linefeed);
+        retString += "#" + separator;
+        return retString;
+    }
+
     @Override
     public Map<String, Vertex> getVertexNames(Structure structure,
         ExportFilterParameters params) throws Exception {

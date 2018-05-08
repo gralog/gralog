@@ -63,7 +63,7 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         this.structure.addEdge(e);
 
-        this.setResponse("ack");
+        this.setResponse(null);
 
         return;
 

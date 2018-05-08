@@ -84,7 +84,7 @@ public class AddEdgeLabelCommand extends CommandForGralogToExecute {
 
         this.edgeToAddLabelTo.setLabel(this.label);
 
-        this.setResponse("ack");
+        this.setResponse(null);
 
         return;
 

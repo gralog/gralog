@@ -6,6 +6,7 @@ import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
 import gralog.events.*;
 import gralog.rendering.*;
+import gralog.exportfilter.*;
 
 import java.util.*;
 import javax.xml.transform.stream.StreamResult;
@@ -764,6 +765,36 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     public String xmlToString() throws Exception{
+
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        Document doc = docBuilder.newDocument(); //a new xml document
+
+        Element root = doc.createElement("graphml"); //<graphml></graphml>
+        Element snode = toXml(doc); //<restOfGraph></restOfGraph>
+        if (snode == null)
+            throw new Exception("Error writing to XML");
+        root.appendChild(snode);
+        doc.appendChild(root);
+
+
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(root);
+        StreamResult result = new StreamResult(new StringWriter());
+
+
+
+        transformer.transform(source, result);
+
+        String strObject = result.getWriter().toString();
+
+        return strObject;
+
+    }
+
+    public String tgfToString() throws Exception{
 
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docFactory.newDocumentBuilder();

@@ -73,7 +73,7 @@ public class DeleteEdgeCommand extends CommandForGralogToExecute {
 
         this.structure.removeEdge(this.edgeToDelete);
 
-        this.setResponse("ack");
+        this.setResponse(null);
 
         return;
 

@@ -222,10 +222,11 @@ public class Piping{
                         System.out.println("handling");
                         currentCommand.handle();
                         System.out.println("handled");
-                        if (! currentCommand.didFail()){
-                            this.out.println(currentCommand.getResponse());    
+                        String response;
+                        if (! currentCommand.didFail() && (response = currentCommand.getResponse()) != null){
+                            System.out.println("no error, response is: " + response);
+                            this.out.println(response);
                         }
-                        
                     }else{
 
                         ExceptionBox exbox = new ExceptionBox();

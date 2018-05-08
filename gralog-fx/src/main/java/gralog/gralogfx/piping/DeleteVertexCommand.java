@@ -43,7 +43,7 @@ public class DeleteVertexCommand extends CommandForGralogToExecute {
 
         // return "ack";
 
-        this.setResponse("ack");
+        this.setResponse(null);
         return;
 
 
