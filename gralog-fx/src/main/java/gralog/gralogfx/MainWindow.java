@@ -20,6 +20,7 @@ import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.zip.Adler32;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -109,16 +110,16 @@ public class MainWindow extends Application {
 
 
         rightBox = new HBox();
-        inspectorSplit = new SplitPane();
+        //inspectorSplit = new SplitPane();
 
         ObjectInspector objectInspector = new ObjectInspector();
 
-        inspectorSplit.getItems().add(objectInspector);
-        inspectorSplit.getItems().add(pluginControlPanel);
-        inspectorSplit.setOrientation(Orientation.VERTICAL);
+        //inspectorSplit.getItems().add(objectInspector);
+        //inspectorSplit.getItems().add(pluginControlPanel);
+        //inspectorSplit.setOrientation(Orientation.VERTICAL);
 
-        rightBox.getChildren().add(inspectorSplit);
-        rightBox.setVisible(false);
+        //rightBox.getChildren().add(inspectorSplit);
+        //rightBox.setVisible(false);
 
         tabs = new Tabs(this::onChangeCurrentStructure, objectInspector);
 
@@ -132,13 +133,16 @@ public class MainWindow extends Application {
         //DockNode structureDock = new DockNode(tabs.getTabPane(), "", new ImageView(dockImage));
 
 
-        DockNode objDock = new DockNode(objectInspector, "obj insp", new ImageView(dockImage));
+        DockNode objDock = new DockNode(objectInspector, "obj inspector", new ImageView(dockImage));
         DockNode pluginDock = new DockNode(pluginControlPanel, "plugin control panel", new ImageView(dockImage));
 
         objDock.setPrefHeight(250);
         objDock.dock(rightDocker, DockPos.TOP);
         pluginDock.dock(rightDocker, DockPos.BOTTOM);
-        //structureDock.dock(leftDocker, DockPos.CENTER);
+
+        objDock.setFloatable(false);
+
+        pluginDock.setFloatable(false);
 
         dockerSplit.getItems().add(tabs.getTabPane());
         dockerSplit.getItems().add(rightDocker);
@@ -146,7 +150,6 @@ public class MainWindow extends Application {
         dockerSplit.setDividerPositions(0.7f);
 
         Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
-        DockPane.initializeDefaultUserAgentStylesheet();
 
         root = new BorderPane();
         root.setTop(topPane);
@@ -455,6 +458,7 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-height", 800));
 
         scene.getStylesheets().add("/stylesheet.css");
+        scene.getStylesheets().add(DockPane.class.getResource("default.css").toExternalForm());
         this.stage = primaryStage;
         primaryStage.setMinHeight(500);
         primaryStage.setMinWidth(400);

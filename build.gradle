@@ -95,6 +95,7 @@ project(':gralog-fx') {
   dependencies {
     gralog project(':gralog-core')
     gralog project(':gralog-finite-game')
+    gralog project(':gralog-dockfx')
   }
   // This subproject contains the main class.
   jar {
@@ -107,7 +108,11 @@ project(':gralog-fx') {
 // Configure the dependencies of the individual subprojects.  Rule:
 // Use the "gralog" configuration for "gralog-" internal dependencies.
 // Use the "compile" configuration for external dependencies.
+project(':gralog-dockfx') {
+  dependencies{
 
+  }
+}
 project(':gralog-automaton') {
   dependencies {
     gralog project(':gralog-core')
@@ -184,7 +189,6 @@ project(':gralog-jgrapht-bridge') {
     compile 'org.jgrapht:jgrapht-core:0.9.2'
   }
 }
-
 // Let the subproject jars explicitly depend on their dependencies.
 subprojects {
   jar {
@@ -236,6 +240,7 @@ project(':gralog-fx') {
 }
 
 compileJava.dependsOn(copySubprojects)
+
 
 // We need to start gralog as a jar because it uses some crazy
 // reflection.
