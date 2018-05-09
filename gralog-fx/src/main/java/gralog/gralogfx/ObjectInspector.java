@@ -11,23 +11,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 
 /**
  *
  */
 public class ObjectInspector extends AnchorPane {
 
-    public static final double MIN_HEIGHT = 320;
-
     private View view;
 
     public ObjectInspector (){
-
-        setStyle( "    -fx-focus-color: transparent;\n" +
-                "    -fx-faint-focus-color: transparent;\n" +
-                "-fx-border-color: transparent;");
-
-        this.setPrefWidth(310.0d);
+        //this.setPrefWidth(310.0d);
     }
     public void setObject(Object obj, StructurePane structurePane) throws Exception {
         setObject(obj, structurePane, (b) -> {
@@ -41,8 +35,8 @@ public class ObjectInspector extends AnchorPane {
 
         ScrollPane sp = new ScrollPane();
 
-        //sp.setPrefViewportHeight(MIN_HEIGHT);
-        sp.setPrefViewportWidth(290);
+        sp.setStyle("-fx-background-color:transparent;");
+
 
         AnchorPane.setTopAnchor(sp, 4.0);
         AnchorPane.setRightAnchor(sp, 4.0);

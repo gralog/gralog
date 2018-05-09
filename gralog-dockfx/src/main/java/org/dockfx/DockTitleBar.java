@@ -228,6 +228,9 @@ public class DockTitleBar extends HBox implements EventHandler<MouseEvent> {
 
         // fire the dock over event for the active stages
         for (DockPane dockPane : dockPanes) {
+            if(dockPane.getScene() == null){
+                continue;
+            }
             Window window = dockPane.getScene().getWindow();
             if (!(window instanceof Stage)) continue;
             Stage targetStage = (Stage) window;

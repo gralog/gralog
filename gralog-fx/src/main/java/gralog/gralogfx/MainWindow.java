@@ -20,7 +20,6 @@ import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.zip.Adler32;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -59,7 +58,7 @@ public class MainWindow extends Application {
     private StatusBar statusBar;
 
     private HBox rightBox;
-    private SplitPane inspectorSplit;
+    private DockNode structureNode;
 
     public MainWindow() {
         MainMenu.Handlers handlers = new MainMenu.Handlers();
@@ -123,26 +122,38 @@ public class MainWindow extends Application {
 
         tabs = new Tabs(this::onChangeCurrentStructure, objectInspector);
 
-        Image dockImage = new Image(DockFX.class.getResource("docknode.png").toExternalForm());
+        //Image dockImage = new Image(DockFX.class.getResource("docknode.png").toExternalForm());
 
         SplitPane dockerSplit = new SplitPane();
         DockPane rightDocker = new DockPane();
+        DockPane mainDockPane = new DockPane();
+        structureNode = new DockNode(tabs.getTabPane());
+
 
         //dock.setPrefWidth(300);
 
         //DockNode structureDock = new DockNode(tabs.getTabPane(), "", new ImageView(dockImage));
 
 
-        DockNode objDock = new DockNode(objectInspector, "obj inspector", new ImageView(dockImage));
-        DockNode pluginDock = new DockNode(pluginControlPanel, "plugin control panel", new ImageView(dockImage));
+        DockNode objDock = new DockNode(objectInspector, "Object Inspector", null);
+        DockNode pluginDock = new DockNode(pluginControlPanel, "External Algorithm", null);
+
+
+        structureNode.setPrefWidth(Double.MAX_VALUE);
+        structureNode.dock(mainDockPane, DockPos.TOP);
+        structureNode.setDockTitleBar(null);
+
+        objDock.dock(mainDockPane, DockPos.RIGHT);
 
         objDock.setPrefHeight(250);
-        objDock.dock(rightDocker, DockPos.TOP);
-        pluginDock.dock(rightDocker, DockPos.BOTTOM);
+        objDock.setPrefWidth(270);
+        objDock.setMinWidth(270);
 
-        objDock.setFloatable(false);
+        pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
 
-        pluginDock.setFloatable(false);
+        pluginDock.setPrefWidth(270);
+        pluginDock.setMinWidth(270);
+
 
         dockerSplit.getItems().add(tabs.getTabPane());
         dockerSplit.getItems().add(rightDocker);
@@ -153,7 +164,7 @@ public class MainWindow extends Application {
 
         root = new BorderPane();
         root.setTop(topPane);
-        root.setCenter(dockerSplit);
+        root.setCenter(mainDockPane);
         root.setBottom(statusBar.getStatusBar());
         //root.setFocusTraversable(true);
         //root.setTop(topPane);

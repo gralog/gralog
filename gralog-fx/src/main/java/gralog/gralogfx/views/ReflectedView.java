@@ -20,11 +20,12 @@ import javax.sound.sampled.Line;
  */
 @ViewDescription(forClass = Object.class)
 public class ReflectedView extends GridPaneView<Object> {
-
+    private static final double LABEL_WIDTH = 100;
+    private static final double MAX_FIELD_WIDTH = 150;
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
-        this.setPrefWidth(280);
+        //this.setPrefWidth(280);
         int i = 0;
 
         try {
@@ -33,6 +34,7 @@ public class ReflectedView extends GridPaneView<Object> {
                 for (Field f : c.getFields()) {
                     String name = f.getName();
                     Label nameLabel = new Label(name);
+                    nameLabel.setPrefWidth(LABEL_WIDTH);
 
                     Object value = f.get(displayObject);
                     Control valueControl = null;
@@ -112,6 +114,7 @@ public class ReflectedView extends GridPaneView<Object> {
                     }
 
                     if (valueControl != null) {
+                        valueControl.setMaxWidth(MAX_FIELD_WIDTH);
                         add(nameLabel, 0, i);
                         add(valueControl, 1, i);
                         i++;
