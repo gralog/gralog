@@ -1,7 +1,9 @@
 /* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
-package gralog.gralogfx;
+package gralog.gralogfx.panels;
 
+import gralog.gralogfx.StructurePane;
+import gralog.gralogfx.Tabs;
 import gralog.gralogfx.views.View;
 import gralog.gralogfx.views.ViewManager;
 
@@ -16,13 +18,19 @@ import javafx.scene.paint.Color;
 /**
  *
  */
-public class ObjectInspector extends AnchorPane {
+public class ObjectInspector extends Pane {
 
     private View view;
+    private Tabs tabView;
 
-    public ObjectInspector (){
-        //this.setPrefWidth(310.0d);
+    public ObjectInspector(){
+
     }
+
+    public ObjectInspector (Tabs tabView){
+        this.tabView = tabView;
+    }
+
     public void setObject(Object obj, StructurePane structurePane) throws Exception {
         setObject(obj, structurePane, (b) -> {
         });
@@ -38,10 +46,10 @@ public class ObjectInspector extends AnchorPane {
         sp.setStyle("-fx-background-color:transparent;");
 
 
-        AnchorPane.setTopAnchor(sp, 4.0);
-        AnchorPane.setRightAnchor(sp, 4.0);
-        AnchorPane.setBottomAnchor(sp, 4.0);
-        AnchorPane.setLeftAnchor(sp, 4.0);
+        //AnchorPane.setTopAnchor(sp, 4.0);
+        //AnchorPane.setRightAnchor(sp, 4.0);
+        //AnchorPane.setBottomAnchor(sp, 4.0);
+        //AnchorPane.setLeftAnchor(sp, 4.0);
 
         if (obj == null && structurePane != null) {
             this.getChildren().add(sp);

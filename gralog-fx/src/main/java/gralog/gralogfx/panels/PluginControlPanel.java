@@ -1,40 +1,76 @@
 package gralog.gralogfx.panels;
 
+import gralog.structure.Highlights;
+import gralog.structure.Structure;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import org.dockfx.DockNode;
 
-public class PluginControlPanel extends AnchorPane {
+public class PluginControlPanel extends AnchorPane implements GralogWindow{
 
-    public PluginControlPanel(Runnable onPlay, Runnable onPause, Runnable onStep){
+    private ProgressBar pb;
+    private Button pause,play,step;
+
+    public PluginControlPanel(){
+        setMaxWidth(270);
+
+        VBox vbox = new VBox();
         HBox hbox = new HBox();
         hbox.prefWidthProperty().bind(this.widthProperty());
+        vbox.prefWidthProperty().bind(this.widthProperty());
         prefWidthProperty().bind(this.widthProperty());
 
-        Button b0 = createButton("\u25B6");
-        b0.setOnMouseClicked(event -> onPlay.run());
+        play = createButton("\u25B6");
 
-        Button b1 = createButton(">>");
-        b1.setOnMouseClicked(event -> onStep.run());
 
-        Button b2 = createButton("||");
-        b2.setOnMouseClicked(event -> onPause.run());
+        step = createButton(">>");
 
-        Button b3 = createButton("∫");
-        hbox.getChildren().addAll(b0, b1, b2, b3);
+
+        pause = createButton("||");
+
+        pb = new ProgressBar(0f);
+
+        pb.prefWidthProperty().bind(this.widthProperty());
+        pb.setPrefHeight(20);
+
+        hbox.getChildren().addAll(pause,play,step,pb);
+        vbox.getChildren().addAll(hbox, pb);
 
         AnchorPane.setLeftAnchor(hbox, 4.0);
         AnchorPane.setRightAnchor(hbox, 4.0);
         AnchorPane.setBottomAnchor(hbox, 4.0);
         AnchorPane.setTopAnchor(hbox, 2.0);
 
-        this.getChildren().add(hbox);
-        setMinHeight(200);
+        this.getChildren().add(vbox);
+    }
+    public void setOnPlay(Runnable onPlay){
+        play.setOnMouseClicked(event -> onPlay.run());
+    }
+    public void setOnPause(Runnable onPause){
+        pause.setOnMouseClicked(event -> onPause.run());
+    }
+    public void setOnStep(Runnable onStep){
+        step.setOnMouseClicked(event -> onStep.run());
+    }
+
+    public void setProgress(double progress){
+        if(pb != null){
+            pb.setProgress(progress);
+        }
     }
 
     private Button createButton(String label){
         Button b = new Button(label);
-        b.setPrefWidth(200);
+        b.setMaxWidth(90);
+        b.prefWidthProperty().bind(widthProperty().divide(3));
+
         return b;
     }
+    @Override
+    public void notifyStructureChange(Structure structure) { }
+
+    @Override
+    public void notifyHighlightChange(Highlights highlights) { }
 }

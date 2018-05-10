@@ -5,6 +5,7 @@ package gralog.gralogfx;
 import gralog.algorithm.AlgorithmParameters;
 import gralog.generator.*;
 
+import gralog.gralogfx.panels.ObjectInspector;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
+import gralog.gralogfx.panels.ObjectInspector;
 import gralog.structure.*;
 import gralog.algorithm.*;
 

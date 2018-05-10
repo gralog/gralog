@@ -27,6 +27,8 @@ import javax.xml.transform.OutputKeys;
 public abstract class Structure<V extends Vertex, E extends Edge>
     extends XmlMarshallable implements IMovable {
 
+    private final Set<StructureListener> listeners = new HashSet<>();
+
     protected HashMap<Integer, V> vertices;
     protected Set<E> edges;
 
@@ -41,7 +43,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             return "("+ a + ", " + b + ")";
         }
     }
-    private final Set<StructureListener> listeners = new HashSet<>();
 
     public Structure() {
         vertices = new HashMap<>();

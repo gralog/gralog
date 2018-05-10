@@ -4,6 +4,7 @@ package gralog.gralogfx;
 
 import gralog.exportfilter.*;
 
+import gralog.gralogfx.panels.ObjectInspector;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
