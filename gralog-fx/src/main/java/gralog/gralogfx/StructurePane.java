@@ -10,6 +10,7 @@ import gralog.gralogfx.events.*;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
@@ -37,11 +38,16 @@ public class StructurePane extends StackPane implements StructureListener {
     private static Color selectionBoxColor = Color.rgb(40, 110, 160, 0.3);
     private static final EventType<StructurePaneEvent> ALL_STRUCTUREPANE_EVENTS
         = new EventType<>("ALL_STRUCTUREPANE_EVENTS");
-    private static final EventType<StructurePaneEvent> STRUCTUREPANE_SELECTIONCHANGED
-        = new EventType<>(ALL_STRUCTUREPANE_EVENTS, "STRUCTUREPANE_SELECTIONCHANGED");
 
-    public void setOnSelectionChanged(EventHandler<StructurePaneEvent> handler) {
-        this.setEventHandler(STRUCTUREPANE_SELECTIONCHANGED, handler);
+    private List<Consumer<Highlights>> highlightsSubribers = new ArrayList<>();
+    private List<Consumer<Structure>> structureSubscribers = new ArrayList<>();
+
+    public void setOnHighlightsChanged(Consumer<Highlights> highlightsSubribers) {
+        this.highlightsSubribers.add(highlightsSubribers);
+    }
+
+    public void setOnStructureChanged(Consumer<Structure> structureSubscribers) {
+        this.structureSubscribers.add(structureSubscribers);
     }
 
     Structure structure;
@@ -193,15 +199,15 @@ public class StructurePane extends StackPane implements StructureListener {
 //                    this.requestRedraw();
 //                    break;
                 case D:
-                    List<Vertex> duplicates = structure.duplicate(highlights.getSelection(), gridSize);
+                    List<Object> duplicates = structure.duplicate(highlights.getSelection(), gridSize);
                     structure.snapToGrid(gridSize);
-                    highlights.clearSelection();
-                    highlights.selectAll(duplicates);
+                    clearSelection();
+                    selectAll(duplicates);
                     this.requestRedraw();
                     break;
                 case A:
                     if(e.isControlDown() || e.isMetaDown()){
-                        highlights.selectAll(structure.getAllMovablesModifiable());
+                        selectAll(structure.getAllMovablesModifiable());
                         this.requestRedraw();
                     }
                     this.requestRedraw();
@@ -234,26 +240,21 @@ public class StructurePane extends StackPane implements StructureListener {
                 if(selected instanceof CurveControlPoint){
                     //select only the edge and the bezier control point.
                     CurveControlPoint controlPoint = (CurveControlPoint) selected;
-                    clearSelection();
-                    select(controlPoint.parent);
-                    select(selected);
+                    selectAllExclusive(controlPoint.parent, selected);
                     dragging = highlights.getSelection();
                     selectedCurveControlPoint = true;
                 }else{
                     //reassign selection to object that was not in the list
                     if(!e.isControlDown() && !highlights.isSelected(selected)){
-                        clearSelection();
+                        selectExclusive(selected);
+                    }else{
+                        select(selected);
                     }
-
-                    select(selected);
                     dragging = highlights.getSelection();
 
                     if(selected instanceof Edge){
                         holdingEdge = (Edge) selected;
                         holdingEdgeStartingPosition = Vector2D.point2DToVector(mousePositionModel);
-                    }
-                    if(selected instanceof Vertex){
-                        System.out.println(((Vertex)selected).id);
                     }
                 }
             }
@@ -298,18 +299,10 @@ public class StructurePane extends StackPane implements StructureListener {
             if(distSquared(screenToModel(boxingStartingPosition), mousePositionModel) > 0.01){
 
                 Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
-                highlights.selectAll(objs);
+                selectAll(objs);
             }
         }
-        //mouse release dissolves selection group, but not when
-        //1) the selection group has been moved = wasDraggingPrimary
-        //2) another item has been added to the selection = isControlDown
-        //3) the button released wasn't primary
-        else if(b == MouseButton.PRIMARY && !e.isControlDown() && !wasDraggingPrimary){
-            Object lastAdded = highlights.lastAdded();
-            clearSelection();
-            select(lastAdded);
-        }
+
         //right release on a vertex while drawing an edge = add edge
         else if(b == MouseButton.SECONDARY && selected instanceof Vertex && currentEdgeStartingPoint != null){
             structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
@@ -347,8 +340,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     if(mousePositionModel.minus(holdingEdgeStartingPosition).length() > 0.2){
                         CurveControlPoint ctrl = holdingEdge.addCurveControlPoint(mousePositionModel);
                         clearSelection();
-                        select(ctrl);
-                        select(holdingEdge);
+                        selectAllExclusive(ctrl, holdingEdge);
                         selectedCurveControlPoint = true;
                         holdingEdge = null;
                     }
@@ -514,23 +506,39 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public void select(Object obj) {
         highlights.select(obj);
-        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+        highlightsSubribers.forEach(c -> c.accept(highlights));
     }
-    public void select(List<IMovable> list) {
-        for(IMovable obj : list){
-            highlights.select(obj);
-        }
-        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+
+    public void selectExclusive(Object obj) {
+        highlights.clearSelection();
+        highlights.select(obj);
+        highlightsSubribers.forEach(c -> c.accept(highlights));
     }
-    public void selectAll(Collection elems) {
+
+    public void selectAll(Collection<?> elems) {
         highlights.selectAll(elems);
-        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+        highlightsSubribers.forEach(c -> c.accept(highlights));
+    }
+
+    public void selectAllExclusive(Object... elems) {
+        highlights.clearSelection();
+        for(Object e : elems){
+            highlights.select(e);
+        }
+        highlightsSubribers.forEach(c -> c.accept(highlights));
     }
 
     public void clearSelection() {
+        boolean wasEmpty = false;
+        if(highlights.getSelection().isEmpty()){
+            wasEmpty = true;
+        }
         highlights.clearSelection();
         selectedCurveControlPoint = false;
-        this.fireEvent(new StructurePaneEvent(STRUCTUREPANE_SELECTIONCHANGED));
+
+        if(!wasEmpty){
+            highlightsSubribers.forEach(c -> c.accept(highlights));
+        }
     }
 
     private boolean wasDragging(){

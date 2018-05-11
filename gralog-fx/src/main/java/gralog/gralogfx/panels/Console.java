@@ -64,6 +64,7 @@ public class Console extends VBox implements GralogWindow{
         });
 
         output = new TextArea();
+        output.setWrapText(true);
         output.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
         output.setEditable(false);
         output.setFocusTraversable(false);

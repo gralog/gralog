@@ -396,9 +396,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
         return edge;
     }
-    public List<V> duplicate(Set<Object> selection){ return duplicate(selection, 1); }
-    public List<V> duplicate(Set<Object> selection, double offset) {
-        List<V> result = new ArrayList<>();
+    public List<Object> duplicate(Set<Object> selection){ return duplicate(selection, 1); }
+
+    public List<Object> duplicate(Set<Object> selection, double offset) {
+        List<Object> result = new ArrayList<>();
         HashMap<Integer, V> idToVertex = new HashMap<>();
         HashSet<Interval> edgeIDs = new HashSet<>();
 
@@ -424,7 +425,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         for(Interval edge : edgeIDs){
             //TODO: instead of addEdge consider directly adding edges, since duplication occurs only
             //with graphs that already fulfill the desired properties
-            addEdge(idToVertex.get(edge.a), idToVertex.get(edge.b));
+            Edge tmp = addEdge(idToVertex.get(edge.a), idToVertex.get(edge.b));
+            result.add(tmp);
         }
 
         return result;

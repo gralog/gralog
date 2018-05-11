@@ -4,6 +4,7 @@ package gralog.gralogfx;
 
 import gralog.gralogfx.panels.GralogWindow;
 import gralog.structure.DirectedGraph;
+import gralog.structure.Highlights;
 import gralog.structure.Structure;
 
 import java.util.HashSet;
@@ -33,7 +34,6 @@ public class Tabs {
 
         tabPane = new TabPane();
 
-        //if the tab was added after, the onChangeTab event would fire
         tabPane.getSelectionModel().selectedItemProperty()
             .addListener(e -> onChangeTab());
     }
@@ -63,7 +63,9 @@ public class Tabs {
         tabPane.getTabs().add(t);
         tabPane.getSelectionModel().select(t);
         structurePane.draw();
-        structurePane.setOnSelectionChanged(e -> onChangeStructurePane(structurePane));
+
+        structurePane.setOnHighlightsChanged(this::onHighlightsChange);
+        structurePane.setOnStructureChanged(this::onStructureChange);
 
         onChangeTabHandler.run();
     }
@@ -96,27 +98,17 @@ public class Tabs {
     }
 
     private void onChangeTab() {
-        onChangeStructurePane(getCurrentStructurePane());
+        onStructureChange(getCurrentStructurePane().structure);
     }
 
-    private void onChangeStructurePane(StructurePane sender) {
-        try {
-            Set<Object> selection = null;
-            if (sender != null) {
-                selection = sender.highlights.getSelection();
-                sender.requestRedraw();
-            }
-            if (selection != null && selection.size() == 1){
-                //objectInspector.setObject(selection.iterator().next(), sender);
-            }
-            else{
-                //objectInspector.setObject(null, sender);
-            }
-
-            onChangeTabHandler.run();
-        } catch (Exception ex) {
-            ExceptionBox exbox = new ExceptionBox();
-            exbox.showAndWait(ex);
+    private void onHighlightsChange(Highlights highlights){
+        for(GralogWindow window : subscribers){
+            window.notifyHighlightChange(highlights);
+        }
+    }
+    private void onStructureChange(Structure structure){
+        for(GralogWindow window : subscribers){
+            window.notifyStructureChange(structure);
         }
     }
 
