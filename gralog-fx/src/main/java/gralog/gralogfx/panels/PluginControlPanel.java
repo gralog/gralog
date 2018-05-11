@@ -8,19 +8,19 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.dockfx.DockNode;
 
-public class PluginControlPanel extends AnchorPane implements GralogWindow{
+public class PluginControlPanel extends Pane implements GralogWindow{
 
     private ProgressBar pb;
     private Button pause,play,step;
 
     public PluginControlPanel(){
-        setMaxWidth(270);
+        setMinWidth(100);
 
         VBox vbox = new VBox();
         HBox hbox = new HBox();
         hbox.prefWidthProperty().bind(this.widthProperty());
         vbox.prefWidthProperty().bind(this.widthProperty());
-        prefWidthProperty().bind(this.widthProperty());
+
 
         play = createButton("\u25B6");
 
@@ -32,16 +32,11 @@ public class PluginControlPanel extends AnchorPane implements GralogWindow{
 
         pb = new ProgressBar(0f);
 
-        pb.prefWidthProperty().bind(this.widthProperty());
+        pb.prefWidthProperty().bind(vbox.widthProperty());
         pb.setPrefHeight(20);
 
         hbox.getChildren().addAll(pause,play,step,pb);
         vbox.getChildren().addAll(hbox, pb);
-
-        AnchorPane.setLeftAnchor(hbox, 4.0);
-        AnchorPane.setRightAnchor(hbox, 4.0);
-        AnchorPane.setBottomAnchor(hbox, 4.0);
-        AnchorPane.setTopAnchor(hbox, 2.0);
 
         this.getChildren().add(vbox);
     }
@@ -63,7 +58,7 @@ public class PluginControlPanel extends AnchorPane implements GralogWindow{
 
     private Button createButton(String label){
         Button b = new Button(label);
-        b.setMaxWidth(90);
+
         b.prefWidthProperty().bind(widthProperty().divide(3));
 
         return b;

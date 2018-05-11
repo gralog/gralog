@@ -137,7 +137,6 @@ public class MainWindow extends Application {
         pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
         pluginDock.setPrefHeight(70);
         pluginDock.setMinHeight(70);
-        pluginDock.setMinWidth(270);
 
         consoleDock.dock(mainDockPane, DockPos.BOTTOM, pluginDock);
         consoleDock.setPrefWidth(200);
