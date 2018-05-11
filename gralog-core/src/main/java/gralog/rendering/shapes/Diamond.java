@@ -1,7 +1,7 @@
 package gralog.rendering.shapes;
 
 import gralog.rendering.GralogGraphicsContext;
-import gralog.structure.Highlights;
+import gralog.rendering.Vector2D;
 
 public class Diamond extends RenderingShape {
 
@@ -10,7 +10,7 @@ public class Diamond extends RenderingShape {
     }
 
     @Override
-    public void render(GralogGraphicsContext gc, Highlights h) {
+    public void render(GralogGraphicsContext gc, boolean h, Vector2D center) {
 
     }
 }

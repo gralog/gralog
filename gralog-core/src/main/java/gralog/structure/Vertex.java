@@ -5,6 +5,9 @@ package gralog.structure;
 import gralog.plugins.*;
 import gralog.events.*;
 import gralog.rendering.*;
+import gralog.rendering.shapes.Circle;
+import gralog.rendering.shapes.RenderingShape;
+import gralog.rendering.shapes.SizeBox;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -33,6 +36,9 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     public GralogColor fillColor = GralogColor.WHITE;
     public GralogColor strokeColor = GralogColor.BLACK;
+
+
+    public RenderingShape shape = Circle.create(0.7);
 
     public Vector2D coordinates = new Vector2D(0.0, 0.0);
 
@@ -123,13 +129,15 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     public void render(GralogGraphicsContext gc, Highlights highlights) {
+        shape.render(gc, highlights.isSelected(this), coordinates);
+        /*
         if (highlights.isSelected(this))
             gc.circle(coordinates, radius + 0.07, GralogColor.RED);
 
         gc.circle(coordinates, radius, strokeColor);
         gc.circle(coordinates, radius - strokeWidth, fillColor);
         gc.putText(coordinates, label, textHeight, fillColor.inverse());
-
+        */
         String annotation = highlights.getAnnotation(this);
         if (annotation != null) {
             gc.putText(coordinates.plus(new Vector2D(0, 1)),
