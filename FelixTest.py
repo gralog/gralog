@@ -31,7 +31,7 @@ for x in range(numV):
 	# g.pauseUntilSpacePressed();
 
 # g.pauseUntilSpacePressed();
-g.getGraph("tgf");
+g.getGraph("xml");
 
 
 

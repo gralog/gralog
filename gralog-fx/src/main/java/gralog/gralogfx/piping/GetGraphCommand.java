@@ -36,6 +36,24 @@ public class GetGraphCommand extends CommandForGralogToExecute {
 
 	public void handle(){
 
+        /*Gralog messages are in the format:
+
+        $$
+        Bla 
+        Bla
+        bla
+        #
+        bla
+        $
+
+
+        In other words, if a message is going to have multiple lines, there is 
+        a $$ in front of the first line, then a $ at the end before the last line
+        */
+
+        /* let it be known that xml comes without whitespace between elements*/
+
+
         if (this.format == GraphType.Xml){
             try{
                 String xml = this.structure.xmlToString();
@@ -50,6 +68,7 @@ public class GetGraphCommand extends CommandForGralogToExecute {
         if (this.format == GraphType.Tgf){
             try{
                 String tgf = TrivialGraphFormatExport.exportToString(this.structure);
+                tgf = PipingPresets.multiLineIfyGraphString(tgf);
                 this.setResponse(tgf);
             }catch(Exception e){
                 this.setResponse(e.toString());

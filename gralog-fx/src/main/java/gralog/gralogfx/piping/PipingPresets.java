@@ -41,10 +41,6 @@ public class PipingPresets{
     public static String getHexByColorName(String colorName){
 
 	    
-
-
-
-
 	    String hex;
 	    if ((hex = colorPresets.get(colorName)) != null){
 	        return hex;
@@ -52,6 +48,12 @@ public class PipingPresets{
 
     	
     	return null;
+    }
+
+    public static String multiLineIfyGraphString(String graph){
+    	graph = "$$\n" + graph;
+    	graph = graph + "$\n";
+    	return graph;
     }
 
     public static String properGraphNames(String name){

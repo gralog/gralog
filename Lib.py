@@ -132,13 +132,33 @@ class Graph:
 			
 		line = "getGraph "+str(self.id).rstrip() + " " + format.rstrip();
 		print line.rstrip();
+		i =0;
 	
 		sys.stdout.flush();
-		graph = sys.stdin.readline();
+
+		line = sys.stdin.readline();
+		graph = "";
+
+		multiline = False;
+		if line[0] == line[1] == '$':
+			# line = line[2:];
+			multiline = True;
+			first = True;
+			
+
+		while multiline and (line[0] != '$' or first):
+			graph += line.rstrip() + "last letter is newline? " + str(line[len(line)-1] == '\n').rstrip() +  " and last letter $? " + str(line[0] == '$').rstrip();
+			line = sys.stdin.readline();
+			i += 1;
+			first = False;
+
+
+
+
 
 		print("kk just received " + graph.rstrip());
 
-		return graph;
+		# return graph;
 
 	def getAllVertices(self):
 		# indices = map(lambda vertex: vertex.id, self.vertices);

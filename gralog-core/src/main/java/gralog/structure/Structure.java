@@ -781,6 +781,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
+
         DOMSource source = new DOMSource(root);
         StreamResult result = new StreamResult(new StringWriter());
 
