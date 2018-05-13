@@ -147,18 +147,20 @@ class Graph:
 			
 
 		while multiline and (line[0] != '$' or first):
-			graph += line.rstrip() + "last letter is newline? " + str(line[len(line)-1] == '\n').rstrip() +  " and last letter $? " + str(line[0] == '$').rstrip();
+			graph += line;
 			line = sys.stdin.readline();
 			i += 1;
 			first = False;
+		# nextline = "also getting: " ,sys.stdin.readline();
 
 
+		return graph;
 
+	def sendGraph(self,format):
+		line = "sendGraph "+str(self.id).rstrip() + " " + format.rstrip();
+		print line;
+		##TODO: impliment this somehow haha
 
-
-		print("kk just received " + graph.rstrip());
-
-		# return graph;
 
 	def getAllVertices(self):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
@@ -219,12 +221,14 @@ class Graph:
 		print line.rstrip();
 	
 		sys.stdout.flush();
-		endpointList = (sys.stdin.readline()).split(" ");
-		# print("endpointList: " , endpointList);
+		endpointList = sys.stdin.readline();
+
+		endpointList = endpointList.split(" ");
+
 		for i in range(len(endpointList)):
 			term = endpointList[i].rstrip();
 			term = term[1:-1]
-			# print("current term",term);
+
 			endpoints = term.split(",");
 			endpointList[i] = (int(endpoints[0]),int(endpoints[1]));
 
@@ -252,8 +256,8 @@ class Graph:
 
 		return endpointList;
 
-	def getNeighbouringEdges(self,sourceVertexId,targetVertexId):
-		line = "getNeighbouringEdges "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() +  " " + str(targetVertexId).rstrip();
+	def getAdjacentEdges(self,sourceVertexId,targetVertexId):
+		line = "getAdjacentEdges "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() +  " " + str(targetVertexId).rstrip();
 
 		print line.rstrip();
 	
@@ -324,18 +328,25 @@ class Graph:
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
+	def addDirecetedEdge(self,sourceVertexId, targetVertexId):
+		# indices = map(lambda vertex: vertex.id, self.vertices);
+		# print("colorhex: " + str(colorHex));
+		# if vertexIndex in indices:
 
-	def deleteEdge(self,sourceVertexId,targetVertexId):
-
-		line = "deleteEdge "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip();
+			
+		line = "addEdge "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip() + " " + str(True).lower();
 
 		print line.rstrip();
-
+	
 		sys.stdout.flush();
 		# sys.stdin.readline();
+
+
+
 
 	def deleteEdge(self,(sourceVertexId,targetVertexId)):
 
+
 		line = "deleteEdge "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip();
 
 		print line.rstrip();
@@ -343,15 +354,15 @@ class Graph:
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
-	def addEdgeLabel(self,sourceVertexId, targetVertexId, label):
-		line = "addEdgeLabel "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip() + " " + label;
+	def setEdgeLabel(self,sourceVertexId, targetVertexId, label):
+		line = "setEdgeLabel "+str(self.id).rstrip() + " " + str(sourceVertexId).rstrip() + " " + str(targetVertexId).rstrip() + " " + label;
 		print line.rstrip();
 
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
-	def addVertexLabel(self,vertexId, label):
-		line = "addVertexLabel "+str(self.id).rstrip() + " " + str(vertexId).rstrip() + " " + label;
+	def setVertexLabel(self,vertexId, label):
+		line = "setVertexLabel "+str(self.id).rstrip() + " " + str(vertexId).rstrip() + " " + label;
 		print line.rstrip();
 
 		sys.stdout.flush();
@@ -362,6 +373,8 @@ class Graph:
 		print("pauseUntilSpacePressed");
 		sys.stdout.flush();
 		sys.stdin.readline();
+
+
 
 	def mistakeLine(self):
 		print("wubbadubdub 3 men in a tub");

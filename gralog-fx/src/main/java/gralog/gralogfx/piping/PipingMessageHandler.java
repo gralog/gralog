@@ -184,6 +184,14 @@ public class PipingMessageHandler{
             return currentCommand;
 
 
+        }else if (externalCommandSegments[0].equals("sendGraph")){ //user input simulation
+
+            currentCommand = new SendGraphCommand(externalCommandSegments,structure);
+            Structure currentStructure = structure;
+            // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+
+
         }else if (externalCommandSegments[0].equals("deleteVertex")){ //user input simulation
             System.out.println("received message to delete vertex " + externalCommandSegments[2]);
 
@@ -265,10 +273,10 @@ public class PipingMessageHandler{
             // Structure currentStructure = structure;
             return currentCommand;
             // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("getNeighbouringEdges")){//format: setColor <vertexId>
+        }else if (externalCommandSegments[0].equals("getAdjacentEdges")){//format: setColor <vertexId>
             // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
 
-            currentCommand = new GetNeighbouringEdgesCommand(externalCommandSegments,structure);
+            currentCommand = new GetAdjacentEdgesCommand(externalCommandSegments,structure);
             // Structure currentStructure = structure;
             return currentCommand;
             // this.out.println(neighbourString);
@@ -302,18 +310,18 @@ public class PipingMessageHandler{
 
             return currentCommand;
             // this.out.println(handleEdgeResponse);
-        }else if (externalCommandSegments[0].equals("addEdgeLabel")){//format: addEdge <sourceId> <targetId> <directed?>
+        }else if (externalCommandSegments[0].equals("setEdgeLabel")){//format: addEdge <sourceId> <targetId> <directed?>
             // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
             // System.out.println("")
-            currentCommand = new AddEdgeLabelCommand(externalCommandSegments,structure);
+            currentCommand = new SetEdgeLabelCommand(externalCommandSegments,structure);
             // Structure currentStructure = structure;
 
             return currentCommand;
             // this.out.println(handleEdgeResponse);
-        }else if (externalCommandSegments[0].equals("addVertexLabel")){//format: addEdge <sourceId> <targetId> <directed?>
+        }else if (externalCommandSegments[0].equals("setVertexLabel")){//format: addEdge <sourceId> <targetId> <directed?>
             // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
             // System.out.println("")
-            currentCommand = new AddVertexLabelCommand(externalCommandSegments,structure);
+            currentCommand = new SetVertexLabelCommand(externalCommandSegments,structure);
             // Structure currentStructure = structure;
             return currentCommand;
 

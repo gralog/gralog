@@ -20,7 +20,7 @@ red = "#ff0000";
 
 
 
-numV = 20;
+numV = 4;
 
 vertices = [];
 for x in range(numV):
@@ -31,28 +31,39 @@ for x in range(numV):
 	# g.pauseUntilSpacePressed();
 
 # g.pauseUntilSpacePressed();
-g.getGraph("xml");
+# g.getGraph("tgf");
+
+
 
 
 
 # for x in range(numV):
 # 	v = g.addVertex();
 # 	vertices.append(v);
-# 	g.addVertexLabel(v,str(x));
+# 	g.setVertexLabel(v,str(x));
 
 
-# for x in vertices:
-# 	for y in vertices:
-# 		if x != y:
-# 			g.addEdge(x,y,True);
+
+for x in vertices:
+	for y in vertices:
+		if x != y:
+			g.addEdge(x,y,True);
 
 
+edges = g.getAllEdges();
+
+for x in edges:
+	# print("edge: : " + str(x[0]) + " " + str(x[1]));
+	# print("schmedge: ");
+	g.deleteEdge(x);
+
+for x in g.getAllVertices():
+	g.setVertexLabel(x,str(x));
+	# g.pauseUntilSpacePressed();
 # g.pauseUntilSpacePressed();
 
 # for x in vertices:
-# 	incoming = g.getIncomingNeighbours(x);
-# 	for y in incoming:
-# 		g.deleteVertex(y);
+# 	g.deleteVertex(x);
 # 	g.pauseUntilSpacePressed();
 
 

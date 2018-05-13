@@ -4,7 +4,7 @@ import gralog.rendering.*;
 import java.util.Set;
 
 
-public class GetNeighbouringEdgesCommand extends CommandForGralogToExecute {
+public class GetAdjacentEdgesCommand extends CommandForGralogToExecute {
 	
 
 	int sourceId;
@@ -15,7 +15,7 @@ public class GetNeighbouringEdgesCommand extends CommandForGralogToExecute {
 
 
 
-	public GetNeighbouringEdgesCommand(String[] externalCommandSegments,Structure structure){
+	public GetAdjacentEdgesCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 

@@ -2,7 +2,7 @@ package gralog.gralogfx;
 import gralog.structure.*;
 import gralog.rendering.*;
 
-public class AddEdgeLabelCommand extends CommandForGralogToExecute {
+public class SetEdgeLabelCommand extends CommandForGralogToExecute {
     
 
     int sourceId;
@@ -15,7 +15,7 @@ public class AddEdgeLabelCommand extends CommandForGralogToExecute {
 
 
 
-    public AddEdgeLabelCommand(String[] externalCommandSegments,Structure structure){
+    public SetEdgeLabelCommand(String[] externalCommandSegments,Structure structure){
         this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 

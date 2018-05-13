@@ -52,7 +52,7 @@ public class PipingPresets{
 
     public static String multiLineIfyGraphString(String graph){
     	graph = "$$\n" + graph;
-    	graph = graph + "$\n";
+    	graph = graph.substring(0,graph.length()-1) + "\n$";
     	return graph;
     }
 

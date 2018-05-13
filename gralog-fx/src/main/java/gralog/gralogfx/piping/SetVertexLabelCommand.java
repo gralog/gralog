@@ -2,7 +2,7 @@ package gralog.gralogfx;
 import gralog.structure.*;
 import gralog.rendering.*;
 
-public class AddVertexLabelCommand extends CommandForGralogToExecute {
+public class SetVertexLabelCommand extends CommandForGralogToExecute {
     
 
     int vertexId;
@@ -12,7 +12,7 @@ public class AddVertexLabelCommand extends CommandForGralogToExecute {
 
 
 
-    public AddVertexLabelCommand(String[] externalCommandSegments,Structure structure){
+    public SetVertexLabelCommand(String[] externalCommandSegments,Structure structure){
         this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
