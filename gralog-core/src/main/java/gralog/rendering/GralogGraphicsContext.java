@@ -5,7 +5,6 @@ package gralog.rendering;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.*;
 
-import javax.sound.sampled.Line;
 import java.util.Arrays;
 
 /**
@@ -104,30 +103,34 @@ public abstract class GralogGraphicsContext {
     public void circle(Vector2D center, double radius, GralogColor color) {
         circle(center.getX(), center.getY(), radius, color);
     }
-    public void rectangle(double x1, double y1, double x2, double y2,
-        GralogColor color, double width) {
-        line(x1, y1, x2, y1, color, width);
-        line(x2, y1, x2, y2, color, width);
-        line(x2, y2, x1, y2, color, width);
-        line(x1, y2, x1, y1, color, width);
+
+    public abstract void strokeOval(double x, double y, double width, double height, double strokeWidth,
+                                    GralogColor color);
+
+    public void strokeOval(Vector2D center, double width, double height, double strokeWidth, GralogColor color) {
+        strokeOval(center.getX(), center.getY(), width, height, strokeWidth, color);
     }
 
-    public void rectangle(Vector2D corner1, Vector2D corner2,
-        GralogColor color, double width) {
-        rectangle(corner1.getX(), corner1.getY(),
-            corner2.getX(), corner2.getY(),
-            color, width);
+    public abstract void fillOval(double x, double y, double width, double height,
+                                    GralogColor color);
+
+    public void fillOval(Vector2D center, double width, double height, GralogColor color) {
+        fillOval(center.getX(), center.getY(), width, height, color);
     }
+
 
     public abstract void fillRectangle(
         double x1, double y1, double x2, double y2, GralogColor color);
 
-    public void fillRectangle(Vector2D corner1, Vector2D corner2,
-        GralogColor color) {
-        fillRectangle(corner1.getX(), corner1.getY(),
-            corner2.getX(), corner2.getY(),
-            color);
-    }
+    public abstract void strokeRectangle(
+            double x1, double y1, double x2, double y2, double strokeWidth, GralogColor color);
+
+    public abstract void strokeDiamond(
+            double x1, double y1, double x2, double y2, double strokeWidth, GralogColor color);
+
+    public abstract void fillDiamond(
+            double x1, double y1, double x2, double y2, GralogColor color);
+
     public abstract void drawBezier(Bezier curve, GralogColor color, double width, LineType type);
     public abstract void drawQuadratic(Bezier curve, GralogColor color, double width, LineType type);
 

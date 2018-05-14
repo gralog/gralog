@@ -6,6 +6,7 @@ import gralog.gralogfx.panels.Console;
 import gralog.gralogfx.panels.ObjectInspector;
 import gralog.gralogfx.panels.PluginControlPanel;
 import gralog.plugins.*;
+import gralog.rendering.shapes.RenderingShape;
 import gralog.structure.*;
 import gralog.importfilter.*;
 import gralog.exportfilter.*;

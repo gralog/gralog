@@ -8,10 +8,16 @@ import java.lang.reflect.*;
 import java.util.function.Consumer;
 
 import gralog.rendering.GralogGraphicsContext;
+import gralog.rendering.shapes.RenderingShape;
+import gralog.rendering.shapes.SizeBox;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.css.Size;
+import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 
 import javax.sound.sampled.Line;
 
@@ -25,6 +31,8 @@ public class ReflectedView extends GridPaneView<Object> {
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
+
+        setVgap(5);
         //this.setPrefWidth(280);
         int i = 0;
 
@@ -111,6 +119,59 @@ public class ReflectedView extends GridPaneView<Object> {
                             }
                         });
                         valueControl = choiceBox;
+                    } else if (type.isAssignableFrom(RenderingShape.class)){
+
+                        RenderingShape shape = (RenderingShape)value;
+
+                        ChoiceBox<Class<? extends RenderingShape>> choiceBox =
+                                new ChoiceBox<>(FXCollections.observableArrayList(RenderingShape.renderingShapeClasses));
+
+                        choiceBox.getSelectionModel().select(RenderingShape.renderingShapeClasses.indexOf(value.getClass()));
+                        choiceBox.setConverter(new RenderingShape.ShapeConverter());
+                        choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
+                            @Override
+                            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                                try{
+                                    Constructor cs = RenderingShape.renderingShapeClasses.get(newValue.intValue()).getConstructors()[0];
+                                    f.set(displayObject, cs.newInstance(shape.sizeBox));
+                                    requestRedraw();
+                                }catch(IllegalAccessException | IllegalArgumentException ex) {
+                                }catch(InstantiationException | InvocationTargetException ex){
+                                    ex.printStackTrace();
+                                }
+                            }
+                        });
+
+                        TextField widthField = new TextField(shape.sizeBox.width.toString());
+                        TextField heightField = new TextField(shape.sizeBox.height.toString());
+                        widthField.textProperty().addListener(e -> {
+                            try {
+                                RenderingShape localShape = (RenderingShape) f.get(displayObject);
+                                localShape.setWidth(Double.parseDouble(widthField.getText()));
+                                f.set(displayObject, localShape);
+                                requestRedraw();
+                            } catch (IllegalAccessException | IllegalArgumentException ex) {
+                            }
+                        });
+                        heightField.textProperty().addListener(e -> {
+                            try {
+                                RenderingShape localShape = (RenderingShape) f.get(displayObject);
+                                localShape.setHeight(Double.parseDouble(heightField.getText()));
+                                f.set(displayObject, localShape);
+                                requestRedraw();
+                            } catch (IllegalAccessException | IllegalArgumentException ex) {
+                            }
+                        });
+
+                        addSeparator(i);
+                        i++;
+                        addPair("shape", choiceBox, i);
+                        addPair("width", widthField, i + 1);
+                        addPair("height", heightField, i + 2);
+
+                        addSeparator(i + 3);
+
+                        i+=4;
                     }
 
                     if (valueControl != null) {
@@ -124,5 +185,24 @@ public class ReflectedView extends GridPaneView<Object> {
         } catch (IllegalAccessException | IllegalArgumentException | SecurityException ex) {
             getChildren().clear();
         }
+    }
+
+    void addSeparator(int i){
+        Separator s = new Separator();
+        setConstraints(s, 0, i);
+        getChildren().add(s);
+
+        s = new Separator();
+        setConstraints(s, 1, i);
+        getChildren().add(s);
+
+    }
+
+    void addPair(String label, Control b, int i){
+        Label a = new Label(label);
+        a.setPrefWidth(LABEL_WIDTH);
+        b.setMaxWidth(MAX_FIELD_WIDTH);
+        add(a, 0, i);
+        add(b, 1, i);
     }
 }

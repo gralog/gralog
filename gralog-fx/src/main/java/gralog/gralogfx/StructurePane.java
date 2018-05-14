@@ -170,7 +170,6 @@ public class StructurePane extends StackPane implements StructureListener {
                         if (o instanceof Vertex) {
                             structure.removeVertex((Vertex) o);
                             clearSelection();
-                            System.out.println(structure.holes);
                         }
                         else if (o instanceof Edge && !selectedCurveControlPoint){
                             structure.removeEdge((Edge) o);
@@ -477,7 +476,7 @@ public class StructurePane extends StackPane implements StructureListener {
         gc.clearRect(0, 0, w, h);
         gc.setFill(Color.rgb(240, 240, 240));
         gc.fillRect(0, 0, w, h);
-
+        gc.setLineWidth(1);
         // grid
         if (zoomFactor * (screenResolutionX / 2.54) >= 10) {
             gc.setStroke(Color.rgb(225, 225, 225));

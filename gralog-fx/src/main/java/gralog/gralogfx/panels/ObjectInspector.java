@@ -64,6 +64,7 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
             throw new Exception("Class " + view.getClass().getName() + " is not derived from javafx.scene.Node");
 
         view.setObject(obj, submitPossible);
+        view.setStructurePane(tabView.getCurrentStructurePane());
 
         Node viewNode = (Node) view;
         sp.setContent(viewNode);

@@ -5,9 +5,8 @@ package gralog.structure;
 import gralog.plugins.*;
 import gralog.events.*;
 import gralog.rendering.*;
-import gralog.rendering.shapes.Circle;
+import gralog.rendering.shapes.Ellipse;
 import gralog.rendering.shapes.RenderingShape;
-import gralog.rendering.shapes.SizeBox;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -38,7 +37,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public GralogColor strokeColor = GralogColor.BLACK;
 
 
-    public RenderingShape shape = Circle.create(0.7);
+    public RenderingShape shape = Ellipse.create(1.4, 1.4);
 
     public Vector2D coordinates = new Vector2D(0.0, 0.0);
 

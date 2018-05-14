@@ -119,4 +119,8 @@ public class Tabs {
         subscribers.add(win);
     }
 
+    public void requestRedraw(){
+        getCurrentStructurePane().requestRedraw();
+    }
+
 }
