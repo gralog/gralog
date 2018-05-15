@@ -56,6 +56,9 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
 
         Object obj = list.iterator().next();
 
+        if(obj == null){
+            return;
+        }
         view = ViewManager.instantiateView(obj.getClass());
 
         if (view == null)
