@@ -36,4 +36,52 @@ public class Rectangle extends RenderingShape {
     public boolean containsCoordinate(Vector2D point, Vector2D center){
         return false;
     }
+
+    @Override
+    public Vector2D getEdgePoint(double alpha, Vector2D center){
+        double x;
+        double y;
+        double thresholdAngle = Math.toDegrees(Math.atan(sizeBox.height/sizeBox.width));
+        alpha = alpha % 360;
+        if(alpha <= 0){
+            alpha += 360;
+        }
+
+        if(alpha <= thresholdAngle){
+            x = sizeBox.width/2;
+            y = tan(alpha) * x;
+        }else if(alpha <= 90){
+            alpha = 90 - alpha;
+            y = sizeBox.height/2;
+            x = tan(alpha) * y;
+        }else if(alpha <= 180 - thresholdAngle){
+            alpha = alpha - 90;
+            y = sizeBox.height/2;
+            x = -tan(alpha) * y;
+        }else if(alpha <= 180){
+            alpha = 180 - alpha;
+            x = -sizeBox.width/2;
+            y = tan(alpha) * sizeBox.width/2;
+        }else if(alpha <= 180 + thresholdAngle){
+            alpha = alpha - 180;
+            x = -sizeBox.width/2;
+            y = tan(alpha) * x;
+        }else if(alpha <= 270){
+            alpha = 270 - alpha;
+            y = -sizeBox.height/2;
+            x = tan(alpha) * y;
+        }else if(alpha <= 360 - thresholdAngle){
+            alpha = alpha - 270;
+            y = -sizeBox.height/2;
+            x = tan(alpha) * sizeBox.height/2;
+        }else {
+            alpha = 360 - alpha;
+            x = sizeBox.width/2;
+            y = -tan(alpha) * x;
+        }
+        return new Vector2D(x, y).plus(center);
+    }
+    private static double tan(double alphaInDeg){
+        return Math.tan(Math.toRadians(alphaInDeg));
+    }
 }

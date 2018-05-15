@@ -26,7 +26,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     //the position of the loop center on the circle
     ///note: -90 is on top because the coordinate system is flipped horizontally
-    public double loopAnchor = -90;  // degrees
+    public Double loopAnchor = -90d;  // degrees
     //the position of the endpoints of a loop
     public double loopAngle = 20;   // degrees
 

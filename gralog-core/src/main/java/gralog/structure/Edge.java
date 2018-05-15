@@ -179,8 +179,8 @@ public class Edge extends XmlMarshallable implements IMovable {
 
         double r = source.radius;
 
-        Vector2D intersection = Vector2D.getVectorAtAngle(angleStart, r).plus(source.coordinates);
-        Vector2D intersection2 = Vector2D.getVectorAtAngle(angleEnd, r).plus(source.coordinates);
+        Vector2D intersection = source.shape.getEdgePoint(angleStart, source.coordinates);
+        Vector2D intersection2 = source.shape.getEdgePoint(angleEnd, source.coordinates);
 
         Vector2D tangentToIntersection = Vector2D.getVectorAtAngle(angleEnd, 1).multiply(-1);
 

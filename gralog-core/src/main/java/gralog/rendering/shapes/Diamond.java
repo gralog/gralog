@@ -34,4 +34,32 @@ public class Diamond extends RenderingShape {
     public boolean containsCoordinate(Vector2D point, Vector2D center){
         return false;
     }
+
+    @Override
+    public Vector2D getEdgePoint(double alpha, Vector2D center){
+        double x;
+        double y;
+        alpha = alpha % 360;
+        if(alpha < 0){
+            alpha += 360;
+        }
+        if(alpha < 90){
+            x = (1-alpha/90)*sizeBox.width/2;
+            y = (alpha/90)*sizeBox.height/2;
+        }else if(alpha < 180){
+            alpha %= 90;
+            x = -(alpha/90)*sizeBox.width/2;
+            y = (1-alpha/90)*sizeBox.height/2;
+        }else if(alpha < 270){
+            alpha %= 90;
+            x = -(1-alpha/90)*sizeBox.width/2;
+            y = -(alpha/90)*sizeBox.height/2;
+        }else{
+            alpha %= 90;
+            x = (alpha/90)*sizeBox.width/2;
+            y = -(1-alpha/90)*sizeBox.height/2;
+        }
+
+        return new Vector2D(x, y).plus(center);
+    }
 }

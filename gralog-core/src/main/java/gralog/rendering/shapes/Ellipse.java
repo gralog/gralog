@@ -31,4 +31,10 @@ public class Ellipse extends RenderingShape {
     public boolean containsCoordinate(Vector2D point, Vector2D center){
         return false;
     }
+
+    @Override
+    public Vector2D getEdgePoint(double alpha, Vector2D center){
+        //TODO: also for ellipse
+        return Vector2D.getVectorAtAngle(alpha, sizeBox.width/2).plus(center);
+    }
 }

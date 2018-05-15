@@ -85,5 +85,13 @@ public abstract class RenderingShape {
      */
     public abstract boolean containsCoordinate(Vector2D point, Vector2D center);
 
+    /**
+     * Calculates the (closest) point X on the edge of the shape so that (X-center)
+     * has an euler angle of alpha.
+     * @param alpha The angle of the point in degrees
+     * @param center The point of reference for calculating X
+     * @return The closest such point as a Vector2D
+     */
+    public abstract Vector2D getEdgePoint(double alpha, Vector2D center);
 
 }
