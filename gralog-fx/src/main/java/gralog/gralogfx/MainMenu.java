@@ -135,6 +135,7 @@ public class MainMenu {
         menuEdit.getItems().addAll(
                 createMenuItem("Undo", handlers.onUndo),
                 createMenuItem("Redo", handlers.onRedo),
+                new SeparatorMenuItem(),
                 createMenuItem("Cut", handlers.onCut),
                 createMenuItem("Copy", handlers.onCopy),
                 createMenuItem("Paste", handlers.onPaste),
@@ -163,6 +164,7 @@ public class MainMenu {
         this.handlers = handlers;
 
         menu = new MenuBar();
+        menu.setUseSystemMenuBar(true);
         menu.getMenus().addAll(
             createFileMenu(),
             createEditMenu(),

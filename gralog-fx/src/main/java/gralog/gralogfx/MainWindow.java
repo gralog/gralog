@@ -2,8 +2,11 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 //test
+
 import gralog.gralogfx.panels.*;
+
 import gralog.plugins.*;
+import gralog.rendering.shapes.RenderingShape;
 import gralog.structure.*;
 import gralog.importfilter.*;
 import gralog.exportfilter.*;
@@ -14,7 +17,9 @@ import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.lang.reflect.*;
 import java.net.URISyntaxException;
@@ -35,12 +40,14 @@ import javafx.scene.control.Alert.AlertType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import org.dockfx.*;
 /**
  * The gralog main window.
  */
@@ -54,8 +61,9 @@ public class MainWindow extends Application {
     private Piping pipeline;
 
     private HBox rightBox;
-    private HBox bottomBox;
-    private SplitPane inspectorSplit;
+
+    private Console mainConsole;
+
 
     public MainWindow() {
         MainMenu.Handlers handlers = new MainMenu.Handlers();
@@ -100,42 +108,64 @@ public class MainWindow extends Application {
         VBox topPane = new VBox();
         topPane.getChildren().addAll(menu.getMenuBar());
 
-        //put lambdas here for controlling stuff
-        PluginControlPanel pluginControlPanel = new PluginControlPanel(
-                () -> System.out.println("hit play"),
-                () -> System.out.println("hit pause"),
-                () -> System.out.println("next step"));
-
-        ConsolePanel consolePanel = new ConsolePanel(() -> System.out.println("execed"));
-
-
         rightBox = new HBox();
-        inspectorSplit = new SplitPane();
+        //inspectorSplit = new SplitPane();
 
-        bottomBox = new HBox();
 
-        ObjectInspector objectInspector = new ObjectInspector();
 
-        inspectorSplit.getItems().add(objectInspector);
-        inspectorSplit.getItems().add(pluginControlPanel);
-        inspectorSplit.setOrientation(Orientation.VERTICAL);
+        tabs = new Tabs(this::onChangeCurrentStructure);
+        tabs.initializeTab();
 
-        bottomBox.getChildren().add(consolePanel);
-        bottomBox.setVisible(true);
+        mainConsole = new Console();
 
-        rightBox.getChildren().add(inspectorSplit);
-        rightBox.setVisible(false);
+        ObjectInspector objectInspector = new ObjectInspector(tabs);
+        //put lambdas here for controlling stuff
+        PluginControlPanel pluginControlPanel = new PluginControlPanel(tabs,pipeline);
 
-        tabs = new Tabs(this::onChangeCurrentStructure, objectInspector);
+        pluginControlPanel.setOnPlay(() -> System.out.println("play"));
+
+
+        DockPane mainDockPane = new DockPane();
+        DockNode structureNode = new DockNode(tabs.getTabPane());
+
+
+
+
+        DockNode objDock = new DockNode(objectInspector, "Object Inspector", null);
+        DockNode pluginDock = new DockNode(pluginControlPanel, "Algorithm Control", null);
+        DockNode consoleDock = new DockNode(mainConsole, "Console", null);
+
+        structureNode.dock(mainDockPane, DockPos.CENTER);
+        structureNode.setMaxHeight(Double.MAX_VALUE);
+        structureNode.setPrefWidth(Double.MAX_VALUE);
+        structureNode.setPrefHeight(Double.MAX_VALUE);
+        structureNode.setDockTitleBar(null);
+
+
+
+        objDock.dock(mainDockPane, DockPos.RIGHT);
+        objDock.setPrefHeight(250);
+        objDock.setPrefWidth(270);
+        objDock.setMinWidth(270);
+
+
+        pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
+        pluginDock.setPrefHeight(70);
+        pluginDock.setMinHeight(70);
+
+
+        consoleDock.dock(mainDockPane, DockPos.BOTTOM, pluginDock);
+        consoleDock.setPrefWidth(200);
+        consoleDock.setMinHeight(200);
+        consoleDock.setMaxHeight(Double.MAX_VALUE);
+
+        Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
 
         root = new BorderPane();
-        //root.setFocusTraversable(true);
         root.setTop(topPane);
-        root.setCenter(tabs.getTabPane());
-        root.setRight(rightBox);
+        root.setCenter(mainDockPane);
         root.setBottom(statusBar.getStatusBar());
-        // root.setBottom(bottomBox);
-    }
+}
 
     public void onLoadPlugin() {
         // FileChooser fileChooser = new FileChooser();
@@ -505,6 +535,7 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-height", 800));
 
         scene.getStylesheets().add("/stylesheet.css");
+        scene.getStylesheets().add(DockPane.class.getResource("default.css").toExternalForm());
         this.stage = primaryStage;
         primaryStage.setMinHeight(500);
         primaryStage.setMinWidth(400);

@@ -48,7 +48,7 @@ public class GetNeighboursCommand extends CommandForGralogToExecute {
 
         String neighbourString = "";
         for (Vertex v : neighbours){
-            neighbourString = neighbourString + Integer.toString(v.getId()) + " ";
+            neighbourString = neighbourString + Integer.toString(v.getId()) + "#";
         }
         if (neighbourString.length() > 0 && null != neighbourString){
             neighbourString = neighbourString.substring(0,neighbourString.length()-1);

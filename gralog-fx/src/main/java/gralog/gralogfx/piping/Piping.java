@@ -10,13 +10,15 @@ package gralog.gralogfx;
 import java.util.concurrent.ThreadLocalRandom;
 import gralog.events.*;
 import gralog.rendering.*;
+import gralog.gralogfx.panels.PipingWindow;
 
 import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.progresshandler.*;
 import gralog.gralogfx.*;
-
-import java.util.function.*;
+import java.util.HashSet;
+import java.util.function.Function;
+import java.util.function.Consumer;
 
 import java.util.Arrays;
 
@@ -47,6 +49,8 @@ public class Piping{
     private Structure structure;
     private StructurePane pane;
 
+    private List<PipingWindow> subscribers = new ArrayList<>();
+
     private Function<String,StructurePane> newGraphMethod;
 
 
@@ -55,6 +59,15 @@ public class Piping{
         Inintialized,
         InProgress,
         Paused
+    }
+
+    public void subscribe(PipingWindow sub){
+        this.subscribers.add(sub);
+    }
+
+    private void aPauseOccured(String[] externalCommandSegments){
+        List<String[]> args = PipingMessageHandler.parsePauseVars(externalCommandSegments);
+        subscribers.forEach(sub -> sub.notifyPauseRequested(this.structure,args));
     }
 
     
@@ -162,7 +175,7 @@ public class Piping{
                 if (line.length() > 0){ // if not a bogus line
                     //handleLine()
                     this.state = State.InProgress;
-                    String[] externalCommandSegments = line.split(" ");
+                    String[] externalCommandSegments = line.split("#");
 
                     
 
@@ -178,6 +191,15 @@ public class Piping{
                         
 
                         System.out.println("paused");
+
+                        
+
+                        this.aPauseOccured(externalCommandSegments);
+                        // for (String[] l : args){
+                        //     System.out.println("key: " + l[0] + "; val: " + l[1]);
+                        // }
+                        // System.out.println("fetig");
+
                         this.pane.requestRedraw();
                         this.state = State.Paused;
                         break;

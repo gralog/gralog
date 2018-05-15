@@ -131,7 +131,23 @@ public class PipingMessageHandler{
     }
 
 
+    public static List<String[]> parsePauseVars(String[] vars){
+        List<String[]> tuples = new ArrayList<String[]>();
+        for (int i = 1; i < vars.length; i ++){
+            String[] terms = vars[i].split("=");
+            for (String x : terms){
+                System.out.println("iter: " + x);
+            }
+            System.out.println("ok done with iterating");
+            System.out.println("ok we have : " + terms[0] + "," + terms[1] + " as terms");
+            String varName = terms[0].substring(1,terms[0].length());
+            String varValue = terms[1].substring(0,terms[1].length()-1);
+            String[] vals = {varName,varValue};
+            tuples.add(vals);
+        }  
+        return tuples;
 
+    }
 
     public static GralogColor colorConversion(String[] colors){
         System.out.println("we're getting: ");

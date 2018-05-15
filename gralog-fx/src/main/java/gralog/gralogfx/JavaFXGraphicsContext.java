@@ -102,6 +102,27 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.closePath();
         gc.setLineDashes(0);
     }
+    public void drawQuadratic(Bezier curve, GralogColor color, double width, LineType type){
+        Vector2D a = pane.modelToScreen(curve.source);
+        Vector2D b = pane.modelToScreen(curve.target);
+        Vector2D ctrl1 = pane.modelToScreen(curve.ctrl1);
+
+        gc.setStroke(Color.rgb(color.r, color.g, color.b));
+        //setting line type
+        if(type == LineType.DOTTED){
+            gc.setLineDashes(0.03 * pane.zoomFactor * pane.screenResolutionX / 2.54, 0.15 * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        }else if(type == LineType.DASHED){
+            gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        }
+        gc.setLineWidth(width * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        gc.beginPath();
+        gc.moveTo(a.getX(), a.getY());
+        gc.quadraticCurveTo(ctrl1.getX(), ctrl1.getY(), b.getX(), b.getY());
+        gc.stroke();
+        gc.closePath();
+        gc.setLineDashes(0);
+    }
+
 
     @Override
     public void circle(double centerx, double centery, double radius,
@@ -114,6 +135,66 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.setLineWidth(1);
 
         gc.fillOval(p1.getX(), p1.getY(), p2.getX() - p1.getX(), p2.getY() - p1.getY());
+    }
+    @Override
+    public void strokeRectangle(double x1, double y1, double x2, double y2, double strokeWidth, GralogColor color) {
+
+        Point2D p1 = pane.modelToScreen(new Point2D(x1, y1));
+        Point2D p2 = pane.modelToScreen(new Point2D(x2, y2));
+
+        gc.setStroke(Color.rgb(color.r, color.g, color.b));
+        gc.setLineWidth(strokeWidth * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        gc.strokeRect(p1.getX(), p1.getY(), p2.getX() - p1.getX(), p2.getY() - p1.getY());
+    }
+
+    @Override
+    public void strokeDiamond(double x1, double y1, double x2, double y2, double strokeWidth, GralogColor color) {
+
+        Point2D p1 = pane.modelToScreen(new Point2D(x1, y1));
+        Point2D p2 = pane.modelToScreen(new Point2D(x2, y2));
+
+        gc.setStroke(Color.rgb(color.r, color.g, color.b));
+        gc.setLineWidth(strokeWidth * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        gc.strokePolygon(new double[] {p1.getX(), (p2.getX() + p1.getX())/2, p2.getX(), (p2.getX() + p1.getX())/2},
+                        new double[] {(p2.getY() + p1.getY())/2, p1.getY(), (p2.getY() + p1.getY())/2, p2.getY()},
+                4);
+    }
+
+    @Override
+    public void fillDiamond(double x1, double y1, double x2, double y2, GralogColor color) {
+
+        Point2D p1 = pane.modelToScreen(new Point2D(x1, y1));
+        Point2D p2 = pane.modelToScreen(new Point2D(x2, y2));
+
+        gc.setFill(Color.rgb(color.r, color.g, color.b));
+        gc.fillPolygon(new double[] {p1.getX(), (p2.getX() + p1.getX())/2, p2.getX(), (p2.getX() + p1.getX())/2},
+                new double[] {(p2.getY() + p1.getY())/2, p1.getY(), (p2.getY() + p1.getY())/2, p2.getY()},
+                4);
+    }
+
+    @Override
+    public void strokeOval(double x, double y, double width, double height, double strokeWidth,
+                           GralogColor c) {
+        Point2D p1 = pane.modelToScreen(new Point2D(x - width/2, y - height/2));
+        Point2D p2 = pane.modelToScreen(new Point2D(x + width/2, y + height/2));
+
+        gc.setStroke(Color.rgb(c.r, c.g, c.b));
+        gc.setLineWidth(strokeWidth * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        gc.strokeOval(p1.getX(), p1.getY(), p2.getX() - p1.getX(), p2.getY() - p1.getY());
+
+    }
+
+    @Override
+    public void fillOval(double x, double y, double width, double height,
+                           GralogColor c) {
+        Point2D p1 = pane.modelToScreen(new Point2D(x - width/2, y - height/2));
+        Point2D p2 = pane.modelToScreen(new Point2D(x + width/2, y + height/2));
+
+        gc.setFill(Color.rgb(c.r, c.g, c.b));
+        gc.setStroke(Color.rgb(c.r, c.g, c.b));
+        gc.setLineWidth(1);
+        gc.fillOval(p1.getX(), p1.getY(), p2.getX() - p1.getX(), p2.getY() - p1.getY());
+
     }
 
     @Override

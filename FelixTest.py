@@ -20,11 +20,20 @@ red = "#ff0000";
 
 
 
-numV = 4;
+numV = 10;
 
 vertices = [];
+
+gregarity = [0];
+trackingVars = [("gregarity",gregarity)];
+
+
+g.track("vertices",vertices);
+
 for x in range(numV):
 	vertices.append(g.addVertex());
+	g.pauseUntilSpacePressed(trackingVars,("hello","worild"));
+	gregarity[0] += 1;
 
 # for x in vertices:
 # 	g.deleteVertex(x);
@@ -53,9 +62,10 @@ for x in vertices:
 edges = g.getAllEdges();
 
 for x in edges:
-	# print("edge: : " + str(x[0]) + " " + str(x[1]));
-	# print("schmedge: ");
-	g.deleteEdge(x);
+	# print("trying with : " + str(x));
+	g.setEdgeLabel(x,"schwupps" + str(x));
+
+
 
 for x in g.getAllVertices():
 	g.setVertexLabel(x,str(x));

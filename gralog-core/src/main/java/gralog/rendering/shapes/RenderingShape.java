@@ -1,0 +1,89 @@
+package gralog.rendering.shapes;
+
+import gralog.rendering.GralogGraphicsContext;
+import gralog.rendering.Vector2D;
+import javafx.util.StringConverter;
+import org.reflections.Reflections;
+
+import java.util.LinkedList;
+import java.util.Set;
+
+
+public abstract class RenderingShape {
+
+    //used to restrict the size box, can cause performance problems otherwise
+    private static final double MAX_WIDTH = 300;
+    private static final double MAX_HEIGHT = 300;
+
+    public static LinkedList<Class<? extends RenderingShape>> renderingShapeClasses;
+
+    /*
+     * Initializes a list of rendering shapes
+     */
+    static{
+        Reflections reflections = new Reflections("gralog.rendering.shapes");
+        Set<Class<? extends RenderingShape>> classes = reflections.getSubTypesOf(RenderingShape.class);
+        renderingShapeClasses = new LinkedList<>(classes);
+    }
+
+
+    /**
+     * StringConverter class. Useful for any class that relies on redefining the toString() method
+     * of classes that extend the RenderingShape
+     *
+     * @see javafx.scene.control.ChoiceBox e.g. setConverter()
+     */
+    public static final class ShapeConverter extends StringConverter<Class<? extends RenderingShape>>{
+
+        @Override
+        public String toString(Class<? extends RenderingShape> object) {
+            return object.getSimpleName();
+        }
+
+        @Override
+        public Class<? extends RenderingShape> fromString(String string) {
+            return null;
+        }
+    }
+    public Double strokeWidth = 3.6d/96; //cm
+    /**
+     * Provides a rough measure of the size of a shape via a Rectangle,
+     * applicable height every subclass of shape
+     *
+     * Two shapes with the same SizeBoxes should have roughly the same
+     * actual size in the final render.
+     */
+    public SizeBox sizeBox;
+    /**
+     * Creates a RenderingShape with sensible default values, so that the final size of
+     * the rendered shape has similar dimensions as the rectangle of the given
+     * SizeBox
+     */
+    public RenderingShape(SizeBox s){
+        this.sizeBox = s;
+    }
+
+    public void setWidth(double width){
+        sizeBox.width = Math.min(width, MAX_WIDTH);
+    }
+    public void setHeight(double height){
+        sizeBox.height = Math.min(height, MAX_HEIGHT);
+    }
+    /**
+     * Renders a shape on the provided graphics context. RenderingShape will depend
+     * on the internal state of the shape object (e.g. parameters such as
+     * size, fill, color, etc..)
+     *  @param gc The graphics context on which the shape is rendered
+     */
+    public abstract void render(GralogGraphicsContext gc, boolean h, Vector2D center);
+
+
+    /**
+     * Returns true if the given vector is overlapping with this shape
+     * @param point Vector that is being tested for overlapping
+     * @return True if the shape contains
+     */
+    public abstract boolean containsCoordinate(Vector2D point, Vector2D center);
+
+
+}

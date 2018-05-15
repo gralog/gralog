@@ -2,7 +2,13 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
+import gralog.gralogfx.panels.GralogWindow;
+import gralog.structure.DirectedGraph;
+import gralog.structure.Highlights;
 import gralog.structure.Structure;
+
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
@@ -16,24 +22,27 @@ import java.util.ArrayList;
 public class Tabs {
 
     private final TabPane tabPane;
-    private final ObjectInspector objectInspector;
 
     private final Runnable onChangeTabHandler;
+
+    private final Set<GralogWindow> subscribers = new HashSet<>();
 
     /**
      * @param onChangeTab Handler to be called when a new tab is selected or a
      * tab is closed.
      */
-    public Tabs(Runnable onChangeTab, ObjectInspector obj) {
+    public Tabs(Runnable onChangeTab) {
         onChangeTabHandler = onChangeTab;
 
         tabPane = new TabPane();
+
         tabPane.getSelectionModel().selectedItemProperty()
             .addListener(e -> onChangeTab());
-
-        objectInspector = obj;
     }
 
+    public void initializeTab(){
+        addTab("Unnamed", new DirectedGraph());
+    }
     /**
      * @return The underlying Node object.
      */
@@ -41,13 +50,6 @@ public class Tabs {
         return tabPane;
     }
 
-    /**
-     * @return The underlying ObjectInspector object. This object shows the
-     * properties of the currently selected object (vertex or edge).
-     */
-    public ObjectInspector getObjectInspector() {
-        return objectInspector;
-    }
 
     /**
      * Adds a new tab containing the given structure.
@@ -63,11 +65,12 @@ public class Tabs {
         tabPane.getTabs().add(t);
         tabPane.getSelectionModel().select(t);
         structurePane.draw();
-        structurePane.setOnSelectionChanged(e -> onChangeStructurePane(structurePane));
+
+        structurePane.setOnHighlightsChanged(this::onHighlightsChange);
+        structurePane.setOnStructureChanged(this::onStructureChange);
 
         onChangeTabHandler.run();
     }
-
     /**
      * Sets the name of the current tab. Does nothing if no tab exists.
      *
@@ -107,27 +110,29 @@ public class Tabs {
     }
 
     private void onChangeTab() {
-        onChangeStructurePane(getCurrentStructurePane());
+        onStructureChange(getCurrentStructurePane().structure);
     }
 
-    private void onChangeStructurePane(StructurePane sender) {
-        try {
-            Set<Object> selection = null;
-            if (sender != null) {
-                selection = sender.highlights.getSelection();
-                sender.requestRedraw();
-            }
-            if (selection != null && selection.size() == 1){
-                objectInspector.setObject(selection.iterator().next(), sender);
-            }
-            else{
-                objectInspector.setObject(null, sender);
-            }
-
-            onChangeTabHandler.run();
-        } catch (Exception ex) {
-            ExceptionBox exbox = new ExceptionBox();
-            exbox.showAndWait(ex);
+    private void onHighlightsChange(Highlights highlights){
+        for(GralogWindow window : subscribers){
+            window.notifyHighlightChange(highlights);
         }
     }
+    private void onStructureChange(Structure structure){
+        for(GralogWindow window : subscribers){
+            window.notifyStructureChange(structure);
+        }
+    }
+
+    public void subscribe(GralogWindow win){
+        subscribers.add(win);
+    }
+    public void unsubscribe(GralogWindow win){
+        subscribers.add(win);
+    }
+
+    public void requestRedraw(){
+        getCurrentStructurePane().requestRedraw();
+    }
+
 }
