@@ -81,6 +81,21 @@ public class Rectangle extends RenderingShape {
         }
         return new Vector2D(x, y).plus(center);
     }
+
+    @Override
+    public Vector2D getIntersection(Vector2D lineStart, Vector2D lineEnd, Vector2D center) {
+        //TODO: implement
+
+        return null;
+    }
+    private static double mod360(double alpha){
+        alpha %= 360;
+        if(alpha < 0){
+            alpha += 360;
+        }
+        return alpha;
+    }
+
     private static double tan(double alphaInDeg){
         return Math.tan(Math.toRadians(alphaInDeg));
     }

@@ -170,6 +170,13 @@ public class Vector2D {
         return new Vector2D(snap(gridSize, x), snap(gridSize, y));
     }
 
+    /**
+     * @return X Angle in degrees
+     */
+    public double measureAngleX(){
+        return Math.toDegrees(Math.atan2(y, x));
+    }
+
     public static Vector2D point2DToVector(Point2D point){
         return new Vector2D(point.getX(), point.getY());
     }

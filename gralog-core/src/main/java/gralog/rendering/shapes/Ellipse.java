@@ -37,4 +37,9 @@ public class Ellipse extends RenderingShape {
         //TODO: also for ellipse
         return Vector2D.getVectorAtAngle(alpha, sizeBox.width/2).plus(center);
     }
+
+    @Override
+    public Vector2D getIntersection(Vector2D lineStart, Vector2D lineEnd, Vector2D center) {
+        return null;
+    }
 }

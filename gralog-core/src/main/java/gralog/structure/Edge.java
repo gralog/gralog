@@ -221,7 +221,13 @@ public class Edge extends XmlMarshallable implements IMovable {
         Vector2D targetOffset = target.coordinates.plus(perpendicularToEdge);
 
         double dist = target.radius * (1 - Math.cos(Math.asin(offset/target.radius)));
-        Vector2D intersection = target.intersectionAdjusted(sourceOffset, targetOffset, dist);
+
+        Vector2D intersection = target.shape.getIntersection(sourceOffset, targetOffset, target.coordinates);
+
+        //fallback to circle intersection if the shape hasn't implemented their method
+        if(intersection == null){
+            intersection = target.intersectionAdjusted(sourceOffset, targetOffset, dist);
+        }
 
         //draw edge and arrows
         if(controlPoints.isEmpty()){
@@ -249,17 +255,19 @@ public class Edge extends XmlMarshallable implements IMovable {
             double corr = arrowType.endPoint * arrowHeadLength;
             Vector2D sourceToCtrl1 = curve.ctrl1.minus(source.coordinates).normalized();
             Vector2D targetToCtrl2 = curve.ctrl2.minus(target.coordinates).normalized();
-            Vector2D exactTarget = target.coordinates.plus(targetToCtrl2.multiply(target.radius));
+
+            curve.source = source.shape.getEdgePoint(sourceToCtrl1.measureAngleX(), source.coordinates);
+            curve.target = target.shape.getEdgePoint(targetToCtrl2.measureAngleX(), target.coordinates);
 
 
             if(isDirected){
-                gc.arrow(targetToCtrl2.multiply(-1), exactTarget, arrowType, arrowHeadLength, edgeColor);
+                gc.arrow(targetToCtrl2.multiply(-1), curve.target, arrowType, arrowHeadLength, edgeColor);
             }else{
                 corr = 0;
             }
 
-            curve.source = source.coordinates.plus(sourceToCtrl1.multiply(source.radius));
-            curve.target = target.coordinates.plus(targetToCtrl2.multiply(target.radius - corr)); //corrected target
+            curve.target = curve.target.minus(targetToCtrl2.multiply(corr)); //correction for the arrow
+
             if(controlPoints.size() == 1){
                 gc.drawQuadratic(curve, edgeColor, width, type);
             }else{

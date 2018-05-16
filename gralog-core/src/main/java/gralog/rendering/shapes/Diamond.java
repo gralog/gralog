@@ -62,4 +62,40 @@ public class Diamond extends RenderingShape {
 
         return new Vector2D(x, y).plus(center);
     }
+
+    @Override
+    public Vector2D getIntersection(Vector2D a, Vector2D b, Vector2D center) {
+        //first, do a classification by angle between center and lineStart
+        double alpha = a.minus(center).measureAngleX() % 360;
+
+        if(alpha < 0){
+            alpha += 360;
+        }
+        double w = sizeBox.width/2;
+        double h = sizeBox.height/2;
+
+        Vector2D r;
+        Vector2D dir;
+
+        double coeff;
+
+        if(alpha < 90){
+            r = new Vector2D(center.getX() + w, center.getY());
+            dir = new Vector2D(w, -h);
+        }else if(alpha < 180){
+            r = new Vector2D(center.getX() - w, center.getY());
+            dir = new Vector2D(w, h);
+        }else if(alpha < 270){
+            r = new Vector2D(center.getX() - w, center.getY());
+            dir = new Vector2D(w, -h);
+        }else{
+            r = new Vector2D(center.getX() + w, center.getY());
+            dir = new Vector2D(w, h);
+        }
+        coeff = dir.getY()/dir.getX();
+        double t = ((a.getY() - r.getY()) - coeff*(a.getX() - r.getX()))/
+                (-b.getY() + a.getY() - coeff*(-b.getX() + a.getX()));
+
+        return a.plus(b.minus(a).multiply(t)); //line defined as a + (b-a)t
+    }
 }

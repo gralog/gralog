@@ -94,4 +94,13 @@ public abstract class RenderingShape {
      */
     public abstract Vector2D getEdgePoint(double alpha, Vector2D center);
 
+    /**
+     * Calculates the point of intersection between a line and the shape
+     * (Basically a RayCast)
+     * @param lineStart Start of the line
+     * @param lineEnd The end of the line INSIDE the shape. For a normal edge calculation, lineEnd = center
+     * @param center The center of the object with this shape
+     */
+    public abstract Vector2D getIntersection(Vector2D lineStart, Vector2D lineEnd, Vector2D center);
+
 }
