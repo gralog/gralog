@@ -2,20 +2,21 @@ package gralog.gralogfx;
 import gralog.structure.*;
 import gralog.rendering.*;
 
-public class SetEdgeLabelCommand extends CommandForGralogToExecute {
+
+public class SetEdgeContourCommand extends CommandForGralogToExecute {
     
 
     int sourceId;
     int targetId;
     Vertex sourceVertex;
     Vertex targetVertex;
-    Edge edgeToAddLabelTo;
-    String label;
+    Edge edgeToChangeContourOn;
+    String contour;
     // String neighbourString;
 
 
 
-    public SetEdgeLabelCommand(String[] externalCommandSegments,Structure structure){
+    public SetEdgeContourCommand(String[] externalCommandSegments,Structure structure){
         this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
@@ -53,25 +54,21 @@ public class SetEdgeLabelCommand extends CommandForGralogToExecute {
             return;
         }
 
-        this.edgeToAddLabelTo = this.structure.getEdgeByVertexIds(this.sourceId,this.targetId);
-        if (this.edgeToAddLabelTo == null){
+        this.edgeToChangeContourOn = this.structure.getEdgeByVertexIds(this.sourceId,this.targetId);
+        if (this.edgeToChangeContourOn == null){
             System.out.println("fail!!!! ahahaha i love failure");
             this.fail();
             this.error = new Exception("error: no edge with vertex coordinates " + Integer.toString(this.sourceId) + " " + Integer.toString(this.targetId));
             return;
         }
 
+        this.contour = externalCommandSegments[4];
+
         // this.generateLabel(externalCommandSegments);
-        this.label = externalCommandSegments[4];
+
     }
 
-    public void generateLabel(String[] externalCommandSegments){
-        String label = "";
-        for (int i = 4; i < externalCommandSegments.length; i += 1){
-            label = label + externalCommandSegments[i]+ " ";
-        }
-        this.label = label;
-    }
+   
 
 
     public void handle(){
@@ -82,7 +79,17 @@ public class SetEdgeLabelCommand extends CommandForGralogToExecute {
             
         // e.isDirected = (externalCommandSegments[3].equals("true"));
 
-        this.edgeToAddLabelTo.setLabel(this.label);
+        if (contour.toLowerCase().equals("plain")){
+            this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.PLAIN;
+        }else if(contour.toLowerCase().equals("dashed")){
+            this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.DASHED;
+        }else if(contour.toLowerCase().equals("dotted")){
+            this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.DOTTED;
+        }else{
+            this.fail();
+            this.error = new Exception("error: edge contour \"" + contour + "\" does not exist");
+            return;
+        }
 
         this.setResponse(null);
 

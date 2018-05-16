@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.control.CheckBox;
 
 /**
  *
@@ -36,6 +37,8 @@ public class ExceptionBox extends Alert {
         textArea.setEditable(false);
         textArea.setWrapText(false);
 
+        CheckBox dontShowThisMessageAgain = new CheckBox("Don't show this message again");
+
         textArea.setMaxWidth(Double.MAX_VALUE);
         textArea.setMaxHeight(Double.MAX_VALUE);
         GridPane.setVgrow(textArea, Priority.ALWAYS);
@@ -45,6 +48,7 @@ public class ExceptionBox extends Alert {
         expContent.setMaxWidth(Double.MAX_VALUE);
         expContent.add(label, 0, 0);
         expContent.add(textArea, 0, 1);
+        expContent.add(dontShowThisMessageAgain,0,2);
 
         // Set expandable Exception into the dialog pane.
         this.getDialogPane().setExpandableContent(expContent);

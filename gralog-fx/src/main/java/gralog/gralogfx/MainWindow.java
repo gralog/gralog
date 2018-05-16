@@ -59,6 +59,7 @@ public class MainWindow extends Application {
     private Tabs tabs;
     private StatusBar statusBar;
     private Piping pipeline;
+    private List<Piping> pipelines;
 
     private HBox rightBox;
 
@@ -77,6 +78,7 @@ public class MainWindow extends Application {
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
         pipeline = new Piping();
+        pipelines = new ArrayList<Piping>();
         //controls
         handlers.onAlignHorizontally = () -> {
             if(tabs.getCurrentStructurePane() != null){
@@ -535,6 +537,7 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-height", 800));
 
         scene.getStylesheets().add("/stylesheet.css");
+
         scene.getStylesheets().add(DockPane.class.getResource("default.css").toExternalForm());
         this.stage = primaryStage;
         primaryStage.setMinHeight(500);
@@ -547,7 +550,7 @@ public class MainWindow extends Application {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()){
                 case SPACE:
-                    System.out.println("space pressed");
+                    System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
                     pipeline.execWithAck();
                     break;
             }

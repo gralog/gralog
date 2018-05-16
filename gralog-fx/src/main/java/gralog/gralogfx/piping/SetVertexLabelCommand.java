@@ -37,14 +37,16 @@ public class SetVertexLabelCommand extends CommandForGralogToExecute {
 
         
 
-        this.generateLabel(externalCommandSegments);
+        // this.generateLabel(externalCommandSegments);
+        this.label = externalCommandSegments[3];
 
     }
 
     public void generateLabel(String[] externalCommandSegments){
         String label = "";
-        for (int i = 3; i < externalCommandSegments.length; i += 1){
-            label = label + externalCommandSegments[i]+ " " ;
+        String[] labelPieces = externalCommandSegments[3].split(" ");
+        for (int i = 0; i < labelPieces.length; i += 1){
+            label = label + labelPieces[i]+ " ";
         }
         this.label = label;
     }

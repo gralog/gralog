@@ -88,6 +88,13 @@ class Graph:
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
+	def setEdgeContour(self, (sourceVertexId,targetVertexId),contour):
+		line = line = "setEdgeContour#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#";
+		line = line + str(contour).rstrip();
+		print(line);
+		sys.stdout.flush()
+
+
 	def setEdgeColor(self,sourceVertexId,targetVertexId,colorHex=-1,colorRGB=-1):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
@@ -394,7 +401,8 @@ class Graph:
 		self.variablesToTrack[name] = var; #if this is a pointer, it will work;
 		# if it is an int or str, or some other non-reference type, it will not
 
-
+	def unTrack(self,name):
+		del self.variablesToTrack[name];
 
 	def mistakeLine(self):
 		print("wubbadubdub 3 men in a tub");

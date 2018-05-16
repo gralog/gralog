@@ -110,7 +110,9 @@ public class Tabs {
     }
 
     private void onChangeTab() {
+        this.requestRedraw();
         onStructureChange(getCurrentStructurePane().structure);
+
     }
 
     private void onHighlightsChange(Highlights highlights){

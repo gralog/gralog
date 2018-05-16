@@ -118,16 +118,24 @@ public class PipingMessageHandler{
         if (color.length() == 7){
             color = color.substring(1);
         }
-        changeColor = new GralogColor(Integer.parseInt(color,16));
+        try{
+
+            changeColor = new GralogColor(Integer.parseInt(color,16));
+        }catch(Exception e){
+            changeColor = (GralogColor)null;
+        }
         return changeColor;
     }
 
     public static GralogColor rgbToGralogColor(String[] rgb){
-
-        int r = Integer.parseInt(rgb[0]);
-        int g = Integer.parseInt(rgb[1]);
-        int b = Integer.parseInt(rgb[2]);
-        return new GralogColor(r,g,b);
+        try{
+            int r = Integer.parseInt(rgb[0]);
+            int g = Integer.parseInt(rgb[1]);
+            int b = Integer.parseInt(rgb[2]);
+            return new GralogColor(r,g,b);
+        }catch(Exception e){
+            return (GralogColor)null;
+        }
     }
 
 
@@ -229,6 +237,14 @@ public class PipingMessageHandler{
             // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
             
             currentCommand = new SetVertexStrokeColorCommand(externalCommandSegments,structure);
+            Structure currentStructure = structure;
+            // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+            // this.out.println("ack");
+        }else if (externalCommandSegments[0].equals("setEdgeContour")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
+            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+            
+            currentCommand = new SetEdgeContourCommand(externalCommandSegments,structure);
             Structure currentStructure = structure;
             // currentCommand.setStructure(currentStructure);
             return currentCommand;

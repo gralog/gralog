@@ -56,11 +56,28 @@ public class SetEdgeColorCommand extends CommandForGralogToExecute {
 
         // int changeId;
        
-
+        String[] color;
         if (this.externalCommandSegments.length == 5){
+            color = Arrays.copyOfRange(externalCommandSegments, 4, 5);
             this.changeColor = PipingMessageHandler.colorConversion(Arrays.copyOfRange(externalCommandSegments, 4, 5));
         }else{
+            color = Arrays.copyOfRange(externalCommandSegments, 4, 7);
             this.changeColor = PipingMessageHandler.colorConversion(Arrays.copyOfRange(externalCommandSegments, 4, 7));
+        }
+
+
+
+        if (this.changeColor == null){
+            System.out.println("fuck it's null!");
+            String colorString = "";
+            for (String x : color){
+                colorString += x;
+            }
+            this.fail();
+            this.error = new Exception("The color: \"" + colorString + "\" is not known to gralog.");
+            return;
+        }else{
+            System.out.println("it's not null jk");
         }
         
         

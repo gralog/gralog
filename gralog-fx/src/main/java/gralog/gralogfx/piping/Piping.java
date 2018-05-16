@@ -239,7 +239,7 @@ public class Piping{
                     }catch(Exception e){
                         currentCommand = new NotRecognizedCommand(externalCommandSegments,(Structure)null);
                     }
-
+                    
                     if (!currentCommand.didFail()){
                         System.out.println("handling");
                         currentCommand.handle();
@@ -249,7 +249,9 @@ public class Piping{
                             System.out.println("no error, response is: |" + response + "|");
                             this.out.println(response);
                         }
-                    }else{
+                    }
+
+                    if (currentCommand.didFail()){
 
                         ExceptionBox exbox = new ExceptionBox();
                         exbox.showAndWait(currentCommand.getError());
