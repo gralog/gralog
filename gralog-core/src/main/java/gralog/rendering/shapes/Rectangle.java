@@ -83,10 +83,35 @@ public class Rectangle extends RenderingShape {
     }
 
     @Override
-    public Vector2D getIntersection(Vector2D lineStart, Vector2D lineEnd, Vector2D center) {
-        //TODO: implement
+    public Vector2D getIntersection(Vector2D a, Vector2D b, Vector2D center) {
+        final double mainLineAngle = a.minus(b).theta();
 
-        return null;
+        //line from b to first corner
+        final Vector2D corner1 = center.plus(sizeBox.width/2, sizeBox.height/2);
+        final Vector2D corner2 = center.plus(-sizeBox.width/2, sizeBox.height/2);
+        final Vector2D corner3 = center.plus(-sizeBox.width/2, -sizeBox.height/2);
+        final Vector2D corner4 = center.plus(sizeBox.width/2, -sizeBox.height/2);
+
+        //if line is between corner 4 and 1
+        if(mainLineAngle < corner1.minus(b).theta() || mainLineAngle > corner4.minus(b).theta()){
+            double t = (corner1.getX() - a.getX())/(b.getX() - a.getX());
+            return a.plus(b.minus(a).multiply(t));
+        }
+        //if line is between corner 1 and 2
+        else if(mainLineAngle < corner2.minus(b).theta()){
+            double t = (corner1.getY() - a.getY())/(b.getY() - a.getY());
+            return a.plus(b.minus(a).multiply(t));
+        }
+        //if line is between corner 2 and 3
+        else if(mainLineAngle < corner3.minus(b).theta()){
+            double t = (corner2.getX() - a.getX())/(b.getX() - a.getX());
+            return a.plus(b.minus(a).multiply(t));
+        }
+        //if line is between corner 3 and 4
+        else{
+            double t = (corner3.getY() - a.getY())/(b.getY() - a.getY());
+            return a.plus(b.minus(a).multiply(t));
+        }
     }
     private static double mod360(double alpha){
         alpha %= 360;

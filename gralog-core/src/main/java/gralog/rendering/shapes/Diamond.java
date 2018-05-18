@@ -66,11 +66,7 @@ public class Diamond extends RenderingShape {
     @Override
     public Vector2D getIntersection(Vector2D a, Vector2D b, Vector2D center) {
         //first, do a classification by angle between center and lineStart
-        double alpha = a.minus(center).measureAngleX() % 360;
-
-        if(alpha < 0){
-            alpha += 360;
-        }
+        double alpha = a.minus(center).theta();
         double w = sizeBox.width/2;
         double h = sizeBox.height/2;
 
