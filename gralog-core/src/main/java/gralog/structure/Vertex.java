@@ -7,9 +7,11 @@ import gralog.events.*;
 import gralog.rendering.*;
 import gralog.rendering.shapes.Ellipse;
 import gralog.rendering.shapes.RenderingShape;
+import gralog.rendering.shapes.SizeBox;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.HashSet;
@@ -61,6 +63,11 @@ public class Vertex extends XmlMarshallable implements IMovable {
         this.loopAngle = v.loopAngle;
         this.loopAnchor = v.loopAnchor;
         this.strokeWidth = v.strokeWidth;
+        try {
+            this.shape = (RenderingShape) v.shape.getClass().getConstructors()[0].newInstance(v.shape.sizeBox);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
         this.strokeColor = new GralogColor(v.strokeColor);
         this.coordinates = new Vector2D(v.coordinates);
         this.listeners = new HashSet<>(v.listeners);
