@@ -6,21 +6,36 @@ package gralog.rendering;
  */
 public class Arrow
 {
+    public enum LineFlag {
+        POLY,
+        LINE
+    }
+
     public static final Arrow TYPE1 = new Arrow(
             new double[]{0, -0.5, -1.0, -0.8, -1.0,  -0.5},
             new double[]{0, 0.14,  0.35,  0.0, -0.35, -0.14},
             6,
-            -0.8);
+            -0.8,
+            LineFlag.POLY);
+
+    public static final Arrow TYPE2 = new Arrow(
+            new double[]{-0.4, -0.31, -0.18, 0, -0.18, -0.31, -0.4},
+            new double[]{0.40, +0.23,  0.10, 0, -0.10, -0.23, -0.40},
+            7,
+            -0.1,
+            LineFlag.LINE);
 
     public double[] xPoints;
     public double[] yPoints;
     public int count;
     public double endPoint;
+    public LineFlag flag;
 
-    public Arrow(double[] xPoints, double[] yPoints, int count, double endPoint){
+    public Arrow(double[] xPoints, double[] yPoints, int count, double endPoint, LineFlag flag){
         this.xPoints = xPoints;
         this.yPoints = yPoints;
         this.count = count;
         this.endPoint = endPoint;
+        this.flag = flag;
     }
 }
