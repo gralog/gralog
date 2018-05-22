@@ -43,9 +43,6 @@ public class Ellipse extends RenderingShape {
     @Override
     public Vector2D getIntersection(Vector2D a, Vector2D b, Vector2D center) {
 
-        //TODO: do a reduced calculation if the sizebox is a square
-        //(which is a default behaviour for many graphs)
-
         //move origin to center
         a = a.minus(center);
         b = b.minus(center);
@@ -63,6 +60,7 @@ public class Ellipse extends RenderingShape {
             double y = Math.signum(a.getY()) * Math.sqrt(h2/4 - a.getX() * a.getX() * h2/w2);
             return new Vector2D(a.getX(), y).plus(center);
         }
+
         //constant factor for linear function of a + (b-a)t
         double c;
 
@@ -73,41 +71,18 @@ public class Ellipse extends RenderingShape {
         }
 
         //pq formula
-        final double bracketTerm = (4/w2 + 4*d*d/h2);
-        final double p = (8 * d * c)/( bracketTerm * h2);
-        final double q = (4 * c * c * (1 / h2) - 1)/bracketTerm;
+        double bracketTerm = (4/w2 + 4*d*d/h2);
+        double p = (8 * d * c)/( bracketTerm * h2);
+        double q = (4 * c * c * (1 / h2) - 1)/bracketTerm;
 
-        final double x1 = -p/2 + Math.sqrt(p * p /4 -q);
-        final double x2 = -p/2 - Math.sqrt(p * p /4 -q);
+        double sqrt = Math.sqrt(p * p /4 -q);
+        double x1 = -p/2 + sqrt;
+        double x2 = -p/2 - sqrt;
 
-        if(a.getX() > b.getX()){
-            if(x1 > b.getX() && x1 < a.getX()){
-                return new Vector2D(x1, d * x1 + c).plus(center);
-            }else{
-                return new Vector2D(x2, d * x2 + c).plus(center);
-            }
-        }else if(a.getX() < b.getX()){
-            if(x1 > a.getX() && x1 < b.getX()){
-                return new Vector2D(x1, d * x1 + c).plus(center);
-            }else{
-                return new Vector2D(x2, d * x2 + c).plus(center);
-            }
+        if(Math.abs(x1 - a.getX()) < Math.abs(x2 - a.getX())){
+            return new Vector2D(x1, d * x1 + c).plus(center);
         }else{
-            if(a.getY() > b.getY()){
-                double y1 = d * x1 + c;
-                if(y1 > b.getY() && y1 < a.getY()){
-                    return new Vector2D(x1, y1).plus(center);
-                }else{
-                    return new Vector2D(x2, d * x2 + c).plus(center);
-                }
-            }else{
-                double y1 = d * x1 + c;
-                if(y1 > a.getY() && y1 < b.getY()){
-                    return new Vector2D(x1, y1).plus(center);
-                }else{
-                    return new Vector2D(x2, d * x2 + c).plus(center);
-                }
-            }
+            return new Vector2D(x2, d * x2 + c).plus(center);
         }
     }
 }
