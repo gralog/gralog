@@ -80,7 +80,9 @@ public class Vector2D {
     public Vector2D plus(double x, double y) {
         return new Vector2D(this.x + x, this.y + y);
     }
-
+    public Vector2D minus(double x, double y) {
+        return new Vector2D(this.x - x, this.y - y);
+    }
     public Vector2D minus(Vector2D other) {
         return new Vector2D(this.x - other.x, this.y - other.y);
     }
@@ -97,8 +99,26 @@ public class Vector2D {
         return new Vector2D(this.x * c, this.y * c);
     }
 
+    public Vector2D rotate(double alpha){
+        double cosa = Math.cos(alpha);
+        double sina = Math.sin(alpha);
+        return new Vector2D(x * cosa - y * sina, x * sina + y * cosa);
+    }
+
+    public Vector2D rotate(Vector2D reference, double alpha){
+        double cosa = Math.cos(alpha);
+        double sina = Math.sin(alpha);
+        double xt = x - reference.x;
+        double yt = y - reference.y;
+        return new Vector2D(xt * cosa - yt * sina + reference.x, xt * sina + yt * cosa + reference.y);
+    }
+
     public double length() {
         return Math.sqrt(x * x + y * y);
+    }
+
+    public double diamondLength() {
+        return Math.abs(x) + Math.abs(y);
     }
 
     public double theta() {

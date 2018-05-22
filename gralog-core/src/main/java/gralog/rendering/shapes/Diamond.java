@@ -66,7 +66,9 @@ public class Diamond extends RenderingShape {
     @Override
     public Vector2D getIntersection(Vector2D a, Vector2D b, Vector2D center) {
         //first, do a classification by angle between center and lineStart
-        double alpha = a.minus(center).theta();
+        a = a.minus(center);
+        b = b.minus(center);
+        double alpha = a.theta();
         double w = sizeBox.width/2;
         double h = sizeBox.height/2;
 
@@ -75,23 +77,106 @@ public class Diamond extends RenderingShape {
 
         double coeff;
 
+        Vector2D diff = a.minus(b);
+        final double counterRotation = Math.toRadians(diff.theta());
+        /*
+        * The shape consists of 4 lines that can be identified by the angle of a point that lies
+        * on the edge of the shape. An edge point with the angle 45 is on the first line,
+        * an edge point with angle 110 lies on the second etc..
+        *
+        *
+        * Consider a point A outside of the diamond with an angle of <90 (w.r.t. center)
+        *
+        * Now, if the internal point B is at the center, the intersection point will always be
+        * at the first line. If however the point B is below the center and A has a very flat angle
+        * then the intersection could occur at the 4th line.
+        *
+        * This correction is being calculated with newC1/C2 and depending on the result, we classify
+        * the correct line.
+        *
+        * */
+
+        int lineNumber;
+
         if(alpha < 90){
-            r = new Vector2D(center.getX() + w, center.getY());
-            dir = new Vector2D(w, -h);
+            double newC1 = (new Vector2D(w,0)).rotate(b, -counterRotation).getY();
+            double newC2 = (new Vector2D(0, h)).rotate(b, -counterRotation).getY();
+
+            if(newC1 > b.getY()){
+                lineNumber = 3;
+            }else if(newC2 < b.getY()){
+                lineNumber = 1;
+            }else{
+                lineNumber = 0;
+            }
         }else if(alpha < 180){
-            r = new Vector2D(center.getX() - w, center.getY());
-            dir = new Vector2D(w, h);
+            double newC1 = (new Vector2D(0, h)).rotate(b, -counterRotation).getY();
+            double newC2 = (new Vector2D(-w, 0)).rotate(b, -counterRotation).getY();
+
+            if(newC1 > b.getY()){
+                lineNumber = 0;
+            }else if(newC2 < b.getY()){
+                lineNumber = 2;
+            }else{
+                lineNumber = 1;
+            }
+
         }else if(alpha < 270){
-            r = new Vector2D(center.getX() - w, center.getY());
-            dir = new Vector2D(w, -h);
+            double newC1 = (new Vector2D(-w,0)).rotate(b, -counterRotation).getY();
+            double newC2 = (new Vector2D(0, -h)).rotate(b, -counterRotation).getY();
+
+            if(newC1 > b.getY()){
+                lineNumber = 1;
+            }else if(newC2 < b.getY()){
+                lineNumber = 3;
+            }else{
+                lineNumber = 2;
+            }
+
         }else{
-            r = new Vector2D(center.getX() + w, center.getY());
-            dir = new Vector2D(w, h);
+            double newC1 = (new Vector2D(0,-h)).rotate(b, -counterRotation).getY();
+            double newC2 = (new Vector2D(w, 0)).rotate(b, -counterRotation).getY();
+
+            if(newC1 > b.getY()){
+                lineNumber = 2;
+            }else if(newC2 < b.getY()){
+                lineNumber = 0;
+            }else{
+                lineNumber = 3;
+            }
+
         }
+        LineParameters l = getParamsFromNumber(lineNumber, w, h);
+        r = l.r;
+        dir = l.dir;
+
         coeff = dir.getY()/dir.getX();
         double t = ((a.getY() - r.getY()) - coeff*(a.getX() - r.getX()))/
                 (-b.getY() + a.getY() - coeff*(-b.getX() + a.getX()));
 
-        return a.plus(b.minus(a).multiply(t)); //line defined as a + (b-a)t
+        return a.plus(b.minus(a).multiply(t)).plus(center); //line defined as a + (b-a)t
+    }
+
+    private LineParameters getParamsFromNumber(int lineNumber, double w, double h){
+        LineParameters l = new LineParameters();
+        if(lineNumber == 0){
+            l.r = new Vector2D(w, 0);
+            l.dir = new Vector2D(w, -h);
+        }else if(lineNumber == 1){
+            l.r = new Vector2D(-w, 0);
+            l.dir = new Vector2D(w, h);
+        }else if(lineNumber == 2){
+            l.r = new Vector2D(-w, 0);
+            l.dir = new Vector2D(w, -h);
+        }else{
+            l.r = new Vector2D(+w, 0);
+            l.dir = new Vector2D(w, h);
+        }
+
+        return l;
+    }
+    private static class LineParameters{
+        private Vector2D r;
+        private Vector2D dir;
     }
 }
