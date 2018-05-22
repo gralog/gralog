@@ -9,6 +9,7 @@ import javafx.geometry.VPos;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.Font;
 
@@ -55,6 +56,18 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
             y[i] = pane.modelToScreenY(y[i]);
         }
         gc.fillPolygon(x, y, count);
+    }
+    @Override
+    public void lines(double[] x, double[] y, int count, GralogColor c){
+        gc.setLineCap(StrokeLineCap.ROUND);
+        gc.setStroke(Color.rgb(c.r, c.g, c.b));
+        gc.setLineWidth((2.54 / 96) * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        for (int i = 0; i < count; i++)
+        {
+            x[i] = pane.modelToScreenX(x[i]);
+            y[i] = pane.modelToScreenY(y[i]);
+        }
+        gc.strokePolyline(x, y, count);
     }
 
     @Override

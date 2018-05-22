@@ -62,16 +62,15 @@ public class State extends Vertex {
 
     @Override
     public void render(GralogGraphicsContext gc, Highlights highlights) {
-        if (highlights.isSelected(this))
-            gc.circle(coordinates, radius + 0.07, GralogColor.RED);
+        super.render(gc, highlights);
 
-        gc.circle(coordinates, radius, strokeColor);
-        gc.circle(coordinates, radius - strokeWidth, fillColor);
+        //TODO: make it look good
+
         if (this.finalState) {
             gc.circle(coordinates, radius - 3 * strokeWidth, strokeColor);
             gc.circle(coordinates, radius - 4 * strokeWidth, fillColor);
         }
-
+        /*
         if (startState) {
             Vector2D center = coordinates;
             Vector2D intersectionOffset = new Vector2D(
@@ -84,7 +83,6 @@ public class State extends Vertex {
                 initialMarkHeadAngle, initialMarkHeadLength,
                 initialMarkColor, initialMarkWidth);
         }
-
-        gc.putText(coordinates, label, textHeight, fillColor.inverse());
+        */
     }
 }

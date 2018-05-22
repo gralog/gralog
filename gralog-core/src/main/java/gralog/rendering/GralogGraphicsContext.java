@@ -35,29 +35,7 @@ public abstract class GralogGraphicsContext {
     public void line(Vector2D from, Vector2D to, GralogColor color, double width, LineType type) {
         line(from.getX(), from.getY(), to.getX(), to.getY(), color, width, type);
     }
-    public void arrow(Vector2D from, Vector2D to,
-        double headAngle, double headLength, GralogColor color, double width) {
-        final double x1 = from.getX();
-        final double y1 = from.getY();
-        final double x2 = to.getX();
-        final double y2 = to.getY();
 
-        double arrowHeadAngle = headAngle / 2.0d;
-        double arrowHeadLength = headLength;
-
-        double alpha = (new Vector2D(x2 - x1, y2 - y1)).theta();
-
-        double arrowX1 = x2 - arrowHeadLength * Math.cos((alpha - arrowHeadAngle) * Math.PI / 180.0d);
-        double arrowY1 = y2 - arrowHeadLength * Math.sin((alpha - arrowHeadAngle) * Math.PI / 180.0d);
-        double arrowX2 = x2 - arrowHeadLength * Math.sin((90d - alpha - arrowHeadAngle) * Math.PI / 180.0d);
-        double arrowY2 = y2 - arrowHeadLength * Math.cos((90d - alpha - arrowHeadAngle) * Math.PI / 180.0d);
-
-        line(x1, y1, x2, y2, color, width);
-        // arrow head
-        line(arrowX1, arrowY1, x2, y2, color, width);
-        line(arrowX2, arrowY2, x2, y2, color, width);
-        line(arrowX1, arrowY1, arrowX2, arrowY2, color, width);
-    }
     public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color){
         double theta = Math.toRadians(dir.theta());
 
@@ -67,14 +45,22 @@ public abstract class GralogGraphicsContext {
         for (int i = 0; i < arrowType.xPoints.length; i++)
         {
             double oldX = xs[i];
-            xs[i] = (xs[i] * Math.cos(theta) - ys[i] * Math.sin(theta)) * scale + pos.getX();
-            ys[i] = (oldX  * Math.sin(theta) + ys[i] * Math.cos(theta)) * scale + pos.getY();
+            double cost = Math.cos(theta);
+            double sint = Math.sin(theta);
+            xs[i] = (xs[i] * cost - ys[i] * sint) * scale + pos.getX();
+            ys[i] = (oldX  * sint + ys[i] * cost) * scale + pos.getY();
         }
-        polygon(xs, ys, arrowType.count, color);
+
+        if(arrowType.flag == Arrow.LineFlag.POLY){
+            polygon(xs, ys, arrowType.count, color);
+        }else{
+            lines(xs, ys, arrowType.count, color);
+        }
     }
 
     public abstract void polygon(double[] x, double[] y, int count, GralogColor color);
 
+    public abstract void lines(double[] x, double[] y, int count, GralogColor color);
     /**
      * Draws a curved bezier line from start to end. The control points are positively perpendicular
      * to the line from start to end. The length of control points can be set.
