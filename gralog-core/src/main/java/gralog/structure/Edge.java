@@ -20,7 +20,7 @@ import org.w3c.dom.NodeList;
 @XmlName(name = "edge")
 public class Edge extends XmlMarshallable implements IMovable {
 
-    public static double multiEdgeOffset = 0.25;
+    public static double multiEdgeOffset = 0.2;
     private static final double SELECTION_WIDTH = 0.15;
 
     Set<EdgeListener> listeners = new HashSet<>();
@@ -31,9 +31,8 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     public Boolean isDirected = true;
 
-    public Arrow arrowType = Arrow.TYPE1;
+    public Arrow arrowType = Arrow.TYPE2;
     public double arrowHeadLength = 0.2d; // cm
-    public double arrowHeadAngle = 40d; // degrees
     public Double width = 2.54 / 96; // cm
 
     public GralogColor color = GralogColor.BLACK;
@@ -375,7 +374,7 @@ public class Edge extends XmlMarshallable implements IMovable {
                     ctrl2,
                     target);
             if(projection.successful){
-                return projection.result.minus(m).length() < SELECTION_WIDTH;
+                return projection.result.minus(m).length() < multiEdgeOffset * 0.5;
             }else{
                 return false;
             }
@@ -410,7 +409,6 @@ public class Edge extends XmlMarshallable implements IMovable {
         enode.setAttribute("cost", Double.toString(cost));
         enode.setAttribute("width", Double.toString(width));
         enode.setAttribute("arrowheadlength", Double.toString(arrowHeadLength));
-        enode.setAttribute("arrowheadangle", Double.toString(arrowHeadAngle));
         enode.setAttribute("color", color.toHtmlString());
 
         for (EdgeIntermediatePoint p : intermediatePoints) {
@@ -437,8 +435,6 @@ public class Edge extends XmlMarshallable implements IMovable {
 
         if (enode.hasAttribute("arrowheadlength"))
             arrowHeadLength = Double.parseDouble(enode.getAttribute("arrowheadlength"));
-        if (enode.hasAttribute("arrowheadangle"))
-            arrowHeadAngle = Double.parseDouble(enode.getAttribute("arrowheadangle"));
         if (enode.hasAttribute("color"))
             color = GralogColor.parseColor(enode.getAttribute("color"));
 

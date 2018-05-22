@@ -17,17 +17,8 @@ public class Diamond extends RenderingShape {
         double x2 = center.getX() + sizeBox.width/2;
         double y2 = center.getY() + sizeBox.height/2;
 
-        if (h){
-            gc.strokeDiamond(x1 - strokeWidth/2, y1 - strokeWidth/2,
-                    x2 + strokeWidth/2, y2 + strokeWidth/2,
-                    strokeWidth, GralogColor.RED);
-        }
-        else{
-            gc.strokeDiamond(x1 - strokeWidth/2, y1 - strokeWidth/2,
-                    x2 + strokeWidth/2, y2 + strokeWidth/2,
-                    strokeWidth, GralogColor.BLACK);
-        }
         gc.fillDiamond(x1, y1, x2, y2, GralogColor.WHITE);
+        gc.strokeDiamond(x1, y1, x2, y2, strokeWidth, h ? GralogColor.RED : GralogColor.BLACK);
     }
 
     @Override

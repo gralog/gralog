@@ -15,16 +15,10 @@ public class Ellipse extends RenderingShape {
     }
     @Override
     public void render(GralogGraphicsContext gc, boolean h, Vector2D center) {
-        if (h){
-            gc.strokeOval(center, sizeBox.width + strokeWidth,
-                    sizeBox.height + strokeWidth,
-                    strokeWidth, GralogColor.RED);
-        }else{
-            gc.strokeOval(center, sizeBox.width + strokeWidth,
-                    sizeBox.height + strokeWidth,
-                    strokeWidth, GralogColor.BLACK);
-        }
-        gc.fillOval(center, sizeBox.width, sizeBox.height, GralogColor.WHITE);
+        gc.strokeOval(center, sizeBox.width - strokeWidth,
+                sizeBox.height - strokeWidth,strokeWidth, h? GralogColor.RED : GralogColor.BLACK);
+        gc.fillOval(center, sizeBox.width - 2 * strokeWidth,
+                sizeBox.height - 2 * strokeWidth, GralogColor.WHITE);
     }
 
     @Override
