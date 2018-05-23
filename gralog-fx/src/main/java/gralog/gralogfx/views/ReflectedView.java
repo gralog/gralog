@@ -39,7 +39,9 @@ public class ReflectedView extends GridPaneView<Object> {
         try {
             if (displayObject != null) {
                 Class<?> c = displayObject.getClass();
+
                 for (Field f : c.getFields()) {
+
                     String name = f.getName();
                     Label nameLabel = new Label(name);
                     nameLabel.setPrefWidth(LABEL_WIDTH);
@@ -49,13 +51,16 @@ public class ReflectedView extends GridPaneView<Object> {
                     Class<?> type = f.getType();
 
                     if (type.equals(Double.class)) {
+
                         String valueString = value.toString();
                         TextField valueField = new TextField(valueString);
+
                         valueField.textProperty().addListener(e -> {
                             try {
                                 f.set(displayObject, Double.parseDouble(valueField.getText()));
                                 requestRedraw();
                             } catch (IllegalAccessException | IllegalArgumentException ex) {
+
                             }
                         });
                         valueControl = valueField;
@@ -132,6 +137,7 @@ public class ReflectedView extends GridPaneView<Object> {
                             @Override
                             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                                 try{
+                                    ///here!
                                     Constructor cs = RenderingShape.renderingShapeClasses.get(newValue.intValue()).getConstructors()[0];
                                     f.set(displayObject, cs.newInstance(shape.sizeBox));
                                     requestRedraw();

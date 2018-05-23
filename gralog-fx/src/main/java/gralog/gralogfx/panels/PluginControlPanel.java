@@ -15,6 +15,8 @@ import gralog.gralogfx.Piping;
 import java.util.List;
 import java.util.ArrayList;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Control;
+import javafx.scene.control.Separator;
 
 public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
@@ -23,10 +25,11 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
     private Tabs tabs;
     private Piping pipeline;
     private List<Label> labels;
-    private VBox vbox;
+    private VBox boilerPlateVbox;
+    private VBox varBox;
     private CheckBox wrapped;
     private HBox wrappedHolder;
-
+    private List<Control> labelsAndSeparators;
 
         
     
@@ -41,57 +44,58 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
         this.tabs = tabs;
         
-        this.vbox = new VBox();
+        this.boilerPlateVbox = new VBox();
+        this.varBox = new VBox();
         HBox hbox = new HBox();
         this.wrappedHolder = new HBox();
+        this.setFitToWidth(true);
 
         hbox.prefWidthProperty().bind(this.widthProperty());
         wrappedHolder.prefWidthProperty().bind(this.widthProperty());
 
         this.wrapped = new CheckBox("Wrap text");
         
-
-        Runnable borf = new Runnable(){
+        Runnable checkBoxClickHandler = new Runnable(){
             public void run(){
                 if (!wrapped.isSelected()){
                     System.out.println("is now unchecked");
                     // System.out.println("before he was " + vbox.getChildren().get(3).getWrapText());
-                    vbox.getChildren().removeAll(labels);
+                    varBox.getChildren().clear();
 
 
-                    for (Label x : labels){
+                    for (Label x : PluginControlPanel.this.labels){
                         x.setMinWidth(Region.USE_PREF_SIZE);
                         x.setWrapText(false);
                         
-                        vbox.getChildren().add(x);
                     }
+                    sourceVarBox();
                     // System.out.println("after readding I've got: " + vbox.getChildren().get(3));
                 }else{
                     System.out.println("is now checked");
                     
-                    vbox.getChildren().removeAll(labels);
-                    System.out.println("after removal I've got: " + vbox.getChildren());
+                    varBox.getChildren().clear();
+                    System.out.println("after removal I've got: " + varBox.getChildren());
 
 
-                    for (Label x : labels){
+                    for (Label x : PluginControlPanel.this.labels){
 
                         x.setMinWidth(100);
                         x.setWrapText(true);
-                        vbox.getChildren().add(x);
                     }
 
-                    System.out.println("after readding I've got: " + vbox.getChildren());
-                
+                    System.out.println("after readding I've got: " + varBox.getChildren());
+                    sourceVarBox();
                 }
 
             }
         };
 
         
-        this.setOnWrappedClicked(borf);
+        this.setOnWrappedClicked(checkBoxClickHandler);
 
 
-        vbox.prefWidthProperty().bind(this.widthProperty());
+        varBox.prefWidthProperty().bind(this.widthProperty());
+        boilerPlateVbox.prefWidthProperty().bind(this.widthProperty());
         
 
         play = createButton("\u25B6");
@@ -104,34 +108,28 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
         n00b = createButton("hello");
 
-        pb = new ProgressBar(0f);
+        pb = new ProgressBar(0.3);
 
         
 
-        labels = new ArrayList<Label>();
-
-        Label label = new Label("foo");
-
-        labels.add(label);
-        labels.add(new Label("bar"));
-
-        for (Label x : labels){
-            x.setWrapText(true);
-        }
+        this.labels = new ArrayList<Label>();
+        this.labelsAndSeparators = new ArrayList<Control>();
+        
 
 
-
-        pb.prefWidthProperty().bind(vbox.widthProperty());
+        pb.prefWidthProperty().bind(boilerPlateVbox.widthProperty());
         pb.setPrefHeight(20);
+        pb.setStyle("-fx-accent:green;");
 
 
 
 
 
-        hbox.getChildren().addAll(pause,play,step,pb);
+        hbox.getChildren().addAll(pause,play,step);
         
-        vbox.getChildren().addAll(hbox,pb,wrapped);
-        vbox.getChildren().addAll(labels);
+        sourceVarBox();
+        varBox.getChildren().addAll(labelsAndSeparators);
+        boilerPlateVbox.getChildren().addAll(hbox,pb,wrapped,varBox);
 
         // this.foo();
         // vbox.setFitToHeight(true);
@@ -139,7 +137,7 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
   
 
 
-        this.setContent(vbox);
+        this.setContent(boilerPlateVbox);
     }
     public void setOnPlay(Runnable onPlay){
         play.setOnMouseClicked(event -> onPlay.run());
@@ -153,6 +151,11 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
     public void setOnWrappedClicked(Runnable onWrappedClicked){
         wrapped.setOnMouseClicked(event -> onWrappedClicked.run());
+    }
+
+    public void sourceVarBox(){
+        interpolateSeparators();
+        this.varBox.getChildren().addAll(this.labelsAndSeparators);
     }
 
     
@@ -179,8 +182,27 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         return b;
     }
 
+    public void interpolateSeparators(){
+        if (this.labelsAndSeparators == null){
+            this.labelsAndSeparators = new ArrayList<Control>();
+        }
+        this.labelsAndSeparators.clear();
+        int i;
+        for (i = 0; i < this.labels.size()-1; i ++){
+            this.labelsAndSeparators.add(this.labels.get(i));
+            this.labelsAndSeparators.add(new Separator());
+        }
+
+        try{
+            this.labelsAndSeparators.add(this.labels.get(i));
+        }catch(Exception e){
+            System.out.println("buppo");
+        }
+
+    }
+
     public void notifyPauseRequested(Structure structure, List<String[]> args){
-        this.vbox.getChildren().removeAll(this.labels);
+        this.varBox.getChildren().clear();
 
         labels.clear();
         for (int i = 0; i < args.size(); i ++){
@@ -191,12 +213,11 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
         }
 
+        sourceVarBox();
+
         this.tabs.requestRedraw();
         
-        this.vbox.getChildren().addAll(this.labels);
-
-
     }
-    
+
 
 }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class PipingPresets{
 	
-	
+
 
 
     // String neighbourString;
@@ -46,7 +46,6 @@ public class PipingPresets{
 	        return hex;
 	    }
 
-    	
     	return null;
     }
 

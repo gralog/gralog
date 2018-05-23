@@ -78,6 +78,15 @@ public class SetEdgeContourCommand extends CommandForGralogToExecute {
         // Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
             
         // e.isDirected = (externalCommandSegments[3].equals("true"));
+        boolean wasType = false;
+        for (GralogGraphicsContext.LineType lineType : GralogGraphicsContext.LineType.values()){
+            String lineTypeString = lineType.toString().toLowerCase();
+            if (contour.toLowerCase().equals(lineTypeString)){
+                this.edgeToChangeContourOn.type = lineType;
+                 wasType = true;
+                 break;
+            }
+        }
 
         if (contour.toLowerCase().equals("plain")){
             this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.PLAIN;
@@ -91,8 +100,15 @@ public class SetEdgeContourCommand extends CommandForGralogToExecute {
             return;
         }
 
-        this.setResponse(null);
 
+        if (wasType){
+            this.setResponse(null);
+            return;
+        }
+
+
+        this.fail();
+        this.error = new Exception("error: edge contour \"" + contour + "\" does not exist");
         return;
 
 

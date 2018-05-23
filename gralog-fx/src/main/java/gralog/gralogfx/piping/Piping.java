@@ -256,7 +256,7 @@ public class Piping{
                         ExceptionBox exbox = new ExceptionBox();
                         exbox.showAndWait(currentCommand.getError());
                     
-                        this.out.println(currentCommand.getError().toString());
+                        // this.out.println(currentCommand.getError().toString());
                         System.out.println(currentCommand.getError().toString());
                     }
                     

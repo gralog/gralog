@@ -133,6 +133,17 @@ class Graph:
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
+	def setVertexShape(self,vertexId,shape):
+		# indices = map(lambda vertex: vertex.id, self.vertices);
+		# print("colorhex: " + str(colorHex));
+		# if vertexId in indices:
+			
+		line = "setVertexShape#"+str(self.id).rstrip() + "#" + str(vertexId).rstrip() + "#" + str(shape).rstrip();
+		print line.rstrip();
+	
+		sys.stdout.flush();
+		# sys.stdin.readline();
+
 	def getGraph(self,format):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
@@ -349,8 +360,20 @@ class Graph:
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
+	def getEdgeWeight(self,(sourceVertexId,targetVertexId)):
+		return self.getEdgeProperty((sourceVertexId,targetVertexId),"weight");
+
+	def getEdgeColor(self,(sourceVertexId,targetVertexId)):
+		return self.getEdgeProperty((sourceVertexId,targetVertexId),"color");
 
 
+	def getEdgeProperty(self,(sourceVertexId,targetVertexId),property):
+		line = "getEdgeProperty#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + property.rstrip().lower();
+
+		print line.rstrip();
+		sys.stdout.flush();
+
+		return sys.stdin.readline();
 
 	def deleteEdge(self,(sourceVertexId,targetVertexId)):
 

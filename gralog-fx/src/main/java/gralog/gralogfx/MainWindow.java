@@ -124,7 +124,14 @@ public class MainWindow extends Application {
         //put lambdas here for controlling stuff
         PluginControlPanel pluginControlPanel = new PluginControlPanel(tabs,pipeline);
 
-        pluginControlPanel.setOnPlay(() -> System.out.println("play"));
+
+        Runnable play = new Runnable(){
+            public void run(){
+                System.out.println("play pressed");
+                pipeline.execWithAck();
+            }
+        };
+        pluginControlPanel.setOnPlay(play);
 
 
         DockPane mainDockPane = new DockPane();

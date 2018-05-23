@@ -27,7 +27,7 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     //inspector visible
     public String label = "";
-    public double cost = 1.0d;
+    public Double weight = 1.0d;
 
     public Boolean isDirected = true;
 
@@ -399,7 +399,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         enode.setAttribute("target", ids.get(target));
         enode.setAttribute("isdirected", isDirected ? "true" : "false");
         enode.setAttribute("label", label);
-        enode.setAttribute("cost", Double.toString(cost));
+        enode.setAttribute("weight", Double.toString(weight));
         enode.setAttribute("width", Double.toString(width));
         enode.setAttribute("arrowheadlength", Double.toString(arrowHeadLength));
         enode.setAttribute("arrowheadangle", Double.toString(arrowHeadAngle));
@@ -425,8 +425,8 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (enode.hasAttribute("isdirected"))
             isDirected = enode.getAttribute("isdirected").equals("true");
         label = enode.getAttribute("label");
-        if (enode.hasAttribute("cost"))
-            cost = Double.parseDouble(enode.getAttribute("cost"));
+        if (enode.hasAttribute("weight"))
+            weight = Double.parseDouble(enode.getAttribute("weight"));
 
         if (enode.hasAttribute("width"))
             width = Double.parseDouble(enode.getAttribute("width"));

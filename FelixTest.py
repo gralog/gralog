@@ -20,7 +20,7 @@ red = "#ff0000";
 
 
 
-numV = 2;
+numV = 3;
 
 vertices = [];
 vertices1 = [];
@@ -78,9 +78,30 @@ for x in edges:
 
 g.pauseUntilSpacePressed()
 
+
+
 for x in edges:
 	g.setEdgeContour(x,"plain");
-	g.setEdgeColor(x,"lolol");
+	print("edge weight: " + str(g.getEdgeProperty(x,"color")));
+	# g.setEdgeColor(x,"lolol");
+
+vertices = g.getAllVertices();
+
+for x in vertices:
+	g.setVertexShape(x,"diamond");
+
+g.pauseUntilSpacePressed();
+
+for x in vertices:
+	g.setVertexShape(x,"rectangle");
+
+g.pauseUntilSpacePressed(("key","val"),("key","val"),("key","val"),("key","val"),("key","val"),("key","rullllllllllllllllllllllllllllllllllllllllllllllllllll   hecking long val haha"));
+
+for x in vertices:
+	g.setVertexShape(x,"ellipse");
+
+g.pauseUntilSpacePressed();
+
 
 
 # for x in g.getAllVertices():
