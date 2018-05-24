@@ -68,39 +68,40 @@ g.pauseUntilSpacePressed();
 
 for x in edges:
 	# print("trying with : " + str(x));
-	g.setEdgeLabel(x,"schwupps" + str(x));
+	g.setEdgeProperty(x,"weight",7);
 	g.setEdgeContour(x,"dashed");
 
 
-g.pauseUntilSpacePressed();
-for x in edges:
-	g.setEdgeContour(x,"dotted");
+# g.pauseUntilSpacePressed();
+# for x in edges:
+# 	g.setEdgeContour(x,"dotted");
 
-g.pauseUntilSpacePressed()
+# g.pauseUntilSpacePressed()
 
 
 
-for x in edges:
-	g.setEdgeContour(x,"plain");
-	print("edge weight: " + str(g.getEdgeProperty(x,"color")));
-	# g.setEdgeColor(x,"lolol");
+# for x in edges:
+# 	g.setEdgeContour(x,"plain");
+# 	g.setEdgeColor(x,"red");
+# 	print("edge weight: " + str(g.getEdgeProperty(x,"color")));
+# 	# g.setEdgeColor(x,"lolol");
 
-vertices = g.getAllVertices();
+# vertices = g.getAllVertices();
 
-for x in vertices:
-	g.setVertexShape(x,"diamond");
+# for x in vertices:
+# 	g.setVertexShape(x,"diamond");
 
-g.pauseUntilSpacePressed();
+# g.pauseUntilSpacePressed();
 
-for x in vertices:
-	g.setVertexShape(x,"rectangle");
+# for x in vertices:
+# 	g.setVertexShape(x,"rectangle");
 
-g.pauseUntilSpacePressed(("key","val"),("key","val"),("key","val"),("key","val"),("key","val"),("key","rullllllllllllllllllllllllllllllllllllllllllllllllllll   hecking long val haha"));
+# g.pauseUntilSpacePressed(("key","val"),("key","val"),("key","val"),("key","val"),("key","val"),("key","rullllllllllllllllllllllllllllllllllllllllllllllllllll   hecking long val haha"));
 
-for x in vertices:
-	g.setVertexShape(x,"ellipse");
+# for x in vertices:
+# 	g.setVertexShape(x,"ellipse");
 
-g.pauseUntilSpacePressed();
+# g.pauseUntilSpacePressed();
 
 
 

@@ -273,6 +273,14 @@ public class PipingMessageHandler{
             // currentCommand.setStructure(currentStructure);
             return currentCommand;
             // this.out.println("ack");
+        }else if (externalCommandSegments[0].equals("setEdgeProperty")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
+            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+            
+            currentCommand = new SetEdgePropertyCommand(externalCommandSegments,structure);
+            Structure currentStructure = structure;
+            // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+            // this.out.println("ack");
         }else if (externalCommandSegments[0].equals("setVertexRadius")){//format: setColor <vertexId> <newRadius>
             // PipingMessageHandler.handleSetVertexRadius(externalCommandSegments,this.structure);
             

@@ -26,7 +26,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     Set<EdgeListener> listeners = new HashSet<>();
 
     //inspector visible
-    public String label = "";
+    public String label = ""; //add this
     public Double weight = 1.0d;
 
     public Boolean isDirected = true;
@@ -34,10 +34,11 @@ public class Edge extends XmlMarshallable implements IMovable {
     public Arrow arrowType = Arrow.TYPE1;
     public double arrowHeadLength = 0.2d; // cm
     public double arrowHeadAngle = 40d; // degrees
+    // @InspectorName(name = "thickness")
     public Double width = 2.54 / 96; // cm
 
     public GralogColor color = GralogColor.BLACK;
-    public GralogGraphicsContext.LineType type = GralogGraphicsContext.LineType.PLAIN;
+    public GralogGraphicsContext.LineType type = GralogGraphicsContext.LineType.PLAIN;//add this
     //end
 
 

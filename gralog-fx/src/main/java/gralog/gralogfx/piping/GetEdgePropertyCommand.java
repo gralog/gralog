@@ -64,8 +64,8 @@ public class GetEdgePropertyCommand extends CommandForGralogToExecute {
 	public void handle(){
 
         // int changeId;
-       boolean found = false;
-       Class<?> c = edge.getClass();
+        boolean found = false;
+        Class<?> c = edge.getClass();
         for (Field f : c.getFields()){
             if (f.getName().equals(this.propertyString)){
                 try{

@@ -375,6 +375,16 @@ class Graph:
 
 		return sys.stdin.readline();
 
+	def setEdgeProperty(self,(sourceVertexId,targetVertexId),property,value):
+		line = "setEdgeProperty#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + property.rstrip().lower() +  "#" + str(value).rstrip().lower();
+
+		print line.rstrip();
+		sys.stdout.flush();
+
+
+	
+
+
 	def deleteEdge(self,(sourceVertexId,targetVertexId)):
 
 
