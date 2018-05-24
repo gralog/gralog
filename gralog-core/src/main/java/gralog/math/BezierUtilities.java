@@ -43,7 +43,7 @@ public final class BezierUtilities {
      * https://hal.inria.fr/inria-00518379/PDF/Xiao-DiaoChen2007c.pdf</a>
      * @see <a href=https://ieeexplore.ieee.org/document/4392595/>alternative IEEE link</a>
      */
-    public static ProjectionResults pointProjectionAlgebraic(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3){
+    public static ProjectionResults pointProjectionCubicAlgebraic(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3){
         double aa = p0.multiply(p0);
         double ab = p0.multiply(p1);
         double ac = p0.multiply(p2);
@@ -60,7 +60,7 @@ public final class BezierUtilities {
         double pc = m.multiply(p2);
         double pd = m.multiply(p3);
 
-        double t = 0.5;
+        double t;
 
         //polynomial coeff for objective equation for cubic bezier curve with constant weights.
         //Paper reference: equation (4)
@@ -70,9 +70,6 @@ public final class BezierUtilities {
         double d = - (-30*aa + 90*ab - 36*ac - 54*bb + 27*bc - 3 * (pd - 3*pc + 3*pb - pa - ad));
         double e = - (15*aa - 30*ab + 9*bb - 6 * (pc - 2*pb + pa - ac));
         double f = -3 * (ab - aa - pb + pa);
-
-        //derivative of function
-        //double dG = evalPolynomial5(t, a, b, c, d, e, f);
 
         double x;
         double y;
@@ -84,7 +81,7 @@ public final class BezierUtilities {
 
         double[] roots = SturmRootIsolator.findRoots(p, intervals);
         double min = Double.MAX_VALUE;
-        double finx = Double.MAX_VALUE, finy = Double.MAX_VALUE;
+        double finX = Double.MAX_VALUE, finY = Double.MAX_VALUE;
 
         for(int i = 0; i < roots.length; i++){
             t = roots[i];
@@ -93,15 +90,73 @@ public final class BezierUtilities {
             double dist = Math.pow(m.getX() - x,2) + Math.pow(m.getY() - y, 2);
             if(dist < min){
                 min = dist;
-                finx = x;
-                finy = y;
+                finX = x;
+                finY = y;
             }
         }
         ProjectionResults result = new ProjectionResults();
         if(roots.length == 0){
             result.successful = false;
         }else{
-            result.result = new Vector2D(finx, finy);
+            result.result = new Vector2D(finX, finY);
+            result.successful = true;
+        }
+
+        return result;
+    }
+
+    public static ProjectionResults pointProjectionQuadraticAlgebraic(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2){
+        double aa = p0.multiply(p0);
+        double ab = p0.multiply(p1);
+        double ac = p0.multiply(p2);
+        double bb = p1.multiply(p1);
+        double bc = p1.multiply(p2);
+        double cc = p2.multiply(p2);
+
+        double pa = m.multiply(p0);
+        double pb = m.multiply(p1);
+        double pc = m.multiply(p2);
+
+        double t;
+
+        //polynomial coeff for objective equation for cubic bezier curve with constant weights.
+        //Paper reference: equation (4)
+        double a = -2*aa + 8*ab - 4*ac - 8*bb + 8*bc - 2*cc;
+        double b = 6*aa - 18*ab + 6*ac + 12*bb - 6*bc;
+        double c = -6*aa + 12*ab - 2*ac + 2*pa - 4*bb - 4*pb + 2*pc;
+        double d = 2*aa - 2*ab - 2*pa + 2*pb;
+
+
+        double x;
+        double y;
+
+        Polynomial objective = new Polynomial(a,b,c, d);
+
+        List<Interval> intervals = pruneIntervals(objective, SturmRootIsolator.findIntervals(objective));
+
+        double[] roots = SturmRootIsolator.findRoots(objective, intervals);
+        double min = Double.MAX_VALUE;
+        double finX = Double.MAX_VALUE, finY = Double.MAX_VALUE;
+
+        for(int i = 0; i < roots.length; i++){
+            t = roots[i];
+            x = (1-t)*(1-t)*p0.getX() + 2*(1-t)*t*p1.getX() + t*t*p2.getX();
+            y = (1-t)*(1-t)*p0.getY() + 2*(1-t)*t*p1.getY() + t*t*p2.getY();
+            double dist = Math.pow(m.getX() - x,2) + Math.pow(m.getY() - y, 2);
+            if(dist < min){
+                min = dist;
+                finX = x;
+                finY = y;
+            }
+        }
+
+        ProjectionResults result = new ProjectionResults();
+        result.result = new Vector2D(finX, finY);
+
+        if(roots.length == 0){
+            result.successful = false;
+        }else{
+            result.result = new Vector2D(finX, finY);
             result.successful = true;
         }
 

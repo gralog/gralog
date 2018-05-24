@@ -351,7 +351,34 @@ public class Edge extends XmlMarshallable implements IMovable {
             double toX = targetOffset.getX();
             double toY = targetOffset.getY();
             return Vector2D.distancePointToLine(x, y, fromX, fromY, toX, toY) < multiEdgeOffset * 0.5;
-        }else if(controlPoints.size() == 2){
+        }
+        else if(controlPoints.size() == 1){
+            Vector2D m = new Vector2D(x,y);
+
+            Vector2D ctrl1 = controlPoints.get(0).getPosition();
+            //correction so that the arrow and line don't overlap at the end
+            //corrections are always negative if the arrow model tip is at the origin
+            double corr = arrowType.endPoint * arrowHeadLength;
+
+            Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
+            Vector2D targetToCtrl2 = ctrl1.minus(target.coordinates).normalized();
+            if(!isDirected){
+                corr = 0;
+            }
+            Vector2D source = this.source.coordinates.plus(sourceToCtrl1.multiply(this.source.radius));
+            Vector2D target = this.target.coordinates.plus(targetToCtrl2.multiply(this.target.radius - corr)); //corrected target
+
+            BezierUtilities.ProjectionResults projection = BezierUtilities.pointProjectionQuadraticAlgebraic(m,
+                    source,
+                    ctrl1,
+                    target);
+            if(projection.successful){
+                return projection.result.minus(m).length() < multiEdgeOffset * 0.5;
+            }else{
+                return false;
+            }
+        }
+        else if(controlPoints.size() == 2){
             Vector2D m = new Vector2D(x,y);
 
             Vector2D ctrl1 = controlPoints.get(0).getPosition();
@@ -368,7 +395,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             Vector2D source = this.source.coordinates.plus(sourceToCtrl1.multiply(this.source.radius));
             Vector2D target = this.target.coordinates.plus(targetToCtrl2.multiply(this.target.radius - corr)); //corrected target
 
-            BezierUtilities.ProjectionResults projection = BezierUtilities.pointProjectionAlgebraic(m,
+            BezierUtilities.ProjectionResults projection = BezierUtilities.pointProjectionCubicAlgebraic(m,
                     source,
                     ctrl1,
                     ctrl2,
