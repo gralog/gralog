@@ -12,6 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
+import gralog.structure.controlpoints.ControlPoint;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -21,7 +22,6 @@ import javafx.scene.layout.StackPane;
 import javafx.geometry.Point2D;
 
 import javafx.event.EventType;
-import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
@@ -175,8 +175,8 @@ public class StructurePane extends StackPane implements StructureListener {
                             structure.removeEdge((Edge) o);
                             clearSelection();
                         }
-                        else if (o instanceof CurveControlPoint){
-                            CurveControlPoint c = ((CurveControlPoint)o);
+                        else if (o instanceof ControlPoint){
+                            ControlPoint c = ((ControlPoint)o);
                             c.parent.removeControlPoint(c);
                             highlights.remove(c);
                             selectedCurveControlPoint = false;
@@ -236,9 +236,9 @@ public class StructurePane extends StackPane implements StructureListener {
             //if selection hit something, select
             if (selected != null) {
                 //only clear selection if mouse press was not on a bezier control point
-                if(selected instanceof CurveControlPoint){
+                if(selected instanceof ControlPoint){
                     //select only the edge and the bezier control point.
-                    CurveControlPoint controlPoint = (CurveControlPoint) selected;
+                    ControlPoint controlPoint = (ControlPoint) selected;
                     selectAllExclusive(controlPoint.parent, selected);
                     dragging = highlights.getSelection();
                     selectedCurveControlPoint = true;
@@ -337,7 +337,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 //if holding an edge
                 if(holdingEdge != null){
                     if(mousePositionModel.minus(holdingEdgeStartingPosition).length() > 0.2){
-                        CurveControlPoint ctrl = holdingEdge.addCurveControlPoint(mousePositionModel);
+                        ControlPoint ctrl = holdingEdge.addCurveControlPoint(mousePositionModel);
                         clearSelection();
                         selectAllExclusive(ctrl, holdingEdge);
                         selectedCurveControlPoint = true;

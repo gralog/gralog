@@ -522,7 +522,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             if(e.isLoop()){
                 continue;
             }
-            if(e.controlPoints.size() > 1){
+            if(e.getControlPointCount() > 1){
                 continue;
             }
             Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);

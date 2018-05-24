@@ -1,10 +1,15 @@
-package gralog.structure;
+package gralog.structure.controlpoints;
 
+import gralog.plugins.XmlMarshallable;
 import gralog.rendering.GralogColor;
 import gralog.rendering.GralogGraphicsContext;
 import gralog.rendering.Vector2D;
+import gralog.structure.Edge;
+import gralog.structure.Highlights;
+import gralog.structure.IMovable;
+import gralog.structure.Vertex;
 
-public class CurveControlPoint implements IMovable{
+public class ControlPoint extends XmlMarshallable implements IMovable {
 
     protected static final double drawRadius = 0.05;
     protected static final double drawRadiusSelected = 0.1;
@@ -18,9 +23,9 @@ public class CurveControlPoint implements IMovable{
 
     public boolean active;
 
-    public CurveControlPoint() { }
+    public ControlPoint() { }
 
-    public CurveControlPoint(Vector2D position, Vertex firstAnchor, Vertex secondAnchor, Edge parent){
+    public ControlPoint(Vector2D position, Vertex firstAnchor, Vertex secondAnchor, Edge parent){
         this.firstAnchor = firstAnchor;
         this.secondAnchor = secondAnchor;
         this.position = position;

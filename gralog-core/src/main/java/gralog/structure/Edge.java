@@ -9,6 +9,7 @@ import gralog.rendering.*;
 
 import java.util.*;
 
+import gralog.structure.controlpoints.ControlPoint;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -20,25 +21,28 @@ import org.w3c.dom.NodeList;
 @XmlName(name = "edge")
 public class Edge extends XmlMarshallable implements IMovable {
 
+    public enum EdgeType{
+        SHARP,
+        ROUND,
+        BEZIER
+    }
+
+
     public static double multiEdgeOffset = 0.2;
-    private static final double SELECTION_WIDTH = 0.15;
 
     Set<EdgeListener> listeners = new HashSet<>();
 
     //inspector visible
     public String label = "";
     public double cost = 1.0d;
-
     public Boolean isDirected = true;
-
     public Arrow arrowType = Arrow.TYPE2;
     public double arrowHeadLength = 0.2d; // cm
     public Double width = 2.54 / 96; // cm
-
     public GralogColor color = GralogColor.BLACK;
     public GralogGraphicsContext.LineType type = GralogGraphicsContext.LineType.PLAIN;
+    private EdgeType edgeType = EdgeType.BEZIER;
     //end
-
 
     public ArrayList<Edge> siblings = new ArrayList<>();
     public ArrayList<EdgeIntermediatePoint> intermediatePoints = new ArrayList<>();
@@ -46,15 +50,21 @@ public class Edge extends XmlMarshallable implements IMovable {
     private Vertex source = null;
     private Vertex target = null;
 
-    public ArrayList<CurveControlPoint> controlPoints = new ArrayList<>();
+    private ArrayList<ControlPoint> controlPoints = new ArrayList<>();
 
+    public void setEdgeType(EdgeType e){
+        //TODO: make sure that bezier edges dont have more than one control point
+    }
 
-    public CurveControlPoint addCurveControlPoint(Vector2D position){
+    public int getControlPointCount(){
+        return controlPoints.size();
+    }
+    public ControlPoint addCurveControlPoint(Vector2D position){
         if(controlPoints.size() >= 2){
             return null;
         }
 
-        CurveControlPoint c =  new CurveControlPoint(position, source, target, this);
+        ControlPoint c =  new ControlPoint(position, source, target, this);
 
         if(controlPoints.size() == 1){
             double c1Dist = c.getPosition().minus(target.coordinates).length();
@@ -67,7 +77,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         }
         return c;
     }
-    public CurveControlPoint removeControlPoint(CurveControlPoint c){
+    public ControlPoint removeControlPoint(ControlPoint c){
         if(controlPoints.size() == 2){
             controlPoints.remove(c);
             return setSingleControlPoint(controlPoints.get(0).getPosition());
@@ -77,9 +87,9 @@ public class Edge extends XmlMarshallable implements IMovable {
         }
 
     }
-    public CurveControlPoint setSingleControlPoint(Vector2D position){
+    public ControlPoint setSingleControlPoint(Vector2D position){
         controlPoints.clear();
-        controlPoints.add(new CurveControlPoint(position, getSource(), getTarget(), this));
+        controlPoints.add(new ControlPoint(position, getSource(), getTarget(), this));
         return controlPoints.get(0);
     }
     public Vertex getSource() {
@@ -112,15 +122,12 @@ public class Edge extends XmlMarshallable implements IMovable {
     }
     public double maximumCoordinate(int dimension) {
         double result = Double.NEGATIVE_INFINITY;
-        for (EdgeIntermediatePoint between : intermediatePoints)
-            result = Math.max(result, between.get(dimension));
         return result;
     }
 
     @Override
     public void move(Vector2D offset) {
-        for (EdgeIntermediatePoint between : intermediatePoints)
-            between.move(offset);
+
     }
 
     public void collapse(Structure structure){
@@ -153,12 +160,11 @@ public class Edge extends XmlMarshallable implements IMovable {
         }
     }
     public void snapToGrid(double gridSize) {
-        for (EdgeIntermediatePoint between : intermediatePoints)
-            between.snapToGrid(gridSize);
+
     }
 
     public IMovable findObject(double x, double y) {
-        for(CurveControlPoint c : controlPoints){
+        for(ControlPoint c : controlPoints){
             if(c.active && c.containsCoordinate(x,y)){
                 return c;
             }
@@ -275,7 +281,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         }
 
         //draw control points
-        for(CurveControlPoint c : controlPoints){
+        for(ControlPoint c : controlPoints){
             if(c != null){
                 if(highlights.isSelected(this)){
                     c.active = true;
@@ -415,15 +421,12 @@ public class Edge extends XmlMarshallable implements IMovable {
         return source == v || target == v;
     }
 
+
     public double length() {
         Vector2D from = this.source.coordinates;
         Vector2D to = this.target.coordinates;
-
+        //TODO: implement length for control points
         double result = 0.0;
-        for (EdgeIntermediatePoint between : this.intermediatePoints) {
-            result += between.coordinates.minus(from).length();
-            from = between.coordinates;
-        }
         return result + to.minus(from).length();
     }
 
