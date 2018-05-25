@@ -50,10 +50,14 @@ public class Edge extends XmlMarshallable implements IMovable {
     private Vertex source = null;
     private Vertex target = null;
 
-    private ArrayList<ControlPoint> controlPoints = new ArrayList<>();
+    public ArrayList<ControlPoint> controlPoints = new ArrayList<>();
 
     public void setEdgeType(EdgeType e){
         //TODO: make sure that bezier edges dont have more than one control point
+    }
+
+    public EdgeType getEdgeType(){
+        return edgeType;
     }
 
     public int getControlPointCount(){
@@ -217,79 +221,11 @@ public class Edge extends XmlMarshallable implements IMovable {
             renderLoop(gc, highlights);
             return;
         }
-        double offset = getOffset();
 
-        Vector2D diff = target.coordinates.minus(source.coordinates);
-        Vector2D perpendicularToEdge = diff.orthogonal(1).normalized().multiply(offset);
-
-        Vector2D sourceOffset = source.coordinates.plus(perpendicularToEdge);
-        Vector2D targetOffset = target.coordinates.plus(perpendicularToEdge);
-
-        double dist = target.radius * (1 - Math.cos(Math.asin(offset/target.radius)));
-
-        Vector2D intersection = target.shape.getIntersection(sourceOffset, targetOffset, target.coordinates);
-
-        //fallback to circle intersection if the shape hasn't implemented their method
-        if(intersection == null){
-            intersection = target.intersectionAdjusted(sourceOffset, targetOffset, dist);
-        }
-
-        //draw edge and arrows
-        if(controlPoints.isEmpty()){
-            if(isDirected){
-                Vector2D adjustedEndpoint = intersection.plus(diff.normalized().multiply(arrowType.endPoint * arrowHeadLength));
-                gc.line(sourceOffset, adjustedEndpoint, edgeColor, width, type);
-                gc.arrow(diff, intersection, arrowType, arrowHeadLength, edgeColor);
-            }else{
-                gc.line(sourceOffset, intersection, edgeColor, width, type);
-            }
-
-
-        }else{
-            GralogGraphicsContext.Bezier curve = new GralogGraphicsContext.Bezier();
-            if(controlPoints.size() == 1){
-                curve.ctrl1 = controlPoints.get(0).getPosition();
-                curve.ctrl2 = controlPoints.get(0).getPosition();
-            }else if(controlPoints.size() == 2){
-                curve.ctrl1 = controlPoints.get(0).getPosition();
-                curve.ctrl2 = controlPoints.get(1).getPosition();
-            }
-
-            //correction so that the arrow and line don't overlap at the end
-            //corrections are always negative if the arrow model tip is at the origin
-            double corr = arrowType.endPoint * arrowHeadLength;
-            Vector2D sourceToCtrl1 = curve.ctrl1.minus(source.coordinates).normalized();
-            Vector2D targetToCtrl2 = curve.ctrl2.minus(target.coordinates).normalized();
-
-            curve.source = source.shape.getEdgePoint(sourceToCtrl1.measureAngleX(), source.coordinates);
-            curve.target = target.shape.getEdgePoint(targetToCtrl2.measureAngleX(), target.coordinates);
-
-
-            if(isDirected){
-                gc.arrow(targetToCtrl2.multiply(-1), curve.target, arrowType, arrowHeadLength, edgeColor);
-            }else{
-                corr = 0;
-            }
-
-            curve.target = curve.target.minus(targetToCtrl2.multiply(corr)); //correction for the arrow
-
-            if(controlPoints.size() == 1){
-                gc.drawQuadratic(curve, edgeColor, width, type);
-            }else{
-                gc.drawBezier(curve, edgeColor, width, type);
-            }
-        }
-
-        //draw control points
-        for(ControlPoint c : controlPoints){
-            if(c != null){
-                if(highlights.isSelected(this)){
-                    c.active = true;
-                    c.render(gc, highlights);
-                }else{
-                    c.active = false;
-                }
-            }
+        if(edgeType == EdgeType.BEZIER){
+            EdgeRenderer.drawBezierEdge(this, gc, edgeColor);
+        }else if(edgeType == EdgeType.SHARP){
+            EdgeRenderer.drawSharpEdge(this, gc, edgeColor);
         }
 
     }
@@ -358,64 +294,74 @@ public class Edge extends XmlMarshallable implements IMovable {
             double toY = targetOffset.getY();
             return Vector2D.distancePointToLine(x, y, fromX, fromY, toX, toY) < multiEdgeOffset * 0.5;
         }
-        else if(controlPoints.size() == 1){
-            Vector2D m = new Vector2D(x,y);
+        if(edgeType == EdgeType.BEZIER){
+            return containsCoordinateBezier(x, y);
+        }else if(edgeType == EdgeType.SHARP){
+            return containsCoordinateSharp(x, y);
+        }else{ //edgeType == EdgeType.ROUND
+            return containsCoordinateRound(x, y);
+        }
+    }
 
-            Vector2D ctrl1 = controlPoints.get(0).getPosition();
-            //correction so that the arrow and line don't overlap at the end
-            //corrections are always negative if the arrow model tip is at the origin
-            double corr = arrowType.endPoint * arrowHeadLength;
+    private boolean containsCoordinateRound(double x, double y){
+        return false;
+    }
 
-            Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
-            Vector2D targetToCtrl2 = ctrl1.minus(target.coordinates).normalized();
-            if(!isDirected){
-                corr = 0;
-            }
-            Vector2D source = this.source.coordinates.plus(sourceToCtrl1.multiply(this.source.radius));
-            Vector2D target = this.target.coordinates.plus(targetToCtrl2.multiply(this.target.radius - corr)); //corrected target
+    private boolean containsCoordinateSharp(double x, double y){
+        double dist = Vector2D.distancePointToLine(x, y, source.coordinates, controlPoints.get(0).getPosition());
 
-            BezierUtilities.ProjectionResults projection = BezierUtilities.pointProjectionQuadraticAlgebraic(m,
-                    source,
-                    ctrl1,
-                    target);
-            if(projection.successful){
-                return projection.result.minus(m).length() < multiEdgeOffset * 0.5;
-            }else{
-                return false;
+        if(dist < multiEdgeOffset * 0.5){
+            return true;
+        }
+        for(int i = 1; i < controlPoints.size(); i++){
+            Vector2D a = controlPoints.get(i-1).getPosition();
+            Vector2D b = controlPoints.get(i).getPosition();
+            if(Vector2D.distancePointToLine(x, y, a, b) < multiEdgeOffset * 0.5){
+                return true;
             }
         }
+        Vector2D last = controlPoints.get(controlPoints.size() - 1).getPosition();
+        dist = Vector2D.distancePointToLine(x, y, last, target.coordinates);
+
+        return dist < multiEdgeOffset * 0.5;
+    }
+
+    private boolean containsCoordinateBezier(double x, double y){
+        Vector2D m = new Vector2D(x,y);
+
+        Vector2D ctrl1 = controlPoints.get(0).getPosition();
+        Vector2D ctrl2 = controlPoints.size() < 2 ? ctrl1 : controlPoints.get(1).getPosition();
+
+        //correction so that the arrow and line don't overlap at the end
+        //corrections are always negative if the arrow model tip is at the origin
+        double corr = arrowType.endPoint * arrowHeadLength;
+
+        Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
+        Vector2D targetToCtrl2 = ctrl2.minus(target.coordinates).normalized();
+
+        if(!isDirected){
+            corr = 0;
+        }
+        //TODO: replace with shape.getEdgePoint
+        Vector2D source = this.source.coordinates.plus(sourceToCtrl1.multiply(this.source.radius));
+        Vector2D target = this.target.coordinates.plus(targetToCtrl2.multiply(this.target.radius - corr));
+        BezierUtilities.ProjectionResults projection;
+
+        if(controlPoints.size() == 1){
+            projection = BezierUtilities.pointProjectionQuadraticAlgebraic(m, source, ctrl1, target);
+        }
         else if(controlPoints.size() == 2){
-            Vector2D m = new Vector2D(x,y);
+            projection = BezierUtilities.pointProjectionCubicAlgebraic(m, source, ctrl1, ctrl2, target);
+        }else{
+            return false;
+        }
 
-            Vector2D ctrl1 = controlPoints.get(0).getPosition();
-            Vector2D ctrl2 = controlPoints.get(1).getPosition();
-            //correction so that the arrow and line don't overlap at the end
-            //corrections are always negative if the arrow model tip is at the origin
-            double corr = arrowType.endPoint * arrowHeadLength;
-
-            Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
-            Vector2D targetToCtrl2 = ctrl2.minus(target.coordinates).normalized();
-            if(!isDirected){
-                corr = 0;
-            }
-            Vector2D source = this.source.coordinates.plus(sourceToCtrl1.multiply(this.source.radius));
-            Vector2D target = this.target.coordinates.plus(targetToCtrl2.multiply(this.target.radius - corr)); //corrected target
-
-            BezierUtilities.ProjectionResults projection = BezierUtilities.pointProjectionCubicAlgebraic(m,
-                    source,
-                    ctrl1,
-                    ctrl2,
-                    target);
-            if(projection.successful){
-                return projection.result.minus(m).length() < multiEdgeOffset * 0.5;
-            }else{
-                return false;
-            }
+        if(projection.successful){
+            return projection.result.minus(m).length() < multiEdgeOffset * 0.5;
         }else{
             return false;
         }
     }
-
 
     public boolean containsVertex(Vertex v) {
         return source == v || target == v;

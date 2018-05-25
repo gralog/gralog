@@ -11,6 +11,7 @@ import java.util.*;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
+import gralog.structure.controlpoints.ControlPoint;
 import javafx.geometry.Point2D;
 import org.w3c.dom.*;
 
@@ -79,8 +80,21 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return result;
     }
     public void render(GralogGraphicsContext gc, Highlights highlights) {
-        for (Edge e : edges)
+        for (Edge e : edges){
             e.render(gc, highlights);
+            for(ControlPoint c : e.controlPoints){
+                if(highlights.isSelected(e)){
+                    c.active = true;
+                    c.render(gc, highlights);
+                    if(e.getEdgeType() == Edge.EdgeType.BEZIER){
+                        c.renderBezierHelpers(gc, highlights); //looks better
+                    }
+                }else{
+                    c.active = false;
+                }
+            }
+        }
+
         for (Vertex v : getVertices())
             v.render(gc, highlights);
     }

@@ -42,10 +42,11 @@ public class ControlPoint extends XmlMarshallable implements IMovable {
 
     public void render(GralogGraphicsContext gc, Highlights highlights){
         double radius = highlights.isSelected(this) ? drawRadiusSelected : drawRadius;
-
+        gc.circle(getPosition(), radius, GralogColor.RED);
+    }
+    public void renderBezierHelpers(GralogGraphicsContext gc, Highlights highlights){
         gc.line(firstAnchor.coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
         gc.line(secondAnchor.coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
-        gc.circle(getPosition(), radius, GralogColor.RED);
     }
 
     public boolean containsCoordinate(double x, double y){

@@ -18,20 +18,13 @@ public abstract class GralogGraphicsContext {
     public enum LineType{
         PLAIN,
         DOTTED,
-        DASHED;
+        DASHED
     }
 
     public abstract void line(double x1, double y1, double x2, double y2,
         GralogColor color, double width, LineType type);
 
-    public void line(double x1, double y1, double x2, double y2,
-                              GralogColor color, double width){
-        line(x1, y1, x2, y2, color, width, LineType.PLAIN);
-    }
 
-    public void line(Vector2D from, Vector2D to, GralogColor color, double width) {
-        line(from.getX(), from.getY(), to.getX(), to.getY(), color, width, LineType.PLAIN);
-    }
     public void line(Vector2D from, Vector2D to, GralogColor color, double width, LineType type) {
         line(from.getX(), from.getY(), to.getX(), to.getY(), color, width, type);
     }
@@ -73,9 +66,6 @@ public abstract class GralogGraphicsContext {
      */
     public abstract void loop(Loop l, double length, double correction, GralogColor color, double width, LineType type);
 
-    public void loop(Loop l, double length, double correction, GralogColor color, double width){
-        loop(l, length, correction, color, width, LineType.PLAIN);
-    }
 
     public static class Loop{
         public Vector2D start;

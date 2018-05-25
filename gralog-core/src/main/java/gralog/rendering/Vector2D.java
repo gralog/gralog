@@ -180,6 +180,9 @@ public class Vector2D {
             return l2.minus(p).length();
         return perpendicular.minus(p).length();
     }
+    public static double distancePointToLine(double px, double py, Vector2D a, Vector2D b){
+        return distancePointToLine(px, py, a.getX(), a.getY(), b.getX(), b.getY());
+    }
 
     private static double snap(double gridSize, double value) {
         double newCoord = value + gridSize / 2d;
