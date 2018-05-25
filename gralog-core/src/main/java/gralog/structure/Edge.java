@@ -53,6 +53,15 @@ public class Edge extends XmlMarshallable implements IMovable {
     public ArrayList<ControlPoint> controlPoints = new ArrayList<>();
 
     public void setEdgeType(EdgeType e){
+        if(e == EdgeType.BEZIER && controlPoints.size() > 2){
+            //TODO: improve deletion routine
+            ControlPoint c1 = controlPoints.get(0);
+            ControlPoint c2 = controlPoints.get(1);
+            controlPoints.clear();
+            controlPoints.add(c1);
+            controlPoints.add(c2);
+        }
+
         this.edgeType = e;
     }
 
@@ -63,12 +72,21 @@ public class Edge extends XmlMarshallable implements IMovable {
     public int getControlPointCount(){
         return controlPoints.size();
     }
-    public ControlPoint addCurveControlPoint(Vector2D position){
+    public ControlPoint addControlPoint(Vector2D position){
+        if(edgeType == EdgeType.BEZIER){
+            return addBezierControlPoint(position);
+        }else{
+            ControlPoint c = new ControlPoint(position, this);
+            controlPoints.add(c);
+            return c;
+        }
+    }
+    private ControlPoint addBezierControlPoint(Vector2D position){
         if(controlPoints.size() >= 2){
             return null;
         }
 
-        ControlPoint c =  new ControlPoint(position, source, target, this);
+        ControlPoint c =  new ControlPoint(position, this);
 
         if(controlPoints.size() == 1){
             double c1Dist = c.getPosition().minus(target.coordinates).length();
@@ -93,7 +111,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     }
     public ControlPoint setSingleControlPoint(Vector2D position){
         controlPoints.clear();
-        controlPoints.add(new ControlPoint(position, getSource(), getTarget(), this));
+        controlPoints.add(new ControlPoint(position, this));
         return controlPoints.get(0);
     }
     public Vertex getSource() {

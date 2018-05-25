@@ -78,7 +78,7 @@ public class EdgeRenderer {
     public static void drawSharpEdge(Edge e, GralogGraphicsContext gc, GralogColor c){
         List<ControlPoint> ctrl = e.controlPoints;
 
-        if(ctrl.isEmpty() || ctrl.size() > 2){
+        if(ctrl.isEmpty()){
             drawStraightEdge(e, gc, c);
             return;
         }

@@ -211,16 +211,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
-                case B:
-                    if(highlights.getSelection().iterator().hasNext()){
-                        Object edge = highlights.getSelection().iterator().next();
-                        if(edge instanceof Edge){
-                            ((Edge) edge).addCurveControlPoint(((Edge) edge).getTarget().coordinates.plus(new Vector2D(0,-2)));
-                            ((Edge) edge).addCurveControlPoint(((Edge) edge).getSource().coordinates.plus(new Vector2D(0,-2)));
-                            this.requestRedraw();
-                        }
-                    }
-                    break;
+
             }
         });
     }
@@ -337,7 +328,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 //if holding an edge
                 if(holdingEdge != null){
                     if(mousePositionModel.minus(holdingEdgeStartingPosition).length() > 0.2){
-                        ControlPoint ctrl = holdingEdge.addCurveControlPoint(mousePositionModel);
+                        ControlPoint ctrl = holdingEdge.addControlPoint(mousePositionModel);
                         clearSelection();
                         selectAllExclusive(ctrl, holdingEdge);
                         selectedCurveControlPoint = true;

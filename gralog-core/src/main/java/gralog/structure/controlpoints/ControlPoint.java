@@ -17,20 +17,17 @@ public class ControlPoint extends XmlMarshallable implements IMovable {
 
     public Vector2D position;
 
-    public Vertex firstAnchor;
-    public Vertex secondAnchor;
     public Edge parent;
 
     public boolean active;
 
     public ControlPoint() { }
 
-    public ControlPoint(Vector2D position, Vertex firstAnchor, Vertex secondAnchor, Edge parent){
-        this.firstAnchor = firstAnchor;
-        this.secondAnchor = secondAnchor;
+    public ControlPoint(Vector2D position, Edge parent){
         this.position = position;
         this.parent = parent;
     }
+
     @Override
     public void move(Vector2D vec){
         position = position.plus(vec);
@@ -45,8 +42,8 @@ public class ControlPoint extends XmlMarshallable implements IMovable {
         gc.circle(getPosition(), radius, GralogColor.RED);
     }
     public void renderBezierHelpers(GralogGraphicsContext gc, Highlights highlights){
-        gc.line(firstAnchor.coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
-        gc.line(secondAnchor.coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
+        gc.line(parent.getSource().coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
+        gc.line(parent.getTarget().coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
     }
 
     public boolean containsCoordinate(double x, double y){
