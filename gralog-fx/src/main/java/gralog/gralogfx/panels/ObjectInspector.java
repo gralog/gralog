@@ -57,12 +57,11 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
 
         Object obj = list.iterator().next(); //default
         for(Object tmp : list){ //maybe find something that's not a control point
-            if(!(tmp instanceof ControlPoint)){
+            if(!(tmp instanceof ControlPoint) && tmp != null){
                 obj = tmp;
                 break;
             }
         }
-
 
         if(obj == null){
             return;
