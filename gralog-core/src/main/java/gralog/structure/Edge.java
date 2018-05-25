@@ -41,7 +41,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public Double width = 2.54 / 96; // cm
     public GralogColor color = GralogColor.BLACK;
     public GralogGraphicsContext.LineType type = GralogGraphicsContext.LineType.PLAIN;
-    private EdgeType edgeType = EdgeType.BEZIER;
+    public EdgeType edgeType = EdgeType.BEZIER; //TODO: switch to private and use annotations to mark insp vars
     //end
 
     public ArrayList<Edge> siblings = new ArrayList<>();
