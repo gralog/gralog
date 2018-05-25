@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
+import gralog.structure.controlpoints.ControlPoint;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
@@ -54,7 +55,14 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
             return;
         }
 
-        Object obj = list.iterator().next();
+        Object obj = list.iterator().next(); //default
+        for(Object tmp : list){ //maybe find something that's not a control point
+            if(!(tmp instanceof ControlPoint)){
+                obj = tmp;
+                break;
+            }
+        }
+
 
         if(obj == null){
             return;

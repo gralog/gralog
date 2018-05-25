@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import gralog.rendering.GralogGraphicsContext;
 import gralog.rendering.shapes.RenderingShape;
 import gralog.rendering.shapes.SizeBox;
+import gralog.structure.Edge;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -117,6 +118,15 @@ public class ReflectedView extends GridPaneView<Object> {
                                 }catch(IllegalAccessException | IllegalArgumentException ex) {
                                 }
                             }
+                        });
+                        valueControl = choiceBox;
+                    } else if (type.isAssignableFrom(Edge.EdgeType.class)) {
+                        ChoiceBox<Edge.EdgeType> choiceBox =
+                                new ChoiceBox<>(FXCollections.observableArrayList(Edge.EdgeType.values()));
+                        choiceBox.getSelectionModel().select((Edge.EdgeType) value);
+                        choiceBox.getSelectionModel().selectedIndexProperty().addListener( (obs, old, d) ->{
+                            ((Edge)displayObject).setEdgeType(Edge.EdgeType.values()[d.intValue()]);
+                            requestRedraw();
                         });
                         valueControl = choiceBox;
                     } else if (type.isAssignableFrom(RenderingShape.class)){

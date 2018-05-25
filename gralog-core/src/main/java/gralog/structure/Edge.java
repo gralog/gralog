@@ -53,7 +53,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     public ArrayList<ControlPoint> controlPoints = new ArrayList<>();
 
     public void setEdgeType(EdgeType e){
-        //TODO: make sure that bezier edges dont have more than one control point
+        this.edgeType = e;
     }
 
     public EdgeType getEdgeType(){
