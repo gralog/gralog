@@ -20,7 +20,7 @@ red = "#ff0000";
 
 
 
-numV = 5;
+numV = 20;
 
 vertices = [];
 vertices1 = [];
@@ -34,11 +34,14 @@ g.track("g vertices",vertices);
 
 for x in range(numV):
 	vertices.append(g.addVertex());
-	g.pauseUntilSpacePressed(0,("hello","world"));
-	for i in range(5):
-		g.addEdge(x,x);
-		g.pauseUntilSpacePressed(1);
+	
+g.pauseUntilSpacePressed();
 
+for x in vertices:
+	for y in vertices:
+		g.addEdge(x,y);
+		g.pauseUntilSpacePressed(2);
+	g.pauseUntilSpacePressed(1);
 
 
 

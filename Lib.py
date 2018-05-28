@@ -450,7 +450,7 @@ class Graph:
 		print line;
 		sys.stdout.flush();
 		toSkip = sys.stdin.readline();
-		print ("we just got " + str(toSkip).rstrip() + " back from the pause func!");
+		# print ("we just got " + str(toSkip).rstrip() + " back from the pause func!");
 
 	def track(self,name,var):
 		#ideally, something like this:

@@ -213,7 +213,7 @@ public class Piping{
 
                         Integer rank = this.extractRankFromPause(externalCommandSegments);
                         withRank = (rank != null);
-                        if (withRank){
+                        if (!withRank){
                             rank = 0;
                         }
                         System.out.println("withrank: " + withRank + " rank: " + rank);
