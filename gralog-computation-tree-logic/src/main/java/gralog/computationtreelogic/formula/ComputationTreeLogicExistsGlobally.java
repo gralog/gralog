@@ -33,14 +33,14 @@ public class ComputationTreeLogicExistsGlobally extends ComputationTreeLogicForm
 
             // examine predecessors of worlds that have been removed in the last iteration
             for (World l : lastRemoved)
-                for (Edge e : l.getConnectedEdges())
+                for (Edge e : l.getIncidentEdges())
                     if (e.getTarget() == l)
                         removalCandidates.add((World) e.getSource());
 
             // if the lost successor of r was the last sucessor inside <result>, then also remove r
             for (World r : removalCandidates) {
                 boolean rMustBeRemoved = true;
-                for (Edge e : r.getConnectedEdges()) {
+                for (Edge e : r.getIncidentEdges()) {
                     if (e.getSource() == r)
                         if (result.contains((World) e.getTarget())) {
                             // no, r has another successor inside <result>

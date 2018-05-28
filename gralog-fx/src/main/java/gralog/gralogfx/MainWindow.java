@@ -2,9 +2,9 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 //test
-import gralog.gralogfx.panels.Console;
-import gralog.gralogfx.panels.ObjectInspector;
-import gralog.gralogfx.panels.PluginControlPanel;
+
+import gralog.gralogfx.panels.*;
+
 import gralog.plugins.*;
 import gralog.rendering.shapes.RenderingShape;
 import gralog.structure.*;
@@ -17,7 +17,9 @@ import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.lang.reflect.*;
 import java.net.URISyntaxException;
@@ -56,9 +58,13 @@ public class MainWindow extends Application {
     private MainMenu menu;
     private Tabs tabs;
     private StatusBar statusBar;
+    private Piping pipeline;
+    private List<Piping> pipelines;
 
     private HBox rightBox;
+
     private Console mainConsole;
+
 
     public MainWindow() {
         MainMenu.Handlers handlers = new MainMenu.Handlers();
@@ -71,6 +77,8 @@ public class MainWindow extends Application {
         handlers.onExit = () -> stage.close();
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
+        pipeline = new Piping();
+        pipelines = new ArrayList<Piping>();
         //controls
         handlers.onAlignHorizontally = () -> {
             if(tabs.getCurrentStructurePane() != null){
@@ -83,6 +91,7 @@ public class MainWindow extends Application {
                 tabs.getCurrentStructurePane().alignVerticallyMean();
             }
         };
+
 
         handlers.onAboutGralog = () -> (new AboutStage(this)).showAndWait();
         handlers.onAboutGraph = () -> {
@@ -113,10 +122,22 @@ public class MainWindow extends Application {
 
         ObjectInspector objectInspector = new ObjectInspector(tabs);
         //put lambdas here for controlling stuff
-        PluginControlPanel pluginControlPanel = new PluginControlPanel();
+        PluginControlPanel pluginControlPanel = new PluginControlPanel(tabs,pipeline);
+
+
+        Runnable play = new Runnable(){
+            public void run(){
+                System.out.println("play pressed");
+                pipeline.execWithAck();
+            }
+        };
+        pluginControlPanel.setOnPlay(play);
+
 
         DockPane mainDockPane = new DockPane();
         DockNode structureNode = new DockNode(tabs.getTabPane());
+
+
 
 
         DockNode objDock = new DockNode(objectInspector, "Object Inspector", null);
@@ -130,14 +151,17 @@ public class MainWindow extends Application {
         structureNode.setDockTitleBar(null);
 
 
+
         objDock.dock(mainDockPane, DockPos.RIGHT);
         objDock.setPrefHeight(250);
         objDock.setPrefWidth(270);
         objDock.setMinWidth(270);
 
+
         pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
         pluginDock.setPrefHeight(70);
         pluginDock.setMinHeight(70);
+
 
         consoleDock.dock(mainDockPane, DockPos.BOTTOM, pluginDock);
         consoleDock.setPrefWidth(200);
@@ -150,20 +174,92 @@ public class MainWindow extends Application {
         root.setTop(topPane);
         root.setCenter(mainDockPane);
         root.setBottom(statusBar.getStatusBar());
+}
 
-    }
     public void onLoadPlugin() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File(getLastDirectory()));
-        fileChooser.setTitle("Load Plugins");
-        fileChooser.getExtensionFilters().add(
-            new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
-        );
-        List<File> list = fileChooser.showOpenMultipleDialog(stage);
-        if (list != null && !list.isEmpty()) {
-            setLastDirectory(list.get(0));
-            for (File file : list)
-                doLoadPlugin(file.getAbsolutePath());
+        // FileChooser fileChooser = new FileChooser();
+        // fileChooser.setInitialDirectory(new File(getLastDirectory()));
+        // fileChooser.setTitle("Load Plugins");
+        // fileChooser.getExtensionFilters().add(
+        //     new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
+        // );
+        // List<File> list = fileChooser.showOpenMultipleDialog(stage);
+        // if (list != null && !list.isEmpty()) {
+        //     setLastDirectory(list.get(0));
+        //     for (File file : list)
+        //         doLoadPlugin(file.getAbsolutePath());
+        // }
+
+        // try {
+        //     String s = null;
+        //     System.out.println(s.substring(0,1));
+        // } catch (Exception ex) {
+        //     ExceptionBox exbox = new ExceptionBox();
+        //     Exception hello = new Exception("hello world");
+        //     exbox.showAndWait(hello);
+        // }
+
+        try{
+
+            final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
+
+            Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
+            if (!initSuccess){
+                return;
+            }
+
+            // if (externalCommandSegments[0].equals("error") || (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
+            //     System.out.println("error: " + externalProcessInitResponse);
+            //     return;
+            // }
+
+            pipeline.run(this::initGraph);
+            // if (!externalProcessInitResponse.equals("useCurrentGraph")){
+            //     System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
+            //     Structure temp = StructureManager.instantiateStructure(externalProcessInitResponse);
+            //     System.out.println("intsantiaed structuer with id: ");
+            //     System.out.println(temp.getId());
+            //     tabs.addTab("new " + externalProcessInitResponse,temp);
+
+            //     tabs.getAllStructures();
+                
+            //     pipeline.run(temp,tabs.getCurrentStructurePane());
+            // }else{
+            //     pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
+
+            // }
+
+
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public StructurePane initGraph(String graphType){
+        System.out.println("here in initgraph!!!!" + graphType);
+        if (!graphType.equals("useCurrentGraph")){
+            System.out.println("trying to make a grpah with type : " + graphType);
+            System.out.println("previosly current structure pane was : " + this.tabs.getCurrentStructurePane());
+            Structure temp;
+            try{
+                temp = StructureManager.instantiateStructure(graphType);
+            }catch(Exception e){
+                e.printStackTrace();
+                System.out.println("well that's an L" + graphType);
+                return null;
+            }
+            System.out.println("intsantiaed structuer with id: ");
+            System.out.println(temp.getId());
+            tabs.addTab("new " + graphType,temp);
+
+            tabs.getAllStructures();
+
+            System.out.println("postwardly current structure pane is : " + this.tabs.getCurrentStructurePane());
+            
+            return tabs.getCurrentStructurePane();
+        }else{
+            return tabs.getCurrentStructurePane();
+
         }
     }
 
@@ -181,6 +277,7 @@ public class MainWindow extends Application {
     }
 
     public void onNew(String structureName) throws Exception {
+        System.out.println("instantiating structrure called: " + structureName);
         Structure structure = StructureManager.instantiateStructure(structureName);
         tabs.addTab(structureName, structure);
         setStatus("created a " + structureName + "...");
@@ -447,6 +544,7 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-height", 800));
 
         scene.getStylesheets().add("/stylesheet.css");
+
         scene.getStylesheets().add(DockPane.class.getResource("default.css").toExternalForm());
         this.stage = primaryStage;
         primaryStage.setMinHeight(500);
@@ -456,7 +554,14 @@ public class MainWindow extends Application {
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());
 
         //TODO: implement hot keys here
-        //scene.setOnKeyPressed(event -> {
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()){
+                case SPACE:
+                    System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
+                    pipeline.execWithAck();
+                    break;
+            }
+        });
 
         // Remember the size of the window.
         primaryStage.setOnCloseRequest((e) -> {

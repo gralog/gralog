@@ -27,7 +27,7 @@ public class IndependentSet extends Algorithm {
 
         for (Vertex candidate : candidates) {
             Set<Vertex> candidateNeigh = new HashSet<>();
-            for (Edge e : candidate.getConnectedEdges()) {
+            for (Edge e : candidate.getIncidentEdges()) {
                 candidateNeigh.add(e.getSource());
                 candidateNeigh.add(e.getTarget());
             }

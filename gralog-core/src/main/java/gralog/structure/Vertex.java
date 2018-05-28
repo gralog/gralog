@@ -44,12 +44,14 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     Set<VertexListener> listeners;
     Set<Edge> outgoingEdges;
-    ArrayList<Edge> connectedEdges;
+    Set<Edge> incomingEdges;
+    Set<Edge> incidentEdges;
 
     public Vertex() {
         listeners = new HashSet<>();
         outgoingEdges = new HashSet<>();
-        connectedEdges = new ArrayList<>();
+        incidentEdges = new HashSet<>();
+        incomingEdges = new HashSet<>();
     }
 
     /**
@@ -73,8 +75,9 @@ public class Vertex extends XmlMarshallable implements IMovable {
         this.coordinates = new Vector2D(v.coordinates);
         this.listeners = new HashSet<>(v.listeners);
 
-        this.connectedEdges = new ArrayList<>(v.connectedEdges);
+        this.incidentEdges = new HashSet<>(v.incidentEdges);
         this.outgoingEdges = new HashSet<>(v.outgoingEdges);
+        this.incomingEdges = new HashSet<>(v.incomingEdges);
     }
 
     @Override
@@ -82,34 +85,53 @@ public class Vertex extends XmlMarshallable implements IMovable {
         return "Vertex{" + "label=" + label + ", radius=" + radius + ", fillColor=" + fillColor + ", strokeWidth=" + strokeWidth + ", textHeight=" + textHeight + ", strokeColor=" + strokeColor + ", coordinates=" + coordinates + '}';
     }
 
+    public void setLabel(String label){
+        this.label = label;
+    }
+
     void connectEdge(Edge e) {
         if(e.getSource() == this){
             outgoingEdges.add(e);
         }
-        this.connectedEdges.add(e);
+        if (e.getTarget() == this){
+            this.incomingEdges.add(e);
+        }
+        this.incidentEdges.add(e);
     }
 
     void disconnectEdge(Edge e) {
-        if(outgoingEdges.contains(e)){
+        if(e.getSource() == this){
             outgoingEdges.remove(e);
         }
-        this.connectedEdges.remove(e);
+        if (e.getTarget() == this){
+            incomingEdges.remove(e);
+        }
+        this.incidentEdges.remove(e);
     }
 
-    public ArrayList<Edge> getConnectedEdges() {
-        return connectedEdges;
+    public Set<Edge> getIncidentEdges() {
+        return incidentEdges;
+    }
+
+    public int getId(){
+        return this.id;
     }
 
     public Set<Edge> getOutgoingEdges(){
         return outgoingEdges;
     }
 
+    public Set<Edge> getIncomingEdges(){
+        return this.incomingEdges;
+    }
+
+//##########START depricated!!!! use getNeighbours instead#########
     /**
      * @return The set of adjacent vertices.
      */
     public Set<Vertex> getAdjacentVertices() {
         Set<Vertex> result = new HashSet<>();
-        for (Edge e : connectedEdges) {
+        for (Edge e : incidentEdges) {
             Vertex v = e.getSource();
             if (v == this)
                 v = e.getTarget();
@@ -117,6 +139,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
         }
         return result;
     }
+
+//##########END#########
 
     public double maximumCoordinate(int dimension) {
         if (coordinates.dimensions() > dimension)
@@ -152,6 +176,36 @@ public class Vertex extends XmlMarshallable implements IMovable {
             gc.putText(coordinates.plus(new Vector2D(0, 1)),
                 annotation, textHeight, GralogColor.RED);
         }
+    }
+
+
+    public Set<Vertex> getNeighbours(){
+        Set<Vertex> neighbours = new HashSet<Vertex>();
+        for (Edge e : this.getIncidentEdges()){
+            if (e.getTarget() != this){
+                neighbours.add(e.getTarget());
+            }else{
+                neighbours.add(e.getSource());
+            }
+        }
+        return neighbours;
+    }
+
+    public Set<Vertex> getOutgoingNeighbours(){
+        Set<Vertex> outgoingNeighbours = new HashSet<Vertex>();
+        for (Edge e : this.getOutgoingEdges()){
+            outgoingNeighbours.add(e.getTarget());
+        }
+        return outgoingNeighbours;
+    }
+
+
+    public Set<Vertex> getIncomingNeighbours(){
+        Set<Vertex> incomingNeighbours = new HashSet<Vertex>();
+        for (Edge e : this.getIncomingEdges()){
+            incomingNeighbours.add(e.getSource());
+        }
+        return incomingNeighbours;
     }
 
     public void snapToGrid(double gridSize) {

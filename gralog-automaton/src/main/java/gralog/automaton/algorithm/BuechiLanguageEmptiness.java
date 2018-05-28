@@ -53,7 +53,7 @@ public class BuechiLanguageEmptiness extends Algorithm {
                 componentHasCycle = true;
             else {
                 Vertex v = component.get(0);
-                for (Edge e : v.getConnectedEdges())
+                for (Edge e : v.getIncidentEdges())
                     if (e.getSource() == v && e.getTarget() == v)
                         componentHasCycle = true;
             }
@@ -86,7 +86,7 @@ public class BuechiLanguageEmptiness extends Algorithm {
             Vertex lastCycleMember = null;
             Transition lastCycleEdge = null;
 
-            for (Edge e : componentFinalState.getConnectedEdges()) {
+            for (Edge e : componentFinalState.getIncidentEdges()) {
                 Vertex other = e.getSource();
                 if (other == componentFinalState)
                     other = e.getTarget();

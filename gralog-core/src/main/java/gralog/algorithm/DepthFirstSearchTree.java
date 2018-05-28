@@ -21,7 +21,7 @@ public class DepthFirstSearchTree extends Algorithm {
     public static void depthFirstSearch(Vertex v,
         HashMap<Vertex, Vertex> predecessor,
         HashMap<Vertex, Edge> edgeFromPredecessor) {
-        for (Edge e : v.getConnectedEdges()) {
+        for (Edge e : v.getIncidentEdges()) {
             if (e.getSource() != v && e.isDirected) // incoming (directed) edge
                 continue;
 

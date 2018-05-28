@@ -33,15 +33,22 @@ public class Edge extends XmlMarshallable implements IMovable {
     Set<EdgeListener> listeners = new HashSet<>();
 
     //inspector visible
-    public String label = "";
-    public double cost = 1.0d;
+    public String label = ""; //add this
+    public Double weight = 1.0d;
+
     public Boolean isDirected = true;
     public Arrow arrowType = Arrow.TYPE2;
     public double arrowHeadLength = 0.2d; // cm
+
+    public double arrowHeadAngle = 40d; // degrees
+    // @InspectorName(name = "thickness")
+
     public Double width = 2.54 / 96; // cm
     public GralogColor color = GralogColor.BLACK;
+
     public GralogGraphicsContext.LineType type = GralogGraphicsContext.LineType.PLAIN;
     public EdgeType edgeType = EdgeType.BEZIER; //TODO: switch to private and use annotations to mark insp vars
+
     //end
 
     public ArrayList<Edge> siblings = new ArrayList<>();
@@ -454,7 +461,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         enode.setAttribute("target", ids.get(target));
         enode.setAttribute("isdirected", isDirected ? "true" : "false");
         enode.setAttribute("label", label);
-        enode.setAttribute("cost", Double.toString(cost));
+        enode.setAttribute("weight", Double.toString(weight));
         enode.setAttribute("width", Double.toString(width));
         enode.setAttribute("arrowheadlength", Double.toString(arrowHeadLength));
         enode.setAttribute("color", color.toHtmlString());
@@ -468,6 +475,10 @@ public class Edge extends XmlMarshallable implements IMovable {
         return enode;
     }
 
+    public void setLabel(String label){
+        this.label = label;
+    }
+
     public void fromXml(Element enode, HashMap<String, Vertex> ids) throws Exception {
         setSource(ids.get(enode.getAttribute("source")));
         setTarget(ids.get(enode.getAttribute("target")));
@@ -475,8 +486,8 @@ public class Edge extends XmlMarshallable implements IMovable {
         if (enode.hasAttribute("isdirected"))
             isDirected = enode.getAttribute("isdirected").equals("true");
         label = enode.getAttribute("label");
-        if (enode.hasAttribute("cost"))
-            cost = Double.parseDouble(enode.getAttribute("cost"));
+        if (enode.hasAttribute("weight"))
+            weight = Double.parseDouble(enode.getAttribute("weight"));
 
         if (enode.hasAttribute("width"))
             width = Double.parseDouble(enode.getAttribute("width"));
@@ -513,5 +524,11 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     public void removeEdgeListener(EdgeListener listener) {
         listeners.remove(listener);
+    }
+
+    @Override
+    public String toString(){
+        String directed = isDirected ? "Directed " : "";
+        return directed + "Edge " + Integer.toString(this.getSource().getId()) + " " + Integer.toString(this.getTarget().getId());
     }
 }

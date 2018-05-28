@@ -93,6 +93,8 @@ public class Console extends VBox implements GralogWindow{
         }
     }
 
+    
+
     @Override
     public void notifyStructureChange(Structure structure) { }
 

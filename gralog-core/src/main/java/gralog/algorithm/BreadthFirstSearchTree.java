@@ -30,7 +30,7 @@ public class BreadthFirstSearchTree extends Algorithm {
         while (!queue.isEmpty()) {
             Vertex v = queue.removeFirst();
 
-            for (Edge e : v.getConnectedEdges()) {
+            for (Edge e : v.getIncidentEdges()) {
                 if (e.getSource() != v && e.isDirected) // incoming (directed) edge
                     continue;
 

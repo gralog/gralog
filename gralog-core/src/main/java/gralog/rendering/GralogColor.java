@@ -15,6 +15,7 @@ public class GralogColor {
         this.r = (short) (red & 0xFF);
         this.g = (short) (green & 0xFF);
         this.b = (short) (blue & 0xFF);
+
     }
 
     public GralogColor(short red, short green, short blue) {

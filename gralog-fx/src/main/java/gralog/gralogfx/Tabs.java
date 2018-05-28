@@ -13,6 +13,8 @@ import java.util.Set;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * A tab pane for structures.
@@ -93,12 +95,24 @@ public class Tabs {
         return null;
     }
 
+    public List<Structure> getAllStructures(){
+        List<Structure> structures = new ArrayList<Structure>();
+        for (Tab tab : tabPane.getTabs()){
+            StructurePane currentStructurePane = (StructurePane) tab.getContent();
+            structures.add(currentStructurePane.getStructure());
+            System.out.println("current structure: " + currentStructurePane.getStructure());
+        }
+        return structures;
+    }
+
     private Tab getCurrentTab() {
         return tabPane.getSelectionModel().getSelectedItem();
     }
 
     private void onChangeTab() {
+        this.requestRedraw();
         onStructureChange(getCurrentStructurePane().structure);
+
     }
 
     private void onHighlightsChange(Highlights highlights){

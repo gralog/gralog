@@ -27,6 +27,7 @@ public abstract class RenderingShape {
         renderingShapeClasses = new LinkedList<>(classes);
     }
 
+//coool look at this//
 
     /**
      * StringConverter class. Useful for any class that relies on redefining the toString() method

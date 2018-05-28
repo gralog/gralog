@@ -15,6 +15,7 @@ import gralog.exportfilter.*;
 public class AlgorithmExternalTest extends AlgorithmExternal {
 
     public AlgorithmExternalTest() {
+    	// System.out.println("external");
         super(new TrivialGraphFormatExport(), false, "gralogexternaltest");
     }
 

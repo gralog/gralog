@@ -19,6 +19,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import java.util.ArrayList;
 
 /**
  *
@@ -68,6 +69,8 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
         }
         view = ViewManager.instantiateView(obj.getClass());
 
+        System.out.println("ok now i've got a view of class: " + view.getClass());
+
         if (view == null)
             return;
         if (!(view instanceof Node))
@@ -111,6 +114,7 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
     public void notifyStructureChange(Structure structure) {
         //not relevant
     }
+
 
     @Override
     public void notifyHighlightChange(Highlights highlights) {

@@ -25,4 +25,6 @@ public interface GralogWindow
      */
     void notifyHighlightChange(Highlights highlights);
 
+    
+
 }

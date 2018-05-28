@@ -26,11 +26,11 @@ public class DominatingSet extends Algorithm {
 
         Vertex minNeigh = null;
         for (Vertex v : undominated)
-            if (minNeigh == null || (minNeigh.getConnectedEdges().size() > v.getConnectedEdges().size()))
+            if (minNeigh == null || (minNeigh.getIncidentEdges().size() > v.getIncidentEdges().size()))
                 minNeigh = v;
 
         Set<Vertex> candidates = new HashSet<>();
-        for (Edge e : minNeigh.getConnectedEdges()) {
+        for (Edge e : minNeigh.getIncidentEdges()) {
             candidates.add(e.getSource());
             candidates.add(e.getTarget());
         }
@@ -40,7 +40,7 @@ public class DominatingSet extends Algorithm {
                 continue;
 
             Set<Vertex> candidateNeigh = new HashSet<>();
-            for (Edge e : candidate.getConnectedEdges()) {
+            for (Edge e : candidate.getIncidentEdges()) {
                 candidateNeigh.add(e.getSource());
                 candidateNeigh.add(e.getTarget());
             }

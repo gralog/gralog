@@ -43,7 +43,7 @@ public class WordAcceptance extends Algorithm {
         for (int i = 0; i < str.length(); i++) {
             String stri = "" + str.charAt(i);
             for (State s : currentStates)
-                for (Edge e : s.getConnectedEdges())
+                for (Edge e : s.getIncidentEdges())
                     if (e.getSource() == s)
                         if (e instanceof Transition)
                             if (((Transition) e).symbol.equals(stri))

@@ -13,7 +13,7 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-    name = "Assign Labels",
+    name = "Assign Labels Diddly",
     text = "Assigns consecutive labels to the vertices",
     url = ""
 )

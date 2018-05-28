@@ -2,6 +2,8 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
+import java.util.ArrayList;
+
 import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -24,6 +26,7 @@ import javafx.geometry.Point2D;
 import javafx.event.EventType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+
 
 /**
  *
@@ -49,6 +52,8 @@ public class StructurePane extends StackPane implements StructureListener {
     public void setOnStructureChanged(Consumer<Structure> structureSubscribers) {
         this.structureSubscribers.add(structureSubscribers);
     }
+
+    // private List<SpaceEvent> spaceListeners = new ArrayList<SpaceEvent>();
 
     Structure structure;
     Canvas canvas;
@@ -89,6 +94,8 @@ public class StructurePane extends StackPane implements StructureListener {
         canvas.widthProperty().addListener(e -> this.requestRedraw());
         canvas.heightProperty().addListener(e -> this.requestRedraw());
 
+
+
         canvas.setOnScroll(e -> {
             ScrollEvent se = (ScrollEvent) e;
 
@@ -106,6 +113,17 @@ public class StructurePane extends StackPane implements StructureListener {
 
         setMouseEvents();
     }
+
+    // public void addSpaceListener(SpaceEvent toAdd) {
+    //     spaceListeners.add(toAdd);
+    // }           
+
+    // public void spacePressed(){
+    //     System.out.println("space pressed");
+    //     for (SpaceEvent listener : spaceListeners){
+    //         listener.spacePressed();
+    //     }
+    // }
 
     public Structure getStructure() {
         return structure;
@@ -211,7 +229,6 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
-
             }
         });
     }
@@ -269,6 +286,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 }
 
                 structure.addVertex(v);
+                structureSubscribers.forEach(s -> s.accept(structure));
             }
         }
         this.requestRedraw();

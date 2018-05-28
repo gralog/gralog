@@ -6,6 +6,7 @@ import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
 import gralog.events.*;
 import gralog.rendering.*;
+import gralog.exportfilter.*;
 
 import java.util.*;
 import javax.xml.transform.stream.StreamResult;
@@ -33,6 +34,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     protected HashMap<Integer, V> vertices;
     protected Set<E> edges;
 
+    private int id;
+
     public TreeSet<Interval> holes;
 
     protected static class Interval {
@@ -52,12 +55,20 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             /**
              * Returns a positive value if number1 is larger than number 2, a
              * negative number if number1 is less than number2, and 0 if they
-             * are equal.
+             * are equal. 
              */
             public int compare(Interval first, Interval second) {
                 return first.a - second.a;
             }
         });
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+    public int getId(){
+        return this.id;
     }
 
     /**
@@ -184,13 +195,42 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return v;
     }
 
+    /** preliminary method (to be updated with edge id's) for removing an edge
+    * very inefficient
+    *@param id's of the vertices to be removed
+    */
+    public Edge getEdgeByVertexIds(int inputSourceId, int inputTargetId){
+
+        Vertex sourceVertex = this.getVertexById(inputSourceId);
+        Vertex targetVertex = this.getVertexById(inputTargetId);
+        if (sourceVertex == null || targetVertex == null){
+            return null;
+        }
+
+        for (Edge e : sourceVertex.getIncidentEdges()){
+            System.out.println("iterating with edge: " + e.toString() + " with input: " + Integer.toString(inputSourceId) + " and target: " + Integer.toString(inputTargetId));
+            int sourceId = e.getSource().getId();
+            int targetId = e.getTarget().getId();
+
+            if (targetId == inputTargetId){
+                return e;
+            }
+            else if (!e.isDirected){
+                if (sourceId == inputTargetId){
+                    return e;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Find the vertex with a given ID. Lookup speed is O(1), since
      * vertices are implemented as a HashMap.
      * @param id The id of the vertex
      * @return Returns the Vertex or null if no vertex has the ID
      */
-    public Vertex findVertexByID(int id){
+    public Vertex getVertexById(int id){
         return vertices.get(id);
     }
 
@@ -210,9 +250,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param v The vertex to be removed.
      */
     public void removeVertex(Vertex v) {
-        Set<Edge> deletedEdges = new HashSet<>(v.connectedEdges);
+        Set<Edge> deletedEdges = new HashSet<>(v.incidentEdges);
 
         for(Edge e : deletedEdges){
+            Vertex other;
+            e.getSource().disconnectEdge(e);
+            e.getTarget().disconnectEdge(e);
             removeEdge(e);
         }
 
@@ -295,7 +338,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         //correct siblings first
         e.siblings.clear();
         int nonLoopEdges = 0;
-        for(Edge edge : e.getSource().getConnectedEdges()){
+        for(Edge edge : e.getSource().getIncidentEdges()){
             if(edge == e){
                 continue;
             }
@@ -311,6 +354,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 }
             }
         }
+
+
         //max amount of edges.
         //TODO: Maybe make that an option
         if(nonLoopEdges >= 4 && e.getSource() != e.getTarget()){
@@ -318,7 +363,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }else if (e.getSource() == e.getTarget()){
             edges.add(e);
         }else{
-            for(Edge edge : e.getSource().getConnectedEdges()){
+            for(Edge edge : e.getSource().getIncidentEdges()){
                 if(edge == e){
                     continue;
                 }
@@ -399,6 +444,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edge.setSource(source);
         edge.setTarget(target);
 
+
+
         //add correct siblings
         if (source == target && source != null) {
             edge.intermediatePoints.add(
@@ -427,7 +474,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         edgeIDs.add(new Interval(e.getSource().id, e.getTarget().id));
                     }
                 }
-                v.connectedEdges.clear();
+                v.incidentEdges.clear();
                 v.outgoingEdges.clear();
                 idToVertex.put(v.id, v);
                 //now we can correct v.id
@@ -500,6 +547,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         return null;
     }
+
+
+    
 
     /**
      * Returns an array of movable objects that lie within bounds of a given rectangle.
@@ -732,6 +782,67 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         DOMSource source = new DOMSource(doc);
         transformer.transform(source, stream);
+    }
+
+    public String xmlToString() throws Exception{
+
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        Document doc = docBuilder.newDocument(); //a new xml document
+
+        Element root = doc.createElement("graphml"); //<graphml></graphml>
+        Element snode = toXml(doc); //<restOfGraph></restOfGraph>
+        if (snode == null)
+            throw new Exception("Error writing to XML");
+        root.appendChild(snode);
+        doc.appendChild(root);
+
+
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+
+        DOMSource source = new DOMSource(root);
+        StreamResult result = new StreamResult(new StringWriter());
+
+
+
+        transformer.transform(source, result);
+
+        String strObject = result.getWriter().toString();
+
+        return strObject;
+
+    }
+
+    public String tgfToString() throws Exception{
+
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        Document doc = docBuilder.newDocument(); //a new xml document
+
+        Element root = doc.createElement("graphml"); //<graphml></graphml>
+        Element snode = toXml(doc); //<restOfGraph></restOfGraph>
+        if (snode == null)
+            throw new Exception("Error writing to XML");
+        root.appendChild(snode);
+        doc.appendChild(root);
+
+
+
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        Transformer transformer = transformerFactory.newTransformer();
+        DOMSource source = new DOMSource(root);
+        StreamResult result = new StreamResult(new StringWriter());
+
+
+
+        transformer.transform(source, result);
+
+        String strObject = result.getWriter().toString();
+
+        return strObject;
+
     }
 
     public void fromXml(Element gnode) throws Exception {

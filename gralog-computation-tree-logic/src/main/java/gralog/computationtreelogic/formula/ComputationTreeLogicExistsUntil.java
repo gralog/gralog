@@ -32,7 +32,7 @@ public class ComputationTreeLogicExistsUntil extends ComputationTreeLogicFormula
         // b) have sucessors inside the current <result> set
         while (!lastIteration.isEmpty()) {
             for (World l : lastIteration)
-                for (Edge e : l.getConnectedEdges())
+                for (Edge e : l.getIncidentEdges())
                     if (e.getTarget() == l)
                         if (beforeresult.contains((World) e.getSource())
                             && !result.contains((World) e.getSource()))

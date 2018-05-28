@@ -44,7 +44,7 @@ public class ShortestPath extends Algorithm {
 
             Double distu = distances.get(u);
 
-            for (Edge e : u.getConnectedEdges()) {
+            for (Edge e : u.getIncidentEdges()) {
                 if (e.getSource() != u && e.isDirected) // incoming (directed) edge
                     continue;
 
@@ -55,7 +55,7 @@ public class ShortestPath extends Algorithm {
                 if (!Q.contains(other)) // shortest path already found
                     continue;
 
-                Double alt = distu + e.cost;
+                Double alt = distu + e.weight;
                 if ((!distances.containsKey(other)) || (alt < distances.get(other))) {
                     distances.put(other, alt);
                     predecessor.put(other, u);
@@ -75,7 +75,7 @@ public class ShortestPath extends Algorithm {
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
         ProgressHandler onprogress) throws Exception {
         for (Edge e : (Set<Edge>) s.getEdges())
-            if (e.cost < 0d)
+            if (e.weight < 0d)
                 throw new Exception("Dijkstra's Algorithm requires positive edge weights");
 
         HashMap<Vertex, Vertex> predecessor = new HashMap<>();

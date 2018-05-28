@@ -15,4 +15,3 @@ include 'gralog-modal-mu-calculus'
 include 'gralog-np-completeness'
 include 'gralog-jgrapht-bridge'
 include 'gralog-dockfx'
-
