@@ -66,4 +66,37 @@ public class EdgeTest {
         c3'
         */
     }
+
+    @Test
+    public void edgeTypeSwitchDeletion(){
+        Structure s = new DirectedGraph();
+
+        Vertex first = s.createVertex();
+        Vertex secnd = s.createVertex();
+
+        ControlPoint ctrl1, ctrl2, ctrl3;
+
+        first.coordinates = new Vector2D(0, 0);
+        secnd.coordinates = new Vector2D(1, 0);
+
+        s.addVertex(first);
+        s.addVertex(secnd);
+
+        Edge e = s.addEdge(first, secnd);
+        e.edgeType = Edge.EdgeType.SHARP;
+
+        ctrl1 = e.addControlPoint(new Vector2D(0,1), new Vector2D(0.5, 0));
+        ctrl2 = e.addControlPoint(new Vector2D(1,1), new Vector2D(0.5, 0.5));
+        ctrl3 = e.addControlPoint(new Vector2D(0.5,1), new Vector2D(0.5, 1));
+
+        e.setEdgeType(Edge.EdgeType.BEZIER);
+
+        assertEquals(2, e.controlPoints.size());
+
+        assertEquals(0.25d, e.controlPoints.get(0).getPosition().getX(), 0.001);
+        assertEquals(1.00d, e.controlPoints.get(0).getPosition().getY(), 0.001);
+
+        assertEquals(0.75d, e.controlPoints.get(1).getPosition().getX(), 0.001);
+        assertEquals(1.00d, e.controlPoints.get(1).getPosition().getY(), 0.001);
+    }
 }

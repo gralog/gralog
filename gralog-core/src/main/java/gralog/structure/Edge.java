@@ -54,9 +54,23 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     public void setEdgeType(EdgeType e){
         if(e == EdgeType.BEZIER && controlPoints.size() > 2){
-            //TODO: improve deletion routine
-            ControlPoint c1 = controlPoints.get(0);
-            ControlPoint c2 = controlPoints.get(1);
+
+            Vector2D ctrl1 = Vector2D.zero(),
+                    ctrl2 = Vector2D.zero();
+
+            int offset = (controlPoints.size() + 1) % 2; //0 when uneven
+            int middle = (controlPoints.size() - 1 - offset)/2;
+
+            for(int i = 0; i <= middle; i++){
+                ctrl1 = ctrl1.plus(controlPoints.get(i).getPosition());
+            }
+            for(int i = middle + offset; i < controlPoints.size(); i++){
+                ctrl2 = ctrl2.plus(controlPoints.get(i).getPosition());
+            }
+            ctrl1 = ctrl1.multiply(1d/(middle + 1));
+            ctrl2 = ctrl2.multiply(1d/(middle + 1));
+            ControlPoint c1 = new ControlPoint(ctrl1, this);
+            ControlPoint c2 = new ControlPoint(ctrl2, this);
             controlPoints.clear();
             controlPoints.add(c1);
             controlPoints.add(c2);
