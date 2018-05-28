@@ -72,13 +72,17 @@ public class Edge extends XmlMarshallable implements IMovable {
     public int getControlPointCount(){
         return controlPoints.size();
     }
-    public ControlPoint addControlPoint(Vector2D position){
+
+    /**
+     * The clickPosition determines where the edge was initially clicked to
+     * add the control point. Depending on clickPosition, the correct edge segment
+     * for adding the control point can be determined
+     */
+    public ControlPoint addControlPoint(Vector2D position, Vector2D clickPosition){
         if(edgeType == EdgeType.BEZIER){
             return addBezierControlPoint(position);
         }else{
-            ControlPoint c = new ControlPoint(position, this);
-            controlPoints.add(c);
-            return c;
+            return addSharpControlPoint(position, clickPosition);
         }
     }
     private ControlPoint addBezierControlPoint(Vector2D position){
@@ -94,26 +98,39 @@ public class Edge extends XmlMarshallable implements IMovable {
             //distance is not the correct metric
             //TODO: project on edge and use x order
             controlPoints.add(c1Dist > c2Dist ? 0 : 1, c);
-        }else{
+        }else if(controlPoints.isEmpty()){
             controlPoints.add(c);
+        }else{ //can't add more than 2 bezier control points
+            return null;
         }
         return c;
     }
+
+    private ControlPoint addSharpControlPoint(Vector2D position, Vector2D clickPosition){
+        ControlPoint c = new ControlPoint(position, this);
+        int idx = containsCoordinateSharp(clickPosition.getX(), clickPosition.getY());
+        if(idx >= controlPoints.size()){
+            controlPoints.add(c);
+        }
+        else if(idx == 0){
+            controlPoints.add(0,c);
+        }else{
+            controlPoints.add(idx, c);
+        }
+        return c;
+    }
+
     public ControlPoint removeControlPoint(ControlPoint c){
-        if(controlPoints.size() == 2){
+        if(controlPoints.size() > 1){
             controlPoints.remove(c);
-            return setSingleControlPoint(controlPoints.get(0).getPosition());
+            return controlPoints.get(0);
         }else{
             controlPoints.remove(0);
             return null;
         }
 
     }
-    public ControlPoint setSingleControlPoint(Vector2D position){
-        controlPoints.clear();
-        controlPoints.add(new ControlPoint(position, this));
-        return controlPoints.get(0);
-    }
+
     public Vertex getSource() {
         return source;
     }
@@ -299,49 +316,72 @@ public class Edge extends XmlMarshallable implements IMovable {
     public boolean containsCoordinate(double x, double y) {
 
         if(controlPoints.size() == 0){
-            Vector2D diff = target.coordinates.minus(source.coordinates);
-            Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(getOffset());
-
-            Vector2D sourceOffset = source.coordinates.plus(perpendicularToDiff);
-            Vector2D targetOffset = target.coordinates.plus(perpendicularToDiff);
-
-            double fromX = sourceOffset.getX();
-            double fromY = sourceOffset.getY();
-
-            double toX = targetOffset.getX();
-            double toY = targetOffset.getY();
-            return Vector2D.distancePointToLine(x, y, fromX, fromY, toX, toY) < multiEdgeOffset * 0.5;
+            return containsCoordinateFlat(x, y) == 0;
         }
         if(edgeType == EdgeType.BEZIER){
             return containsCoordinateBezier(x, y);
         }else if(edgeType == EdgeType.SHARP){
-            return containsCoordinateSharp(x, y);
+            return containsCoordinateSharp(x, y) >= 0;
         }else{ //edgeType == EdgeType.ROUND
             return containsCoordinateRound(x, y);
         }
     }
 
+    /**
+     * Checks for contains() assuming there are no control points
+     * @return 0 if it contains (x,  y), -1 otherwise
+     */
+    private int containsCoordinateFlat(double x, double y){
+        Vector2D diff = target.coordinates.minus(source.coordinates);
+        Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(getOffset());
+
+        Vector2D sourceOffset = source.coordinates.plus(perpendicularToDiff);
+        Vector2D targetOffset = target.coordinates.plus(perpendicularToDiff);
+
+        double fromX = sourceOffset.getX();
+        double fromY = sourceOffset.getY();
+
+        double toX = targetOffset.getX();
+        double toY = targetOffset.getY();
+        if(Vector2D.distancePointToLine(x, y, fromX, fromY, toX, toY) < multiEdgeOffset * 0.5){
+            return 0;
+        }else{
+            return -1;
+        }
+
+    }
     private boolean containsCoordinateRound(double x, double y){
         return false;
     }
 
-    private boolean containsCoordinateSharp(double x, double y){
+    /**
+     * Checks if a given vector (x, y) is within a close margin of the
+     * sharp edge (the form of the edge is given by its control points)
+     * @param x x coordinate of the position to check
+     * @param y y coordinate of the position to check
+     * @return -1 if edge does not contain position, i>=0 otherwise (where [i-1, i] are the indices
+     * of the control points that have been hit). If i==0, then [i-1] is the source vertex
+     */
+    private int containsCoordinateSharp(double x, double y){
+        if(controlPoints.size() == 0){
+            return containsCoordinateFlat(x, y);
+        }
         double dist = Vector2D.distancePointToLine(x, y, source.coordinates, controlPoints.get(0).getPosition());
 
         if(dist < multiEdgeOffset * 0.5){
-            return true;
+            return 0;
         }
         for(int i = 1; i < controlPoints.size(); i++){
             Vector2D a = controlPoints.get(i-1).getPosition();
             Vector2D b = controlPoints.get(i).getPosition();
             if(Vector2D.distancePointToLine(x, y, a, b) < multiEdgeOffset * 0.5){
-                return true;
+                return i;
             }
         }
         Vector2D last = controlPoints.get(controlPoints.size() - 1).getPosition();
         dist = Vector2D.distancePointToLine(x, y, last, target.coordinates);
 
-        return dist < multiEdgeOffset * 0.5;
+        return dist < multiEdgeOffset * 0.5 ? controlPoints.size(): -1;
     }
 
     private boolean containsCoordinateBezier(double x, double y){

@@ -327,13 +327,7 @@ public class StructurePane extends StackPane implements StructureListener {
             else{
                 //if holding an edge
                 if(holdingEdge != null){
-                    if(mousePositionModel.minus(holdingEdgeStartingPosition).length() > 0.2){
-                        ControlPoint ctrl = holdingEdge.addControlPoint(mousePositionModel);
-                        clearSelection();
-                        selectAllExclusive(ctrl, holdingEdge);
-                        selectedCurveControlPoint = true;
-                        holdingEdge = null;
-                    }
+                    tryAddControlPoint(mousePositionModel, holdingEdgeStartingPosition);
                 }
                 else{
                     for (Object o : dragging)
@@ -492,6 +486,17 @@ public class StructurePane extends StackPane implements StructureListener {
         // draw the graph
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
         structure.render(ggc, highlights);
+    }
+    private void tryAddControlPoint(Vector2D mousePositionModel, Vector2D clickPosition){
+        if(mousePositionModel.minus(holdingEdgeStartingPosition).length() > 0.2){
+            ControlPoint ctrl = holdingEdge.addControlPoint(mousePositionModel, clickPosition);
+            if(ctrl != null){
+                clearSelection();
+                selectAllExclusive(ctrl, holdingEdge);
+                selectedCurveControlPoint = true;
+                holdingEdge = null;
+            }
+        }
     }
 
     public void select(Object obj) {
