@@ -197,7 +197,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     /** preliminary method (to be updated with edge id's) for removing an edge
     * very inefficient
-    *@param id's of the vertices to be removed
     */
     public Edge getEdgeByVertexIds(int inputSourceId, int inputTargetId){
 
@@ -409,6 +408,20 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         addEdge(e);
         return e;
     }
+    /**
+     * Creates a new edge and adds it to the structure. This is a convenience
+     * function combining createEdge and addEdge.
+     *
+     * @param source The tail of the new edge.
+     * @param target The head of the new edge.
+     * @param id The id of the edge. Leave empty for default vals
+     * @return The new edge.
+     */
+    public E addEdge(V source, V target, int id) {
+        E e = createEdge(source, target, id);
+        addEdge(e);
+        return e;
+    }
 
     /**
      * Removes an edge from the structure. Does not affect vertices, incident or
@@ -440,20 +453,30 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @return The new edge.
      */
     public E createEdge(V source, V target) {
+        return createEdge(source, target, -1);
+    }
+
+    /**
+     * Creates an edge without adding it to the graph.
+     *
+     * @param source The tail of the new edge.
+     * @param target The head of the new edge.
+     * @return The new edge.
+     */
+    private E createEdge(V source, V target, int id) {
         E edge = createEdge();
+        edge.id = id;
         edge.setSource(source);
         edge.setTarget(target);
-
-
 
         //add correct siblings
         if (source == target && source != null) {
             edge.intermediatePoints.add(
-                new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
-                    source.coordinates.getY() - 1.5d));
+                    new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
+                            source.coordinates.getY() - 1.5d));
             edge.intermediatePoints.add(
-                new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
-                    source.coordinates.getY() - 1.5d));
+                    new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
+                            source.coordinates.getY() - 1.5d));
         }
         return edge;
     }

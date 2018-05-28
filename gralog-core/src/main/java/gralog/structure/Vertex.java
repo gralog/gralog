@@ -11,9 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * A vertex with a circle shape.
@@ -91,6 +89,31 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     void connectEdge(Edge e) {
         if(e.getSource() == this){
+            //if id has not been set already, set it
+            if(e.id == -1 && outgoingEdges.isEmpty()){
+                e.id = 0;
+            }
+            if(e.id == -1){
+                int[] allIndices = new int[outgoingEdges.size()];
+                int k = 0;
+                for(Edge edge : outgoingEdges){
+                    allIndices[k] = edge.id;
+                    k++;
+                }
+                Arrays.sort(allIndices);
+
+                boolean changedOnce = false;
+                for(int i = 0; i < allIndices.length; i++){
+                    if(i < allIndices[i]){
+                        e.id = i;
+                        changedOnce = true;
+                        break;
+                    }
+                }
+                if(!changedOnce){
+                    e.id = allIndices.length; //fallback
+                }
+            }
             outgoingEdges.add(e);
         }
         if (e.getTarget() == this){

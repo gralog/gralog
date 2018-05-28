@@ -27,6 +27,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         BEZIER
     }
 
+    public int id = -1; //if not -1, then don't change the id
 
     public static double multiEdgeOffset = 0.2;
 
