@@ -19,6 +19,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 import javax.sound.sampled.Line;
 
@@ -73,15 +74,16 @@ public class ReflectedView extends GridPaneView<Object> {
                         valueControl = valueField;
                     } else if (type.equals(GralogColor.class)) {
                         String valueString = ((GralogColor) value).toHtmlString();
-                        TextField valueField = new TextField(valueString);
-                        valueField.textProperty().addListener(e -> {
+
+                        ColorPicker colorPicker = new ColorPicker(Color.web(valueString));
+                        colorPicker.setOnAction(e -> {
                             try {
-                                f.set(displayObject, GralogColor.parseColor(valueField.getText()));
+                                f.set(displayObject, GralogColor.parseColorAlpha(colorPicker.getValue().toString()));
                                 requestRedraw();
                             } catch (IllegalAccessException | IllegalArgumentException ex) {
                             }
                         });
-                        valueControl = valueField;
+                        valueControl = colorPicker;
                     } else if (type.equals(Boolean.class)) {
                         CheckBox valueField = new CheckBox();
                         if ((Boolean) value)

@@ -1,5 +1,6 @@
 package gralog.rendering.shapes;
 
+import gralog.rendering.GralogColor;
 import gralog.rendering.GralogGraphicsContext;
 import gralog.rendering.Vector2D;
 import javafx.util.StringConverter;
@@ -46,6 +47,7 @@ public abstract class RenderingShape {
         }
     }
     public Double strokeWidth = 3.6d/96; //cm
+
     /**
      * Provides a rough measure of the size of a shape via a Rectangle,
      * applicable height every subclass of shape
@@ -73,9 +75,11 @@ public abstract class RenderingShape {
      * Renders a shape on the provided graphics context. RenderingShape will depend
      * on the internal state of the shape object (e.g. parameters such as
      * size, fill, color, etc..)
-     *  @param gc The graphics context on which the shape is rendered
+     * @param gc The graphics context on which the shape is rendered
+     * @param f Filling color
+     * @param s Stroke color
      */
-    public abstract void render(GralogGraphicsContext gc, boolean h, Vector2D center);
+    public abstract void render(GralogGraphicsContext gc, Vector2D center, GralogColor f, GralogColor s);
 
 
     /**

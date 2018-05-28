@@ -7,7 +7,6 @@ import gralog.events.*;
 import gralog.rendering.*;
 import gralog.rendering.shapes.Ellipse;
 import gralog.rendering.shapes.RenderingShape;
-import gralog.rendering.shapes.SizeBox;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -69,6 +68,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
             e.printStackTrace();
         }
         this.strokeColor = new GralogColor(v.strokeColor);
+        this.fillColor = new GralogColor(v.fillColor);
+
         this.coordinates = new Vector2D(v.coordinates);
         this.listeners = new HashSet<>(v.listeners);
 
@@ -134,8 +135,10 @@ public class Vertex extends XmlMarshallable implements IMovable {
         coordinates = coordinates.plus(offset);
     }
 
+
     public void render(GralogGraphicsContext gc, Highlights highlights) {
-        shape.render(gc, highlights.isSelected(this), coordinates);
+        GralogColor c = highlights.isSelected(this) ? GralogColor.RED : strokeColor;
+        shape.render(gc, coordinates, fillColor, c);
         /*
         if (highlights.isSelected(this))
             gc.circle(coordinates, radius + 0.07, GralogColor.RED);

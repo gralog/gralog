@@ -11,14 +11,14 @@ public class Diamond extends RenderingShape {
     }
 
     @Override
-    public void render(GralogGraphicsContext gc, boolean h, Vector2D center) {
+    public void render(GralogGraphicsContext gc, Vector2D center, GralogColor fillColor, GralogColor strokeColor) {
         double x1 = center.getX() - sizeBox.width/2;
         double y1 = center.getY() - sizeBox.height / 2;
         double x2 = center.getX() + sizeBox.width/2;
         double y2 = center.getY() + sizeBox.height/2;
 
-        gc.fillDiamond(x1, y1, x2, y2, GralogColor.WHITE);
-        gc.strokeDiamond(x1, y1, x2, y2, strokeWidth, h ? GralogColor.RED : GralogColor.BLACK);
+        gc.fillDiamond(x1, y1, x2, y2, fillColor);
+        gc.strokeDiamond(x1, y1, x2, y2, strokeWidth, strokeColor);
     }
 
     @Override

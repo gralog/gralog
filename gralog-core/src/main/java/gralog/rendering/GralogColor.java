@@ -87,6 +87,27 @@ public class GralogColor {
 
         return new GralogColor(colorCode);
     }
+    public static GralogColor parseColorAlpha(String htmlString) {
+        int colorCode = 0;
+        int i = 0;
+        if (htmlString.charAt(i) == '#')
+            i++;
+
+        for (; i < htmlString.length() - 2; i++) {
+            int temp = 0;
+            char ci = htmlString.charAt(i);
+            if ('0' <= ci && ci <= '9')
+                temp = ci - '0';
+            else if ('a' <= ci && ci <= 'f')
+                temp = (ci - 'a') + 10;
+            else if ('A' <= ci && ci <= 'F')
+                temp = (ci - 'A') + 10;
+
+            colorCode = (colorCode << 4) | temp;
+        }
+
+        return new GralogColor(colorCode);
+    }
 
     public GralogColor inverse() {
         return new GralogColor((short) (255 - r), (short) (255 - g), (short) (255 - b));
