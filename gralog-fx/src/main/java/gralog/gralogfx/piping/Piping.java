@@ -53,6 +53,9 @@ public class Piping{
 
     private Function<String,StructurePane> newGraphMethod;
 
+    private int skipPausesWithIdGreaterThanOrEqualTo = Integer.MAX_VALUE;
+    private int currentSkipValue = Integer.MAX_VALUE;
+
 
     private enum State{
         Null,
@@ -65,8 +68,8 @@ public class Piping{
         this.subscribers.add(sub);
     }
 
-    private void aPauseOccured(String[] externalCommandSegments){
-        List<String[]> args = PipingMessageHandler.parsePauseVars(externalCommandSegments);
+    private void aPauseOccured(String[] externalCommandSegments, boolean rankGiven){
+        List<String[]> args = PipingMessageHandler.parsePauseVars(externalCommandSegments,rankGiven);
         subscribers.forEach(sub -> sub.notifyPauseRequested(this.structure,args));
     }
 
@@ -128,7 +131,21 @@ public class Piping{
     }
 
    
+    public Integer extractRankFromPause(String[] externalCommandSegments){
+        System.out.println("where the rank would be : " + externalCommandSegments[1]);
+        try{
+            Integer rank = Integer.parseInt(externalCommandSegments[1]);
+            System.out.println("parsd!: " + rank);
+            return rank;
+        }catch(Exception e){
+            return (Integer)null;
+        }
+    }
 
+    public void skipPressed(){
+        this.skipPausesWithIdGreaterThanOrEqualTo = this.currentSkipValue;
+        this.exec(Integer.toString(this.currentSkipValue));
+    }
   
 
     public String execWithAck(){
@@ -190,19 +207,30 @@ public class Piping{
                     if (externalCommandSegments[0].equals("pauseUntilSpacePressed")){
                         
 
+
                         System.out.println("paused");
+                        boolean withRank;
+
+                        Integer rank = this.extractRankFromPause(externalCommandSegments);
+                        withRank = (rank != null);
+                        if (withRank){
+                            rank = 0;
+                        }
+                        System.out.println("withrank: " + withRank + " rank: " + rank);
+                        
+                        if (rank < this.skipPausesWithIdGreaterThanOrEqualTo){
+                            this.currentSkipValue = rank;
+                            this.aPauseOccured(externalCommandSegments,withRank);
+
+                            this.pane.requestRedraw();
+                            this.state = State.Paused;
+                            break;
+                        }else{
+                            out.println("skipped");
+                            continue;
+                        }
 
                         
-
-                        this.aPauseOccured(externalCommandSegments);
-                        // for (String[] l : args){
-                        //     System.out.println("key: " + l[0] + "; val: " + l[1]);
-                        // }
-                        // System.out.println("fetig");
-
-                        this.pane.requestRedraw();
-                        this.state = State.Paused;
-                        break;
 
                     }else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
                         

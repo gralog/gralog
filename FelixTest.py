@@ -20,7 +20,7 @@ red = "#ff0000";
 
 
 
-numV = 3;
+numV = 5;
 
 vertices = [];
 vertices1 = [];
@@ -34,7 +34,10 @@ g.track("g vertices",vertices);
 
 for x in range(numV):
 	vertices.append(g.addVertex());
-
+	g.pauseUntilSpacePressed(0,("hello","world"));
+	for i in range(5):
+		g.addEdge(x,x);
+		g.pauseUntilSpacePressed(1);
 
 
 
@@ -70,6 +73,7 @@ for x in edges:
 	# print("trying with : " + str(x));
 	g.setEdgeProperty(x,"weight",7);
 	g.setEdgeContour(x,"dashed");
+	g.pauseUntilSpacePressed();
 
 
 # g.pauseUntilSpacePressed();

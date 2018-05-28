@@ -133,6 +133,14 @@ public class MainWindow extends Application {
         };
         pluginControlPanel.setOnPlay(play);
 
+        Runnable skip = new Runnable(){
+            public void run(){
+                System.out.println("skip");
+                pipeline.skipPressed();
+            }
+        };
+        pluginControlPanel.setOnStep(skip);
+
 
         DockPane mainDockPane = new DockPane();
         DockNode structureNode = new DockNode(tabs.getTabPane());
