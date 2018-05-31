@@ -71,7 +71,9 @@ public class StructurePane extends StackPane implements StructureListener {
     private Point2D boxingStartingPosition;
     private boolean selectionBoxingActive = false;
     private boolean selectionBoxDragging = false;
+
     private IMovable currentEdgeStartingPoint;
+    private boolean drawingEdge = false;
 
     private boolean selectedCurveControlPoint = false;
 
@@ -321,10 +323,15 @@ public class StructurePane extends StackPane implements StructureListener {
             }
         }
         else if(b == MouseButton.SECONDARY){
-            //right release on a vertex while drawing an edge = add edge
-            if(selected instanceof Vertex && currentEdgeStartingPoint != null){
+            if(selected instanceof Vertex){
+                //right release on a vertex while drawing an edge = add edge
+                if(drawingEdge && currentEdgeStartingPoint != null){
+                    structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
+                }
+                //right click opens context menu
+                else{
 
-                structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
+                }
             }
         }
 
@@ -335,7 +342,9 @@ public class StructurePane extends StackPane implements StructureListener {
         selectionBoxDragging = false;
         holdingEdge = null;
         dragging = null;
+
         currentEdgeStartingPoint = null;
+        drawingEdge = false;
 
         this.requestRedraw();
     }
@@ -380,6 +389,7 @@ public class StructurePane extends StackPane implements StructureListener {
         else if(e.isSecondaryButtonDown()){
             //if edge is being drawn currently, draw a line between start and mouse
             if(currentEdgeStartingPoint != null){
+                drawingEdge = true;
                 Vertex v = (Vertex) currentEdgeStartingPoint;
                 Point2D vScreenCords = modelToScreen(new Point2D(v.coordinates.getX(), v.coordinates.getY()));
                 this.requestRedraw(vScreenCords, new Point2D(e.getX(), e.getY()));
