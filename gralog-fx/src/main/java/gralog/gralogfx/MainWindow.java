@@ -12,6 +12,7 @@ import gralog.importfilter.*;
 import gralog.exportfilter.*;
 import gralog.generator.*;
 import gralog.algorithm.*;
+import gralog.gralogfx.piping.Piping;
 
 import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
@@ -58,7 +59,7 @@ public class MainWindow extends Application {
     private MainMenu menu;
     private Tabs tabs;
     private StatusBar statusBar;
-    private Piping pipeline;
+    // private Piping pipeline;
     private List<Piping> pipelines;
 
     private HBox rightBox;
@@ -77,7 +78,7 @@ public class MainWindow extends Application {
         handlers.onExit = () -> stage.close();
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
-        pipeline = new Piping();
+        // pipeline = new Piping();
         pipelines = new ArrayList<Piping>();
         //controls
         handlers.onAlignHorizontally = () -> {
@@ -122,34 +123,39 @@ public class MainWindow extends Application {
 
         ObjectInspector objectInspector = new ObjectInspector(tabs);
         //put lambdas here for controlling stuff
-        PluginControlPanel pluginControlPanel = new PluginControlPanel(tabs,pipeline);
+        
 
 
         Runnable play = new Runnable(){
             public void run(){
                 System.out.println("play pressed");
-                pipeline.execWithAck();
+                MainWindow.this.tabs.getCurrentStructurePane().getPiping().execWithAck();
             }
         };
-        pluginControlPanel.setOnPlay(play);
+        
 
         Runnable skip = new Runnable(){
             public void run(){
                 System.out.println("skip");
-                pipeline.skipPressed();
+                MainWindow.this.tabs.getCurrentStructurePane().getPiping().skipPressed();
             }
         };
-        pluginControlPanel.setOnStep(skip);
+        
 
 
         DockPane mainDockPane = new DockPane();
         DockNode structureNode = new DockNode(tabs.getTabPane());
 
-
-
+        /* pluginConrolPanel stuff commented out because
+        it is not properly integrated with multiple piping
+        PluginControlPanel pluginControlPanel = new PluginControlPanel(tabs,this.tabs.getCurrentStructurePane().getPiping());
+        pluginControlPanel.setOnPlay(play);
+        pluginControlPanel.setOnStep(skip);
+        END
+        */
 
         DockNode objDock = new DockNode(objectInspector, "Object Inspector", null);
-        DockNode pluginDock = new DockNode(pluginControlPanel, "Algorithm Control", null);
+        // DockNode pluginDock = new DockNode(pluginControlPanel, "Algorithm Control", null);
         DockNode consoleDock = new DockNode(mainConsole, "Console", null);
 
         structureNode.dock(mainDockPane, DockPos.CENTER);
@@ -166,12 +172,12 @@ public class MainWindow extends Application {
         objDock.setMinWidth(270);
 
 
-        pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
-        pluginDock.setPrefHeight(70);
-        pluginDock.setMinHeight(70);
+        // pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
+        // pluginDock.setPrefHeight(70);
+        // pluginDock.setMinHeight(70);
 
 
-        consoleDock.dock(mainDockPane, DockPos.BOTTOM, pluginDock);
+        // consoleDock.dock(mainDockPane, DockPos.BOTTOM, pluginDock);
         consoleDock.setPrefWidth(200);
         consoleDock.setMinHeight(200);
         consoleDock.setMaxHeight(Double.MAX_VALUE);
@@ -208,7 +214,7 @@ public class MainWindow extends Application {
         // }
 
         try{
-
+            Piping pipeline = new Piping();
             final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
 
             Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
@@ -220,8 +226,10 @@ public class MainWindow extends Application {
             //     System.out.println("error: " + externalProcessInitResponse);
             //     return;
             // }
-
+            
             pipeline.run(this::initGraph);
+
+            // pipeline.run(this::initGraph);
             // if (!externalProcessInitResponse.equals("useCurrentGraph")){
             //     System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
             //     Structure temp = StructureManager.instantiateStructure(externalProcessInitResponse);
@@ -243,7 +251,7 @@ public class MainWindow extends Application {
         }
     }
 
-    public StructurePane initGraph(String graphType){
+    public StructurePane initGraph(String graphType,Piping pipelineThatCalled){
         System.out.println("here in initgraph!!!!" + graphType);
         if (!graphType.equals("useCurrentGraph")){
             System.out.println("trying to make a grpah with type : " + graphType);
@@ -260,7 +268,7 @@ public class MainWindow extends Application {
             System.out.println(temp.getId());
             tabs.addTab("new " + graphType,temp);
 
-            tabs.getAllStructures();
+            tabs.getCurrentStructurePane().setPiping(pipelineThatCalled);
 
             System.out.println("postwardly current structure pane is : " + this.tabs.getCurrentStructurePane());
             
@@ -565,8 +573,14 @@ public class MainWindow extends Application {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()){
                 case SPACE:
-                    System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
-                    pipeline.execWithAck();
+                    if (this.tabs.getCurrentStructurePane().getPiping() != null && this.tabs.getCurrentStructurePane().getPiping().isInitialized()){
+                        this.tabs.getCurrentStructurePane().getPiping().execWithAck();
+                    }else{
+                        System.out.println("no piping in this puppy!");
+                    }
+                    
+                    // System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
+                    // pipeline.execWithAck();
                     break;
             }
         });

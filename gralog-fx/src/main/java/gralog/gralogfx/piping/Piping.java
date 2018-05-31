@@ -6,7 +6,7 @@
  * @author meike
  * @also felix
  */
-package gralog.gralogfx;
+package gralog.gralogfx.piping;
 import java.util.concurrent.ThreadLocalRandom;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -17,7 +17,7 @@ import gralog.algorithm.*;
 import gralog.progresshandler.*;
 import gralog.gralogfx.*;
 import java.util.HashSet;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import java.util.Arrays;
@@ -51,11 +51,10 @@ public class Piping{
 
     private List<PipingWindow> subscribers = new ArrayList<>();
 
-    private Function<String,StructurePane> newGraphMethod;
+    private BiFunction<String,Piping,StructurePane> newGraphMethod;
 
     private int skipPausesWithIdGreaterThanOrEqualTo = Integer.MAX_VALUE;
     private int currentSkipValue = Integer.MAX_VALUE;
-
 
     private enum State{
         Null,
@@ -63,6 +62,12 @@ public class Piping{
         InProgress,
         Paused
     }
+    
+    State state = State.Null;
+
+    private HashMap<Integer,Structure> idGraphMap =  new HashMap<Integer,Structure>();
+
+
 
     public void subscribe(PipingWindow sub){
         this.subscribers.add(sub);
@@ -73,21 +78,20 @@ public class Piping{
         subscribers.forEach(sub -> sub.notifyPauseRequested(this.structure,args));
     }
 
+    public boolean isInitialized(){
+        return (this.state != State.Null);
+    }
+
     
 
     // private PipingMessageHandler eventHandler = 
 
-    State state = State.Null;
-
-
-            //todo: hashmap<id,structure>
-
-    private HashMap<Integer,Structure> idGraphMap;
-
+   
     public boolean externalProcessInit(String fileName,String initMessage){
 
+        System.out.println("creating new pipeline, it has pane: " + this.pane);
 
-        idGraphMap = new HashMap<Integer,Structure>();
+        
             
         System.out.println("external yo");
         String line;
@@ -102,6 +106,7 @@ public class Piping{
         }
         System.out.println("execd and shit");
         this.state=State.Inintialized;
+
         return true;
 
     
@@ -113,14 +118,21 @@ public class Piping{
         return this.idGraphMap.get(id);
     }
 
-    public Object run(Function<String,StructurePane> newGraphMethod) throws
+    private void resetInitialVals(){
+        this.skipPausesWithIdGreaterThanOrEqualTo = Integer.MAX_VALUE;
+        this.currentSkipValue = Integer.MAX_VALUE;
+    }
+
+    public Object run(BiFunction<String,Piping,StructurePane> newGraphMethod) throws
         Exception {
         // String[] commands
             // = {fileName, structure.xmlToString()};
         System.out.println("Gralog says: starting.");
-        this.structure = structure;
-        this.pane = pane;
+        // this.structure = structure;
+        // this.pane = pane;
+        System.out.println("running, it has pane: " + this.pane);
         this.newGraphMethod = newGraphMethod;
+        this.resetInitialVals();
         // newGraphMethod.apply(("hello world".split(" ")));
 
         System.out.println("starting exec");
@@ -159,6 +171,8 @@ public class Piping{
 
 
     private String exec(String firstMessage) {
+
+        System.out.println("exeqing, it has pane: " + this.pane);
 
         System.out.println("exec and state is: " + this.state);
         if (this.state == State.Null){
@@ -221,7 +235,7 @@ public class Piping{
                         if (rank < this.skipPausesWithIdGreaterThanOrEqualTo){
                             this.currentSkipValue = rank;
                             this.aPauseOccured(externalCommandSegments,withRank);
-
+                            System.out.println("reqing redraw, it has pane: " + this.pane);
                             this.pane.requestRedraw();
                             this.state = State.Paused;
                             break;
@@ -234,7 +248,7 @@ public class Piping{
 
                     }else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
                         
-                        this.pane = this.newGraphMethod.apply(externalCommandSegments[0]);
+                        this.pane = this.newGraphMethod.apply(externalCommandSegments[0],this);
                         this.state = State.InProgress;
                         System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
 
@@ -250,7 +264,7 @@ public class Piping{
 
                     }else if ((line = PipingMessageHandler.properGraphNames(line)) != null){
 
-                        this.pane = this.newGraphMethod.apply(line);
+                        this.pane = this.newGraphMethod.apply(line,this);
 
                         idGraphMap.put(this.pane.getStructure().getId(),this.pane.getStructure());
 

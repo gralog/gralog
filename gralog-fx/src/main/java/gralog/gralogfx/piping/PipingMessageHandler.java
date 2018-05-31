@@ -5,7 +5,7 @@
  *
  * @author felix
  */
-package gralog.gralogfx;
+package gralog.gralogfx.piping;
 // import java.util.concurrent.ThreadLocalRandom;
 // import gralog.events.*;
 import gralog.rendering.*;
@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import java.util.Arrays;
 import gralog.structure.*;
+import gralog.gralogfx.StructurePane;
 // import PipingPresets.*;
 // import gralog.algorithm.*;
 // import gralog.progresshandler.*;

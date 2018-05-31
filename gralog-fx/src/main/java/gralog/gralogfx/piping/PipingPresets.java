@@ -1,6 +1,6 @@
 
 
-package gralog.gralogfx;
+package gralog.gralogfx.piping;
 import java.util.HashMap;
 
 public class PipingPresets{

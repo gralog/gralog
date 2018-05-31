@@ -1,4 +1,4 @@
-package gralog.gralogfx;
+package gralog.gralogfx.piping;
 import gralog.structure.*;
 import gralog.rendering.*;
 
@@ -53,8 +53,9 @@ public class SetEdgeContourCommand extends CommandForGralogToExecute {
             this.error = new Exception("error: target vertex with id " + Integer.toString(this.targetId) + " does not exist");
             return;
         }
-
+        System.out.println("ok we're looking for edge with source : " + this.sourceId + " and target: " + this.targetId);
         this.edgeToChangeContourOn = this.structure.getEdgeByVertexIds(this.sourceId,this.targetId);
+        System.out.println("bork bork bork ok we found the edge: " + this.edgeToChangeContourOn);
         if (this.edgeToChangeContourOn == null){
             System.out.println("fail!!!! ahahaha i love failure");
             this.fail();
@@ -88,17 +89,17 @@ public class SetEdgeContourCommand extends CommandForGralogToExecute {
             }
         }
 
-        if (contour.toLowerCase().equals("plain")){
-            this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.PLAIN;
-        }else if(contour.toLowerCase().equals("dashed")){
-            this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.DASHED;
-        }else if(contour.toLowerCase().equals("dotted")){
-            this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.DOTTED;
-        }else{
-            this.fail();
-            this.error = new Exception("error: edge contour \"" + contour + "\" does not exist");
-            return;
-        }
+        // if (contour.toLowerCase().equals("plain")){
+        //     this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.PLAIN;
+        // }else if(contour.toLowerCase().equals("dashed")){
+        //     this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.DASHED;
+        // }else if(contour.toLowerCase().equals("dotted")){
+        //     this.edgeToChangeContourOn.type = GralogGraphicsContext.LineType.DOTTED;
+        // }else{
+        //     this.fail();
+        //     this.error = new Exception("error: edge contour \"" + contour + "\" does not exist");
+        //     return;
+        // }
 
 
         if (wasType){

@@ -1,4 +1,4 @@
-package gralog.gralogfx;
+package gralog.gralogfx.piping;
 import gralog.structure.*;
 import gralog.rendering.*;
 import java.util.concurrent.ThreadLocalRandom;

@@ -198,13 +198,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
 
-            if (targetId == inputTargetId){
+            if (targetId == inputTargetId && sourceId == inputSourceId){
+                System.out.println("ok we found edge with target: " + targetId + "=" + inputTargetId + " and source: " + sourceId + "=" + inputSourceId);
                 return e;
             }
-            else if (!e.isDirected){
-                if (sourceId == inputTargetId){
-                    return e;
-                }
+            else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)){
+                return e;
             }
         }
         return null;

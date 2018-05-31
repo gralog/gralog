@@ -11,7 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import org.dockfx.DockNode;
-import gralog.gralogfx.Piping;
+import gralog.gralogfx.piping.Piping;
 import java.util.List;
 import java.util.ArrayList;
 import javafx.scene.control.ScrollPane;
