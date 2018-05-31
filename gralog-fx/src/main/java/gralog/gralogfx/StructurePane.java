@@ -61,6 +61,8 @@ public class StructurePane extends StackPane implements StructureListener {
 
 
     //temporary drawing state variables
+    private boolean blockVertexCreationOnRelease = false;
+
     private Set<Object> dragging = null;
     private boolean wasDraggingPrimary = false;
     private boolean wasDraggingSecondary = false;
@@ -269,6 +271,11 @@ public class StructurePane extends StackPane implements StructureListener {
             else if(!e.isControlDown()){
                 boxingStartingPosition = new Point2D(e.getX(), e.getY());
                 selectionBoxingActive = true;
+
+                //if user is clearing his selection, do not create a vertex
+                if(!highlights.getSelection().isEmpty()){
+                    blockVertexCreationOnRelease = true;
+                }
                 clearSelection();
             }
         }else if(e.isSecondaryButtonDown()){
@@ -276,17 +283,7 @@ public class StructurePane extends StackPane implements StructureListener {
             if(selected instanceof Vertex){
                 currentEdgeStartingPoint = selected;
             }else if(selected == null){
-                Vertex v = structure.createVertex();
-                v.coordinates = new Vector2D(
-                        mousePositionModel.getX(),
-                        mousePositionModel.getY()
-                );
-                if (snapToGrid){
-                    v.snapToGrid(gridSize);
-                }
 
-                structure.addVertex(v);
-                structureSubscribers.forEach(s -> s.accept(structure));
             }
         }
         this.requestRedraw();
@@ -303,18 +300,35 @@ public class StructurePane extends StackPane implements StructureListener {
             structure.snapToGrid(gridSize);
             this.requestRedraw();
         }
-        else if(b == MouseButton.PRIMARY && selectionBoxDragging && selectionBoxingActive){
-            if(distSquared(screenToModel(boxingStartingPosition), mousePositionModel) > 0.01){
+        else if(b == MouseButton.PRIMARY){
+            if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease){
+                Vertex v = structure.createVertex();
+                v.coordinates = new Vector2D(
+                        mousePositionModel.getX(),
+                        mousePositionModel.getY()
+                );
+                if (snapToGrid){
+                    v.snapToGrid(gridSize);
+                }
+                structure.addVertex(v);
+                structureSubscribers.forEach(s -> s.accept(structure));
+            }
+            else if(selectionBoxDragging && selectionBoxingActive &&
+                    distSquared(screenToModel(boxingStartingPosition), mousePositionModel) > 0.01){
 
                 Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
                 selectAll(objs);
             }
         }
+        else if(b == MouseButton.SECONDARY){
+            //right release on a vertex while drawing an edge = add edge
+            if(selected instanceof Vertex && currentEdgeStartingPoint != null){
 
-        //right release on a vertex while drawing an edge = add edge
-        else if(b == MouseButton.SECONDARY && selected instanceof Vertex && currentEdgeStartingPoint != null){
-            structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
+                structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
+            }
         }
+
+        blockVertexCreationOnRelease = false;
         wasDraggingPrimary = false;
         wasDraggingSecondary = false;
         selectionBoxingActive = false;
