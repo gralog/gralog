@@ -363,22 +363,24 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             edges.add(e);
         }else{
             for(Edge edge : e.getSource().getIncidentEdges()){
-                if(edge == e){
-                    continue;
-                }
-                if(edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()){
-                    edge.siblings.add(e);
+                if(e.isSiblingTo(edge)){
                     e.siblings.add(edge);
                 }
             }
-            e.siblings.add(e);
             //very special case: if the two outer edges of a 3-edge multi edge connection are
-            //oriented the opposite way of the middle one
+            //oriented the opposite way of the middle one (do that for all sibling lists)
             if(e.siblings.size() == 3){
                 if(!e.siblings.get(0).sameOrientationAs(e.siblings.get(1)) && !e.siblings.get(1).sameOrientationAs(e)){
-                    Collections.swap(e.siblings.get(0).siblings, 1, 2);
-                    Collections.swap(e.siblings.get(1).siblings, 1, 2);
                     Collections.swap(e.siblings, 1, 2);
+                }
+            }
+
+            for(Edge edge : e.getSource().getIncidentEdges()){
+                if(edge == e){
+                    continue;
+                }
+                if(e.isSiblingTo(edge)){
+                    edge.siblings = e.siblings;
                 }
             }
             edges.add(e);

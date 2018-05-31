@@ -181,6 +181,10 @@ public class Edge extends XmlMarshallable implements IMovable {
     public boolean isLoop(){
         return getSource() == getTarget();
     }
+
+    public boolean isSiblingTo(Edge other){
+        return getTarget() == other.getTarget()|| getTarget() == other.getSource();
+    }
     public double maximumCoordinate(int dimension) {
         double result = Double.NEGATIVE_INFINITY;
         return result;
@@ -529,7 +533,6 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     @Override
     public String toString(){
-        String directed = isDirected ? "Directed " : "";
-        return directed + "Edge " + Integer.toString(this.getSource().getId()) + " " + Integer.toString(this.getTarget().getId());
+        return String.format("id:%d __ E(%d,%d)", id, this.getSource().getId(), this.getTarget().getId());
     }
 }
