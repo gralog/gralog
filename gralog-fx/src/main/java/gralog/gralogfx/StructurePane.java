@@ -127,7 +127,16 @@ public class StructurePane extends StackPane implements StructureListener {
             deleteSelection();
             this.requestRedraw();
         });
-        vertexMenu.getItems().addAll(copy, delete);
+        MenuItem addLoop = new MenuItem("Add loop");
+
+        addLoop.setOnAction(e -> {
+            if(highlights.getSelection().size() == 1){
+                Vertex v = (Vertex)highlights.getSelection().iterator().next();
+                structure.addEdge(v, v);
+            }
+            this.requestRedraw();
+        });
+        vertexMenu.getItems().addAll(addLoop, copy, delete);
 
     }
 
