@@ -3,6 +3,7 @@
 package gralog.gralogfx;
 //test
 
+import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
 
 import gralog.plugins.*;
@@ -569,6 +570,8 @@ public class MainWindow extends Application {
             Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
         });
         primaryStage.show();
+
+        MultipleKeyCombination.setupMultipleKeyCombination(scene);
     }
 
     public void windowShown() {

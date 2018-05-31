@@ -4,6 +4,7 @@ package gralog.gralogfx;
 
 import java.util.ArrayList;
 
+import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -16,16 +17,17 @@ import java.util.function.Consumer;
 
 import gralog.structure.controlpoints.ControlPoint;
 import javafx.application.Platform;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.MouseButton;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.StackPane;
 import javafx.geometry.Point2D;
 
 import javafx.event.EventType;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 
 
 /**
@@ -59,6 +61,8 @@ public class StructurePane extends StackPane implements StructureListener {
     Canvas canvas;
     Highlights highlights = new Highlights();
 
+    //context menu
+    ContextMenu vertexMenu;
 
     //temporary drawing state variables
     private boolean blockVertexCreationOnRelease = false;
@@ -76,7 +80,6 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean drawingEdge = false;
 
     private boolean selectedCurveControlPoint = false;
-
     private Edge holdingEdge = null;
     private Vector2D holdingEdgeStartingPosition;
 
@@ -98,8 +101,6 @@ public class StructurePane extends StackPane implements StructureListener {
         canvas.widthProperty().addListener(e -> this.requestRedraw());
         canvas.heightProperty().addListener(e -> this.requestRedraw());
 
-
-
         canvas.setOnScroll(e -> {
             ScrollEvent se = (ScrollEvent) e;
 
@@ -116,6 +117,18 @@ public class StructurePane extends StackPane implements StructureListener {
         canvas.addEventFilter(MouseEvent.ANY, (e) -> canvas.requestFocus());
 
         setMouseEvents();
+
+        vertexMenu = new ContextMenu();
+
+        MenuItem copy = new MenuItem("Copy");
+        copy.setAccelerator(new MultipleKeyCombination(KeyCode.CONTROL, KeyCode.C));
+        MenuItem delete = new MenuItem("Delete");
+        delete.setOnAction(e -> {
+            deleteSelection();
+            this.requestRedraw();
+        });
+        vertexMenu.getItems().addAll(copy, delete);
+
     }
 
     // public void addSpaceListener(SpaceEvent toAdd) {
@@ -288,6 +301,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
             }
         }
+        vertexMenu.hide();
         this.requestRedraw();
     }
     private void onMouseReleased(MouseEvent e){
@@ -329,8 +343,11 @@ public class StructurePane extends StackPane implements StructureListener {
                     structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
                 }
                 //right click opens context menu
-                else{
-
+                else if(vertexMenu != null){
+                    if(!highlights.isSelected(selected)){
+                        selectExclusive(selected);
+                    }
+                    vertexMenu.show(canvas, e.getScreenX(), e.getScreenY());
                 }
             }
         }
@@ -564,7 +581,25 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         highlightsSubribers.forEach(c -> c.accept(highlights));
     }
-
+    public void deleteSelection(){
+        Set<Object> selection = new HashSet<>(highlights.getSelection());
+        for (Object o : selection) {
+            if (o instanceof Vertex) {
+                structure.removeVertex((Vertex) o);
+                clearSelection();
+            }
+            else if (o instanceof Edge && !selectedCurveControlPoint){
+                structure.removeEdge((Edge) o);
+                clearSelection();
+            }
+            else if (o instanceof ControlPoint){
+                ControlPoint c = ((ControlPoint)o);
+                c.parent.removeControlPoint(c);
+                highlights.remove(c);
+                selectedCurveControlPoint = false;
+            }
+        }
+    }
     public void clearSelection() {
         boolean wasEmpty = false;
         if(highlights.getSelection().isEmpty()){
