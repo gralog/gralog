@@ -5,6 +5,7 @@ package gralog.gralogfx;
 import java.util.ArrayList;
 
 import gralog.gralogfx.input.MultipleKeyCombination;
+import gralog.gralogfx.threading.ScrollThread;
 import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -17,7 +18,6 @@ import java.util.function.Consumer;
 
 import gralog.structure.controlpoints.ControlPoint;
 import javafx.application.Platform;
-import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
@@ -72,7 +72,8 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean wasDraggingSecondary = false;
     private boolean wasDraggingMiddle = false;
 
-    private Point2D boxingStartingPosition;
+    private Point2D boxingStartingPosition; //model
+    private Point2D boxingEndingPosition;   //screen
     private boolean selectionBoxingActive = false;
     private boolean selectionBoxDragging = false;
 
@@ -82,6 +83,10 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean selectedCurveControlPoint = false;
     private Edge holdingEdge = null;
     private Vector2D holdingEdgeStartingPosition;
+
+    //UI Threads
+    private Thread horizontalScrollThread;
+    private Thread verticalScrollThread;
 
     private double lastMouseX = -1d;
     private double lastMouseY = -1d;
@@ -200,7 +205,6 @@ public class StructurePane extends StackPane implements StructureListener {
         this.requestRedraw();
     }
     public final void setMouseEvents() {
-
         canvas.setOnMouseClicked(e -> { });
         canvas.setOnMousePressed(this::onMousePressed);
         canvas.setOnMouseReleased(this::onMouseReleased);
@@ -293,7 +297,7 @@ public class StructurePane extends StackPane implements StructureListener {
             }
             //if selection hit nothing, start boxing
             else if(!e.isControlDown()){
-                boxingStartingPosition = new Point2D(e.getX(), e.getY());
+                boxingStartingPosition = new Point2D(lastMouseX, lastMouseY);
                 selectionBoxingActive = true;
 
                 //if user is clearing his selection, do not create a vertex
@@ -341,7 +345,7 @@ public class StructurePane extends StackPane implements StructureListener {
             else if(selectionBoxDragging && selectionBoxingActive &&
                     distSquared(screenToModel(boxingStartingPosition), mousePositionModel) > 0.01){
 
-                Set<IMovable> objs = structure.findObjects(screenToModel(boxingStartingPosition), mousePositionModel);
+                Set<IMovable> objs = structure.findObjects(boxingStartingPosition, mousePositionModel);
                 selectAll(objs);
             }
         }
@@ -372,6 +376,10 @@ public class StructurePane extends StackPane implements StructureListener {
         currentEdgeStartingPoint = null;
         drawingEdge = false;
 
+        if(horizontalScrollThread != null){
+            horizontalScrollThread.interrupt();
+            horizontalScrollThread = null;
+        }
         this.requestRedraw();
     }
     private void onMouseDragged(MouseEvent e) {
@@ -387,8 +395,13 @@ public class StructurePane extends StackPane implements StructureListener {
         if (e.isPrimaryButtonDown()) {
             //If dragging is null, start drawing a box for box selection
             if(dragging == null){
+
+                boxingEndingPosition = new Point2D(e.getX(), e.getY());
                 selectionBoxDragging = true;
-                requestRedrawRectangle(boxingStartingPosition, new Point2D(e.getX(), e.getY()), selectionBoxColor);
+
+                handleHorizontalScrolling(e.getX(), 0, canvas.getWidth());
+                handleVerticalScrolling(e.getY(), 0, canvas.getHeight());
+
             }
             //else just move the dragging object
             else{
@@ -432,9 +445,19 @@ public class StructurePane extends StackPane implements StructureListener {
 
     double screenResolutionX = 96d; // dpi
     double screenResolutionY = 96d; // dpi
-    double offsetX = -1d;
-    double offsetY = -1d;
+    private double offsetX = -1d;
+    private double offsetY = -1d;
     double zoomFactor = 1d;
+
+
+    /**
+     * Offset the whole drawing pane by a given vector. Uses the sync keyword so
+     * it can be used by scrolling threads
+     */
+    public synchronized void move(double offsetX, double offsetY){
+        this.offsetX += offsetX;
+        this.offsetY += offsetY;
+    }
 
     private double distSquared(Point2D first, Point2D second){
         return Math.pow(first.getX() - second.getX(), 2) + Math.pow(first.getY() - second.getY(), 2);
@@ -554,6 +577,12 @@ public class StructurePane extends StackPane implements StructureListener {
         // draw the graph
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
         structure.render(ggc, highlights);
+
+        //draw the selection box
+        if(selectionBoxDragging){
+            Point2D boxStartScreen = modelToScreen(boxingStartingPosition);
+            ggc.selectionRectangle(boxStartScreen, boxingEndingPosition, selectionBoxColor);
+        }
     }
     private void tryAddControlPoint(Vector2D mousePositionModel, Vector2D clickPosition){
         if(mousePositionModel.minus(holdingEdgeStartingPosition).length() > 0.2){
@@ -620,6 +649,34 @@ public class StructurePane extends StackPane implements StructureListener {
         if(!wasEmpty){
             highlightsSubribers.forEach(c -> c.accept(highlights));
         }
+    }
+    private void handleHorizontalScrolling(double cursorX, double from, double to){
+        if(cursorX > to && horizontalScrollThread == null){
+            horizontalScrollThread = ScrollThread.horizontal(this, true);
+            horizontalScrollThread.start();
+        }else if(cursorX < from && horizontalScrollThread == null){
+            horizontalScrollThread = ScrollThread.horizontal(this, false);
+            horizontalScrollThread.start();
+        }
+        else if(cursorX >= 0 && cursorX <= to && horizontalScrollThread != null){
+            horizontalScrollThread.interrupt();
+            horizontalScrollThread = null;
+        }
+
+    }
+    private void handleVerticalScrolling(double cursorY, double from, double to){
+        if(cursorY > to && verticalScrollThread == null){
+            verticalScrollThread = ScrollThread.vertical(this, true);
+            verticalScrollThread.start();
+        }else if(cursorY < from && verticalScrollThread == null){
+            verticalScrollThread = ScrollThread.vertical(this, false);
+            verticalScrollThread.start();
+        }
+        else if(cursorY >= 0 && cursorY <= to && verticalScrollThread != null){
+            verticalScrollThread.interrupt();
+            verticalScrollThread = null;
+        }
+
     }
 
     private boolean wasDragging(){
