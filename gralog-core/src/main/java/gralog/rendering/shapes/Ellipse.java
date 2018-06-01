@@ -14,11 +14,13 @@ public class Ellipse extends RenderingShape {
         return new Ellipse(new SizeBox(width, height));
     }
     @Override
-    public void render(GralogGraphicsContext gc, Vector2D center, GralogColor fillColor, GralogColor strokeColor) {
+    public void render(GralogGraphicsContext gc, Vector2D center, String label, GralogColor strokeColor, GralogColor fillColor) {
         gc.strokeOval(center, sizeBox.width - strokeWidth,
                 sizeBox.height - strokeWidth,strokeWidth, strokeColor);
         gc.fillOval(center, sizeBox.width - 2 * strokeWidth,
                 sizeBox.height - 2 * strokeWidth, fillColor);
+
+        super.render(gc, center, label, strokeColor, fillColor);
     }
 
     @Override

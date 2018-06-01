@@ -185,15 +185,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     public void render(GralogGraphicsContext gc, Highlights highlights) {
         GralogColor c = highlights.isSelected(this) ? GralogColor.RED : strokeColor;
-        shape.render(gc, coordinates, fillColor, c);
-        /*
-        if (highlights.isSelected(this))
-            gc.circle(coordinates, radius + 0.07, GralogColor.RED);
+        shape.render(gc, coordinates, label, c, fillColor);
 
-        gc.circle(coordinates, radius, strokeColor);
-        gc.circle(coordinates, radius - strokeWidth, fillColor);
-        gc.putText(coordinates, label, textHeight, fillColor.inverse());
-        */
         String annotation = highlights.getAnnotation(this);
         if (annotation != null) {
             gc.putText(coordinates.plus(new Vector2D(0, 1)),

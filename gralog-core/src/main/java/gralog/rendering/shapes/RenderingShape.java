@@ -77,11 +77,18 @@ public abstract class RenderingShape {
      * on the internal state of the shape object (e.g. parameters such as
      * size, fill, color, etc..)
      * @param gc The graphics context on which the shape is rendered
-     * @param f Filling color
+     * @param label
      * @param s Stroke color
+     * @param f Filling color
      */
-    public abstract void render(GralogGraphicsContext gc, Vector2D center, GralogColor f, GralogColor s);
+    public void render(GralogGraphicsContext gc, Vector2D center, String label, GralogColor s, GralogColor f){
+        double avg = (sizeBox.width + sizeBox.height)/2;
+        gc.putText(center, label, avg/4, f.inverse());
+    }
 
+    public void render(GralogGraphicsContext gc, Vector2D center, GralogColor s, GralogColor f){
+        render(gc, center, "", s, f);
+    }
 
     /**
      * Returns true if the given vector is overlapping with this shape

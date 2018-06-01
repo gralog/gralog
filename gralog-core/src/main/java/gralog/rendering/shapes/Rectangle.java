@@ -11,7 +11,7 @@ public class Rectangle extends RenderingShape {
     }
 
     @Override
-    public void render(GralogGraphicsContext gc, Vector2D center, GralogColor fillColor, GralogColor strokeColor) {
+    public void render(GralogGraphicsContext gc, Vector2D center, String label, GralogColor strokeColor, GralogColor fillColor) {
         //rendered shape is already given by sizeBox
         double x1 = center.getX() - sizeBox.width/2;
         double y1 = center.getY() - sizeBox.height / 2;
@@ -21,6 +21,7 @@ public class Rectangle extends RenderingShape {
         gc.fillRectangle(x1, y1, x2, y2, fillColor);
         gc.strokeRectangle(x1, y1, x2, y2, strokeWidth, strokeColor);
 
+        super.render(gc, center, label, strokeColor, fillColor);
     }
 
     @Override

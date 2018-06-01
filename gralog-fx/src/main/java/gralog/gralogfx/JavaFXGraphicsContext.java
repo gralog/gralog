@@ -10,6 +10,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.Font;
 
@@ -215,11 +216,11 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         double lineHeightCM, GralogColor c) {
         Point2D p1 = pane.modelToScreen(new Point2D(centerx, centery));
 
-        Font font = gc.getFont();
+
         // I have no idea, why this is 1959.5... I hate magic numbers
         double newSize = 2.54d * lineHeightCM * pane.zoomFactor * 1959.5
             / (pane.screenResolutionY);
-        gc.setFont(new Font(font.getName(), newSize));
+        gc.setFont(Font.font("Verdana", FontWeight.NORMAL, newSize));
 
         gc.setTextAlign(TextAlignment.CENTER);
         gc.setTextBaseline(VPos.CENTER);

@@ -433,13 +433,12 @@ public class StructurePane extends StackPane implements StructureListener {
                 Point2D vScreenCords = modelToScreen(new Point2D(v.coordinates.getX(), v.coordinates.getY()));
                 this.requestRedraw(vScreenCords, new Point2D(e.getX(), e.getY()));
             }
+            //drag pane with right drag
+            else{
+                offsetX -= (mousePositionModel.getX() - lastMouseX);
+                offsetY -= (mousePositionModel.getY() - lastMouseY);
+            }
         }
-        // Drag only with middle mouse button
-        else if(e.isMiddleButtonDown()){
-            offsetX -= (mousePositionModel.getX() - lastMouseX);
-            offsetY -= (mousePositionModel.getY() - lastMouseY);
-        }
-
         this.requestRedraw();
     }
 
