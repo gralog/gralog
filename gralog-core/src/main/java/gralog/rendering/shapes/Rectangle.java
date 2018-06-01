@@ -26,7 +26,8 @@ public class Rectangle extends RenderingShape {
 
     @Override
     public boolean containsCoordinate(Vector2D point, Vector2D center){
-        return false;
+        Vector2D p = point.minus(center); // the point relative to center
+        return Math.abs(p.getX()) < sizeBox.width/2 && Math.abs(p.getY()) < sizeBox.height/2;
     }
 
     @Override

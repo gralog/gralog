@@ -556,9 +556,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @return An edge or vertex that lies at the given x/y coordinate.
      */
     public IMovable findObject(double x, double y) {
-
+        Vector2D p = new Vector2D(x, y);
         for (Vertex v : getVertices()){
-            if (v.containsCoordinate(x, y)){
+            if (v.shape.containsCoordinate(p, v.coordinates)){
                 return v;
             }
         }

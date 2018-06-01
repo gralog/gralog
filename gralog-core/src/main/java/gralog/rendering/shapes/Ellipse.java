@@ -25,7 +25,10 @@ public class Ellipse extends RenderingShape {
 
     @Override
     public boolean containsCoordinate(Vector2D point, Vector2D center){
-        return false;
+        Vector2D p = point.minus(center); // the point relative to center
+        double a2 = sizeBox.width * sizeBox.width / 4;
+        double b2 = sizeBox.height * sizeBox.height / 4;
+        return (p.getX() * p.getX())/a2 + (p.getY() * p.getY())/b2 < 1;
     }
 
     @Override

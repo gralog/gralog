@@ -25,7 +25,9 @@ public class Diamond extends RenderingShape {
 
     @Override
     public boolean containsCoordinate(Vector2D point, Vector2D center){
-        return false;
+        Vector2D p = point.minus(center); // the point relative to center
+        double quo = sizeBox.width / sizeBox.height;
+        return Math.abs(p.getX()) + Math.abs(quo * p.getY()) < sizeBox.width/2;
     }
 
     @Override
