@@ -392,6 +392,10 @@ public class StructurePane extends StackPane implements StructureListener {
             horizontalScrollThread.interrupt();
             horizontalScrollThread = null;
         }
+        if(verticalScrollThread != null){
+            verticalScrollThread.interrupt();
+            verticalScrollThread = null;
+        }
         this.requestRedraw();
     }
     private void onMouseDragged(MouseEvent e) {
