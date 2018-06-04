@@ -146,16 +146,16 @@ public class MainWindow extends Application {
         DockPane mainDockPane = new DockPane();
         DockNode structureNode = new DockNode(tabs.getTabPane());
 
-        /* pluginConrolPanel stuff commented out because
-        it is not properly integrated with multiple piping
-        PluginControlPanel pluginControlPanel = new PluginControlPanel(tabs,this.tabs.getCurrentStructurePane().getPiping());
+        //  pluginConrolPanel stuff commented out because
+        // it is not properly integrated with multiple piping
+        PluginControlPanel pluginControlPanel = new PluginControlPanel();
         pluginControlPanel.setOnPlay(play);
         pluginControlPanel.setOnStep(skip);
-        END
-        */
+        // END
+        
 
         DockNode objDock = new DockNode(objectInspector, "Object Inspector", null);
-        // DockNode pluginDock = new DockNode(pluginControlPanel, "Algorithm Control", null);
+        DockNode pluginDock = new DockNode(pluginControlPanel, "Algorithm Control", null);
         DockNode consoleDock = new DockNode(mainConsole, "Console", null);
 
         structureNode.dock(mainDockPane, DockPos.CENTER);
@@ -172,12 +172,12 @@ public class MainWindow extends Application {
         objDock.setMinWidth(270);
 
 
-        // pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
-        // pluginDock.setPrefHeight(70);
-        // pluginDock.setMinHeight(70);
+        pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
+        pluginDock.setPrefHeight(70);
+        pluginDock.setMinHeight(70);
 
 
-        // consoleDock.dock(mainDockPane, DockPos.BOTTOM, pluginDock);
+        consoleDock.dock(mainDockPane, DockPos.BOTTOM, pluginDock);
         consoleDock.setPrefWidth(200);
         consoleDock.setMinHeight(200);
         consoleDock.setMaxHeight(Double.MAX_VALUE);
