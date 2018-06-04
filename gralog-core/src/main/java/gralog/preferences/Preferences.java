@@ -45,7 +45,11 @@ public final class Preferences {
         }
         return path;
     }
-
+    /*
+     **********
+     * STRING *
+     **********
+     * */
     public static String getString(Class c, String key, String defaultValue) {
         return getString(classKey(c, key), defaultValue);
     }
@@ -54,6 +58,20 @@ public final class Preferences {
         return PROPERTIES.getProperty(key, defaultValue);
     }
 
+    public static void setString(Class c, String key, String value) {
+        setString(classKey(c, key), value);
+    }
+
+    public static void setString(String key, String value) {
+        PROPERTIES.setProperty(key, value);
+        flush();
+    }
+
+    /*
+     ***********
+     * INTEGER *
+     ***********
+     * */
     public static Integer getInteger(Class c, String key, int defaultValue) {
         return getInteger(classKey(c, key), defaultValue);
     }
@@ -67,15 +85,6 @@ public final class Preferences {
         }
     }
 
-    public static void setString(Class c, String key, String value) {
-        setString(classKey(c, key), value);
-    }
-
-    public static void setString(String key, String value) {
-        PROPERTIES.setProperty(key, value);
-        flush();
-    }
-
     public static void setInteger(Class c, String key, int value) {
         setInteger(classKey(c, key), value);
     }
@@ -83,6 +92,46 @@ public final class Preferences {
     public static void setInteger(String key, int value) {
         PROPERTIES.setProperty(key, Integer.toString(value));
         flush();
+    }
+
+    /*
+     ***********
+     * BOOLEAN *
+     ***********
+     * */
+    public static Boolean getBoolean(Class c, String key, boolean defaultValue){
+        return getBoolean(classKey(c, key), defaultValue);
+    }
+
+    public static Boolean getBoolean(String key, boolean defaultValue){
+        return Boolean.parseBoolean(PROPERTIES.getProperty(key, Boolean.toString(defaultValue)));
+    }
+
+    public static void setBoolean(Class c, String key, boolean b){
+        setBoolean(classKey(c, key), b);
+    }
+
+    public static void setBoolean(String key, boolean b){
+        PROPERTIES.setProperty(key, Boolean.toString(b));
+    }
+
+    /*
+     **********
+     * DOUBLE *
+     **********
+     * */
+    public static Double getDouble(Class c, String key, double defaultValue){
+        return getDouble(classKey(c, key), defaultValue);
+    }
+    public static Double getDouble(String key, double defaultValue){
+        return Double.parseDouble(PROPERTIES.getProperty(key, Double.toString(defaultValue)));
+    }
+
+    public static void setDouble(Class c, String key, double d){
+        setDouble(classKey(c, key), d);
+    }
+    public static void setDouble(String key, double d){
+        PROPERTIES.setProperty(key, Double.toString(d));
     }
 
     private static String classKey(Class c, String key) {

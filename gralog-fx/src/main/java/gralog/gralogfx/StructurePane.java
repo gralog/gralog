@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.threading.ScrollThread;
+import gralog.preferences.Preferences;
 import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -92,7 +93,8 @@ public class StructurePane extends StackPane implements StructureListener {
     private double lastMouseY = -1d;
 
 
-    private double gridSize = 1.0; // cm
+    private boolean hasGrid = Preferences.getBoolean(getClass(), "hasGrid", true);
+    private double gridSize = 1.0;
     private boolean snapToGrid = true;
 
     public StructurePane(Structure structure) {
@@ -325,7 +327,7 @@ public class StructurePane extends StackPane implements StructureListener {
         lastMouseY = mousePositionModel.getY();
         IMovable selected = structure.findObject(lastMouseX, lastMouseY);
 
-        if (dragging != null && snapToGrid) {
+        if (dragging != null && hasGrid && snapToGrid) {
             structure.snapToGrid(gridSize);
             this.requestRedraw();
         }
@@ -336,7 +338,7 @@ public class StructurePane extends StackPane implements StructureListener {
                         mousePositionModel.getX(),
                         mousePositionModel.getY()
                 );
-                if (snapToGrid){
+                if (hasGrid && snapToGrid){
                     v.snapToGrid(gridSize);
                 }
                 structure.addVertex(v);
@@ -553,7 +555,7 @@ public class StructurePane extends StackPane implements StructureListener {
         gc.fillRect(0, 0, w, h);
         gc.setLineWidth(1);
         // grid
-        if (zoomFactor * (screenResolutionX / 2.54) >= 10) {
+        if (hasGrid && zoomFactor * (screenResolutionX / 2.54) >= 10) {
             gc.setStroke(Color.rgb(225, 225, 225));
             Point2D leftupper = screenToModel(new Point2D(0d, 0d));
             Point2D rightlower = screenToModel(new Point2D(w, h));

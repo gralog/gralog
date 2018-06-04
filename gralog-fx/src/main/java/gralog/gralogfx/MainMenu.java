@@ -118,7 +118,7 @@ public class MainMenu {
         menuFileSave = createMenuItem("Save graph as...", handlers.onSave);
         menuFileSave.setDisable(true);
         menuFile.getItems().addAll(
-            menuFileNew, menuFileGenerators,
+            menuFileNew, menuFileGenerators, new SeparatorMenuItem(),
             createMenuItem("Open graph...", handlers.onOpen),
             createMenuItem("Direct input...", handlers.onDirectInput),
             menuFileSave,
