@@ -375,6 +375,9 @@ class Graph:
 
 		return sys.stdin.readline();
 
+	def setEdgeWeight(self,(sourceVertexId,targetVertexId),weight):
+		setEdgeProperty((sourceVertexId,targetVertexId),"weight",weight);
+
 	def setEdgeProperty(self,(sourceVertexId,targetVertexId),property,value):
 		line = "setEdgeProperty#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + property.rstrip().lower() +  "#" + str(value).rstrip().lower();
 
@@ -409,10 +412,29 @@ class Graph:
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
+	def representsInt(s):
+	    try: 
+	        int(s)
+	        return True
+	    except ValueError:
+	        return False
+
 
 	def pauseUntilSpacePressed(self,*args):
 		# print("pauseUntilSpacePressed");
 		line = "pauseUntilSpacePressed";
+		rank = None;
+		try:
+			rank = int(args[0]);
+		except:
+			pass;
+		if len(args) > 0 and rank != None:
+			rank = int(args[0]);
+			args = args[1:];
+
+		if rank != None:
+			line += "#"+str(rank).rstrip();
+
 		for key in sorted(self.variablesToTrack.keys()):
 			term = "#("+str(key)+"="+str(self.variablesToTrack[key])+")";
 			line = line + term;
@@ -427,7 +449,8 @@ class Graph:
 				line = line + term;
 		print line;
 		sys.stdout.flush();
-		sys.stdin.readline();
+		toSkip = sys.stdin.readline();
+		# print ("we just got " + str(toSkip).rstrip() + " back from the pause func!");
 
 	def track(self,name,var):
 		#ideally, something like this:

@@ -11,6 +11,7 @@ import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
 import gralog.gralogfx.events.*;
+import gralog.gralogfx.piping.Piping;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -55,6 +56,8 @@ public class StructurePane extends StackPane implements StructureListener {
     public void setOnStructureChanged(Consumer<Structure> structureSubscribers) {
         this.structureSubscribers.add(structureSubscribers);
     }
+
+    private Piping pipeline;
 
     // private List<SpaceEvent> spaceListeners = new ArrayList<SpaceEvent>();
 
@@ -160,6 +163,13 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public Structure getStructure() {
         return structure;
+    }
+
+    public void setPiping(Piping pipeline){
+        this.pipeline = pipeline;
+    }
+    public Piping getPiping(){
+        return this.pipeline;
     }
 
     public void requestRedraw() {

@@ -11,7 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import org.dockfx.DockNode;
-import gralog.gralogfx.Piping;
+import gralog.gralogfx.piping.Piping;
 import java.util.List;
 import java.util.ArrayList;
 import javafx.scene.control.ScrollPane;
@@ -22,8 +22,8 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
     private ProgressBar pb;
     private Button pause,play,step,n00b;
-    private Tabs tabs;
-    private Piping pipeline;
+    // private Tabs tabs;
+    // private Piping pipeline;
     private List<Label> labels;
     private VBox boilerPlateVbox;
     private VBox varBox;
@@ -35,14 +35,14 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
     
 
 
-    public PluginControlPanel(Tabs tabs,Piping pipeline){
+    public PluginControlPanel(){
         setMinWidth(100);
         setMinHeight(200);
 
-        this.pipeline = pipeline;
-        this.pipeline.subscribe(this);
+        // this.pipeline = pipeline;
+        // this.pipeline.subscribe(this);
 
-        this.tabs = tabs;
+        // this.tabs = tabs;
         
         this.boilerPlateVbox = new VBox();
         this.varBox = new VBox();
@@ -214,8 +214,8 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         }
 
         sourceVarBox();
-
-        this.tabs.requestRedraw();
+// 
+        // this.tabs.requestRedraw();
         
     }
 
