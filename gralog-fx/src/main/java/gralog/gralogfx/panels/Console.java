@@ -1,5 +1,7 @@
 package gralog.gralogfx.panels;
 
+import gralog.gralogfx.StructurePane;
+import gralog.gralogfx.Tabs;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import javafx.scene.control.TextArea;
@@ -9,8 +11,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.dockfx.DockNode;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
@@ -22,12 +24,17 @@ public class Console extends VBox implements GralogWindow{
     private TextField input;
     private TextArea output;
 
+    private Tabs tabs;
+
     private LinkedList<String> history = new LinkedList<>();
     private int historyPointer = -1;
 
     private final Set<Consumer<String>> subscribers = new HashSet<>();
 
-    public Console(){
+    public Console(Tabs tabs){
+
+        this.tabs = tabs;
+
         input = new TextField();
         input.setMaxHeight(20);
         input.setMinHeight(20);
@@ -41,7 +48,7 @@ public class Console extends VBox implements GralogWindow{
 
                 if(!inputText.isEmpty()){
                     history.add(inputText);
-                    submit(inputText);
+                    onEnter(inputText);
                 }
                 input.clear();
             }else if(e.getCode() == KeyCode.BACK_SPACE){
@@ -80,10 +87,29 @@ public class Console extends VBox implements GralogWindow{
     public void registerMethod(Consumer<String> c){
         subscribers.add(c);
     }
-    public void submit(String text){
+    public void onEnter(String text){
         for(Consumer<String> consumer : subscribers){
             consumer.accept(text);
         }
+
+        StructurePane currentPane = tabs.getCurrentStructurePane();
+        Structure s = currentPane.getStructure();
+        if (!text.isEmpty()) {
+            String[] inputWords = text.split(" ");
+            switch (inputWords[0]){
+                case "select": if (inputWords[1].equalsIgnoreCase("all")) {
+                    currentPane.selectAll(s.getVertices());
+                    currentPane.selectAll(s.getEdges());
+                    currentPane.requestRedraw();
+                }
+            }
+        }
+    }
+
+    public void output(String text){
+
+        output.appendText(text);
+
     }
 
     public void clear(){
