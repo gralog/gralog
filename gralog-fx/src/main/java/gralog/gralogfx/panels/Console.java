@@ -1,9 +1,9 @@
 package gralog.gralogfx.panels;
 
+import gralog.dialog.*;
 import gralog.gralogfx.StructurePane;
 import gralog.gralogfx.Tabs;
-import gralog.structure.Highlights;
-import gralog.structure.Structure;
+import gralog.gralogfx.dialogfx.Dialogfx;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -18,6 +18,9 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static gralog.dialog.DialogState.ASK_WHAT_TO_SELECT;
+import static gralog.dialog.DialogState.*;
+
 
 public class Console extends VBox implements GralogWindow{
 
@@ -25,6 +28,11 @@ public class Console extends VBox implements GralogWindow{
     private TextArea output;
 
     private Tabs tabs;
+    private Dialog dialog;
+    private Dialogfx dialogfx;
+    DialogParser parser;
+    DialogState dialogState = DONE;
+
 
     private LinkedList<String> history = new LinkedList<>();
     private int historyPointer = -1;
@@ -87,22 +95,30 @@ public class Console extends VBox implements GralogWindow{
     public void registerMethod(Consumer<String> c){
         subscribers.add(c);
     }
+
     public void onEnter(String text){
         for(Consumer<String> consumer : subscribers){
             consumer.accept(text);
         }
 
         StructurePane currentPane = tabs.getCurrentStructurePane();
-        Structure s = currentPane.getStructure();
-        if (!text.isEmpty()) {
-            String[] inputWords = text.split(" ");
-            switch (inputWords[0]){
-                case "select": if (inputWords[1].equalsIgnoreCase("all")) {
-                    currentPane.selectAll(s.getVertices());
-                    currentPane.selectAll(s.getEdges());
-                    currentPane.requestRedraw();
+
+        parser.parse(dialogState,text);
+        ActionType type = parser.getType();
+        DialogAction action = parser.getDialogAction();
+        ArrayList<String> parameters = parser.getParameters();
+        if (parser.getDialogState() == )
+        if (type == ActionType.CORE)
+            if (dialog.performAction(action,parameters)){
+                if (parser.getDialogState() == ASK_WHAT_TO_SELECT) {
+                    output("Choose what to select (all, all edges, all vertices):");
+                    dialogState = ASK_WHAT_TO_SELECT;
                 }
             }
+        else // type = FX
+            dialogfx.performAction(action,parameters);
+
+   }
         }
     }
 

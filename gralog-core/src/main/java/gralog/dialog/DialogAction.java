@@ -1,0 +1,7 @@
+package gralog.dialog;
+
+public enum DialogAction { SELECTALL, SELECT_ALL_VERTICES, SELECT_ALL_EDGES,
+    ADD_VERTEX, ADD_EDGE, ADD_LIST_VERTICES, ADD_LIST_EDGES,
+    CONNECT_LIST_A_TO_LIST_B,
+    FILTER
+}
