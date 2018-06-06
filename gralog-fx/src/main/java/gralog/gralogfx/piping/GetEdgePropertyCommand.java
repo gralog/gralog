@@ -4,6 +4,7 @@ import gralog.rendering.*;
 import java.util.Arrays;
 import java.lang.reflect.Field;
 
+
 public class GetEdgePropertyCommand extends CommandForGralogToExecute {
 	
 

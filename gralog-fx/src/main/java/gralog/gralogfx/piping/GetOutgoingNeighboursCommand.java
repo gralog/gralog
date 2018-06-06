@@ -4,6 +4,7 @@ import gralog.rendering.*;
 import java.util.Set;
 
 
+
 public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
 	
 

@@ -3,6 +3,7 @@ import gralog.structure.*;
 import gralog.rendering.*;
 
 
+
 public class SetEdgeContourCommand extends CommandForGralogToExecute {
     
 

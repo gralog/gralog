@@ -3,6 +3,7 @@ import gralog.structure.*;
 import gralog.rendering.*;
 import java.util.Arrays;
 
+
 public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 	
 
@@ -14,7 +15,7 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 
 	public SetVertexStrokeColorCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
-        this.structure=structure;
+        this.structure = structure;
 		try{    
             this.changeId = Integer.parseInt(externalCommandSegments[2]);
         }catch(NumberFormatException e){

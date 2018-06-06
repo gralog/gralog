@@ -4,6 +4,7 @@ import gralog.rendering.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Constructor;
 
+
 public class SetEdgePropertyCommand extends CommandForGralogToExecute {
 
     ////*** CHECK YOURSELF BEFORE YOU USE THIS FUNCTIONALITYYYYY***///

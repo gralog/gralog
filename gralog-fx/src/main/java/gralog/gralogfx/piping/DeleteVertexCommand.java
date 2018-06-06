@@ -2,6 +2,7 @@ package gralog.gralogfx.piping;
 import gralog.structure.*;
 import gralog.rendering.*;
 
+
 public class DeleteVertexCommand extends CommandForGralogToExecute {
 	
 
@@ -12,7 +13,8 @@ public class DeleteVertexCommand extends CommandForGralogToExecute {
 
 	public DeleteVertexCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
-		this.structure=structure;
+		this.structure = structure;
+        
 		try{    
             this.toDeleteVertexId = Integer.parseInt(externalCommandSegments[2]);
         }catch(NumberFormatException e){

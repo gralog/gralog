@@ -5,6 +5,7 @@ import java.util.Collection;
 
 
 
+
 public class GetAllVerticesCommand extends CommandForGralogToExecute {
 	
 

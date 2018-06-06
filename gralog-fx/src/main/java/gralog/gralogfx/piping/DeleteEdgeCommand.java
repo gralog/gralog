@@ -17,7 +17,7 @@ public class DeleteEdgeCommand extends CommandForGralogToExecute {
 	public DeleteEdgeCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-
+        
         try{    
             this.sourceId = Integer.parseInt(externalCommandSegments[2]);
         }catch(NumberFormatException e){

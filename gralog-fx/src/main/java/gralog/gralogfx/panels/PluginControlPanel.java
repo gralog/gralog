@@ -32,9 +32,6 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
     private List<Control> labelsAndSeparators;
 
         
-    
-
-
     public PluginControlPanel(){
         setMinWidth(100);
         setMinHeight(200);
@@ -201,13 +198,16 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
     }
 
-    public void notifyPauseRequested(Structure structure, List<String[]> args){
+    public void notifyPauseRequested(List<String[]> args){
         this.varBox.getChildren().clear();
+        System.out.println("yooooooooooo a pause br000");
 
         labels.clear();
         for (int i = 0; i < args.size(); i ++){
             String[] arg = args.get(i);
-            Label inter = new Label(arg[0] + ": " + arg[1]);
+            String labelString = arg[0] + ": " + arg[1];
+            System.out.println("labelString: " + labelString);
+            Label inter = new Label(labelString);
             inter.setMinWidth(Region.USE_PREF_SIZE);
             this.labels.add(inter);
 

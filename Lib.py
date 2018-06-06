@@ -436,8 +436,9 @@ class Graph:
 			line += "#"+str(rank).rstrip();
 
 		for key in sorted(self.variablesToTrack.keys()):
-			term = "#("+str(key)+"="+str(self.variablesToTrack[key])+")";
-			line = line + term;
+			term = "#("+str(key).rstrip()+"="+str(self.variablesToTrack[key]).rstrip()+")";
+			# print ("boi term : " + term);
+			line = line + term.rstrip();
 		# line = "pauseUntilSpacePressed (hello,world)";
 		for x in args:
 			if (type(x) == list):
@@ -446,7 +447,7 @@ class Graph:
 					line = line + term;
 			else:	
 				term = "#("+str(x[0])+"="+str(x[1])+")";
-				line = line + term;
+				line = line + term.rstrip();
 		print line;
 		sys.stdout.flush();
 		toSkip = sys.stdin.readline();
@@ -459,6 +460,10 @@ class Graph:
 
 	def unTrack(self,name):
 		del self.variablesToTrack[name];
+
+	def send(self,toSend):
+		print toSend;
+		sys.stdout.flush();
 
 	def mistakeLine(self):
 		print("wubbadubdub 3 men in a tub");

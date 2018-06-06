@@ -13,7 +13,7 @@ public class AddVertexCommand extends CommandForGralogToExecute {
 	public AddVertexCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
 		this.newVertexId = Integer.parseInt(this.externalCommandSegments[1]);
-		this.structure=structure;
+		this.structure = structure;
 	}
 
 	// public void 

@@ -3,6 +3,7 @@ import gralog.structure.*;
 import gralog.rendering.*;
 import java.util.Arrays;
 
+
 public class SetVertexFillColorCommand extends CommandForGralogToExecute {
 	
 
