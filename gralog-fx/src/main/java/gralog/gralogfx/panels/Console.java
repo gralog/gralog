@@ -111,18 +111,13 @@ public class Console extends VBox implements GralogWindow{
             consumer.accept(text);
         }
 
-            System.out.println(ANSI_RED + "Starting onEnter: dialogState: " + dialogState + "\n"  + ANSI_RESET);
-
-
         StructurePane currentPane = tabs.getCurrentStructurePane();
         parser.parse(dialogState,text);
         ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
         DialogAction dialogAction = parser.getDialogAction();
         ArrayList<String> parameters = parser.getParameters();
 
-        //if (dialogState == DONE) // the dialog is not still going on
-            dialogState = parser.getDialogState();
-        System.out.println(ANSI_RED + "Done parsing: dialogState: " + dialogState + "\n"  + ANSI_RESET);
+        dialogState = parser.getDialogState();
 
         if (dialogState == ASK_WHAT_TO_SELECT){
             output("Choose what to select (all, all edges, all vertices) or abort operation with \"q\":\n");

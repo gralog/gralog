@@ -43,8 +43,6 @@ public class DialogParser {
         if (!text.isEmpty()) {
             String[] inputWords = text.split(" ");
             String word0 = inputWords[0].toUpperCase();
-            System.out.println(ANSI_RED + "Entred parse with dialogState: " + dialogState + "\n"  + ANSI_RESET);
-
 
             if (word0.equals("Q") ||
                     word0.equals("EXIT") ||
@@ -84,8 +82,6 @@ public class DialogParser {
                 if (word0.equalsIgnoreCase("deselect")) {
                     type = CORE;
                     if (inputWords.length == 1 || !inputWords[1].equalsIgnoreCase("all")) {
-                        System.out.println(ANSI_RED + "parsing: inputWords[1]: " + inputWords[1] + "\n"  + ANSI_RESET);
-
                         this.dialogState = ASK_WHAT_TO_DESELECT;
                         return true;
                     } // > 1 words
