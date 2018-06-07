@@ -4,6 +4,8 @@ import gralog.dialog.*;
 import gralog.gralogfx.StructurePane;
 import gralog.gralogfx.Tabs;
 import gralog.gralogfx.dialogfx.Dialogfx;
+import gralog.structure.Highlights;
+import gralog.structure.Structure;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -21,8 +23,11 @@ import java.util.function.Consumer;
 import static gralog.dialog.DialogState.ASK_WHAT_TO_SELECT;
 import static gralog.dialog.DialogState.*;
 
-
 public class Console extends VBox implements GralogWindow{
+
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
 
     private TextField input;
     private TextArea output;
@@ -30,8 +35,8 @@ public class Console extends VBox implements GralogWindow{
     private Tabs tabs;
     private Dialog dialog;
     private Dialogfx dialogfx;
-    DialogParser parser;
-    DialogState dialogState = DONE;
+    private DialogParser parser;
+    private DialogState dialogState;
 
 
     private LinkedList<String> history = new LinkedList<>();
@@ -48,6 +53,11 @@ public class Console extends VBox implements GralogWindow{
         input.setMinHeight(20);
         input.prefWidthProperty().bind(this.widthProperty());
         input.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
+
+        parser = new DialogParser();
+        dialogfx = new Dialogfx();
+        dialog = new Dialog();
+        dialogState = DONE;
 
         input.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             String inputText = input.getText();
@@ -101,24 +111,43 @@ public class Console extends VBox implements GralogWindow{
             consumer.accept(text);
         }
 
+            System.out.println(ANSI_RED + "Starting onEnter: dialogState: " + dialogState + "\n"  + ANSI_RESET);
+
+
         StructurePane currentPane = tabs.getCurrentStructurePane();
-
         parser.parse(dialogState,text);
-        ActionType type = parser.getType();
-        DialogAction action = parser.getDialogAction();
+        ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
+        DialogAction dialogAction = parser.getDialogAction();
         ArrayList<String> parameters = parser.getParameters();
-        if (parser.getDialogState() == )
-        if (type == ActionType.CORE)
-            if (dialog.performAction(action,parameters)){
-                if (parser.getDialogState() == ASK_WHAT_TO_SELECT) {
-                    output("Choose what to select (all, all edges, all vertices):");
-                    dialogState = ASK_WHAT_TO_SELECT;
-                }
-            }
-        else // type = FX
-            dialogfx.performAction(action,parameters);
 
-   }
+        //if (dialogState == DONE) // the dialog is not still going on
+            dialogState = parser.getDialogState();
+        System.out.println(ANSI_RED + "Done parsing: dialogState: " + dialogState + "\n"  + ANSI_RESET);
+
+        if (dialogState == ASK_WHAT_TO_SELECT){
+            output("Choose what to select (all, all edges, all vertices) or abort operation with \"q\":\n");
+            dialogState = WAIT_FOR_WHAT_TO_SELECT;
+        }
+        if (dialogState == ASK_WHAT_TO_DESELECT){
+            output("Choose what to deselect (all, all edges, all vertices) or abort operation with \"q\":\n");
+            dialogState = WAIT_FOR_WHAT_TO_DESELECT;
+        }
+
+        if (dialogState == DONE){
+            switch (dialogAction) {
+                case SELECTALL:                 dialogfx.selectAll(currentPane);
+                                                break;
+                case SELECT_ALL_VERTICES:       dialogfx.selectAllVertices(currentPane);
+                                                break;
+                case SELECT_ALL_EDGES:          dialogfx.selectAllEdges(currentPane);
+                                                break;
+                case DESELECTALL:               dialogfx.deselectAll(currentPane);
+                                                break;
+                case DESELECT_ALL_VERTICES:     dialogfx.deselectAllVertices(currentPane);
+                                                break;
+                case DESELECT_ALL_EDGES:        dialogfx.deselectAllEdges(currentPane);
+                    break;
+            }
         }
     }
 

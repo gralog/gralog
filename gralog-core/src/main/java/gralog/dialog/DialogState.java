@@ -1,4 +1,5 @@
 package gralog.dialog;
 
-public enum DialogState { ASK_WHAT_TO_SELECT, DONE
+public enum DialogState { ASK_WHAT_TO_SELECT, ASK_WHAT_TO_DESELECT, WAIT_FOR_WHAT_TO_SELECT, WAIT_FOR_WHAT_TO_DESELECT,
+    DONE
 }
