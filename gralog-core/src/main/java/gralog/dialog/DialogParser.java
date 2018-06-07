@@ -2,8 +2,6 @@ package gralog.dialog;
 
 import java.util.ArrayList;
 
-
-import static gralog.dialog.ActionType.*;
 import static gralog.dialog.DialogState.*;
 import static gralog.dialog.DialogAction.*;
 
@@ -55,8 +53,15 @@ public class DialogParser {
                 return true;
             }
             if (dialogState == DONE) { // beginning of a dialog
+                if (word0.equalsIgnoreCase("filter")){
+                    if (inputWords.length == 1){
+                        this.dialogState = ASK_WHAT_TO_FILTER;
+                        return true;
+                    }
+                                        
+                }
                 if (word0.equalsIgnoreCase("select")) {
-                    type = CORE;
+
                     if (inputWords.length == 1 || !inputWords[1].equalsIgnoreCase("all")) {
                         this.dialogState = ASK_WHAT_TO_SELECT;
                         return true;
@@ -80,7 +85,6 @@ public class DialogParser {
                     return true;
                 }
                 if (word0.equalsIgnoreCase("deselect")) {
-                    type = CORE;
                     if (inputWords.length == 1 || !inputWords[1].equalsIgnoreCase("all")) {
                         this.dialogState = ASK_WHAT_TO_DESELECT;
                         return true;

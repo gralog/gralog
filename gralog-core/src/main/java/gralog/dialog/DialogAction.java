@@ -10,3 +10,15 @@ public enum DialogAction {
     FILTER,
     NONE
 }
+
+/* possible commands
+* select/deselect all [vertices | edges] [ignored trash]
+*
+* filter <what> to <list> [ignored trash]
+*
+*   where <what> := all vertices | all edges | <list id> // <list id> can be list of vertices or list of edges
+*         <to>   := list <identifier> | subgraph <identifier>
+*
+*
+*
+* */
