@@ -21,9 +21,8 @@ public class Highlights {
     public Object lastAdded(){
         return lastAdded;
     }
-    public void selectAll(Collection<?> elems) {
-        selection.addAll(elems);
-    }
+    public void selectAll(Collection<?> elems)   { selection.addAll(elems); }
+    public void deselectAll(Collection<?> elems) { selection.removeAll(elems); }
 
     public void clearSelection() {
         selection.clear();
