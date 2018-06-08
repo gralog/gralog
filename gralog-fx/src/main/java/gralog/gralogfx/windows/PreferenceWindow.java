@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 
+
 public class PreferenceWindow extends Stage {
 
     private static final double WINDOW_WIDTH = 700;
@@ -71,11 +72,15 @@ public class PreferenceWindow extends Stage {
         Pane container = (Pane) mainScene.lookup("#container");
 
         tgroup.selectedToggleProperty().addListener((e, oldVal, newVal) -> {
-            container.getChildren().clear();
-            if(newVal == generalButton){
-                container.getChildren().add(generalPage);
-            }else if(newVal == structureButton){
-                container.getChildren().addAll(structurePage);
+            if(newVal == null){
+                oldVal.setSelected(true);
+            }else{
+                container.getChildren().clear();
+                if(newVal == generalButton){
+                    container.getChildren().add(generalPage);
+                }else if(newVal == structureButton){
+                    container.getChildren().addAll(structurePage);
+                }
             }
         });
 
