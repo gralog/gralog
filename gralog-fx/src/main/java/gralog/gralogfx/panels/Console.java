@@ -14,10 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 import static gralog.dialog.DialogState.ASK_WHAT_TO_SELECT;
@@ -37,6 +34,7 @@ public class Console extends VBox implements GralogWindow{
     private Dialogfx dialogfx;
     private DialogParser parser;
     private DialogState dialogState;
+
 
 
     private LinkedList<String> history = new LinkedList<>();
@@ -119,6 +117,11 @@ public class Console extends VBox implements GralogWindow{
 
         dialogState = parser.getDialogState();
 
+        if (dialogState == ASK_WHAT_TO_FILTER){
+            output(parser.getErrorMsg());
+            output("Choose what to filter (all, all edges, all vertices, <list id>) or abort operation with \"q\":\n");
+            dialogState = WAIT_FOR_WHAT_TO_FILTER;
+        }
         if (dialogState == ASK_WHAT_TO_SELECT){
             output("Choose what to select (all, all edges, all vertices) or abort operation with \"q\":\n");
             dialogState = WAIT_FOR_WHAT_TO_SELECT;
