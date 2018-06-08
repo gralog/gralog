@@ -37,6 +37,19 @@ public enum DialogAction {
 *     <arithmetic expression with one variable i> must return a natural number and be built from
 *     natural constants, i, +, *, /, %, ceil(.), floor(.), .^., root(.,.), exp(.,.)
 * add <obj id> to <list id>
-* remove <obj id> to <list id>
-* contract <list id>
+* remove|delete <obj id> from <list id>
+* contract edge <edge list id>
+* contract edges <edge id>
+* contract subgraph <subgraph id>
+* contract subgraph <vertex list id>
+* butterfly contract <edge id>
+* butterfly contract <edge list id>
+* generarte <graph> [<generateParameterS>]
+*   <graph> := grid <n,m>| wheel <n> | cycle <n> | path <n> | clique <n> | torus <n,m> | complete tree <deg,depth>
+*                        | cylindrical grid <n,m> | petersen | haus vom nikolaus | bull | butterfly | duerer |
+*                        | erdos-renyi <n,p> | complete bipartite <n,m> | matching <n> | cube | 3-dim cube |
+*                        | parallelepiped <n,m,k> | star <n>
+*
+* subdivide edge <edge id>
+* subdivide <edge list id>
 * */
