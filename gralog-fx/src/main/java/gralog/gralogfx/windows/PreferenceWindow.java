@@ -12,7 +12,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 
-
+/**
+ * Spawns a stage that contains all Gralog-relevant preferences
+ *
+ * Loads and stores all preferences (editor config, structure default vars, etc)
+ * back in the user configuration file from gralog.preferences.
+ * 
+ */
 public class PreferenceWindow extends Stage {
 
     private static final double WINDOW_WIDTH = 700;
@@ -57,10 +63,22 @@ public class PreferenceWindow extends Stage {
         centerOnScreen();
     }
 
-    void setupGeneralPage(Node generalPage){
+    /**
+     * Loads all values from the configuration file into the
+     * value fields of the given node.
+     *
+     * Example: TextField with ID k=StructurePane-hasGrid. If the
+     * preference file has a key k then the value from k gets loaded
+     * into the TextField.
+     */
+    void loadGeneralPage(Node generalPage){
         generalPage.lookup("");
     }
 
+    /**
+     * Sets up the toggle buttons of the preference window to be
+     * combined into a ToggleGroup
+     */
     void setupToggleGroups(Scene mainScene, Node generalPage, Node structurePage){
 
         ToggleGroup tgroup = new ToggleGroup();
