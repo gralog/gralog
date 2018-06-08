@@ -64,7 +64,7 @@ public class Console extends VBox implements GralogWindow{
 
                 if(!inputText.isEmpty()){
                     history.add(inputText);
-                    onEnter(inputText);
+                    onEnter(inputText, tabs.getCurrentStructurePane());
                 }
                 input.clear();
             }else if(e.getCode() == KeyCode.BACK_SPACE){
@@ -104,12 +104,11 @@ public class Console extends VBox implements GralogWindow{
         subscribers.add(c);
     }
 
-    public void onEnter(String text){
+    public void onEnter(String text, StructurePane currentPane){
         for(Consumer<String> consumer : subscribers){
             consumer.accept(text);
         }
 
-        StructurePane currentPane = tabs.getCurrentStructurePane();
         parser.parse(dialogState,text);
         ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
         DialogAction dialogAction = parser.getDialogAction();

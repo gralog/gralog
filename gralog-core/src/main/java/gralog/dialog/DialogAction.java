@@ -38,4 +38,5 @@ public enum DialogAction {
 *     natural constants, i, +, *, /, %, ceil(.), floor(.), .^., root(.,.), exp(.,.)
 * add <obj id> to <list id>
 * remove <obj id> to <list id>
+* contract <list id>
 * */
