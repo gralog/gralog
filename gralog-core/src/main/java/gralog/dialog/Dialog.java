@@ -54,6 +54,16 @@ public class Dialog  {
     return (vertices.add(v));
   }
 
+  public boolean removeVertex(Vertex v){
+      return (vertices.remove(v));
+  }
 
+  public boolean addEdge(Edge e){
+      return edges.add(e);
+  }
+
+  public boolean removeEdge(Edge e){
+      return edges.remove(e);
+  }
 
 }
