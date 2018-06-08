@@ -1,5 +1,9 @@
 package gralog.gralogfx.panels;
 
+import gralog.dialog.*;
+import gralog.gralogfx.StructurePane;
+import gralog.gralogfx.Tabs;
+import gralog.gralogfx.dialogfx.Dialogfx;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import javafx.scene.control.TextArea;
@@ -9,30 +13,49 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.dockfx.DockNode;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
+import static gralog.dialog.DialogState.ASK_WHAT_TO_SELECT;
+import static gralog.dialog.DialogState.*;
 
 public class Console extends VBox implements GralogWindow{
 
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
+
     private TextField input;
     private TextArea output;
+
+    private Tabs tabs;
+    private Dialog dialog;
+    private Dialogfx dialogfx;
+    private DialogParser parser;
+    private DialogState dialogState;
+
+
 
     private LinkedList<String> history = new LinkedList<>();
     private int historyPointer = -1;
 
     private final Set<Consumer<String>> subscribers = new HashSet<>();
 
-    public Console(){
+    public Console(Tabs tabs){
+
+        this.tabs = tabs;
+
         input = new TextField();
         input.setMaxHeight(20);
         input.setMinHeight(20);
         input.prefWidthProperty().bind(this.widthProperty());
         input.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
+
+        parser = new DialogParser();
+        dialogfx = new Dialogfx();
+        dialog = new Dialog();
+        dialogState = DONE;
 
         input.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             String inputText = input.getText();
@@ -41,7 +64,7 @@ public class Console extends VBox implements GralogWindow{
 
                 if(!inputText.isEmpty()){
                     history.add(inputText);
-                    submit(inputText);
+                    onEnter(inputText, tabs.getCurrentStructurePane());
                 }
                 input.clear();
             }else if(e.getCode() == KeyCode.BACK_SPACE){
@@ -80,10 +103,55 @@ public class Console extends VBox implements GralogWindow{
     public void registerMethod(Consumer<String> c){
         subscribers.add(c);
     }
-    public void submit(String text){
+
+    public void onEnter(String text, StructurePane currentPane){
         for(Consumer<String> consumer : subscribers){
             consumer.accept(text);
         }
+
+        parser.parse(dialogState,text);
+        ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
+        DialogAction dialogAction = parser.getDialogAction();
+        ArrayList<String> parameters = parser.getParameters();
+
+        dialogState = parser.getDialogState();
+
+        if (dialogState == ASK_WHAT_TO_FILTER){
+            output(parser.getErrorMsg());
+            output("Choose what to filter (all, all edges, all vertices, <list id>) or abort operation with \"q\":\n");
+            dialogState = WAIT_FOR_WHAT_TO_FILTER;
+        }
+        if (dialogState == ASK_WHAT_TO_SELECT){
+            output("Choose what to select (all, all edges, all vertices) or abort operation with \"q\":\n");
+            dialogState = WAIT_FOR_WHAT_TO_SELECT;
+        }
+        if (dialogState == ASK_WHAT_TO_DESELECT){
+            output("Choose what to deselect (all, all edges, all vertices) or abort operation with \"q\":\n");
+            dialogState = WAIT_FOR_WHAT_TO_DESELECT;
+        }
+
+        if (dialogState == DONE){
+            switch (dialogAction) {
+                case SELECTALL:                 dialogfx.selectAll(currentPane);
+                                                break;
+                case SELECT_ALL_VERTICES:       dialogfx.selectAllVertices(currentPane);
+                                                break;
+                case SELECT_ALL_EDGES:          dialogfx.selectAllEdges(currentPane);
+                                                break;
+                case DESELECTALL:               dialogfx.deselectAll(currentPane);
+                                                break;
+                case DESELECT_ALL_VERTICES:     dialogfx.deselectAllVertices(currentPane);
+                                                break;
+                case DESELECT_ALL_EDGES:        dialogfx.deselectAllEdges(currentPane);
+                    break;
+            }
+        }
+    }
+
+    public void output(String text){
+
+        output.appendText(text);
+
     }
 
     public void clear(){

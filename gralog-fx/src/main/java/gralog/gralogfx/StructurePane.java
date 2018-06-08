@@ -628,6 +628,11 @@ public class StructurePane extends StackPane implements StructureListener {
         highlightsSubribers.forEach(c -> c.accept(highlights));
     }
 
+    public void deselectAll(Collection<?> elems){
+        highlights.deselectAll(elems);
+        highlightsSubribers.forEach(c -> c.accept(highlights));
+    }
+
     public void selectAllExclusive(Object... elems) {
         highlights.clearSelection();
         for(Object e : elems){

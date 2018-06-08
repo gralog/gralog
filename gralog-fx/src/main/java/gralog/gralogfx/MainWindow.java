@@ -120,7 +120,7 @@ public class MainWindow extends Application {
         tabs = new Tabs(this::onChangeCurrentStructure);
         tabs.initializeTab();
 
-        mainConsole = new Console();
+        mainConsole = new Console(tabs);
 
         ObjectInspector objectInspector = new ObjectInspector(tabs);
         //put lambdas here for controlling stuff
