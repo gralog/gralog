@@ -12,9 +12,9 @@
    <children>
       <Pane prefHeight="58.0" prefWidth="700.0">
          <children>
-            <Rectangle arcHeight="5.0" height="4.0" layoutY="45.0" smooth="false" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="700.0">
+            <Rectangle arcHeight="5.0" height="2.0" layoutY="46.0" smooth="false" stroke="#ffffff00" strokeType="INSIDE" strokeWidth="0.0" width="700.0">
                <fill>
-                  <RadialGradient centerX="0.453781512605042" focusAngle="-95.63" radius="0.4526627218934911">
+                  <RadialGradient centerX="0.49299719887955185" centerY="0.5035971223021583" focusAngle="-95.63" radius="0.4526627218934911">
                      <stops>
                         <Stop color="#0d00ff00" />
                         <Stop color="#757575" offset="0.0074487895716946" />

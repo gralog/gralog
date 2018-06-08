@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Control;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
@@ -11,13 +12,14 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
 
 /**
  * Spawns a stage that contains all Gralog-relevant preferences
  *
  * Loads and stores all preferences (editor config, structure default vars, etc)
  * back in the user configuration file from gralog.preferences.
- * 
+ *
  */
 public class PreferenceWindow extends Stage {
 
@@ -27,8 +29,8 @@ public class PreferenceWindow extends Stage {
 
     public PreferenceWindow() {
         Parent root = new Pane();
-        Node generalPage = new Pane();
-        Node structurePage = new Pane();
+        Pane generalPage = new Pane();
+        Pane structurePage = new Pane();
 
         try{
             URL fxmlURLMain = getClass().getClassLoader().getResource("preference_window.fxml");
@@ -52,6 +54,7 @@ public class PreferenceWindow extends Stage {
 
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
+        loadGeneralPage(generalPage);
         setupToggleGroups(s, generalPage, structurePage);
 
         setTitle("Preferences");
@@ -71,15 +74,33 @@ public class PreferenceWindow extends Stage {
      * preference file has a key k then the value from k gets loaded
      * into the TextField.
      */
-    void loadGeneralPage(Node generalPage){
-        generalPage.lookup("");
+    private void loadGeneralPage(Parent generalPage){
+        for(Node node : getChildrenRecursively(generalPage)){
+            String id = node.getId();
+            if(id != null && !id.isEmpty()){
+                System.out.println(id);
+            }
+        }
     }
 
+    /**
+     * Gets all nodes below the given one
+     */
+    private LinkedList<Parent> getChildrenRecursively(Parent root){
+        LinkedList<Parent> result = new LinkedList<>();
+        for(Node x : root.getChildrenUnmodifiable()){
+            if(x instanceof Parent){
+                result.add((Parent)x);
+                result.addAll(getChildrenRecursively((Parent)x));
+            }
+        }
+        return result;
+    }
     /**
      * Sets up the toggle buttons of the preference window to be
      * combined into a ToggleGroup
      */
-    void setupToggleGroups(Scene mainScene, Node generalPage, Node structurePage){
+    private void setupToggleGroups(Scene mainScene, Node generalPage, Node structurePage){
 
         ToggleGroup tgroup = new ToggleGroup();
 

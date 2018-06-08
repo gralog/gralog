@@ -97,7 +97,7 @@ public class StructurePane extends StackPane implements StructureListener {
     private double lastMouseY = -1d;
 
     @PreferenceVariable
-    private boolean hasGrid = false;
+    private boolean hasGrid = true;
     private double gridSize = 1.0;
     private boolean snapToGrid = true;
 
