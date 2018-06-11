@@ -67,6 +67,15 @@ public class DialogParser {
                         this.dialogState = ASK_WHAT_TO_FILTER;
                         return true;
                     }
+                    if (inputWords[1].equalsIgnoreCase("all")){
+                        if (inputWords.length == 2){
+                            this.dialogState = ASK_FILTER_ALL_WHAT;
+                            return true;
+                        }
+                        if (inputWords[2].equalsIgnoreCase("vertices") && inputWords.length == ){
+                            this.dialogState = ASK_FILTER_WHERE;
+                        }
+                    }
 
                 }
                 if (word0.equalsIgnoreCase("select")) {

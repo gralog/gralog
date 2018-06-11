@@ -27,7 +27,7 @@ public class DialogConsoleParserTest {
         catch (Exception e){
             e.printStackTrace();
         }
-        anEdge = getGraph("anEdge.graphml");
+        //anEdge = getGraph("anEdge.graphml");
 
         // generate some graphs
 
