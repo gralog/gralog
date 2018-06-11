@@ -1,12 +1,12 @@
 package gralog.gralogfx.windows;
 
+import gralog.preferences.Preferences;
+import gralog.rendering.GralogColor;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Control;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -20,11 +20,14 @@ import java.util.LinkedList;
  * Loads and stores all preferences (editor config, structure default vars, etc)
  * back in the user configuration file from gralog.preferences.
  *
+ * All changes are being stored offline in the persistent configuration, NOT in
+ * a runtime object.
+ *
  */
 public class PreferenceWindow extends Stage {
 
     private static final double WINDOW_WIDTH = 700;
-    private static final double WINDOW_HEIGHT = 400;
+    private static final double WINDOW_HEIGHT = 420;
 
 
     public PreferenceWindow() {
@@ -78,11 +81,34 @@ public class PreferenceWindow extends Stage {
         for(Node node : getChildrenRecursively(generalPage)){
             String id = node.getId();
             if(id != null && !id.isEmpty()){
-                System.out.println(id);
+                if(node instanceof CheckBox){
+                    Boolean b = Preferences.getBoolean(node.getId(), false);
+                    ((CheckBox)node).setSelected(b);
+                }
+                if(node instanceof TextField){
+                    Double d = Preferences.getDouble(node.getId(), 0);
+                    ((TextField)node).setText(d.toString());
+                }
             }
         }
     }
 
+    private void saveGeneralPreferences(Parent generalPage){
+        for(Node node : getChildrenRecursively(generalPage)){
+            String id = node.getId();
+            if(id != null && !id.isEmpty()){
+                if(node instanceof CheckBox){
+                    Boolean b = ((CheckBox)node).isSelected();
+                    Preferences.setBoolean(node.getId(), b);
+                }
+                if(node instanceof TextField){
+                    Double d = Double.parseDouble(((TextField)node).getText());
+                    Preferences.setDouble(node.getId(),  d);
+                }
+            }
+        }
+    }
+    
     /**
      * Gets all nodes below the given one
      */

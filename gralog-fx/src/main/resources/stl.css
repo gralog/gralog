@@ -2,8 +2,11 @@
      -fx-background-color:
             -fx-shadow-highlight-color,
             linear-gradient(to bottom, derive(-fx-outer-border, -45%), -fx-outer-border),
-            linear-gradient(to bottom,
-                    derive(-fx-color, -45%) 0%,
-                    derive(-fx-color, -40%) 10%,
-                    derive(-fx-color, -35%) 50%);
+            grey
+	
 }
+
+.button{
+-fx-border-color: #5d5d5d;
+}
+
