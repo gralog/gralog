@@ -21,6 +21,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Consumer;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.*;
 
 import java.util.Arrays;
 
@@ -63,8 +64,11 @@ public class Piping extends Thread{
     public List<String[]> trackedVarArgs;
 
     public CountDownLatch waitForPauseToBeHandled;
+    private Lock pauseLock;
+    public Condition canContinue;
     public MainWindow caller;
     public Function<Piping,Boolean> pauseFunction;
+    private boolean pauseWasPressed = false;
 
 
     public enum State{
@@ -183,10 +187,12 @@ public class Piping extends Thread{
         }
     }
 
+    public void pausePressed(){
+        this.pauseWasPressed = true;
+    }
+
     public void skipPressed(){
         this.skipPausesWithRankGreaterThanOrEqualTo = this.currentSkipValue;
-        this.setFirstMessage(Integer.toString(this.currentSkipValue));
-        this.run();
     }
   
 
@@ -221,6 +227,10 @@ public class Piping extends Thread{
 
     public void addIdStructurePane(int id, StructurePane structurePane){
         this.idStructurePaneMap.put(id,structurePane);
+    }
+
+    public void setCountDownLatch(CountDownLatch latch){
+        this.waitForPauseToBeHandled = latch;
     }
 
 
@@ -261,13 +271,8 @@ public class Piping extends Thread{
             System.out.println("191");
             while ((line = this.in.readLine()) != null){//while python has not yet terminated
                 System.out.println("in while");
-                System.out.println("current count: " + this.waitForPauseToBeHandled.getCount());
+                // System.out.println("current count: " + this.waitForPauseToBeHandled.getCount());
 
-                try{
-                    Thread.sleep(100);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
                 
                 if (line.length() > 0){ // if not a bogus line
                     //handleLine()
@@ -277,6 +282,11 @@ public class Piping extends Thread{
                     
 
                     System.out.println("current line: " + line);
+
+                    if (this.pauseWasPressed){ //user input simulation
+                        
+                        this.waitForPauseToBeHandled.await();
+                    }
 
 
                     if (externalCommandSegments[0].equals("pauseUntilSpacePressed")){
@@ -315,9 +325,6 @@ public class Piping extends Thread{
                             out.println("skipped");
                             continue;
                         }
-
-                        
-
                     }else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
                         
                         // StructurePane thisPane = this.newGraphMethod.apply(externalCommandSegments[0],this);

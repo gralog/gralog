@@ -30,12 +30,16 @@ g.track("my id",str(g.id));
 
 
 for x in range(numV):
-	vertices.append(g.addVertex());
-	g.setVertexLabel(x,str(x));
+	v = g.addVertex();
+	vertices.append(v);
+	g.setVertexLabel(v,str(v));
 
-
+for x in vertices:
+	for y in vertices:
+		g.addEdge(x,y,True);
+	g.pauseUntilSpacePressed();
 	
-g.pauseUntilSpacePressed();
+
 
 # for x in vertices:
 # 	for y in vertices:
