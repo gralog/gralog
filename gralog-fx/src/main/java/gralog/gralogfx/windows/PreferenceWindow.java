@@ -65,8 +65,7 @@ public class PreferenceWindow extends Stage {
 
 
         Button okButton = findButton(root, "ok");
-        okButton.setOnAction(e -> savePreferences(generalPageCopy));
-        okButton.setOnAction(e -> savePreferences(structurePageCopy));
+        okButton.setOnAction(e -> savePreferences(generalPageCopy, structurePageCopy));
 
         Button cancelButton = findButton(root, "cancel");
         cancelButton.setOnAction(e -> hide());
@@ -125,24 +124,26 @@ public class PreferenceWindow extends Stage {
 
     /**
      * Saves all preferences corresponding to the IDs to the children
-     * of the given root node.
+     * of the given root nodes
      * @param root
      */
-    private void savePreferences(Parent root){
-        for(Node node : getChildrenRecursively(root)){
-            String id = node.getId();
-            if(id != null && !id.isEmpty()){
-                if(node instanceof CheckBox){
-                    Boolean b = ((CheckBox)node).isSelected();
-                    Preferences.setBoolean(node.getId(), b);
-                }
-                if(node instanceof TextField){
-                    Double d = Double.parseDouble(((TextField)node).getText());
-                    Preferences.setDouble(node.getId(),  d);
-                }
-                if(node instanceof ColorPicker){
-                    GralogColor c = GralogColor.parseColorAlpha(((ColorPicker)node).getValue().toString());
-                    Preferences.setColor(node.getId(), c);
+    private void savePreferences(Parent... root){
+        for(int i = 0; i < root.length; i++){
+            for(Node node : getChildrenRecursively(root[i])){
+                String id = node.getId();
+                if(id != null && !id.isEmpty()){
+                    if(node instanceof CheckBox){
+                        Boolean b = ((CheckBox)node).isSelected();
+                        Preferences.setBoolean(node.getId(), b);
+                    }
+                    if(node instanceof TextField){
+                        Double d = Double.parseDouble(((TextField)node).getText());
+                        Preferences.setDouble(node.getId(),  d);
+                    }
+                    if(node instanceof ColorPicker){
+                        GralogColor c = GralogColor.parseColorAlpha(((ColorPicker)node).getValue().toString());
+                        Preferences.setColor(node.getId(), c);
+                    }
                 }
             }
         }
@@ -173,6 +174,7 @@ public class PreferenceWindow extends Stage {
 
         ToggleButton structureButton = (ToggleButton) mainScene.lookup("#structureButton");
         ToggleButton generalButton = (ToggleButton) mainScene.lookup("#generalButton");
+
         tgroup.getToggles().addAll(structureButton, generalButton);
 
         Pane container = (Pane) mainScene.lookup("#container");
@@ -191,6 +193,7 @@ public class PreferenceWindow extends Stage {
         });
 
         container.getChildren().add(structurePage); // default
+        structureButton.setSelected(true);
     }
 
 }

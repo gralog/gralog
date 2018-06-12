@@ -5,6 +5,7 @@ package gralog.gralogfx;
 import java.util.ArrayList;
 
 import gralog.gralogfx.input.MultipleKeyCombination;
+import gralog.gralogfx.preferences.Configuration;
 import gralog.gralogfx.threading.ScrollThread;
 import gralog.preferences.MenuPrefVariable;
 import gralog.structure.*;
@@ -96,19 +97,27 @@ public class StructurePane extends StackPane implements StructureListener {
     private double lastMouseY = -1d;
 
     @MenuPrefVariable(name="Draw Coordinate Grid")
-    private boolean hasGrid = true;
+    private boolean hasGrid;
 
     @MenuPrefVariable(name="Grid Size")
-    private double gridSize = 1.0;
+    private double gridSize;
 
     @MenuPrefVariable(name="Snap to Grid")
     private boolean snapToGrid = true;
 
-    public StructurePane(Structure structure) {
+    public StructurePane(Structure structure){
+        this(structure, new Configuration());
+    }
+    public StructurePane(Structure structure, Configuration config) {
+
+        //init to config
+        hasGrid = config.getValue("StructurePane_showGrid", Boolean::parseBoolean,true);
+        gridSize = config.getValue("StructurePane_gridSize", Double::parseDouble, 1.0);
+
         this.structure = structure;
         canvas = new Canvas(500,500);
-
         this.getChildren().add(canvas);
+
         // resize canvas with surrounding StructurePane
         canvas.widthProperty().bind(this.widthProperty());
         canvas.heightProperty().bind(this.heightProperty());
@@ -153,18 +162,6 @@ public class StructurePane extends StackPane implements StructureListener {
         vertexMenu.getItems().addAll(addLoop, copy, delete);
 
     }
-
-    // public void addSpaceListener(SpaceEvent toAdd) {
-    //     spaceListeners.add(toAdd);
-    // }           
-
-    // public void spacePressed(){
-    //     System.out.println("space pressed");
-    //     for (SpaceEvent listener : spaceListeners){
-    //         listener.spacePressed();
-    //     }
-    // }
-
     public Structure getStructure() {
         return structure;
     }

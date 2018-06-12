@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 /**
  * Stores user-specific preferences. In contrast to the Java Preferences API,
@@ -19,6 +20,10 @@ public final class Preferences {
     private static final String FILENAME = "preferences";
     private static final java.util.Properties PROPERTIES = new java.util.Properties();
     private static final String PREFERENCE_PATH = buildPreferencePath();
+
+    public static Properties getProperties(){
+        return PROPERTIES;
+    }
 
     private Preferences() {
     }

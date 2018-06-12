@@ -91,7 +91,7 @@
       </Pane>
       <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
          <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e4e4e4" height="245.0" layoutX="14.0" layoutY="47.0" stroke="BLACK" strokeType="INSIDE" width="283.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f2f2f2" height="224.0" layoutX="24.0" layoutY="41.0" stroke="BLACK" strokeType="INSIDE" width="290.0" />
             <Line endX="-10.0" layoutX="166.0" layoutY="119.0" startX="-100.0" />
             <Line endX="-20.0" endY="-10.0" layoutX="176.0" layoutY="129.0" startX="-20.0" startY="92.0" />
             <Line endX="-20.0" endY="-10.0" layoutX="189.0" layoutY="130.0" startX="-20.0" startY="92.0" />
