@@ -6,13 +6,18 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Every variable annotated with PreferenceVariable
- * can be overwritten by a preference file via Reflection.
+ * Every variable annotated with MenuPrefVariable
+ * will be accessible for modification via a drop down
+ * menu from the top bar.
  *
  * TODO: Reference which class makes use of this annotation
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface PreferenceVariable {
+public @interface MenuPrefVariable {
 
+    /**
+     * The name that should be displayed in the menu panel
+     */
+    String name() default "";
 }

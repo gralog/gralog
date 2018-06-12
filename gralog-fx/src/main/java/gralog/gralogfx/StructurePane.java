@@ -6,8 +6,7 @@ import java.util.ArrayList;
 
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.threading.ScrollThread;
-import gralog.preferences.PreferenceVariable;
-import gralog.preferences.Preferences;
+import gralog.preferences.MenuPrefVariable;
 import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -96,9 +95,13 @@ public class StructurePane extends StackPane implements StructureListener {
     private double lastMouseX = -1d;
     private double lastMouseY = -1d;
 
-    @PreferenceVariable
+    @MenuPrefVariable(name="Draw Coordinate Grid")
     private boolean hasGrid = true;
+
+    @MenuPrefVariable(name="Grid Size")
     private double gridSize = 1.0;
+
+    @MenuPrefVariable(name="Snap to Grid")
     private boolean snapToGrid = true;
 
     public StructurePane(Structure structure) {

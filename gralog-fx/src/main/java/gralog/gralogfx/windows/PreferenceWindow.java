@@ -66,11 +66,14 @@ public class PreferenceWindow extends Stage {
 
         Button okButton = findButton(root, "ok");
         okButton.setOnAction(e -> savePreferences(generalPageCopy));
+        okButton.setOnAction(e -> savePreferences(structurePageCopy));
 
         Button cancelButton = findButton(root, "cancel");
         cancelButton.setOnAction(e -> hide());
 
         loadPreferences(generalPage);
+        loadPreferences(structurePage);
+
         setupToggleGroups(s, generalPage, structurePage);
 
         setTitle("Preferences");
@@ -187,7 +190,7 @@ public class PreferenceWindow extends Stage {
             }
         });
 
-        container.getChildren().add(generalPage); // default
+        container.getChildren().add(structurePage); // default
     }
 
 }
