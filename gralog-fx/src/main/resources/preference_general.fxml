@@ -47,10 +47,10 @@
       </Pane>
       <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
          <children>
-            <CheckBox fx:id="showGrid" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" />
-            <CheckBox fx:id="showAxis" layoutY="55.0" mnemonicParsing="false" />
-            <TextField fx:id="gridSize" layoutY="30.0" minHeight="0.0" prefHeight="20.0" prefWidth="138.0" />
-            <ColorPicker fx:id="axisColor" layoutY="80.0" prefHeight="20.0" prefWidth="138.0" style="-fx-font-size: 11;" />
+            <CheckBox fx:id="StructurePane_showGrid" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" />
+            <CheckBox fx:id="StructurePane_showAxis" layoutY="55.0" mnemonicParsing="false" />
+            <TextField fx:id="StructurePane_gridSize" layoutY="30.0" minHeight="0.0" prefHeight="20.0" prefWidth="138.0" />
+            <ColorPicker fx:id="StructurePane_axisColor" layoutY="80.0" prefHeight="20.0" prefWidth="138.0" style="-fx-font-size: 11;" />
          </children>
       </Pane>
       <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
@@ -69,8 +69,8 @@
       </Pane>
       <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3">
          <children>
-            <CheckBox layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" />
-            <CheckBox layoutY="30.0" mnemonicParsing="false" prefHeight="20.0" />
+            <CheckBox fx:id="helpOnStart" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" />
+            <CheckBox fx:id="newGraphOnStart" layoutY="30.0" mnemonicParsing="false" prefHeight="20.0" />
          </children>
       </Pane>
    </children>

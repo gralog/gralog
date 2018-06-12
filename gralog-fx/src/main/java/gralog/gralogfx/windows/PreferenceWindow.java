@@ -1,12 +1,14 @@
 package gralog.gralogfx.windows;
 
 import gralog.preferences.Preferences;
+import gralog.rendering.GralogColor;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -97,8 +99,8 @@ public class PreferenceWindow extends Stage {
      * preference file has a key k then the value from k gets loaded
      * into the TextField.
      */
-    private void loadPreferences(Parent generalPage){
-        for(Node node : getChildrenRecursively(generalPage)){
+    private void loadPreferences(Parent root){
+        for(Node node : getChildrenRecursively(root)){
             String id = node.getId();
             if(id != null && !id.isEmpty()){
                 if(node instanceof CheckBox){
@@ -109,12 +111,22 @@ public class PreferenceWindow extends Stage {
                     Double d = Preferences.getDouble(node.getId(), 0);
                     ((TextField)node).setText(d.toString());
                 }
+                if(node instanceof ColorPicker){
+                    GralogColor c = Preferences.getColor(node.getId(), GralogColor.BLACK);
+                    ((ColorPicker)node).setValue(Color.rgb(c.r, c.g, c.b));
+                }
+
             }
         }
     }
 
-    private void savePreferences(Parent generalPage){
-        for(Node node : getChildrenRecursively(generalPage)){
+    /**
+     * Saves all preferences corresponding to the IDs to the children
+     * of the given root node.
+     * @param root
+     */
+    private void savePreferences(Parent root){
+        for(Node node : getChildrenRecursively(root)){
             String id = node.getId();
             if(id != null && !id.isEmpty()){
                 if(node instanceof CheckBox){
@@ -124,6 +136,10 @@ public class PreferenceWindow extends Stage {
                 if(node instanceof TextField){
                     Double d = Double.parseDouble(((TextField)node).getText());
                     Preferences.setDouble(node.getId(),  d);
+                }
+                if(node instanceof ColorPicker){
+                    GralogColor c = GralogColor.parseColorAlpha(((ColorPicker)node).getValue().toString());
+                    Preferences.setColor(node.getId(), c);
                 }
             }
         }
