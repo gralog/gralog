@@ -52,10 +52,11 @@ public class Console extends VBox implements GralogWindow{
         input.prefWidthProperty().bind(this.widthProperty());
         input.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
 
-        parser = new DialogParser();
         dialogfx = new Dialogfx();
         dialog = new Dialog();
         dialogState = DONE;
+        parser = new DialogParser();
+
 
         input.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             String inputText = input.getText();
@@ -132,13 +133,13 @@ public class Console extends VBox implements GralogWindow{
 
         if (dialogState == DONE){
             switch (dialogAction) {
-                case SELECTALL:                 dialogfx.selectAll(currentPane);
+                case SELECT_ALL:                 dialogfx.selectAll(currentPane);
                                                 break;
                 case SELECT_ALL_VERTICES:       dialogfx.selectAllVertices(currentPane);
                                                 break;
                 case SELECT_ALL_EDGES:          dialogfx.selectAllEdges(currentPane);
                                                 break;
-                case DESELECTALL:               dialogfx.deselectAll(currentPane);
+                case DESELECT_ALL:               dialogfx.deselectAll(currentPane);
                                                 break;
                 case DESELECT_ALL_VERTICES:     dialogfx.deselectAllVertices(currentPane);
                                                 break;

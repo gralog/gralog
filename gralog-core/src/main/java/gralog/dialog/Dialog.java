@@ -2,10 +2,7 @@ package gralog.dialog;
 
 import gralog.structure.*;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 
 public class Dialog  {
@@ -13,8 +10,8 @@ public class Dialog  {
   private TreeSet<Vertex> vertices;
   private TreeSet<Edge> edges;
 
-  private Set<TreeSet<Vertex>> vertexListS;
-  private Set<TreeSet<Edge>> edgeListS;
+  private Map<String, TreeSet<Vertex>> vertexListS;
+  private Map<String, TreeSet<Edge>> edgeListS;
 
 
   public Dialog() {
@@ -44,6 +41,10 @@ public class Dialog  {
       }
     });
 
+  }
+
+  public boolean isID(String s){
+    return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
   }
 
   public void performAction(DialogAction action, ArrayList<String> parameters){
