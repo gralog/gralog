@@ -1,7 +1,6 @@
 package gralog.gralogfx.windows;
 
 import gralog.preferences.Preferences;
-import gralog.rendering.GralogColor;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -31,6 +30,9 @@ public class PreferenceWindow extends Stage {
 
 
     public PreferenceWindow() {
+        final Parent generalPageCopy;
+        final Parent structurePageCopy;
+
         Parent root = new Pane();
         Pane generalPage = new Pane();
         Pane structurePage = new Pane();
@@ -54,10 +56,19 @@ public class PreferenceWindow extends Stage {
         }catch(IOException e){
             e.printStackTrace();
         }
+        generalPageCopy = generalPage;
+        structurePageCopy = structurePage;
 
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        loadGeneralPage(generalPage);
+
+        Button okButton = findButton(root, "ok");
+        okButton.setOnAction(e -> savePreferences(generalPageCopy));
+
+        Button cancelButton = findButton(root, "cancel");
+        cancelButton.setOnAction(e -> hide());
+
+        loadPreferences(generalPage);
         setupToggleGroups(s, generalPage, structurePage);
 
         setTitle("Preferences");
@@ -69,6 +80,15 @@ public class PreferenceWindow extends Stage {
         centerOnScreen();
     }
 
+    private Button findButton(Parent root, String name){
+        for(Parent p : getChildrenRecursively(root)){
+            if(p instanceof Button && p.getId().equals(name)){
+                return (Button)p;
+            }
+        }
+        return null;
+    }
+
     /**
      * Loads all values from the configuration file into the
      * value fields of the given node.
@@ -77,7 +97,7 @@ public class PreferenceWindow extends Stage {
      * preference file has a key k then the value from k gets loaded
      * into the TextField.
      */
-    private void loadGeneralPage(Parent generalPage){
+    private void loadPreferences(Parent generalPage){
         for(Node node : getChildrenRecursively(generalPage)){
             String id = node.getId();
             if(id != null && !id.isEmpty()){
@@ -93,7 +113,7 @@ public class PreferenceWindow extends Stage {
         }
     }
 
-    private void saveGeneralPreferences(Parent generalPage){
+    private void savePreferences(Parent generalPage){
         for(Node node : getChildrenRecursively(generalPage)){
             String id = node.getId();
             if(id != null && !id.isEmpty()){
@@ -107,8 +127,10 @@ public class PreferenceWindow extends Stage {
                 }
             }
         }
+
+        hide();
     }
-    
+
     /**
      * Gets all nodes below the given one
      */

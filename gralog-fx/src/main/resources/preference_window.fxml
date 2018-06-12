@@ -32,8 +32,8 @@
       <Pane fx:id="container" prefHeight="341.0" prefWidth="700.0" />
       <Pane prefHeight="52.0" prefWidth="700.0">
          <children>
-            <Button layoutX="627.0" layoutY="3.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" style="-fx-background-color: #d5f2c9; -fx-background-radius: 0; -fx-background-insets: 0; -fx-border-color: grey;" text="Ok" />
-            <Button layoutX="554.0" layoutY="3.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" style="-fx-background-color: #ffc6c6; -fx-background-radius: 0; -fx-background-insets: 0; -fx-border-color: grey;" styleClass="okcancel" text="Cancel" />
+            <Button fx:id="ok" layoutX="627.0" layoutY="3.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" style="-fx-background-color: #d5f2c9; -fx-background-radius: 0; -fx-background-insets: 0; -fx-border-color: grey;" text="Ok" />
+            <Button fx:id="cancel" layoutX="554.0" layoutY="3.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" style="-fx-background-color: #ffc6c6; -fx-background-radius: 0; -fx-background-insets: 0; -fx-border-color: grey;" styleClass="okcancel" text="Cancel" />
          </children>
       </Pane>
    </children>

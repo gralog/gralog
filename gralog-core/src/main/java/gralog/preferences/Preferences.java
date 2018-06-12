@@ -113,6 +113,7 @@ public final class Preferences {
 
     public static void setBoolean(String key, boolean b){
         PROPERTIES.setProperty(key, Boolean.toString(b));
+        flush();
     }
 
     /*
@@ -132,6 +133,7 @@ public final class Preferences {
     }
     public static void setDouble(String key, double d){
         PROPERTIES.setProperty(key, Double.toString(d));
+        flush();
     }
 
     private static String classKey(Class c, String key) {
