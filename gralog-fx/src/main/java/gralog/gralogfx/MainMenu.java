@@ -4,6 +4,7 @@ package gralog.gralogfx;
 
 import gralog.algorithm.AlgorithmManager;
 import gralog.generator.GeneratorManager;
+import gralog.gralogfx.windows.PreferenceWindow;
 import gralog.structure.Structure;
 import gralog.structure.StructureManager;
 import javafx.scene.control.Menu;
@@ -124,6 +125,8 @@ public class MainMenu {
             menuFileSave,
             new SeparatorMenuItem(),
             createMenuItem("Load plugin...", handlers.onLoadPlugin),
+            new SeparatorMenuItem(),
+            createMenuItem("Preferences", PreferenceWindow::new),
             new SeparatorMenuItem(),
             createMenuItem("Exit", handlers.onExit));
 
