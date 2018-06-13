@@ -188,7 +188,9 @@ public class Piping extends Thread{
     }
 
     public void pausePressed(){
-        this.pauseWasPressed = true;
+        if (!(this.state == State.Paused)){
+            this.pauseWasPressed = true;
+        }
     }
 
     public void skipPressed(){
@@ -284,8 +286,11 @@ public class Piping extends Thread{
                     System.out.println("current line: " + line);
 
                     if (this.pauseWasPressed){ //user input simulation
-                        
+                        this.redrawMyStructurePanes();
+                        this.state = State.Paused;
                         this.waitForPauseToBeHandled.await();
+                        this.pauseWasPressed = false;
+                        this.state = State.InProgress;
                     }
 
 
@@ -318,6 +323,7 @@ public class Piping extends Thread{
                             this.waitForPauseToBeHandled.await();
                             out.println("");
                             System.out.println("waited for ack, now it's done!");
+                            this.state = State.InProgress;
                             continue;
 
                             // break;

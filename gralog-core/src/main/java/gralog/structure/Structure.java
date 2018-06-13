@@ -32,6 +32,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     private final Set<StructureListener> listeners = new HashSet<>();
 
     protected HashMap<Integer, V> vertices;
+
+    private HashMap<Vertex,HashMap<Vertex,Integer>> edgeIdMap;
+
+    // edgeIdMap.get(v).get(v) \in INt.
+
     protected Set<E> edges;
 
     private int id;
@@ -216,6 +221,27 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 return e;
             }
             else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)){
+                return e;
+            }
+        }
+        return null;
+    }
+
+    public Edge getEdgeByVertexIdsAndId(int inputSourceId, int inputTargetId,int inputEdgeId){
+
+        Vertex sourceVertex = this.getVertexById(inputSourceId);
+        Vertex targetVertex = this.getVertexById(inputTargetId);
+        if (sourceVertex == null || targetVertex == null){
+            return null;
+        }
+        for (Edge e : sourceVertex.getIncidentEdges()){
+            int sourceId = e.getSource().getId();
+            int targetId = e.getTarget().getId();
+            int edgeId = e.getId();
+            if (targetId == inputTargetId && sourceId == inputSourceId && edgeId == inputEdgeId){
+                return e;
+            }
+            else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId) && edgeId == inputEdgeId){
                 return e;
             }
         }

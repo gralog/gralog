@@ -16,7 +16,7 @@ g = Graph(None);#type \in buechi, directed, etc. or None
 
 
 
-numV = 4;
+numV = 100;
 
 vertices = [];
 
@@ -29,14 +29,10 @@ g.track("my id",str(g.id));
 
 
 
-for x in range(numV):
-	v = g.addVertex();
-	vertices.append(v);
-	g.setVertexLabel(v,str(v));
-
-for x in vertices:
-	for y in vertices:
-		g.addEdge(x,y,True);
+for x in range(10000):
+	v1 = g.addVertex();
+	v2 = g.addVertex();
+	g.addEdge(v1,v2);
 	g.pauseUntilSpacePressed();
 	
 

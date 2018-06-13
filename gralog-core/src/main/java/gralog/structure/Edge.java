@@ -27,7 +27,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         BEZIER
     }
 
-    public int id = -1; //if not -1, then don't change the id
+    private int id = -1; //if not -1, then don't change the id
 
     public static double multiEdgeOffset = 0.2;
 
@@ -107,6 +107,17 @@ public class Edge extends XmlMarshallable implements IMovable {
             return addSharpControlPoint(position, clickPosition);
         }
     }
+
+
+    public int getId(){
+        return this.id;
+    }
+
+    public int setId(int id){
+        this.id = id;
+    }
+
+
     private ControlPoint addBezierControlPoint(Vector2D position){
         if(controlPoints.size() >= 2){
             return null;
