@@ -17,7 +17,6 @@ import javafx.scene.text.FontWeight;
 import java.util.*;
 import java.util.function.Consumer;
 
-import static gralog.dialog.DialogState.ASK_WHAT_TO_SELECT;
 import static gralog.dialog.DialogState.*;
 
 public class Console extends VBox implements GralogWindow{
@@ -111,24 +110,17 @@ public class Console extends VBox implements GralogWindow{
         }
 
         parser.parse(dialogState,text);
+        System.out.println(ANSI_RED + "console: parsed\n" + ANSI_RESET);
         ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
         DialogAction dialogAction = parser.getDialogAction();
         ArrayList<String> parameters = parser.getParameters();
 
         dialogState = parser.getDialogState();
+        System.out.println(ANSI_RED + "console: dialogState=" + dialogState + ANSI_RESET);
 
-        if (dialogState == ASK_WHAT_TO_FILTER){
+        if (dialogState == SELECT){
+            System.out.println(ANSI_RED+parser.getErrorMsg()+ANSI_RESET);
             output(parser.getErrorMsg());
-            output("Choose what to filter (all, all edges, all vertices, <list id>) or abort operation with \"q\":\n");
-            dialogState = WAIT_FOR_WHAT_TO_FILTER;
-        }
-        if (dialogState == ASK_WHAT_TO_SELECT){
-            output("Choose what to select (all, all edges, all vertices) or abort operation with \"q\":\n");
-            dialogState = WAIT_FOR_WHAT_TO_SELECT;
-        }
-        if (dialogState == ASK_WHAT_TO_DESELECT){
-            output("Choose what to deselect (all, all edges, all vertices) or abort operation with \"q\":\n");
-            dialogState = WAIT_FOR_WHAT_TO_DESELECT;
         }
 
         if (dialogState == DONE){
