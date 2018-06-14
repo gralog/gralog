@@ -32,7 +32,7 @@ public class GralogColor {
 
     public static boolean isColor(String s){
         for (Colors c : Colors.values())
-            if (s.equals(c))
+            if (c.name().equalsIgnoreCase(s))
                 return true;
         return false;
     }

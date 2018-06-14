@@ -118,10 +118,8 @@ public class Console extends VBox implements GralogWindow{
         dialogState = parser.getDialogState();
         System.out.println(ANSI_RED + "console: dialogState=" + dialogState + ANSI_RESET);
 
-        if (dialogState == SELECT){
-            System.out.println(ANSI_RED+parser.getErrorMsg()+ANSI_RESET);
-            output(parser.getErrorMsg());
-        }
+        output(parser.getErrorMsg());
+        parser.setErrorMsg("");
 
         if (dialogState == DONE){
             switch (dialogAction) {

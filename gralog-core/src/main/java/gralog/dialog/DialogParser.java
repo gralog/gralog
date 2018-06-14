@@ -3,9 +3,6 @@ package gralog.dialog;
 import gralog.rendering.GralogColor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import static gralog.dialog.ActionType.FX;
 import static gralog.dialog.DialogState.*;
@@ -34,11 +31,15 @@ public class DialogParser {
             "GENERATE", "WHEEL", "GRID", "CLIQUE", "CYCLE", "PATH", "TORUS", "COMPLETE", "TREE", "CYLINDRICAL",
             "NO", "CONDITION", "LABEL", "X", "Q", "EXIT", "ABORT", "CANCEL"};
 
+    private boolean hasValueForm(String s){
+        // color or number or "PLAIN" or "DOTTED" or "DASHED"
+        return (isColorValue(s) || s.matches("-?\\d*((.|,)\\d+)?"));
+    }
 
     private boolean hasIdForm(String idCandidate){
         String idCandidateUC = idCandidate.toUpperCase();
         for (String s : forbiddenIds) if(s.equals(idCandidateUC)) return false;
-        return (idCandidateUC.matches("_|[A-Z]([A-Z]|[0-9]|_)*"));
+        return (idCandidateUC.matches("(_|[A-Z])([A-Z]|[0-9]|_)*"));
     }
 
     private boolean isColorValue(String colorValueCandidate){
@@ -55,6 +56,8 @@ public class DialogParser {
     public String getErrorMsg() {
         return errorMsg;
     }
+
+    public void setErrorMsg(String s){ errorMsg = s; }
 
     public ActionType getType() {
         return actionType;
@@ -76,7 +79,7 @@ public class DialogParser {
         this.dialogState = dialogState;
         System.out.println(ANSI_RED + "parse: got string: " + text + ANSI_RESET); //debugging
         if (text.isEmpty()) {// TODO: make an exception
-            System.out.println("Something went wrong: Console got an empty string as input.");
+            System.out.println("Something went wrong: Console got an empty string as input.\n");
             return false;
         }
         String[] inputWords = text.toUpperCase().split(" ");
@@ -120,14 +123,14 @@ public class DialogParser {
                         this.dialogState = FILTER;
                         i++;
                         break;
+                    default:
+                        errorMsg = "Parse error. Please, try again.\n";
+                        return true;
                 }
-                continue;
             }
             if (this.dialogState == SELECT) {
                 if (i == inputWords.length) {
                     errorMsg = "What to select?  Format: (all [vertices|edges]) | <list id>\n";
-                    System.out.println(ANSI_RED + "DialogParser: in dialogState=SELECT errorMsg="
-                            + errorMsg + ANSI_RESET);
                     return true;
                 }
                 if (hasIdForm(inputWords[i])) {
@@ -143,7 +146,7 @@ public class DialogParser {
                         return true;
                     }
                 }
-                if (inputWords[i].equals("all")) {
+                if (inputWords[i].equals("ALL")) {
                     this.dialogState = SELECT_ALL;
                     i++;
                     continue;
@@ -158,17 +161,18 @@ public class DialogParser {
                 }
                 if (hasIdForm(inputWords[i])) {
                     if (i == inputWords.length - 1) { // last word
+                        this.dialogState = DONE;
                         actionType = FX;
                         dialogAction = DESELECT_LIST;
                         parameters.add(inputWords[i]);
                         return true;
-                    } else {           // could not parse: select <id> <trash>
-                        // dont change this.dialogState == SELECT
+                    } else {           // could not parse: deselect <id> <trash>
+                        // dont change dialogState == DESELECT
                         errorMsg = "What to deselect? Format: (all [vertices|edges]) | <list id>\n";
                         return true;
                     }
                 }
-                if (inputWords[i].equals("all")) {
+                if (inputWords[i].equals("ALL")) {
                     this.dialogState = DESELECT_ALL;
                     i++;
                     continue;
@@ -177,6 +181,7 @@ public class DialogParser {
                 return true;
             }
             if (this.dialogState == DialogState.SELECT_ALL) {
+                System.out.println("DialogParser.parse: dialogState=" + DialogState.SELECT_ALL);
                 if (i == inputWords.length) {
                     this.dialogState = DONE;
                     dialogAction = DialogAction.SELECT_ALL;
@@ -189,6 +194,15 @@ public class DialogParser {
                     parameters.clear();
                     return true;
                 }
+                if (inputWords[i].equals("EDGES")) {
+                    this.dialogState = DONE;
+                    dialogAction = SELECT_ALL_EDGES;
+                    parameters.clear();
+                    return true;
+                }
+                errorMsg = "Select all what: edges or vertices? (Or abort.)\n";
+                return true;
+
             }
             if (this.dialogState == DESELECT_ALL) {
                 if (i == inputWords.length) {
@@ -203,6 +217,14 @@ public class DialogParser {
                     parameters.clear();
                     return true;
                 }
+                if (inputWords[i].equals("EDGES")) {
+                    this.dialogState = DONE;
+                    dialogAction = DESELECT_ALL_EDGES;
+                    parameters.clear();
+                    return true;
+                }
+                errorMsg = "Deselect all what: edges or vertices?\n";
+                return true;
             }
             if (this.dialogState == FILTER) {
                 if (i == inputWords.length) {
@@ -225,7 +247,7 @@ public class DialogParser {
             }
             if (this.dialogState == FILTER_ALL) {
                 if (i == inputWords.length) {
-                    errorMsg = "All vertices or all edges?";
+                    errorMsg = "Vertices or edges?\n";
                     return true;
                 }
                 if (inputWords[i].equals("VERTICES")) {
@@ -240,7 +262,7 @@ public class DialogParser {
                     i++;
                     continue;
                 }
-                errorMsg = "All vertices or all edges?";
+                errorMsg = "Vertices or edges?\n";
                 return true;
             }
             if (this.dialogState == FILTER_WHAT) {
@@ -258,6 +280,8 @@ public class DialogParser {
                     i++;
                     continue;
                 }
+                errorMsg = "Specify filter conditions. Start with \"where\". Enter \"help\" for help.\n";
+                return true;
             }
             if (this.dialogState == FILTER_WHAT_SUCH) {
                 if (i == inputWords.length) {
@@ -274,7 +298,7 @@ public class DialogParser {
             }
             if (this.dialogState == FILTER_WHAT_WHERE) {
                 if (i == inputWords.length) {
-                    errorMsg = "Specify filter conditions. Enter \"help\" for help.";
+                    errorMsg = "Specify filter conditions. Enter \"help\" for help.\n";
                     return true;
                 }
                 if (inputWords[i].equals("NO")) {
@@ -385,7 +409,7 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("DIRECTED")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
+                    this.dialogState = FILTER_WHAT_WHERE_COND;
                     parameters.add("directed");
                     i++;
                     continue;
@@ -396,7 +420,7 @@ public class DialogParser {
             if (this.dialogState == FILTER_WHAT_WHERE_NO) {
                 if (i == inputWords.length) {
                     this.dialogState = FILTER_WHAT_WHERE_COND;
-                    errorMsg = "Specify where to save the result. Start with \"to\", then give a list id.\n";
+                    errorMsg = "Specify more conditions or where to save the result. Start with \"to\", then give a list id.\n";
                     return true;
                 }
                 if (inputWords[i].equals("CONDITION")) {
@@ -404,15 +428,16 @@ public class DialogParser {
                     ;
                     i++;
                     continue;
-                } else if (inputWords[i].equals("TO")) {
+                }
+                if (inputWords[i].equals("TO")) {
                     this.dialogState = FILTER_WHAT_WHERE_COND_TO;
                     i++;
                     continue;
-                } else {
-                    this.dialogState = FILTER_WHAT_WHERE_COND;
-                    errorMsg = "Specify where to save the result. Start with \"to\", then give a list id.\n";
-                    return true;
                 }
+                this.dialogState = FILTER_WHAT_WHERE_COND;
+                errorMsg = "Specify more conditions or where to save the result. Start with \"to\", then give a list id.\n";
+                return true;
+
             }
             if (this.dialogState == FILTER_WHAT_WHERE_FILL) {
                 if (i == inputWords.length) {
@@ -431,6 +456,8 @@ public class DialogParser {
                     i++;
                     continue;
                 }
+                errorMsg = "Specify a color or abort.\n";
+                return true;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_STROKE) {
                 if (i == inputWords.length) {
@@ -449,6 +476,8 @@ public class DialogParser {
                     i++;
                     continue;
                 }
+                errorMsg = "Specify a color or abort.\n";
+                return true;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_EDGE) {
                 if (i == inputWords.length) {
@@ -467,6 +496,23 @@ public class DialogParser {
                     i++;
                     continue;
                 }
+                errorMsg = "Specify an edge type or abort.\n";
+                return true;
+
+            }
+            if (this.dialogState == FILTER_WHAT_WHERE_PARAM){
+                if (i == inputWords.length){
+                    errorMsg = "Specify the value or abort.\n";
+                    return true;
+                }
+                if (hasValueForm(inputWords[i])){
+                    this.dialogState = FILTER_WHAT_WHERE_COND;
+                    parameters.add(inputWords[i]);
+                    i++;
+                    continue;
+                }
+                errorMsg = "Specify a value or abort.\n";
+                return true;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_HAS) {
                 if (i == inputWords.length) {
@@ -498,8 +544,9 @@ public class DialogParser {
                     i++;
                     continue;
                 }
-                errorMsg = "Specify where to save the result. Start with \"to\", then give a list id.\n";
-                return true;
+                // epsilon transition to FILTER_WHAT_WHERE
+                this.dialogState = FILTER_WHAT_WHERE;
+                continue;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_COND_TO) {
                 if (i == inputWords.length) {
@@ -515,6 +562,8 @@ public class DialogParser {
                 errorMsg = "Specify where to save the result. Format: (_|[a-Z])(_|[a-Z]|[0-9])*.\n";
                 return true;
             }
+            errorMsg = "Something went wrong, I could not parse your command. Please, try to write the command in one line.\n";
+            return true;
         }
         return true;
     }
