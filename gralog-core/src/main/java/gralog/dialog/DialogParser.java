@@ -536,7 +536,7 @@ public class DialogParser {
             }
             if (this.dialogState == FILTER_WHAT_WHERE_COND) {
                 if (i == inputWords.length) {
-                    errorMsg = "Specify where to save the result. Start with \"to\", then give a list id.\n";
+                    errorMsg = "Specify further conditions or where to save the result (start with \"to\", then give a list id).\n";
                     return true;
                 }
                 if (inputWords[i].equals("TO")) {
