@@ -21,7 +21,7 @@ public class DialogParser {
     private ArrayList<String> parameters;
     private String errorMsg;
     private DialogState dialogState;
-    private static String[] forbiddenIds = {"ALL", "SELECT", "FILTER", "WHERE", "ST", "SUCH", "THAT",
+    private static String[] forbiddenIds = {"ALL", "SELECT", "SELECTED", "FILTER", "WHERE", "ST", "SUCH", "THAT",
             "TO", "VERTICES", "EDGES", "DELETE", "FILL", "COLOR", "STROKE", "THICKNESS", "WIDTH", "HEIGHT",
             "SIZE", "ID", "SHAPE", "WEIGHT", "TYPE", "EDGETYPE", "DEGREE", "INDEGREE", "OUTDEGREE", "BUTTERFLY",
             "HAS", "SELFLOOP", "DIRECTED",
@@ -233,6 +233,12 @@ public class DialogParser {
                 }
                 if (inputWords[i].equals("ALL")) {
                     this.dialogState = FILTER_ALL;
+                    i++;
+                    continue;
+                }
+                if (inputWords[i].equals("SELECTED")){
+                    this.dialogState = FILTER_ALL; // filter all ... behaves as filter selected ...
+                    parameters.add("selected");
                     i++;
                     continue;
                 }
