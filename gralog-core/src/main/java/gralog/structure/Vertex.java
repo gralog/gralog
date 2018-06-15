@@ -46,7 +46,6 @@ public class Vertex extends XmlMarshallable implements IMovable {
     Set<Edge> incomingEdges;
     Set<Edge> incidentEdges;
 
-    protected Configuration config;
 
     public Vertex() {
         listeners = new HashSet<>();
@@ -57,7 +56,6 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     public Vertex(Configuration config){
         this();
-        this.config = config;
         if(config != null){
             initWithConfig(config);
         }
@@ -100,7 +98,6 @@ public class Vertex extends XmlMarshallable implements IMovable {
         this.outgoingEdges = new HashSet<>(v.outgoingEdges);
         this.incomingEdges = new HashSet<>(v.incomingEdges);
 
-        this.config = new Configuration(v.config);
     }
 
     @Override

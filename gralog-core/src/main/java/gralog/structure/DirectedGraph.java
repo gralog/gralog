@@ -29,4 +29,9 @@ public class DirectedGraph extends Structure<Vertex, Edge> {
     public Edge createEdge() {
         return new Edge();
     }
+
+    @Override
+    public Edge createEdge(Configuration config) {
+        return new Edge(config);
+    }
 }

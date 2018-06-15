@@ -160,7 +160,7 @@ public class StructurePane extends StackPane implements StructureListener {
         addLoop.setOnAction(e -> {
             if(highlights.getSelection().size() == 1){
                 Vertex v = (Vertex)highlights.getSelection().iterator().next();
-                structure.addEdge(v, v);
+                structure.addEdge(v, v, config);
             }
             this.requestRedraw();
         });
@@ -265,7 +265,9 @@ public class StructurePane extends StackPane implements StructureListener {
 //                    break;
                 case D:
                     List<Object> duplicates = structure.duplicate(highlights.getSelection(), gridSize);
-                    structure.snapToGrid(gridSize);
+                    if(snapToGrid){
+                        structure.snapToGrid(gridSize);
+                    }
                     clearSelection();
                     selectAll(duplicates);
                     this.requestRedraw();
@@ -370,7 +372,7 @@ public class StructurePane extends StackPane implements StructureListener {
             if(selected instanceof Vertex){
                 //right release on a vertex while drawing an edge = add edge
                 if(drawingEdge && currentEdgeStartingPoint != null){
-                    structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
+                    structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected, config);
                 }
                 //right click opens context menu
                 else if(vertexMenu != null){

@@ -1,10 +1,10 @@
 Adrian
 
-MOw
-DI
+MO
+DI 12-15
 MI
-DO
-FR
+DO 12-15
+FR 12-15
 
 Felix
 

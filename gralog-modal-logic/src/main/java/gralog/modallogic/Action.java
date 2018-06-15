@@ -3,6 +3,7 @@
 package gralog.modallogic;
 
 import gralog.plugins.XmlName;
+import gralog.preferences.Configuration;
 import gralog.structure.Edge;
 import gralog.structure.Vertex;
 import java.util.HashMap;
@@ -16,6 +17,14 @@ import org.w3c.dom.Element;
 public class Action extends Edge {
 
     public String name = null;
+
+    public Action(){
+
+    }
+
+    public Action(Configuration config){
+        super(config);
+    }
 
     @Override
     public Element toXml(Document doc, HashMap<Vertex, String> ids) throws Exception {

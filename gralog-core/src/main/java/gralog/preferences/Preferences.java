@@ -16,7 +16,7 @@ import java.util.Properties;
  * this class stores everything in a single file in the user's home directory.
  */
 public final class Preferences {
-    private static final String VERSION = "0.0.1";
+    private static final String VERSION = "0.0.2";
     private static final String FILENAME = "preferences";
     private static final java.util.Properties PROPERTIES = new java.util.Properties();
     private static final String PREFERENCE_PATH = buildPreferencePath();

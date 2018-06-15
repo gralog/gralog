@@ -27,4 +27,9 @@ public class FiniteGame extends Structure<FiniteGamePosition, FiniteGameMove> {
     public FiniteGameMove createEdge() {
         return new FiniteGameMove();
     }
+
+    @Override
+    public FiniteGameMove createEdge(Configuration config) {
+        return new FiniteGameMove(config);
+    }
 }

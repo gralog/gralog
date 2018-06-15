@@ -369,6 +369,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public abstract E createEdge();
 
     /**
+     * Create a new edge instance without adding it to the structure.
+     *
+     * @return The new edge.
+     */
+    public abstract E createEdge(Configuration config);
+
+    /**
      * Add an edge to the structure. Has no effect if the edge already exists in
      * the structure.
      *
@@ -438,34 +445,21 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edges.addAll(es);
     }
 
-    /**
-     * Creates a new edge and adds it to the structure. This is a convenience
-     * function combining createEdge and addEdge.
-     *
-     * @param source The tail of the new edge.
-     * @param target The head of the new edge.
-     * @return The new edge.
-     */
     public E addEdge(V source, V target) {
-        E e = createEdge(source, target);
-        addEdge(e);
-        return e;
+        return addEdge(source, target, -1, null);
     }
-    /**
-     * Creates a new edge and adds it to the structure. This is a convenience
-     * function combining createEdge and addEdge.
-     *
-     * @param source The tail of the new edge.
-     * @param target The head of the new edge.
-     * @param id The id of the edge. Leave empty for default vals
-     * @return The new edge.
-     */
+    public E addEdge(V source, V target, Configuration config){
+        return addEdge(source, target, -1, config);
+    }
     public E addEdge(V source, V target, int id) {
-        E e = createEdge(source, target, id);
-        addEdge(e);
-        return e;
+        return addEdge(source, target, id, null);
     }
 
+    public E addEdge(V source, V target, int id, Configuration config) {
+        E e = createEdge(source, target, id, config);
+        addEdge(e);
+        return e;
+    }
     /**
      * Removes an edge from the structure. Does not affect vertices, incident or
      * not.
@@ -496,7 +490,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @return The new edge.
      */
     public E createEdge(V source, V target) {
-        return createEdge(source, target, -1);
+        return createEdge(source, target, -1, null);
     }
 
     /**
@@ -506,8 +500,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param target The head of the new edge.
      * @return The new edge.
      */
-    private E createEdge(V source, V target, int id) {
-        E edge = createEdge();
+    private E createEdge(V source, V target, int id, Configuration config) {
+        E edge = createEdge(config);
         edge.id = id;
         edge.setSource(source);
         edge.setTarget(target);
@@ -539,6 +533,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     }
                 }
                 V v = addVertex();
+
                 v.copy((V) o);
                 v.move(new Vector2D(offset, offset));
 

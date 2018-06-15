@@ -557,8 +557,8 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) {
         Scene scene = new Scene(
             root,
-            Preferences.getInteger(getClass(), "main-window-width", 1000),
-            Preferences.getInteger(getClass(), "main-window-height", 800));
+            Preferences.getInteger(getClass(), "main-window-width", 1200),
+            Preferences.getInteger(getClass(), "main-window-height", 700));
 
         scene.getStylesheets().add("/stylesheet.css");
 

@@ -3,6 +3,7 @@
 package gralog.automaton;
 
 import gralog.plugins.XmlName;
+import gralog.preferences.Configuration;
 import gralog.structure.*;
 import java.util.HashMap;
 import org.w3c.dom.Document;
@@ -16,6 +17,13 @@ public class Transition extends Edge {
 
     public String symbol = "";
 
+    public Transition(){
+
+    }
+
+    public Transition(Configuration config){
+        super(config);
+    }
     @Override
     public Element toXml(Document doc, HashMap<Vertex, String> ids) throws Exception {
         Element enode = super.toXml(doc, ids);

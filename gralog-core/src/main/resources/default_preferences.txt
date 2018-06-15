@@ -1,5 +1,5 @@
 #internal version of the preference system
-pref_id=0.0.1
+pref_id=0.0.2x
 #other values
 newGraphOnStart=true
 Vertex_strokeColor=\#000000
@@ -13,3 +13,5 @@ helpOnStart=true
 Vertex_width=1.0
 StructurePane_gridSize=1.0
 Edge_color=\#000000
+Edge_endPointDistance=0.2
+Edge_startPointDistance=0

@@ -31,4 +31,11 @@ public class UndirectedGraph extends Structure<Vertex, Edge> {
         result.isDirected = false;
         return result;
     }
+
+    @Override
+    public Edge createEdge(Configuration config) {
+        Edge result = new Edge(config);
+        result.isDirected = false;
+        return result;
+    }
 }

@@ -35,6 +35,11 @@ public class Automaton extends Structure<State, Transition> {
         return new Transition();
     }
 
+    @Override
+    public Transition createEdge(Configuration config) {
+        return new Transition(config);
+    }
+
     public HashSet<State> epsilonHull(Set<State> start) {
         HashSet<State> result = new HashSet<>();
         HashSet<State> lastiteration = new HashSet<>();
