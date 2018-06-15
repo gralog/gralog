@@ -47,7 +47,24 @@ public class Dialog  {
     return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
   }
 
+  public boolean isListID(String s){
+    return (vertexListS.containsKey(s)|| edgeListS.containsKey(s));
+  }
+
   public void performAction(DialogAction action, ArrayList<String> parameters){
+
+  }
+
+  public void filter(ArrayList<String> parameters){
+      ArrayList<Vertex> what_v;
+      ArrayList<Edge> what_e;
+      if ((parameters.get(0).equals("ALL") && parameters.get(1).equals("VERTICES"))
+              ||
+              ()){
+          what_v = new ArrayList<Vertex>();
+      }
+
+
 
   }
 

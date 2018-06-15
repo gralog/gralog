@@ -207,13 +207,13 @@ public class DialogParser {
                     }
                     if (inputWords[i].equals("VERTICES")){
                         dialogState = FILTER_WHAT;
-                        parameters.add("vertices");
+                        parameters.add("VERTICES");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("EDGES")){
                         dialogState = FILTER_WHAT;
-                        parameters.add("edges");
+                        parameters.add("EDGES");
                         i++;
                         continue;
                     }
@@ -256,103 +256,103 @@ public class DialogParser {
                     }
                     if (inputWords[i].equals("NO")){
                         dialogState = FILTER_WHAT_WHERE_NO;
-                        parameters.add("nocodition");
+                        parameters.add("NOCONDITON");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("FILL")){
                         dialogState = FILTER_WHAT_WHERE_FILL;
-                        parameters.add("fill");
+                        parameters.add("FILL");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("STROKE")){
                         dialogState = FILTER_WHAT_WHERE_STROKE;
-                        parameters.add("stroke");
+                        parameters.add("STROKE");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("COLOR")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("color");
+                        parameters.add("COLOR");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("THICKNESS")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("thickness");
+                        parameters.add("THICKNESS");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("WIDTH")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("width");
+                        parameters.add("WIDTH");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("HEIGHT")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("height");
+                        parameters.add("HEIGHT");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("SIZE")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("size");
+                        parameters.add("SIZE");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("ID")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("id");
+                        parameters.add("ID");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("SHAPE")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("shape");
+                        parameters.add("SHAPE");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("WEIGHT")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("weight");
+                        parameters.add("WEIGHT");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("TYPE")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("type");
+                        parameters.add("TYPE");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("EDGE")){
                         dialogState = FILTER_WHAT_WHERE_EDGE;
-                        parameters.add("edge");
+                        parameters.add("EDGE");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("EDGETYPE")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("edgetype");
+                        parameters.add("EDGETYPE");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("DEGREE")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("degree");
+                        parameters.add("DEGREE");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("INDEGREE")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("indegree");
+                        parameters.add("INDEGREE");
                         i++;
                         continue;
                     }
                     if (inputWords[i].equals("OUTDEGREE")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("outdegree");
+                        parameters.add("OUTDEGREE");
                         i++;
                         continue;
                     }
@@ -363,7 +363,7 @@ public class DialogParser {
                     }
                     if (inputWords[i].equals("DIRECTED")){
                         dialogState = FILTER_WHAT_WHERE_PARAM;
-                        parameters.add("directed");
+                        parameters.add("DIRECTED");
                         i++;
                         continue;
                     }
