@@ -60,9 +60,8 @@ public class PreferenceWindow extends Stage {
         }
         generalPageCopy = generalPage;
         structurePageCopy = structurePage;
-
+        
         Scene s = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
-
 
         Button okButton = findButton(root, "ok");
         okButton.setOnAction(e -> savePreferences(generalPageCopy, structurePageCopy));
