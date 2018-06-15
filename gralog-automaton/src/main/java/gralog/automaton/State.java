@@ -3,6 +3,7 @@
 package gralog.automaton;
 
 import gralog.plugins.XmlName;
+import gralog.preferences.Configuration;
 import gralog.rendering.*;
 import gralog.structure.*;
 
@@ -25,6 +26,25 @@ public class State extends Vertex {
     public Double initialMarkHeadLength = 0.4d; // cm
     public GralogColor initialMarkColor = GralogColor.BLACK;
 
+
+    public State(){
+        super();
+    }
+
+    public State(Configuration config){
+        super(config);
+    }
+
+    /**
+     * Initializes lots of variables from a given configuration
+     * @param config
+     */
+    @Override
+    protected void initWithConfig(Configuration config){
+        super.initWithConfig(config);
+
+        //TODO: additional initializations from config have to be made
+    }
     @Override
     public Element toXml(Document doc, String id) throws Exception {
         Element vnode = super.toXml(doc, id);

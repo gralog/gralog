@@ -55,6 +55,26 @@ public class Vertex extends XmlMarshallable implements IMovable {
         incomingEdges = new HashSet<>();
     }
 
+    public Vertex(Configuration config){
+        this();
+        this.config = config;
+        if(config != null){
+            initWithConfig(config);
+        }
+    }
+
+    /**
+     * Initializes lots of variables from a given configuration
+     * @param config
+     */
+    protected void initWithConfig(Configuration config){
+        //TODO: complete
+        strokeColor = config.getValue("Vertex_strokeColor", GralogColor::parseColor, GralogColor.BLACK);
+        fillColor = config.getValue("Vertex_fillColor", GralogColor::parseColor, GralogColor.WHITE);
+        shape.setWidth(config.getValue("Vertex_width", Double::parseDouble, 1.0));
+        shape.setHeight(config.getValue("Vertex_height", Double::parseDouble, 1.0));
+    }
+
     /**
      * Copies a vertex information from a given vertex object. Not the ID.
      *
@@ -85,7 +105,12 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     @Override
     public String toString() {
-        return "Vertex{" + "label=" + label + ", radius=" + radius + ", fillColor=" + fillColor + ", strokeWidth=" + strokeWidth + ", textHeight=" + textHeight + ", strokeColor=" + strokeColor + ", coordinates=" + coordinates + '}';
+        return "Vertex{" + "label=" + label + ", radius=" + radius +
+                ", fillColor=" + fillColor +
+                ", strokeWidth=" + strokeWidth +
+                ", textHeight=" + textHeight +
+                ", strokeColor=" + strokeColor +
+                ", coordinates=" + coordinates + '}';
     }
 
     public void setLabel(String label){

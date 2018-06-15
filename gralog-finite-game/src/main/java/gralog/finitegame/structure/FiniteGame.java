@@ -3,6 +3,7 @@
 package gralog.finitegame.structure;
 
 import gralog.plugins.XmlName;
+import gralog.preferences.Configuration;
 import gralog.structure.*;
 
 @StructureDescription(
@@ -15,6 +16,11 @@ public class FiniteGame extends Structure<FiniteGamePosition, FiniteGameMove> {
     @Override
     public FiniteGamePosition createVertex() {
         return new FiniteGamePosition();
+    }
+
+    @Override
+    public FiniteGamePosition createVertex(Configuration config) {
+        return new FiniteGamePosition(config);
     }
 
     @Override

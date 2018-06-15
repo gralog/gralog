@@ -33,7 +33,7 @@
                   <Font size="11.0" />
                </font>
             </Label>
-            <Label layoutX="20.0" layoutY="55.0" prefHeight="20.0" prefWidth="138.0" text="Show Axis" textAlignment="RIGHT">
+            <Label layoutX="20.0" layoutY="55.0" prefHeight="20.0" prefWidth="138.0" text="Snap To Grid" textAlignment="RIGHT">
                <font>
                   <Font size="11.0" />
                </font>
@@ -48,7 +48,7 @@
       <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
          <children>
             <CheckBox fx:id="StructurePane_showGrid" layoutY="5.0" mnemonicParsing="false" prefHeight="20.0" />
-            <CheckBox fx:id="StructurePane_showAxis" layoutY="55.0" mnemonicParsing="false" />
+            <CheckBox fx:id="StructurePane_snapToGrid" layoutY="55.0" mnemonicParsing="false" />
             <TextField fx:id="StructurePane_gridSize" layoutY="30.0" minHeight="0.0" prefHeight="20.0" prefWidth="138.0" />
             <ColorPicker fx:id="StructurePane_axisColor" layoutY="80.0" prefHeight="20.0" prefWidth="138.0" style="-fx-font-size: 11;" />
          </children>

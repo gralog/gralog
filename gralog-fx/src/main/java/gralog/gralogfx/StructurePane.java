@@ -105,14 +105,19 @@ public class StructurePane extends StackPane implements StructureListener {
     @MenuPrefVariable(name="Snap to Grid")
     private boolean snapToGrid = true;
 
+    protected Configuration config;
+
     public StructurePane(Structure structure){
         this(structure, new Configuration());
     }
     public StructurePane(Structure structure, Configuration config) {
 
+        this.config = config;
+
         //init to config
         hasGrid = config.getValue("StructurePane_showGrid", Boolean::parseBoolean,true);
         gridSize = config.getValue("StructurePane_gridSize", Double::parseDouble, 1.0);
+        snapToGrid = config.getValue("StructurePane_snapToGrid", Boolean::parseBoolean,true);
 
         this.structure = structure;
         canvas = new Canvas(500,500);
@@ -344,7 +349,7 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         else if(b == MouseButton.PRIMARY){
             if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease){
-                Vertex v = structure.addVertex();
+                Vertex v = structure.addVertex(config);
                 v.coordinates = new Vector2D(
                         mousePositionModel.getX(),
                         mousePositionModel.getY()
@@ -582,12 +587,6 @@ public class StructurePane extends StackPane implements StructureListener {
                 gc.strokeLine(0, lineScreen.getY(), w, lineScreen.getY());
             }
         }
-
-        // origin
-        gc.setStroke(Color.BLACK);
-        Point2D center = modelToScreen(new Point2D(0d, 0d));
-        gc.strokeLine(center.getX(), 0, center.getX(), h);
-        gc.strokeLine(0, center.getY(), w, center.getY());
 
         // draw the graph
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);

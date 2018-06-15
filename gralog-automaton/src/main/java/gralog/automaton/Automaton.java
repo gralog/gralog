@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton;
 
+import gralog.preferences.Configuration;
 import gralog.structure.*;
 import gralog.plugins.*;
 
@@ -21,6 +22,12 @@ public class Automaton extends Structure<State, Transition> {
     @Override
     public State createVertex() {
         return new State();
+    }
+
+    @Override
+    public State createVertex(Configuration config) {
+        //TODO:
+        return new State(config);
     }
 
     @Override

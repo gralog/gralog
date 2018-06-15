@@ -5,6 +5,7 @@ package gralog.structure;
 import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
 import gralog.events.*;
+import gralog.preferences.Configuration;
 import gralog.rendering.*;
 import gralog.exportfilter.*;
 
@@ -146,10 +147,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public abstract V createVertex();
 
     /**
-     * Adds a vertex to the structure. Has no effect if the vertex already
-     * exists in the structure.
+     * Creates a new vertex instance without adding it to the structure.
      *
-     * @param v The vertex to be added.
+     * @return The new vertex.
+     */
+    public abstract V createVertex(Configuration config);
+
+
+    /**
+     * Don't use this method. Adding vertices this way is deprecated.
+     * @param v
      */
     @Deprecated
     public void addVertex(V v) {
@@ -159,8 +166,23 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
     }
 
+    /**
+     * Adds a vertex to the structure. Has no effect if the vertex already
+     * exists in the structure.
+     *
+     */
     public V addVertex(){
-        V v = createVertex();
+        return addVertex((Configuration) null);
+    }
+
+    /**
+     * Adds a vertex to the structure. Has no effect if the vertex already
+     * exists in the structure.
+     * @param config The config with which the vertex will be initialized
+     * @return The created vertex
+     */
+    public V addVertex(Configuration config){
+        V v = createVertex(config);
         v.id = pollNextFreeID();
         vertices.put(v.id, v);
         return v;
@@ -176,6 +198,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public V addVertex(String label) {
         V v = addVertex();
+        v.label = label;
+        return v;
+    }
+
+    public V addVertex(String label, Configuration config) {
+        V v = addVertex(config);
         v.label = label;
         return v;
     }

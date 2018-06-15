@@ -3,6 +3,7 @@
 package gralog.modalmucalculus.structure;
 
 import gralog.plugins.XmlName;
+import gralog.preferences.Configuration;
 import gralog.structure.*;
 import gralog.finitegame.structure.*;
 
@@ -16,6 +17,11 @@ public class ParityGame extends Structure<ParityGamePosition, FiniteGameMove> {
     @Override
     public ParityGamePosition createVertex() {
         return new ParityGamePosition();
+    }
+
+    @Override
+    public ParityGamePosition createVertex(Configuration config) {
+        return new ParityGamePosition(config);
     }
 
     @Override

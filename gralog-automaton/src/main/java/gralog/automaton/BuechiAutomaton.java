@@ -3,6 +3,7 @@
 package gralog.automaton;
 
 import gralog.plugins.XmlName;
+import gralog.preferences.Configuration;
 import gralog.structure.Structure;
 import gralog.structure.StructureDescription;
 
@@ -19,6 +20,11 @@ public class BuechiAutomaton extends Structure<State, Transition> {
     @Override
     public State createVertex() {
         return new State();
+    }
+
+    @Override
+    public State createVertex(Configuration config) {
+        return new State(config);
     }
 
     @Override
