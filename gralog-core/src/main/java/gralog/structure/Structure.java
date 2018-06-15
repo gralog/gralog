@@ -151,11 +151,34 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @param v The vertex to be added.
      */
+    @Deprecated
     public void addVertex(V v) {
-        v.id = pollNextFreeID();
-        vertices.put(v.id, v);
+        if(!vertices.containsKey(v)){
+            v.id = pollNextFreeID();
+            vertices.put(v.id, v);
+        }
     }
 
+    public V addVertex(){
+        V v = createVertex();
+        v.id = pollNextFreeID();
+        vertices.put(v.id, v);
+        return v;
+    }
+
+    /**
+     * Creates a new vertex with the given label and adds it to the structure.
+     * This is a convenience function combining createVertex and addVertex.
+     * Adding multiple vertices with the same name adds multiple vertices.
+     *
+     * @param label The label of the new vertex to be added.
+     * @return The new vertex.
+     */
+    public V addVertex(String label) {
+        V v = addVertex();
+        v.label = label;
+        return v;
+    }
     /**
      * Adds a set of vertices to the structure.
      *
@@ -180,20 +203,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edges.clear();
     }
 
-    /**
-     * Creates a new vertex with the given label and adds it to the structure.
-     * This is a convenience function combining createVertex and addVertex.
-     * Adding multiple vertices with the same name adds multiple vertices.
-     *
-     * @param label The label of the new vertex to be added.
-     * @return The new vertex.
-     */
-    public V addVertex(String label) {
-        V v = createVertex();
-        v.label = label;
-        addVertex(v);
-        return v;
-    }
+
 
     /** preliminary method (to be updated with edge id's) for removing an edge
     * very inefficient
@@ -207,12 +217,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
 
         for (Edge e : sourceVertex.getIncidentEdges()){
-            System.out.println("iterating with edge: " + e.toString() + " with input: " + Integer.toString(inputSourceId) + " and target: " + Integer.toString(inputTargetId));
+            System.out.println("iterating with edge: " + e.toString() +
+                    " with input: " + Integer.toString(inputSourceId) +
+                    " and target: " + Integer.toString(inputTargetId));
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
 
             if (targetId == inputTargetId && sourceId == inputSourceId){
-                System.out.println("ok we found edge with target: " + targetId + "=" + inputTargetId + " and source: " + sourceId + "=" + inputSourceId);
+                System.out.println("ok we found edge with target: " +
+                        targetId + "=" + inputTargetId + " and source: " +
+                        sourceId + "=" + inputSourceId);
                 return e;
             }
             else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)){
@@ -490,19 +504,23 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         for(Object o : selection) {
             if (o instanceof Vertex) {
-                V v = createVertex();
-                v.copy((V) o);
-                v.move(new Vector2D(offset, offset));
-                for(Edge e : v.getOutgoingEdges()){
+
+                for(Edge e : ((V) o).getOutgoingEdges()){
                     if(selection.contains(e.getTarget())){
                         edgeIDs.add(new Interval(e.getSource().id, e.getTarget().id));
                     }
                 }
+                V v = addVertex();
+                v.copy((V) o);
+                v.move(new Vector2D(offset, offset));
+
                 v.incidentEdges.clear();
                 v.outgoingEdges.clear();
-                idToVertex.put(v.id, v);
+
+
                 //now we can correct v.id
-                addVertex(v);
+                idToVertex.put(((V) o).id, v);
+
                 result.add(v);
             }
         }
@@ -883,10 +901,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             Element child = (Element) childNode;
             Object obj = PluginManager.instantiateClass(child.getTagName());
             if (obj instanceof Vertex) {
-                V v = (V) obj;
+                V v = addVertex();
+                v.copy((V) obj);
                 String id = v.fromXml(child);
                 vertexRegister.put(id, v);
-                addVertex(v);
             } else if (obj instanceof Edge) {
                 tempEdges.add((E) obj);
                 loadedFrom.put((E) obj, child);

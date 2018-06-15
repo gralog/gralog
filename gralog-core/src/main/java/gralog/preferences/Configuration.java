@@ -21,6 +21,17 @@ public class Configuration {
         }
     }
 
+    public Configuration(Configuration config){
+        this();
+        if(config == null){
+            return;
+        }
+        for(String key : config.config.keySet()){
+            this.config.put(key, config.config.get(key));
+        }
+    }
+
+
     /**
      * Returns an object from the configuration dictionary. Can provide
      * a default argument

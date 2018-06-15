@@ -344,7 +344,7 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         else if(b == MouseButton.PRIMARY){
             if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease){
-                Vertex v = structure.createVertex();
+                Vertex v = structure.addVertex();
                 v.coordinates = new Vector2D(
                         mousePositionModel.getX(),
                         mousePositionModel.getY()
@@ -352,7 +352,6 @@ public class StructurePane extends StackPane implements StructureListener {
                 if (hasGrid && snapToGrid){
                     v.snapToGrid(gridSize);
                 }
-                structure.addVertex(v);
                 structureSubscribers.forEach(s -> s.accept(structure));
             }
             else if(selectionBoxDragging && selectionBoxingActive &&

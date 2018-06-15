@@ -4,6 +4,7 @@ package gralog.structure;
 
 import gralog.plugins.*;
 import gralog.events.*;
+import gralog.preferences.Configuration;
 import gralog.rendering.*;
 import gralog.rendering.shapes.Ellipse;
 import gralog.rendering.shapes.RenderingShape;
@@ -45,6 +46,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
     Set<Edge> incomingEdges;
     Set<Edge> incidentEdges;
 
+    protected Configuration config;
+
     public Vertex() {
         listeners = new HashSet<>();
         outgoingEdges = new HashSet<>();
@@ -53,11 +56,11 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     /**
-     * Copies a vertex information from a given vertex object.
+     * Copies a vertex information from a given vertex object. Not the ID.
      *
      */
     public <V extends Vertex> void copy(V v){
-        this.id = v.id;
+        //this.id = v.id;
         this.radius = v.radius;
         this.loopAngle = v.loopAngle;
         this.loopAnchor = v.loopAnchor;
@@ -76,6 +79,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
         this.incidentEdges = new HashSet<>(v.incidentEdges);
         this.outgoingEdges = new HashSet<>(v.outgoingEdges);
         this.incomingEdges = new HashSet<>(v.incomingEdges);
+
+        this.config = new Configuration(v.config);
     }
 
     @Override
