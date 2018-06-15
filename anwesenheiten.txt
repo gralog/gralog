@@ -8,11 +8,11 @@ FR
 
 Felix
 
-MO
-DI
-MI
-DO
-FR
+MO 14-18
+DI 14-18
+MI 12-15
+DO 14-18
+FR 12-15:30
 
 Michelle
 
