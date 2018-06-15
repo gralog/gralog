@@ -3,7 +3,7 @@
 package gralog.gralogfx;
 
 import gralog.gralogfx.panels.GralogWindow;
-import gralog.gralogfx.preferences.Configuration;
+import gralog.preferences.Configuration;
 import gralog.preferences.Preferences;
 import gralog.structure.DirectedGraph;
 import gralog.structure.Highlights;
@@ -15,7 +15,7 @@ import java.util.Set;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import java.util.List;
+
 import java.util.ArrayList;
 
 /**

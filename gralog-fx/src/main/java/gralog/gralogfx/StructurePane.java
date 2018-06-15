@@ -5,7 +5,7 @@ package gralog.gralogfx;
 import java.util.ArrayList;
 
 import gralog.gralogfx.input.MultipleKeyCombination;
-import gralog.gralogfx.preferences.Configuration;
+import gralog.preferences.Configuration;
 import gralog.gralogfx.threading.ScrollThread;
 import gralog.preferences.MenuPrefVariable;
 import gralog.structure.*;

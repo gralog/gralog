@@ -4,11 +4,11 @@ package gralog.preferences;
 
 import gralog.rendering.GralogColor;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
 /**
@@ -16,7 +16,7 @@ import java.util.Properties;
  * this class stores everything in a single file in the user's home directory.
  */
 public final class Preferences {
-
+    private static final String VERSION = "1.0.0";
     private static final String FILENAME = "preferences";
     private static final java.util.Properties PROPERTIES = new java.util.Properties();
     private static final String PREFERENCE_PATH = buildPreferencePath();
@@ -46,12 +46,34 @@ public final class Preferences {
 
         try (FileInputStream in = new FileInputStream(path + "/" + FILENAME)) {
             PROPERTIES.load(in);
-        } catch (IOException e) {
-            // Most likely the config file does not exist, so we can ignore
-            // this exception.
+            String id =PROPERTIES.getProperty("pref_id");
+            if(id == null || !id.equals(VERSION))
+            {
+                createDefaultPrefs(path);
+            }
+        } catch (FileNotFoundException e) {
+            createDefaultPrefs(path);
+        } catch (IOException e){
+            e.printStackTrace();
         }
         return path;
     }
+
+    private static void createDefaultPrefs(String path){
+        System.out.println("No config was found - add default prefs");
+        InputStream def = Preferences.class.getClassLoader().getResourceAsStream("default_preferences.txt");
+        URL r = Preferences.class.getClassLoader().getResource("default_preferences.txt");
+        try{
+            Files.copy(def, Paths.get(path + "/" + FILENAME), StandardCopyOption.REPLACE_EXISTING);
+            try (FileInputStream in = new FileInputStream(path + "/" + FILENAME)) {
+                PROPERTIES.load(in);
+            }
+        }catch (IOException ex){
+            ex.printStackTrace();
+        }
+    }
+
+
     /*
      **********
      * STRING *

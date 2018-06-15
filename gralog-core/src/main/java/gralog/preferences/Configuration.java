@@ -1,4 +1,4 @@
-package gralog.gralogfx.preferences;
+package gralog.preferences;
 
 
 import java.util.HashMap;
