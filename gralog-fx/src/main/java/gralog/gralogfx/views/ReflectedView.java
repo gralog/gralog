@@ -20,6 +20,9 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import java.lang.annotation.Annotation;
+import gralog.core.annotations.DataField;
+
 
 import javax.sound.sampled.Line;
 
@@ -42,7 +45,19 @@ public class ReflectedView extends GridPaneView<Object> {
             if (displayObject != null) {
                 Class<?> c = displayObject.getClass();
 
-                for (Field f : c.getFields()) {
+                
+                for (Field f : c.getDeclaredFields()) {
+                    f.setAccessible(true);
+                    boolean display = false;
+                    Annotation[] annotations = f.getDeclaredAnnotations();
+                    for(Annotation annotation : annotations){
+                        if(annotation instanceof DataField){
+                            DataField dataField = (DataField)annotation;
+                            display = dataField.display();
+                        }
+                    }
+                    System.out.println("current field: " + f + " and display: " + display);
+
 
                     String name = f.getName();
                     Label nameLabel = new Label(name);
@@ -51,152 +66,153 @@ public class ReflectedView extends GridPaneView<Object> {
                     Object value = f.get(displayObject);
                     Control valueControl = null;
                     Class<?> type = f.getType();
+                    if (display){
+                        if (type.equals(Double.class)) {
 
-                    if (type.equals(Double.class)) {
+                            String valueString = value.toString();
+                            TextField valueField = new TextField(valueString);
 
-                        String valueString = value.toString();
-                        TextField valueField = new TextField(valueString);
-
-                        valueField.textProperty().addListener(e -> {
-                            try {
-                                f.set(displayObject, Double.parseDouble(valueField.getText()));
-                                requestRedraw();
-                            } catch (IllegalAccessException | IllegalArgumentException ex) {
-
-                            }
-                        });
-                        valueControl = valueField;
-                    } else if (type.equals(Integer.class)) {
-                        String valueString = value.toString();
-                        TextField valueField = new TextField(valueString);
-                        valueField.textProperty().addListener(e -> {
-                            try {
-                                f.set(displayObject, Integer.parseInt(valueField.getText()));
-                                requestRedraw();
-                            } catch (IllegalAccessException | IllegalArgumentException ex) {
-                            }
-                        });
-                        valueControl = valueField;
-                    } else if (type.equals(GralogColor.class)) {
-                        String valueString = ((GralogColor) value).toHtmlString();
-
-                        ColorPicker colorPicker = new ColorPicker(Color.web(valueString));
-                        colorPicker.setOnAction(e -> {
-                            try {
-                                f.set(displayObject, GralogColor.parseColorAlpha(colorPicker.getValue().toString()));
-                                requestRedraw();
-                            } catch (IllegalAccessException | IllegalArgumentException ex) {
-                            }
-                        });
-                        valueControl = colorPicker;
-                    } else if (type.equals(Boolean.class)) {
-                        CheckBox valueField = new CheckBox();
-                        if ((Boolean) value)
-                            valueField.setSelected(true);
-                        valueField.selectedProperty().addListener(e -> {
-                            try {
-                                f.set(displayObject, valueField.isSelected());
-                                requestRedraw();
-                            } catch (IllegalAccessException | IllegalArgumentException ex) {
-                            }
-                        });
-                        valueControl = valueField;
-                    } else if (type.isAssignableFrom(String.class)) {
-                        String valueString = value.toString();
-                        TextField valueField = new TextField(valueString);
-                        valueField.textProperty().addListener(e -> {
-                            try {
-                                f.set(displayObject, valueField.getText());
-                                requestRedraw();
-                            } catch (IllegalAccessException | IllegalArgumentException ex) {
-                            }
-                        });
-                        valueControl = valueField;
-                    } else if (type.isAssignableFrom(GralogGraphicsContext.LineType.class)) {
-                        ChoiceBox<GralogGraphicsContext.LineType> choiceBox =
-                                new ChoiceBox<>(FXCollections.observableArrayList(GralogGraphicsContext.LineType.values()));
-                        choiceBox.getSelectionModel().select((GralogGraphicsContext.LineType)value);
-                        choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
-                            @Override
-                            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                                try{
-                                    f.set(displayObject, GralogGraphicsContext.LineType.values()[newValue.intValue()]);
+                            valueField.textProperty().addListener(e -> {
+                                try {
+                                    f.set(displayObject, Double.parseDouble(valueField.getText()));
                                     requestRedraw();
-                                }catch(IllegalAccessException | IllegalArgumentException ex) {
+                                } catch (IllegalAccessException | IllegalArgumentException ex) {
+
                                 }
-                            }
-                        });
-                        valueControl = choiceBox;
-                    } else if (type.isAssignableFrom(Edge.EdgeType.class)) {
-                        ChoiceBox<Edge.EdgeType> choiceBox =
-                                new ChoiceBox<>(FXCollections.observableArrayList(Edge.EdgeType.values()));
-                        choiceBox.getSelectionModel().select((Edge.EdgeType) value);
-                        choiceBox.getSelectionModel().selectedIndexProperty().addListener( (obs, old, d) ->{
-                            ((Edge)displayObject).setEdgeType(Edge.EdgeType.values()[d.intValue()]);
-                            requestRedraw();
-                        });
-                        valueControl = choiceBox;
-                    } else if (type.isAssignableFrom(RenderingShape.class)){
-
-                        RenderingShape shape = (RenderingShape)value;
-
-                        ChoiceBox<Class<? extends RenderingShape>> choiceBox =
-                                new ChoiceBox<>(FXCollections.observableArrayList(RenderingShape.renderingShapeClasses));
-
-                        choiceBox.getSelectionModel().select(RenderingShape.renderingShapeClasses.indexOf(value.getClass()));
-                        choiceBox.setConverter(new RenderingShape.ShapeConverter());
-                        choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
-                            @Override
-                            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                                try{
-                                    ///here!
-                                    Constructor cs = RenderingShape.renderingShapeClasses.get(newValue.intValue()).getConstructors()[0];
-                                    f.set(displayObject, cs.newInstance(shape.sizeBox));
+                            });
+                            valueControl = valueField;
+                        } else if (type.equals(Integer.class)) {
+                            String valueString = value.toString();
+                            TextField valueField = new TextField(valueString);
+                            valueField.textProperty().addListener(e -> {
+                                try {
+                                    f.set(displayObject, Integer.parseInt(valueField.getText()));
                                     requestRedraw();
-                                }catch(IllegalAccessException | IllegalArgumentException ex) {
-                                }catch(InstantiationException | InvocationTargetException ex){
-                                    ex.printStackTrace();
+                                } catch (IllegalAccessException | IllegalArgumentException ex) {
                                 }
-                            }
-                        });
+                            });
+                            valueControl = valueField;
+                        } else if (type.equals(GralogColor.class)) {
+                            String valueString = ((GralogColor) value).toHtmlString();
 
-                        TextField widthField = new TextField(shape.sizeBox.width.toString());
-                        TextField heightField = new TextField(shape.sizeBox.height.toString());
-                        widthField.textProperty().addListener(e -> {
-                            try {
-                                RenderingShape localShape = (RenderingShape) f.get(displayObject);
-                                localShape.setWidth(Double.parseDouble(widthField.getText()));
-                                f.set(displayObject, localShape);
+                            ColorPicker colorPicker = new ColorPicker(Color.web(valueString));
+                            colorPicker.setOnAction(e -> {
+                                try {
+                                    f.set(displayObject, GralogColor.parseColorAlpha(colorPicker.getValue().toString()));
+                                    requestRedraw();
+                                } catch (IllegalAccessException | IllegalArgumentException ex) {
+                                }
+                            });
+                            valueControl = colorPicker;
+                        } else if (type.equals(Boolean.class)) {
+                            CheckBox valueField = new CheckBox();
+                            if ((Boolean) value)
+                                valueField.setSelected(true);
+                            valueField.selectedProperty().addListener(e -> {
+                                try {
+                                    f.set(displayObject, valueField.isSelected());
+                                    requestRedraw();
+                                } catch (IllegalAccessException | IllegalArgumentException ex) {
+                                }
+                            });
+                            valueControl = valueField;
+                        } else if (type.isAssignableFrom(String.class)) {
+                            String valueString = value.toString();
+                            TextField valueField = new TextField(valueString);
+                            valueField.textProperty().addListener(e -> {
+                                try {
+                                    f.set(displayObject, valueField.getText());
+                                    requestRedraw();
+                                } catch (IllegalAccessException | IllegalArgumentException ex) {
+                                }
+                            });
+                            valueControl = valueField;
+                        } else if (type.isAssignableFrom(GralogGraphicsContext.LineType.class)) {
+                            ChoiceBox<GralogGraphicsContext.LineType> choiceBox =
+                                    new ChoiceBox<>(FXCollections.observableArrayList(GralogGraphicsContext.LineType.values()));
+                            choiceBox.getSelectionModel().select((GralogGraphicsContext.LineType)value);
+                            choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                                    try{
+                                        f.set(displayObject, GralogGraphicsContext.LineType.values()[newValue.intValue()]);
+                                        requestRedraw();
+                                    }catch(IllegalAccessException | IllegalArgumentException ex) {
+                                    }
+                                }
+                            });
+                            valueControl = choiceBox;
+                        } else if (type.isAssignableFrom(Edge.EdgeType.class)) {
+                            ChoiceBox<Edge.EdgeType> choiceBox =
+                                    new ChoiceBox<>(FXCollections.observableArrayList(Edge.EdgeType.values()));
+                            choiceBox.getSelectionModel().select((Edge.EdgeType) value);
+                            choiceBox.getSelectionModel().selectedIndexProperty().addListener( (obs, old, d) ->{
+                                ((Edge)displayObject).setEdgeType(Edge.EdgeType.values()[d.intValue()]);
                                 requestRedraw();
-                            } catch (IllegalAccessException | IllegalArgumentException ex) {
-                            }
-                        });
-                        heightField.textProperty().addListener(e -> {
-                            try {
-                                RenderingShape localShape = (RenderingShape) f.get(displayObject);
-                                localShape.setHeight(Double.parseDouble(heightField.getText()));
-                                f.set(displayObject, localShape);
-                                requestRedraw();
-                            } catch (IllegalAccessException | IllegalArgumentException ex) {
-                            }
-                        });
+                            });
+                            valueControl = choiceBox;
+                        } else if (type.isAssignableFrom(RenderingShape.class)){
 
-                        addSeparator(i);
-                        i++;
-                        addPair("shape", choiceBox, i);
-                        addPair("width", widthField, i + 1);
-                        addPair("height", heightField, i + 2);
+                            RenderingShape shape = (RenderingShape)value;
 
-                        addSeparator(i + 3);
+                            ChoiceBox<Class<? extends RenderingShape>> choiceBox =
+                                    new ChoiceBox<>(FXCollections.observableArrayList(RenderingShape.renderingShapeClasses));
 
-                        i+=4;
-                    }
+                            choiceBox.getSelectionModel().select(RenderingShape.renderingShapeClasses.indexOf(value.getClass()));
+                            choiceBox.setConverter(new RenderingShape.ShapeConverter());
+                            choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
+                                @Override
+                                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                                    try{
+                                        ///here!
+                                        Constructor cs = RenderingShape.renderingShapeClasses.get(newValue.intValue()).getConstructors()[0];
+                                        f.set(displayObject, cs.newInstance(shape.sizeBox));
+                                        requestRedraw();
+                                    }catch(IllegalAccessException | IllegalArgumentException ex) {
+                                    }catch(InstantiationException | InvocationTargetException ex){
+                                        ex.printStackTrace();
+                                    }
+                                }
+                            });
 
-                    if (valueControl != null) {
-                        valueControl.setMaxWidth(MAX_FIELD_WIDTH);
-                        add(nameLabel, 0, i);
-                        add(valueControl, 1, i);
-                        i++;
+                            TextField widthField = new TextField(shape.sizeBox.width.toString());
+                            TextField heightField = new TextField(shape.sizeBox.height.toString());
+                            widthField.textProperty().addListener(e -> {
+                                try {
+                                    RenderingShape localShape = (RenderingShape) f.get(displayObject);
+                                    localShape.setWidth(Double.parseDouble(widthField.getText()));
+                                    f.set(displayObject, localShape);
+                                    requestRedraw();
+                                } catch (IllegalAccessException | IllegalArgumentException ex) {
+                                }
+                            });
+                            heightField.textProperty().addListener(e -> {
+                                try {
+                                    RenderingShape localShape = (RenderingShape) f.get(displayObject);
+                                    localShape.setHeight(Double.parseDouble(heightField.getText()));
+                                    f.set(displayObject, localShape);
+                                    requestRedraw();
+                                } catch (IllegalAccessException | IllegalArgumentException ex) {
+                                }
+                            });
+
+                            addSeparator(i);
+                            i++;
+                            addPair("shape", choiceBox, i);
+                            addPair("width", widthField, i + 1);
+                            addPair("height", heightField, i + 2);
+
+                            addSeparator(i + 3);
+
+                            i+=4;
+                        }
+
+                        if (valueControl != null) {
+                            valueControl.setMaxWidth(MAX_FIELD_WIDTH);
+                            add(nameLabel, 0, i);
+                            add(valueControl, 1, i);
+                            i++;
+                        }
                     }
                 }
             }

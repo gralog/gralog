@@ -10,6 +10,8 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
     int targetId;
 	Vertex sourceVertex;
     Vertex targetVertex;
+    int id= -1;
+    boolean isDirected;
     // String neighbourString;
 
 
@@ -51,6 +53,19 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
             this.error = new Exception("error: target vertex with id " + Integer.toString(this.targetId) + " does not exist");
             return;
         }
+
+        try{
+            this.isDirected = externalCommandSegments[4].equals("true");
+        }catch(ArrayIndexOutOfBoundsException e){
+            this.error = e;
+            this.fail();
+        }
+
+        try{
+            this.id = Integer.parseInt(externalCommandSegments[5]);
+        }catch(Exception e){
+            System.out.println("no id given, who gives a fuck");
+        }
 	}
 
 
@@ -59,8 +74,10 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
         
 
         Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
+
+        e.setId(this.id);
             
-        e.isDirected = (externalCommandSegments[4].equals("true"));
+        e.isDirected = this.isDirected;
 
         this.structure.addEdge(e);
 

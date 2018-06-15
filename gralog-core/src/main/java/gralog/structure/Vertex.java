@@ -9,9 +9,13 @@ import gralog.rendering.shapes.Ellipse;
 import gralog.rendering.shapes.RenderingShape;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import gralog.core.annotations.DataField;
+
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+
 
 /**
  * A vertex with a circle shape.
@@ -19,23 +23,30 @@ import java.util.*;
 @XmlName(name = "node")
 public class Vertex extends XmlMarshallable implements IMovable {
 
+    @DataField(display=true)
     public int id;
+    @DataField(display=true)
     public String label = "";
+    @DataField(display=false)
     public double radius = 0.7;     // cm
 
     //the position of the loop center on the circle
     ///note: -90 is on top because the coordinate system is flipped horizontally
+    @DataField(display=false)
     public Double loopAnchor = -90d;  // degrees
     //the position of the endpoints of a loop
+    @DataField(display=false)
     public double loopAngle = 20;   // degrees
 
     public double strokeWidth = 2.54 / 96; // cm
     public double textHeight = 0.4d; // cm
 
+    @DataField(display=true)
     public GralogColor fillColor = GralogColor.WHITE;
+    @DataField(display=true)
     public GralogColor strokeColor = GralogColor.BLACK;
 
-
+    @DataField(display=true)
     public RenderingShape shape = Ellipse.create(1.4, 1.4);
 
     public Vector2D coordinates = new Vector2D(0.0, 0.0);
@@ -90,14 +101,14 @@ public class Vertex extends XmlMarshallable implements IMovable {
     void connectEdge(Edge e) {
         if(e.getSource() == this){
             //if id has not been set already, set it
-            if(e.id == -1 && outgoingEdges.isEmpty()){
-                e.id = 0;
+            if(e.getId() == -1 && outgoingEdges.isEmpty()){
+                e.setId(0);
             }
-            if(e.id == -1){
+            if(e.getId() == -1){
                 int[] allIndices = new int[outgoingEdges.size()];
                 int k = 0;
                 for(Edge edge : outgoingEdges){
-                    allIndices[k] = edge.id;
+                    allIndices[k] = edge.getId();
                     k++;
                 }
                 Arrays.sort(allIndices);
@@ -105,13 +116,13 @@ public class Vertex extends XmlMarshallable implements IMovable {
                 boolean changedOnce = false;
                 for(int i = 0; i < allIndices.length; i++){
                     if(i < allIndices[i]){
-                        e.id = i;
+                        e.setId(i);
                         changedOnce = true;
                         break;
                     }
                 }
                 if(!changedOnce){
-                    e.id = allIndices.length; //fallback
+                    e.setId(allIndices.length); //fallback
                 }
             }
             outgoingEdges.add(e);

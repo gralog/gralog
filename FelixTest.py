@@ -29,11 +29,11 @@ g.track("my id",str(g.id));
 
 
 
-for x in range(10000):
+for x in range(1):
 	v1 = g.addVertex();
 	v2 = g.addVertex();
-	g.addEdge(v1,v2);
-	g.pauseUntilSpacePressed();
+	g.addEdge(v1,v2,id=12);
+	# g.pauseUntilSpacePressed();
 	
 
 

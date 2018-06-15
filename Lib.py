@@ -333,13 +333,14 @@ class Graph:
 		return incomingNeighboursList;
 
 
-	def addEdge(self,sourceVertexId, targetVertexId, directed = False):
+	def addEdge(self,sourceVertexId, targetVertexId, directed = False, id = -1):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
 		# if vertexIndex in indices:
-
+		if not id==-1:
+			idSubString = "#"+str(id);
 			
-		line = "addEdge#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + str(directed).lower();
+		line = "addEdge#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + str(directed).lower()+idSubString.rstrip();
 
 
 		print line.rstrip();
@@ -347,13 +348,16 @@ class Graph:
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
-	def addDirecetedEdge(self,sourceVertexId, targetVertexId):
+	def addDirecetedEdge(self,sourceVertexId, targetVertexId, id=-1):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
 		# if vertexIndex in indices:
 
-			
-		line = "addEdge#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + str(True).lower();
+		idSubString = "";	
+		if not id==-1:
+			idSubString = "#"+str(id);
+
+		line = "addEdge#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + str(True).lower()+idSubString.rstrip();
 
 		print line.rstrip();
 	

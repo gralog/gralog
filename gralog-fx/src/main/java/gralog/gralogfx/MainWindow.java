@@ -276,6 +276,7 @@ public class MainWindow extends Application {
 
             
             Piping pipeline = new Piping(this::initGraph,this.tabs.getCurrentStructurePane(),waitForPause,this::handlePlannedPause);
+            pipelines.add(pipeline);
             this.tabs.getCurrentStructurePane().setPiping(pipeline);
             // pipeline.subscribe(this.pluginControlPanel);
             final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
@@ -729,8 +730,9 @@ public class MainWindow extends Application {
                             }else{
                                 System.out.println("no piping in this puppy!" + (currentPiping == null));
                             }
+                        }else{
+                            System.out.println("piping is null or unit!");
                         }
-                        
                         // System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
                         // pipeline.execWithAck();
                         break;
@@ -760,6 +762,10 @@ public class MainWindow extends Application {
         primaryStage.setOnCloseRequest((e) -> {
             Preferences.setInteger(getClass(), "main-window-width", (int) scene.getWidth());
             Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
+            for (Piping p : this.pipelines){
+                p.killSelf();
+                
+            }
         });
         primaryStage.show();
 

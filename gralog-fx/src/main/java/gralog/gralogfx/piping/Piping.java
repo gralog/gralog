@@ -69,6 +69,7 @@ public class Piping extends Thread{
     public MainWindow caller;
     public Function<Piping,Boolean> pauseFunction;
     private boolean pauseWasPressed = false;
+    public boolean windowDoesCloseNow = false;
 
 
     public enum State{
@@ -89,7 +90,7 @@ public class Piping extends Thread{
         this.subscribers.add(sub);
     }
 
-    private void aPauseOccured(String[] externalCommandSegments, boolean rankGiven){
+    private void plannedPauseRequested(String[] externalCommandSegments, boolean rankGiven){
         List<String[]> args = PipingMessageHandler.parsePauseVars(externalCommandSegments,rankGiven);
         trackedVarArgs = args;
         this.pauseFunction.apply(this);
@@ -175,6 +176,10 @@ public class Piping extends Thread{
         
     // }
 
+    public void killSelf(){
+        this.windowDoesCloseNow = true;
+        this.waitForPauseToBeHandled.countDown();
+    }
    
     public Integer extractRankFromPause(String[] externalCommandSegments){
         // System.out.println("where the rank would be : " + externalCommandSegments[1]);
@@ -219,6 +224,8 @@ public class Piping extends Thread{
             t.start();
         }
     }
+
+    
 
     public void setFirstMessage(String firstMessage){
         this.firstMessage = firstMessage;
@@ -274,13 +281,14 @@ public class Piping extends Thread{
             while ((line = this.in.readLine()) != null){//while python has not yet terminated
                 System.out.println("in while");
                 // System.out.println("current count: " + this.waitForPauseToBeHandled.getCount());
-
+                if (this.windowDoesCloseNow){
+                    return;
+                }
                 
                 if (line.length() > 0){ // if not a bogus line
                     //handleLine()
                     this.state = State.InProgress;
                     String[] externalCommandSegments = line.split("#");
-
                     
 
                     System.out.println("current line: " + line);
@@ -289,6 +297,9 @@ public class Piping extends Thread{
                         this.redrawMyStructurePanes();
                         this.state = State.Paused;
                         this.waitForPauseToBeHandled.await();
+                        if (this.windowDoesCloseNow){
+                            return;
+                        }
                         this.pauseWasPressed = false;
                         this.state = State.InProgress;
                     }
@@ -311,7 +322,7 @@ public class Piping extends Thread{
                         if (rank < this.skipPausesWithRankGreaterThanOrEqualTo){
                             this.currentSkipValue = rank;
 
-                            this.aPauseOccured(externalCommandSegments,withRank);
+                            this.plannedPauseRequested(externalCommandSegments,withRank);
 
                             
                             this.redrawMyStructurePanes();
@@ -321,8 +332,10 @@ public class Piping extends Thread{
                             System.out.println("ok it's been a paused");
 
                             this.waitForPauseToBeHandled.await();
+                            if (this.windowDoesCloseNow){
+                                return;
+                            }
                             out.println("");
-                            System.out.println("waited for ack, now it's done!");
                             this.state = State.InProgress;
                             continue;
 

@@ -492,7 +492,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     private E createEdge(V source, V target, int id) {
         E edge = createEdge();
-        edge.id = id;
+        edge.setId(id);
         edge.setSource(source);
         edge.setTarget(target);
 
