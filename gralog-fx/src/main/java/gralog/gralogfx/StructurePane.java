@@ -733,4 +733,8 @@ public class StructurePane extends StackPane implements StructureListener {
     @Override
     public void edgeChanged(EdgeEvent e) {
     }
+
+    public Highlights getHighlights() {
+        return highlights;
+    }
 }

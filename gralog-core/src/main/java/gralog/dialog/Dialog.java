@@ -7,40 +7,16 @@ import java.util.*;
 
 public class Dialog  {
 
-  private TreeSet<Vertex> vertices;
-  private TreeSet<Edge> edges;
+  private ArrayList<Vertex> vertices;
+  private ArrayList<Edge> edges;
 
-  private Map<String, TreeSet<Vertex>> vertexListS;
-  private Map<String, TreeSet<Edge>> edgeListS;
+  private Map<String, ArrayList<Vertex>> vertexListS;
+  private Map<String, ArrayList<Edge>> edgeListS;
 
 
   public Dialog() {
-    vertices = new TreeSet<Vertex>(new Comparator<Vertex>() {
-      @Override
-      public int compare(Vertex a, Vertex b) {
-        if (a.id == b.id)
-          return 0;
-        else {
-          if (a.id < b.id) {
-            return -1;
-          } else return 1;
-        }
-      }
-    });
-
-    edges = new TreeSet<Edge>(new Comparator<Edge>() {
-      @Override
-      public int compare(Edge a, Edge b) {
-        if (a.id == b.id)
-          return 0;
-        else {
-          if (a.id < b.id) {
-            return -1;
-          } else return 1;
-        }
-      }
-    });
-
+    vertices = new ArrayList<Vertex>();
+    edges = new ArrayList<Edge>();
   }
 
   public boolean isID(String s){
@@ -55,13 +31,44 @@ public class Dialog  {
 
   }
 
-  public void filter(ArrayList<String> parameters){
-      ArrayList<Vertex> what_v;
-      ArrayList<Edge> what_e;
-      if ((parameters.get(0).equals("ALL") && parameters.get(1).equals("VERTICES"))
-              ||
-              ()){
-          what_v = new ArrayList<Vertex>();
+  private void filterAllVertices(ArrayList<String> parameters, Structure structure){
+      ArrayList<Vertex> what = structure.getVertices();
+      ArrayList<Vertex> to;
+      if (vertexListS.containsKey(parameters.get(parameters.size()-1))){
+          to = vertexListS.get(parameters.get(parameters.size()-1));
+      }
+      else
+          to = new ArrayList<Vertex>();
+
+      for (Object v : highlights.getSelection())
+          if (v instanceof Vertex)
+              to.add((Vertex)v);
+  }
+
+  public void filter(ArrayList<String> parameters, Structure structure, Highlights highlights){
+      if (parameters.get(0).equals("ALL")){
+          if (parameters.get(1).equals("VERTICES")) {
+              parameters.remove(0);
+              parameters.remove(1);
+              filterAllVertices(parameters,structure);
+          }
+          if (parameters.get(1).equals("EDGES")){
+              parameters.remove(0);
+              parameters.remove(1);
+              filterAllEdges(parameters);
+          }
+      }
+      if (parameters.get(0).equals("SELECTED")){
+          if (parameters.get(1).equals("VERTICES")) {
+              parameters.remove(0);
+              parameters.remove(1);
+              filterSelectedVertices(parameters);
+          }
+          if (parameters.get(1).equals("EDGES")){
+              parameters.remove(0);
+              parameters.remove(1);
+              filterSelectedEdges(parameters);
+          }
       }
 
 
