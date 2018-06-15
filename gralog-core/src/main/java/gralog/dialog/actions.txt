@@ -3,7 +3,7 @@
 *
 * filter <what> where|st|(such that)  <parameters> to <list identifier> [ignored trash]
 *
-*   where <what> := (all vertices) | (all edges)| selected | <list id>      // <list id> can be list of vertices or list of edges
+*   where <what> := (all vertices) | (all edges)| (selected vertices) | (selected edges) | <list id>   // <list id> can be list of vertices or list of edges
 *         <parameterS> := <parameterS> <parameterS> | <parameter> <value> | <bool_parameter>
 *         <parameter> := no condition | fill|(fill color) | stroke|(stroke color) | color
 	  	      	    	      | thickness | width | height | size | id | shape

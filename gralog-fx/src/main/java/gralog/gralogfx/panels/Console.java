@@ -135,7 +135,9 @@ public class Console extends VBox implements GralogWindow{
                                                 break;
                 case DESELECT_ALL_EDGES:        dialogfx.deselectAllEdges(currentPane);
                                                 break;
-                case FILTER:                    dialog.filter(parser.getParameters(),currentPane.getStructure(), currentPane.getHighlights());
+                case FILTER:                    dialog.filter(parser.getParameters(),
+                                                                currentPane.getStructure(),
+                                                                currentPane.getHighlights());
                                                 break;
             }
         }
