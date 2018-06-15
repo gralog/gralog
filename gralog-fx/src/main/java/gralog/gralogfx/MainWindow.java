@@ -590,10 +590,15 @@ public class MainWindow extends Application {
         primaryStage.setOnCloseRequest((e) -> {
             Preferences.setInteger(getClass(), "main-window-width", (int) scene.getWidth());
             Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
+            Platform.exit();
         });
         primaryStage.show();
 
         MultipleKeyCombination.setupMultipleKeyCombination(scene);
+    }
+    @Override
+    public void stop(){
+        System.exit(0);
     }
 
     public void windowShown() {

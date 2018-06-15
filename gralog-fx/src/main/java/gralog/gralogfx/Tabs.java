@@ -3,6 +3,8 @@
 package gralog.gralogfx;
 
 import gralog.gralogfx.panels.GralogWindow;
+import gralog.gralogfx.preferences.Configuration;
+import gralog.preferences.Preferences;
 import gralog.structure.DirectedGraph;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
@@ -59,7 +61,7 @@ public class Tabs {
      */
     public void addTab(String name, Structure structure) {
         Tab t = new Tab(name);
-        StructurePane structurePane = new StructurePane(structure);
+        StructurePane structurePane = new StructurePane(structure, new Configuration(Preferences.getProperties()));
         t.setContent(structurePane);
 
         tabPane.getTabs().add(t);
@@ -110,9 +112,10 @@ public class Tabs {
     }
 
     private void onChangeTab() {
-        this.requestRedraw();
-        onStructureChange(getCurrentStructurePane().structure);
-
+        if(getCurrentStructurePane() != null){
+            this.requestRedraw();
+            onStructureChange(getCurrentStructurePane().structure);
+        }
     }
 
     private void onHighlightsChange(Highlights highlights){
@@ -134,7 +137,9 @@ public class Tabs {
     }
 
     public void requestRedraw(){
-        getCurrentStructurePane().requestRedraw();
+        if(getCurrentStructurePane() != null){
+            getCurrentStructurePane().requestRedraw();
+        }
     }
 
 }

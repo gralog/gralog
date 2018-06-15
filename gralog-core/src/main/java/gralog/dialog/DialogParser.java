@@ -256,15 +256,15 @@ public class DialogParser {
                     errorMsg = "Vertices or edges?\n";
                     return true;
                 }
-                if (inputWords[i].equals("VERTICES")) {
-                    this.dialogState = FILTER_WHAT;
-                    parameters.add("vertices");
+                if (inputWords[i].equals("VERTICES")){
+                    dialogState = FILTER_WHAT;
+                    parameters.add("VERTICES");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("EDGES")) {
-                    this.dialogState = FILTER_WHAT;
-                    parameters.add("edges");
+                if (inputWords[i].equals("EDGES")){
+                    dialogState = FILTER_WHAT;
+                    parameters.add("EDGES");
                     i++;
                     continue;
                 }
@@ -307,122 +307,123 @@ public class DialogParser {
                     errorMsg = "Specify filter conditions. Enter \"help\" for help.\n";
                     return true;
                 }
-                if (inputWords[i].equals("NO")) {
-                    this.dialogState = FILTER_WHAT_WHERE_NO;
-                    parameters.add("nocodition");
+                if (inputWords[i].equals("NO")){
+                    dialogState = FILTER_WHAT_WHERE_NO;
+                    parameters.add("NOCONDITON");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("FILL")) {
-                    this.dialogState = FILTER_WHAT_WHERE_FILL;
-                    parameters.add("fill");
+                if (inputWords[i].equals("FILL")){
+                    dialogState = FILTER_WHAT_WHERE_FILL;
+                    parameters.add("FILL");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("STROKE")) {
-                    this.dialogState = FILTER_WHAT_WHERE_STROKE;
-                    parameters.add("stroke");
+                if (inputWords[i].equals("STROKE")){
+                    dialogState = FILTER_WHAT_WHERE_STROKE;
+                    parameters.add("STROKE");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("COLOR")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("color");
+                if (inputWords[i].equals("COLOR")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("COLOR");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("THICKNESS")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("thickness");
+                if (inputWords[i].equals("THICKNESS")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("THICKNESS");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("WIDTH")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("width");
+                if (inputWords[i].equals("WIDTH")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("WIDTH");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("HEIGHT")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("height");
+                if (inputWords[i].equals("HEIGHT")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("HEIGHT");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("SIZE")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("size");
+                if (inputWords[i].equals("SIZE")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("SIZE");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("ID")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("id");
+                if (inputWords[i].equals("ID")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("ID");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("SHAPE")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("shape");
+                if (inputWords[i].equals("SHAPE")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("SHAPE");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("WEIGHT")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("weight");
+                if (inputWords[i].equals("WEIGHT")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("WEIGHT");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("TYPE")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("type");
+                if (inputWords[i].equals("TYPE")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("TYPE");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("EDGE")) {
-                    this.dialogState = FILTER_WHAT_WHERE_EDGE;
-                    parameters.add("edge");
+                if (inputWords[i].equals("EDGE")){
+                    dialogState = FILTER_WHAT_WHERE_EDGE;
+                    parameters.add("EDGE");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("EDGETYPE")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("edgetype");
+                if (inputWords[i].equals("EDGETYPE")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("EDGETYPE");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("DEGREE")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("degree");
+                if (inputWords[i].equals("DEGREE")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("DEGREE");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("INDEGREE")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("indegree");
+                if (inputWords[i].equals("INDEGREE")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("INDEGREE");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("OUTDEGREE")) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    parameters.add("outdegree");
+                if (inputWords[i].equals("OUTDEGREE")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("OUTDEGREE");
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("HAS")) {
-                    this.dialogState = FILTER_WHAT_WHERE_HAS;
+                if (inputWords[i].equals("HAS")){
+                    dialogState = FILTER_WHAT_WHERE_HAS;
                     i++;
                     continue;
                 }
-                if (inputWords[i].equals("DIRECTED")) {
-                    this.dialogState = FILTER_WHAT_WHERE_COND;
-                    parameters.add("directed");
+                if (inputWords[i].equals("DIRECTED")){
+                    dialogState = FILTER_WHAT_WHERE_PARAM;
+                    parameters.add("DIRECTED");
                     i++;
                     continue;
                 }
                 errorMsg = "Mistyped? Add conditions. Enter \"help\" for help.\n";
                 return true;
             }
+
             if (this.dialogState == FILTER_WHAT_WHERE_NO) {
                 if (i == inputWords.length) {
                     this.dialogState = FILTER_WHAT_WHERE_COND;

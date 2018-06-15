@@ -2,11 +2,14 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.preferences;
 
+import gralog.rendering.GralogColor;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 /**
  * Stores user-specific preferences. In contrast to the Java Preferences API,
@@ -17,6 +20,10 @@ public final class Preferences {
     private static final String FILENAME = "preferences";
     private static final java.util.Properties PROPERTIES = new java.util.Properties();
     private static final String PREFERENCE_PATH = buildPreferencePath();
+
+    public static Properties getProperties(){
+        return PROPERTIES;
+    }
 
     private Preferences() {
     }
@@ -113,6 +120,7 @@ public final class Preferences {
 
     public static void setBoolean(String key, boolean b){
         PROPERTIES.setProperty(key, Boolean.toString(b));
+        flush();
     }
 
     /*
@@ -132,6 +140,27 @@ public final class Preferences {
     }
     public static void setDouble(String key, double d){
         PROPERTIES.setProperty(key, Double.toString(d));
+        flush();
+    }
+
+    /*
+     *********
+     * COLOR *
+     *********
+     * */
+    public static GralogColor getColor(Class c, String key, GralogColor defaultValue){
+        return getColor(classKey(c, key), defaultValue);
+    }
+    public static GralogColor getColor(String key, GralogColor defaultValue){
+        return GralogColor.parseColor(PROPERTIES.getProperty(key, defaultValue.toHtmlString()));
+    }
+
+    public static void setColor(Class c, String key, GralogColor color){
+        setColor(classKey(c, key), color);
+    }
+    public static void setColor(String key, GralogColor c){
+        PROPERTIES.setProperty(key, c.toHtmlString());
+        flush();
     }
 
     private static String classKey(Class c, String key) {
