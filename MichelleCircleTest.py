@@ -20,7 +20,12 @@ from Lib import *
 #ig.plot(g_ig,layout=g_lay)
 
 ### Verarbeitung in nx:
-g_nx = nx.read_graphml("adirectedgraph.graphml")
+#g_nx = nx.read_graphml("test_undi.graphml")
+#g_nx = nx.read_graphml("test_di.graphml")
+#g_nx = nx.read_graphml("test_bueautom.graphml")
+g_nx = nx.read_graphml("test_krstr.graphml")
+
+#g_nx = nx.read_graphml("adirectedgraph.graphml")
 #g_nx = nx.read_graphml("xml_testout.graphml")
 lay = nx.circular_layout(g_nx)
 print(lay)
