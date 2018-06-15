@@ -1,5 +1,5 @@
 #internal version of the preference system
-pref_id=0.0.2x
+pref_id=0.0.2
 #other values
 newGraphOnStart=true
 Vertex_strokeColor=\#000000
