@@ -27,10 +27,16 @@ public class GralogColor {
         NAVY    (0x000080),
         ORANGE  (0xFF4500);
 
-        Colors(int c) {}
+        int value;
+
+        Colors(int c) {this.value = c;}
     }
 
-    public static boolean isColor(String s){
+    public int getValue(Colors c){
+        return c.value;
+    }
+
+    public static boolean isColor(String s){ // checks if s is a color from enum Colors
         for (Colors c : Colors.values())
             if (c.name().equalsIgnoreCase(s))
                 return true;

@@ -1,8 +1,14 @@
 package gralog.dialog;
 
+import gralog.rendering.GralogColor;
+import gralog.rendering.shapes.RenderingShape;
+import gralog.rendering.shapes.RenderingShape.*;
 import gralog.structure.*;
 
 import java.util.*;
+
+import static gralog.dialog.DialogParser.ANSI_RED;
+import static gralog.dialog.DialogParser.ANSI_RESET;
 
 
 public class Dialog {
@@ -18,6 +24,8 @@ public class Dialog {
     public Dialog() {
         vertices = new ArrayList<Vertex>();
         edges = new ArrayList<Edge>();
+        vertexListS = new HashMap();
+        edgeListS = new HashMap();
     }
 
     public boolean isID(String s) {
@@ -43,7 +51,103 @@ public class Dialog {
 
     }
 
+    private void filterStroke(ArrayList<Vertex> what, ArrayList<Vertex> to, String color){
+        for (Vertex v : what){
+            if (v.strokeColor.equals(color)){
+                to.add(v);
+            }
+        }
+    }
+
+
     private void filterVertices(ArrayList<Vertex> what, ArrayList<Vertex> to, ArrayList<String> parameters) {
+
+        for (int i = 0; i < parameters.size(); i += 2){
+            switch (parameters.get(i)){
+                case "STROKE": case "COLOR":
+                    String strokeColor = parameters.get(i+1);
+                    if (GralogColor.isColor(strokeColor))
+                        filterStroke(what,to, strokeColor);
+                    else{
+                        errorMsg = "\"(stroke) color\" must be a color.\n";
+                        return;
+                    }
+                    break;
+
+                case "FILL":
+                    String fillColor = parameters.get(i+1);
+                    if (GralogColor.isColor(fillColor))
+                        filterFill(what,to, fillColor);
+                    else{
+                        errorMsg = "\"stroke\" must be a color.\n";
+                        return;
+                    }
+                    break;
+                case "WIDTH":
+                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
+                        errorMsg = "\"width\" must be a number. Format: [0-9](.[0-9]+)?\n";
+                        return;
+                    }
+                    Double width;
+                    try {width = Double.valueOf(parameters.get(i+1));}
+                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"width\".\n"; return;}
+                    filterWidth(what,to, width);
+                    break;
+                case "NOCONDITION": to = new ArrayList<Vertex>(what) ; break;
+                case "THICKNESS":
+                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
+                        errorMsg = "\"thickness\" must be a number. Format: [0-9](.[0-9]+)?\n";
+                        return;
+                    }
+                    Double thickness;
+                    try {thickness = Double.valueOf(parameters.get(i+1));}
+                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"thickness\".\n"; return;}
+                    filterThickness(what,to, thickness);
+                    break;
+                case "HEIGHT":
+                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
+                        errorMsg = "\"height\" must be a number. Format: [0-9](.[0-9]+)?\n";
+                        return;
+                    }
+                    Double height;
+                    try {height = Double.valueOf(parameters.get(i+1));}
+                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"height\".\n"; return;}
+                    filterHeight(what,to, height);
+                    break;
+                case "SIZE":
+                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
+                        errorMsg = "\"size\" must be a number. Format: [0-9](.[0-9]+)?\n";
+                        return;
+                    }
+                    Double size;
+                    try {size = Double.valueOf(parameters.get(i+1));}
+                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"size\".\n"; return;}
+                    filterSize(what,to, size);
+                    break;
+                case "ID":
+                    if (parameters.get(i+1).matches("\\d+")){
+                        errorMsg = "\"id\" must be a number. Format: [0-9]+\n";
+                        return;
+                    }
+                    Integer id;
+                    try {id= Integer.valueOf(parameters.get(i+1));}
+                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"id\".\n"; return;}
+                    filterID(what,to, id);
+                    break;
+                case "SHAPE":
+                    String shape = parameters.get(i+1);
+                    if (!RenderingShape.isShape(shape)){
+                        errorMsg = "Could not recognise the value for \"shape\".\n"; return;
+                    }
+                    filterShape(what,to,shape);
+                    break;
+
+
+            }
+
+
+            }
+
         return;
     }
 

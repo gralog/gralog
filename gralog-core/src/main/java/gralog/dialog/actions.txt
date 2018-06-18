@@ -3,11 +3,7 @@
 *
 * filter <what> where|st|(such that)  <parameters> to <list identifier> [ignored trash]
 *
-<<<<<<< HEAD
-*   where <what> := (all vertices) | (all edges)| (selected vertices|edges) | <list id>      // <list id> can be list of vertices or list of edges
-=======
 *   where <what> := (all vertices) | (all edges)| (selected vertices) | (selected edges) | <list id>   // <list id> can be list of vertices or list of edges
->>>>>>> 76f07856e94473b5ba9a0b57392169477de2446b
 *         <parameterS> := <parameterS> <parameterS> | <parameter> <value> | <bool_parameter>
 *         <parameter> := no condition | fill|(fill color) | stroke|(stroke color) | color
 	  	      	    	      | thickness | width | height | size | id | shape
@@ -17,6 +13,7 @@
 
 *
 *   if <list id> already exists, new elements are added to the list
+    color means stroke color
 *
 * delete <list id>
 * union <list id> <list id> to <list id>
