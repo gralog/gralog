@@ -59,6 +59,18 @@ public class Dialog {
         }
     }
 
+    private void filterFill(ArrayList<Vertex> what, ArrayList<Vertex> to, String edgeType){}
+    private void filterWidth(ArrayList<Vertex> what, ArrayList<Vertex> to, double width){}
+    private void filterThickness(ArrayList<Vertex> what, ArrayList<Vertex> to, double thickness){}
+    private void filterHeight(ArrayList<Vertex> what, ArrayList<Vertex> to, double height){}
+    private void filterSize(ArrayList<Vertex> what, ArrayList<Vertex> to, double size){}
+    private void filterID(ArrayList<Vertex> what, ArrayList<Vertex> to, int id){}
+    private void filterShape(ArrayList<Vertex> what, ArrayList<Vertex> to, String shape){}
+    private void filterEdgeType(ArrayList<Vertex> what, ArrayList<Vertex> to, Edge.EdgeType edgeType){}
+    private void filterWeight(ArrayList<Vertex> what, ArrayList<Vertex> to, double weight){}
+
+
+
 
     private void filterVertices(ArrayList<Vertex> what, ArrayList<Vertex> to, ArrayList<String> parameters) {
 
@@ -141,7 +153,23 @@ public class Dialog {
                     }
                     filterShape(what,to,shape);
                     break;
-
+                case "WEIGHT":
+                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
+                        errorMsg = "\"weight\" must be a number. Format: [0-9](.[0-9]+)?\n";
+                        return;
+                    }
+                    Double weight;
+                    try {weight = Double.valueOf(parameters.get(i+1));}
+                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"weight\".\n"; return;}
+                    filterWeight(what,to, weight);
+                    break;
+                case "EDGETYPE":
+                    String edgeType= parameters.get(i+1);
+                    if (Edge.isEdgeType(edgeType)){
+                        errorMsg = "Could not recognise the value for \"shape\".\n"; return;
+                    }
+                    filterEdgeType(what,to,edgeType);
+                    break;
 
             }
 
