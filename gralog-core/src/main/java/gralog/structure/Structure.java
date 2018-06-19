@@ -72,6 +72,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return this.id;
     }
 
+    public boolean isEmpty(){
+        return vertices.size() + edges.size() == 0;
+    }
     /**
      * @return An unmodifiable set of vertices.
      */

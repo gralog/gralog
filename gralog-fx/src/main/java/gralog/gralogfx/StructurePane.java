@@ -24,8 +24,7 @@ import gralog.structure.controlpoints.ControlPoint;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.StackPane;
@@ -743,6 +742,29 @@ public class StructurePane extends StackPane implements StructureListener {
      *
      */
     public void requestClose(Runnable afterClose){
-        afterClose.run();
+        if(structure.isEmpty()){ // TODO: isEmpty is not enough to know if you can just close
+            afterClose.run();
+            return;
+        }
+
+        //open a close save context window
+        Alert con = new Alert(Alert.AlertType.NONE);
+        con.setTitle("Close Structure");
+        con.setHeaderText("Do you want to discard all changes to this structure?");
+
+        ButtonType save = new ButtonType("Save Changes", ButtonBar.ButtonData.APPLY);
+        ButtonType discard = new ButtonType("Discard", ButtonBar.ButtonData.NO);
+        ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        con.getButtonTypes().addAll(save, discard, cancel);
+
+        Optional<ButtonType> result = con.showAndWait();
+
+        if(result.get() == cancel){
+            afterClose.run();
+        }else{
+            System.out.println("Saved or discarded");
+            afterClose.run();
+        }
     }
 }

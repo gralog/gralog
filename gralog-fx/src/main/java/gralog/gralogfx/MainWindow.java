@@ -30,6 +30,7 @@ import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
@@ -76,7 +77,7 @@ public class MainWindow extends Application {
         handlers.onSave = this::onSave;
         handlers.onDirectInput = this::onDirectInput;
         handlers.onLoadPlugin = this::onLoadPlugin;
-        handlers.onExit = () -> stage.close();
+        handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
         // pipeline = new Piping();

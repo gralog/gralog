@@ -66,9 +66,13 @@ public class Tabs {
         Tab t = new Tab(name);
         StructurePane structurePane = new StructurePane(structure, new Configuration(Preferences.getProperties()));
         t.setContent(structurePane);
-        t.setOnClosed(e -> {
-            panes.remove(structurePane);
-            tabsArray.remove(t);
+        t.setOnCloseRequest(e -> {
+            int idx = panes.indexOf(structurePane);
+
+            panes.get(idx).requestClose(() ->
+                    closeTab(idx));
+
+            e.consume();
         });
 
         panes.add(structurePane);
@@ -89,9 +93,12 @@ public class Tabs {
      * @param index
      */
     public void closeTab(int index){
-        EventHandler<Event> e = tabsArray.get(index).getOnClosed();
+        if(panes.isEmpty()){
+            return;
+        }
         tabPane.getTabs().remove(tabsArray.get(index));
-        e.handle(null); // removes entry from all relevant arrays
+        panes.remove(index);
+        tabsArray.remove(index);
     }
     /**
      * Sets the name of the current tab. Does nothing if no tab exists.

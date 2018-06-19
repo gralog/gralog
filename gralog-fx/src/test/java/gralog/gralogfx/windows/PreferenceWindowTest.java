@@ -18,7 +18,6 @@ public class PreferenceWindowTest {
         @Override
         public void start(Stage primaryStage){
             PreferenceWindow p = new PreferenceWindow();
-            //primaryStage.show();
         }
     }
 }

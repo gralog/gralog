@@ -40,9 +40,9 @@ public class PreferenceWindow extends Stage {
         Pane structurePage = new Pane();
 
         try{
-            URL fxmlURLMain = getClass().getClassLoader().getResource("preference_window.fxml");
-            URL fxmlURLGeneral = getClass().getClassLoader().getResource("preference_general.fxml");
-            URL fxmlURLStructure = getClass().getClassLoader().getResource("preference_structure.fxml");
+            URL fxmlURLMain = getClass().getClassLoader().getResource("fxml/preference_window.fxml");
+            URL fxmlURLGeneral = getClass().getClassLoader().getResource("fxml/preference_general.fxml");
+            URL fxmlURLStructure = getClass().getClassLoader().getResource("fxml/preference_structure.fxml");
 
             if(fxmlURLMain == null){
                 System.err.println("The preference-fxml URL is null. Does the file exist?");
