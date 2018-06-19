@@ -68,7 +68,13 @@ public class Dialog {
     private void filterShape(ArrayList<Vertex> what, ArrayList<Vertex> to, String shape){}
     private void filterEdgeType(ArrayList<Vertex> what, ArrayList<Vertex> to, String edgeType){}
     private void filterWeight(ArrayList<Vertex> what, ArrayList<Vertex> to, double weight){}
-
+    private void filterDegree(ArrayList<Vertex> what, ArrayList<Vertex> to, int weight){}
+    private void filterInDegree(ArrayList<Vertex> what, ArrayList<Vertex> to, int indegree){}
+    private void filterOutDegree(ArrayList<Vertex> what, ArrayList<Vertex> to, int outdegree){}
+    private void filterHasSelfloop(ArrayList<Vertex> what, ArrayList<Vertex> to){}
+    private void filterHasNoSelfloop(ArrayList<Vertex> what, ArrayList<Vertex> to){}
+    private void filterHasLabel(ArrayList<Vertex> what, ArrayList<Vertex> to){}
+    private void filterHasNoLabel(ArrayList<Vertex> what, ArrayList<Vertex> to){}
 
 
 
@@ -171,7 +177,50 @@ public class Dialog {
                     filterEdgeType(what,to,edgeType);
                     break;
                 case "DEGREE":
-                    
+                    if (parameters.get(i+1).matches("\\d+")){
+                        errorMsg = "\"degree\" must be a number. Format: [0-9]+\n";
+                        return;
+                    }
+                    Integer degree;
+                    try {degree= Integer.valueOf(parameters.get(i+1));}
+                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"degree\".\n"; return;}
+                    filterDegree(what,to, degree);
+                    break;
+                case "INDEGREE":
+                    if (parameters.get(i+1).matches("\\d+")){
+                        errorMsg = "\"indegree\" must be a number. Format: [0-9]+\n";
+                        return;
+                    }
+                    Integer indegree;
+                    try {indegree= Integer.valueOf(parameters.get(i+1));}
+                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"indegree\".\n"; return;}
+                    filterInDegree(what,to, indegree);
+                    break;
+                case "OUTDEGREE":
+                    if (parameters.get(i+1).matches("\\d+")){
+                        errorMsg = "\"outdegree\" must be a number. Format: [0-9]+\n";
+                        return;
+                    }
+                    Integer outdegree;
+                    try {outdegree= Integer.valueOf(parameters.get(i+1));}
+                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"outdegree\".\n"; return;}
+                    filterOutDegree(what,to, outdegree);
+                    break;
+                case "SELFLOOP":
+                    filterHasSelfloop(what,to);
+                    break;
+
+                case "NOSELFLOOP":
+                    filterHasNoSelfloop(what,to);
+                    break;
+                case "LABEL":
+                    filterHasLabel(what,to);
+                    break;
+
+                case "NOLABEL":
+                    filterHasNoLabel(what,to);
+                    break;
+
 
             }
 

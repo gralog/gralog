@@ -25,7 +25,7 @@ public class DialogParser {
     private static String[] forbiddenIds = {"ALL", "SELECT", "SELECTED", "FILTER", "WHERE", "ST", "SUCH", "THAT",
             "TO", "VERTICES", "EDGES", "DELETE", "FILL", "COLOR", "STROKE", "THICKNESS", "WIDTH", "HEIGHT",
             "SIZE", "ID", "SHAPE", "WEIGHT", "TYPE", "EDGETYPE", "DEGREE", "INDEGREE", "OUTDEGREE", "BUTTERFLY",
-            "HAS", "SELFLOOP", "DIRECTED",
+            "HAS", "HASNT", "SELFLOOP", "DIRECTED",
             "DELETE", "UNION", "INTERSECTION", "DIFFERENCE", "SYMMETRIC", "COMPLEMENT",
             "CONNECT",
             "ADD", "REMOVE", "DELETE", "CONTRACT", "EDGE",
@@ -323,6 +323,10 @@ public class DialogParser {
                     transition(FILTER_WHAT_WHERE_NO,"NOCONDITON");
                     continue;
                 }
+                if (inputWords[i].equals("LABEL")){
+                    transition(FILTER_WHAT_WHERE_LABEL,"LABEL");
+                    continue;
+                }
                 if (inputWords[i].equals("FILL")){
                     transition(FILTER_WHAT_WHERE_FILL,"FILL");
                     continue;
@@ -391,6 +395,10 @@ public class DialogParser {
                     transition(FILTER_WHAT_WHERE_HAS);
                     continue;
                 }
+                if (inputWords[i].equals("HASNT")){
+                    transition(FILTER_WHAT_WHERE_HASNT);
+                    continue;
+                }
                 if (inputWords[i].equals("DIRECTED")){
                     transition(FILTER_WHAT_WHERE_PARAM,"DIRECTED");
                     continue;
@@ -417,6 +425,15 @@ public class DialogParser {
                 errorMsg = "Specify more conditions or where to save the result. Start with \"to\", then give a list id.\n";
                 return true;
 
+            }
+            if (this.dialogState == FILTER_WHAT_WHERE_LABEL) {
+                if (i == inputWords.length) {
+                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
+                    errorMsg = "Specify what the label should contain Zor abort.\n";
+                    return true;
+                }
+                transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
+                continue;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_FILL) {
                 if (i == inputWords.length) {
@@ -486,16 +503,33 @@ public class DialogParser {
                     return true;
                 }
                 if (inputWords[i].equals("SELFLOOP")) {
-                    transitionErr(FILTER_WHAT_WHERE_COND, "selfloop");
+                    transition(FILTER_WHAT_WHERE_COND, "SELFLOOP");
                     continue;
                 }
                 if (inputWords[i].equals("LABEL")) {
-                    transitionErr(FILTER_WHAT_WHERE_COND, "label");
+                    transition(FILTER_WHAT_WHERE_COND, "LABEL");
                     continue;
                 }
                 errorMsg = "Possible properties to have are: selfloop, label. Specify property or abort.\n";
                 return true;
             }
+            if (this.dialogState == FILTER_WHAT_WHERE_HASNT) {
+                if (i == inputWords.length) {
+                    errorMsg = "Hasn\'t what? Specify property or abort.\n";
+                    return true;
+                }
+                if (inputWords[i].equals("SELFLOOP")) {
+                    transition(FILTER_WHAT_WHERE_COND, "NOSELFLOOP");
+                    continue;
+                }
+                if (inputWords[i].equals("LABEL")) {
+                    transition(FILTER_WHAT_WHERE_COND, "NOLABEL");
+                    continue;
+                }
+                errorMsg = "Possible properties to have are: selfloop, label. Specify property or abort.\n";
+                return true;
+            }
+
             if (this.dialogState == FILTER_WHAT_WHERE_COND) {
                 if (i == inputWords.length) {
                     errorMsg = "Specify further conditions or where to save the result (start with \"to\", then give a list id).\n";
