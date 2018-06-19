@@ -66,7 +66,7 @@ public class Dialog {
     private void filterSize(ArrayList<Vertex> what, ArrayList<Vertex> to, double size){}
     private void filterID(ArrayList<Vertex> what, ArrayList<Vertex> to, int id){}
     private void filterShape(ArrayList<Vertex> what, ArrayList<Vertex> to, String shape){}
-    private void filterEdgeType(ArrayList<Vertex> what, ArrayList<Vertex> to, Edge.EdgeType edgeType){}
+    private void filterEdgeType(ArrayList<Vertex> what, ArrayList<Vertex> to, String edgeType){}
     private void filterWeight(ArrayList<Vertex> what, ArrayList<Vertex> to, double weight){}
 
 
@@ -170,6 +170,8 @@ public class Dialog {
                     }
                     filterEdgeType(what,to,edgeType);
                     break;
+                case "DEGREE":
+                    
 
             }
 
