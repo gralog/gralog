@@ -28,14 +28,21 @@ g.track("my id",str(g.id));
 # g.track("g vertices",vertices);
 
 
-
-for x in range(1):
-	v1 = g.addVertex();
-	v2 = g.addVertex();
-	g.addEdge(v1,v2,id=12);
-	# g.pauseUntilSpacePressed();
+v1 = g.addVertex();
+v2 = g.addVertex();
+ids = []
+for x in range(4):
 	
+	ids.append(g.addEdge(v1,v2));
+	# g.pauseUntilSpacePressed();
+	# print("hello world",str(g.getOutgoingEdges(v1)));
 
+g.pauseUntilSpacePressed();
+for x in range(4):
+	g.getEdgeWeight((v1,v2),x);
+	g.deleteEdge((v1,v2));
+# for x in range(4):
+# 	g.deleteEdge((v1,v2),ids[x]);
 
 # for x in vertices:
 # 	for y in vertices:

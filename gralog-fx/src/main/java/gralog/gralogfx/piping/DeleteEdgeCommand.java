@@ -10,9 +10,7 @@ public class DeleteEdgeCommand extends CommandForGralogToExecute {
 	Vertex sourceVertex;
     Vertex targetVertex;
     Edge edgeToDelete;
-    // String neighbourString;
-
-
+    int edgeId = -1;
 
 	public DeleteEdgeCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
@@ -52,13 +50,33 @@ public class DeleteEdgeCommand extends CommandForGralogToExecute {
             return;
         }
 
-        this.edgeToDelete = this.structure.getEdgeByVertexIds(this.sourceId,this.targetId);
-        if (this.edgeToDelete == null){
-            System.out.println("fail!!!! ahahaha i love failure");
+        this.sourceVertex = this.structure.getVertexById(this.sourceId);
+
+        try{    
+            this.edgeId = Integer.parseInt(externalCommandSegments[4]);
+        }catch(NumberFormatException e){
+            this.error = e;
             this.fail();
-            this.error = new Exception("error: no edge with vertex coordinates " + Integer.toString(this.sourceId) + " " + Integer.toString(this.targetId));
             return;
+        }catch(Exception e){
+            System.out.println("no id given, who giveth a fuck");
         }
+
+        if (this.edgeId == -1){
+            this.edgeToDelete = this.structure.getEdgeByVertexIds(this.sourceId,this.targetId);
+        }else{
+            this.edgeToDelete = this.structure.getEdgeByVertexIdsAndId(this.sourceId,this.targetId,this.edgeId);
+        }
+
+        if (this.edgeToDelete == null){
+            if (this.edgeId != -1){
+                this.error = new Exception("error: edge with id: " + this.edgeId + " betwee target vertex " + Integer.toString(this.targetId) + " and source vertex " + Integer.toString(this.sourceId) + " does not exist!");
+                this.fail();
+                return;
+            }
+            System.out.println("The edge doesn't exist but that's okee!");
+        }
+        
 
 	}
 
@@ -70,8 +88,9 @@ public class DeleteEdgeCommand extends CommandForGralogToExecute {
         // Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
             
         // e.isDirected = (externalCommandSegments[3].equals("true"));
-
-        this.structure.removeEdge(this.edgeToDelete);
+        if (this.edgeToDelete != null){
+            this.structure.removeEdge(this.edgeToDelete);
+        }
 
         this.setResponse(null);
 

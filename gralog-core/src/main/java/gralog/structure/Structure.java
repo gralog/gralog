@@ -212,12 +212,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
 
         for (Edge e : sourceVertex.getIncidentEdges()){
-            System.out.println("iterating with edge: " + e.toString() + " with input: " + Integer.toString(inputSourceId) + " and target: " + Integer.toString(inputTargetId));
+            
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
+            
 
             if (targetId == inputTargetId && sourceId == inputSourceId){
-                System.out.println("ok we found edge with target: " + targetId + "=" + inputTargetId + " and source: " + sourceId + "=" + inputSourceId);
+                
                 return e;
             }
             else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)){
@@ -235,13 +236,15 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             return null;
         }
         for (Edge e : sourceVertex.getIncidentEdges()){
+            
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
             int edgeId = e.getId();
+            System.out.println("we're looking at id pairs: " + targetId + "," + inputTargetId + " and " + sourceId + "," + inputSourceId + " and " + edgeId + "," + inputEdgeId);;
             if (targetId == inputTargetId && sourceId == inputSourceId && edgeId == inputEdgeId){
+                System.out.println("ok we found edge with target: " + targetId + "=" + inputTargetId + " and source: " + sourceId + "=" + inputSourceId);
                 return e;
-            }
-            else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId) && edgeId == inputEdgeId){
+            }else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId) && edgeId == inputEdgeId){
                 return e;
             }
         }
@@ -490,8 +493,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param target The head of the new edge.
      * @return The new edge.
      */
-    private E createEdge(V source, V target, int id) {
+    public E createEdge(V source, V target, int id) {
         E edge = createEdge();
+        if ((this.getEdgeByVertexIdsAndId(source.getId(),target.getId(),id) != null) || (this.getEdgeByVertexIdsAndId(target.getId(),source.getId(),id)!= null) ){
+            return (E)null;
+        }
         edge.setId(id);
         edge.setSource(source);
         edge.setTarget(target);

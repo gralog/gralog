@@ -23,7 +23,7 @@ import java.util.*;
 @XmlName(name = "node")
 public class Vertex extends XmlMarshallable implements IMovable {
 
-    @DataField(display=true)
+    @DataField(display=true,readOnly=true)
     public int id;
     @DataField(display=true)
     public String label = "";

@@ -8,4 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DataField {
 	public boolean display();
+	public boolean readOnly() default false;
 }

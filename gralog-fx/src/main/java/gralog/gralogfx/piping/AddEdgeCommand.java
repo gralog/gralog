@@ -71,17 +71,29 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
 	public void handle(){
 
-        
+        Edge e;
+        if (this.id == -1){
+            e = structure.createEdge(this.sourceVertex,this.targetVertex);
+        }else{
+            e = structure.createEdge(this.sourceVertex,this.targetVertex,this.id);
+        }
 
-        Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
-
-        e.setId(this.id);
+        if (e == null){
+            this.fail();
+            this.error = new Exception("error: an edge between vertices " + this.sourceId + " and " + this.targetId + " with id: " + this.id + " already exists");
+            this.setResponse("fail");
+            return;
+        }else{
+            System.out.println("they say e is not null. ok then it is: " +e);
+        }
+    
+        System.out.println("i have creaeted e: " + e);
             
         e.isDirected = this.isDirected;
 
         this.structure.addEdge(e);
 
-        this.setResponse(null);
+        this.setResponse(Integer.toString(e.getId()));
 
         return;
 

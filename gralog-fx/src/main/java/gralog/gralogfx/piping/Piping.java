@@ -395,13 +395,29 @@ public class Piping extends Thread{
                         }
                     }
 
-                    if (currentCommand.didFail()){
 
-                        ExceptionBox exbox = new ExceptionBox();
-                        exbox.showAndWait(currentCommand.getError());
+
+                    if (currentCommand.didFail()){
+                        final String lineFinal = String.join(" ",externalCommandSegments);
+                        Exception e = currentCommand.getError();
+                        Platform.runLater(
+                            () -> {
+                                Alert alert = new Alert(AlertType.INFORMATION);
+                                alert.setTitle("\"" + lineFinal + "\" is invalid:");
+                                alert.setHeaderText(null);
+                                alert.setContentText(e.toString());
+                                alert.showAndWait();
+                            }
+                        ); 
+
+                        if (currentCommand.getResponse() != null){
+                            System.out.println("given them tha ol response anyhoo");
+                            this.out.println(currentCommand.getResponse());
+                        }
                     
                         // this.out.println(currentCommand.getError().toString());
                         System.out.println(currentCommand.getError().toString());
+                        return;
                     }
                     
                     result = result + line;

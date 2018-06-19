@@ -52,6 +52,8 @@ public class GetAdjacentEdgesCommand extends CommandForGralogToExecute {
             return;
         }
 
+        
+
        
 	}
 

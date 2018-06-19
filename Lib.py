@@ -337,6 +337,7 @@ class Graph:
 		# indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
 		# if vertexIndex in indices:
+		idSubString = "";
 		if not id==-1:
 			idSubString = "#"+str(id);
 			
@@ -346,9 +347,9 @@ class Graph:
 		print line.rstrip();
 	
 		sys.stdout.flush();
-		# sys.stdin.readline();
+		return int(sys.stdin.readline());
 
-	def addDirecetedEdge(self,sourceVertexId, targetVertexId, id=-1):
+	def addDirectedEdge(self,sourceVertexId, targetVertexId, id=-1):
 		# indices = map(lambda vertex: vertex.id, self.vertices);
 		# print("colorhex: " + str(colorHex));
 		# if vertexIndex in indices:
@@ -362,17 +363,21 @@ class Graph:
 		print line.rstrip();
 	
 		sys.stdout.flush();
-		# sys.stdin.readline();
+		return int(sys.stdin.readline());
 
-	def getEdgeWeight(self,(sourceVertexId,targetVertexId)):
-		return self.getEdgeProperty((sourceVertexId,targetVertexId),"weight");
+	def getEdgeWeight(self,(sourceVertexId,targetVertexId),edgeId=-1):
+		return self.getEdgeProperty((sourceVertexId,targetVertexId),"weight",edgeId);
 
-	def getEdgeColor(self,(sourceVertexId,targetVertexId)):
-		return self.getEdgeProperty((sourceVertexId,targetVertexId),"color");
+	def getEdgeColor(self,(sourceVertexId,targetVertexId),edgeId=-1):
+		return self.getEdgeProperty((sourceVertexId,targetVertexId),"color",edgeId);
 
 
-	def getEdgeProperty(self,(sourceVertexId,targetVertexId),property):
-		line = "getEdgeProperty#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + property.rstrip().lower();
+	def getEdgeProperty(self,(sourceVertexId,targetVertexId),property,edgeId=-1):
+		idString = "";
+		if not edgeId == -1:
+			idString = "#"+str(edgeId);
+
+		line = "getEdgeProperty#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + property.rstrip().lower()+idString.rstrip();
 
 		print line.rstrip();
 		sys.stdout.flush();
@@ -388,14 +393,14 @@ class Graph:
 		print line.rstrip();
 		sys.stdout.flush();
 
+	def deleteEdge(self,(sourceVertexId,targetVertexId),edgeId=-1):
 
-	
+		idString = "";
+		if not edgeId == -1:
+			idString = "#"+str(edgeId);
 
 
-	def deleteEdge(self,(sourceVertexId,targetVertexId)):
-
-
-		line = "deleteEdge#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip();
+		line = "deleteEdge#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip()+idString.rstrip();
 
 		print line.rstrip();
 
