@@ -17,6 +17,7 @@ import gralog.gralogfx.piping.Piping;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import gralog.structure.controlpoints.ControlPoint;
@@ -732,5 +733,16 @@ public class StructurePane extends StackPane implements StructureListener {
 
     @Override
     public void edgeChanged(EdgeEvent e) {
+    }
+
+    /**
+     * Requests to close the current structure pane. After closing,
+     * can also execute a given Runnable.
+     *
+     * @param afterClose The method invoked after this structure closes
+     *
+     */
+    public void requestClose(Runnable afterClose){
+        afterClose.run();
     }
 }

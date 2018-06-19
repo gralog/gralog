@@ -223,7 +223,8 @@ public class MainWindow extends Application {
                 return;
             }
 
-            // if (externalCommandSegments[0].equals("error") || (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
+            // if (externalCommandSegments[0].equals("error") ||
+            // (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
             //     System.out.println("error: " + externalProcessInitResponse);
             //     return;
             // }
@@ -328,7 +329,8 @@ public class MainWindow extends Application {
                 int idx = extension.lastIndexOf('.');
                 extension = idx > 0 ? extension.substring(idx + 1) : "";
 
-                ExportFilter exportFilter = ExportFilterManager.instantiateExportFilterByExtension(structure.getClass(), extension);
+                ExportFilter exportFilter = ExportFilterManager
+                        .instantiateExportFilterByExtension(structure.getClass(), extension);
                 if (exportFilter != null) {
                     // configure export filter
                     ExportFilterParameters params = exportFilter.getParameters(structure);
@@ -574,13 +576,14 @@ public class MainWindow extends Application {
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()){
                 case SPACE:
-                    if (this.tabs.getCurrentStructurePane().getPiping() != null && this.tabs.getCurrentStructurePane().getPiping().isInitialized()){
+                    if (this.tabs.getCurrentStructurePane().getPiping() != null &&
+                            this.tabs.getCurrentStructurePane().getPiping().isInitialized()){
                         this.tabs.getCurrentStructurePane().getPiping().execWithAck();
                     }else{
                         System.out.println("no piping in this puppy!");
                     }
                     
-                    // System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
+
                     // pipeline.execWithAck();
                     break;
             }
@@ -590,7 +593,11 @@ public class MainWindow extends Application {
         primaryStage.setOnCloseRequest((e) -> {
             Preferences.setInteger(getClass(), "main-window-width", (int) scene.getWidth());
             Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
-            Platform.exit();
+            tabs.requestClose(() -> {
+                Platform.exit();
+                primaryStage.hide();
+            });
+            e.consume();
         });
         primaryStage.show();
 
@@ -607,7 +614,8 @@ public class MainWindow extends Application {
         String configFileDir = null;
         try {
             File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            File configFile = new File(jarFile.getParentFile().getAbsolutePath() + File.separator + "config.xml");
+            File configFile = new File(jarFile.getParentFile().getAbsolutePath() +
+                    File.separator + "config.xml");
             configFileDir = configFile.getParent();
 
             if (configFile.exists()) {

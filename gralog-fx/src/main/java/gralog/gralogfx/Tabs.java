@@ -9,14 +9,13 @@ import gralog.structure.DirectedGraph;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-
-import java.util.ArrayList;
 
 /**
  * A tab pane for structures.
@@ -28,6 +27,10 @@ public class Tabs {
     private final Runnable onChangeTabHandler;
 
     private final Set<GralogWindow> subscribers = new HashSet<>();
+
+    private final ArrayList<StructurePane> panes = new ArrayList<>();
+    private final ArrayList<Tab> tabsArray = new ArrayList<>();
+
 
     /**
      * @param onChangeTab Handler to be called when a new tab is selected or a
@@ -63,6 +66,13 @@ public class Tabs {
         Tab t = new Tab(name);
         StructurePane structurePane = new StructurePane(structure, new Configuration(Preferences.getProperties()));
         t.setContent(structurePane);
+        t.setOnClosed(e -> {
+            panes.remove(structurePane);
+            tabsArray.remove(t);
+        });
+
+        panes.add(structurePane);
+        tabsArray.add(t);
 
         tabPane.getTabs().add(t);
         tabPane.getSelectionModel().select(t);
@@ -72,6 +82,16 @@ public class Tabs {
         structurePane.setOnStructureChanged(this::onStructureChange);
 
         onChangeTabHandler.run();
+    }
+
+    /**
+     * Closes the tab at index i
+     * @param index
+     */
+    public void closeTab(int index){
+        EventHandler<Event> e = tabsArray.get(index).getOnClosed();
+        tabPane.getTabs().remove(tabsArray.get(index));
+        e.handle(null); // removes entry from all relevant arrays
     }
     /**
      * Sets the name of the current tab. Does nothing if no tab exists.
@@ -141,5 +161,43 @@ public class Tabs {
             getCurrentStructurePane().requestRedraw();
         }
     }
+
+    /**
+     * Requests to close all structure panes. If all structures
+     * were successfully closed, the Runnable afterClose will
+     * be ran.
+     */
+    public void requestClose(Runnable afterClose){
+        if(panes.isEmpty()){
+            afterClose.run();
+        }
+        requestClosePerPaneProxy(afterClose);
+    }
+
+
+    /**
+     * Closes the first tab (tab at index 0) and propagates the closing signal on to the
+     * next tab recursively. Since closing a tab at i=0 means that all other tabs will move
+     * up, all tabs will get closed in a sequential manner. Each tab
+     * will be able to close itself AFTER the tab before was done properly closing.
+     * @param afterClose This runnable will execute after all tabs were correctly closed.
+     */
+    private void requestClosePerPaneProxy(Runnable afterClose){
+        if(panes.isEmpty()){
+            afterClose.run();
+        }else{
+            panes.get(0).requestClose(() -> {
+                closeTab(0);
+                requestClosePerPaneProxy(afterClose);
+            });
+        }
+    }
+    /**
+     * Requests to close all structure panes.
+     */
+    public void requestClose(){
+        requestClose(() -> {});
+    }
+
 
 }
