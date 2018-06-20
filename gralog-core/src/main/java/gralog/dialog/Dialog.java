@@ -4,6 +4,7 @@ import gralog.rendering.GralogColor;
 import gralog.rendering.shapes.RenderingShape;
 import gralog.structure.*;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import static gralog.dialog.DialogParser.ANSI_RED;
@@ -243,13 +244,8 @@ public class Dialog {
                     filterWidth(what,to, width);
                     break;
                 case "NOCONDITION":
-                    to = (ArrayList<Vertex>) what.clone();
-                    System.out.println("WHAT: ");
-                    printVertexIdList(what);
-                    System.out.println("TO: ");
-                    printVertexIdList(to);
-                    System.out.println("\n");
-                    break;
+                    to.addAll(what);
+                    return;
                 case "THICKNESS":
                     if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
                         errorMsg = "\"thickness\" must be a number. Format: [0-9](.[0-9]+)?\n";
@@ -410,7 +406,7 @@ public class Dialog {
             parameters.remove(0);
             filterVertices(what,to,parameters);
             // debug only
-            System.out.println("What: ");
+            System.out.println("Did filterVertices.\nWhat: ");
             printVertexIdList(what);
             System.out.println("\nto: ");
             printVertexIdList(to);
