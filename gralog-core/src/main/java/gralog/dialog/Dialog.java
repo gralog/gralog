@@ -2,7 +2,6 @@ package gralog.dialog;
 
 import gralog.rendering.GralogColor;
 import gralog.rendering.shapes.RenderingShape;
-import gralog.rendering.shapes.RenderingShape.*;
 import gralog.structure.*;
 
 import java.util.*;
@@ -59,27 +58,159 @@ public class Dialog {
         }
     }
 
-    private void filterFill(ArrayList<Vertex> what, ArrayList<Vertex> to, String edgeType){}
-    private void filterWidth(ArrayList<Vertex> what, ArrayList<Vertex> to, double width){}
-    private void filterThickness(ArrayList<Vertex> what, ArrayList<Vertex> to, double thickness){}
-    private void filterHeight(ArrayList<Vertex> what, ArrayList<Vertex> to, double height){}
-    private void filterSize(ArrayList<Vertex> what, ArrayList<Vertex> to, double size){}
-    private void filterID(ArrayList<Vertex> what, ArrayList<Vertex> to, int id){}
-    private void filterShape(ArrayList<Vertex> what, ArrayList<Vertex> to, String shape){}
-    private void filterEdgeType(ArrayList<Vertex> what, ArrayList<Vertex> to, String edgeType){}
-    private void filterWeight(ArrayList<Vertex> what, ArrayList<Vertex> to, double weight){}
-    private void filterDegree(ArrayList<Vertex> what, ArrayList<Vertex> to, int weight){}
-    private void filterInDegree(ArrayList<Vertex> what, ArrayList<Vertex> to, int indegree){}
-    private void filterOutDegree(ArrayList<Vertex> what, ArrayList<Vertex> to, int outdegree){}
-    private void filterHasSelfloop(ArrayList<Vertex> what, ArrayList<Vertex> to){}
-    private void filterHasNoSelfloop(ArrayList<Vertex> what, ArrayList<Vertex> to){}
-    private void filterHasLabel(ArrayList<Vertex> what, ArrayList<Vertex> to){}
-    private void filterHasNoLabel(ArrayList<Vertex> what, ArrayList<Vertex> to){}
+    private void filterFill(ArrayList<Vertex> what, ArrayList<Vertex> to, String color){
+        for (Vertex v : what){
+            if (v.fillColor.equals(color)){
+                to.add(v);
+            }
+        }
+    }
 
+    private void filterWidth(ArrayList<Vertex> what, ArrayList<Vertex> to, double width){
+        for (Vertex v : what){
+            if (v.radius == width){ // radius?
+                to.add(v);
+            }
+        }
+    }
+    private void filterThickness(ArrayList<Vertex> what, ArrayList<Vertex> to, double thickness){
+        for (Vertex v : what){
+            if (v.strokeWidth == thickness){
+                to.add(v);
+            }
+        }
+    }
+    private void filterHeight(ArrayList<Vertex> what, ArrayList<Vertex> to, double height){
+        for (Vertex v : what){
+            if (v.textHeight == height){ // textheight?
+                to.add(v);
+            }
+        }
+    }
+    private void filterSize(ArrayList<Vertex> what, ArrayList<Vertex> to, double size){
+        for (Vertex v : what){
+            if (v.radius == size){ // size?
+                to.add(v);
+            }
+        }
+    }
+    private void filterID(ArrayList<Vertex> what, ArrayList<Vertex> to, int id){
+        for (Vertex v : what){
+            if (v.id == id){
+                to.add(v);
+            }
+        }
 
+    }
+    private void filterShape(ArrayList<Vertex> what, ArrayList<Vertex> to, String shape){
+        for (Vertex v : what){
+            if (v.shape.equals(shape)){
+                to.add(v);
+            }
+        }
+    }
+    private void filterDegree(ArrayList<Vertex> what, ArrayList<Vertex> to, int degree){
+        for (Vertex v : what){
+            if (v.getDegree() == degree){
+                to.add(v);
+            }
+        }
+    }
+    private void filterInDegree(ArrayList<Vertex> what, ArrayList<Vertex> to, int indegree){
+        for (Vertex v : what){
+            if (v.getInDegree() == indegree){
+                to.add(v);
+            }
+        }
+    }
 
+    private void filterOutDegree(ArrayList<Vertex> what, ArrayList<Vertex> to, int outdegree){
+        for (Vertex v : what){
+            if (v.getOutDegree() == outdegree){
+                to.add(v);
+            }
+        }
+    }
+    private void filterHasSelfloop(ArrayList<Vertex> what, ArrayList<Vertex> to){
+        for (Vertex v : what){
+            if (v.getNeighbours().contains(v) || v.getOutgoingNeighbours().contains(v)){ // how are selfloops stored?
+                to.add(v);
+            }
+        }
+    }
+    private void filterHasNoSelfloop(ArrayList<Vertex> what, ArrayList<Vertex> to){
+        for (Vertex v : what){
+            if (!v.getNeighbours().contains(v) && !v.getOutgoingNeighbours().contains(v)){ // how are selfloops stored?
+                to.add(v);
+            }
+        }
+    }
+    private void filterHasLabel(ArrayList<Vertex> what, ArrayList<Vertex> to){
+        for (Vertex v : what){
+            if (v.label.length() != 0){
+                to.add(v);
+            }
+        }
+    }
+    private void filterHasNoLabel(ArrayList<Vertex> what, ArrayList<Vertex> to){
+        for (Vertex v : what){
+            if (v.label.length() > 0){
+                to.add(v);
+            }
+        }
+    }
+
+    private void filterWeight(ArrayList<Edge> what, ArrayList<Edge> to, double weight){
+        for (Edge e : what){
+            if (e.weight == weight){
+                to.add(e);
+            }
+        }
+    }
+    private void filterEdgeType(ArrayList<Edge> what, ArrayList<Edge> to, String edgeType){
+        for (Edge e : what){
+            if (e.edgeType.name().equals(edgeType)){
+                to.add(e);
+            }
+        }
+    }
+
+    private void filterEdges(ArrayList<Edge> what, ArrayList<Edge> to, ArrayList<String> parameters){
+
+        for (int i = 0; i < parameters.size(); i += 2) {
+            switch (parameters.get(i)) {
+
+                case "WEIGHT":
+                    if (parameters.get(i + 1).matches("\\d*((\\.|,)\\d+)?")) {
+                        errorMsg = "\"weight\" must be a number. Format: [0-9](.[0-9]+)?\n";
+                        return;
+                    }
+                    Double weight;
+                    try {
+                        weight = Double.valueOf(parameters.get(i + 1));
+                    } catch (NumberFormatException e) {
+                        errorMsg = "Could not recognise the value for \"weight\".\n";
+                        return;
+                    }
+                    filterWeight(what, to, weight);
+                    break;
+                case "EDGETYPE":
+                    String edgeType = parameters.get(i + 1);
+                    if (Edge.isEdgeType(edgeType)) {
+                        errorMsg = "Could not recognise the value for \"shape\".\n";
+                        return;
+                    }
+                    filterEdgeType(what, to, edgeType);
+                    break;
+            }
+        }
+    }
+
+    // what: list to filter from, to: list to add items to
+    // the function iterates over parameters, in an iteration extracts the next parameter and filers according to it
     private void filterVertices(ArrayList<Vertex> what, ArrayList<Vertex> to, ArrayList<String> parameters) {
-
+        // debugging
+        System.out.println("what = [" + what + "], to = [" + to + "], parameters = [" + parameters + "]");
         for (int i = 0; i < parameters.size(); i += 2){
             switch (parameters.get(i)){
                 case "STROKE": case "COLOR":
@@ -111,7 +242,14 @@ public class Dialog {
                     catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"width\".\n"; return;}
                     filterWidth(what,to, width);
                     break;
-                case "NOCONDITION": to = new ArrayList<Vertex>(what) ; break;
+                case "NOCONDITION":
+                    to = (ArrayList<Vertex>) what.clone();
+                    System.out.println("WHAT: ");
+                    printVertexIdList(what);
+                    System.out.println("TO: ");
+                    printVertexIdList(to);
+                    System.out.println("\n");
+                    break;
                 case "THICKNESS":
                     if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
                         errorMsg = "\"thickness\" must be a number. Format: [0-9](.[0-9]+)?\n";
@@ -158,23 +296,6 @@ public class Dialog {
                         errorMsg = "Could not recognise the value for \"shape\".\n"; return;
                     }
                     filterShape(what,to,shape);
-                    break;
-                case "WEIGHT":
-                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
-                        errorMsg = "\"weight\" must be a number. Format: [0-9](.[0-9]+)?\n";
-                        return;
-                    }
-                    Double weight;
-                    try {weight = Double.valueOf(parameters.get(i+1));}
-                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"weight\".\n"; return;}
-                    filterWeight(what,to, weight);
-                    break;
-                case "EDGETYPE":
-                    String edgeType= parameters.get(i+1);
-                    if (Edge.isEdgeType(edgeType)){
-                        errorMsg = "Could not recognise the value for \"shape\".\n"; return;
-                    }
-                    filterEdgeType(what,to,edgeType);
                     break;
                 case "DEGREE":
                     if (parameters.get(i+1).matches("\\d+")){
@@ -230,11 +351,9 @@ public class Dialog {
         return;
     }
 
-    private void filterEdges(ArrayList<Edge> what, ArrayList<Edge> to, ArrayList<String> parameters) {
-        return;
-    }
 
-
+    // returns list of vertices to save the result of filtering to
+    // if the list with key s already exists, vertices are added to it
     private ArrayList<Vertex> getVertexTo(String s){
         if (vertexListS.containsKey(s))
             return vertexListS.get(s);
@@ -244,6 +363,8 @@ public class Dialog {
         }
     }
 
+    // returns list of edges to save the result of filtering to
+    // if the list with key s already exists, edges are added to it
     private ArrayList<Edge> getEdgeTo(String s){
         if (edgeListS.containsKey(s))
             return edgeListS.get(s);
@@ -253,29 +374,47 @@ public class Dialog {
         }
     }
 
+    // for debugging only
+    private void printVertexIdList(ArrayList<Vertex> list){
+        for (Vertex v : list){
+            System.out.println(v.id);
+        }
+    }
+    // for debugging only
+    private void printEdgeIdList(ArrayList<Edge> list){
+        for (Edge v : list){
+            System.out.println(v.id);
+        }
+    }
+
+
+
+    // the main filtering funciton
     public void filter(ArrayList<String> parameters, Structure structure, Highlights highlights) {
+        System.out.println(ANSI_RED + "Entering filter. parameters = [" + parameters + "], structure = [" + structure + "], highlights = [" + highlights + "]" + ANSI_RESET);
         if (parameters.get(1).equals("VERTICES") || vertexListS.containsKey(parameters.get(0))){ // vertex list
             if (parameters.get(1).equals("VERTICES") && edgeListS.containsKey(parameters.get(0))){
                 errorMsg = "List " + parameters.get(parameters.size()-1) + " already exists as an edge list. Choose another name.\n";
                 return;
             }
-            ArrayList<Vertex> to = getVertexTo(parameters.get(parameters.size()-1));
-            parameters.remove(0);
-            parameters.remove(1);
-            ArrayList<Vertex> what = new ArrayList<Vertex>();
-            if (parameters.get(0).equals("SELECTED")) {
-                parameters.remove(0);
-                parameters.remove(1);
+            ArrayList<Vertex> to = getVertexTo(parameters.get(parameters.size()-1)); // where to filter to
+            parameters.remove(parameters.size()-1);
+            ArrayList<Vertex> what = new ArrayList<Vertex>();; // where to filter from
+            if (parameters.get(0).equals("SELECTED"))
                 for (Object v : highlights.getSelection())
                     if (v instanceof Vertex)
                         what.add((Vertex) v);
-            }
-            if (parameters.get(0).equals("ALL")) {
-                what = (ArrayList<Vertex>) structure.getVertices();
-                parameters.remove(0);
-                parameters.remove(1);
-            }
+            if (parameters.get(0).equals("ALL"))
+                what = new ArrayList<Vertex>(structure.getVertices());
+            parameters.remove(1);
+            parameters.remove(0);
             filterVertices(what,to,parameters);
+            // debug only
+            System.out.println("What: ");
+            printVertexIdList(what);
+            System.out.println("\nto: ");
+            printVertexIdList(to);
+            System.out.println("\n");
             return;
         }
         if (parameters.get(1).equals("EDGES") || edgeListS.containsKey(parameters.get(0))){ // edge list
@@ -284,22 +423,20 @@ public class Dialog {
                 return;
             }
             ArrayList<Edge> to = getEdgeTo(parameters.get(parameters.size()-1));
-            parameters.remove(0);
-            parameters.remove(1);
+            parameters.remove(parameters.size()-1);
             ArrayList<Edge> what = new ArrayList<Edge>();
-            if (parameters.get(0).equals("SELECTED")) {
-                parameters.remove(0);
-                parameters.remove(1);
+            if (parameters.get(0).equals("SELECTED"))
                 for (Object v : highlights.getSelection())
                     if (v instanceof Edge)
                         what.add((Edge) v);
-            }
-            if (parameters.get(0).equals("ALL")) {
+            if (parameters.get(0).equals("ALL"))
                 what = (ArrayList<Edge>) structure.getEdges();
-                parameters.remove(0);
-                parameters.remove(1);
-            }
+            parameters.remove(1);
+            parameters.remove(0);
             filterEdges(what,to,parameters);
+            // debug only
+            printEdgeIdList(what);
+            printEdgeIdList(to);
             return;
         }
 

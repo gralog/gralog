@@ -135,6 +135,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public Set<Edge> getIncidentEdges() {
         return incidentEdges;
     }
+    public int getDegree (){return incidentEdges.size();}
 
     public int getId(){
         return this.id;
@@ -143,11 +144,12 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public Set<Edge> getOutgoingEdges(){
         return outgoingEdges;
     }
+    public int getOutDegree (){return outgoingEdges.size();}
 
     public Set<Edge> getIncomingEdges(){
         return this.incomingEdges;
     }
-
+    public int getInDegree (){return incomingEdges.size();}
 //##########START depricated!!!! use getNeighbours instead#########
     /**
      * @return The set of adjacent vertices.

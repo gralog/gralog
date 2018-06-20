@@ -1,19 +1,25 @@
 /* possible commands
 *select/deselect (all [vertices | edges] [ignored trash]) | <list id>
 *
-* filter <what> where|st|(such that)  <parameters> to <list identifier> [ignored trash]
+* filter <what> where|st|(such that)  <parameterS> to <list identifier> [ignored trash]
 *
-*   where <what> := (all vertices) | (all edges)| (selected vertices) | (selected edges) | <list id>   // <list id> can be list of vertices or list of edges
+*   where <what> := (all vertices) | (all edges)| (selected vertices) | (selected edges) | <list id>
+    	  	    // <list id> can be list of vertices or list of edges
+
 *         <parameterS> := <parameterS> <parameterS> | <parameter> <value> | <bool_parameter>
-*         <parameter> := no condition | fill|(fill color) | stroke|(stroke color) | color
+	  	       	  	       		    | formula <integer expression (i)>
+
+*	           <parameter> := no condition | fill|(fill color) | stroke|(stroke color) | color
 	  	      	    	      | thickness | width | height | size | id | shape
 *                                     | weight | type | (edge type)|edgeType
 *                                     | degree | indegree | outdegree | butterfly?
-*         <bool_parameter> := has selfloop | directed | has label
+
+*        	   <bool_parameter> := has selfloop | directed | has label
 
 *
-*   if <list id> already exists, new elements are added to the list
-    color means stroke color
+*   // if <list id> already exists, new elements are added to the list
+    // color means stroke color
+    // integer expression: e.g., 2*i + i^2 means filter all elements {2*i + i^2 : i in N}
 *
 * delete <list id>
 * union <list id> <list id> to <list id>

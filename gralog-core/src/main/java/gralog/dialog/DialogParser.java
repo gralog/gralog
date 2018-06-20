@@ -256,11 +256,11 @@ public class DialogParser {
                     return true;
                 }
                 if (inputWords[i].equals("ALL")) {
-                    transition(FILTER_ALL);
+                    transition(FILTER_ALL,"ALL");
                     continue;
                 }
                 if (inputWords[i].equals("SELECTED")){
-                    transition(FILTER_ALL,"selected"); // filter all ... behaves as filter selected ...
+                    transition(FILTER_ALL,"SELECTED"); // filter all ... behaves as filter selected ...
                     continue;
                 }
                 if (hasIdForm(inputWords[i])) {
@@ -320,7 +320,7 @@ public class DialogParser {
                     return true;
                 }
                 if (inputWords[i].equals("NO")){
-                    transition(FILTER_WHAT_WHERE_NO,"NOCONDITON");
+                    transition(FILTER_WHAT_WHERE_NO,"NOCONDITION");
                     continue;
                 }
                 if (inputWords[i].equals("LABEL")){
