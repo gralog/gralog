@@ -405,6 +405,7 @@ public class Dialog {
             parameters.remove(1);
             parameters.remove(0);
             filterVertices(what,to,parameters);
+            parameters.clear();
             // debug only
             System.out.println("Did filterVertices.\nWhat: ");
             printVertexIdList(what);
@@ -430,6 +431,7 @@ public class Dialog {
             parameters.remove(1);
             parameters.remove(0);
             filterEdges(what,to,parameters);
+            parameters.clear();
             // debug only
             printEdgeIdList(what);
             printEdgeIdList(to);
