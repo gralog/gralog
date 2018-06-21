@@ -177,7 +177,9 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     public void setSource(Vertex source) {
         if (this.source != null)
+            // System.out.println("i got id: " + this.getId());
             this.source.disconnectEdge(this);
+
         this.source = source;
         if (source != null){
             this.source.connectEdge(this);

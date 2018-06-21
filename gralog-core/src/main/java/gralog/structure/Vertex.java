@@ -101,15 +101,20 @@ public class Vertex extends XmlMarshallable implements IMovable {
     void connectEdge(Edge e) {
         if(e.getSource() == this){
             //if id has not been set already, set it
-            if(e.getId() == -1 && outgoingEdges.isEmpty()){
+            if(e.getId() == -1 && incidentEdges.isEmpty()){
                 e.setId(0);
             }
             if(e.getId() == -1){
-                int[] allIndices = new int[outgoingEdges.size()];
+                int[] allIndices = new int[incidentEdges.size()];
                 int k = 0;
-                for(Edge edge : outgoingEdges){
+                
+                for(Edge edge : incidentEdges){
                     allIndices[k] = edge.getId();
                     k++;
+                }
+                System.out.println("i got indicex array: ");
+                for (int x : allIndices){
+                    System.out.println("bla: " + x);
                 }
                 Arrays.sort(allIndices);
 

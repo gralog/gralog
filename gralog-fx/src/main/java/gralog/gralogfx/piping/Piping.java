@@ -198,6 +198,12 @@ public class Piping extends Thread{
         }
     }
 
+    public void spontaneousStop(){
+        this.windowDoesCloseNow = true;
+        this.waitForPauseToBeHandled.countDown();
+        this.makeNull();
+    }
+
     public void skipPressed(){
         this.skipPausesWithRankGreaterThanOrEqualTo = this.currentSkipValue;
     }
@@ -416,7 +422,9 @@ public class Piping extends Thread{
                         }
                     
                         // this.out.println(currentCommand.getError().toString());
-                        System.out.println(currentCommand.getError().toString());
+                        System.out.println("we have no work left to do here");
+                        this.state = State.Null;
+                        this.redrawMyStructurePanes();
                         return;
                     }
                     
@@ -427,11 +435,7 @@ public class Piping extends Thread{
             }
 
             if (line == null){
-                this.state = State.Null;
-                System.out.println("makingue null");
-                for (int i: idStructurePaneMap.keySet()){
-                    idStructurePaneMap.get(i).setPiping(null);
-                }
+                this.makeNull();
             }else{
                 System.out.println("line is not null rather: " + line);
             }
@@ -454,10 +458,22 @@ public class Piping extends Thread{
    
     }
 
+    public void makeNull(){
+        this.state = State.Null;
+        System.out.println("makingue null");
+        for (int i: idStructurePaneMap.keySet()){
+            idStructurePaneMap.get(i).setPiping(null);
+        }
+        this.redrawMyStructurePanes();
+        return;
+    }
+
     
 
     
 }
+
+
 
 
 

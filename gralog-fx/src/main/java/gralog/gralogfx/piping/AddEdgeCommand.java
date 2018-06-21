@@ -40,6 +40,12 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         this.sourceVertex = this.structure.getVertexById(this.sourceId);
 
+        System.out.println("ok found my source, it's got outgoint eges???");
+
+        for (Edge e : this.sourceVertex.getOutgoingEdges()){
+            System.out.println("bla: "+ e);
+        }
+
         if (this.sourceVertex == null){
             this.fail();
             this.error = new Exception("error: source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
@@ -74,6 +80,7 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
         Edge e;
         if (this.id == -1){
             e = structure.createEdge(this.sourceVertex,this.targetVertex);
+            System.out.println("and directly afterward we have id = " + e.getId());
         }else{
             e = structure.createEdge(this.sourceVertex,this.targetVertex,this.id);
         }

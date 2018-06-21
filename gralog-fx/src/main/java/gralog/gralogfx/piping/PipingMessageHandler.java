@@ -128,13 +128,15 @@ public class PipingMessageHandler{
         return changeColor;
     }
 
-    public static GralogColor rgbToGralogColor(String[] rgb){
+    public static GralogColor rgbToGralogColor(String rgb){
+        String[] rgbSplit = rgb.split(",");
         try{
-            int r = Integer.parseInt(rgb[0]);
-            int g = Integer.parseInt(rgb[1]);
-            int b = Integer.parseInt(rgb[2]);
+            int r = Integer.parseInt(rgbSplit[0]);
+            int g = Integer.parseInt(rgbSplit[1]);
+            int b = Integer.parseInt(rgbSplit[2]);
             return new GralogColor(r,g,b);
         }catch(Exception e){
+            e.printStackTrace();
             return (GralogColor)null;
         }
     }
@@ -163,26 +165,22 @@ public class PipingMessageHandler{
 
     }
 
-    public static GralogColor colorConversion(String[] colors){
-        System.out.println("we're getting: ");
+    public static GralogColor colorConversionHex(String color){
         
         String colorName;
 
-        if ((colorName = PipingPresets.getHexByColorName(colors[0])) != null){
+        if ((colorName = PipingPresets.getHexByColorName(color)) != null){
             return hexToGralogColor(colorName);
         }else{
             System.out.println(colorName + " not in database #rip");
         }
-
-        GralogColor changeColor;
-        if (colors.length == 1){
-            
-            return hexToGralogColor(colors[0]);
-        }else if (colors.length == 3){
-            return rgbToGralogColor(colors);
-        }
-        return (GralogColor)null;
+        return hexToGralogColor(color);
         
+    }
+
+    public static GralogColor colorConversionRGB(String color){
+        
+        return rgbToGralogColor(color);
     }
 
     public static CommandForGralogToExecute handleCommand(String[] externalCommandSegments,Structure structure){
@@ -370,6 +368,14 @@ public class PipingMessageHandler{
             // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
             // System.out.println("")
             currentCommand = new DeleteEdgeCommand(externalCommandSegments,currentStructure);
+            // 
+
+            return currentCommand;
+            // this.out.println(handleEdgeResponse);
+        }else if (externalCommandSegments[0].equals("deleteAllEdges")){//format: addEdge <sourceId> <targetId> <directed?>
+            // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
+            // System.out.println("")
+            currentCommand = new DeleteAllEdgesCommand(externalCommandSegments,currentStructure);
             // 
 
             return currentCommand;

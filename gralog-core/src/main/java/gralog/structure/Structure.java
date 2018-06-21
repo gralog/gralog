@@ -232,10 +232,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         Vertex sourceVertex = this.getVertexById(inputSourceId);
         Vertex targetVertex = this.getVertexById(inputTargetId);
+        System.out.println("commencing edge search");
         if (sourceVertex == null || targetVertex == null){
             return null;
         }
         for (Edge e : sourceVertex.getIncidentEdges()){
+            System.out.println("iterating on edge : " + e);
             
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
@@ -483,7 +485,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @return The new edge.
      */
     public E createEdge(V source, V target) {
-        return createEdge(source, target, -1);
+
+
+        E e = createEdge(source, target, -1);
+        System.out.println("really ret " + e.getId());
+        return e;
     }
 
     /**
@@ -499,8 +505,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             return (E)null;
         }
         edge.setId(id);
+        System.out.println("setting id to " + edge.getId());
         edge.setSource(source);
         edge.setTarget(target);
+        System.out.println("post setting s,t id to " + edge.getId());
 
         //add correct siblings
         if (source == target && source != null) {
@@ -511,6 +519,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
                             source.coordinates.getY() - 1.5d));
         }
+        System.out.println("returning " + edge.getId());
         return edge;
     }
     public List<Object> duplicate(Set<Object> selection){ return duplicate(selection, 1); }

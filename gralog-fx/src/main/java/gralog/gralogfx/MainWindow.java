@@ -143,7 +143,7 @@ public class MainWindow extends Application {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("No External Process");
                             alert.setHeaderText(null);
-                            alert.setContentText("You have not yet started a piping thread in this window, as such there is resume");
+                            alert.setContentText("You have not yet started a piping thread in this window, as such you cannot resume piping");
                             alert.showAndWait();
                         }
                     );
@@ -191,6 +191,25 @@ public class MainWindow extends Application {
                 }
             }
         };
+
+        Runnable stop = new Runnable(){
+            public void run(){
+                Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
+                if (currentPiping != null){
+                    MainWindow.this.handleSpontaneousStop(currentPiping);
+                }else{
+                    Platform.runLater(
+                        () -> {
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("No External Process");
+                            alert.setHeaderText(null);
+                            alert.setContentText("You have not yet started a piping thread in this window, as such there is nothing to pause");
+                            alert.showAndWait();
+                        }
+                    );
+                }
+            }
+        };
         
 
 
@@ -203,6 +222,7 @@ public class MainWindow extends Application {
         this.pluginControlPanel.setOnPlay(play);
         this.pluginControlPanel.setOnStep(skip);
         this.pluginControlPanel.setOnPause(pause);
+        this.pluginControlPanel.setOnStop(stop);
         // END
         
 
@@ -695,6 +715,12 @@ public class MainWindow extends Application {
         return true;
     }
 
+    public boolean handleSpontaneousStop(Piping currentPiping){
+        this.pipingUnderway = false;
+        currentPiping.spontaneousStop();
+        return true;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         Scene scene = new Scene(
@@ -716,22 +742,24 @@ public class MainWindow extends Application {
 
 
         scene.setOnKeyPressed(event -> {
+
             if (!pipingUnderway || pipingUnderway){
                 switch (event.getCode()){
                     case SPACE:
                         Piping currentPiping = this.tabs.getCurrentStructurePane().getPiping();
                         if (currentPiping != null && currentPiping.isInitialized()){
                             if (currentPiping.state == Piping.State.Paused){
-                                
+                                System.out.println("handlePlay");
                                 MainWindow.this.handlePlay(currentPiping);
 
                             }else if(currentPiping.state == Piping.State.InProgress){
+                                System.out.println("handleSponrtlay");
                                 MainWindow.this.handleSpontaneousPause(currentPiping);
                             }else{
                                 System.out.println("no piping in this puppy!" + (currentPiping == null));
                             }
                         }else{
-                            System.out.println("piping is null or unit!");
+                            System.out.println("piping is null or unit!" + currentPiping);
                         }
                         // System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
                         // pipeline.execWithAck();
