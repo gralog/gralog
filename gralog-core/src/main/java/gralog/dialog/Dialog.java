@@ -176,6 +176,14 @@ public class Dialog {
         }
     }
 
+    private void filterEdgeColor(ArrayList<Edge> what, ArrayList<Edge> to, String color){
+        for (Edge e : what){
+            if (e.color.equals(color)){
+                to.add(e);
+            }
+        }
+    }
+
     private void filterEdges(ArrayList<Edge> what, ArrayList<Edge> to, ArrayList<String> parameters){
 
         for (int i = 0; i < parameters.size(); i += 2) {
@@ -203,6 +211,16 @@ public class Dialog {
                     }
                     filterEdgeType(what, to, edgeType);
                     break;
+                case "COLOR":
+                    String color = parameters.get(i + 1);
+                    if (GralogColor.isColor(color)) {
+                        errorMsg = "Could not recognise the value for \"color\".\n";
+                        return;
+                    }
+                    filterEdgeColor(what, to, color);
+                    break;
+
+
             }
         }
     }
@@ -379,7 +397,7 @@ public class Dialog {
     // for debugging only
     private void printEdgeIdList(ArrayList<Edge> list){
         for (Edge v : list){
-            System.out.println(v.id);
+            System.out.println(v.color);
         }
     }
 
@@ -427,13 +445,15 @@ public class Dialog {
                     if (v instanceof Edge)
                         what.add((Edge) v);
             if (parameters.get(0).equals("ALL"))
-                what = (ArrayList<Edge>) structure.getEdges();
+                what = new ArrayList<Edge>(structure.getEdges());
             parameters.remove(1);
             parameters.remove(0);
             filterEdges(what,to,parameters);
             parameters.clear();
             // debug only
+            System.out.println("Did filterEdges.\nWhat: ");
             printEdgeIdList(what);
+            System.out.println("\nto: ");
             printEdgeIdList(to);
             return;
         }

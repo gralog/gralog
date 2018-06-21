@@ -4,8 +4,10 @@ import gralog.dialog.*;
 import gralog.gralogfx.StructurePane;
 import gralog.gralogfx.Tabs;
 import gralog.gralogfx.dialogfx.Dialogfx;
+import gralog.structure.Edge;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
+import gralog.structure.Vertex;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -17,6 +19,7 @@ import javafx.scene.text.FontWeight;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static gralog.dialog.DialogAction.NONE;
 import static gralog.dialog.DialogState.*;
 
 public class Console extends VBox implements GralogWindow{
@@ -32,7 +35,7 @@ public class Console extends VBox implements GralogWindow{
     private Dialog dialog;
     private Dialogfx dialogfx;
     private DialogParser parser;
-    private DialogState dialogState;
+
 
 
 
@@ -53,7 +56,6 @@ public class Console extends VBox implements GralogWindow{
 
         dialogfx = new Dialogfx();
         dialog = new Dialog();
-        dialogState = DONE;
         parser = new DialogParser();
 
 
@@ -109,20 +111,69 @@ public class Console extends VBox implements GralogWindow{
             consumer.accept(text);
         }
 
-        parser.parse(dialogState,text);
-        System.out.println(ANSI_RED + "console: parsed\n" + ANSI_RESET);
+        parser.parse(text);
+        System.out.println(ANSI_RED + "\nconsole: parsed" + ANSI_RESET);
+        System.out.println("text = [" + text + "], currentPane = [" + currentPane + "]");
         ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
-        DialogAction dialogAction = parser.getDialogAction();
         ArrayList<String> parameters = parser.getParameters();
 
-        dialogState = parser.getDialogState();
-        System.out.println(ANSI_RED + "console: dialogState=" + dialogState + ANSI_RESET);
+        System.out.println(ANSI_RED + "console: dialogState=" + parser.getDialogState() + ANSI_RESET);
+
+        // the input was "filter [all] selected"
+        // if only vertices or only edges are selected, guess this, don't let the user write it
+        // if nothing, abort
+        // if both, ask what to select
+        if (parser.getDialogState() == FILTER_SELECTED){
+            boolean existsSelectedVertex = false;
+            for (Object v : currentPane.getHighlights().getSelection())
+                if (v instanceof Vertex) {
+                    existsSelectedVertex = true;
+                    break;
+                }
+            boolean existsSelectedEdge = false;
+            for (Object v : currentPane.getHighlights().getSelection())
+                if (v instanceof Edge) {
+                    existsSelectedEdge = true;
+                    break;
+                }
+            if (existsSelectedVertex & ! existsSelectedEdge){
+                parser.setErrorMsg("");
+                parser.setDialogState(FILTER_WHAT);
+                parser.addParameter("VERTICES");
+                if (text.indexOf('d') == text.length() - 1){ // the input was only "filter [all] selected"
+                    output("Specify conditions, start with \"where\".\n");
+                    return;
+                }
+                String remainingText = text.substring(text.indexOf('d')+1); // more text was entered
+                System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "], err = " + parser.getErrorMsg() );
+                parser.parse(remainingText);
+            }
+            if (existsSelectedEdge & ! existsSelectedVertex){
+                parser.setErrorMsg("");
+                parser.setDialogState(FILTER_WHAT);
+                parser.addParameter("EDGES");
+                if (text.indexOf('d') == text.length() - 1){
+                    output("Specify conditions, start with \"where\".\n");
+                    return;
+                }
+                String remainingText = text.substring(text.indexOf('d')+1); // more text was entered
+                System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "]");
+                parser.parse(remainingText);
+            }
+            if (!existsSelectedEdge & !existsSelectedVertex){
+                parser.setErrorMsg("Nothing is selected! Aborting.\n");
+                parser.setDialogState(DONE);
+                parser.setDialogAction(NONE);
+            }
+        }
+
+        System.out.println("HERE! dialogAction = " + parser.getDialogAction());
 
         output(parser.getErrorMsg());
         parser.setErrorMsg("");
 
-        if (dialogState == DONE){
-            switch (dialogAction) {
+        if (parser.getDialogState() == DONE){
+            switch (parser.getDialogAction()) {
                 case SELECT_ALL:                 dialogfx.selectAll(currentPane);
                                                 break;
                 case SELECT_ALL_VERTICES:       dialogfx.selectAllVertices(currentPane);
@@ -135,10 +186,14 @@ public class Console extends VBox implements GralogWindow{
                                                 break;
                 case DESELECT_ALL_EDGES:        dialogfx.deselectAllEdges(currentPane);
                                                 break;
-                case FILTER:                    dialog.filter(parser.getParameters(),
+                case FILTER:
+                                                System.out.println("Calling dialog.filter with parameters=" + parameters);
+                                                dialog.filter(parser.getParameters(),
                                                                 currentPane.getStructure(),
                                                                 currentPane.getHighlights());
+                                                parameters.clear();
                                                 break;
+                case NONE:                      return;
             }
         }
     }
