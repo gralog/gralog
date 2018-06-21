@@ -191,6 +191,7 @@ public class Console extends VBox implements GralogWindow{
                                                 dialog.filter(parser.getParameters(),
                                                                 currentPane.getStructure(),
                                                                 currentPane.getHighlights());
+                                                output(dialog.getErrorMsg());
                                                 parameters.clear();
                                                 break;
                 case NONE:                      return;

@@ -185,7 +185,7 @@ public class Dialog {
     }
 
     private void filterEdges(ArrayList<Edge> what, ArrayList<Edge> to, ArrayList<String> parameters){
-
+        System.out.println("what = [" + what + "], to = [" + to + "], parameters = [" + parameters + "]");
         for (int i = 0; i < parameters.size(); i += 2) {
             switch (parameters.get(i)) {
 
@@ -212,8 +212,9 @@ public class Dialog {
                     filterEdgeType(what, to, edgeType);
                     break;
                 case "COLOR":
+                    System.out.println("COLOR!err");
                     String color = parameters.get(i + 1);
-                    if (GralogColor.isColor(color)) {
+                    if (!GralogColor.isColor(color)) {
                         errorMsg = "Could not recognise the value for \"color\".\n";
                         return;
                     }
