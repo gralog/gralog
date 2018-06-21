@@ -50,22 +50,26 @@ public class DialogParser {
     private void transition(DialogState dialogState){
         this.dialogState = dialogState;
         i++;
+        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
     private void transition(DialogState dialogState, String addedParameter){
         this.dialogState = dialogState;
         parameters.add(addedParameter);
         i++;
+        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
     private void transition(DialogState dialogState, DialogAction dialogAction,String addedParameter){
         this.dialogState = dialogState;
         parameters.add(addedParameter);
         this.dialogAction = dialogAction;
         i++;
+        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
     private void transition(DialogState dialogState, DialogAction dialogAction){
         this.dialogState = dialogState;
         this.dialogAction = dialogAction;
         i++;
+        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
     private void transition(DialogState dialogState, DialogAction dialogAction,String addedParameter, String errorMsg){
         this.dialogState = dialogState;
@@ -73,10 +77,12 @@ public class DialogParser {
         this.dialogAction = dialogAction;
         this.errorMsg = errorMsg;
         i++;
+        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
     private void transitionErr(DialogState dialogState, String errorMsg){
         this.dialogState = dialogState;
         this.errorMsg = errorMsg;
+        System.out.println("Changed to dialogState = [" + dialogState + "]");
     }
 
 
@@ -89,6 +95,10 @@ public class DialogParser {
         errorMsg = "";
     }
 
+    public void addParameter(String parameter){parameters.add(parameter);}
+
+    public void setDialogState(DialogState dialogState) {this.dialogState = dialogState;} // maybe make dialogState public
+    public void setDialogAction(DialogAction dialogAction) {this.dialogAction = dialogAction;} // maybe make dialogState public
     public String getErrorMsg() {
         return errorMsg;
     }
@@ -111,14 +121,13 @@ public class DialogParser {
         return dialogState;
     }
 
-    public boolean parse(DialogState dialogState, String text) {
-        this.dialogState = dialogState;
+    public boolean parse(String text) {
         System.out.println(ANSI_RED + "parse: got string: " + text + ANSI_RESET); //debugging
         if (text.isEmpty()) {// TODO: make an exception
             System.out.println("Something went wrong: Console got an empty string as input.\n");
             return false;
         }
-        String[] inputWords = text.toUpperCase().split(" ");
+        String[] inputWords = text.trim().toUpperCase().split(" ");
         if (inputWords[0].equals("Q") ||
                 inputWords[0].equals("EXIT") ||
                 inputWords[0].equals("ABORT") ||
@@ -148,16 +157,13 @@ public class DialogParser {
                         parameters.clear();
                         return true;
                     case "SELECT":
-                        this.dialogState = SELECT;
-                        i++;
+                        transition(SELECT);
                         break;
                     case "DESELECT":
-                        this.dialogState = DESELECT;
-                        i++;
+                        transition(DESELECT);
                         break;
                     case "FILTER":
-                        this.dialogState = FILTER;
-                        i++;
+                        transition(FILTER);
                         break;
                     default:
                         errorMsg = "Parse error. Please, try again.\n";
@@ -260,7 +266,7 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("SELECTED")){
-                    transition(FILTER_ALL,"SELECTED"); // filter all ... behaves as filter selected ...
+                    transition(FILTER_SELECTED,"SELECTED"); // filter all ... behaves as filter selected ...
                     continue;
                 }
                 if (hasIdForm(inputWords[i])) {
@@ -269,6 +275,23 @@ public class DialogParser {
                 }
                 errorMsg = "What to filter? Format: <what> where|st|(such that)  <parameters> to <list>\n";
                 return true;
+            }
+            if (this.dialogState == FILTER_SELECTED){
+                if (i == inputWords.length){
+                    errorMsg = "Vertices or edges?\n";
+                    return true;
+                }
+                if (inputWords[i].equals("VERTICES")){
+                    transition(FILTER_WHAT,"VERTICES");
+                    continue;
+                }
+                if (inputWords[i].equals("EDGES")){
+                    transition(FILTER_WHAT,"EDGES");
+                    continue;
+                }
+                errorMsg = "Vertices or edges?\n";
+                return true;
+
             }
             if (this.dialogState == FILTER_ALL) {
                 if (i == inputWords.length) {
@@ -281,6 +304,11 @@ public class DialogParser {
                 }
                 if (inputWords[i].equals("EDGES")){
                     transition(FILTER_WHAT,"EDGES");
+                    continue;
+                }
+                if (inputWords[i].equals("SELECTED")){
+                    parameters.clear(); // replace parameters=[["ALL"]] by parameters=[["SELECTED"]]
+                    transition(FILTER_SELECTED,"SELECTED");
                     continue;
                 }
                 errorMsg = "Vertices or edges?\n";
@@ -491,7 +519,7 @@ public class DialogParser {
                     return true;
                 }
                 if (hasValueForm(inputWords[i])){
-                    transitionErr(FILTER_WHAT_WHERE_COND,inputWords[i]);
+                    transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
                     continue;
                 }
                 errorMsg = "Specify a value or abort.\n";

@@ -3,8 +3,9 @@
 *
 * filter <what> where|st|(such that)  <parameterS> to <list identifier> [ignored trash]
 *
-*   where <what> := (all vertices) | (all edges)| (selected vertices) | (selected edges) | <list id>
-    	  	    // <list id> can be list of vertices or list of edges
+*   where <what> := (all vertices) | (all edges)| ([all ]?selected vertices) | ([all ]?selected edges)
+    	  	    	 	   | <list id>
+ 				     	   // <list id> can be list of vertices or list of edges
 
 *         <parameterS> := <parameterS> <parameterS> | <parameter> <value> | <bool_parameter>
 	  	       	  	       		    | formula <integer expression (i)>
