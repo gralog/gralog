@@ -734,6 +734,7 @@ public class StructurePane extends StackPane implements StructureListener {
     public void edgeChanged(EdgeEvent e) {
     }
 
+
     /**
      * Requests to close the current structure pane. After closing,
      * can also execute a given Runnable.
@@ -766,5 +767,8 @@ public class StructurePane extends StackPane implements StructureListener {
             System.out.println("Saved or discarded");
             afterClose.run();
         }
+
+    public Highlights getHighlights() {
+        return highlights;
     }
 }
