@@ -69,23 +69,7 @@ public class Console extends VBox implements GralogWindow{
                     onEnter(inputText, tabs.getCurrentStructurePane());
                 }
                 input.clear();
-            }else if(e.getCode() == KeyCode.BACK_SPACE){
-                input.deletePreviousChar();
             }
-            if(e.getCode() == KeyCode.UP){
-                historyPointer = Math.min(history.size() - 1, historyPointer + 1);
-                input.setText(history.get(history.size() - 1 - historyPointer));
-                input.positionCaret(inputText.length());
-            }
-            else if(e.getCode() == KeyCode.DOWN){
-                historyPointer = Math.max(0, historyPointer - 1);
-                input.setText(history.get(history.size() - 1 - historyPointer));
-                input.positionCaret(inputText.length());
-            }
-            else{
-                historyPointer = -1;
-            }
-            e.consume();
         });
 
         output = new TextArea();
