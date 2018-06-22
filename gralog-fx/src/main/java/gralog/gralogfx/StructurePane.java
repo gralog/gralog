@@ -167,6 +167,7 @@ public class StructurePane extends StackPane implements StructureListener {
         vertexMenu.getItems().addAll(addLoop, copy, delete);
 
     }
+
     public Structure getStructure() {
         return structure;
     }
@@ -734,6 +735,11 @@ public class StructurePane extends StackPane implements StructureListener {
     public void edgeChanged(EdgeEvent e) {
     }
 
+    public void saveStructure(){
+        if(structure.hasFileReference()){
+            
+        }
+    }
     /**
      * Requests to close the current structure pane. After closing,
      * can also execute a given Runnable.
@@ -760,11 +766,12 @@ public class StructurePane extends StackPane implements StructureListener {
 
         Optional<ButtonType> result = con.showAndWait();
 
-        if(result.get() == cancel){
-            afterClose.run();
-        }else{
-            System.out.println("Saved or discarded");
+        if(result.get() == save){
+
+        }else if(result.get() == discard){
             afterClose.run();
         }
+
+        //else canceling the closing routine
     }
 }
