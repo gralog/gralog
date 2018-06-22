@@ -742,8 +742,8 @@ public class StructurePane extends StackPane implements StructureListener {
      * @param afterClose The method invoked after this structure closes
      *
      */
-    public void requestClose(Runnable afterClose){
-        if(structure.isEmpty()){ // TODO: isEmpty is not enough to know if you can just close
+    public void requestClose(Runnable afterClose) {
+        if (structure.isEmpty()) { // TODO: isEmpty is not enough to know if you can just close
             afterClose.run();
             return;
         }
@@ -761,12 +761,13 @@ public class StructurePane extends StackPane implements StructureListener {
 
         Optional<ButtonType> result = con.showAndWait();
 
-        if(result.get() == cancel){
+        if (result.get() == cancel) {
             afterClose.run();
-        }else{
+        } else {
             System.out.println("Saved or discarded");
             afterClose.run();
         }
+    }
 
     public Highlights getHighlights() {
         return highlights;

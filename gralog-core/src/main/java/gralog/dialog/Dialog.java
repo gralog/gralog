@@ -480,7 +480,6 @@ public class Dialog {
     }
 
     public boolean removeEdge(Edge e) {
->>>>>>> console
         return edges.remove(e);
     }
 
