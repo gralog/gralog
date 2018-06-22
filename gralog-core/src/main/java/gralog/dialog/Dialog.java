@@ -60,11 +60,13 @@ public class Dialog {
     }
 
     private void filterFill(ArrayList<Vertex> what, ArrayList<Vertex> to, String color){
+        System.out.println("Strting... what = [" + what + "], to = [" + to + "], color = [" + color + "]");
         for (Vertex v : what){
-            if (v.fillColor.equals(color)){
+            if (v.fillColor.name().equals(color)){
                 to.add(v);
             }
         }
+        System.out.println("Finished: what = [" + what + "], to = [" + to + "], color = [" + color + "]");
     }
 
     private void filterWidth(ArrayList<Vertex> what, ArrayList<Vertex> to, double width){
@@ -244,9 +246,12 @@ public class Dialog {
                     break;
 
                 case "FILL":
+                    System.out.println(ANSI_RED + "filterVertices. Case FILL" + ANSI_RESET);
                     String fillColor = parameters.get(i+1);
-                    if (GralogColor.isColor(fillColor))
-                        filterFill(what,to, fillColor);
+                    if (GralogColor.isColor(fillColor)) {
+                        System.out.println("Is color, entring filterFill");
+                        filterFill(what, to, fillColor);
+                    }
                     else{
                         errorMsg = "\"stroke\" must be a color.\n";
                         return;

@@ -2,12 +2,15 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.rendering;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  */
 public class GralogColor {
 
-    public enum Colors{
+    public enum Color {
         WHITE   (0xFFFFFF),
         BLACK   (0x000000),
         BLUE    (0x0000FF),
@@ -29,15 +32,20 @@ public class GralogColor {
 
         int value;
 
-        Colors(int c) {this.value = c;}
+        Color(int c) {this.value = c;}
     }
 
-    public int getValue(Colors c){
+    private static final Map<Integer,Color> _map = new HashMap<Integer, Color>();
+    static{
+        for (Color c : Color.values()){ _map.put(c.value,c);}
+    }
+
+    public int getValue(Color c){
         return c.value;
     }
 
-    public static boolean isColor(String s){ // checks if s is a color from enum Colors
-        for (Colors c : Colors.values())
+    public static boolean isColor(String s){ // checks if s is a color from enum Color
+        for (Color c : Color.values())
             if (c.name().equalsIgnoreCase(s))
                 return true;
         return false;
@@ -144,6 +152,13 @@ public class GralogColor {
         }
 
         return new GralogColor(colorCode);
+    }
+
+    public String name(){
+        for (Color c : Color.values()){
+            if (c.value == r + g + b){return c.name();}
+        }
+
     }
 
     public GralogColor inverse() {
