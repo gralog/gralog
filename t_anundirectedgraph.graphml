@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <graphml>
-  <graph>
+  <graph edgedefault="undirected">
     <node fillcolor="#FFFFFF" id="n1" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="9.0" y="8.0"/>
     <node fillcolor="#FFFFFF" id="n2" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="16.0" y="8.0"/>
     <node fillcolor="#FFFFFF" id="n3" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="15.0" y="12.0"/>

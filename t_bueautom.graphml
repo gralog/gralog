@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <graphml>
-  <buechiautomaton>
+  <graph edgedefault="directed">
     <state fillcolor="#FFFFFF" final="false" id="n1" initial="false" initialmarkangle="0.0" initialmarkcolor="#000000" initialmarkheadangle="40.0" initialmarkheadlength="0.4" initialmarklength="0.7" initialmarkwidth="0.026458333333333334" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="3.0" y="2.0"/>
     <state fillcolor="#FFFFFF" final="false" id="n2" initial="false" initialmarkangle="0.0" initialmarkcolor="#000000" initialmarkheadangle="40.0" initialmarkheadlength="0.4" initialmarklength="0.7" initialmarkwidth="0.026458333333333334" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="14.0" y="3.0"/>
     <state fillcolor="#FFFFFF" final="false" id="n3" initial="false" initialmarkangle="0.0" initialmarkcolor="#000000" initialmarkheadangle="40.0" initialmarkheadlength="0.4" initialmarklength="0.7" initialmarkwidth="0.026458333333333334" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="9.0" y="5.0"/>
@@ -22,5 +22,5 @@
     <transition arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n7" symbol="" target="n5" weight="1.0" width="0.026458333333333334"/>
     <transition arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n5" symbol="" target="n9" weight="1.0" width="0.026458333333333334"/>
     <transition arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n4" symbol="" target="n9" weight="1.0" width="0.026458333333333334"/>
-  </buechiautomaton>
+  </graph>
 </graphml>
