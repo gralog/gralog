@@ -16,7 +16,6 @@ public class GralogColor {
         BLUE    (0x0000FF),
         GREEN   (0x00FF00),
         RED     (0xFF0000),
-        GREY    (0x808080),
         GRAY    (0x808080),
         YELLOW  (0xFFFF00),
         CYAN    (0x00FFFF),
@@ -35,11 +34,6 @@ public class GralogColor {
         Color(int c) {this.value = c;}
     }
 
-    private static final Map<Integer,Color> _map = new HashMap<Integer, Color>();
-    static{
-        for (Color c : Color.values()){ _map.put(c.value,c);}
-    }
-
     public int getValue(Color c){
         return c.value;
     }
@@ -54,6 +48,10 @@ public class GralogColor {
     public final short r;
     public final short g;
     public final short b;
+
+    public GralogColor(String hex){
+        this(Integer.parseInt(hex,16));
+    }
 
     public GralogColor(int red, int green, int blue) {
         this.r = (short) (red & 0xFF);
@@ -156,9 +154,14 @@ public class GralogColor {
 
     public String name(){
         for (Color c : Color.values()){
-            if (c.value == r + g + b){return c.name();}
+            if (c.value == (
+                    ((r&0x0FF)<<16)|((g&0x0FF)<<8)|(b&0x0FF)
+                            )
+               ){
+                return c.name();
+            }
         }
-
+    return Integer.toHexString(r)+ Integer.toHexString(g) + Integer.toHexString(b);
     }
 
     public GralogColor inverse() {

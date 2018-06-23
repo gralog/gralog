@@ -426,9 +426,12 @@ public class Dialog {
                         what.add((Vertex) v);
             if (parameters.get(0).equals("ALL"))
                 what = new ArrayList<Vertex>(structure.getVertices());
+            if (vertexListS.containsKey(parameters.get(0)))
+                what = vertexListS.get(parameters.get(0));
             parameters.remove(1);
             parameters.remove(0);
             filterVertices(what,to,parameters);
+
             parameters.clear();
             // debug only
             System.out.println("Did filterVertices.\nWhat: ");
@@ -452,6 +455,8 @@ public class Dialog {
                         what.add((Edge) v);
             if (parameters.get(0).equals("ALL"))
                 what = new ArrayList<Edge>(structure.getEdges());
+            if (edgeListS.containsKey(parameters.get(0)))
+                what = edgeListS.get(parameters.get(0));
             parameters.remove(1);
             parameters.remove(0);
             filterEdges(what,to,parameters);
