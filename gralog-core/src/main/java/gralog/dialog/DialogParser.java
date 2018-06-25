@@ -99,6 +99,7 @@ public class DialogParser {
 
     public void setDialogState(DialogState dialogState) {this.dialogState = dialogState;} // maybe make dialogState public
     public void setDialogAction(DialogAction dialogAction) {this.dialogAction = dialogAction;} // maybe make dialogState public
+    public void clearParameters() {this.parameters.clear();}
     public String getErrorMsg() {
         return errorMsg;
     }
@@ -123,6 +124,8 @@ public class DialogParser {
 
     public boolean parse(String text) {
         System.out.println(ANSI_RED + "parse: got string: " + text + ANSI_RESET); //debugging
+        dialogAction = NONE;
+        errorMsg = "";
         if (text.isEmpty()) {// TODO: make an exception
             System.out.println("Something went wrong: Console got an empty string as input.\n");
             return false;
@@ -233,7 +236,7 @@ public class DialogParser {
                     parameters.clear();
                     return true;
                 }
-                errorMsg = "Select all what: edges or vertices? (Or abort.)\n";
+                errorMsg = "Edges or vertices? (Or abort.)\n";
                 return true;
 
             }
@@ -253,7 +256,7 @@ public class DialogParser {
                     parameters.clear();
                     return true;
                 }
-                errorMsg = "Deselect all what: edges or vertices?\n";
+                errorMsg = "Edges or vertices? (Or abort.)\n";
                 return true;
             }
             if (this.dialogState == FILTER) {
