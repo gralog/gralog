@@ -33,15 +33,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     protected HashMap<Integer, V> vertices;
 
-    private HashMap<Vertex,HashMap<Vertex,Integer>> edgeIdMap;
-
-    // edgeIdMap.get(v).get(v) \in INt.
-
     protected Set<E> edges;
 
     private int id;
 
-    public TreeSet<Interval> holes;
+    public TreeSet<Interval> vertexIdHoles;
+    public TreeSet<Interval> edgeIdHoles;
 
     protected static class Interval {
         Interval(int a, int b) { this.a = a; this.b = b;}
@@ -56,7 +53,17 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public Structure() {
         vertices = new HashMap<>();
         edges = new HashSet<>();
-        holes = new TreeSet<>(new Comparator<>() {
+        vertexIdHoles = new TreeSet<>(new Comparator<>() {
+            /**
+             * Returns a positive value if number1 is larger than number 2, a
+             * negative number if number1 is less than number2, and 0 if they
+             * are equal. 
+             */
+            public int compare(Interval first, Interval second) {
+                return first.a - second.a;
+            }
+        });
+        edgeIdHoles = new TreeSet<>(new Comparator<>() {
             /**
              * Returns a positive value if number1 is larger than number 2, a
              * negative number if number1 is less than number2, and 0 if they
@@ -157,7 +164,33 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param v The vertex to be added.
      */
     public void addVertex(V v) {
-        v.id = pollNextFreeID();
+        v.id = pollNextFreeVertexID();
+        vertices.put(v.id, v);
+    }
+
+    /**
+     * Adds a vertex to the structure, and uses the given id, given it is
+     it is stil available. if not, it uses the next free id.
+     *
+     * @param v The vertex to be added.
+     * @param id The id of which v will soon hopefully be the proud owner
+     */
+    public void addVertex(V v,int id) {
+        // v.id = pollNextFreeVertexID();
+        Interval me = new Interval(id,id);
+        Interval smallestGreaterThanOrEqual = this.vertexIdHoles.ceiling();
+        Interval greatestLessThanOrEqualTo = this.vertexIdHoles.ceiling();
+        Interval newInterval = new Interval(0,0);
+        boolean addNewInterval = false;
+        if (smallestGreaterThanOrEqual != null){ //if the next biggest 
+            //interval starts with the id we want to add
+            newInterval.a = id+1;
+            newInterval.b = smallestGreaterThanOrEqual.b;
+            this.vertexIdHoles.remove(smallestGreaterThanOrEqual);
+            if (newInterval.a < newInterval.b){
+                this.vertexIdHoles.add(newInterval);
+            }
+        }
         vertices.put(v.id, v);
     }
 
@@ -169,7 +202,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public void addVertices(Collection<V> vs, boolean autoGenerateIDs) {
         if(autoGenerateIDs){
             for(V v : vs){
-                v.id = pollNextFreeID();
+                v.id = pollNextFreeVertexID();
             }
         }
         //vertices.addAll(vs);
@@ -199,6 +232,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         addVertex(v);
         return v;
     }
+
+
 
     /** preliminary method (to be updated with edge id's) for removing an edge
     * very inefficient
@@ -291,22 +326,22 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         vertices.remove(v.id);
 
         Interval deleteThisInterval = null;
-        if(holes.size() == 0){
-            holes.add(new Interval(v.id, v.id));
+        if(vertexIdHoles.size() == 0){
+            vertexIdHoles.add(new Interval(v.id, v.id));
         }else{
-            for(Interval hole : holes){
+            for(Interval hole : vertexIdHoles){
                 //find hole with[,]..v.id..[a,b]
                 if(hole.a > v.id + 1){
                     //find the hole smaller than [a,b]
-                    Interval minInterval = holes.lower(hole);
+                    Interval minInterval = vertexIdHoles.lower(hole);
                     if(minInterval == null){
-                        holes.add(new Interval(v.id, v.id));
+                        vertexIdHoles.add(new Interval(v.id, v.id));
                         return;
                     }
                     int min = minInterval.b;
                     System.out.println("id: " + v.id + " _ min: " + min);
                     if(min < v.id - 1){
-                        holes.add(new Interval(v.id, v.id));
+                        vertexIdHoles.add(new Interval(v.id, v.id));
                         return;
                     }else if(min == v.id - 1){
                         minInterval.b += 1;
@@ -320,7 +355,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 else if(hole.a == v.id + 1){
                     hole.a--;
                     //in case the extension makes hole lie next to a different interval, merge
-                    Interval lower = holes.lower(hole);
+                    Interval lower = vertexIdHoles.lower(hole);
                     if(lower != null && lower.b == hole.a - 1){
                         //merge
                         lower.b = hole.b;
@@ -331,15 +366,15 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
             //did two intervals merge
             if(deleteThisInterval != null){
-                holes.remove(deleteThisInterval);
+                vertexIdHoles.remove(deleteThisInterval);
             }
             //if not, for loop exited without finding a hole that's greater
             //than v.id. Get last hole and decide if to extend or create new interval
             else{
-                if(holes.last().b == v.id - 1){
-                    holes.last().b += 1;
+                if(vertexIdHoles.last().b == v.id - 1){
+                    vertexIdHoles.last().b += 1;
                 }else{
-                    holes.add(new Interval(v.id, v.id));
+                    vertexIdHoles.add(new Interval(v.id, v.id));
                 }
             }
         }
@@ -461,18 +496,72 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @param e The edge to be removed.
      */
-    public void removeEdge(Edge e, boolean removeSiblingsEntries) {
-        e.setSource(null);
-        e.setTarget(null);
+    public void removeEdge(Edge edge, boolean removeSiblingsEntries) {
+        edge.setSource(null);
+        edge.setTarget(null);
         if(removeSiblingsEntries){
-            for (int i = 0; i < e.siblings.size(); i++)
+            for (int i = 0; i < edge.siblings.size(); i++)
             {
-                if(e != e.siblings.get(i)){
-                    e.siblings.get(i).siblings.remove(e);
+                if(edge != edge.siblings.get(i)){
+                    edge.siblings.get(i).siblings.remove(edge);
                 }
             }
         }
-        edges.remove(e);
+        edges.remove(edge);
+
+        Interval deleteThisInterval = null;
+        if(this.edgeIdHoles.size() == 0){
+            this.edgeIdHoles.add(new Interval(edge.getId(), edge.getId()));
+        }else{
+            for(Interval hole : this.edgeIdHoles){
+                //find hole with[,]..v.id..[a,b]
+                if(hole.a > edge.id + 1){
+                    //find the hole smaller than [a,b]
+                    Interval minInterval = this.edgeIdHoles.lower(hole);
+                    if(minInterval == null){
+                        this.edgeIdHoles.add(new Interval(edge.getId(), edge.getId()));
+                        return;
+                    }
+                    int min = minInterval.b;
+                    System.out.println("id: " + edge.id + " _ min: " + min);
+                    if(min < edge.id - 1){
+                        edgeIdHoles.add(new Interval(edge.getId(), edge.getId()));
+                        return;
+                    }else if(min == edge.id - 1){
+                        minInterval.b += 1;
+                        return;
+                    }else{
+                        System.out.println("indexing error");
+                    }
+                }
+                //if v.id is exactly below the hole, extend it
+                //[,]..v.id,[a,b] -> [,]..[v.id,b]
+                else if(hole.a == edge.id + 1){
+                    hole.a--;
+                    //in case the extension makes hole lie next to a different interval, merge
+                    Interval lower = edgeIdHoles.lower(hole);
+                    if(lower != null && lower.b == hole.a - 1){
+                        //merge
+                        lower.b = hole.b;
+                        deleteThisInterval = hole;
+                    }
+                    break;
+                }
+            }
+            //did two intervals merge
+            if(deleteThisInterval != null){
+                edgeIdHoles.remove(deleteThisInterval);
+            }
+            //if not, for loop exited without finding a hole that's greater
+            //than v.id. Get last hole and decide if to extend or create new interval
+            else{
+                if(edgeIdHoles.last().b == edge.getId() - 1){
+                    edgeIdHoles.last().b += 1;
+                }else{
+                    edgeIdHoles.add(new Interval(edge.getId(), edge.getId()));
+                }
+            }
+        }
     }
     public void removeEdge(Edge e){
         removeEdge(e, true);
@@ -573,12 +662,29 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * Returns the next free available ID, so that all vertices' ids are continuously
      * filled on a single interval [0, n)
      */
-    public int pollNextFreeID(){
-        if(holes.size() != 0){
-            Interval hole = holes.first();
+    public int pollNextFreeEdgeID(){
+        if(edgeIdHoles.size() != 0){
+            Interval hole = edgeIdHoles.first();
             hole.a++;
             if(hole.a > hole.b){
-                holes.remove(hole);
+                edgeIdHoles.remove(hole);
+            }
+            return hole.a - 1;
+        }else{
+            return vertices.size();
+        }
+    }
+
+    /**
+     * Returns the next free available ID, so that all vertices' ids are continuously
+     * filled on a single interval [0, n)
+     */
+    public int pollNextFreeVertexID(){
+        if(vertexIdHoles.size() != 0){
+            Interval hole = vertexIdHoles.first();
+            hole.a++;
+            if(hole.a > hole.b){
+                vertexIdHoles.remove(hole);
             }
             return hole.a - 1;
         }else{
