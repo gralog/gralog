@@ -1,7 +1,10 @@
 package gralog.gralogfx.dialog;
 
 import gralog.algorithm.StringAlgorithmParameter;
+import gralog.dialog.Dialog;
+import gralog.dialog.DialogAction;
 import gralog.dialog.DialogParser;
+import gralog.dialog.DialogState;
 import gralog.generator.Cycle;
 import gralog.generator.CylindricalGrid;
 import gralog.generator.Grid;
@@ -14,37 +17,216 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static gralog.dialog.DialogAction.*;
+import static gralog.dialog.DialogState.DONE;
+import static gralog.dialog.DialogState.SELECT;
 import static org.junit.Assert.*;
 
 public class DialogConsoleParserTest {
 
     private Structure anEdge;
+    Structure c20;
+    Structure cylGrid;
+    Structure grid5x5;
+    Structure wheel5;
+
+    private DialogParser dialogParser;
+    private StructurePane currentStructure;
+
 
     public DialogConsoleParserTest(){
-        try {
-            PluginManager.initialize();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+        dialogParser = new DialogParser();
+
+//        try {
+//            PluginManager.initialize();
+//        }
+//        catch (Exception e){
+//            e.printStackTrace();
+//        }
         //anEdge = getGraph("anEdge.graphml");
 
         // generate some graphs
 
-        Structure c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
-        Structure cylGrid = (new CylindricalGrid()).generate(new StringAlgorithmParameter("", "5"));
-        Structure grid5x5 = (new Grid()).generate(new StringAlgorithmParameter("", "5"));
-        Structure wheel5 = (new Wheel()).generate(new StringAlgorithmParameter("", "5"));
+        c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
+        cylGrid = (new CylindricalGrid()).generate(new StringAlgorithmParameter("", "5"));
+        grid5x5 = (new Grid()).generate(new StringAlgorithmParameter("", "5"));
+        wheel5 = (new Wheel()).generate(new StringAlgorithmParameter("", "5"));
+    }
+
+    private void resetParserFields(){
+        dialogParser.clearParameters();
+        dialogParser.setDialogState(DONE);
+        dialogParser.setDialogAction(NONE);
+
     }
 
     @Test
     public void testSelect(){
-        DialogParser dialogParser = new DialogParser();
-        StructurePane currentStructure;
-        assertEquals(2,anEdge.getVertices().size());
 
+        resetParserFields();
+        dialogParser.parse("Select all");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DONE,dialogParser.getDialogState());
+        assertEquals(SELECT_ALL,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("Slect all");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DONE,dialogParser.getDialogState());
+        assertEquals(NONE,dialogParser.getDialogAction());
+        assertEquals("Parse error. Please, try again.\n",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("Slect");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DONE,dialogParser.getDialogState());
+        assertEquals(NONE,dialogParser.getDialogAction());
+        assertEquals("Parse error. Please, try again.\n",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("Select all vertices");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DONE,dialogParser.getDialogState());
+        assertEquals(DialogAction.SELECT_ALL_VERTICES,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("SELECT all ABC");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.SELECT_ALL,dialogParser.getDialogState());
+        assertEquals(NONE,dialogParser.getDialogAction());
+        assertEquals("Edges or vertices? (Or abort.)\n",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("SELECT all vertices");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.DONE,dialogParser.getDialogState());
+        assertEquals(DialogAction.SELECT_ALL_VERTICES,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("SELECT all vertices abc");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.DONE,dialogParser.getDialogState());
+        assertEquals(DialogAction.SELECT_ALL_VERTICES,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("select");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.SELECT,dialogParser.getDialogState());
+        assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
+        assertEquals("What to select?  Format: (all [vertices|edges]) | <list id>\n",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("select abc");
+        assertEquals("ABC",dialogParser.getParameters().get(0));
+        assertEquals(1,dialogParser.getParameters().size());
+        assertEquals(DialogState.DONE,dialogParser.getDialogState());
+        assertEquals(DialogAction.SELECT_LIST,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("select abc trash");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.SELECT,dialogParser.getDialogState());
+        assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
+        assertEquals("What to select? Format: (all [vertices|edges]) | <list id>\n",dialogParser.getErrorMsg());
+
+// the same with deselect
+        resetParserFields();
+        dialogParser.parse("deselect all");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DONE,dialogParser.getDialogState());
+        assertEquals(DESELECT_ALL,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("Slect all");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DONE,dialogParser.getDialogState());
+        assertEquals(NONE,dialogParser.getDialogAction());
+        assertEquals("Parse error. Please, try again.\n",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("Slect");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DONE,dialogParser.getDialogState());
+        assertEquals(NONE,dialogParser.getDialogAction());
+        assertEquals("Parse error. Please, try again.\n",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("deselect all vertices");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DONE,dialogParser.getDialogState());
+        assertEquals(DialogAction.DESELECT_ALL_VERTICES,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("deselect all ABC");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.DESELECT_ALL,dialogParser.getDialogState());
+        assertEquals(NONE,dialogParser.getDialogAction());
+        assertEquals("Edges or vertices? (Or abort.)\n",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("deselect all vertices");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.DONE,dialogParser.getDialogState());
+        assertEquals(DialogAction.DESELECT_ALL_VERTICES,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("deselect all vertices abc");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.DONE,dialogParser.getDialogState());
+        assertEquals(DialogAction.DESELECT_ALL_VERTICES,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("deselect");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.DESELECT,dialogParser.getDialogState());
+        assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
+        assertEquals("What to deselect?  Format: (all [vertices|edges]) | <list id>\n",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("deselect abc");
+        assertEquals("ABC",dialogParser.getParameters().get(0));
+        assertEquals(1,dialogParser.getParameters().size());
+        assertEquals(DialogState.DONE,dialogParser.getDialogState());
+        assertEquals(DialogAction.DESELECT_LIST,dialogParser.getDialogAction());
+        assertEquals("",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("deselect abc trash");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.DESELECT,dialogParser.getDialogState());
+        assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
+        assertEquals("What to deselect? Format: (all [vertices|edges]) | <list id>\n",dialogParser.getErrorMsg());
     }
 
+    @Test
+    public void testFilter(){
+        resetParserFields();
+        dialogParser.parse("filter");
+        assertTrue(dialogParser.getParameters().isEmpty());
+        assertEquals(DialogState.FILTER,dialogParser.getDialogState());
+        assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
+        assertEquals("What to filter? Format: <what> where|st|(such that)  <parameters> to <list>\n",dialogParser.getErrorMsg());
+
+        resetParserFields();
+        dialogParser.parse("filter all");
+        assertFalse(dialogParser.getParameters().isEmpty());
+        assertEquals("ALL", dialogParser.getParameters().get(0));
+        assertEquals(DialogState.FILTER_ALL,dialogParser.getDialogState());
+        assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
+        assertEquals("Vertices or edges?\n",dialogParser.getErrorMsg());
+
+        // TODO: write more filter tests
+
+    }
 
     private Structure getGraph(String fileName){
         try {
