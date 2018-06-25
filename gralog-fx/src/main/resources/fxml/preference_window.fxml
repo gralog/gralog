@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="400.0" prefWidth="700.0" style="-fx-background-color: derive(-fx-base,26.4%)derive(-fx-base,26.4%);" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane prefHeight="58.0" prefWidth="700.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#e4e4e4" height="340.0" layoutX="-6.0" layoutY="25.0" stroke="#5d5d5d" strokeType="INSIDE" width="716.0" />
+            <ToggleButton id="structureButton" fx:id="structureButton" layoutX="315.0" layoutY="12.0" minHeight="20.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" style="-fx-focus-color: silver; -fx-faint-focus-color: transparent; -fx-background-radius: 0; -fx-background-insets: 0; -fx-border-width: 1 0 1 0;" styleClass="button" stylesheets="@../stl.css" text="Structure">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </ToggleButton>
+            <ToggleButton id="generalButton" fx:id="generalButton" layoutX="245.0" layoutY="12.0" minHeight="20.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" selected="true" style="-fx-focus-color: silver; -fx-faint-focus-color: transparent; -fx-background-radius: 10 0 0 10; -fx-background-insets: 0; -fx-border-width: 1 0 1 1; -fx-border-radius: 10 0 0 10;" styleClass="button" stylesheets="@../stl.css" text="General">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </ToggleButton>
+            <ToggleButton id="specificButton" fx:id="specificButton" layoutX="385.0" layoutY="12.0" minHeight="20.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" style="-fx-focus-color: silver; -fx-faint-focus-color: transparent; -fx-background-radius: 0 10 10 0; -fx-background-insets: 0; -fx-border-width: 1 1 1 0; -fx-border-radius: 0 10 10 0;" styleClass="button" stylesheets="@../stl.css" text="Specific">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </ToggleButton>
+         </children>
+      </Pane>
+      <Pane fx:id="container" prefHeight="341.0" prefWidth="700.0" />
+      <Pane prefHeight="52.0" prefWidth="700.0">
+         <children>
+            <Button fx:id="ok" layoutX="627.0" layoutY="3.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" style="-fx-background-color: #d5f2c9; -fx-background-radius: 0; -fx-background-insets: 0; -fx-border-color: grey;" text="Ok" />
+            <Button fx:id="cancel" layoutX="554.0" layoutY="3.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="70.0" style="-fx-background-color: #ffc6c6; -fx-background-radius: 0; -fx-background-insets: 0; -fx-border-color: grey;" styleClass="okcancel" text="Cancel" />
+         </children>
+      </Pane>
+   </children>
+</VBox>

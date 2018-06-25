@@ -3,6 +3,7 @@
 package gralog.structure;
 
 import gralog.plugins.XmlName;
+import gralog.preferences.Configuration;
 
 /**
  *
@@ -20,8 +21,20 @@ public class UndirectedGraph extends Structure<Vertex, Edge> {
     }
 
     @Override
+    public Vertex createVertex(Configuration config) {
+        return new Vertex(config);
+    }
+
+    @Override
     public Edge createEdge() {
         Edge result = new Edge();
+        result.isDirected = false;
+        return result;
+    }
+
+    @Override
+    public Edge createEdge(Configuration config) {
+        Edge result = new Edge(config);
         result.isDirected = false;
         return result;
     }

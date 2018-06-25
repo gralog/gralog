@@ -3,6 +3,7 @@
 package gralog.modallogic;
 
 import gralog.plugins.XmlName;
+import gralog.preferences.Configuration;
 import gralog.structure.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -14,6 +15,15 @@ import org.w3c.dom.Element;
 public class World extends Vertex {
 
     public String propositions = "";
+
+
+    public World(){
+        super();
+    }
+
+    public World(Configuration config){
+        super(config);
+    }
 
     @Override
     public Element toXml(Document doc, String id) throws Exception {

@@ -7,6 +7,42 @@ package gralog.rendering;
  */
 public class GralogColor {
 
+    public enum Colors{
+        WHITE   (0xFFFFFF),
+        BLACK   (0x000000),
+        BLUE    (0x0000FF),
+        GREEN   (0x00FF00),
+        RED     (0xFF0000),
+        GREY    (0x808080),
+        GRAY    (0x808080),
+        YELLOW  (0xFFFF00),
+        CYAN    (0x00FFFF),
+        MAGENTA (0xFF00FF),
+        SILVER  (0xC0C0C0),
+        MAROON	(0x800000),
+        OLIVE	(0x808000),
+        DARK_GREEN (0x008000),
+        PURPLE	(0x800080),
+        TEAL	(0x008080),
+        NAVY    (0x000080),
+        ORANGE  (0xFF4500);
+
+        int value;
+
+        Colors(int c) {this.value = c;}
+    }
+
+    public int getValue(Colors c){
+        return c.value;
+    }
+
+    public static boolean isColor(String s){ // checks if s is a color from enum Colors
+        for (Colors c : Colors.values())
+            if (c.name().equalsIgnoreCase(s))
+                return true;
+        return false;
+    }
+
     public final short r;
     public final short g;
     public final short b;

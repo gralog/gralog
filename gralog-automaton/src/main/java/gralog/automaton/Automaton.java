@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton;
 
+import gralog.preferences.Configuration;
 import gralog.structure.*;
 import gralog.plugins.*;
 
@@ -24,8 +25,19 @@ public class Automaton extends Structure<State, Transition> {
     }
 
     @Override
+    public State createVertex(Configuration config) {
+        //TODO:
+        return new State(config);
+    }
+
+    @Override
     public Transition createEdge() {
         return new Transition();
+    }
+
+    @Override
+    public Transition createEdge(Configuration config) {
+        return new Transition(config);
     }
 
     public HashSet<State> epsilonHull(Set<State> start) {

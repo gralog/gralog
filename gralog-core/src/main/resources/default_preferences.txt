@@ -1,0 +1,17 @@
+#internal version of the preference system
+pref_id=0.0.2
+#other values
+newGraphOnStart=true
+Vertex_strokeColor=\#000000
+StructurePane_axisColor=\#000000
+Vertex_fillColor=\#FFFFFF
+StructurePane_showGrid=true
+StructurePane_snapToGrid=false
+Vertex_height=1.0
+Edge_thickness=0.025
+helpOnStart=true
+Vertex_width=1.0
+StructurePane_gridSize=1.0
+Edge_color=\#000000
+Edge_endPointDistance=0.2
+Edge_startPointDistance=0

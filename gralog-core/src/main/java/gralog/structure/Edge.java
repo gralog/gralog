@@ -5,6 +5,7 @@ package gralog.structure;
 import gralog.math.BezierUtilities;
 import gralog.plugins.*;
 import gralog.events.*;
+import gralog.preferences.Configuration;
 import gralog.rendering.*;
 
 import java.util.*;
@@ -29,8 +30,18 @@ public class Edge extends XmlMarshallable implements IMovable {
         BEZIER
     }
 
+
     @DataField(display=true,readOnly=true)
     private Integer id = -1; //if not -1, then don't change the id
+
+    public static boolean isEdgeType(String type){
+
+        for (EdgeType et : EdgeType.values())
+            if (et.name().equalsIgnoreCase(type))
+                return true;
+        return false;
+    }
+
 
     public static double multiEdgeOffset = 0.2;
 
@@ -44,6 +55,10 @@ public class Edge extends XmlMarshallable implements IMovable {
     @DataField(display=true)
     public Boolean isDirected = true;
     public Arrow arrowType = Arrow.TYPE2;
+
+    public Double endPointDistance = 0d;   //how much distance is between endpoint and target
+    public Double startPointDistance = 0d; //how much distance is between start point and source
+
     public double arrowHeadLength = 0.2d; // cm
 
     public double arrowHeadAngle = 40d; // degrees
@@ -66,6 +81,25 @@ public class Edge extends XmlMarshallable implements IMovable {
     private Vertex target = null;
 
     public ArrayList<ControlPoint> controlPoints = new ArrayList<>();
+
+
+    public Edge(){
+
+    }
+
+    public Edge(Configuration config){
+        this();
+        if(config != null){
+            initWithConfig(config);
+        }
+    }
+
+    protected void initWithConfig(Configuration config){
+        color = config.getValue("Edge_color", GralogColor::parseColor, GralogColor.BLACK);
+        endPointDistance = config.getValue("Edge_endPointDistance", Double::parseDouble, 0.0);
+        startPointDistance = config.getValue("Edge_startPointDistance", Double::parseDouble, 0.0);
+        width = config.getValue("Edge_thickness", Double::parseDouble, 0.025);
+    }
 
     public void setEdgeType(EdgeType e){
         if(e == EdgeType.BEZIER && controlPoints.size() > 2){

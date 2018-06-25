@@ -1,0 +1,31 @@
+Adrian
+
+MO
+DI 12-15
+MI
+DO 12-15
+FR 12-15
+
+Felix
+
+MO 14-18
+DI 14-18
+MI 12-15
+DO 14-18
+FR 12-15:30
+
+Michelle
+
+MO
+DI
+MI
+DO
+FR
+
+Roman
+
+MO 9:30 - 16:00
+DI 9:30 - 16:00
+MI 9:30 - 16:00
+DO 9:30 - 16:00
+FR 9:30 - 15:30

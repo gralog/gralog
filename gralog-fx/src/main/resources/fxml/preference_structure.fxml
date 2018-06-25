@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<GridPane fx:id="generalPage" minWidth="300.0" prefHeight="340.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="428.83331298828125" minWidth="10.0" prefWidth="167.0" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="428.83331298828125" minWidth="10.0" prefWidth="169.5" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="602.0000076293945" minWidth="10.0" prefWidth="183.00003051757812" />
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="602.0000076293945" minWidth="10.0" prefWidth="182.49996948242188" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="0.0" prefHeight="89.66666793823242" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <Pane prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <Label layoutX="15.0" layoutY="35.0" prefHeight="20.0" prefWidth="138.0" text="Vertices" textAlignment="RIGHT">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="55.0" prefHeight="20.0" prefWidth="138.0" text="Fill Color" textAlignment="RIGHT">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="80.0" prefHeight="20.0" prefWidth="138.0" text="Stroke Color" textAlignment="RIGHT">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="105.0" prefHeight="20.0" prefWidth="95.0" text="Width" textAlignment="RIGHT">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="130.0" prefHeight="20.0" prefWidth="95.0" text="Height" textAlignment="RIGHT">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="165.0" prefHeight="20.0" prefWidth="138.0" text="Edges" textAlignment="RIGHT">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="185.0" prefHeight="20.0" prefWidth="138.0" text="Line Color" textAlignment="RIGHT">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="210.0" prefHeight="20.0" prefWidth="138.0" text="Arrow Type" textAlignment="RIGHT">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="235.0" prefHeight="20.0" prefWidth="95.0" text="Thickness" textAlignment="RIGHT">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="4.0" prefHeight="20.0" prefWidth="138.0" text="Default of Structure:" textAlignment="RIGHT">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="260.0" prefHeight="20.0" prefWidth="138.0" text="Edge Endpoint Distance" textAlignment="RIGHT">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+            <Label layoutX="15.0" layoutY="285.0" prefHeight="20.0" prefWidth="138.0" text="Edge Endpoint Distance" textAlignment="RIGHT">
+               <font>
+                  <Font size="11.0" />
+               </font>
+            </Label>
+         </children>
+      </Pane>
+      <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+         <children>
+            <ColorPicker fx:id="Vertex_strokeColor" layoutY="80.0" prefHeight="20.0" prefWidth="138.0" style="-fx-font-size: 11;" />
+            <TextField fx:id="Vertex_width" layoutY="105.0" minHeight="0.0" prefHeight="20.0" prefWidth="138.0" promptText="0.0">
+               <font>
+                  <Font size="11.0" />
+               </font></TextField>
+            <TextField fx:id="Vertex_height" layoutY="130.0" minHeight="0.0" prefHeight="20.0" prefWidth="138.0" promptText="0.0">
+               <font>
+                  <Font size="11.0" />
+               </font></TextField>
+            <ColorPicker fx:id="Vertex_fillColor" layoutY="55.0" prefHeight="20.0" prefWidth="138.0" style="-fx-font-size: 11;" />
+            <TextField fx:id="Edge_thickness" layoutY="235.0" minHeight="0.0" prefHeight="20.0" prefWidth="138.0" promptText="0.0">
+               <font>
+                  <Font size="11.0" />
+               </font></TextField>
+            <ColorPicker fx:id="Edge_color" layoutY="185.0" prefHeight="20.0" prefWidth="138.0" style="-fx-font-size: 11;" />
+            <ComboBox fx:id="Edge_arrowType" layoutY="210.0" maxHeight="20.0" minHeight="0.0" prefHeight="20.0" prefWidth="138.0" style="-fx-font-size: 10;" />
+            <TextField fx:id="Edge_endPointDistance" layoutY="260.0" minHeight="0.0" prefHeight="20.0" prefWidth="138.0" promptText="0.0">
+               <font>
+                  <Font size="11.0" />
+               </font></TextField>
+            <TextField fx:id="Edge_startPointDistance1" layoutY="285.0" minHeight="0.0" prefHeight="20.0" prefWidth="138.0" promptText="0.0">
+               <font>
+                  <Font size="11.0" />
+               </font></TextField>
+         </children>
+      </Pane>
+      <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#f2f2f2" height="224.0" layoutX="24.0" layoutY="41.0" stroke="BLACK" strokeType="INSIDE" width="290.0" />
+            <Line endX="-10.0" layoutX="166.0" layoutY="119.0" startX="-100.0" />
+            <Line endX="-20.0" endY="-10.0" layoutX="176.0" layoutY="129.0" startX="-20.0" startY="92.0" />
+            <Line endX="-20.0" endY="-10.0" layoutX="189.0" layoutY="130.0" startX="-20.0" startY="92.0" />
+            <Line endX="-20.0" endY="-10.0" layoutX="165.0" layoutY="130.0" startX="-20.0" startY="89.0" />
+            <Circle fill="WHITE" layoutX="66.0" layoutY="119.0" radius="18.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fill="WHITE" layoutX="156.0" layoutY="220.0" radius="18.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fill="WHITE" layoutX="156.0" layoutY="119.0" radius="18.0" stroke="BLACK" strokeType="INSIDE" />
+         </children></Pane>
+      <Pane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" />
+   </children>
+</GridPane>

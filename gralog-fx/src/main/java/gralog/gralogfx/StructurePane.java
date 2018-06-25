@@ -5,8 +5,9 @@ package gralog.gralogfx;
 import java.util.ArrayList;
 
 import gralog.gralogfx.input.MultipleKeyCombination;
+import gralog.preferences.Configuration;
 import gralog.gralogfx.threading.ScrollThread;
-import gralog.preferences.Preferences;
+import gralog.preferences.MenuPrefVariable;
 import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -16,14 +17,14 @@ import gralog.gralogfx.piping.Piping;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import gralog.structure.controlpoints.ControlPoint;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.layout.StackPane;
@@ -95,16 +96,33 @@ public class StructurePane extends StackPane implements StructureListener {
     private double lastMouseX = -1d;
     private double lastMouseY = -1d;
 
+    @MenuPrefVariable(name="Draw Coordinate Grid")
+    private boolean hasGrid;
 
-    private boolean hasGrid = Preferences.getBoolean(getClass(), "hasGrid", true);
-    private double gridSize = 1.0;
+    @MenuPrefVariable(name="Grid Size")
+    private double gridSize;
+
+    @MenuPrefVariable(name="Snap to Grid")
     private boolean snapToGrid = true;
 
-    public StructurePane(Structure structure) {
+    protected Configuration config;
+
+    public StructurePane(Structure structure){
+        this(structure, new Configuration());
+    }
+    public StructurePane(Structure structure, Configuration config) {
+
+        this.config = config;
+
+        //init to config
+        hasGrid = config.getValue("StructurePane_showGrid", Boolean::parseBoolean,true);
+        gridSize = config.getValue("StructurePane_gridSize", Double::parseDouble, 1.0);
+        snapToGrid = config.getValue("StructurePane_snapToGrid", Boolean::parseBoolean,true);
+
         this.structure = structure;
         canvas = new Canvas(500,500);
-
         this.getChildren().add(canvas);
+
         // resize canvas with surrounding StructurePane
         canvas.widthProperty().bind(this.widthProperty());
         canvas.heightProperty().bind(this.heightProperty());
@@ -142,25 +160,13 @@ public class StructurePane extends StackPane implements StructureListener {
         addLoop.setOnAction(e -> {
             if(highlights.getSelection().size() == 1){
                 Vertex v = (Vertex)highlights.getSelection().iterator().next();
-                structure.addEdge(v, v);
+                structure.addEdge(v, v, config);
             }
             this.requestRedraw();
         });
         vertexMenu.getItems().addAll(addLoop, copy, delete);
 
     }
-
-    // public void addSpaceListener(SpaceEvent toAdd) {
-    //     spaceListeners.add(toAdd);
-    // }           
-
-    // public void spacePressed(){
-    //     System.out.println("space pressed");
-    //     for (SpaceEvent listener : spaceListeners){
-    //         listener.spacePressed();
-    //     }
-    // }
-
     public Structure getStructure() {
         return structure;
     }
@@ -259,7 +265,9 @@ public class StructurePane extends StackPane implements StructureListener {
 //                    break;
                 case D:
                     List<Object> duplicates = structure.duplicate(highlights.getSelection(), gridSize);
-                    structure.snapToGrid(gridSize);
+                    if(snapToGrid){
+                        structure.snapToGrid(gridSize);
+                    }
                     clearSelection();
                     selectAll(duplicates);
                     this.requestRedraw();
@@ -343,7 +351,7 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         else if(b == MouseButton.PRIMARY){
             if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease){
-                Vertex v = structure.createVertex();
+                Vertex v = structure.addVertex(config);
                 v.coordinates = new Vector2D(
                         mousePositionModel.getX(),
                         mousePositionModel.getY()
@@ -351,7 +359,6 @@ public class StructurePane extends StackPane implements StructureListener {
                 if (hasGrid && snapToGrid){
                     v.snapToGrid(gridSize);
                 }
-                structure.addVertex(v);
                 structureSubscribers.forEach(s -> s.accept(structure));
             }
             else if(selectionBoxDragging && selectionBoxingActive &&
@@ -365,7 +372,7 @@ public class StructurePane extends StackPane implements StructureListener {
             if(selected instanceof Vertex){
                 //right release on a vertex while drawing an edge = add edge
                 if(drawingEdge && currentEdgeStartingPoint != null){
-                    structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected);
+                    structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected, config);
                 }
                 //right click opens context menu
                 else if(vertexMenu != null){
@@ -391,6 +398,10 @@ public class StructurePane extends StackPane implements StructureListener {
         if(horizontalScrollThread != null){
             horizontalScrollThread.interrupt();
             horizontalScrollThread = null;
+        }
+        if(verticalScrollThread != null){
+            verticalScrollThread.interrupt();
+            verticalScrollThread = null;
         }
         this.requestRedraw();
     }
@@ -579,12 +590,6 @@ public class StructurePane extends StackPane implements StructureListener {
             }
         }
 
-        // origin
-        gc.setStroke(Color.BLACK);
-        Point2D center = modelToScreen(new Point2D(0d, 0d));
-        gc.strokeLine(center.getX(), 0, center.getX(), h);
-        gc.strokeLine(0, center.getY(), w, center.getY());
-
         // draw the graph
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
         structure.render(ggc, highlights);
@@ -620,6 +625,11 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public void selectAll(Collection<?> elems) {
         highlights.selectAll(elems);
+        highlightsSubribers.forEach(c -> c.accept(highlights));
+    }
+
+    public void deselectAll(Collection<?> elems){
+        highlights.deselectAll(elems);
         highlightsSubribers.forEach(c -> c.accept(highlights));
     }
 
@@ -722,5 +732,44 @@ public class StructurePane extends StackPane implements StructureListener {
 
     @Override
     public void edgeChanged(EdgeEvent e) {
+    }
+
+
+    /**
+     * Requests to close the current structure pane. After closing,
+     * can also execute a given Runnable.
+     *
+     * @param afterClose The method invoked after this structure closes
+     *
+     */
+    public void requestClose(Runnable afterClose) {
+        if (structure.isEmpty()) { // TODO: isEmpty is not enough to know if you can just close
+            afterClose.run();
+            return;
+        }
+
+        //open a close save context window
+        Alert con = new Alert(Alert.AlertType.NONE);
+        con.setTitle("Close Structure");
+        con.setHeaderText("Do you want to discard all changes to this structure?");
+
+        ButtonType save = new ButtonType("Save Changes", ButtonBar.ButtonData.APPLY);
+        ButtonType discard = new ButtonType("Discard", ButtonBar.ButtonData.NO);
+        ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        con.getButtonTypes().addAll(save, discard, cancel);
+
+        Optional<ButtonType> result = con.showAndWait();
+
+        if (result.get() == cancel) {
+            afterClose.run();
+        } else {
+            System.out.println("Saved or discarded");
+            afterClose.run();
+        }
+    }
+
+    public Highlights getHighlights() {
+        return highlights;
     }
 }

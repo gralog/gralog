@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.finitegame.structure;
 
+import gralog.preferences.Configuration;
 import gralog.structure.*;
 import gralog.plugins.XmlName;
 import gralog.rendering.GralogColor;
@@ -13,6 +14,14 @@ import org.w3c.dom.Element;
 public class FiniteGamePosition extends Vertex {
 
     public Boolean player1Position = true;
+
+    public FiniteGamePosition(){
+        super();
+    }
+
+    public FiniteGamePosition(Configuration config){
+        super(config);
+    }
 
     @Override
     public Element toXml(Document doc, String id) throws Exception {

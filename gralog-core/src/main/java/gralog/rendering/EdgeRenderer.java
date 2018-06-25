@@ -51,7 +51,9 @@ public class EdgeRenderer {
         curve.source = e.getSource().shape.getEdgePoint(sourceToCtrl1.measureAngleX(), e.getSource().coordinates);
         curve.target = e.getTarget().shape.getEdgePoint(targetToCtrl2.measureAngleX(), e.getTarget().coordinates);
 
-
+        //move away from the center of the target by the specified endPointDistance
+        curve.target = curve.target.plus(curve.target.minus(e.getTarget().coordinates).multiply(e.endPointDistance));
+        curve.source = curve.source.plus(curve.source.minus(e.getSource().coordinates).multiply(e.startPointDistance));
 
         if(e.isDirected){
             gc.arrow(targetToCtrl2.multiply(-1), curve.target, e.arrowType, e.arrowHeadLength, c);
@@ -102,6 +104,7 @@ public class EdgeRenderer {
         Vector2D targetOffset = e.getTarget().coordinates.plus(perpendicularToEdge);
 
         Vector2D intersection = e.getTarget().shape.getIntersection(sourceOffset, targetOffset, e.getTarget().coordinates);
+        intersection = intersection.minus(diff.normalized().multiply(e.endPointDistance / 2)); //no idea why I divide
         if(e.isDirected){
             Vector2D adjust = intersection.plus(diff.normalized().multiply(e.arrowType.endPoint * e.arrowHeadLength));
             gc.line(sourceOffset, adjust, c, e.width, e.type);

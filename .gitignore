@@ -28,3 +28,4 @@
 # IntelliJ IDEA
 .idea/
 .idea/*
+/bin/

@@ -4,6 +4,7 @@ package gralog.structure;
 
 import gralog.plugins.*;
 import gralog.events.*;
+import gralog.preferences.Configuration;
 import gralog.rendering.*;
 import gralog.rendering.shapes.Ellipse;
 import gralog.rendering.shapes.RenderingShape;
@@ -56,6 +57,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     Set<Edge> incomingEdges;
     Set<Edge> incidentEdges;
 
+
     public Vertex() {
         listeners = new HashSet<>();
         outgoingEdges = new HashSet<>();
@@ -63,12 +65,31 @@ public class Vertex extends XmlMarshallable implements IMovable {
         incomingEdges = new HashSet<>();
     }
 
+    public Vertex(Configuration config){
+        this();
+        if(config != null){
+            initWithConfig(config);
+        }
+    }
+
     /**
-     * Copies a vertex information from a given vertex object.
+     * Initializes lots of variables from a given configuration
+     * @param config
+     */
+    protected void initWithConfig(Configuration config){
+        //TODO: complete
+        strokeColor = config.getValue("Vertex_strokeColor", GralogColor::parseColor, GralogColor.BLACK);
+        fillColor = config.getValue("Vertex_fillColor", GralogColor::parseColor, GralogColor.WHITE);
+        shape.setWidth(config.getValue("Vertex_width", Double::parseDouble, 1.0));
+        shape.setHeight(config.getValue("Vertex_height", Double::parseDouble, 1.0));
+    }
+
+    /**
+     * Copies a vertex information from a given vertex object. Not the ID.
      *
      */
     public <V extends Vertex> void copy(V v){
-        this.id = v.id;
+        //this.id = v.id;
         this.radius = v.radius;
         this.loopAngle = v.loopAngle;
         this.loopAnchor = v.loopAnchor;
@@ -87,11 +108,17 @@ public class Vertex extends XmlMarshallable implements IMovable {
         this.incidentEdges = new HashSet<>(v.incidentEdges);
         this.outgoingEdges = new HashSet<>(v.outgoingEdges);
         this.incomingEdges = new HashSet<>(v.incomingEdges);
+
     }
 
     @Override
     public String toString() {
-        return "Vertex{" + "label=" + label + ", radius=" + radius + ", fillColor=" + fillColor + ", strokeWidth=" + strokeWidth + ", textHeight=" + textHeight + ", strokeColor=" + strokeColor + ", coordinates=" + coordinates + '}';
+        return "Vertex{" + "label=" + label + ", radius=" + radius +
+                ", fillColor=" + fillColor +
+                ", strokeWidth=" + strokeWidth +
+                ", textHeight=" + textHeight +
+                ", strokeColor=" + strokeColor +
+                ", coordinates=" + coordinates + '}';
     }
 
     public void setLabel(String label){
@@ -188,6 +215,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public Set<Edge> getIncidentEdges() {
         return incidentEdges;
     }
+    public int getDegree (){return incidentEdges.size();}
 
     public int getId(){
         return this.id;
@@ -196,11 +224,12 @@ public class Vertex extends XmlMarshallable implements IMovable {
     public Set<Edge> getOutgoingEdges(){
         return outgoingEdges;
     }
+    public int getOutDegree (){return outgoingEdges.size();}
 
     public Set<Edge> getIncomingEdges(){
         return this.incomingEdges;
     }
-
+    public int getInDegree (){return incomingEdges.size();}
 //##########START depricated!!!! use getNeighbours instead#########
     /**
      * @return The set of adjacent vertices.

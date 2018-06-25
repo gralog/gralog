@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.modallogic;
 
+import gralog.preferences.Configuration;
 import gralog.structure.*;
 import gralog.plugins.*;
 
@@ -21,7 +22,18 @@ public class KripkeStructure extends Structure<World, Action> {
     }
 
     @Override
+    public World createVertex(Configuration config) {
+        return new World(config);
+    }
+
+    @Override
     public Action createEdge() {
         return new Action();
     }
+
+    @Override
+    public Action createEdge(Configuration config) {
+        return new Action(config);
+    }
+
 }

@@ -30,7 +30,7 @@ public class Grid extends Generator {
     }
 
     @Override
-    public Structure generate(AlgorithmParameters p) throws Exception {
+    public Structure generate(AlgorithmParameters p)  {
         int n = Integer.parseInt(((StringAlgorithmParameter) p).parameter);
         Preferences.setInteger(this.getClass(), "size", n);
 

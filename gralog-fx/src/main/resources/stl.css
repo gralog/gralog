@@ -1,0 +1,12 @@
+.button:selected{
+     -fx-background-color:
+            -fx-shadow-highlight-color,
+            linear-gradient(to bottom, derive(-fx-outer-border, -45%), -fx-outer-border),
+            grey
+	
+}
+
+.button{
+-fx-border-color: #5d5d5d;
+}
+

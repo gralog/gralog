@@ -5,6 +5,7 @@ package gralog.structure;
 import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
 import gralog.events.*;
+import gralog.preferences.Configuration;
 import gralog.rendering.*;
 import gralog.exportfilter.*;
 
@@ -83,6 +84,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return this.id;
     }
 
+    public boolean isEmpty(){
+        return vertices.size() + edges.size() == 0;
+    }
     /**
      * @return An unmodifiable set of vertices.
      */
@@ -158,15 +162,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public abstract V createVertex();
 
     /**
-     * Adds a vertex to the structure. Has no effect if the vertex already
-     * exists in the structure.
+     * Creates a new vertex instance without adding it to the structure.
      *
-     * @param v The vertex to be added.
+     * @return The new vertex.
      */
-    public void addVertex(V v) {
-        v.id = pollNextFreeVertexID();
-        vertices.put(v.id, v);
-    }
+    public abstract V createVertex(Configuration config);
+
 
     /**
      * Adds a vertex to the structure, and uses the given id, given it is
@@ -175,9 +176,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param v The vertex to be added.
      * @param id The id of which v will soon hopefully be the proud owner
      */
-    public void addVertex(V v,int id) {
+    public V addVertex(Configuration config,int id) {
         // v.id = pollNextFreeVertexID();
-        Interval me = new Interval(id,id);
+        V v = createVertex(config);
+        if (this.getVertexById(id) != null){
+            //send warning to console that the id has already been assigned
+            v.setId(pollNextFreeVertexID());
+            vertices.put(v.getId(),v);
+            return v;
+        }
+        
         Interval smallestGreaterThanOrEqual = this.vertexIdHoles.ceiling(me);
         Interval greatestLessThanOrEqualTo = this.vertexIdHoles.floor(me);
         Interval newInterval = new Interval(0,0);
@@ -191,9 +199,45 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 this.vertexIdHoles.add(newInterval);
             }
         }
-        vertices.put(v.id, v);
+        v.setId(id);
+        return v;
+    }
+    public V addVertex(){
+        return addVertex((Configuration) null);
     }
 
+    /**
+     * Adds a vertex to the structure. Has no effect if the vertex already
+     * exists in the structure.
+     * @param config The config with which the vertex will be initialized
+     * @return The created vertex
+     */
+    public V addVertex(Configuration config){
+        V v = createVertex(config);
+        v.id = pollNextFreeID();
+        vertices.put(v.id, v);
+        return v;
+    }
+
+    /**
+     * Creates a new vertex with the given label and adds it to the structure.
+     * This is a convenience function combining createVertex and addVertex.
+     * Adding multiple vertices with the same name adds multiple vertices.
+     *
+     * @param label The label of the new vertex to be added.
+     * @return The new vertex.
+     */
+    public V addVertex(String label) {
+        V v = addVertex();
+        v.label = label;
+        return v;
+    }
+
+    public V addVertex(String label, Configuration config) {
+        V v = addVertex(config);
+        v.label = label;
+        return v;
+    }
     /**
      * Adds a set of vertices to the structure.
      *
@@ -218,20 +262,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edges.clear();
     }
 
-    /**
-     * Creates a new vertex with the given label and adds it to the structure.
-     * This is a convenience function combining createVertex and addVertex.
-     * Adding multiple vertices with the same name adds multiple vertices.
-     *
-     * @param label The label of the new vertex to be added.
-     * @return The new vertex.
-     */
-    public V addVertex(String label) {
-        V v = createVertex();
-        v.label = label;
-        addVertex(v);
-        return v;
-    }
+
 
 
 
@@ -247,13 +278,19 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
 
         for (Edge e : sourceVertex.getIncidentEdges()){
-            
+
+            System.out.println("iterating with edge: " + e.toString() +
+                    " with input: " + Integer.toString(inputSourceId) +
+                    " and target: " + Integer.toString(inputTargetId));
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
             
 
             if (targetId == inputTargetId && sourceId == inputSourceId){
-                
+
+                System.out.println("ok we found edge with target: " +
+                        targetId + "=" + inputTargetId + " and source: " +
+                        sourceId + "=" + inputSourceId);
                 return e;
             }
             else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)){
@@ -393,6 +430,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public abstract E createEdge();
 
     /**
+     * Create a new edge instance without adding it to the structure.
+     *
+     * @return The new edge.
+     */
+    public abstract E createEdge(Configuration config);
+
+    /**
      * Add an edge to the structure. Has no effect if the edge already exists in
      * the structure.
      *
@@ -463,34 +507,21 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edges.addAll(es);
     }
 
-    /**
-     * Creates a new edge and adds it to the structure. This is a convenience
-     * function combining createEdge and addEdge.
-     *
-     * @param source The tail of the new edge.
-     * @param target The head of the new edge.
-     * @return The new edge.
-     */
     public E addEdge(V source, V target) {
-        E e = createEdge(source, target);
-        addEdge(e);
-        return e;
+        return addEdge(source, target, -1, null);
     }
-    /**
-     * Creates a new edge and adds it to the structure. This is a convenience
-     * function combining createEdge and addEdge.
-     *
-     * @param source The tail of the new edge.
-     * @param target The head of the new edge.
-     * @param id The id of the edge. Leave empty for default vals
-     * @return The new edge.
-     */
+    public E addEdge(V source, V target, Configuration config){
+        return addEdge(source, target, -1, config);
+    }
     public E addEdge(V source, V target, int id) {
-        E e = createEdge(source, target, id);
-        addEdge(e);
-        return e;
+        return addEdge(source, target, id, null);
     }
 
+    public E addEdge(V source, V target, int id, Configuration config) {
+        E e = createEdge(source, target, id, config);
+        addEdge(e);
+        return e;
+    }
     /**
      * Removes an edge from the structure. Does not affect vertices, incident or
      * not.
@@ -576,10 +607,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public E createEdge(V source, V target) {
 
-
-        E e = createEdge(source, target, -1);
-        System.out.println("really ret " + e.getId());
-        return e;
+        return createEdge(source, target, -1, null);
     }
 
     /**
@@ -589,13 +617,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param target The head of the new edge.
      * @return The new edge.
      */
-    public E createEdge(V source, V target, int id) {
-        E edge = createEdge();
+
+    private E createEdge(V source, V target, int id, Configuration config) {
+        E edge = createEdge(config);
         if ((this.getEdgeByVertexIdsAndId(source.getId(),target.getId(),id) != null) || (this.getEdgeByVertexIdsAndId(target.getId(),source.getId(),id)!= null) ){
-            return (E)null;
+            // return (E)null;
+            //send warning message that the id had already been assigned
         }
         edge.setId(id);
         System.out.println("setting id to " + edge.getId());
+
         edge.setSource(source);
         edge.setTarget(target);
         System.out.println("post setting s,t id to " + edge.getId());
@@ -621,19 +652,24 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         for(Object o : selection) {
             if (o instanceof Vertex) {
-                V v = createVertex();
-                v.copy((V) o);
-                v.move(new Vector2D(offset, offset));
-                for(Edge e : v.getOutgoingEdges()){
+
+                for(Edge e : ((V) o).getOutgoingEdges()){
                     if(selection.contains(e.getTarget())){
                         edgeIDs.add(new Interval(e.getSource().id, e.getTarget().id));
                     }
                 }
+                V v = addVertex();
+
+                v.copy((V) o);
+                v.move(new Vector2D(offset, offset));
+
                 v.incidentEdges.clear();
                 v.outgoingEdges.clear();
-                idToVertex.put(v.id, v);
+
+
                 //now we can correct v.id
-                addVertex(v);
+                idToVertex.put(((V) o).id, v);
+
                 result.add(v);
             }
         }
@@ -1031,10 +1067,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             Element child = (Element) childNode;
             Object obj = PluginManager.instantiateClass(child.getTagName());
             if (obj instanceof Vertex) {
-                V v = (V) obj;
+                V v = addVertex();
+                v.copy((V) obj);
                 String id = v.fromXml(child);
                 vertexRegister.put(id, v);
-                addVertex(v);
             } else if (obj instanceof Edge) {
                 tempEdges.add((E) obj);
                 loadedFrom.put((E) obj, child);

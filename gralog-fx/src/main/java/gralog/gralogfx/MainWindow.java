@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
@@ -81,7 +82,7 @@ public class MainWindow extends Application {
         handlers.onSave = this::onSave;
         handlers.onDirectInput = this::onDirectInput;
         handlers.onLoadPlugin = this::onLoadPlugin;
-        handlers.onExit = () -> stage.close();
+        handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
         // pipeline = new Piping();
@@ -125,7 +126,7 @@ public class MainWindow extends Application {
         tabs = new Tabs(this::onChangeCurrentStructure);
         tabs.initializeTab();
 
-        mainConsole = new Console();
+        mainConsole = new Console(tabs);
 
         ObjectInspector objectInspector = new ObjectInspector(tabs);
         //put lambdas here for controlling stuff
@@ -306,7 +307,8 @@ public class MainWindow extends Application {
                 return;
             }
 
-            // if (externalCommandSegments[0].equals("error") || (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
+            // if (externalCommandSegments[0].equals("error") ||
+            // (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
             //     System.out.println("error: " + externalProcessInitResponse);
             //     return;
             // }
@@ -425,7 +427,8 @@ public class MainWindow extends Application {
                 int idx = extension.lastIndexOf('.');
                 extension = idx > 0 ? extension.substring(idx + 1) : "";
 
-                ExportFilter exportFilter = ExportFilterManager.instantiateExportFilterByExtension(structure.getClass(), extension);
+                ExportFilter exportFilter = ExportFilterManager
+                        .instantiateExportFilterByExtension(structure.getClass(), extension);
                 if (exportFilter != null) {
                     // configure export filter
                     ExportFilterParameters params = exportFilter.getParameters(structure);
@@ -725,8 +728,8 @@ public class MainWindow extends Application {
     public void start(Stage primaryStage) {
         Scene scene = new Scene(
             root,
-            Preferences.getInteger(getClass(), "main-window-width", 1000),
-            Preferences.getInteger(getClass(), "main-window-height", 800));
+            Preferences.getInteger(getClass(), "main-window-width", 1200),
+            Preferences.getInteger(getClass(), "main-window-height", 700));
 
         scene.getStylesheets().add("/stylesheet.css");
 
@@ -742,6 +745,7 @@ public class MainWindow extends Application {
 
 
         scene.setOnKeyPressed(event -> {
+
 
             if (!pipingUnderway || pipingUnderway){
                 switch (event.getCode()){
@@ -783,6 +787,7 @@ public class MainWindow extends Application {
                 }
             }else{
                 System.out.println("good try hoss but pipign is pipingUnderway");
+
             }
         });
 
@@ -790,14 +795,26 @@ public class MainWindow extends Application {
         primaryStage.setOnCloseRequest((e) -> {
             Preferences.setInteger(getClass(), "main-window-width", (int) scene.getWidth());
             Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
+
             for (Piping p : this.pipelines){
                 p.killSelf();
                 
             }
+
+            tabs.requestClose(() -> {
+                Platform.exit();
+                primaryStage.hide();
+            });
+            e.consume();
+
         });
         primaryStage.show();
 
         MultipleKeyCombination.setupMultipleKeyCombination(scene);
+    }
+    @Override
+    public void stop(){
+        System.exit(0);
     }
 
     public void windowShown() {
@@ -806,7 +823,8 @@ public class MainWindow extends Application {
         String configFileDir = null;
         try {
             File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            File configFile = new File(jarFile.getParentFile().getAbsolutePath() + File.separator + "config.xml");
+            File configFile = new File(jarFile.getParentFile().getAbsolutePath() +
+                    File.separator + "config.xml");
             configFileDir = configFile.getParent();
 
             if (configFile.exists()) {
