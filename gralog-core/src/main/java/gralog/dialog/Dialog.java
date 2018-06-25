@@ -60,13 +60,11 @@ public class Dialog {
     }
 
     private void filterFill(ArrayList<Vertex> what, ArrayList<Vertex> to, String color){
-        System.out.println("Strting... what = [" + what + "], to = [" + to + "], color = [" + color + "]");
         for (Vertex v : what){
             if (v.fillColor.name().equals(color)){
                 to.add(v);
             }
         }
-        System.out.println("Finished: what = [" + what + "], to = [" + to + "], color = [" + color + "]");
     }
 
     private void filterWidth(ArrayList<Vertex> what, ArrayList<Vertex> to, double width){
@@ -187,7 +185,6 @@ public class Dialog {
     }
 
     private void filterEdges(ArrayList<Edge> what, ArrayList<Edge> to, ArrayList<String> parameters){
-        System.out.println("what = [" + what + "], to = [" + to + "], parameters = [" + parameters + "]");
         for (int i = 0; i < parameters.size(); i += 2) {
             switch (parameters.get(i)) {
 
@@ -231,8 +228,6 @@ public class Dialog {
     // what: list to filter from, to: list to add items to
     // the function iterates over parameters, in an iteration extracts the next parameter and filers according to it
     private void filterVertices(ArrayList<Vertex> what, ArrayList<Vertex> to, ArrayList<String> parameters) {
-        // debugging
-        System.out.println("what = [" + what + "], to = [" + to + "], parameters = [" + parameters + "]");
         for (int i = 0; i < parameters.size(); i += 2){
             switch (parameters.get(i)){
                 case "STROKE": case "COLOR":
@@ -397,14 +392,16 @@ public class Dialog {
     // for debugging only
     private void printVertexIdList(ArrayList<Vertex> list){
         for (Vertex v : list){
-            System.out.println(v.id);
+            System.out.print(v.id + " ");
         }
+        System.out.println();
     }
     // for debugging only
     private void printEdgeIdList(ArrayList<Edge> list){
         for (Edge v : list){
-            System.out.println(v.color);
+            System.out.print(v.color + " ");
         }
+        System.out.println();
     }
 
 
@@ -419,6 +416,7 @@ public class Dialog {
             }
             ArrayList<Vertex> to = getVertexTo(parameters.get(parameters.size()-1)); // where to filter to
             parameters.remove(parameters.size()-1);
+            parameters.remove(parameters.size()-1);
             ArrayList<Vertex> what = new ArrayList<Vertex>();; // where to filter from
             if (parameters.get(0).equals("SELECTED"))
                 for (Object v : highlights.getSelection())
@@ -428,8 +426,9 @@ public class Dialog {
                 what = new ArrayList<Vertex>(structure.getVertices());
             if (vertexListS.containsKey(parameters.get(0)))
                 what = vertexListS.get(parameters.get(0));
-            parameters.remove(1);
-            parameters.remove(0);
+            parameters.remove(2); // delete "where" TODO: don't need "where" as a parameter at all
+            parameters.remove(1); // delete "vertices" / "edges"
+            parameters.remove(0); // delete "all" / "selected"
             filterVertices(what,to,parameters);
 
             parameters.clear();
