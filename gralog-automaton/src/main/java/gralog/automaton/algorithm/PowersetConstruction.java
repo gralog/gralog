@@ -26,7 +26,7 @@ public class PowersetConstruction extends Algorithm {
 
         Set<State> Q0 = new HashSet<>();
         Collection<State> Q = a.getVertices();
-        Set<Transition> delta = a.getEdges();
+        Set<Transition> delta = (Set<Transition>)a.getEdges();
         for (Vertex v : Q)
             if (v instanceof State && ((State) v).startState)
                 Q0.add((State) v);

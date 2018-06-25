@@ -26,14 +26,14 @@ public class AddVertexCommand extends CommandForGralogToExecute {
 		// if (!this.stringId.equals(-1)){
 		// 	this.vertex = this.structure.createVertex(Integer.parseInt(this.stringId));
 		// }
-		this.vertex = this.structure.createVertex();
+		this.vertex = this.structure.addVertex();
+		System.out.println("and his id is: " + this.vertex.getId());
         this.vertex.coordinates = new Vector2D(
             ThreadLocalRandom.current().nextInt(0, 10+1),
             ThreadLocalRandom.current().nextInt(0, 10+1)
         );
         this.vertex.fillColor = new GralogColor(204, 236, 53);
 
-        this.structure.addVertex(this.vertex);
         this.newVertexId = this.vertex.getId();
 
         this.setResponse(Integer.toString(this.vertex.getId()));

@@ -79,11 +79,14 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         Edge e;
         if (this.id == -1){
-            e = structure.createEdge(this.sourceVertex,this.targetVertex);
+            e = structure.addEdge(this.sourceVertex,this.targetVertex,null);
             System.out.println("and directly afterward we have id = " + e.getId());
         }else{
-            e = structure.createEdge(this.sourceVertex,this.targetVertex,this.id);
+            e = structure.addEdge(this.sourceVertex,this.targetVertex,this.id,null);
         }
+        
+        System.out.println("is e null? " + (e== null));
+
 
         if (e == null){
             this.fail();
@@ -93,12 +96,8 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
         }else{
             System.out.println("they say e is not null. ok then it is: " +e);
         }
-    
-        System.out.println("i have creaeted e: " + e);
             
         e.isDirected = this.isDirected;
-
-        this.structure.addEdge(e);
 
         this.setResponse(Integer.toString(e.getId()));
 

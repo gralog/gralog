@@ -298,6 +298,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     private void renderLoop(GralogGraphicsContext gc, Highlights highlights){
         GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
+        
         double angleStart = source.loopAnchor - source.loopAngle;
         double angleEnd = source.loopAnchor + source.loopAngle;
 

@@ -53,15 +53,15 @@ for x in ids:
 			for z in range(4):
 				g.addEdge(x,y,False);
 
-		# g.setEdgeColor((x,y),colorRGB=(255,0,0),edgeId=eid);
-# for x in range(4):
-# 	g.deleteEdge((v1,v2),ids[x]);
-g.pauseUntilSpacePressed();
-for x in ids:
-	for y in ids:
-		if x != y:
-			for z in range(4):
-				g.deleteEdge((x,y),z);
+# 		# g.setEdgeColor((x,y),colorRGB=(255,0,0),edgeId=eid);
+# # for x in range(4):
+# # 	g.deleteEdge((v1,v2),ids[x]);
+# g.pauseUntilSpacePressed();
+# for x in ids:
+# 	for y in ids:
+# 		if x != y:
+# 			for z in range(4):
+# 				g.deleteEdge((x,y),z);
 
 # for x in vertices:
 # 	for y in vertices:

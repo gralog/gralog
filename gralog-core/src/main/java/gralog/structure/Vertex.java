@@ -128,37 +128,38 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     void connectEdge(Edge e) {
+        System.out.println("connecty boi");
         if(e.getSource() == this){
-            //if id has not been set already, set it
-            if(e.getId() == -1 && incidentEdges.isEmpty()){
-                e.setId(0);
-            }
-            if(e.getId() == -1){
-                int[] allIndices = new int[incidentEdges.size()];
-                int k = 0;
+            //deprecated local id Vergabe. 
+            // if(e.getId() == -1 && incidentEdges.isEmpty()){
+            //     e.setId(0);
+            // }
+            // if(e.getId() == -1){
+            //     int[] allIndices = new int[incidentEdges.size()];
+            //     int k = 0;
                 
-                for(Edge edge : incidentEdges){
-                    allIndices[k] = edge.getId();
-                    k++;
-                }
-                System.out.println("i got indicex array: ");
-                for (int x : allIndices){
-                    System.out.println("bla: " + x);
-                }
-                Arrays.sort(allIndices);
+            //     for(Edge edge : incidentEdges){
+            //         allIndices[k] = edge.getId();
+            //         k++;
+            //     }
+            //     System.out.println("i got indicex array: ");
+            //     for (int x : allIndices){
+            //         System.out.println("bla: " + x);
+            //     }
+            //     Arrays.sort(allIndices);
 
-                boolean changedOnce = false;
-                for(int i = 0; i < allIndices.length; i++){
-                    if(i < allIndices[i]){
-                        e.setId(i);
-                        changedOnce = true;
-                        break;
-                    }
-                }
-                if(!changedOnce){
-                    e.setId(allIndices.length); //fallback
-                }
-            }
+            //     boolean changedOnce = false;
+            //     for(int i = 0; i < allIndices.length; i++){
+            //         if(i < allIndices[i]){
+            //             e.setId(i);
+            //             changedOnce = true;
+            //             break;
+            //         }
+            //     }
+            //     if(!changedOnce){
+            //         e.setId(allIndices.length); //fallback
+            //     }
+            // }
             outgoingEdges.add(e);
         }
         if (e.getTarget() == this){
@@ -167,7 +168,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
         this.incidentEdges.add(e);
     }
 
-    void connectEdgeGlobal(Edge e) {
+    void connectEdgeLocal(Edge e) {
         if(e.getSource() == this){
             //if id has not been set already, set it
             if(e.getId() == -1 && incidentEdges.isEmpty()){
