@@ -178,6 +178,9 @@ public class Console extends VBox implements GralogWindow{
                                                 break;
                 case NONE:                      return;
             }
+            parser.setDialogAction(NONE);
+            parser.setDialogState(DONE);
+            parser.setErrorMsg("");
         }
     }
 
