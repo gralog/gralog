@@ -185,7 +185,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             vertices.put(v.getId(),v);
             return v;
         }
-        
+        Interval me = new Interval(id,id);
         Interval smallestGreaterThanOrEqual = this.vertexIdHoles.ceiling(me);
         Interval greatestLessThanOrEqualTo = this.vertexIdHoles.floor(me);
         Interval newInterval = new Interval(0,0);
@@ -207,6 +207,18 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     /**
+     * Don't use this method. Adding vertices this way is deprecated.
+     * @param v
+     */
+    @Deprecated
+    public void addVertex(V v) {
+        if(!vertices.containsKey(v)){
+            v.id = pollNextFreeVertexID();
+            vertices.put(v.id, v);
+        }
+    }
+
+    /**
      * Adds a vertex to the structure. Has no effect if the vertex already
      * exists in the structure.
      * @param config The config with which the vertex will be initialized
@@ -214,7 +226,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public V addVertex(Configuration config){
         V v = createVertex(config);
-        v.id = pollNextFreeID();
+        v.id = pollNextFreeVertexID();
         vertices.put(v.id, v);
         return v;
     }

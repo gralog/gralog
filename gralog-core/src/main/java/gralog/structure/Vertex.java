@@ -65,6 +65,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
         incomingEdges = new HashSet<>();
     }
 
+
+
     public Vertex(Configuration config){
         this();
         if(config != null){
@@ -219,6 +221,10 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     public int getId(){
         return this.id;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
     public Set<Edge> getOutgoingEdges(){
