@@ -178,8 +178,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public void addVertex(V v,int id) {
         // v.id = pollNextFreeVertexID();
         Interval me = new Interval(id,id);
-        Interval smallestGreaterThanOrEqual = this.vertexIdHoles.ceiling();
-        Interval greatestLessThanOrEqualTo = this.vertexIdHoles.ceiling();
+        Interval smallestGreaterThanOrEqual = this.vertexIdHoles.ceiling(me);
+        Interval greatestLessThanOrEqualTo = this.vertexIdHoles.floor(me);
         Interval newInterval = new Interval(0,0);
         boolean addNewInterval = false;
         if (smallestGreaterThanOrEqual != null){ //if the next biggest 
@@ -450,6 +450,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
             edges.add(e);
         }
+        System.out.println("we be addin the edge up in this boi");
 
     }
 
@@ -515,7 +516,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }else{
             for(Interval hole : this.edgeIdHoles){
                 //find hole with[,]..v.id..[a,b]
-                if(hole.a > edge.id + 1){
+                if(hole.a > edge.getId() + 1){
                     //find the hole smaller than [a,b]
                     Interval minInterval = this.edgeIdHoles.lower(hole);
                     if(minInterval == null){
@@ -523,11 +524,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         return;
                     }
                     int min = minInterval.b;
-                    System.out.println("id: " + edge.id + " _ min: " + min);
-                    if(min < edge.id - 1){
+                    System.out.println("id: " + edge.getId() + " _ min: " + min);
+                    if(min < edge.getId() - 1){
                         edgeIdHoles.add(new Interval(edge.getId(), edge.getId()));
                         return;
-                    }else if(min == edge.id - 1){
+                    }else if(min == edge.getId() - 1){
                         minInterval.b += 1;
                         return;
                     }else{
@@ -536,7 +537,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 }
                 //if v.id is exactly below the hole, extend it
                 //[,]..v.id,[a,b] -> [,]..[v.id,b]
-                else if(hole.a == edge.id + 1){
+                else if(hole.a == edge.getId() + 1){
                     hole.a--;
                     //in case the extension makes hole lie next to a different interval, merge
                     Interval lower = edgeIdHoles.lower(hole);

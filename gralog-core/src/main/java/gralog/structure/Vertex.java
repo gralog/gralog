@@ -152,10 +152,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
                     allIndices[k] = edge.getId();
                     k++;
                 }
-                System.out.println("i got indicex array: ");
-                for (int x : allIndices){
-                    System.out.println("bla: " + x);
-                }
+                
                 Arrays.sort(allIndices);
 
                 boolean changedOnce = false;
