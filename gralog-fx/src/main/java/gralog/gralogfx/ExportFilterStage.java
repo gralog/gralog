@@ -56,7 +56,9 @@ public class ExportFilterStage extends Stage {
         String url = descr.url();
         if (url != null && !url.trim().equals("")) {
             infoButton = new Button("Info");
-            infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
+            if(app != null){
+                infoButton.setOnAction(e -> app.getHostServices().showDocument(url));
+            }
             hBox.getChildren().addAll(runButton, cancelButton, infoButton);
         } else
             hBox.getChildren().addAll(runButton, cancelButton);

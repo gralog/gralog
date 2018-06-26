@@ -2,8 +2,12 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import gralog.exportfilter.ExportFilter;
+import gralog.exportfilter.ExportFilterManager;
+import gralog.exportfilter.ExportFilterParameters;
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.preferences.Configuration;
 import gralog.gralogfx.threading.ScrollThread;
@@ -17,10 +21,10 @@ import gralog.gralogfx.piping.Piping;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import gralog.structure.controlpoints.ControlPoint;
+import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -737,7 +741,35 @@ public class StructurePane extends StackPane implements StructureListener {
 
     public void saveStructure(){
         if(structure.hasFileReference()){
-            
+            try{
+                structure.getFileReference();
+                File file = new File(structure.getFileReference());
+
+                // has the user selected the native file-type or an export-filter?
+                String extension = file.getName(); // unclean way of getting file extension
+                int idx = extension.lastIndexOf('.');
+                extension = idx > 0 ? extension.substring(idx + 1) : "";
+
+                ExportFilter exportFilter = ExportFilterManager
+                        .instantiateExportFilterByExtension(structure.getClass(), extension);
+                if (exportFilter != null) {
+                    // configure export filter
+                    ExportFilterParameters params = exportFilter.getParameters(structure);
+                    if (params != null) {
+                        ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, null);
+                        exportStage.showAndWait();
+                        if (!exportStage.dialogResult)
+                            return;
+                    }
+                    exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
+                } else {
+                    structure.writeToFile(file.getAbsolutePath());
+                }
+                System.out.println("Saving " + file.getName() + " to: \t" + file.getPath());
+            }catch(Exception ex){
+                ExceptionBox x = new ExceptionBox();
+                x.showAndWait(ex);
+            }
         }
     }
     /**
@@ -768,11 +800,10 @@ public class StructurePane extends StackPane implements StructureListener {
 
         if (result.get() == cancel) {
             afterClose.run();
-        } else {
-            System.out.println("Saved or discarded");
         }
         if(result.get() == save){
-
+            saveStructure();
+            afterClose.run();
         }else if(result.get() == discard){
             afterClose.run();
         }

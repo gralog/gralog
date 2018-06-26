@@ -67,6 +67,7 @@ public class MainWindow extends Application {
 
 
     public MainWindow() {
+
         MainMenu.Handlers handlers = new MainMenu.Handlers();
         handlers.onNew = this::onNew;
         handlers.onGenerate = this::onGenerate;
