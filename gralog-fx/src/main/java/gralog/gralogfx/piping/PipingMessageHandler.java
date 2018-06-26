@@ -141,6 +141,94 @@ public class PipingMessageHandler{
         }
     }
 
+    public static String rejoinExternalCommandSegments(String[] externalCommandSegments){
+        return String.join(" ",externalCommandSegments);
+    }
+
+    public static Edge extractEdge(String[] externalCommandSegments, Structure structure) throws Exception{
+        String edge;
+        try{
+            edge = externalCommandSegments[2];
+        }catch(Exception e){
+            throw new MessageFormatException("Error: the command " + rejoinExternalCommandSegments(externalCommandSegments) + " did not have an edge as the 3rd paramter!");
+        }
+        String[] sourceTargetOrEdgeId = edge.split(",");
+        if (sourceTargetOrEdgeId.length == 1){
+            //the edge id was passed
+            int id;
+            try{
+                id = Integer.parseInt(edge);
+            }catch(NumberFormatException e){
+                throw new MessageFormatException("Error: the id: " + edge + " you have passed was not an integer!");
+            }
+
+            Edge e = structure.getEdgeById(id);
+            if (e == null){
+                throw new NonExistantEdgeException("Error: the id: " + edge + " is not assigned to an edge!");
+            }
+            return e;
+        }else{
+            int sourceId;
+            int targetId;
+            String sourceString;
+            String targetString;
+            Vertex source;
+            Vertex target;
+            try{
+                sourceString = sourceTargetOrEdgeId[0];
+            }catch(Exception e){
+                throw new MessageFormatException("Error: the source of the source,target tuple: " + edge + " you have passed was not valid!");
+            }
+            try{
+                targetString = sourceTargetOrEdgeId[1];
+            }catch(Exception e){
+                throw new MessageFormatException("Error: the target of the source,target tuple: " + edge + " you have passed was not valid!");
+            }
+            try{
+                sourceId = Integer.parseInt(sourceString);
+            }catch(Exception e){
+                throw new MessageFormatException("Error: source id: " + sourceString + " you have passed was not an integer!");
+            }
+            try{
+                targetId = Integer.parseInt(targetString);
+            }catch(Exception e){
+                throw new MessageFormatException("Error: target id: " + targetString + " you have passed was not an integer!");
+            }
+            try{
+                source = structure.getVertexById(sourceId);
+            }catch(Exception e){
+                throw new NonExistantVertexException("Error: the source vertex of id " + sourceString + " you have passed does not exist!");
+            }
+            try{
+                target = structure.getVertexById(targetId);
+            }catch(Exception e){
+                throw new NonExistantVertexException("Error: the target vertex of id " + targetString + " you have passed does not exist!");
+            }
+            Edge e = structure.getEdgeByEndVertices(source,target);
+            if (e == null){
+                throw new NonExistantEdgeException("Error: there is no edge with endpoints " + edge + " which you have passed!");
+            }
+            return e;
+
+        }
+    }
+
+    public static Vertex extractSourceFromEdge(String[] externalCommandSegments, Structure structure) throws Exception{
+        Edge e  = extractEdge(externalCommandSegments,structure);
+        return e.getSource();
+    }
+
+    public static Vertex extractTargetFromEdge(String[] externalCommandSegments, Structure structure) throws Exception{
+        Edge e  = extractEdge(externalCommandSegments,structure);
+        return e.getTarget();
+    }
+
+   
+
+    public static String universalEdgeToTuple(Edge e){
+        return "("+Integer.toString(e.getId())+","+Integer.toString(e.getSource().getId())+","+Integer.toString(e.getTarget().getId())+")";
+    }
+
 
     public static List<String[]> parsePauseVars(String[] vars, boolean rankGiven){
         List<String[]> tuples = new ArrayList<String[]>();

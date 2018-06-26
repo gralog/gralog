@@ -50,8 +50,20 @@ edges = {}
 for x in ids:
 	for y in ids:
 		if x != y:
-			for z in range(4):
+			for z in range(2):
 				g.addEdge(x,y,False);
+
+g.pauseUntilSpacePressed("hello","world");
+edges = g.getIncidentEdges(ids[0]);
+
+for e in edges:
+	g.setEdgeColor(e[0],"purple");
+
+g.pauseUntilSpacePressed("borf","diddly");
+
+edges = g.getAllEdges();
+for e in edges:
+	g.deleteEdge(e[0]);
 
 # 		# g.setEdgeColor((x,y),colorRGB=(255,0,0),edgeId=eid);
 # # for x in range(4):

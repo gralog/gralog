@@ -80,23 +80,27 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
         Edge e;
         if (this.id == -1){
             e = structure.addEdge(this.sourceVertex,this.targetVertex,null);
-            System.out.println("and directly afterward we have id = " + e.getId());
+            if (e == null){
+                this.fail();
+                this.error = new Exception("error: too many edges between vertices " + this.sourceId + " and " + this.targetId + "; only 4 are allowed!");
+                this.setResponse("fail");
+                return;
+            }
         }else{
             e = structure.addEdge(this.sourceVertex,this.targetVertex,this.id,null);
+            if (e == null){
+                //either the id exists or there are too many edges.
+                if (this.structure.getEdgeById(this.id) == null){
+                    this.error = new Exception("error: too many edges between vertices " + this.sourceId + " and " + this.targetId + "; only 4 are allowed!");
+                }else{
+                    this.error = new Exception("error: an edge between vertices " + this.sourceId + " and " + this.targetId + " with id: " + this.id + " already exists");
+                }
+                this.fail();
+                this.setResponse("fail");
+                return;
+            }
         }
-        
-        System.out.println("is e null? " + (e== null));
-
-
-        if (e == null){
-            this.fail();
-            this.error = new Exception("error: an edge between vertices " + this.sourceId + " and " + this.targetId + " with id: " + this.id + " already exists");
-            this.setResponse("fail");
-            return;
-        }else{
-            System.out.println("they say e is not null. ok then it is: " +e);
-        }
-            
+         
         e.isDirected = this.isDirected;
 
         this.setResponse(Integer.toString(e.getId()));

@@ -285,6 +285,32 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
 
 
+    public Edge getEdgeByEndVertices(Vertex sourceVertex, Vertex targetVertex){
+
+        int inputSourceId = sourceVertex.getId();
+        int inputTargetId = targetVertex.getId();
+        if (sourceVertex == null || targetVertex == null){
+            return null;
+        }
+
+        for (Edge e : sourceVertex.getIncidentEdges()){
+
+            int sourceId = e.getSource().getId();
+            int targetId = e.getTarget().getId();
+            
+
+            if (targetId == inputTargetId && sourceId == inputSourceId){
+                return e;
+            }
+            else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)){
+                return e;
+            }
+        }
+        return null;
+    }
+
+
+
 
 
     /** preliminary method (to be updated with edge id's) for removing an edge
@@ -475,7 +501,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @param e The edge to be added.
      */
-    public void addEdge(E e) {
+    public boolean addEdge(E e) {
         //correct siblings first
         System.out.println("tha sinister methooooddd");
         e.siblings.clear();
@@ -489,6 +515,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         for(Edge edge : e.getSource().getIncidentEdges()){
             System.out.println("non loopies: " + nonLoopEdges + " and i'm on : " + e);
             if(edge == e){
+                System.out.println("soft and warm continuing");
                 continue;
             }
             if(edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()){
@@ -499,7 +526,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 //if vertex has loop, don't add another loop e
                 else if(e.getSource() == e.getTarget()){
                     removeEdge(e);
-                    return;
+                    return false;
                 }
             }
         }
@@ -509,9 +536,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         //max amount of edges.
         //TODO: Maybe make that an option
-        if(nonLoopEdges >= 4 && e.getSource() != e.getTarget() && false){
+        if(nonLoopEdges >= 4 && e.getSource() != e.getTarget()){
             System.out.println("wubhoo : " + e.getSource() + e.getTarget());
             removeEdge(e);
+            return false;
         }else if (e.getSource() == e.getTarget()){
             System.out.println("putin " + e.getSource() + e.getTarget());
             edges.put(e.getId(),e);
@@ -543,9 +571,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             edges.put(e.getId(),e);
 
         }
-        System.out.println("we are : " + e + " am ende : " + e.getSource() + e.getTarget());
-        System.out.println("we be addin the edge up in this boi");
-
+        // System.out.println("we are : " + e + " am ende : " + e.getSource() + e.getTarget());
+        // System.out.println("we be addin the edge up in this boi");
+        return true;
     }
 
     /**
@@ -578,13 +606,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public E addEdge(V source, V target, int id, Configuration config) {
         E e = createEdge(source, target, id, config);
         System.out.println("after adding" + e.getSource() + e.getTarget());
-        addEdge(e);
-        System.out.println("are we try8ing to add null bois???" + e.getSource() + target);
-        System.out.println("connecting tha edge in a secky deck");
-        source.connectEdge(e);
-        target.connectEdge(e);
-        System.out.println("source: " + e.getSource() + " and targ : " + e.getTarget());
-        return e;
+        
+        if(addEdge(e)){
+            System.out.println("are we try8ing to add null bois???" + e.getSource() + target);
+            System.out.println("connecting tha edge in a secky deck");
+            source.connectEdge(e);
+            target.connectEdge(e);
+            System.out.println("source: " + e.getSource() + " and targ : " + e.getTarget());
+            return e;    
+        }
+        return null;
     }
 
 

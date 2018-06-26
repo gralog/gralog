@@ -8,12 +8,6 @@ import java.util.Collection;
 
 public class GetAllVerticesCommand extends CommandForGralogToExecute {
 	
-
-	
-
-
-
-
 	public GetAllVerticesCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;

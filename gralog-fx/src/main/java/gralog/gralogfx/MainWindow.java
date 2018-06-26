@@ -845,13 +845,13 @@ public class MainWindow extends Application {
 
             for (Piping p : this.pipelines){
                 p.killSelf();
-                
             }
 
-            tabs.requestClose(() -> {
-                Platform.exit();
-                primaryStage.hide();
-            });
+            // tabs.requestClose(() -> {
+            //     Platform.exit();
+            //     primaryStage.hide();
+            // });
+            Platform.exit();
             e.consume();
 
         });

@@ -404,7 +404,7 @@ public class Piping extends Thread{
 
 
                     if (currentCommand.didFail()){
-                        final String lineFinal = String.join(" ",externalCommandSegments);
+                        final String lineFinal = PipingMessageHandler.rejoinExternalCommandSegments(externalCommandSegments);
                         Exception e = currentCommand.getError();
                         Platform.runLater(
                             () -> {

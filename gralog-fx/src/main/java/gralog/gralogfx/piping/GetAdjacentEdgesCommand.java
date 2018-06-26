@@ -8,9 +8,9 @@ import java.util.Set;
 public class GetAdjacentEdgesCommand extends CommandForGralogToExecute {
 	
 
-	int sourceId;
+
 	Vertex sourceVertex;
-    int targetId;
+
     Vertex targetVertex;
     // String neighbourString;
 
@@ -21,39 +21,14 @@ public class GetAdjacentEdgesCommand extends CommandForGralogToExecute {
         this.structure = structure;
 
         try{    
-            this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+            Edge e = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
+            this.sourceVertex = e.getSource();
+            this.targetVertex = e.getTarget();
+        }catch(Exception e){
             this.error = e;
             this.fail();
             return;
         }
-
-        try{    
-            this.targetId = Integer.parseInt(externalCommandSegments[3]);
-        }catch(NumberFormatException e){
-            this.error = e;
-            this.fail();
-            return;
-        }
-
-        this.sourceVertex = this.structure.getVertexById(this.sourceId);
-
-        if (this.sourceVertex == null){
-            this.fail();
-            this.error = new Exception("error: source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
-            return;
-        }
-
-        this.targetVertex = this.structure.getVertexById(this.targetId);
-
-        if (this.targetVertex == null){
-            this.fail();
-            this.error = new Exception("error: target vertex with id " + Integer.toString(this.targetId) + " does not exist");
-            return;
-        }
-
-        
-
        
 	}
 
@@ -73,7 +48,7 @@ public class GetAdjacentEdgesCommand extends CommandForGralogToExecute {
 
         String edgeString = "";
         for (Edge e : neighbouringEdges){
-            edgeString = edgeString + "("+Integer.toString(e.getSource().getId())+","+Integer.toString(e.getTarget().getId())+")"+ "#";
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToTuple(e)+ "#";
         }
         if (edgeString.length() > 0 && null != edgeString){
             edgeString = edgeString.substring(0,edgeString.length()-1);

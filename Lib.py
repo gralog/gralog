@@ -29,6 +29,12 @@ def hexFormatter(colorHex):
 	s += "("+str(colorHex).rstrip() + ")";
 	return s.rstrip();
 
+
+def edgeSplitter(edge):
+	if type(edge) == tuple and len(edge)==2:
+		return str(edge[0]).rstrip()+","+str(edge[1]).rstrip();
+	return str(edge).rstrip();
+
 class Graph:
 	def __init__(self,format="Undirected Graph"):
 		#perform analysis of graph
@@ -96,25 +102,24 @@ class Graph:
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
-	def setEdgeContour(self, (sourceVertexId,targetVertexId),contour,edgeId=-1):
-		idString = "";
-		if not edgeId == -1:
-			idString = "#"+str(edgeId);
-		line = line = "setEdgeContour#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + str(contour).rstrip() + idString.rstrip();
+	def setEdgeContour(self, edge,contour):
+		
+		line = line = "setEdgeContour#"+str(self.id).rstrip() + "#";
+		line = line + edgeSplitter(edge);
+		line = line +"#" + str(contour).rstrip();
 		print(line);
 		sys.stdout.flush()
 
 
-	def setEdgeColor(self,(sourceVertexId,targetVertexId),colorHex=-1,colorRGB=-1,edgeId=-1):
-		idString = "";
-		if not edgeId == -1:
-			idString = "#"+str(edgeId);
-		line = "setEdgeColor#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#";
+	def setEdgeColor(self,edge,colorHex=-1,colorRGB=-1):
+		
+		line = "setEdgeColor#"+str(self.id).rstrip() + "#";
+		line = line + edgeSplitter(edge);
+		line = line + "#";
 		if not (colorHex==-1):
 			line = line + hexFormatter(colorHex);
 		elif not (colorRGB == -1) and len(colorRGB) == 3:
 			line = line + rgbFormatter(colorRGB);
-		line = line + idString.rstrip();
 		print line.rstrip();
 		sys.stdout.flush();
 		# sys.stdin.readline();
@@ -229,7 +234,7 @@ class Graph:
 			term = term[1:-1]
 
 			endpoints = term.split(",");
-			endpointList[i] = (int(endpoints[0]),int(endpoints[1]));
+			endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
 
 
 		return endpointList;
@@ -249,13 +254,14 @@ class Graph:
 			term = term[1:-1]
 			# print("current term",term);
 			endpoints = term.split(",");
-			endpointList[i] = (int(endpoints[0]),int(endpoints[1]));
+			endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
 
 
 		return endpointList;
 
-	def getAdjacentEdges(self,sourceVertexId,targetVertexId):
-		line = "getAdjacentEdges#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() +  "#" + str(targetVertexId).rstrip();
+	def getAdjacentEdges(self,edge):
+		line = "getAdjacentEdges#"+str(self.id).rstrip() + "#";
+		line = line + edgeSplitter(edge);
 
 		print line.rstrip();
 	
@@ -267,7 +273,7 @@ class Graph:
 			term = term[1:-1]
 			# print("current term",term);
 			endpoints = term.split(",");
-			endpointList[i] = (int(endpoints[0]),int(endpoints[1]));
+			endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
 
 
 		return endpointList;
@@ -338,46 +344,61 @@ class Graph:
 		sys.stdout.flush();
 		return int(sys.stdin.readline());
 
-	def getEdgeWeight(self,(sourceVertexId,targetVertexId),edgeId=-1):
-		return self.getEdgeProperty((sourceVertexId,targetVertexId),"weight",edgeId);
+	def getEdgeWeight(self,edge):
+		return self.getEdgeProperty(edge,"weight");
 
-	def getEdgeColor(self,(sourceVertexId,targetVertexId),edgeId=-1):
-		return self.getEdgeProperty((sourceVertexId,targetVertexId),"color",edgeId);
+	def getEdgeColor(self,edge):
+		return self.getEdgeProperty(edge,"color");
 
 
-	def getEdgeProperty(self,(sourceVertexId,targetVertexId),property,edgeId=-1):
-		idString = "";
-		if not edgeId == -1:
-			idString = "#"+str(edgeId);
+	def getEdgeProperty(self,edge,property):
+		
 
-		line = "getEdgeProperty#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + property.rstrip().lower()+idString.rstrip();
+		line = "getEdgeProperty#"+str(self.id).rstrip() + "#"
+		line = line + edgeSplitter(edge)
+		line = line + "#" + property.rstrip().lower();
 
 		print line.rstrip();
 		sys.stdout.flush();
 
 		return sys.stdin.readline().rstrip();
 
-	def setEdgeWeight(self,(sourceVertexId,targetVertexId),weight,edgeId=-1):
-		setEdgeProperty((sourceVertexId,targetVertexId),"weight",weight,edgeId);
-
-	def setEdgeProperty(self,(sourceVertexId,targetVertexId),property,value,edgeId):
-		idString = "";
-		if not edgeId == -1:
-			idString = "#"+str(edgeId);
-		
-		line = "setEdgeProperty#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + property.rstrip().lower() +  "#" + str(value).rstrip().lower()+idString.rstrip();
+	def getEdgesByPropertyValue(self,prop,val):
+		line = "getEdgesByPropertyValue#"+str(self.id).rstrip() + "#" + str(prop).rstrip() + "#" + str(val).rstrip();
 
 		print line.rstrip();
 		sys.stdout.flush();
 
-	def deleteEdge(self,(sourceVertexId,targetVertexId),edgeId=-1):
+		endpointList = sys.stdin.readline();
 
-		idString = "";
-		if not edgeId == -1:
-			idString = "#"+str(edgeId);
+		endpointList = endpointList.split("#");
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1]
+
+			endpoints = term.split(",");
+			endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
+
+		return endpointList;
 
 
-		line = "deleteEdge#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip()+idString.rstrip();
+	def setEdgeWeight(self,edge,weight):
+		setEdgeProperty(edge,"weight",weight);
+
+	def setEdgeProperty(self,edge,property,value):
+		line = "setEdgeProperty#"+str(self.id).rstrip() + "#"
+		line = line + edgeSplitter(edge);
+
+		line = line + "#" + property.rstrip().lower() +  "#" + str(value).rstrip().lower()+idString.rstrip();
+
+		print line.rstrip();
+		sys.stdout.flush();
+
+	def deleteEdge(self,edge):
+
+		line = "deleteEdge#"+str(self.id).rstrip() + "#";
+		line = line + edgeSplitter(edge);
 
 		print line.rstrip();
 
@@ -393,12 +414,13 @@ class Graph:
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
-	def setEdgeLabel(self,(sourceVertexId, targetVertexId), label,edgeId=-1):
-		idString = "";
-		if not edgeId == -1:
-			idString = "#"+str(edgeId);
+	def setEdgeLabel(self,edge, label):
 		
-		line = "setEdgeLabel#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip() + "#" + label+idString.rstrip();
+		
+		line = "setEdgeLabel#"+str(self.id).rstrip() + "#";
+		line = line + edgeSplitter(edge);
+
+		line = line +"#" + label;
 		print line.rstrip();
 
 		sys.stdout.flush();
