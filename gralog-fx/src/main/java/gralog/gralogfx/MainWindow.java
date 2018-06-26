@@ -54,6 +54,10 @@ import org.dockfx.*;
 public class MainWindow extends Application {
 
     public static MainWindow Main_Application;
+
+    // preference key identifiers
+    private static final String PREF_LAST_USED_STRUCTURE = "lastUsedStructure";
+
     private Stage stage;
     private BorderPane root;
     private MainMenu menu;
@@ -125,7 +129,13 @@ public class MainWindow extends Application {
 
 
         tabs = new Tabs(this::onChangeCurrentStructure);
-        tabs.initializeTab();
+        String lastOpenedFilePath = Preferences.getString(PREF_LAST_USED_STRUCTURE, "");
+        if(lastOpenedFilePath.isEmpty()){
+            tabs.initializeTab();
+        }else{
+            doOpenFile(new File(lastOpenedFilePath));
+        }
+
 
         mainConsole = new Console(tabs);
 
@@ -651,11 +661,12 @@ public class MainWindow extends Application {
             Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
 
             if(dontAskWhenClosing){
+                primaryStage.hide();
                 Platform.exit();
             }else{
                 tabs.requestClose(() -> {
-                    Platform.exit();
                     primaryStage.hide();
+                    Platform.exit();
                 });
             }
             e.consume();

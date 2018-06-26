@@ -13,6 +13,7 @@ import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.preferences.Configuration;
 import gralog.gralogfx.threading.ScrollThread;
 import gralog.preferences.MenuPrefVariable;
+import gralog.preferences.Preferences;
 import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -804,6 +805,9 @@ public class StructurePane extends StackPane implements StructureListener {
 
         if(result.get() == save){
             saveStructure();
+            if(structure.hasFileReference()){
+                Preferences.setString("lastUsedStructure", structure.getFileReference());
+            }
             afterClose.run();
         }else if(result.get() == discard){
             afterClose.run();
