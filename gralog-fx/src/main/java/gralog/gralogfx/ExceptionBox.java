@@ -54,4 +54,36 @@ public class ExceptionBox extends Alert {
         this.getDialogPane().setExpandableContent(expContent);
         this.showAndWait();
     }
+
+    public void showAndWait(String msg) {
+
+        this.setContentText(msg);
+
+        // Create expandable Exception.
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        String exceptionText = sw.toString();
+
+        Label label = new Label("Stack-Trace:");
+        TextArea textArea = new TextArea(exceptionText);
+        textArea.setEditable(false);
+        textArea.setWrapText(false);
+
+        CheckBox dontShowThisMessageAgain = new CheckBox("Don't show this message again");
+
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(label, 0, 0);
+        expContent.add(textArea, 0, 1);
+        expContent.add(dontShowThisMessageAgain,0,2);
+
+        // Set expandable Exception into the dialog pane.
+        this.getDialogPane().setExpandableContent(expContent);
+        this.showAndWait();
+    }
 }
