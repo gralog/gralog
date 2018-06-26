@@ -6,6 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import gralog.exportfilter.ExportFilter;
+import gralog.exportfilter.ExportFilterDescription;
 import gralog.exportfilter.ExportFilterManager;
 import gralog.exportfilter.ExportFilterParameters;
 import gralog.gralogfx.input.MultipleKeyCombination;
@@ -35,6 +36,7 @@ import javafx.scene.layout.StackPane;
 import javafx.geometry.Point2D;
 
 import javafx.event.EventType;
+import javafx.stage.FileChooser;
 
 
 /**
@@ -770,6 +772,8 @@ public class StructurePane extends StackPane implements StructureListener {
                 ExceptionBox x = new ExceptionBox();
                 x.showAndWait(ex);
             }
+        }else{
+            MainWindow.Main_Application.onSaveAs();
         }
     }
     /**
@@ -798,9 +802,6 @@ public class StructurePane extends StackPane implements StructureListener {
 
         Optional<ButtonType> result = con.showAndWait();
 
-        if (result.get() == cancel) {
-            afterClose.run();
-        }
         if(result.get() == save){
             saveStructure();
             afterClose.run();

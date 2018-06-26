@@ -53,6 +53,7 @@ import org.dockfx.*;
  */
 public class MainWindow extends Application {
 
+    public static MainWindow Main_Application;
     private Stage stage;
     private BorderPane root;
     private MainMenu menu;
@@ -66,7 +67,13 @@ public class MainWindow extends Application {
     private Console mainConsole;
 
 
+    //argument configs
+    private boolean dontAskWhenClosing = false; // <==> argument 'dawc'
+
     public MainWindow() {
+
+        Main_Application = this;
+
 
         MainMenu.Handlers handlers = new MainMenu.Handlers();
         handlers.onNew = this::onNew;
@@ -642,15 +649,29 @@ public class MainWindow extends Application {
         primaryStage.setOnCloseRequest((e) -> {
             Preferences.setInteger(getClass(), "main-window-width", (int) scene.getWidth());
             Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
-            tabs.requestClose(() -> {
+
+            if(dontAskWhenClosing){
                 Platform.exit();
-                primaryStage.hide();
-            });
+            }else{
+                tabs.requestClose(() -> {
+                    Platform.exit();
+                    primaryStage.hide();
+                });
+            }
             e.consume();
         });
         primaryStage.show();
 
         MultipleKeyCombination.setupMultipleKeyCombination(scene);
+
+
+        // Setting up arguments
+        Parameters p = getParameters();
+        for(String arg : p.getRaw()){
+            if(arg.equals("dawc")){
+                dontAskWhenClosing = true;
+            }
+        }
     }
     @Override
     public void stop(){
