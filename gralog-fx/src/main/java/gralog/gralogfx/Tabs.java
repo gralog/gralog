@@ -61,6 +61,8 @@ public class Tabs {
      *
      * @param name The name of the new tab
      * @param structure The new structure
+     *
+     *
      */
     public void addTab(String name, Structure structure) {
         Tab t = new Tab(name);
@@ -99,6 +101,8 @@ public class Tabs {
         tabPane.getTabs().remove(tabsArray.get(index));
         panes.remove(index);
         tabsArray.remove(index);
+
+        onChangeTabHandler.run();
     }
     /**
      * Sets the name of the current tab. Does nothing if no tab exists.
@@ -193,6 +197,7 @@ public class Tabs {
         if(panes.isEmpty()){
             afterClose.run();
         }else{
+            tabPane.getSelectionModel().select(tabsArray.get(0));
             panes.get(0).requestClose(() -> {
                 closeTab(0);
                 requestClosePerPaneProxy(afterClose);

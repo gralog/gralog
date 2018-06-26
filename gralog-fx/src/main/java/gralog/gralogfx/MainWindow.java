@@ -7,7 +7,6 @@ import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
 
 import gralog.plugins.*;
-import gralog.rendering.shapes.RenderingShape;
 import gralog.structure.*;
 import gralog.importfilter.*;
 import gralog.exportfilter.*;
@@ -31,8 +30,6 @@ import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
-import javafx.geometry.Orientation;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -80,6 +77,7 @@ public class MainWindow extends Application {
         handlers.onGenerate = this::onGenerate;
         handlers.onOpen = this::onOpen;
         handlers.onSave = this::onSave;
+        handlers.onSaveAs = this::onSaveAs;
         handlers.onDirectInput = this::onDirectInput;
         handlers.onLoadPlugin = this::onLoadPlugin;
         handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
@@ -400,21 +398,68 @@ public class MainWindow extends Application {
     }
 
     public void onSave() {
+        onSave(getCurrentStructure(), this);
+    }
+    public static void onSave(Structure structure, Application app){
         try {
-            Structure structure = getCurrentStructure();
+            if(structure == null){
+                ExceptionBox exbox = new ExceptionBox();
+                exbox.showAndWait("You want to save an empty structure");
+                return;
+            }
+
+            if(structure.hasFileReference()){
+                structure.getFileReference();
+                File file = new File(structure.getFileReference());
+                if (file != null) {
+                    setLastDirectory(file);
+                    // has the user selected the native file-type or an export-filter?
+                    String extension = file.getName(); // unclean way of getting file extension
+                    int idx = extension.lastIndexOf('.');
+                    extension = idx > 0 ? extension.substring(idx + 1) : "";
+
+                    ExportFilter exportFilter = ExportFilterManager
+                            .instantiateExportFilterByExtension(structure.getClass(), extension);
+                    if (exportFilter != null) {
+                        // configure export filter
+                        ExportFilterParameters params = exportFilter.getParameters(structure);
+                        if (params != null) {
+                            ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, app);
+                            exportStage.showAndWait();
+                            if (!exportStage.dialogResult)
+                                return;
+                        }
+                        exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
+                    } else {
+                        structure.writeToFile(file.getAbsolutePath());
+                    }
+                    System.out.println("Saving " + file.getName() + " to: \t" + file.getPath());
+                }
+            }
+        } catch (Exception ex) {
+            ExceptionBox exbox = new ExceptionBox();
+            exbox.showAndWait(ex);
+        }
+    }
+
+    public void onSaveAs() {
+        onSaveAs(getCurrentStructure(), stage, tabs, this);
+    }
+    public static void onSaveAs(Structure structure, Stage stage, Tabs tabs, Application app) {
+        try {
 
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File(getLastDirectory()));
             fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
+                    new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
 
             // add export-filters to list of extensions
             for (String format : ExportFilterManager.getExportFilters(structure.getClass())) {
                 ExportFilterDescription descr = ExportFilterManager.getExportFilterDescription(structure.getClass(), format);
                 ExtensionFilter filter = new FileChooser.ExtensionFilter(
-                    descr.name() + " (*." + descr.fileExtension() + ")",
-                    "*." + descr.fileExtension());
+                        descr.name() + " (*." + descr.fileExtension() + ")",
+                        "*." + descr.fileExtension());
                 fileChooser.getExtensionFilters().add(filter);
             }
 
@@ -433,7 +478,7 @@ public class MainWindow extends Application {
                     // configure export filter
                     ExportFilterParameters params = exportFilter.getParameters(structure);
                     if (params != null) {
-                        ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, this);
+                        ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, app);
                         exportStage.showAndWait();
                         if (!exportStage.dialogResult)
                             return;
@@ -510,8 +555,10 @@ public class MainWindow extends Application {
                 structure = Structure.loadFromFile(file.getAbsolutePath());
             }
 
-            if (structure != null)
+            if (structure != null){
+                structure.setFileReference(true, file.getAbsolutePath());
                 tabs.addTab(file.getName(), structure);
+            }
         } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -889,19 +936,19 @@ public class MainWindow extends Application {
         statusBar.setCurrentStructure(structure);
     }
 
-    private String getLastDirectory() {
+    private static String getLastDirectory() {
         final String defaultDir = System.getProperty("user.home");
-        String dir = Preferences.getString(this.getClass(), "lastdirectory", defaultDir);
+        String dir = Preferences.getString(MainWindow.class, "lastdirectory", defaultDir);
         if (Files.exists(Paths.get(dir)))
             return dir;
         return defaultDir;
     }
 
-    private void setLastDirectory(File lastFile) {
+    private static void setLastDirectory(File lastFile) {
         setLastDirectory(Paths.get(lastFile.getAbsolutePath()).getParent().toString());
     }
 
-    private void setLastDirectory(String lastDirectory) {
-        Preferences.setString(this.getClass(), "lastdirectory", lastDirectory);
+    private static void setLastDirectory(String lastDirectory) {
+        Preferences.setString(MainWindow.class, "lastdirectory", lastDirectory);
     }
 }

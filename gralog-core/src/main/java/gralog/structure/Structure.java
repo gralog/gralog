@@ -42,6 +42,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public TreeSet<Interval> vertexIdHoles;
     public TreeSet<Interval> edgeIdHoles;
 
+
+    //File IO
+    private boolean isOpenFile = false;
+    private String structureFilePath = "";
+
     protected static class Interval {
         Interval(int a, int b) { this.a = a; this.b = b;}
         public int a;
@@ -1215,6 +1220,33 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
 
         return null;
+    }
+
+    /**
+     * Was the structure opened from a file or does this structure reference
+     * a file? (e.g.: was it saved as...?)
+     *
+     * You can set the file reference here.
+     */
+    public void setFileReference(boolean hasReference, String ref){
+        isOpenFile = hasReference;
+        structureFilePath = ref;
+    }
+
+
+    /**
+     * @return A string containing the path of the referenced file. Empty if
+     * no file is referenced by this structure.
+     */
+    public String getFileReference(){
+        return structureFilePath;
+    }
+
+    /**
+     * @return True if the structure is referencing a file
+     */
+    public boolean hasFileReference(){
+        return isOpenFile;
     }
 
     protected void notifyStructureListeners() {
