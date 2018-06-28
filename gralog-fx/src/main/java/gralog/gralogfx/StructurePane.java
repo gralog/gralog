@@ -28,6 +28,8 @@ import java.util.function.Consumer;
 import gralog.structure.controlpoints.ControlPoint;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -790,18 +792,22 @@ public class StructurePane extends StackPane implements StructureListener {
             return;
         }
 
-        //open a close save context window
-        Alert con = new Alert(Alert.AlertType.NONE);
-        con.setTitle("Close Structure");
-        con.setHeaderText("Do you want to discard all changes to this structure?");
+        if(!Preferences.getBoolean("Develop_requireConfirmation", true)){
+            afterClose.run();
+            return;
+        }
 
         ButtonType save = new ButtonType("Save Changes", ButtonBar.ButtonData.APPLY);
         ButtonType discard = new ButtonType("Discard", ButtonBar.ButtonData.NO);
         ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        con.getButtonTypes().addAll(save, discard, cancel);
+        String message = "You have made changes to this structure. Do you want to save them?";
 
-        Optional<ButtonType> result = con.showAndWait();
+        Alert alert = createAlertWithOptOut(Alert.AlertType.CONFIRMATION, "Exit", null,
+                message, "Never. (dev)",
+                param -> Preferences.setBoolean("Develop_requireConfirmation", !param), save, discard, cancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
 
         if(result.get() == save){
             saveStructure();
@@ -812,11 +818,42 @@ public class StructurePane extends StackPane implements StructureListener {
         }else if(result.get() == discard){
             afterClose.run();
         }
-
         //else canceling the closing routine
     }
 
     public Highlights getHighlights() {
         return highlights;
+    }
+
+    public static Alert createAlertWithOptOut(Alert.AlertType type, String title, String headerText,
+                                              String message, String optOutMessage, Consumer<Boolean> optOutAction,
+                                              ButtonType... buttonTypes) {
+        Alert alert = new Alert(type);
+        // Need to force the alert to layout in order to grab the graphic,
+        // as we are replacing the dialog pane with a custom pane
+        alert.getDialogPane().applyCss();
+        Node graphic = alert.getDialogPane().getGraphic();
+        // Create a new dialog pane that has a checkbox instead of the hide/show details button
+        // Use the supplied callback for the action of the checkbox
+        alert.setDialogPane(new DialogPane() {
+            @Override
+            protected Node createDetailsButton() {
+                CheckBox optOut = new CheckBox();
+                optOut.setText(optOutMessage);
+                optOut.setOnAction(e -> optOutAction.accept(optOut.isSelected()));
+                return optOut;
+            }
+        });
+        alert.getDialogPane().getButtonTypes().addAll(buttonTypes);
+        alert.getDialogPane().setContentText(message);
+        // Fool the dialog into thinking there is some expandable content
+        // a Group won't take up any space if it has no children
+        alert.getDialogPane().setExpandableContent(new Group());
+        alert.getDialogPane().setExpanded(true);
+        // Reset the dialog graphic using the default style
+        alert.getDialogPane().setGraphic(graphic);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        return alert;
     }
 }
