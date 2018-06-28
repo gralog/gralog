@@ -128,7 +128,7 @@ public class MainWindow extends Application {
 
 
 
-        tabs = new Tabs(this::onChangeCurrentStructure);
+        tabs = new Tabs(this::onSwitchCurrentStructure);
         String lastOpenedFilePath = Preferences.getString(PREF_LAST_USED_STRUCTURE, "");
         if(lastOpenedFilePath.isEmpty()){
             tabs.initializeTab();
@@ -754,10 +754,16 @@ public class MainWindow extends Application {
         return pane == null ? null : pane.structure;
     }
 
-    private void onChangeCurrentStructure() {
+
+    /**
+     * Whenever the tab switches structure panes, notify all relevant entities
+     */
+    private void onSwitchCurrentStructure() {
+        StructurePane pane = tabs.getCurrentStructurePane();
         Structure structure = getCurrentStructure();
+
         rightBox.setVisible(structure != null);
-        menu.setCurrentStructure(structure);
+        menu.setCurrentStructurePane(pane);
         statusBar.setCurrentStructure(structure);
     }
 

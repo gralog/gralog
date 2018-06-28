@@ -5,6 +5,7 @@ package gralog.gralogfx;
 import gralog.algorithm.AlgorithmManager;
 import gralog.generator.GeneratorManager;
 import gralog.gralogfx.windows.PreferenceWindow;
+import gralog.preferences.MenuPrefVariable;
 import gralog.structure.Structure;
 import gralog.structure.StructureManager;
 import javafx.scene.control.Menu;
@@ -14,6 +15,8 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+
+import java.lang.reflect.Field;
 
 /**
  * The main menu of the main window.
@@ -65,11 +68,15 @@ public class MainMenu {
     // dynamically generated.
     private Menu menuFileNew;
     private Menu menuFileGenerators;
+
+    private Menu menuStructurePane;
     private Menu menuAlgorithms;
 
     private final Handlers handlers;
 
+
     private Structure currentStructure;
+    private StructurePane currentPane;
 
     private static void handleException(Exception exception) {
         (new ExceptionBox()).showAndWait(exception);
@@ -163,6 +170,11 @@ public class MainMenu {
         return menuAlgorithms;
     }
 
+    private Menu createStructurePaneMenu(){
+        menuStructurePane = new Menu("Structure");
+        return menuStructurePane;
+    }
+
     private Menu createHelpMenu() {
         Menu menuHelp = new Menu("Help");
         menuHelp.getItems().addAll(
@@ -179,6 +191,7 @@ public class MainMenu {
         menu.getMenus().addAll(
             createFileMenu(),
             createEditMenu(),
+            createStructurePaneMenu(),
             createAlgorithmMenu(),
             createHelpMenu());
 
@@ -222,25 +235,54 @@ public class MainMenu {
     private void updateAlgorithms() {
         menuAlgorithms.getItems().clear();
 
-        if (currentStructure == null)
+        if (currentStructure == null){
             return;
+        }
 
         for (String str : AlgorithmManager.getAlgorithms(currentStructure.getClass()))
             menuAlgorithms.getItems().add(
                 createMenuItem(str, handlers.onRunAlgorithm));
     }
 
+    private void updateStructureVariables(){
+        menuStructurePane.getItems().clear();
+
+        if(currentPane == null){
+            return;
+        }
+
+        for(int i = 0; i < StructurePane.menuVariables.length; i++){
+            MenuPrefVariable ff = StructurePane.menuVariables[i];
+            Field f = StructurePane.menuVariableFields[i];
+
+            menuStructurePane.getItems().add(
+                    createMenuItem(ff.name(), () -> dummy(f, currentPane))
+            );
+        }
+    }
+
+    private void dummy(Field f, StructurePane ref){
+        //TODO: use this to start a process (like a window) that lets the user change the field
+        System.out.printf(">> Request to change variable [%s] of Structure [%s]\n",
+                f.getName(),
+                ref.structure.getClass().getSimpleName());
+        System.out.flush();
+    }
     /**
      * Tells the menu about the current structure. If the argument is null,
      * certain menu items such as "Save" become disabled. The current structure
      * also affects the available algorithms, which get updated automatically.
      *
-     * @param s The current structure. May be null.
+     * @param pane The current structure pane. May be null.
      */
-    public void setCurrentStructure(Structure s) {
+    public void setCurrentStructurePane(StructurePane pane) {
+        Structure s = pane == null ? null : pane.structure;
+        this.currentPane = pane;
         this.currentStructure = s;
         menuFileSave.setDisable(s == null || !s.hasFileReference());
         menuFileSaveAs.setDisable(s == null);
+
         updateAlgorithms();
+        updateStructureVariables();
     }
 }

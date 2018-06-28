@@ -3,10 +3,10 @@
 package gralog.gralogfx;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import gralog.exportfilter.ExportFilter;
-import gralog.exportfilter.ExportFilterDescription;
 import gralog.exportfilter.ExportFilterManager;
 import gralog.exportfilter.ExportFilterParameters;
 import gralog.gralogfx.input.MultipleKeyCombination;
@@ -26,7 +26,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import gralog.structure.controlpoints.ControlPoint;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -39,7 +38,6 @@ import javafx.scene.layout.StackPane;
 import javafx.geometry.Point2D;
 
 import javafx.event.EventType;
-import javafx.stage.FileChooser;
 
 
 /**
@@ -48,6 +46,27 @@ import javafx.stage.FileChooser;
 //public class StructurePane extends ScrollPane implements StructureListener {
 public class StructurePane extends StackPane implements StructureListener {
 
+    // indices are respectively equal
+    public static MenuPrefVariable[] menuVariables;
+    public static Field[] menuVariableFields;
+
+    static{
+
+        ArrayList<Field> flds = new ArrayList<>();
+        for(Field f : StructurePane.class.getDeclaredFields()){
+            if(f.isAnnotationPresent(MenuPrefVariable.class)){
+                flds.add(f);
+            }
+        }
+        menuVariableFields = new Field[flds.size()];
+
+        flds.toArray(menuVariableFields);
+        menuVariables = new MenuPrefVariable[menuVariableFields.length];
+
+        for(int i = 0; i < menuVariables.length; i++){
+            menuVariables[i] = menuVariableFields[i].getAnnotation(MenuPrefVariable.class);
+        }
+    }
 
     private boolean needsRepaint = true;
     private Lock needsRepaintLock = new ReentrantLock();
@@ -114,7 +133,7 @@ public class StructurePane extends StackPane implements StructureListener {
     @MenuPrefVariable(name="Snap to Grid")
     private boolean snapToGrid = true;
 
-    protected Configuration config;
+    private Configuration config;
 
     public StructurePane(Structure structure){
         this(structure, new Configuration());
@@ -138,9 +157,7 @@ public class StructurePane extends StackPane implements StructureListener {
         canvas.widthProperty().addListener(e -> this.requestRedraw());
         canvas.heightProperty().addListener(e -> this.requestRedraw());
 
-        canvas.setOnScroll(e -> {
-            ScrollEvent se = (ScrollEvent) e;
-
+        canvas.setOnScroll(se -> {
             Point2D oldMousePos = screenToModel(new Point2D(se.getX(), se.getY()));
             zoomFactor *= Math.pow(1.2d, se.getDeltaY() / 40d);
             Point2D newMousePos = screenToModel(new Point2D(se.getX(), se.getY()));
@@ -340,8 +357,6 @@ public class StructurePane extends StackPane implements StructureListener {
             //start an edge if secondary mouse down on a vertex
             if(selected instanceof Vertex){
                 currentEdgeStartingPoint = selected;
-            }else if(selected == null){
-
             }
         }
         vertexMenu.hide();
@@ -743,6 +758,7 @@ public class StructurePane extends StackPane implements StructureListener {
     @Override
     public void edgeChanged(EdgeEvent e) {
     }
+
 
     public void saveStructure(){
         if(structure.hasFileReference()){
