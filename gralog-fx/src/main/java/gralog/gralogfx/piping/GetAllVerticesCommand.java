@@ -28,7 +28,7 @@ public class GetAllVerticesCommand extends CommandForGralogToExecute {
 
         String vertexString = "";
         for (Vertex v : allNodes){
-            vertexString = vertexString + Integer.toString(v.getId()) + "#";
+            vertexString = vertexString + v.gralogPipify()+ "#";
         }
         if (vertexString.length() > 0 && null != vertexString){
             vertexString = vertexString.substring(0,vertexString.length()-1);

@@ -229,6 +229,10 @@ public class PipingMessageHandler{
         return "("+Integer.toString(e.getId())+","+Integer.toString(e.getSource().getId())+","+Integer.toString(e.getTarget().getId())+")";
     }
 
+    public static String universalEdgeToGralogTuple(Edge e){
+        return "("+e.gralogPipify()+","+e.getSource().gralogPipify()+","+e.getTarget().gralogPipify()+")";
+    }
+
 
     public static List<String[]> parsePauseVars(String[] vars, boolean rankGiven){
         List<String[]> tuples = new ArrayList<String[]>();
@@ -359,6 +363,14 @@ public class PipingMessageHandler{
             // currentCommand.setStructure(currentStructure);
             return currentCommand;
             // this.out.println("ack");
+        //todo: re-impliment this!! }else if (externalCommandSegments[0].equals("getEdgesByPropertyValue")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
+        //     // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+            
+        //     currentCommand = new GetEdgesByPropertyValueCommand(externalCommandSegments,currentStructure);
+            
+        //     // currentCommand.setStructure(currentStructure);
+        //     return currentCommand;
+        //     // this.out.println("ack");
         }else if (externalCommandSegments[0].equals("getEdgeProperty")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
             // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
             

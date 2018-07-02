@@ -15,6 +15,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.lang.reflect.*;
+import java.lang.annotation.Annotation;
 import gralog.core.annotations.DataField;
 
 /**
@@ -589,5 +592,38 @@ public class Edge extends XmlMarshallable implements IMovable {
     @Override
     public String toString(){
         return String.format("id:%d __ E(%d,%d)", id, this.getSource().getId(), this.getTarget().getId());
+    }
+
+
+    public String gralogPipify(){
+        Class<?> c = this.getClass();
+        String ret = "";
+        for (Field f : c.getDeclaredFields()) {
+            f.setAccessible(true);
+            boolean toBeSent = false;
+            Annotation[] annotations = f.getDeclaredAnnotations();
+            for(Annotation annotation : annotations){
+                if(annotation instanceof DataField){
+                    DataField dataField = (DataField)annotation;
+                    toBeSent = dataField.display();
+                    break;
+                }
+            }
+            if (toBeSent){
+                ret = ret + f.getName() + "=";
+                try{
+                    ret = ret+f.get(this).toString() + "|";
+                }catch(Exception e){
+                    //todo: to handle!!!
+                }
+            }
+            
+        }
+        if (ret.length() > 0){
+            ret = ret.substring(0,ret.length()-1);
+        }
+
+        return ret;
+
     }
 }

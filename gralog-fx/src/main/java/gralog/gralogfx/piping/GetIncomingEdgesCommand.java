@@ -47,21 +47,17 @@ public class GetIncomingEdgesCommand extends CommandForGralogToExecute {
 
         Set<Edge> conncetedEdges = this.sourceVertex.getIncomingEdges();
 
-        System.out.println("here's what we got for incoming edges: ");
-        for (Edge e : conncetedEdges){
-            System.out.println(e.toString());
-        }
-        System.out.println("fin");
+        
 
         String edgeString = "";
+
         for (Edge e : conncetedEdges){
-            edgeString = edgeString + "("+Integer.toString(e.getSource().getId())+","+Integer.toString(e.getTarget().getId())+")"+ "#";
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToGralogTuple(e)+ "#";
         }
         if (edgeString.length() > 0 && null != edgeString){
             edgeString = edgeString.substring(0,edgeString.length()-1);
         }
 
-        System.out.println("here we our edge string |" + edgeString+ "|");
         this.setResponse(edgeString.trim());
 
         return;

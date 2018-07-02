@@ -49,7 +49,7 @@ public class GetOutgoingEdgesCommand extends CommandForGralogToExecute {
 
         String edgeString = "";
         for (Edge e : conncetedEdges){
-            edgeString = edgeString + "("+Integer.toString(e.getSource().getId())+","+Integer.toString(e.getTarget().getId())+")"+ "#";
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToGralogTuple(e)+ "#";
         }
         if (edgeString.length() > 0 && null != edgeString){
             edgeString = edgeString.substring(0,edgeString.length()-1);

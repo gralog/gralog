@@ -27,7 +27,7 @@ public class GetAllEdgesCommand extends CommandForGralogToExecute {
 
         String edgeString = "";
         for (Edge e : allEdges){
-            edgeString = edgeString + PipingMessageHandler.universalEdgeToTuple(e)+ "#";
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToGralogTuple(e)+ "#";
         }
         if (edgeString.length() > 0 && null != edgeString){
             edgeString = edgeString.substring(0,edgeString.length()-1);

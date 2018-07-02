@@ -100,10 +100,10 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
                 return;
             }
         }
-         
+
         e.isDirected = this.isDirected;
 
-        this.setResponse(Integer.toString(e.getId()));
+        this.setResponse(PipingMessageHandler.universalEdgeToGralogTuple(e));
 
         return;
 

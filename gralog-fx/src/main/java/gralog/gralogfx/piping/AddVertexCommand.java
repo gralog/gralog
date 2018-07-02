@@ -36,7 +36,7 @@ public class AddVertexCommand extends CommandForGralogToExecute {
 
         this.newVertexId = this.vertex.getId();
 
-        this.setResponse(Integer.toString(this.vertex.getId()));
+        this.setResponse(this.vertex.gralogPipify());
 
         // return v;
 	}

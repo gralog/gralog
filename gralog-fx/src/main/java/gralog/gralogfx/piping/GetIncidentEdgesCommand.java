@@ -49,7 +49,7 @@ public class GetIncidentEdgesCommand extends CommandForGralogToExecute {
 
         String edgeString = "";
         for (Edge e : incidentEdges){
-            edgeString = edgeString + PipingMessageHandler.universalEdgeToTuple(e)+ "#";
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToGralogTuple(e)+ "#";
         }
         if (edgeString.length() > 0 && null != edgeString){
             edgeString = edgeString.substring(0,edgeString.length()-1);

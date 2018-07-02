@@ -57,7 +57,7 @@ g.pauseUntilSpacePressed("hello","world");
 edges = g.getIncidentEdges(ids[0]);
 
 for e in edges:
-	g.setEdgeColor(e[0],"purple");
+	g.setEdgeColor(e,"purple");
 
 g.pauseUntilSpacePressed("borf","diddly");
 
