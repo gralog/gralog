@@ -211,6 +211,11 @@ public class Vertex extends XmlMarshallable implements IMovable {
         coordinates = coordinates.plus(offset);
     }
 
+    public void setCoordinates(double x, double y){
+        coordinates = new Vector2D(x, y);
+    }
+
+
 
     public void render(GralogGraphicsContext gc, Highlights highlights) {
         GralogColor c = highlights.isSelected(this) ? GralogColor.RED : strokeColor;

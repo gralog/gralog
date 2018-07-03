@@ -110,6 +110,8 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean selectionBoxingActive = false;
     private boolean selectionBoxDragging = false;
 
+    private Vector2D singleVertexDragPosition; //relative to origin
+
     private IMovable currentEdgeStartingPoint;
     private boolean drawingEdge = false;
 
@@ -335,7 +337,9 @@ public class StructurePane extends StackPane implements StructureListener {
                         select(selected);
                     }
                     dragging = highlights.getSelection();
-
+                    if(dragging.size() == 1 && selected instanceof Vertex){
+                        singleVertexDragPosition = ((Vertex)selected).coordinates.minus(lastMouseX, lastMouseY);
+                    }
                     if(selected instanceof Edge){
                         holdingEdge = (Edge) selected;
                         holdingEdgeStartingPosition = Vector2D.point2DToVector(mousePositionModel);
@@ -375,7 +379,7 @@ public class StructurePane extends StackPane implements StructureListener {
             this.requestRedraw();
         }
         else if(b == MouseButton.PRIMARY){
-            if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease){
+            if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease && selectionBoxingActive){
                 Vertex v = structure.addVertex(config);
                 v.coordinates = new Vector2D(
                         mousePositionModel.getX(),
@@ -458,7 +462,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     tryAddControlPoint(mousePositionModel, holdingEdgeStartingPosition);
                 }
                 else{
-                    for (Object o : dragging)
+                    for (Object o : dragging) {
                         if (o instanceof IMovable) {
                             Vector2D offset = new Vector2D(
                                     mousePositionModel.getX() - lastMouseX,
@@ -466,6 +470,21 @@ public class StructurePane extends StackPane implements StructureListener {
                             );
                             ((IMovable) o).move(offset);
                         }
+                        //only align when the difference between initial relative dragging point
+                        //and current relative position is small enough
+                        if(o instanceof Vertex){
+                            Vector2D rel = ((Vertex)o).coordinates.minus(
+                                    mousePositionModel.getX(), mousePositionModel.getY());
+                            Vector2D diffRel = singleVertexDragPosition.minus(rel);
+                            if (dragging.size() == 1) {
+                                if(diffRel.length() < 0.2){
+                                    tryAlign((Vertex)o, 10, 0.15);
+                                }else{
+                                    ((IMovable)o).move(diffRel);
+                                }
+                            }
+                        }
+                    }
                 }
                 // update model position under mouse
                 // this must not be done when we are dragging the screen!!!!!
@@ -553,7 +572,8 @@ public class StructurePane extends StackPane implements StructureListener {
                 GraphicsContext gc = canvas.getGraphicsContext2D();
                 draw(gc);
 
-                gc.setStroke(Color.BLACK);
+                gc.setStroke(Color.GREY);
+                gc.setLineWidth(1);
                 gc.strokeLine(from.getX(), from.getY(), to.getX(), to.getY());
 
 
@@ -635,6 +655,41 @@ public class StructurePane extends StackPane implements StructureListener {
                 holdingEdge = null;
             }
         }
+    }
+
+    /**
+     * Aligns the given vertex to a nearby node. Also Draws helper
+     * lines (node alignment) if the vertex is close enough to the x/y
+     * coordinate of a vertex below a specified radius
+     * @param vertex The vertex that wants to be aligned (aligner)
+     * @param radius The max radius of the alignee (?)
+     * @param maxDelta At what distance should the helper line be drawn
+     */
+    private boolean tryAlign(Vertex vertex, double radius, double maxDelta){
+
+        for(Object v : structure.getVertices()){
+            Vertex x = ((Vertex)v);
+            if(x == vertex){
+                continue;
+            }
+            if(x.coordinates.minus(vertex.coordinates).length() < radius){
+                final double xdiff = x.coordinates.getX() - vertex.coordinates.getX();
+                if(Math.abs(xdiff) < maxDelta){
+                    Point2D from = new Point2D(x.coordinates.getX(), x.coordinates.getY()),
+                            to = new Point2D(x.coordinates.getX(), vertex.coordinates.getY());
+                    vertex.setCoordinates(from.getX(), to.getY());
+                    this.requestRedraw(modelToScreen(from), modelToScreen(to));
+                    return true;
+                }else if(Math.abs(x.coordinates.getY() - vertex.coordinates.getY()) < maxDelta){
+                    Point2D from = new Point2D(x.coordinates.getX(), x.coordinates.getY()),
+                            to = new Point2D(vertex.coordinates.getX(), x.coordinates.getY());
+                    vertex.setCoordinates(to.getX(), from.getY());
+                    this.requestRedraw(modelToScreen(from), modelToScreen(to));
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public void select(Object obj) {
