@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml>
+  <graph edgedefault="undirected">
+    <node fillcolor="#FFFFFF" id="n1" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="3.5" y="3.5"/>
+    <node fillcolor="#FFFFFF" id="n2" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="3.5" y="7.0"/>
+    <node fillcolor="#FFFFFF" id="n3" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="6.828697807033038" y="4.5815594803123165"/>
+    <node fillcolor="#FFFFFF" id="n4" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="5.557248383023657" y="0.6684405196876844"/>
+    <node fillcolor="#FFFFFF" id="n5" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="1.4427516169763446" y="0.6684405196876835"/>
+    <node fillcolor="#FFFFFF" id="n6" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="0.17130219296696225" y="4.581559480312315"/>
+    <node fillcolor="#FFFFFF" id="n7" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="7.0" y="-3.0"/>
+    <node fillcolor="#FFFFFF" id="n8" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-3.0" y="4.0"/>
+    <node fillcolor="#FFFFFF" id="n9" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="3.0" y="10.0"/>
+    <node fillcolor="#FFFFFF" id="n10" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="6.0" y="11.0"/>
+    <node fillcolor="#FFFFFF" id="n11" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="9.0" y="8.0"/>
+    <node fillcolor="#FFFFFF" id="n12" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="9.0" y="4.0"/>
+    <node fillcolor="#FFFFFF" id="n13" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="12.0" y="3.0"/>
+    <node fillcolor="#FFFFFF" id="n14" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="9.0" y="1.0"/>
+    <node fillcolor="#FFFFFF" id="n15" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="3.0" y="-3.0"/>
+    <node fillcolor="#FFFFFF" id="n16" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-4.0" y="-2.0"/>
+    <node fillcolor="#FFFFFF" id="n17" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-2.0" y="2.0"/>
+    <node fillcolor="#FFFFFF" id="n18" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-4.0" y="7.0"/>
+    <node fillcolor="#FFFFFF" id="n19" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-1.0" y="8.0"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n2" target="n1" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n19" target="n9" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n12" target="n4" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n6" target="n2" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n5" target="n16" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n3" target="n2" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n14" target="n13" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n19" target="n18" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n11" target="n3" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n18" target="n6" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n2" target="n10" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n2" target="n3" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n8" target="n6" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n6" target="n1" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n5" target="n1" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n4" target="n1" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n10" target="n12" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n4" target="n7" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n9" target="n11" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n3" target="n1" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n5" target="n15" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n4" target="n5" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n4" target="n14" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n17" target="n5" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n3" target="n4" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="n5" target="n6" weight="1.0" width="0.026458333333333334"/>
+  </graph>
+</graphml>
