@@ -41,7 +41,7 @@ public class ModalLogicFormulaTest {
     }
 
     private static Action addEdge(World source, World target) {
-        Action e = structure.createEdge();
+        Action e = structure.createEdge(null);
         e.setSource(source);
         e.setTarget(target);
         structure.addEdge(e);

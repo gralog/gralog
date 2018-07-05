@@ -38,7 +38,7 @@ public class RegularExpressionLetter extends RegularExpression {
             t.coordinates = new Vector2D(scale * i + scale, 0d);
             a.addVertex(t);
 
-            Transition e = a.createEdge();
+            Transition e = a.createEdge(null);
             e.setSource(s);
             e.setTarget(t);
             e.symbol = "" + string.charAt(i);

@@ -2,6 +2,7 @@ package gralog.gralogfx.piping;
 import gralog.structure.*;
 import gralog.rendering.*;
 
+
 public class SetVertexLabelCommand extends CommandForGralogToExecute {
     
 

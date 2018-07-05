@@ -5,19 +5,19 @@ import java.util.Arrays;
 import java.lang.reflect.Field;
 
 
-public class GetEdgePropertyCommand extends CommandForGralogToExecute {
+public class GetVertexPropertyCommand extends CommandForGralogToExecute {
 
-    Edge edge;
+    Vertex vertex;
 	String propertyString;
   
 
-	public GetEdgePropertyCommand(String[] externalCommandSegments,Structure structure){
+	public GetVertexPropertyCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         
 
         try{
-            this.edge = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
+            this.vertex = PipingMessageHandler.extractVertex(externalCommandSegments,structure);
         }catch(Exception e){
             this.fail();
             this.setResponse(null);
@@ -28,7 +28,7 @@ public class GetEdgePropertyCommand extends CommandForGralogToExecute {
         //extract the property to be searched for, if it doesn't exist, terminate program
         try{
 
-            this.propertyString = externalCommandSegments[3];
+            this.propertyString = PipingMessageHandler.extractNthPositionString(externalCommandSegments,structure,3);
         }catch(Exception e){
             this.fail();
             this.error = e;
@@ -41,12 +41,11 @@ public class GetEdgePropertyCommand extends CommandForGralogToExecute {
 
         // int changeId;
 
-        boolean found = false;
-        Class<?> c = edge.getClass();
+        Class<?> c = this.vertex.getClass();
         for (Field f : c.getFields()){
             if (f.getName().equals(this.propertyString)){
                 try{
-                    this.setResponse(PipingMessageHandler.universalEdgeToGralogTuple(this.edge));
+                    this.setResponse(this.vertex.gralogPipify());
                 }catch(Exception e){
                     this.fail();
                     this.error = e;

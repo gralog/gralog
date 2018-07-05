@@ -16,17 +16,26 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.lang.reflect.*;
+import java.lang.annotation.Annotation;
+import gralog.core.annotations.DataField;
+
 /**
  *
  */
 @XmlName(name = "edge")
 public class Edge extends XmlMarshallable implements IMovable {
 
+
     public enum EdgeType{
         SHARP,
         ROUND,
         BEZIER
     }
+
+
+    @DataField(display=true,readOnly=true)
+    private Integer id = -1; //if not -1, then don't change the id
 
     public static boolean isEdgeType(String type){
 
@@ -36,16 +45,17 @@ public class Edge extends XmlMarshallable implements IMovable {
         return false;
     }
 
-    public int id = -1; //if not -1, then don't change the id
 
     public static double multiEdgeOffset = 0.2;
 
     Set<EdgeListener> listeners = new HashSet<>();
 
     //inspector visible
+    @DataField(display=true)
     public String label = ""; //add this
+    @DataField(display=true)
     public Double weight = 1.0d;
-
+    @DataField(display=true)
     public Boolean isDirected = true;
     public Arrow arrowType = Arrow.TYPE2;
 
@@ -56,11 +66,13 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     public double arrowHeadAngle = 40d; // degrees
     // @InspectorName(name = "thickness")
-
+    @DataField(display=true)
     public Double width = 2.54 / 96; // cm
+    @DataField(display=true)
     public GralogColor color = GralogColor.BLACK;
-
+    @DataField(display=true)
     public GralogGraphicsContext.LineType type = GralogGraphicsContext.LineType.PLAIN;
+    @DataField(display=true)
     public EdgeType edgeType = EdgeType.BEZIER; //TODO: switch to private and use annotations to mark insp vars
 
     //end
@@ -139,6 +151,17 @@ public class Edge extends XmlMarshallable implements IMovable {
             return addSharpControlPoint(position, clickPosition);
         }
     }
+
+
+    public int getId(){
+        return this.id;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+
     private ControlPoint addBezierControlPoint(Vector2D position){
         if(controlPoints.size() >= 2){
             return null;
@@ -191,11 +214,17 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     public void setSource(Vertex source) {
         if (this.source != null)
+            // System.out.println("i got id: " + this.getId());
             this.source.disconnectEdge(this);
+
         this.source = source;
         if (source != null){
             this.source.connectEdge(this);
         }
+    }
+
+    public boolean isDirected(){
+        return this.isDirected;
     }
 
     public Vertex getTarget() {
@@ -276,6 +305,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     private void renderLoop(GralogGraphicsContext gc, Highlights highlights){
         GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
+        
         double angleStart = source.loopAnchor - source.loopAngle;
         double angleEnd = source.loopAnchor + source.loopAngle;
 
@@ -566,5 +596,37 @@ public class Edge extends XmlMarshallable implements IMovable {
     @Override
     public String toString(){
         return String.format("id:%d __ E(%d,%d)", id, this.getSource().getId(), this.getTarget().getId());
+    }
+
+
+    public String gralogPipify(){
+        Class<?> c = this.getClass();
+        String ret = "";
+        for (Field f : c.getDeclaredFields()) {
+            f.setAccessible(true);
+            boolean toBeSent = false;
+            Annotation[] annotations = f.getDeclaredAnnotations();
+            for(Annotation annotation : annotations){
+                if(annotation instanceof DataField){
+                    DataField dataField = (DataField)annotation;
+                    toBeSent = dataField.display() && dataField.readOnly();
+                }
+            }
+            if (toBeSent){
+                ret = ret + f.getName() + "=";
+                try{
+                    ret = ret+f.get(this).toString() + "|";
+                }catch(Exception e){
+                    //todo: to handle!!!
+                }
+            }
+            
+        }
+        if (ret.length() > 0){
+            ret = ret.substring(0,ret.length()-1);
+        }
+
+        return ret;
+
     }
 }

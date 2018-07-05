@@ -4,15 +4,13 @@ import gralog.rendering.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Constructor;
 
+
 public class SetEdgePropertyCommand extends CommandForGralogToExecute {
 
     ////*** CHECK YOURSELF BEFORE YOU USE THIS FUNCTIONALITYYYYY***///
     
 
-    int sourceId;
-    int targetId;
-    Vertex sourceVertex;
-    Vertex targetVertex;
+    
     Edge edge;
     String propertyString;
     String propertyStringValue;
@@ -24,52 +22,20 @@ public class SetEdgePropertyCommand extends CommandForGralogToExecute {
         this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        try{    
-            this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        try{
+            this.edge = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
+        }catch(NonExistantEdgeException e){
+            //tell the console about it
+            return;
+        }catch(Exception e){
+            this.fail();
+            this.setResponse(null);
             this.error = e;
-            this.fail();
             return;
         }
-
-        this.externalCommandSegments = externalCommandSegments;
-
-        try{    
-            this.targetId = Integer.parseInt(externalCommandSegments[3]);
-        }catch(NumberFormatException e){
-            this.error = e;
-            this.fail();
-            return;
-        }
-
-        this.sourceVertex = this.structure.getVertexById(this.sourceId);
-
-        if (this.sourceVertex == null){
-            this.fail();
-            this.error = new Exception("error: source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
-            return;
-        }
-
-        this.targetVertex = this.structure.getVertexById(this.targetId);
-
-        if (this.targetVertex == null){
-            this.fail();
-            this.error = new Exception("error: target vertex with id " + Integer.toString(this.targetId) + " does not exist");
-            return;
-        }
-
-        this.edge = this.structure.getEdgeByVertexIds(this.sourceId,this.targetId);
-        if (this.edge == null){
-            System.out.println("fail!!!! ahahaha i love failure");
-            this.fail();
-            this.error = new Exception("error: no edge with vertex coordinates " + Integer.toString(this.sourceId) + " " + Integer.toString(this.targetId));
-            return;
-        }
-
-        // this.generateLabel(externalCommandSegments);
         try{
 
-            this.propertyString = externalCommandSegments[4];
+            this.propertyString = externalCommandSegments[3];
         }catch(Exception e){
             this.fail();
             this.error = e;
@@ -78,7 +44,7 @@ public class SetEdgePropertyCommand extends CommandForGralogToExecute {
 
         try{
 
-            this.propertyStringValue = externalCommandSegments[5];
+            this.propertyStringValue = externalCommandSegments[4];
         }catch(Exception e){
             this.fail();
             this.error = e;
@@ -90,44 +56,39 @@ public class SetEdgePropertyCommand extends CommandForGralogToExecute {
 
 
     public void handle(){
+        if (this.edge != null){
 
-        
+            boolean found = false;
+            Class<?> c = edge.getClass();
+            for (Field f : c.getFields()){
+                if (f.getName().equals(this.propertyString)){
+                    try{
+                        if (f.getType().getName().equals("java.lang.Double")){
+                            f.set(this.edge,Double.parseDouble(this.propertyStringValue));
+                        }else if (f.getType().getName().equals("java.lang.Integer") || f.getType() == int.class){
+                            f.set(this.edge,Integer.parseInt(this.propertyStringValue));
+                        }else{ //string lol
+                            // Constructor cs = f.get(this.edge).getClass().getConstructors()[0];
+                            // System.out.println("constructor? : " + cs);
+                            // cs.newInstance(this.propertyStringValue);
+                            f.set(this.edge,this.propertyStringValue);
+                            
+                        }
+                        this.setResponse(null);
 
-        // Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
-            
-        // e.isDirected = (externalCommandSegments[3].equals("true"));
+                    }catch(Exception e){
+                        this.fail();
+                        this.error = e;
 
-        boolean found = false;
-        Class<?> c = edge.getClass();
-        for (Field f : c.getFields()){
-            if (f.getName().equals(this.propertyString)){
-                try{
-                    System.out.println("looking perhasp for... " + f.getName() + "= " + f.get(this.edge)  + " or " + f.getType());
-                    
-                    if (f.getType().getName().equals("java.lang.Double")){
-                        System.out.println("aha! a dubbleeee");
-                        f.set(this.edge,Double.parseDouble(this.propertyStringValue));
-                    }else if (f.getType().getName().equals("java.lang.Integer") || f.getType() == int.class){
-                        f.set(this.edge,Integer.parseInt(this.propertyStringValue));
-                    }else{ //string lol
-                        // Constructor cs = f.get(this.edge).getClass().getConstructors()[0];
-                        // System.out.println("constructor? : " + cs);
-                        // cs.newInstance(this.propertyStringValue);
-                        f.set(this.edge,this.propertyStringValue);
-                        
                     }
-                    this.setResponse(null);
-
-                }catch(Exception e){
-                    this.fail();
-                    this.error = e;
-
+                    return;
                 }
-                return;
             }
+            this.fail();
+            this.error = new Exception("class Edge does not have property : " + this.propertyString);
+            return;
         }
-        this.fail();
-        this.error = new Exception("class Edge does not have property : " + this.propertyString);
+        this.setResponse(null);
         return;
 
 
