@@ -484,15 +484,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @return The new edge.
      */
-    @Deprecated
-    public abstract E createEdge();
+
+    public E createEdge(){
+        return createEdge(null);
+    }
 
     /**
      * Create a new edge instance without adding it to the structure.
      *
      * @return The new edge.
      */
-    @Deprecated
     public abstract E createEdge(Configuration config);
 
 
