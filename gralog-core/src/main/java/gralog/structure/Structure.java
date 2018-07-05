@@ -181,7 +181,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * Adds a vertex to the structure, and uses the given id, given it is
      it is stil available. if not, it uses the next free id.
      *
-     * @param v The vertex to be added.
+     * @param config The configuration of the vertex
      * @param id The id of which v will soon hopefully be the proud owner
      */
     public V addVertex(Configuration config,int id) {
@@ -484,32 +484,22 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      *
      * @return The new edge.
      */
+    protected abstract E createEdge(Configuration config);
 
-    public E createEdge(){
-        return createEdge(null);
-    }
-
-    /**
-     * Create a new edge instance without adding it to the structure.
-     *
-     * @return The new edge.
-     */
-    public abstract E createEdge(Configuration config);
-
-
+    @Deprecated
     public E createEdge(V source, V target) {
-
-        return createEdge(source, target, -1, null);
+        E e = createEdge(-1, null);
+        e.setSource(source);
+        e.setTarget(target);
+        return e;
     }
 
     /**
      * Creates an edge without adding it to the graph.
      *
-     * @param source The tail of the new edge.
-     * @param target The head of the new edge.
      * @return The new edge.
      */
-    public E createEdge(V source, V target, int id, Configuration config) {
+    public E createEdge(int id, Configuration config) {
         E edge = createEdge(config);
         if (this.edges.get(id) != null){
             // return (E)null;
@@ -523,9 +513,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }else{
                 Interval me = new Interval(id,id);
                 Interval smallestGreaterThanOrEqual = this.edgeIdHoles.ceiling(me);
-                Interval greatestLessThanOrEqualTo = this.edgeIdHoles.floor(me);
                 Interval newInterval = new Interval(0,0);
-                boolean addNewInterval = false;
+
                 if (smallestGreaterThanOrEqual != null){ //if the next biggest 
                     //interval starts with the id we want to add
                     newInterval.a = id+1;
@@ -541,26 +530,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
         
         System.out.println("setting id to " + edge.getId());
-
-        edge.setSource(source);
-        edge.setTarget(target);
-        
-
-        //add correct siblings
-        if (source == target && source != null) {
-            edge.intermediatePoints.add(
-                    new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
-                            source.coordinates.getY() - 1.5d));
-            edge.intermediatePoints.add(
-                    new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
-                            source.coordinates.getY() - 1.5d));
-        }
-        System.out.println("returning " + edge.getId());
-        System.out.println("now we should have s, t: " + edge.getSource() + edge.getTarget());
-
         return edge;
     }
 
+    public boolean addEdge(E e, V source, V target){
+        e.setSource(source);
+        e.setTarget(target);
+        return addEdge(e);
+    }
     /**
      * Add an edge to the structure. Has no effect if the edge already exists in
      * the structure.
@@ -572,8 +549,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         System.out.println("tha sinister methooooddd");
         e.siblings.clear();
         int nonLoopEdges = 0;
-
-      
 
         for(Edge edge : e.getSource().getIncidentEdges()){
             
@@ -592,9 +567,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 }
             }
         }
-
-        
-
 
         //max amount of edges.
         //TODO: Maybe make that an option
@@ -666,14 +638,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     public E addEdge(V source, V target, int id, Configuration config) {
-        E e = createEdge(source, target, id, config);
+        E e = createEdge(id, config);
         System.out.println("after adding" + e.getSource() + e.getTarget());
         
-        if(addEdge(e)){
+        if(addEdge(e, source, target)){
             System.out.println("are we try8ing to add null bois???" + e.getSource() + target);
             System.out.println("connecting tha edge in a secky deck");
-            source.connectEdge(e);
-            target.connectEdge(e);
             System.out.println("source: " + e.getSource() + " and targ : " + e.getTarget());
             return e;    
         }
@@ -696,7 +666,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * Removes an edge from the structure. Does not affect vertices, incident or
      * not.
      *
-     * @param e The edge to be removed.
+     * @param edge The edge to be removed.
      */
     public void removeEdge(Edge edge, boolean removeSiblingsEntries) {
         edge.setSource(null);
@@ -771,8 +741,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     /**
      * Creates an edge without adding it to the graph.
      *
-     * @param source The tail of the new edge.
-     * @param target The head of the new edge.
      * @return The new edge.
      */
     

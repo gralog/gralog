@@ -27,11 +27,6 @@ public class KripkeStructure extends Structure<World, Action> {
     }
 
     @Override
-    public Action createEdge() {
-        return new Action();
-    }
-
-    @Override
     public Action createEdge(Configuration config) {
         return new Action(config);
     }
