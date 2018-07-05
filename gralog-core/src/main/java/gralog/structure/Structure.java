@@ -495,6 +495,71 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     @Deprecated
     public abstract E createEdge(Configuration config);
 
+
+    public E createEdge(V source, V target) {
+
+        return createEdge(source, target, -1, null);
+    }
+
+    /**
+     * Creates an edge without adding it to the graph.
+     *
+     * @param source The tail of the new edge.
+     * @param target The head of the new edge.
+     * @return The new edge.
+     */
+    public E createEdge(V source, V target, int id, Configuration config) {
+        E edge = createEdge(config);
+        if (this.edges.get(id) != null){
+            // return (E)null;
+            //send warning message that the id had already been assigned
+        }
+        if (id != -1){
+            if (this.getEdgeById(id) != null){
+                //send warning to console that the id has already been assigned
+                edge.setId(pollNextFreeEdgeID());
+                edges.put(edge.getId(),edge);
+            }else{
+                Interval me = new Interval(id,id);
+                Interval smallestGreaterThanOrEqual = this.edgeIdHoles.ceiling(me);
+                Interval greatestLessThanOrEqualTo = this.edgeIdHoles.floor(me);
+                Interval newInterval = new Interval(0,0);
+                boolean addNewInterval = false;
+                if (smallestGreaterThanOrEqual != null){ //if the next biggest 
+                    //interval starts with the id we want to add
+                    newInterval.a = id+1;
+                    newInterval.b = smallestGreaterThanOrEqual.b;
+                    this.edgeIdHoles.remove(smallestGreaterThanOrEqual);
+                    if (newInterval.a < newInterval.b){
+                        this.edgeIdHoles.add(newInterval);
+                    }
+                }
+            }
+        }else{
+            edge.setId(this.pollNextFreeEdgeID());    
+        }
+        
+        System.out.println("setting id to " + edge.getId());
+
+        edge.setSource(source);
+        edge.setTarget(target);
+        
+
+        //add correct siblings
+        if (source == target && source != null) {
+            edge.intermediatePoints.add(
+                    new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
+                            source.coordinates.getY() - 1.5d));
+            edge.intermediatePoints.add(
+                    new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
+                            source.coordinates.getY() - 1.5d));
+        }
+        System.out.println("returning " + edge.getId());
+        System.out.println("now we should have s, t: " + edge.getSource() + edge.getTarget());
+
+        return edge;
+    }
+
     /**
      * Add an edge to the structure. Has no effect if the edge already exists in
      * the structure.
@@ -709,69 +774,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param target The head of the new edge.
      * @return The new edge.
      */
-    public E createEdge(V source, V target) {
-
-        return createEdge(source, target, -1, null);
-    }
-
-    /**
-     * Creates an edge without adding it to the graph.
-     *
-     * @param source The tail of the new edge.
-     * @param target The head of the new edge.
-     * @return The new edge.
-     */
-    public E createEdge(V source, V target, int id, Configuration config) {
-        E edge = createEdge(config);
-        if (this.edges.get(id) != null){
-            // return (E)null;
-            //send warning message that the id had already been assigned
-        }
-        if (id != -1){
-            if (this.getEdgeById(id) != null){
-                //send warning to console that the id has already been assigned
-                edge.setId(pollNextFreeEdgeID());
-                edges.put(edge.getId(),edge);
-            }else{
-                Interval me = new Interval(id,id);
-                Interval smallestGreaterThanOrEqual = this.edgeIdHoles.ceiling(me);
-                Interval greatestLessThanOrEqualTo = this.edgeIdHoles.floor(me);
-                Interval newInterval = new Interval(0,0);
-                boolean addNewInterval = false;
-                if (smallestGreaterThanOrEqual != null){ //if the next biggest 
-                    //interval starts with the id we want to add
-                    newInterval.a = id+1;
-                    newInterval.b = smallestGreaterThanOrEqual.b;
-                    this.edgeIdHoles.remove(smallestGreaterThanOrEqual);
-                    if (newInterval.a < newInterval.b){
-                        this.edgeIdHoles.add(newInterval);
-                    }
-                }
-            }
-        }else{
-            edge.setId(this.pollNextFreeEdgeID());    
-        }
-        
-        System.out.println("setting id to " + edge.getId());
-
-        edge.setSource(source);
-        edge.setTarget(target);
-        
-
-        //add correct siblings
-        if (source == target && source != null) {
-            edge.intermediatePoints.add(
-                    new EdgeIntermediatePoint(source.coordinates.getX() + 0.6,
-                            source.coordinates.getY() - 1.5d));
-            edge.intermediatePoints.add(
-                    new EdgeIntermediatePoint(source.coordinates.getX() - 0.6,
-                            source.coordinates.getY() - 1.5d));
-        }
-        System.out.println("returning " + edge.getId());
-        System.out.println("now we should have s, t: " + edge.getSource() + edge.getTarget());
-
-        return edge;
-    }
+    
     public List<Object> duplicate(Set<Object> selection){ return duplicate(selection, 1); }
 
     public List<Object> duplicate(Set<Object> selection, double offset) {
