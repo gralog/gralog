@@ -223,6 +223,10 @@ public class Edge extends XmlMarshallable implements IMovable {
         }
     }
 
+    public boolean isDirected(){
+        return this.isDirected;
+    }
+
     public Vertex getTarget() {
         return target;
     }
@@ -605,8 +609,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             for(Annotation annotation : annotations){
                 if(annotation instanceof DataField){
                     DataField dataField = (DataField)annotation;
-                    toBeSent = dataField.display();
-                    break;
+                    toBeSent = dataField.display() && dataField.readOnly();
                 }
             }
             if (toBeSent){

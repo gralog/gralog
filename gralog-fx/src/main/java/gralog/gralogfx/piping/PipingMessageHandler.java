@@ -213,6 +213,40 @@ public class PipingMessageHandler{
         }
     }
 
+    public static Vertex extractVertex(String[] externalCommandSegments, Structure structure) throws Exception{
+        String vertex;
+        try{
+            vertex = externalCommandSegments[2];
+        }catch(Exception e){
+            throw new MessageFormatException("Error: the command " + rejoinExternalCommandSegments(externalCommandSegments) + " did not have a vertex as the 3rd paramter!");
+        }
+        
+ 
+        int id;
+        try{
+            id = Integer.parseInt(vertex);
+        }catch(NumberFormatException e){
+            throw new MessageFormatException("Error: the id: " + vertex + " you have passed was not an integer!");
+        }
+        Vertex v = structure.getVertexById(id);
+        if (v == null){
+            throw new NonExistantEdgeException("Error: the id: " + vertex + " is not assigned to a vertex!");
+        }
+        return v;
+    
+    }
+
+    public static String extractNthPositionString(String[] externalCommandSegments, Structure structure,int n) throws Exception{
+        String string;
+        try{
+            string = externalCommandSegments[n];
+        }catch(Exception e){
+            throw new MessageFormatException("Error: the command " + rejoinExternalCommandSegments(externalCommandSegments) + " did not have a paramater at index: " + n + "! Did you remember that Informatiker count from 0?");
+        }
+        return string;
+    
+    }
+
     public static Vertex extractSourceFromEdge(String[] externalCommandSegments, Structure structure) throws Exception{
         Edge e  = extractEdge(externalCommandSegments,structure);
         return e.getSource();
@@ -306,9 +340,9 @@ public class PipingMessageHandler{
             return currentCommand;
 
 
-        }else if (externalCommandSegments[0].equals("sendGraph")){ //user input simulation
+        }else if (externalCommandSegments[0].equals("setGraph")){ //user input simulation
 
-            currentCommand = new SendGraphCommand(externalCommandSegments,currentStructure);
+            currentCommand = new SetGraphCommand(externalCommandSegments,currentStructure);
             
             // currentCommand.setStructure(currentStructure);
             return currentCommand;

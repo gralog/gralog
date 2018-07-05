@@ -137,7 +137,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
             for(Annotation annotation : annotations){
                 if(annotation instanceof DataField){
                     DataField dataField = (DataField)annotation;
-                    toBeSent = dataField.display();
+                    toBeSent = dataField.display()&&dataField.readOnly();
                     break;
                 }
             }
@@ -163,42 +163,47 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     void connectEdge(Edge e) {
-        System.out.println("connecty boi");
-        if(e.getSource() == this){
-            //deprecated local id Vergabe. 
-            // if(e.getId() == -1 && incidentEdges.isEmpty()){
-            //     e.setId(0);
-            // }
-            // if(e.getId() == -1){
-            //     int[] allIndices = new int[incidentEdges.size()];
-            //     int k = 0;
-                
-            //     for(Edge edge : incidentEdges){
-            //         allIndices[k] = edge.getId();
-            //         k++;
-            //     }
-            //     System.out.println("i got indicex array: ");
-            //     for (int x : allIndices){
-            //         System.out.println("bla: " + x);
-            //     }
-            //     Arrays.sort(allIndices);
+        if (e.isDirected()){
+            System.out.println("we're dealing wiht a direced boi" + e.isDirected);
+            if(e.getSource() == this){
+                //deprecated local id Vergabe. 
+                // if(e.getId() == -1 && incidentEdges.isEmpty()){
+                //     e.setId(0);
+                // }
+                // if(e.getId() == -1){
+                //     int[] allIndices = new int[incidentEdges.size()];
+                //     int k = 0;
+                    
+                //     for(Edge edge : incidentEdges){
+                //         allIndices[k] = edge.getId();
+                //         k++;
+                //     }
+                //     System.out.println("i got indicex array: ");
+                //     for (int x : allIndices){
+                //         System.out.println("bla: " + x);
+                //     }
+                //     Arrays.sort(allIndices);
 
-            //     boolean changedOnce = false;
-            //     for(int i = 0; i < allIndices.length; i++){
-            //         if(i < allIndices[i]){
-            //             e.setId(i);
-            //             changedOnce = true;
-            //             break;
-            //         }
-            //     }
-            //     if(!changedOnce){
-            //         e.setId(allIndices.length); //fallback
-            //     }
-            // }
-            outgoingEdges.add(e);
-        }
-        if (e.getTarget() == this){
+                //     boolean changedOnce = false;
+                //     for(int i = 0; i < allIndices.length; i++){
+                //         if(i < allIndices[i]){
+                //             e.setId(i);
+                //             changedOnce = true;
+                //             break;
+                //         }
+                //     }
+                //     if(!changedOnce){
+                //         e.setId(allIndices.length); //fallback
+                //     }
+                // }
+                outgoingEdges.add(e);
+            }
+            if (e.getTarget() == this){
+                this.incomingEdges.add(e);
+            }
+        }else{
             this.incomingEdges.add(e);
+            this.outgoingEdges.add(e);
         }
         this.incidentEdges.add(e);
     }

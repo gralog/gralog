@@ -507,15 +507,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         e.siblings.clear();
         int nonLoopEdges = 0;
 
-        System.out.println("ok so i'm looking at my incident edges");
-        for (Edge each : e.getSource().getIncidentEdges()){
-            System.out.println("eaehc: " + each);
-        }
+      
 
         for(Edge edge : e.getSource().getIncidentEdges()){
-            System.out.println("non loopies: " + nonLoopEdges + " and i'm on : " + e);
+            
             if(edge == e){
-                System.out.println("soft and warm continuing");
                 continue;
             }
             if(edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()){
@@ -531,7 +527,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
         }
 
-        System.out.println("mitten drin : " + e.getSource() + e.getTarget());
+        
 
 
         //max amount of edges.

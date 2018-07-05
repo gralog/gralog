@@ -40,11 +40,7 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         this.sourceVertex = this.structure.getVertexById(this.sourceId);
 
-        System.out.println("ok found my source, it's got outgoint eges???");
-
-        for (Edge e : this.sourceVertex.getOutgoingEdges()){
-            System.out.println("bla: "+ e);
-        }
+        
 
         if (this.sourceVertex == null){
             this.fail();
@@ -100,10 +96,10 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
                 return;
             }
         }
-
+         
         e.isDirected = this.isDirected;
 
-        this.setResponse(PipingMessageHandler.universalEdgeToGralogTuple(e));
+        this.setResponse(Integer.toString(e.getId()));
 
         return;
 

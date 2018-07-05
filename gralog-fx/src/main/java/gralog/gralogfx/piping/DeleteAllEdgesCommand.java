@@ -60,9 +60,10 @@ public class DeleteAllEdgesCommand extends CommandForGralogToExecute {
 	public void handle(){
 
         
-        Set<Edge> interesction = sourceVertex.getOutgoingEdges().stream().filter(targetVertex.getIncomingEdges()::contains).collect(Collectors.toSet());
+        Set<Edge> intersection = sourceVertex.getOutgoingEdges().stream().filter(targetVertex.getIncomingEdges()::contains).collect(Collectors.toSet());
+        
 
-        for (Edge e : interesction){
+        for (Edge e : intersection){
             this.structure.removeEdge(e);
         }
 

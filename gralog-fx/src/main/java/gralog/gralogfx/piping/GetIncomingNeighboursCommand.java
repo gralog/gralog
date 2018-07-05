@@ -17,20 +17,11 @@ public class GetIncomingNeighboursCommand extends CommandForGralogToExecute {
 	public GetIncomingNeighboursCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-
-        try{    
-            this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        try{
+            this.sourceVertex = PipingMessageHandler.extractVertex(externalCommandSegments,structure);
+        }catch(Exception e){
             this.error = e;
             this.fail();
-            return;
-        }
-
-        this.sourceVertex = this.structure.getVertexById(this.sourceId);
-
-        if (this.sourceVertex == null){
-            this.fail();
-            this.error = new Exception("error: source vertex does not exist");
             return;
         }
 	}

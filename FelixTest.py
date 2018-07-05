@@ -14,87 +14,22 @@ g = Graph(None);#type \in buechi, directed, etc. or None
 
 # g1 = Graph("directed");
 
-
-
-numV = 100;
-
 vertices = [];
-
-gregarity = [0];
-
-
-g.track("my id",str(g.id));
-
-# g.track("g vertices",vertices);
-
-
-
-	# g.pauseUntilSpacePressed();
-	# print("hello world",str(g.getOutgoingEdges(v1)));
-
-
-# for x in ids:
-# 	c = g.getEdgeColor((v1,v2),x);
-
-# 	g.setEdgeContour((v1,v2),"dashed",x);
-# 	g.setEdgeColor((v1,v2),colorRGB=(12,234,21));
-# 	# print("we're getting back : " + c);
-# 	g.pauseUntilSpacePressed(("color",c));
-
-ids = [];
 for x in range(2):
-	ids.append(g.addVertex());
-
-edges = {}
-
-for x in ids:
-	for y in ids:
-		if x != y:
-			for z in range(2):
-				g.addEdge(x,y,False);
-
-g.pauseUntilSpacePressed("hello","world");
-edges = g.getIncidentEdges(ids[0]);
-
-for e in edges:
-	g.setEdgeColor(e,"purple");
-
-g.pauseUntilSpacePressed("borf","diddly");
-
-edges = g.getAllEdges();
-for e in edges:
-	g.deleteEdge(e[0]);
-
-# 		# g.setEdgeColor((x,y),colorRGB=(255,0,0),edgeId=eid);
-# # for x in range(4):
-# # 	g.deleteEdge((v1,v2),ids[x]);
-# g.pauseUntilSpacePressed();
-# for x in ids:
-# 	for y in ids:
-# 		if x != y:
-# 			for z in range(4):
-# 				g.deleteEdge((x,y),z);
-
-# for x in vertices:
-# 	for y in vertices:
-# 		g.addEdge(x,y);
-		
-# 		# g.pauseUntilSpacePressed(2);
-# 	# g.pauseUntilSpacePressed(1);
-
-# g.pauseUntilSpacePressed();
-
-# for x in vertices:
-# 	for y in vertices:
-# 		g.setEdgeContour((x,y),"dashed");
-		
-# 	# g.pauseUntilSpacePressed(5);
+	vertices.append(g.addVertex());
+edges = [];
+for v in vertices:
+	for u in vertices:
+		edges.append(g.addEdge(u,v));
+g.pauseUntilSpacePressed();
+for v in vertices:
+	for u in vertices:
+		g.deleteAllEdges((u,v));
+		g.pauseUntilSpacePressed();
 
 
-# g.pauseUntilSpacePressed();
+# first = 
 
-# for x in vertices:
-# 	g.deleteVertex(x);
 
 
 

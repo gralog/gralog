@@ -18,19 +18,11 @@ public class GetNeighboursCommand extends CommandForGralogToExecute {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        try{    
-            this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        try{
+            this.sourceVertex = PipingMessageHandler.extractVertex(externalCommandSegments,structure);
+        }catch(Exception e){
             this.error = e;
             this.fail();
-            return;
-        }
-
-        this.sourceVertex = this.structure.getVertexById(this.sourceId);
-
-        if (this.sourceVertex == null){
-            this.fail();
-            this.error = new Exception("error: source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
             return;
         }
 	}
