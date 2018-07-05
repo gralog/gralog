@@ -32,6 +32,14 @@ for x in vertices:
 
 
 
+for e in edges:
+	e.delete();
+g.pause();
+
+for v in vertices:
+	v.delete();
+
+
 # first = 
 
 

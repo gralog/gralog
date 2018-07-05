@@ -65,6 +65,8 @@ class Vertex:
 		self.graph.setVertexProperty(self.id,otherProperty,value);
 	def getProperty(self,prop):
 		return self.otherProperties[prop];
+	def delete(self):
+		return self.graph.deleteVertex(self.id);
 	def __str__(self):
 		return str(self.getId());
 
@@ -134,6 +136,8 @@ class Edge:
 		self.graph.setEdgeProperty(otherProperty,value);
 	def getProperty(self,prop):
 		return self.otherProperties[prop];
+	def delete(self):
+		return self.graph.deleteEdge(self.id);
 
 
 	def __str__(self):
@@ -775,6 +779,9 @@ class Graph:
 		print("wubbadubdub 3 men in a tub");
 		sys.stdout.flush();
 		sys.stdin.readline();
+
+	def pause(self,*args):
+		self.pauseUntilSpacePressed(*args);
 
 
 	#####end runtime changer functions
