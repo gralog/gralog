@@ -46,6 +46,9 @@ import javafx.event.EventType;
 //public class StructurePane extends ScrollPane implements StructureListener {
 public class StructurePane extends StackPane implements StructureListener {
 
+    public static final double DISTANCE_CURSOR_STOP_ALIGN = 0.3;
+    public static final double DISTANCE_START_ALIGN = 0.1;
+
     // indices are respectively equal
     public static MenuPrefVariable[] menuVariables;
     public static Field[] menuVariableFields;
@@ -90,12 +93,12 @@ public class StructurePane extends StackPane implements StructureListener {
 
     // private List<SpaceEvent> spaceListeners = new ArrayList<SpaceEvent>();
 
-    Structure structure;
+    Structure<Vertex, Edge> structure;
     Canvas canvas;
     Highlights highlights = new Highlights();
 
     //context menu
-    ContextMenu vertexMenu;
+    private ContextMenu vertexMenu;
 
     //temporary drawing state variables
     private boolean blockVertexCreationOnRelease = false;
@@ -103,7 +106,7 @@ public class StructurePane extends StackPane implements StructureListener {
     private Set<Object> dragging = null;
     private boolean wasDraggingPrimary = false;
     private boolean wasDraggingSecondary = false;
-    private boolean wasDraggingMiddle = false;
+
 
     private Point2D boxingStartingPosition; //model
     private Point2D boxingEndingPosition;   //screen
@@ -111,6 +114,7 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean selectionBoxDragging = false;
 
     private Vector2D singleVertexDragPosition; //relative to origin
+    private boolean alreadyAligned = false;
 
     private IMovable currentEdgeStartingPoint;
     private boolean drawingEdge = false;
@@ -137,10 +141,10 @@ public class StructurePane extends StackPane implements StructureListener {
 
     private Configuration config;
 
-    public StructurePane(Structure structure){
+    public StructurePane(Structure<Vertex, Edge> structure){
         this(structure, new Configuration());
     }
-    public StructurePane(Structure structure, Configuration config) {
+    public StructurePane(Structure<Vertex, Edge> structure, Configuration config) {
 
         this.config = config;
 
@@ -230,28 +234,29 @@ public class StructurePane extends StackPane implements StructureListener {
             needsRepaintLock.unlock();
         }
     }
-    private void requestRedrawRectangle(Point2D from, Point2D to, Color color){
+    private void requestRedraw(Runnable r){
         needsRepaintLock.lock();
         try {
             if (!needsRepaint) {
-                Platform.runLater(() -> this.drawRectangle(from, to, color));
+                Platform.runLater(r);
                 needsRepaint = true;
             }
         } finally {
             needsRepaintLock.unlock();
         }
     }
-    public void alignHorizontallyMean(){
+
+    void alignHorizontallyMean(){
         structure.alignHorizontallyMean(highlights.getSelection());
         structure.snapToGrid(gridSize);
         this.requestRedraw();
     }
-    public void alignVerticallyMean(){
+    void alignVerticallyMean(){
         structure.alignVerticallyMean(highlights.getSelection());
         structure.snapToGrid(gridSize);
         this.requestRedraw();
     }
-    public final void setMouseEvents() {
+    private void setMouseEvents() {
         canvas.setOnMouseClicked(e -> { });
         canvas.setOnMousePressed(this::onMousePressed);
         canvas.setOnMouseReleased(this::onMouseReleased);
@@ -280,18 +285,10 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
-//                case V:
-//                    highlights.filterType(Vertex.class);
-//                    this.requestRedraw();
-//                    break;
                 case C:
                     structure.collapseEdges(highlights.getSelection());
                     this.requestRedraw();
                     break;
-//                case E:
-//                    highlights.filterType(Edge.class);
-//                    this.requestRedraw();
-//                    break;
                 case D:
                     List<Object> duplicates = structure.duplicate(highlights.getSelection(), gridSize);
                     if(snapToGrid){
@@ -477,10 +474,12 @@ public class StructurePane extends StackPane implements StructureListener {
                                     mousePositionModel.getX(), mousePositionModel.getY());
                             Vector2D diffRel = singleVertexDragPosition.minus(rel);
                             if (dragging.size() == 1) {
-                                if(diffRel.length() < 0.2){
-                                    tryAlign((Vertex)o, 10, 0.15);
-                                }else{
+                                if(diffRel.length() < DISTANCE_CURSOR_STOP_ALIGN){
+                                    alreadyAligned = tryAlign((Vertex)o, 10);
+                                }else{ //break alignment
                                     ((IMovable)o).move(diffRel);
+                                    tryAlign((Vertex)o, 10);
+                                    alreadyAligned = false;
                                 }
                             }
                         }
@@ -529,12 +528,11 @@ public class StructurePane extends StackPane implements StructureListener {
         return Math.pow(first.getX() - second.getX(), 2) + Math.pow(first.getY() - second.getY(), 2);
     }
     public Point2D modelToScreen(Point2D point) {
-        Point2D result = new Point2D(
+        return new Point2D(
             (point.getX() - offsetX) * zoomFactor * (screenResolutionX / 2.54),
             (point.getY() - offsetY) * zoomFactor * (screenResolutionY / 2.54)
         // dots per inch -> dots per cm
         );
-        return result;
     }
     public Vector2D modelToScreen(Vector2D v){
         return new Vector2D(
@@ -584,27 +582,26 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    protected void draw() {
+    private void draw(Consumer<GraphicsContext> c){
         this.needsRepaintLock.lock();
         try {
             if (needsRepaint) {
-                draw(canvas.getGraphicsContext2D());
+                GraphicsContext gc = canvas.getGraphicsContext2D();
+                draw(gc);
+                c.accept(gc);
                 needsRepaint = false;
             }
         } finally {
             this.needsRepaintLock.unlock();
         }
     }
-    private void drawRectangle(Point2D from, Point2D to, Color color){
+
+
+    protected void draw() {
         this.needsRepaintLock.lock();
         try {
             if (needsRepaint) {
-                GraphicsContext gc = canvas.getGraphicsContext2D();
-                draw(gc);
-
-                GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
-                ggc.selectionRectangle(from, to, color);
-
+                draw(canvas.getGraphicsContext2D());
                 needsRepaint = false;
             }
         } finally {
@@ -663,10 +660,15 @@ public class StructurePane extends StackPane implements StructureListener {
      * coordinate of a vertex below a specified radius
      * @param vertex The vertex that wants to be aligned (aligner)
      * @param radius The max radius of the alignee (?)
-     * @param maxDelta At what distance should the helper line be drawn
      */
-    private boolean tryAlign(Vertex vertex, double radius, double maxDelta){
+    private boolean tryAlign(Vertex vertex, double radius){
+        double maxDelta = DISTANCE_START_ALIGN;
+        boolean xAligned = false,
+                yAligned = false;
+        Point2D dummy = new Point2D(0,0);
 
+        Point2D horizontalP1 = dummy, horizontalP2 = dummy,
+                verticalP1 = dummy, verticalP2 = dummy;
         for(Object v : structure.getVertices()){
             Vertex x = ((Vertex)v);
             if(x == vertex){
@@ -674,23 +676,52 @@ public class StructurePane extends StackPane implements StructureListener {
             }
             if(x.coordinates.minus(vertex.coordinates).length() < radius){
                 final double xdiff = x.coordinates.getX() - vertex.coordinates.getX();
-                if(Math.abs(xdiff) < maxDelta){
-                    Point2D from = new Point2D(x.coordinates.getX(), x.coordinates.getY()),
-                            to = new Point2D(x.coordinates.getX(), vertex.coordinates.getY());
-                    vertex.setCoordinates(from.getX(), to.getY());
-                    this.requestRedraw(modelToScreen(from), modelToScreen(to));
-                    return true;
-                }else if(Math.abs(x.coordinates.getY() - vertex.coordinates.getY()) < maxDelta){
-                    Point2D from = new Point2D(x.coordinates.getX(), x.coordinates.getY()),
-                            to = new Point2D(vertex.coordinates.getX(), x.coordinates.getY());
-                    vertex.setCoordinates(to.getX(), from.getY());
-                    this.requestRedraw(modelToScreen(from), modelToScreen(to));
-                    return true;
+
+                if(!xAligned && Math.abs(xdiff) < maxDelta){
+                    horizontalP1 = modelToScreen(new Point2D(x.coordinates.getX(), x.coordinates.getY()));
+                    horizontalP2 = modelToScreen(new Point2D(x.coordinates.getX(), vertex.coordinates.getY()));
+                    vertex.setCoordinates(x.coordinates.getX(), vertex.coordinates.getY());
+                    xAligned = true;
+                }
+                else if(!yAligned && Math.abs(x.coordinates.getY() - vertex.coordinates.getY()) < maxDelta){
+                    verticalP1 = modelToScreen(new Point2D(x.coordinates.getX(), x.coordinates.getY()));
+                    verticalP2 = modelToScreen(new Point2D(vertex.coordinates.getX(), x.coordinates.getY()));
+                    vertex.setCoordinates(vertex.coordinates.getX(), x.coordinates.getY());
+                    yAligned = true;
+                }
+                if(xAligned && yAligned){
+                    break;
                 }
             }
         }
-        return false;
+        if(xAligned || yAligned){
+            boolean finalXAligned = xAligned;
+            boolean finalYAligned = yAligned;
+            Point2D finalHP1 = horizontalP1;
+            Point2D finalHP2 = horizontalP2;
+            Point2D finalVP1 = verticalP1;
+            Point2D finalVP2 = verticalP2;
+            this.requestRedraw(() -> this.draw(gc -> {
+                if(finalXAligned){
+                    drawAlignmentLines(gc, finalHP1, finalHP2);
+                }
+                if(finalYAligned){
+                    drawAlignmentLines(gc, finalVP1, finalVP2);
+                }
+            }));
+        }
+        return xAligned || yAligned;
     }
+
+    private void drawAlignmentLines(GraphicsContext gc, Point2D from, Point2D to){
+        gc.setLineWidth(0.03 * zoomFactor * screenResolutionX / 2.54);
+        gc.setStroke(Color.GRAY);
+        gc.setLineDashes(0.03 * zoomFactor * screenResolutionX / 2.54,
+                0.15 * zoomFactor * screenResolutionX / 2.54);
+        gc.strokeLine(from.getX(), from.getY(), to.getX(), to.getY());
+        gc.setLineDashes();
+    }
+
 
     public void select(Object obj) {
         highlights.select(obj);
@@ -713,14 +744,14 @@ public class StructurePane extends StackPane implements StructureListener {
         highlightsSubribers.forEach(c -> c.accept(highlights));
     }
 
-    public void selectAllExclusive(Object... elems) {
+    private void selectAllExclusive(Object... elems) {
         highlights.clearSelection();
         for(Object e : elems){
             highlights.select(e);
         }
         highlightsSubribers.forEach(c -> c.accept(highlights));
     }
-    public void deleteSelection(){
+    private void deleteSelection(){
         Set<Object> selection = new HashSet<>(highlights.getSelection());
         for (Object o : selection) {
             if (o instanceof Vertex) {
@@ -779,10 +810,6 @@ public class StructurePane extends StackPane implements StructureListener {
         }
 
     }
-
-    private boolean wasDragging(){
-        return wasDraggingPrimary || wasDraggingSecondary || wasDraggingMiddle;
-    }
     /**
      * Annotates the given vertex or edge with the given string. Overrides the
      * old annotation for this vertex/edge if present.
@@ -815,10 +842,9 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
 
-    public void saveStructure(){
+    private void saveStructure(){
         if(structure.hasFileReference()){
             try{
-                structure.getFileReference();
                 File file = new File(structure.getFileReference());
 
                 // has the user selected the native file-type or an export-filter?
@@ -896,7 +922,10 @@ public class StructurePane extends StackPane implements StructureListener {
         return highlights;
     }
 
-    public static Alert createAlertWithOptOut(Alert.AlertType type, String title, String headerText,
+    /**
+     * Taken from https://stackoverflow.com/a/36949596
+     */
+    private static Alert createAlertWithOptOut(Alert.AlertType type, String title, String headerText,
                                               String message, String optOutMessage, Consumer<Boolean> optOutAction,
                                               ButtonType... buttonTypes) {
         Alert alert = new Alert(type);
