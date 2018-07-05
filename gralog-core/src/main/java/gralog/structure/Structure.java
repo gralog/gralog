@@ -622,8 +622,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             e.setId(id);
             edges.put(e.getId(),e);
         }
-
-        
     }
 
 
@@ -655,7 +653,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         Edge e = this.getEdgeById(id);
         if (e != null){
-            this.removeEdge(id);
+            this.removeEdge(e,true);
             return;
         }
 
@@ -669,6 +667,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param edge The edge to be removed.
      */
     public void removeEdge(Edge edge, boolean removeSiblingsEntries) {
+        // edge.getSource().disconnectEdge(edge);
+        // edge.getTarget().disconnectEdge(edge);
         edge.setSource(null);
         edge.setTarget(null);
         if(removeSiblingsEntries){
@@ -794,6 +794,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             if (e.containsVertex(a) && e.containsVertex(b))
                 return true;
         return false;
+    }
+
+    public Set<Edge> edgesBetweenVertices(V a,V b){
+        Set<Edge> edges = new HashSet<Edge>();
+        for (Edge e : a.getIncidentEdges()){
+            if ((e.getSource() == a && e.getTarget() == b) || (e.getSource() == b && e.getTarget() == a)){
+                edges.add(e);
+            }
+        }
+        return edges;
     }
 
     /**

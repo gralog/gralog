@@ -310,6 +310,8 @@ public class Piping extends Thread{
                         this.state = State.InProgress;
                     }
 
+                    System.out.println("blurg");
+
 
                     if (externalCommandSegments[0].equals("pauseUntilSpacePressed")){
                         
@@ -363,13 +365,13 @@ public class Piping extends Thread{
                         // // currentCommand = new NewGraphCommand(externalCommandSegments);
                         // // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
                         // // currentCommand.setStructure(currentStructure);
-
+                        System.out.println("useCurrentGraph");
                         out.println(Integer.toString(this.structurePane.getStructure().getId()));
 
                         continue;
 
                     }else if ((line = PipingMessageHandler.properGraphNames(line)) != null){
-
+                        System.out.println("properGraphNames");
                         StructurePane thisPane = this.newGraphMethod.apply(line,this);
 
                         idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
@@ -387,6 +389,7 @@ public class Piping extends Thread{
                         currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
                         // mostRecentlyUsedStructurePane = currentCommand.getStructurePane();
                     }catch(Exception e){
+                        e.printStackTrace();
                         currentCommand = new NotRecognizedCommand(externalCommandSegments,(Structure)null);
                     }
                     

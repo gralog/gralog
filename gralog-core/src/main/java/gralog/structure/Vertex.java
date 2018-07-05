@@ -246,10 +246,10 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     void disconnectEdge(Edge e) {
-        if(e.getSource() == this){
+        if(e.getSource() == this || (!e.isDirected && e.getTarget() == this)){
             outgoingEdges.remove(e);
         }
-        if (e.getTarget() == this){
+        if (e.getTarget() == this || (!e.isDirected && e.getSource() == this)){
             incomingEdges.remove(e);
         }
         this.incidentEdges.remove(e);

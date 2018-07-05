@@ -29,38 +29,23 @@ public class SetEdgeColorCommand extends CommandForGralogToExecute {
             this.error = e;
             return;
         }
-        String color = "";
+
         try{
-            color = this.externalCommandSegments[3];
+            String color = this.externalCommandSegments[3];
             if (color.substring(0,3).equals("hex")){
                 this.changeColor = PipingMessageHandler.colorConversionHex(color.substring(4,color.length()-1));
             }else if(color.substring(0,3).equals("rgb")){
+                System.out.println("dubidubidu rgb");
                 this.changeColor = PipingMessageHandler.colorConversionRGB(color.substring(4,color.length()-1));
-            }else{
-                System.out.println("fuckadoodledoo");
             }
-        }catch(ArrayIndexOutOfBoundsException e){
-            this.error = e;
-            this.fail();
-            return;
-        }catch(StringIndexOutOfBoundsException e){
+        }catch(Exception e){
             this.error = e;
             this.fail();
             return;
         }
         
 
-        if (this.changeColor == null){
-            System.out.println("fuck it's null!");
-            String colorString = "";
-            
-            this.fail();
-            this.error = new Exception("The color: \"" + color + "\" is not known to gralog.");
-            return;
-        }else{
-            System.out.println("it's not null jk");
-        }
-
+        
 
 
 	}

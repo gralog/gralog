@@ -14,18 +14,22 @@ g = Graph(None);#type \in buechi, directed, etc. or None
 
 # g1 = Graph("directed");
 
+
 vertices = [];
+edges = [];
 for x in range(2):
 	vertices.append(g.addVertex());
-edges = [];
-for v in vertices:
-	for u in vertices:
-		edges.append(g.addEdge(u,v));
-g.pauseUntilSpacePressed();
-for v in vertices:
-	for u in vertices:
-		g.deleteAllEdges((u,v));
-		g.pauseUntilSpacePressed();
+
+for x in vertices:
+	x.setColor("purple");
+	x.setStrokeColor("green");
+
+for x in vertices:
+	for y in vertices:
+		e=g.addEdge(x,y);
+		edges.append(e);
+		e.setColor("brown");
+
 
 
 # first = 

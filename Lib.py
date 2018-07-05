@@ -51,8 +51,8 @@ class Vertex:
 			self.graph.setVertexStrokeColor(self.id,colorRGB=colorRGB);
 	def getStrokeColor(self):
 		return self.properties["strokeColor"];
-	def setColor(self,label,colorHex=-1,colorRGB=-1):
-		self.setVertexFillColor(label,colorHex,colorRGB);
+	def setColor(self,colorHex=-1,colorRGB=-1):
+		self.graph.setVertexFillColor(self.id,colorHex,colorRGB);
 	def getColor(self):
 		return self.fillColor;
 	def setShape(self,shape):
@@ -62,7 +62,7 @@ class Vertex:
 		return self.shape;
 	def setOtherProperty(self,otherProperty,value):
 		self.otherProperties[otherProperty] = value;
-		self.graph.setEdgeProperty(otherProperty,value);
+		self.graph.setVertexProperty(self.id,otherProperty,value);
 	def getProperty(self,prop):
 		return self.otherProperties[prop];
 	def __str__(self):
@@ -348,8 +348,12 @@ class Graph:
 		line = "setVertexFillColor#" + str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#"
 		if not (colorHex==-1):
 			line = line + hexFormatter(str(colorHex));
-		elif not (colorRGB == -1) and len(colorRGB) == 3:
-			line = line + rgbFormatter(colorRGB);
+		elif not (colorRGB == -1):
+			try:
+				line = line + rgbFormatter(colorRGB);
+			except:
+				self.sendErrorToGralog("python error: the rgb color: " + str(colorRGB).rstrip() + " is not properly formatted!");
+
 			
 		print(line.rstrip());
 		sys.stdout.flush();
@@ -761,6 +765,11 @@ class Graph:
 	def send(self,toSend):
 		print toSend;
 		sys.stdout.flush();
+
+	def sendErrorToGralog(self,toSend):
+		print "error#"+str(self.id).rstrip() + "#"+str(toSend).rstrip();
+		sys.stdout.flush();
+		exit();
 
 	def mistakeLine(self):
 		print("wubbadubdub 3 men in a tub");

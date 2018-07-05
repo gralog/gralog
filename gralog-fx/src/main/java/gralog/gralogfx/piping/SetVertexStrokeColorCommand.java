@@ -44,11 +44,7 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
             }else if(color.substring(0,3).equals("rgb")){
                 this.changeColor = PipingMessageHandler.colorConversionRGB(color.substring(4,color.length()-1));
             }
-        }catch(ArrayIndexOutOfBoundsException e){
-            this.error = e;
-            this.fail();
-            return;
-        }catch(StringIndexOutOfBoundsException e){
+        }catch(Exception e){
             this.error = e;
             this.fail();
             return;
