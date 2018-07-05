@@ -5,11 +5,11 @@ package gralog.gralogfx.piping;
 import java.util.concurrent.ThreadLocalRandom;
 import gralog.events.*;
 import gralog.rendering.*;
-
 import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.progresshandler.*;
 import gralog.gralogfx.*;
+import gralog.gralogfx.StructurePane;
 
 import java.util.function.*;
 
@@ -36,6 +36,7 @@ public abstract class CommandForGralogToExecute{
 	// String name;
 
 	Structure structure;
+
 	String[] externalCommandSegments;
 	private Boolean failed = false;
 	Exception error;
@@ -74,5 +75,7 @@ public abstract class CommandForGralogToExecute{
 	public void setStructure(Structure s){
 		this.structure = s;
 	}
+
+
 
 }

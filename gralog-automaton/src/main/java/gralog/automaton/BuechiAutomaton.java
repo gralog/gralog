@@ -28,11 +28,6 @@ public class BuechiAutomaton extends Structure<State, Transition> {
     }
 
     @Override
-    public Transition createEdge() {
-        return new Transition();
-    }
-
-    @Override
     public Transition createEdge(Configuration config) {
         return new Transition(config);
     }

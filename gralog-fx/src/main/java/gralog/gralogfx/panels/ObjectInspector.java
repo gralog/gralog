@@ -20,6 +20,7 @@ import javafx.scene.layout.*;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
+import javafx.scene.control.Button;
 
 /**
  *
@@ -63,11 +64,13 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
                 break;
             }
         }
+        
 
         if(obj == null){
             return;
         }
         view = ViewManager.instantiateView(obj.getClass());
+        System.out.println("we a working with an object: " + obj + " and the view is: " + view);
 
         if (view == null)
             return;
@@ -75,9 +78,13 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
             throw new Exception("Class " + view.getClass().getName() + " is not derived from javafx.scene.Node");
 
         view.setObject(obj, submitPossible);
+        // System.out.println("ok so now i've set the object: " + view.object);
         view.setStructurePane(tabView.getCurrentStructurePane());
-
+        
         Node viewNode = (Node) view;
+
+        System.out.println("viewNode: " + viewNode);
+
         sp.setContent(viewNode);
 
         AnchorPane.setTopAnchor(sp, 4.0);

@@ -93,7 +93,8 @@ public class GralogColor {
 
     @Override
     public String toString() {
-        return "GralogColor{" + r + "," + g + "," + b + '}';
+        String s = this.toHtmlString();
+        return s.substring(1,s.length());
     }
 
     public String toHtmlString() {

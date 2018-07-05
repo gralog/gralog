@@ -10,9 +10,17 @@ import gralog.rendering.shapes.Ellipse;
 import gralog.rendering.shapes.RenderingShape;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import gralog.core.annotations.DataField;
+
+import java.lang.reflect.*;
+import java.lang.annotation.Annotation;
+import gralog.core.annotations.DataField;
+
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+
+
 
 /**
  * A vertex with a circle shape.
@@ -20,23 +28,30 @@ import java.util.*;
 @XmlName(name = "node")
 public class Vertex extends XmlMarshallable implements IMovable {
 
+    @DataField(display=true,readOnly=true)
     public int id;
+    @DataField(display=true)
     public String label = "";
+    @DataField(display=false)
     public double radius = 0.7;     // cm
 
     //the position of the loop center on the circle
     ///note: -90 is on top because the coordinate system is flipped horizontally
+    @DataField(display=false)
     public Double loopAnchor = -90d;  // degrees
     //the position of the endpoints of a loop
+    @DataField(display=false)
     public double loopAngle = 20;   // degrees
 
     public double strokeWidth = 2.54 / 96; // cm
     public double textHeight = 0.4d; // cm
 
+    @DataField(display=true)
     public GralogColor fillColor = GralogColor.WHITE;
+    @DataField(display=true)
     public GralogColor strokeColor = GralogColor.BLACK;
 
-
+    @DataField(display=true)
     public RenderingShape shape = Ellipse.create(1.4, 1.4);
 
     public Vector2D coordinates = new Vector2D(0.0, 0.0);
@@ -53,6 +68,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
         incidentEdges = new HashSet<>();
         incomingEdges = new HashSet<>();
     }
+
+
 
     public Vertex(Configuration config){
         this();
@@ -110,35 +127,114 @@ public class Vertex extends XmlMarshallable implements IMovable {
                 ", coordinates=" + coordinates + '}';
     }
 
+    public String gralogPipify(){
+        Class<?> c = this.getClass();
+        String ret = "";
+        for (Field f : c.getDeclaredFields()) {
+            f.setAccessible(true);
+            boolean toBeSent = false;
+            Annotation[] annotations = f.getDeclaredAnnotations();
+            for(Annotation annotation : annotations){
+                if(annotation instanceof DataField){
+                    DataField dataField = (DataField)annotation;
+                    toBeSent = dataField.display()&&dataField.readOnly();
+                    break;
+                }
+            }
+            if (toBeSent){
+                ret = ret + f.getName() + "=";
+                try{
+                    ret = ret+f.get(this).toString() + "|";
+                }catch(Exception e){
+                    //todo: to handle!!!
+                }
+            }
+            
+        }
+        if (ret.length() > 0){
+            ret = ret.substring(0,ret.length()-1);
+        }
+        return ret;
+
+    }
+
     public void setLabel(String label){
         this.label = label;
     }
 
     void connectEdge(Edge e) {
+        if (e.isDirected()){
+            System.out.println("we're dealing wiht a direced boi" + e.isDirected);
+            if(e.getSource() == this){
+                //deprecated local id Vergabe. 
+                // if(e.getId() == -1 && incidentEdges.isEmpty()){
+                //     e.setId(0);
+                // }
+                // if(e.getId() == -1){
+                //     int[] allIndices = new int[incidentEdges.size()];
+                //     int k = 0;
+                    
+                //     for(Edge edge : incidentEdges){
+                //         allIndices[k] = edge.getId();
+                //         k++;
+                //     }
+                //     System.out.println("i got indicex array: ");
+                //     for (int x : allIndices){
+                //         System.out.println("bla: " + x);
+                //     }
+                //     Arrays.sort(allIndices);
+
+                //     boolean changedOnce = false;
+                //     for(int i = 0; i < allIndices.length; i++){
+                //         if(i < allIndices[i]){
+                //             e.setId(i);
+                //             changedOnce = true;
+                //             break;
+                //         }
+                //     }
+                //     if(!changedOnce){
+                //         e.setId(allIndices.length); //fallback
+                //     }
+                // }
+                outgoingEdges.add(e);
+            }
+            if (e.getTarget() == this){
+                this.incomingEdges.add(e);
+            }
+        }else{
+            this.incomingEdges.add(e);
+            this.outgoingEdges.add(e);
+        }
+        this.incidentEdges.add(e);
+    }
+
+    void connectEdgeLocal(Edge e) {
         if(e.getSource() == this){
             //if id has not been set already, set it
-            if(e.id == -1 && outgoingEdges.isEmpty()){
-                e.id = 0;
+            if(e.getId() == -1 && incidentEdges.isEmpty()){
+                e.setId(0);
             }
-            if(e.id == -1){
-                int[] allIndices = new int[outgoingEdges.size()];
+            if(e.getId() == -1){
+                int[] allIndices = new int[incidentEdges.size()];
                 int k = 0;
-                for(Edge edge : outgoingEdges){
-                    allIndices[k] = edge.id;
+                
+                for(Edge edge : incidentEdges){
+                    allIndices[k] = edge.getId();
                     k++;
                 }
+                
                 Arrays.sort(allIndices);
 
                 boolean changedOnce = false;
                 for(int i = 0; i < allIndices.length; i++){
                     if(i < allIndices[i]){
-                        e.id = i;
+                        e.setId(i);
                         changedOnce = true;
                         break;
                     }
                 }
                 if(!changedOnce){
-                    e.id = allIndices.length; //fallback
+                    e.setId(allIndices.length); //fallback
                 }
             }
             outgoingEdges.add(e);
@@ -150,10 +246,10 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     void disconnectEdge(Edge e) {
-        if(e.getSource() == this){
+        if(e.getSource() == this || (!e.isDirected && e.getTarget() == this)){
             outgoingEdges.remove(e);
         }
-        if (e.getTarget() == this){
+        if (e.getTarget() == this || (!e.isDirected && e.getSource() == this)){
             incomingEdges.remove(e);
         }
         this.incidentEdges.remove(e);
@@ -166,6 +262,10 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     public int getId(){
         return this.id;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 
     public Set<Edge> getOutgoingEdges(){

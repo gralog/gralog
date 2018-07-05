@@ -18,7 +18,10 @@ import gralog.progresshandler.*;
 import gralog.gralogfx.*;
 import java.util.HashSet;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Consumer;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.*;
 
 import java.util.Arrays;
 
@@ -41,31 +44,45 @@ import javafx.scene.control.Button;
 
 
 
-public class Piping{
+public class Piping extends Thread{
 
     private Process external;
     private BufferedReader in;
     private PrintStream out;
     private Structure structure;
-    private StructurePane pane;
+    private StructurePane structurePane;
 
     private List<PipingWindow> subscribers = new ArrayList<>();
 
     private BiFunction<String,Piping,StructurePane> newGraphMethod;
 
-    private int skipPausesWithIdGreaterThanOrEqualTo = Integer.MAX_VALUE;
+    private int skipPausesWithRankGreaterThanOrEqualTo = Integer.MAX_VALUE;
     private int currentSkipValue = Integer.MAX_VALUE;
+    private Thread t;
+    private String firstMessage = null;
+    public String[] commandWhichPromptedJoin;
+    public List<String[]> trackedVarArgs;
 
-    private enum State{
+    public CountDownLatch waitForPauseToBeHandled;
+    private Lock pauseLock;
+    public Condition canContinue;
+    public MainWindow caller;
+    public Function<Piping,Boolean> pauseFunction;
+    private boolean pauseWasPressed = false;
+    public boolean windowDoesCloseNow = false;
+
+
+    public enum State{
         Null,
         Inintialized,
         InProgress,
         Paused
     }
     
-    State state = State.Null;
+    public State state = State.Null;
 
     private HashMap<Integer,Structure> idGraphMap =  new HashMap<Integer,Structure>();
+    private HashMap<Integer,StructurePane> idStructurePaneMap =  new HashMap<Integer,StructurePane>();
 
 
 
@@ -73,13 +90,25 @@ public class Piping{
         this.subscribers.add(sub);
     }
 
-    private void aPauseOccured(String[] externalCommandSegments, boolean rankGiven){
+    private void plannedPauseRequested(String[] externalCommandSegments, boolean rankGiven){
         List<String[]> args = PipingMessageHandler.parsePauseVars(externalCommandSegments,rankGiven);
-        subscribers.forEach(sub -> sub.notifyPauseRequested(this.structure,args));
+        trackedVarArgs = args;
+        this.pauseFunction.apply(this);
+        // subscribers.forEach(sub -> sub.notifyPauseRequested(this.structure,args));
     }
 
     public boolean isInitialized(){
         return (this.state != State.Null);
+    }
+
+    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Function<Piping,Boolean> pauseFunction){
+        this.newGraphMethod = newGraphMethod;
+        this.resetInitialVals();
+        this.structurePane = structurePane;
+        this.idGraphMap.put(structurePane.getStructure().getId(),structurePane.getStructure());
+        this.idStructurePaneMap.put(structurePane.getStructure().getId(),structurePane);
+        this.waitForPauseToBeHandled = waitForPauseToBeHandled;
+        this.pauseFunction = pauseFunction;
     }
 
     
@@ -89,7 +118,7 @@ public class Piping{
    
     public boolean externalProcessInit(String fileName,String initMessage){
 
-        System.out.println("creating new pipeline, it has pane: " + this.pane);
+        // System.out.println("creating new pipeline, it has pane: " + this.pane);
 
         
             
@@ -118,33 +147,42 @@ public class Piping{
         return this.idGraphMap.get(id);
     }
 
+    private StructurePane getStructurePaneWithId(int id){
+        return this.idStructurePaneMap.get(id);
+    }
+
     private void resetInitialVals(){
-        this.skipPausesWithIdGreaterThanOrEqualTo = Integer.MAX_VALUE;
+        this.skipPausesWithRankGreaterThanOrEqualTo = Integer.MAX_VALUE;
         this.currentSkipValue = Integer.MAX_VALUE;
     }
 
-    public Object run(BiFunction<String,Piping,StructurePane> newGraphMethod) throws
-        Exception {
-        // String[] commands
-            // = {fileName, structure.xmlToString()};
-        System.out.println("Gralog says: starting.");
-        // this.structure = structure;
-        // this.pane = pane;
-        System.out.println("running, it has pane: " + this.pane);
-        this.newGraphMethod = newGraphMethod;
-        this.resetInitialVals();
-        // newGraphMethod.apply(("hello world".split(" ")));
+    // public void run(BiFunction<String,Piping,StructurePane> newGraphMethod) throws
+    //     Exception {
+    //     // String[] commands
+    //         // = {fileName, structure.xmlToString()};
+    //     System.out.println("Gralog says: starting.");
+    //     // this.structure = structure;
+    //     // this.pane = pane;
+    //     // System.out.println("running, it has pane: " + this.pane);
+    //     this.newGraphMethod = newGraphMethod;
+    //     this.resetInitialVals();
+    //     // newGraphMethod.apply(("hello world".split(" ")));
 
-        System.out.println("starting exec");
-        this.exec(null);
-        System.out.println("exec finished");
-        return null;
+    //     System.out.println("starting exec");
+    //     String exitMessage = this.exec(null);
         
-    }
+    //     System.out.println("exec finished");
+    //     return;
+        
+    // }
 
+    public void killSelf(){
+        this.windowDoesCloseNow = true;
+        this.waitForPauseToBeHandled.countDown();
+    }
    
     public Integer extractRankFromPause(String[] externalCommandSegments){
-        System.out.println("where the rank would be : " + externalCommandSegments[1]);
+        // System.out.println("where the rank would be : " + externalCommandSegments[1]);
         try{
             Integer rank = Integer.parseInt(externalCommandSegments[1]);
             System.out.println("parsd!: " + rank);
@@ -154,29 +192,71 @@ public class Piping{
         }
     }
 
+    public void pausePressed(){
+        if (!(this.state == State.Paused)){
+            this.pauseWasPressed = true;
+        }
+    }
+
+    public void spontaneousStop(){
+        this.windowDoesCloseNow = true;
+        this.waitForPauseToBeHandled.countDown();
+        this.makeNull();
+    }
+
     public void skipPressed(){
-        this.skipPausesWithIdGreaterThanOrEqualTo = this.currentSkipValue;
-        this.exec(Integer.toString(this.currentSkipValue));
+        this.skipPausesWithRankGreaterThanOrEqualTo = this.currentSkipValue;
     }
   
 
-    public String execWithAck(){
+    // public String execWithAck(){
         
-        if (this.state != State.Paused){
-            return "error: not paused, therefore ack in jest";
+    //     if (this.state != State.Paused){
+    //         return "error: not paused, therefore ack in jest";
+    //     }
+    //     return this.exec("ack");
+    // }
+
+    private void redrawMyStructurePanes(){
+        for (int i : this.idStructurePaneMap.keySet()){
+            this.idStructurePaneMap.get(i).requestRedraw();
         }
-        return this.exec("ack");
+    }
+
+    public void start(){
+        if (this.t == null){
+            this.t =new Thread(this,this.toString());
+            this.firstMessage = null;
+            t.start();
+        }
+    }
+
+    
+
+    public void setFirstMessage(String firstMessage){
+        this.firstMessage = firstMessage;
+    }
+    public String getFirstMessage(){
+        return this.firstMessage;
+    }
+
+    public void addIdStructurePane(int id, StructurePane structurePane){
+        this.idStructurePaneMap.put(id,structurePane);
+    }
+
+    public void setCountDownLatch(CountDownLatch latch){
+        this.waitForPauseToBeHandled = latch;
     }
 
 
 
-    private String exec(String firstMessage) {
+    public void run() {
 
-        System.out.println("exeqing, it has pane: " + this.pane);
+        // System.out.println("exeqing, it has pane: " + this.pane);
 
         System.out.println("exec and state is: " + this.state);
         if (this.state == State.Null){
-            return "error: should not being execing as process has not been inintialized";
+            return;// "error: should not being execing as process has not been inintialized";
         }
         
         System.out.println("140");
@@ -185,6 +265,7 @@ public class Piping{
 
 
         try{
+            String firstMessage = this.getFirstMessage();
             System.out.println("execing " + firstMessage);
 
             String line;
@@ -197,25 +278,39 @@ public class Piping{
                 System.out.println("null first message");
             }
             // return "bla";
+            this.setFirstMessage(null);
+
+
 
             
             System.out.println("191");
             while ((line = this.in.readLine()) != null){//while python has not yet terminated
                 System.out.println("in while");
+                // System.out.println("current count: " + this.waitForPauseToBeHandled.getCount());
+                if (this.windowDoesCloseNow){
+                    return;
+                }
                 
                 if (line.length() > 0){ // if not a bogus line
                     //handleLine()
                     this.state = State.InProgress;
                     String[] externalCommandSegments = line.split("#");
-
                     
 
                     System.out.println("current line: " + line);
 
-                    //if pause, or graph init method, handle here
-                    // else{
-                    //     CommandForGralogToExecute currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments);
-                    // }
+                    if (this.pauseWasPressed){ //user input simulation
+                        this.redrawMyStructurePanes();
+                        this.state = State.Paused;
+                        this.waitForPauseToBeHandled.await();
+                        if (this.windowDoesCloseNow){
+                            return;
+                        }
+                        this.pauseWasPressed = false;
+                        this.state = State.InProgress;
+                    }
+
+                    System.out.println("blurg");
 
 
                     if (externalCommandSegments[0].equals("pauseUntilSpacePressed")){
@@ -232,45 +327,59 @@ public class Piping{
                         }
                         System.out.println("withrank: " + withRank + " rank: " + rank);
                         
-                        if (rank < this.skipPausesWithIdGreaterThanOrEqualTo){
+                        if (rank < this.skipPausesWithRankGreaterThanOrEqualTo){
                             this.currentSkipValue = rank;
-                            this.aPauseOccured(externalCommandSegments,withRank);
-                            System.out.println("reqing redraw, it has pane: " + this.pane);
-                            this.pane.requestRedraw();
+
+                            this.plannedPauseRequested(externalCommandSegments,withRank);
+
+                            
+                            this.redrawMyStructurePanes();
+
                             this.state = State.Paused;
-                            break;
+                            
+                            System.out.println("ok it's been a paused");
+
+                            this.waitForPauseToBeHandled.await();
+                            if (this.windowDoesCloseNow){
+                                return;
+                            }
+                            out.println("");
+                            this.state = State.InProgress;
+                            continue;
+
+                            // break;
                         }else{
                             out.println("skipped");
                             continue;
                         }
-
-                        
-
                     }else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
                         
-                        this.pane = this.newGraphMethod.apply(externalCommandSegments[0],this);
-                        this.state = State.InProgress;
-                        System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
+                        // StructurePane thisPane = this.newGraphMethod.apply(externalCommandSegments[0],this);
+                        // this.state = State.InProgress;
+                        // // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
 
 
-                        idGraphMap.put(this.pane.getStructure().getId(),this.pane.getStructure());
+                        // idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
+                        // idStructurePaneMap.put(thisPane.getStructure().getId(),thisPane);
 
-                        // currentCommand = new NewGraphCommand(externalCommandSegments);
-                        // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
-                        // currentCommand.setStructure(currentStructure);
-                        out.println(Integer.toString(this.pane.getStructure().getId()));
+                        // // currentCommand = new NewGraphCommand(externalCommandSegments);
+                        // // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
+                        // // currentCommand.setStructure(currentStructure);
+                        System.out.println("useCurrentGraph");
+                        out.println(Integer.toString(this.structurePane.getStructure().getId()));
 
                         continue;
 
                     }else if ((line = PipingMessageHandler.properGraphNames(line)) != null){
+                        System.out.println("properGraphNames");
+                        StructurePane thisPane = this.newGraphMethod.apply(line,this);
 
-                        this.pane = this.newGraphMethod.apply(line,this);
-
-                        idGraphMap.put(this.pane.getStructure().getId(),this.pane.getStructure());
+                        idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
+                        idStructurePaneMap.put(thisPane.getStructure().getId(),thisPane);
 
                         this.state = State.InProgress;
-                        System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
-                        out.println(this.pane.getStructure().getId());
+                        // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
+                        out.println(thisPane.getStructure().getId());
 
                         continue;
                     }
@@ -278,7 +387,9 @@ public class Piping{
                     CommandForGralogToExecute currentCommand;
                     try{
                         currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        // mostRecentlyUsedStructurePane = currentCommand.getStructurePane();
                     }catch(Exception e){
+                        e.printStackTrace();
                         currentCommand = new NotRecognizedCommand(externalCommandSegments,(Structure)null);
                     }
                     
@@ -293,13 +404,31 @@ public class Piping{
                         }
                     }
 
-                    if (currentCommand.didFail()){
 
-                        ExceptionBox exbox = new ExceptionBox();
-                        exbox.showAndWait(currentCommand.getError());
+
+                    if (currentCommand.didFail()){
+                        final String lineFinal = PipingMessageHandler.rejoinExternalCommandSegments(externalCommandSegments);
+                        Exception e = currentCommand.getError();
+                        Platform.runLater(
+                            () -> {
+                                Alert alert = new Alert(AlertType.INFORMATION);
+                                alert.setTitle("\"" + lineFinal + "\" is invalid:");
+                                alert.setHeaderText(null);
+                                alert.setContentText(e.toString());
+                                alert.showAndWait();
+                            }
+                        ); 
+
+                        if (currentCommand.getResponse() != null){
+                            System.out.println("given them tha ol response anyhoo");
+                            this.out.println(currentCommand.getResponse());
+                        }
                     
                         // this.out.println(currentCommand.getError().toString());
-                        System.out.println(currentCommand.getError().toString());
+                        System.out.println("we have no work left to do here");
+                        this.state = State.Null;
+                        this.redrawMyStructurePanes();
+                        return;
                     }
                     
                     result = result + line;
@@ -309,32 +438,45 @@ public class Piping{
             }
 
             if (line == null){
-                this.state = State.Null;
-                System.out.println("makingue null");
+                this.makeNull();
             }else{
                 System.out.println("line is not null rather: " + line);
             }
 
 
             System.out.println("reqing redraw");
-            this.pane.requestRedraw();
-            return result;
 
+            this.redrawMyStructurePanes();
+            System.out.println("redr000");
             
 
 
         }catch (Exception e){
             e.printStackTrace();
-            return "error: there was an error";
+            return;// "error: there was an error";
         }
+
+        System.out.println("returning");
         
    
+    }
+
+    public void makeNull(){
+        this.state = State.Null;
+        System.out.println("makingue null");
+        for (int i: idStructurePaneMap.keySet()){
+            idStructurePaneMap.get(i).setPiping(null);
+        }
+        this.redrawMyStructurePanes();
+        return;
     }
 
     
 
     
 }
+
+
 
 
 

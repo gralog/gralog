@@ -2,6 +2,7 @@ package gralog.gralogfx.piping;
 import gralog.structure.*;
 import gralog.rendering.*;
 
+
 public class SetVertexRadiusCommand extends CommandForGralogToExecute {
 	
 
@@ -14,6 +15,7 @@ public class SetVertexRadiusCommand extends CommandForGralogToExecute {
 	public SetVertexRadiusCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
+        
 		try{    
             this.changeId = Integer.parseInt(externalCommandSegments[2]);
         }catch(NumberFormatException e){
