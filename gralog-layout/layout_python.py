@@ -11,9 +11,8 @@ from Lib import *
 n = 0
 
 ### import graph ## GRALOG ###
-g      = Graph()
+g      = Graph(None)
 gralog_xml  = g.getGraph("xml")
-print "lala", gralog_xml
 ### import graph to ## IGRAPH + NX ###
 g_ig   = ig.Graph.Read_GraphML(gralog_xml)
 g_nx = nx.read_graphml(gralog_xml)
@@ -21,7 +20,7 @@ doc = ET.parse(gralog_xml)
 nodes = doc.getroot().find('graph').findall('node')
 x, y = [float(nodes[i].attrib['x']) for i in range(len(nodes))], [float(nodes[i].attrib['y']) for i in range(len(nodes))]
 center = (int(sum(x)/len(x)), int(sum(y)/len(y)))
-print center
+#print center
 
 ### DONE ## Write new coords into graphml-file ## ET ###
 nx_layouts = [nx.circular_layout(g_nx,10), nx.shell_layout(g_nx,None,7,None,2), nx.spring_layout(g_nx,None,None, None,50,1e-4,None,7), nx.kamada_kawai_layout(g_nx,None,None,'weight',10,None,2), nx.spectral_layout(g_nx,'weight',20,None,2)]
@@ -46,4 +45,4 @@ for il in range(len(ig_lay)):
     ig_node = ig_root.find('graph').findall('node')[il].attrib
     ig_node['x'] = str(round(ig_lay[il][0], 5))
     ig_node['y'] = str(round(ig_lay[il][1], 5))
-#ET.tostring(ig_root, encoding="utf8").sendGraph("xml")
+g.sendGraph("xml",ET.tostring(ig_root, encoding="utf8"))

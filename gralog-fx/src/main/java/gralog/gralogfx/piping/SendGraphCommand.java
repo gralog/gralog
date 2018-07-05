@@ -58,6 +58,7 @@ public class SendGraphCommand extends CommandForGralogToExecute {
 
 
         if (this.format == GraphType.Xml){
+        	System.out.println("Worked until here"+this);
             //parse the xml, possibly in a multi-line manner
         }
 

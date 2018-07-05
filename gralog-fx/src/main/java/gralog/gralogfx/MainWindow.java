@@ -233,7 +233,7 @@ public class MainWindow extends Application {
 
         try{
             Piping pipeline = new Piping();
-            final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
+            final String fileName = "/home/michelle/gralog/gralog/gralog-layout/layout_python.py";//  "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
 
             Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
             if (!initSuccess){
