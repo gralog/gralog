@@ -44,7 +44,7 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         if (this.sourceVertex == null){
             this.fail();
-            this.error = new Exception("error: source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
+            this.error = new NonExistantVertexException("source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
             return;
         }
 
@@ -52,7 +52,7 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         if (this.targetVertex == null){
             this.fail();
-            this.error = new Exception("error: target vertex with id " + Integer.toString(this.targetId) + " does not exist");
+            this.error = new NonExistantVertexException("target vertex with id " + Integer.toString(this.targetId) + " does not exist");
             return;
         }
 
@@ -79,9 +79,9 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
         if (e == null){
             //either the id exists or there are too many edges.
             if (this.structure.getEdgeById(this.id) == null){
-                this.error = new Exception("error: too many edges between vertices " + this.sourceId + " and " + this.targetId + "; only 4 are allowed!");
+                this.error = new EdgeException("too many edges between vertices " + this.sourceId + " and " + this.targetId + "; only 4 are allowed!");
             }else{
-                this.error = new Exception("error: an edge between vertices " + this.sourceId + " and " + this.targetId + " with id: " + this.id + " already exists");
+                this.error = new EdgeException("an edge between vertices " + this.sourceId + " and " + this.targetId + " with id: " + this.id + " already exists");
             }
             this.fail();
             this.setResponse("fail");

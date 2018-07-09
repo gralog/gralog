@@ -30,7 +30,7 @@ public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
 
         if (this.sourceVertex == null){
             this.fail();
-            this.error = new Exception("error: source vertex does not exist");
+            this.error = new NonExistantVertexException("source vertex does not exist");
             return;
         }
 	}

@@ -303,7 +303,7 @@ class Graph:
 
 		idSubString = "";
 		if not edgeId==-1:
-			idSubString = "#"+str(id);
+			idSubString = "#"+str(edgeId);
 			
 		line = "addEdge#"+str(self.id).rstrip() + "#" + str(sourceVertex).rstrip() + "#" + str(targetVertex).rstrip() + "#" + str(directed).lower()+idSubString.rstrip();
 
@@ -319,7 +319,7 @@ class Graph:
 
 	def addDirectedEdge(self,sourceVertex, targetVertex, edgeId=-1):
 		#return: Edge object with id only
-		return addEdge(sourceVertex,targetVertex,directed=True,edgeId=edgeId);
+		return self.addEdge(sourceVertex,targetVertex,directed=True,edgeId=edgeId);
 
 
 	def deleteEdge(self,edge):
@@ -356,7 +356,7 @@ class Graph:
 			try:
 				line = line + rgbFormatter(colorRGB);
 			except:
-				self.sendErrorToGralog("python error: the rgb color: " + str(colorRGB).rstrip() + " is not properly formatted!");
+				self.sendErrorToGralog("the rgb color: " + str(colorRGB).rstrip() + " is not properly formatted!");
 
 			
 		print(line.rstrip());

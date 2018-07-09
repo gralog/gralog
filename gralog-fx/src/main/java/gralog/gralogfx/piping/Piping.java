@@ -70,6 +70,7 @@ public class Piping extends Thread{
     public Function<Piping,Boolean> pauseFunction;
     private boolean pauseWasPressed = false;
     public boolean windowDoesCloseNow = false;
+    private Consumer sendMessageToConsole;
 
 
     public enum State{
@@ -101,7 +102,7 @@ public class Piping extends Thread{
         return (this.state != State.Null);
     }
 
-    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Function<Piping,Boolean> pauseFunction){
+    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Function<Piping,Boolean> pauseFunction,Consumer<String> sendMessageToConsole){
         this.newGraphMethod = newGraphMethod;
         this.resetInitialVals();
         this.structurePane = structurePane;
@@ -109,6 +110,7 @@ public class Piping extends Thread{
         this.idStructurePaneMap.put(structurePane.getStructure().getId(),structurePane);
         this.waitForPauseToBeHandled = waitForPauseToBeHandled;
         this.pauseFunction = pauseFunction;
+        this.sendMessageToConsole = sendMessageToConsole;
     }
 
     
@@ -402,6 +404,10 @@ public class Piping extends Thread{
                             System.out.println("no error, response is: |" + response + "|");
                             this.out.println(response);
                         }
+                    }
+                    String msg;
+                    if (!((msg = currentCommand.getConsoleMessage()) == null)){
+                        this.sendMessageToConsole.accept(msg);
                     }
 
 

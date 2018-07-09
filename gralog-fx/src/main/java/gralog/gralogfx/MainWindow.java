@@ -312,10 +312,12 @@ public class MainWindow extends Application {
             CountDownLatch waitForPause = new CountDownLatch(1);
 
             
-            Piping pipeline = new Piping(this::initGraph,this.tabs.getCurrentStructurePane(),waitForPause,this::handlePlannedPause);
+            Piping pipeline = new Piping(this::initGraph,this.tabs.getCurrentStructurePane(),waitForPause,this::handlePlannedPause,this::sendOutsideMessageToConsole);
             pipelines.add(pipeline);
             this.tabs.getCurrentStructurePane().setPiping(pipeline);
             // pipeline.subscribe(this.pluginControlPanel);
+
+            /* at the moment this is hardcorded but it will soon be made dynamic!!!*/
             final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
 
             Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
@@ -413,6 +415,10 @@ public class MainWindow extends Application {
         Structure structure = StructureManager.instantiateStructure(structureName);
         tabs.addTab(structureName, structure);
         setStatus("created a " + structureName + "...");
+    }
+
+    public void sendOutsideMessageToConsole(String msg){
+        this.mainConsole.output(msg);
     }
 
     public void onSave() {

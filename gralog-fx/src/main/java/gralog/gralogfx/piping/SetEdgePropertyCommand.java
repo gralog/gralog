@@ -25,7 +25,7 @@ public class SetEdgePropertyCommand extends CommandForGralogToExecute {
         try{
             this.edge = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
         }catch(NonExistantEdgeException e){
-            //tell the console about it
+            this.setConsoleMessage("Non-fatal " + e.toString());
             return;
         }catch(Exception e){
             this.fail();

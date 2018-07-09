@@ -40,6 +40,7 @@ public abstract class CommandForGralogToExecute{
 	String[] externalCommandSegments;
 	private Boolean failed = false;
 	Exception error;
+	private String consoleMessage = null;
 
 
 	private String response = null;
@@ -66,6 +67,16 @@ public abstract class CommandForGralogToExecute{
 
 	public Exception getError(){
 		return this.error;
+	}
+
+	public void setConsoleMessage(Exception e){
+		this.consoleMessage = e.toString() + "\n";
+	}
+	public void setConsoleMessage(String msg){
+		this.consoleMessage = msg;
+	}
+	public String getConsoleMessage(){
+		return this.consoleMessage;
 	}
 
 

@@ -15,29 +15,9 @@ g = Graph(None);#type \in buechi, directed, etc. or None
 # g1 = Graph("directed");
 
 
-vertices = [];
-edges = [];
-for x in range(2):
-	vertices.append(g.addVertex());
-
-for x in vertices:
-	x.setColor("purple");
-	x.setStrokeColor("green");
-
-for x in vertices:
-	for y in vertices:
-		e=g.addEdge(x,y);
-		edges.append(e);
-		e.setColor("brown");
+g.deleteEdge(0);
 
 
-
-for e in edges:
-	e.delete();
-g.pause();
-
-for v in vertices:
-	v.delete();
 
 
 # first = 

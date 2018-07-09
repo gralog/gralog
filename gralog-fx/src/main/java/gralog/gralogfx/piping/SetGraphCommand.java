@@ -28,7 +28,7 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 
         if (this.format == GraphType.Null){
             this.fail();
-            this.error = new Exception("error: " + this.format.toString() + " ain't no proper format");
+            this.error = new Exception("this.format.toString()" + " ain't no proper format");
             
         }
 	}

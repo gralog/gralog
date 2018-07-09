@@ -38,7 +38,7 @@ public class DeleteAllEdgesCommand extends CommandForGralogToExecute {
 
         if (this.sourceVertex == null){
             this.fail();
-            this.error = new Exception("error: source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
+            this.error = new NonExistantVertexException("source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
             return;
         }
 
@@ -46,7 +46,7 @@ public class DeleteAllEdgesCommand extends CommandForGralogToExecute {
 
         if (this.targetVertex == null){
             this.fail();
-            this.error = new Exception("error: target vertex with id " + Integer.toString(this.targetId) + " does not exist");
+            this.error = new NonExistantVertexException("target vertex with id " + Integer.toString(this.targetId) + " does not exist");
             return;
         }
 

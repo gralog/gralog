@@ -500,13 +500,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @return The new edge.
      */
     public E createEdge(int id, Configuration config) {
+        System.out.println("user chosen id: " + id);
         E edge = createEdge(config);
         if (this.edges.get(id) != null){
             // return (E)null;
             //send warning message that the id had already been assigned
         }
         if (id != -1){
+            System.out.println("the process");
             if (this.getEdgeById(id) != null){
+                System.out.println("already existeeth");
                 //send warning to console that the id has already been assigned
                 edge.setId(pollNextFreeEdgeID());
                 edges.put(edge.getId(),edge);
@@ -524,6 +527,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         this.edgeIdHoles.add(newInterval);
                     }
                 }
+                edge.setId(id);
+                edges.put(id,edge);
             }
         }else{
             edge.setId(this.pollNextFreeEdgeID());    
@@ -654,10 +659,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         Edge e = this.getEdgeById(id);
         if (e != null){
             this.removeEdge(e,true);
-            return;
         }
 
-        //send console warning that an edge was tried to be deleted what didn't exist
+
+        
 
     }
     /**
@@ -665,6 +670,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * not.
      *
      * @param edge The edge to be removed.
+     * @return boolean whether the edge was successfully removed
      */
     public void removeEdge(Edge edge, boolean removeSiblingsEntries) {
         // edge.getSource().disconnectEdge(edge);

@@ -9,12 +9,15 @@ import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import javafx.scene.control.TextArea;
+import javafx.scene.text.TextFlow;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.scene.paint.Color;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -29,7 +32,7 @@ public class Console extends VBox implements GralogWindow{
 
 
     private TextField input;
-    private TextArea output;
+    private VBox output;
 
     private Tabs tabs;
     private Dialog dialog;
@@ -62,7 +65,7 @@ public class Console extends VBox implements GralogWindow{
         input.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             String inputText = input.getText();
             if(e.getCode() == KeyCode.ENTER){
-                output.appendText("./> " + inputText + "\n");
+                this.output("./> " + inputText + "\n");
 
                 if(!inputText.isEmpty()){
                     history.add(inputText);
@@ -72,15 +75,24 @@ public class Console extends VBox implements GralogWindow{
             }
         });
 
-        output = new TextArea();
-        output.setWrapText(true);
-        output.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
-        output.setEditable(false);
-        output.setFocusTraversable(false);
+        input.setStyle("-fx-background-color: #123455;");
+        output = new VBox();
+        output.setStyle("-fx-background-color: #123455;");
+        output.setMaxHeight(50);
+        output.setMinHeight(40);
         output.prefHeightProperty().bind(this.heightProperty().subtract(20));
-        output.prefWidthProperty().bind(this.widthProperty());
 
-        getChildren().addAll(output, input);
+
+
+        // output.setWrapText(true);
+        // output.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
+        // output.setEditable(false);
+        // output.setFocusTraversable(false);
+        // output.prefHeightProperty().bind(this.heightProperty().subtract(20));
+        // output.prefWidthProperty().bind(this.widthProperty());
+
+
+
     }
 
     /**
@@ -185,7 +197,14 @@ public class Console extends VBox implements GralogWindow{
 
     public void output(String text){
 
-        output.appendText(text);
+
+        Text t = new Text();
+        t.setText(text);
+        t.setFont(Font.font ("Verdana", 20));
+        t.setFill(Color.RED);
+        output.getChildren().add(t);  
+        System.out.println("now i've got: " + this.output.getChildren());      
+
 
     }
 
