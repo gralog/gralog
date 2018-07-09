@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -32,7 +33,8 @@ public class Console extends VBox implements GralogWindow{
 
 
     private TextField input;
-    private VBox output;
+    private ScrollPane output;
+    private VBox outputElements;
 
     private Tabs tabs;
     private Dialog dialog;
@@ -75,11 +77,22 @@ public class Console extends VBox implements GralogWindow{
             }
         });
 
-        input.setStyle("-fx-background-color: #123455;");
-        output = new VBox();
+        output = new ScrollPane();
+        outputElements = new VBox();
+        output.setContent(outputElements);
+
+        outputElements.setFocusTraversable(false);
+        outputElements.prefHeightProperty().bind(this.heightProperty().subtract(20));
+        outputElements.prefWidthProperty().bind(this.widthProperty());
+        // outputElements.setMaxHeight(this.heightProperty()-20);
+
+        // output.setFocusTraversable(false);
+        // output.prefHeightProperty().bind(this.heightProperty().subtract(20));
+        // output.prefWidthProperty().bind(this.widthProperty());
+        // output.setMaxHeight(this.heightProperty().subtract(20));
+        
         output.setStyle("-fx-background-color: #123455;");
-        output.setMaxHeight(50);
-        output.setMinHeight(40);
+        
         output.prefHeightProperty().bind(this.heightProperty().subtract(20));
         getChildren().addAll(output, input);
 
@@ -200,10 +213,10 @@ public class Console extends VBox implements GralogWindow{
 
         Text t = new Text();
         t.setText(text);
-        t.setFont(Font.font ("Verdana", 20));
+        t.setFont(Font.font ("Verdana", 12));
         t.setFill(Color.RED);
-        output.getChildren().add(t);  
-        System.out.println("now i've got: " + this.output.getChildren());      
+        outputElements.getChildren().add(t);  
+        System.out.println("now i've got: " + this.outputElements.getChildren());      
 
 
     }
