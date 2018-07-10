@@ -19,6 +19,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
+import javafx.application.Platform;
+import javafx.scene.Node;
+
+import javafx.beans.value.ObservableValue;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -40,6 +44,11 @@ public class Console extends VBox implements GralogWindow{
     private Dialog dialog;
     private Dialogfx dialogfx;
     private DialogParser parser;
+    private boolean outputAdded = false;
+
+
+    private String currentlyEntered = "";
+
 
 
 
@@ -67,23 +76,68 @@ public class Console extends VBox implements GralogWindow{
         input.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             String inputText = input.getText();
             if(e.getCode() == KeyCode.ENTER){
-                this.output("./> " + inputText + "\n");
+                this.output("./> " + inputText + "");
 
                 if(!inputText.isEmpty()){
                     history.add(inputText);
                     onEnter(inputText, tabs.getCurrentStructurePane());
                 }
                 input.clear();
+            }else if(e.getCode() == KeyCode.UP){
+                
+                System.out.println("up up and awayyyyy");
+                if (historyPointer == -1){
+                    currentlyEntered = inputText;
+                }
+                historyPointer = historyPointer + 1;
+                try{
+                    input.setText(history.get(historyPointer));
+                }catch(IndexOutOfBoundsException ex){
+                    historyPointer = historyPointer - 1;
+                }
+            }else if(e.getCode() == KeyCode.DOWN){
+                System.out.println("down donw down");
+                if (historyPointer < 0){
+                    //shimmy shake
+                }else if (historyPointer == 0){
+                    input.setText(currentlyEntered);
+                    historyPointer = historyPointer - 1;
+                }else{
+                    historyPointer = historyPointer - 1;
+                    input.setText(history.get(historyPointer));
+                }
+                
             }
         });
 
+        
         output = new ScrollPane();
         outputElements = new VBox();
         output.setContent(outputElements);
+        outputElements.setSpacing(5.0);
+
+        output.vvalueProperty().addListener(
+            (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            if (outputAdded){
+                outputAdded = false;
+                output.setVvalue(1.0);
+            }
+        });
+
+        
+        output.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // never show a horizontal ScrollBar
+        output.setFitToWidth(true); // set content width to viewport width
+        
+
+        // output.setStyle("-fx-background-color: #123455;");
+
+
+
+
 
         outputElements.setFocusTraversable(false);
         outputElements.prefHeightProperty().bind(this.heightProperty().subtract(20));
-        outputElements.prefWidthProperty().bind(this.widthProperty());
+        outputElements.prefWidthProperty().bind(this.widthProperty().subtract(5));
         // outputElements.setMaxHeight(this.heightProperty()-20);
 
         // output.setFocusTraversable(false);
@@ -91,10 +145,24 @@ public class Console extends VBox implements GralogWindow{
         // output.prefWidthProperty().bind(this.widthProperty());
         // output.setMaxHeight(this.heightProperty().subtract(20));
         
-        output.setStyle("-fx-background-color: #123455;");
-        
         output.prefHeightProperty().bind(this.heightProperty().subtract(20));
         getChildren().addAll(output, input);
+
+        this.widthProperty().addListener((obs, oldVal, newVal) -> {
+            System.out.println("borf diddly");
+
+            List<Text> texts = new ArrayList<Text>();
+
+            for (Node n : this.outputElements.getChildren()){
+                if (n instanceof Text){
+                    texts.add((Text)n);
+                }
+            }
+            for (Text t : texts){
+                System.out.println("t: " + t);;
+                t.setWrappingWidth((Double)newVal);
+            }
+        });
 
 
         // output.setWrapText(true);
@@ -113,6 +181,10 @@ public class Console extends VBox implements GralogWindow{
      */
     public void registerMethod(Consumer<String> c){
         subscribers.add(c);
+    }
+
+    public void onSpace(String text, StructurePane currentPane){
+        System.out.println("space!");
     }
 
     public void onEnter(String text, StructurePane currentPane){
@@ -150,7 +222,7 @@ public class Console extends VBox implements GralogWindow{
                 parser.setDialogState(FILTER_WHAT);
                 parser.addParameter("VERTICES");
                 if (text.indexOf('d') == text.length() - 1){ // the input was only "filter [all] selected"
-                    output("Specify conditions, start with \"where\".\n");
+                    output("Specify conditions, start with \"where\".");
                     return;
                 }
                 String remainingText = text.substring(text.indexOf('d')+1); // more text was entered
@@ -162,7 +234,7 @@ public class Console extends VBox implements GralogWindow{
                 parser.setDialogState(FILTER_WHAT);
                 parser.addParameter("EDGES");
                 if (text.indexOf('d') == text.length() - 1){
-                    output("Specify conditions, start with \"where\".\n");
+                    output("Specify conditions, start with \"where\".");
                     return;
                 }
                 String remainingText = text.substring(text.indexOf('d')+1); // more text was entered
@@ -170,7 +242,7 @@ public class Console extends VBox implements GralogWindow{
                 parser.parse(remainingText);
             }
             if (!existsSelectedEdge & !existsSelectedVertex){
-                parser.setErrorMsg("Nothing is selected! Aborting.\n");
+                parser.setErrorMsg("Nothing is selected! Aborting.");
                 parser.setDialogState(DONE);
                 parser.setDialogAction(NONE);
             }
@@ -178,7 +250,7 @@ public class Console extends VBox implements GralogWindow{
 
         System.out.println("HERE! dialogAction = " + parser.getDialogAction());
 
-        output(parser.getErrorMsg());
+        errorOutput(parser.getErrorMsg());
         parser.setErrorMsg("");
 
         if (parser.getDialogState() == DONE){
@@ -200,24 +272,60 @@ public class Console extends VBox implements GralogWindow{
                                                 dialog.filter(parser.getParameters(),
                                                                 currentPane.getStructure(),
                                                                 currentPane.getHighlights());
-                                                output(dialog.getErrorMsg());
+                                                errorOutput(dialog.getErrorMsg());
                                                 parameters.clear();
                                                 break;
                 case NONE:                      return;
             }
         }
+
+    }
+
+    public void finalizeTextAdd(Text t){
+        t.setWrappingWidth(this.getWidth());
+        Platform.runLater(
+            () ->{
+
+                outputElements.getChildren().add(t); 
+                outputAdded = true;
+                output.setVvalue(1.0);
+            }
+        );
     }
 
     public void output(String text){
+        
+        
 
+        Text t = new Text();
+        t.setText(text);
+        t.setFont(Font.font ("Verdana", 12));
+
+        finalizeTextAdd(t);
+
+    }
+
+    public void errorOutput(String text){
+        
+        
 
         Text t = new Text();
         t.setText(text);
         t.setFont(Font.font ("Verdana", 12));
         t.setFill(Color.RED);
-        outputElements.getChildren().add(t);  
-        System.out.println("now i've got: " + this.outputElements.getChildren());      
+        t.setStyle("-fx-background-color: #888888;");
 
+        finalizeTextAdd(t);
+
+    }
+
+    public void output(Text t){
+        
+
+        
+        t.setFont(Font.font ("Verdana", 12));
+
+        finalizeTextAdd(t);
 
     }
 
@@ -231,7 +339,9 @@ public class Console extends VBox implements GralogWindow{
     
 
     @Override
-    public void notifyStructureChange(Structure structure) { }
+    public void notifyStructureChange(Structure structure) { 
+
+    }
 
     @Override
     public void notifyHighlightChange(Highlights highlights) { }

@@ -7,6 +7,7 @@ from random import randint
 
 class Vertex:
 	def __init__(self,graph,id):
+		self.sourced = False;
 		self.id = id;
 		self.graph = graph;
 		self.properties = dict();
@@ -19,12 +20,17 @@ class Vertex:
 		self.outgoingEdges = [];
 		self.incidentEdges = [];
 	def sourceProperties(self,stringFromGralog):
+		self.sourced = True;
 		strings = stringFromGralog.split("|");
 		for string in strings:
 			propVal = string.split("=");
-			prop = propVal[0];
-			val = propVal[1];
-			self.properties[prop] = val;
+			try:
+				prop = propVal[0];
+				val = propVal[1];
+				self.properties[prop] = val;
+			except:
+				print("fuck")
+				pass;
 
 	def getId(self):
 		return self.id;
@@ -61,12 +67,16 @@ class Vertex:
 	def getShape(self):
 		return self.shape;
 	def setOtherProperty(self,otherProperty,value):
-		self.otherProperties[otherProperty] = value;
+		self.properties[otherProperty] = value;
 		self.graph.setVertexProperty(self.id,otherProperty,value);
 	def getProperty(self,prop):
-		return self.otherProperties[prop];
+		return self.properties[prop];
 	def delete(self):
-		return self.graph.deleteVertex(self.id);
+		return self.graph.deleteVertex(self);
+	def connect(self,v1,directed = False,edgeId=-1):
+		return self.graph.addEdge(self,v1,directed,edgeId);
+	def fill(self):
+		return self.graph.getVertex(self);
 	def __str__(self):
 		return str(self.getId());
 
@@ -79,6 +89,7 @@ class Vertex:
 
 class Edge:
 	def __init__(self,graph,id):
+		self.sourced = False;
 		self.id = id;
 		self.graph = graph;
 		self.properties = dict();
@@ -91,12 +102,16 @@ class Edge:
 		self.properties["target"] = None;
 
 	def sourceProperties(self,stringFromGralog):
+		self.sourced = True;
 		strings = stringFromGralog.split("|");
 		for string in strings:
 			propVal = string.split("=");
-			prop = propVal[0];
-			val = propVal[1];
-			self.properties[prop] = val;
+			try:
+				prop = propVal[0];
+				val = propVal[1];
+				self.properties[prop] = val;
+			except:
+				pass;
 	def getId(self):
 		return self.id;
 	def setLabel(self,label):
@@ -132,13 +147,14 @@ class Edge:
 	def getTarget(self):
 		return self.properties["target"];
 	def setOtherProperty(self,otherProperty,value):
-		self.otherProperties[otherProperty] = value;
+		self.properties[otherProperty] = value;
 		self.graph.setEdgeProperty(otherProperty,value);
 	def getProperty(self,prop):
-		return self.otherProperties[prop];
+		return self.properties[prop];
 	def delete(self):
 		return self.graph.deleteEdge(self.id);
-
+	def fill(self):
+		return self.graph.getEdge(self);
 
 	def __str__(self):
 		return str(self.getId());
@@ -659,22 +675,46 @@ class Graph:
 	def getEdgeColor(self,edge):
 		return self.getEdgeProperty(edge,"color");
 
-
-	def getEdgeProperty(self,edge,property):
-		#internally: fill edge property dictionary
-		#return: String representing queried property
-
-		line = "getEdgeProperty#"+str(self.id).rstrip() + "#"
+	def getEdge(self,edge):
+		line = "getEdge#"+str(self.id).rstrip() + "#"
 		line = line + edgeSplitter(edge)
-		line = line + "#" + property.rstrip().lower();
 
 		print line.rstrip();
 		sys.stdout.flush();
 
 		edgeTuple = sys.stdin.readline().rstrip();
 		edge.sourceProperties(edgeTuple);
+		return edge;
 
-	def getVertexProperty(self,vertex,property):
+
+	def getEdgeProperty(self,edge,prop):
+		#internally: fill edge property dictionary
+		#return: String representing queried property
+
+		line = "getEdgeProperty#"+str(self.id).rstrip() + "#"
+		line = line + edgeSplitter(edge)
+		line = line + "#" + prop.rstrip().lower();
+
+		print line.rstrip();
+		sys.stdout.flush();
+
+		edgeTuple = sys.stdin.readline().rstrip();
+		edge.sourceProperties(edgeTuple);
+		return edge.getProperty(prop);
+
+	def getVertex(self,vertex):
+		line = "getVertex#"+str(self.id).rstrip() + "#"
+		line = line + str(vertex).rstrip();
+
+		print line.rstrip();
+		sys.stdout.flush();
+
+		vertexTuple = sys.stdin.readline().rstrip();
+
+		vertex.sourceProperties(vertexTuple);
+		return vertex;
+
+	def getVertexProperty(self,vertex,prop):
 		#internally: fill edge property dictionary
 		#return: String representing queried property
 
@@ -682,13 +722,14 @@ class Graph:
 
 		line = "getVertexProperty#"+str(self.id).rstrip() + "#"
 		line = line + vid
-		line = line + "#" + property.rstrip().lower();
+		line = line + "#" + prop.rstrip().lower();
 
 		print line.rstrip();
 		sys.stdout.flush();
 
 		vertexTuple = sys.stdin.readline().rstrip();
 		vertex.sourceProperties(vertexTuple);
+		return vertex.getProperty(prop);
 
 	# def getEdgesByPropertyValue(self,prop,val):
 	# 	#return: list of Edge objects with id only

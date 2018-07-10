@@ -312,7 +312,7 @@ public class Piping extends Thread{
                         this.state = State.InProgress;
                     }
 
-                    System.out.println("blurg");
+
 
 
                     if (externalCommandSegments[0].equals("pauseUntilSpacePressed")){

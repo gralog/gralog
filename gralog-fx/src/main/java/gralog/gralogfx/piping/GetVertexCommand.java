@@ -33,7 +33,9 @@ public class GetVertexCommand extends CommandForGralogToExecute {
 
         
         try{
-            this.setResponse(this.vertex.gralogPipify());
+            String pipification = this.vertex.gralogPipify();
+            System.out.println("got back: " + pipification);
+            this.setResponse(pipification);
         }catch(Exception e){
             this.fail();
             this.error = e;

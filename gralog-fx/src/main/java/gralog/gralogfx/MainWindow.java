@@ -318,7 +318,7 @@ public class MainWindow extends Application {
             // pipeline.subscribe(this.pluginControlPanel);
 
             /* at the moment this is hardcorded but it will soon be made dynamic!!!*/
-            final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
+            final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py";
 
             Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
             if (!initSuccess){

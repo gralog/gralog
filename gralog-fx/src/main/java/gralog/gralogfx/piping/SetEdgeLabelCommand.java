@@ -20,7 +20,7 @@ public class SetEdgeLabelCommand extends CommandForGralogToExecute {
         try{
             this.edge = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
         }catch(NonExistantEdgeException e){
-            this.setConsoleMessage("Non-fatal " + e.toString());
+            this.setConsoleMessage("(non-fatal) " + e.toString());
             return;
         }catch(Exception e){
             this.fail();

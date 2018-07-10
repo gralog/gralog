@@ -609,7 +609,7 @@ public class Edge extends XmlMarshallable implements IMovable {
             for(Annotation annotation : annotations){
                 if(annotation instanceof DataField){
                     DataField dataField = (DataField)annotation;
-                    toBeSent = dataField.display() && dataField.readOnly();
+                    toBeSent = dataField.display() && (!dataField.readOnly());
                 }
             }
             if (toBeSent){

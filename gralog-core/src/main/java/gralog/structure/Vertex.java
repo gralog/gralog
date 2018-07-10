@@ -131,17 +131,19 @@ public class Vertex extends XmlMarshallable implements IMovable {
         Class<?> c = this.getClass();
         String ret = "";
         for (Field f : c.getDeclaredFields()) {
+
             f.setAccessible(true);
             boolean toBeSent = false;
             Annotation[] annotations = f.getDeclaredAnnotations();
             for(Annotation annotation : annotations){
                 if(annotation instanceof DataField){
                     DataField dataField = (DataField)annotation;
-                    toBeSent = dataField.display()&&dataField.readOnly();
+                    toBeSent = dataField.display()&&(!dataField.readOnly());
                     break;
                 }
             }
             if (toBeSent){
+
                 ret = ret + f.getName() + "=";
                 try{
                     ret = ret+f.get(this).toString() + "|";
@@ -154,6 +156,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
         if (ret.length() > 0){
             ret = ret.substring(0,ret.length()-1);
         }
+
         return ret;
 
     }

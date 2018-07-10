@@ -15,7 +15,7 @@ public class DeleteEdgeCommand extends CommandForGralogToExecute {
         try{
             this.edgeToDelete = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
         }catch(NonExistantEdgeException e){
-            this.setConsoleMessage("Non-fatal " + e.toString());
+            this.setConsoleMessage("(non-fatal) " + e.toString());
         }catch(Exception e){
             this.fail();
             this.setResponse(null);

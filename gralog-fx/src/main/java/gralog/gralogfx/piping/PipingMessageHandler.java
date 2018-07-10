@@ -401,6 +401,30 @@ public class PipingMessageHandler{
             
             // currentCommand.setStructure(currentStructure);
             return currentCommand;
+        }else if (commandKeyword.equals("getVertex")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
+            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+            
+            currentCommand = new GetVertexCommand(externalCommandSegments,currentStructure);
+            
+            // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+            // this.out.println("ack");
+        }else if (commandKeyword.equals("getVertexProperty")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
+            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+            
+            currentCommand = new GetVertexPropertyCommand(externalCommandSegments,currentStructure);
+            
+            // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+            // this.out.println("ack");
+        }else if (commandKeyword.equals("getEdge")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
+            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+            
+            currentCommand = new GetEdgeCommand(externalCommandSegments,currentStructure);
+            
+            // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+            // this.out.println("ack");
         }else if (commandKeyword.equals("getEdgeProperty")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
             // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
             

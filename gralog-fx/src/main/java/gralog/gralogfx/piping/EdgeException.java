@@ -1,6 +1,7 @@
 package gralog.gralogfx.piping;
-public class EdgeException extends Exception {
+public class EdgeException extends GralogException {
     public EdgeException(String message) {
         super(message);
     }
+    
 }

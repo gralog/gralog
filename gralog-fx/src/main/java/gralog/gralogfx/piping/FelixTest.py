@@ -15,7 +15,14 @@ g = Graph(None);#type \in buechi, directed, etc. or None
 # g1 = Graph("directed");
 
 
-g.deleteEdge(0);
+v = g.addVertex();
+v1 = g.addVertex();
+v = v.fill();
+e = v.connect(v1);
+e.fill();
+
+
+print("hello#"+v.getProperty("shape"));
 
 
 
