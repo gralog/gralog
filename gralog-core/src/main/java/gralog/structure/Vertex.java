@@ -408,6 +408,7 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     protected void notifyVertexListeners() {
+
         for (VertexListener listener : listeners)
             listener.vertexChanged(new VertexEvent(this));
     }

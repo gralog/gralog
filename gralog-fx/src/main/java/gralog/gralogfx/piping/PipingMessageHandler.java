@@ -311,7 +311,7 @@ public class PipingMessageHandler{
         return rgbToGralogColor(color);
     }
 
-    public static CommandForGralogToExecute handleCommand(String[] externalCommandSegments,Structure structure){
+    public static CommandForGralogToExecute handleCommand(String[] externalCommandSegments,Structure structure,Piping piping){
         System.out.println("handlincom");
         CommandForGralogToExecute currentCommand;
         Structure currentStructure = structure;
@@ -405,6 +405,22 @@ public class PipingMessageHandler{
             // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
             
             currentCommand = new GetVertexCommand(externalCommandSegments,currentStructure);
+            
+            // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+            // this.out.println("ack");
+        }else if (commandKeyword.equals("requestVertex")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
+            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+            
+            currentCommand = new RequestVertexCommand(externalCommandSegments,currentStructure,piping);
+            
+            // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+            // this.out.println("ack");
+        }else if (commandKeyword.equals("requestRandomVertex")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
+            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
+            
+            currentCommand = new RequestRandomVertexCommand(externalCommandSegments,currentStructure);
             
             // currentCommand.setStructure(currentStructure);
             return currentCommand;

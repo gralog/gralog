@@ -19,8 +19,9 @@ import gralog.gralogfx.*;
 import java.util.HashSet;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Consumer;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.concurrent.locks.*;
 
 import java.util.Arrays;
@@ -64,10 +65,12 @@ public class Piping extends Thread{
     public List<String[]> trackedVarArgs;
 
     public CountDownLatch waitForPauseToBeHandled;
+    public CountDownLatch waitForSelection;
     private Lock pauseLock;
     public Condition canContinue;
     public MainWindow caller;
-    public Function<Piping,Boolean> pauseFunction;
+    public Supplier<Boolean> pauseFunction;
+    public Supplier<Boolean> selectionFunction;
     private boolean pauseWasPressed = false;
     public boolean windowDoesCloseNow = false;
     private Consumer sendMessageToConsole;
@@ -77,7 +80,8 @@ public class Piping extends Thread{
         Null,
         Inintialized,
         InProgress,
-        Paused
+        Paused,
+        WaitingForSelection
     }
     
     public State state = State.Null;
@@ -94,7 +98,7 @@ public class Piping extends Thread{
     private void plannedPauseRequested(String[] externalCommandSegments, boolean rankGiven){
         List<String[]> args = PipingMessageHandler.parsePauseVars(externalCommandSegments,rankGiven);
         trackedVarArgs = args;
-        this.pauseFunction.apply(this);
+        this.pauseFunction.get();
         // subscribers.forEach(sub -> sub.notifyPauseRequested(this.structure,args));
     }
 
@@ -102,14 +106,16 @@ public class Piping extends Thread{
         return (this.state != State.Null);
     }
 
-    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Function<Piping,Boolean> pauseFunction,Consumer<String> sendMessageToConsole){
+    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Supplier<Boolean> pauseFunction,CountDownLatch waitForSelection,Supplier<Boolean> selectionFunction,Consumer<String> sendMessageToConsole){
         this.newGraphMethod = newGraphMethod;
         this.resetInitialVals();
         this.structurePane = structurePane;
         this.idGraphMap.put(structurePane.getStructure().getId(),structurePane.getStructure());
         this.idStructurePaneMap.put(structurePane.getStructure().getId(),structurePane);
         this.waitForPauseToBeHandled = waitForPauseToBeHandled;
+        this.waitForSelection = waitForSelection;
         this.pauseFunction = pauseFunction;
+        this.selectionFunction = pauseFunction;
         this.sendMessageToConsole = sendMessageToConsole;
     }
 
@@ -388,7 +394,7 @@ public class Piping extends Thread{
 
                     CommandForGralogToExecute currentCommand;
                     try{
-                        currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])));
+                        currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])),this);
                         // mostRecentlyUsedStructurePane = currentCommand.getStructurePane();
                     }catch(Exception e){
                         e.printStackTrace();

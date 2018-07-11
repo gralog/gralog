@@ -20,17 +20,17 @@ import javafx.scene.control.Separator;
 
 public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
-    private ProgressBar pb;
-    private Button pause,play,step,stop;
+    private static ProgressBar pb;
+    private static Button pause,play,step,stop;
     // private Tabs tabs;
     // private Piping pipeline;
-    private List<Label> labels;
-    private VBox boilerPlateVbox;
-    private VBox varBox;
-    private CheckBox wrapped;
-    private HBox wrappedHolder;
-    private HBox pauseOrPlay;
-    private List<Control> labelsAndSeparators;
+    private static List<Label> labels;
+    private static VBox boilerPlateVbox;
+    private static VBox varBox;
+    private static CheckBox wrapped;
+    private static HBox wrappedHolder;
+    private static HBox pauseOrPlay;
+    private static List<Control> labelsAndSeparators;
 
         
     public PluginControlPanel(){
@@ -159,9 +159,9 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
    
 
-    public void sourceVarBox(){
+    public static void sourceVarBox(){
         interpolateSeparators();
-        this.varBox.getChildren().addAll(this.labelsAndSeparators);
+        varBox.getChildren().addAll(labelsAndSeparators);
     }
 
 
@@ -188,31 +188,31 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         return b;
     }
 
-    public void interpolateSeparators(){
-        if (this.labelsAndSeparators == null){
-            this.labelsAndSeparators = new ArrayList<Control>();
+    public static void interpolateSeparators(){
+        if (labelsAndSeparators == null){
+            labelsAndSeparators = new ArrayList<Control>();
         }
-        this.labelsAndSeparators.clear();
+        labelsAndSeparators.clear();
         int i;
-        for (i = 0; i < this.labels.size()-1; i ++){
-            this.labelsAndSeparators.add(this.labels.get(i));
-            this.labelsAndSeparators.add(new Separator());
+        for (i = 0; i < labels.size()-1; i ++){
+            labelsAndSeparators.add(labels.get(i));
+            labelsAndSeparators.add(new Separator());
         }
 
         try{
-            this.labelsAndSeparators.add(this.labels.get(i));
+            labelsAndSeparators.add(labels.get(i));
         }catch(Exception e){
             System.out.println("buppo");
         }
 
     }
 
-    public void notifyPlannedPauseRequested(List<String[]> args){
-        this.varBox.getChildren().clear();
+    public static void notifyPlannedPauseRequested(List<String[]> args){
+        varBox.getChildren().clear();
         System.out.println("yooooooooooo a pause br000");
 
-        this.pauseOrPlay.getChildren().clear();
-        this.pauseOrPlay.getChildren().add(play);
+        pauseOrPlay.getChildren().clear();
+        pauseOrPlay.getChildren().add(play);
     
 
         labels.clear();
@@ -222,7 +222,7 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
             System.out.println("labelString: " + labelString);
             Label inter = new Label(labelString);
             inter.setMinWidth(Region.USE_PREF_SIZE);
-            this.labels.add(inter);
+            labels.add(inter);
 
         }
 
@@ -230,16 +230,16 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         
     }
 
-    public void notifySpontaneousPauseRequested(){
+    public static void notifySpontaneousPauseRequested(){
         
-        this.pauseOrPlay.getChildren().clear();
-        this.pauseOrPlay.getChildren().add(play);
+        pauseOrPlay.getChildren().clear();
+        pauseOrPlay.getChildren().add(play);
         
     }
 
-    public void notifyPlayRequested(){
-        this.pauseOrPlay.getChildren().clear();
-        this.pauseOrPlay.getChildren().add(pause);
+    public static void notifyPlayRequested(){
+        pauseOrPlay.getChildren().clear();
+        pauseOrPlay.getChildren().add(pause);
     }
 
 

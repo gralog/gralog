@@ -16,6 +16,7 @@ import java.io.*;
 import gralog.structure.controlpoints.ControlPoint;
 import javafx.geometry.Point2D;
 import org.w3c.dom.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -101,6 +102,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     //public Set<V> getVertices() { return Collections.unmodifiableSet(vertices); }
 
     public Collection<V> getVertices(){ return vertices.values(); }
+
+    /**
+     * @return A pseudo-randommly selected vertrex.
+     */
+    public Vertex getRandomVertex(){ 
+        ArrayList<Vertex> vertices = new ArrayList<Vertex>(this.getVertices());
+        int randomVertexIndex = ThreadLocalRandom.current().nextInt(0, vertices.size() );
+        Vertex vertex = vertices.get(randomVertexIndex);
+        return vertex;
+    }
     /**
      * @return An unmodifiable set of edges.
      */

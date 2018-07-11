@@ -6,9 +6,9 @@ from random import randint
 
 
 class Vertex:
-	def __init__(self,graph,id):
+	def __init__(self,graph,vid):
 		self.sourced = False;
-		self.id = id;
+		self.id = int(vid);
 		self.graph = graph;
 		self.properties = dict();
 		self.properties["id"] = None;
@@ -75,7 +75,7 @@ class Vertex:
 		return self.graph.deleteVertex(self);
 	def connect(self,v1,directed = False,edgeId=-1):
 		return self.graph.addEdge(self,v1,directed,edgeId);
-	def fill(self):
+	def source(self):
 		return self.graph.getVertex(self);
 	def __str__(self):
 		return str(self.getId());
@@ -88,9 +88,9 @@ class Vertex:
 
 
 class Edge:
-	def __init__(self,graph,id):
+	def __init__(self,graph,eid):
 		self.sourced = False;
-		self.id = id;
+		self.id = int(eid);
 		self.graph = graph;
 		self.properties = dict();
 		self.properties["id"] = None;
@@ -153,7 +153,7 @@ class Edge:
 		return self.properties[prop];
 	def delete(self):
 		return self.graph.deleteEdge(self.id);
-	def fill(self):
+	def source(self):
 		return self.graph.getEdge(self);
 
 	def __str__(self):
@@ -730,6 +730,25 @@ class Graph:
 		vertexTuple = sys.stdin.readline().rstrip();
 		vertex.sourceProperties(vertexTuple);
 		return vertex.getProperty(prop);
+
+
+	def requestVertex(self):
+		line = "requestVertex#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		vid = sys.stdin.readline().rstrip();
+		vertex = self.getVertexOrNew(vid);
+		return vertex;
+
+	def requestRandomVertex(self):
+		line = "requestRandomVertex#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		vid = sys.stdin.readline().rstrip();
+		vertex = self.getVertexOrNew(vid);
+		return vertex;
 
 	# def getEdgesByPropertyValue(self,prop,val):
 	# 	#return: list of Edge objects with id only
