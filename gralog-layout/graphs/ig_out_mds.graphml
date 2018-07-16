@@ -1,29 +1,29 @@
 <?xml version='1.0' encoding='utf-8'?>
 <graphml>
-  <graph edgedefault="directed">
-    <node fillcolor="#BBFFFF" id="n1" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="13.62207" y="146.17353" />
-    <node fillcolor="#FFFFFF" id="n2" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="50.43153" y="53.06446" />
-    <node fillcolor="#FFFFFF" id="n3" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="34.30531" y="26.85705" />
-    <node fillcolor="#FFFFFF" id="n4" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-46.3979" y="5.15236" />
-    <node fillcolor="#FFFFFF" id="n5" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="26.90501" y="33.25272" />
-    <node fillcolor="#FFFFFF" id="n6" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-27.29153" y="138.68643" />
-    <node fillcolor="#FFFFFF" id="n7" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="58.3979" y="0.9099" />
-    <node fillcolor="#FFFFFF" id="n8" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="19.21298" y="-17.88943" />
-    <node fillcolor="#FFFFFF" id="n9" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-21.68754" y="6.53786" />
-    <node fillcolor="#FFFFFF" id="n10" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-46.3979" y="5.15236" />
-    <node fillcolor="#FFFFFF" id="n11" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-4.43225" y="103.93702" />
-    <node fillcolor="#FFFFFF" id="n12" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-26.28893" y="138.93329" />
-    <node fillcolor="#FFFFFF" id="n13" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-26.28893" y="138.93329" />
-    <node fillcolor="#FFFFFF" id="n14" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-52.31298" y="149.30664" />
-    <node fillcolor="#FFFFFF" id="n15" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="7.41519" y="193.1716" />
-    <node fillcolor="#FFFFFF" id="n16" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="35.57666" y="157.77167" />
-    <node fillcolor="#FFFFFF" id="n17" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-8.33251" y="134.57538" />
-    <node fillcolor="#FFFFFF" id="n18" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-15.17372" y="16.11074" />
-    <node fillcolor="#FFFFFF" id="n19" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="4.16937" y="-14.13016" />
-    <node fillcolor="#FFFFFF" id="n20" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="7.99561" y="11.63002" />
-    <node fillcolor="#FFFFFF" id="n21" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="40.77383" y="-7.00638" />
-    <node fillcolor="#FFFFFF" id="n22" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="56.61346" y="-35.06446" />
-    <node fillcolor="#FFFFFF" id="n23" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-53.31558" y="149.05977" />
+  <graph edgedefault="directed" name="automata">
+    <node fillcolor="#BBFFFF" id="n1" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-8.66004" y="134.20935" />
+    <node fillcolor="#FFFFFF" id="n2" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="44.43153" y="44.06446" />
+    <node fillcolor="#FFFFFF" id="n3" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="28.30531" y="17.85705" />
+    <node fillcolor="#FFFFFF" id="n4" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-52.3979" y="-3.84764" />
+    <node fillcolor="#FFFFFF" id="n5" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="20.90501" y="24.25272" />
+    <node fillcolor="#FFFFFF" id="n6" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-49.57364" y="126.72225" />
+    <node fillcolor="#FFFFFF" id="n7" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="52.3979" y="-8.0901" />
+    <node fillcolor="#FFFFFF" id="n8" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="13.21298" y="-26.88943" />
+    <node fillcolor="#FFFFFF" id="n9" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-27.68754" y="-2.46214" />
+    <node fillcolor="#FFFFFF" id="n10" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-52.3979" y="-3.84764" />
+    <node fillcolor="#FFFFFF" id="n11" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-26.71437" y="91.97283" />
+    <node fillcolor="#FFFFFF" id="n12" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-48.57105" y="126.96911" />
+    <node fillcolor="#FFFFFF" id="n13" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-48.57105" y="126.96911" />
+    <node fillcolor="#FFFFFF" id="n14" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-74.5951" y="137.34246" />
+    <node fillcolor="#FFFFFF" id="n15" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="32.89373" y="-73.79579" />
+    <node fillcolor="#FFFFFF" id="n16" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="13.29454" y="145.80749" />
+    <node fillcolor="#FFFFFF" id="n17" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-30.61462" y="122.6112" />
+    <node fillcolor="#FFFFFF" id="n18" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-21.17372" y="7.11074" />
+    <node fillcolor="#FFFFFF" id="n19" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-1.83063" y="-23.13016" />
+    <node fillcolor="#FFFFFF" id="n20" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="1.99561" y="2.63002" />
+    <node fillcolor="#FFFFFF" id="n21" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="34.77383" y="-16.00638" />
+    <node fillcolor="#FFFFFF" id="n22" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="50.61346" y="-44.06446" />
+    <node fillcolor="#FFFFFF" id="n23" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="-75.59769" y="137.09559" />
     <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n17" target="n12" weight="1.0" width="0.026458333333333334" />
     <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n3" target="n5" weight="1.0" width="0.026458333333333334" />
     <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n9" target="n4" weight="1.0" width="0.026458333333333334" />
