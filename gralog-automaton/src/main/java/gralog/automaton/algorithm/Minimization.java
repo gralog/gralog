@@ -129,7 +129,7 @@ public class Minimization extends Algorithm {
             String foo = transitionDefined.get(resultSource);
             if (!foo.contains("" + t.symbol)) {
                 transitionDefined.put(resultSource, "" + t.symbol);
-                Transition resultTransition = (Transition) result.createEdge();
+                Transition resultTransition = (Transition) result.createEdge(null);
                 resultTransition.symbol = t.symbol;
                 resultTransition.setSource(nerodeRelationEquivalenceClass.get(t.getSource()));
                 resultTransition.setTarget(nerodeRelationEquivalenceClass.get(t.getTarget()));

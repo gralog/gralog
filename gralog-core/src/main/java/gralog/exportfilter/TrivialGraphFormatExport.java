@@ -36,7 +36,7 @@ public class TrivialGraphFormatExport extends ExportFilter {
 
         stream.write("#" + linefeed);
 
-        Set<Edge> E = structure.getEdges();
+        Set<Edge> E = (Set<Edge>)structure.getEdges();
         for (Edge e : E)
             stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + linefeed);
 
@@ -62,7 +62,7 @@ public class TrivialGraphFormatExport extends ExportFilter {
 
         // stream.write("#" + linefeed);
 
-        Set<Edge> E = structure.getEdges();
+        Set<Edge> E = (Set<Edge>)structure.getEdges();
         for (Edge e : E){
             retString += nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + separator;
             // stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + linefeed);
@@ -94,7 +94,7 @@ public class TrivialGraphFormatExport extends ExportFilter {
         for (Vertex v : V)
             nodeIndex.put(v, i++);
 
-        Set<Edge> E = structure.getEdges();
+        Set<Edge> E = (Set<Edge>)structure.getEdges();
         for (Edge e : E)
             result.put(nodeIndex.get(e.getSource()) + ":" + nodeIndex.get(e.getTarget()), e);
 

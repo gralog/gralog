@@ -6,9 +6,9 @@
  * @author meike
  * @also felix
  */
-package gralog.python.algorithm;
+package gralog.algorithm;
 
-import gralog.python.*;
+
 
 import gralog.structure.*;
 import gralog.algorithm.*;
