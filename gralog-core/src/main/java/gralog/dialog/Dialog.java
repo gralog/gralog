@@ -229,6 +229,8 @@ public class Dialog {
     // the function iterates over parameters, in an iteration extracts the next parameter and filers according to it
     private void filterVertices(ArrayList<Vertex> what, ArrayList<Vertex> to, ArrayList<String> parameters) {
         for (int i = 0; i < parameters.size(); i += 2){
+            System.out.println("what = [" + what + "], to = [" + to + "], parameters = [" + parameters + "]");
+            System.out.println("i = " + i);
             switch (parameters.get(i)){
                 case "STROKE": case "COLOR":
                     String strokeColor = parameters.get(i+1);
@@ -263,7 +265,9 @@ public class Dialog {
                     filterWidth(what,to, width);
                     break;
                 case "NOCONDITION":
+                    System.out.println("What: " + what);
                     to.addAll(what);
+                    System.out.println("To" + to);
                     return;
                 case "THICKNESS":
                     if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
@@ -370,11 +374,23 @@ public class Dialog {
     // returns list of vertices to save the result of filtering to
     // if the list with key s already exists, vertices are added to it
     private ArrayList<Vertex> getVertexTo(String s){
-        if (vertexListS.containsKey(s))
+        if (vertexListS.containsKey(s)) {
+            System.out.println("Vertex list already exists.");
             return vertexListS.get(s);
+        }
         else{
             vertexListS.put(s,new ArrayList<Vertex>());
             return (vertexListS.get(s));
+        }
+    }
+
+    private void printVertexListS(){
+        for (Map.Entry<String, ArrayList<Vertex>> pair : vertexListS.entrySet()){
+            System.out.println(pair.getKey() + " ");
+            for (Vertex v :  pair.getValue()){
+                System.out.print(v.id + " ");
+            }
+            System.out.println("");
         }
     }
 
@@ -415,8 +431,7 @@ public class Dialog {
                 return;
             }
             ArrayList<Vertex> to = getVertexTo(parameters.get(parameters.size()-1)); // where to filter to
-            parameters.remove(parameters.size()-1);
-            parameters.remove(parameters.size()-1);
+            parameters.remove(parameters.size()-1); // remove name of to
             ArrayList<Vertex> what = new ArrayList<Vertex>();; // where to filter from
             if (parameters.get(0).equals("SELECTED"))
                 for (Object v : highlights.getSelection())
@@ -424,9 +439,8 @@ public class Dialog {
                         what.add((Vertex) v);
             if (parameters.get(0).equals("ALL"))
                 what = new ArrayList<Vertex>(structure.getVertices());
-            if (vertexListS.containsKey(parameters.get(0)))
+            if (vertexListS.containsKey(parameters.get(0))) // list already exists
                 what = vertexListS.get(parameters.get(0));
-            parameters.remove(2); // delete "where" TODO: don't need "where" as a parameter at all
             parameters.remove(1); // delete "vertices" / "edges"
             parameters.remove(0); // delete "all" / "selected"
             filterVertices(what,to,parameters);
@@ -438,6 +452,8 @@ public class Dialog {
             System.out.println("\nto: ");
             printVertexIdList(to);
             System.out.println("\n");
+            System.out.println("vertexListS: ");
+            printVertexListS();
             return;
         }
         if (parameters.get(1).equals("EDGES") || edgeListS.containsKey(parameters.get(0))){ // edge list

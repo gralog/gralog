@@ -10,6 +10,8 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
+
 public class DialogTest {
 
     private Dialog dialog = new Dialog();
@@ -35,6 +37,7 @@ public class DialogTest {
         parameters.add("TO");
         parameters.add("whiteList");
         dialog.filter(parameters, c20, highlights);
+
 
     }
 
