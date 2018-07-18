@@ -53,7 +53,7 @@ public class Dialog {
 
     private void filterStroke(ArrayList<Vertex> what, ArrayList<Vertex> to, String color){
         for (Vertex v : what){
-            if (v.strokeColor.equals(color)){
+            if (v.strokeColor.name().equals(color)){
                 to.add(v);
             }
         }
@@ -201,6 +201,7 @@ public class Dialog {
                         return;
                     }
                     filterWeight(what, to, weight);
+                    what = to;
                     break;
                 case "EDGETYPE":
                     String edgeType = parameters.get(i + 1);
@@ -209,6 +210,7 @@ public class Dialog {
                         return;
                     }
                     filterEdgeType(what, to, edgeType);
+                    what = to;
                     break;
                 case "COLOR":
                     System.out.println("COLOR!err");
@@ -218,6 +220,7 @@ public class Dialog {
                         return;
                     }
                     filterEdgeColor(what, to, color);
+                    what = to;
                     break;
 
 
@@ -234,8 +237,10 @@ public class Dialog {
             switch (parameters.get(i)){
                 case "STROKE": case "COLOR":
                     String strokeColor = parameters.get(i+1);
-                    if (GralogColor.isColor(strokeColor))
-                        filterStroke(what,to, strokeColor);
+                    if (GralogColor.isColor(strokeColor)) {
+                        filterStroke(what, to, strokeColor);
+                        what = to;
+                    }
                     else{
                         errorMsg = "\"(stroke) color\" must be a color.\n";
                         return;
@@ -248,6 +253,7 @@ public class Dialog {
                     if (GralogColor.isColor(fillColor)) {
                         System.out.println("Is color, entring filterFill");
                         filterFill(what, to, fillColor);
+                        what = to;
                     }
                     else{
                         errorMsg = "\"stroke\" must be a color.\n";
@@ -263,10 +269,12 @@ public class Dialog {
                     try {width = Double.valueOf(parameters.get(i+1));}
                     catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"width\".\n"; return;}
                     filterWidth(what,to, width);
+                    what = to;
                     break;
                 case "NOCONDITION":
                     System.out.println("What: " + what);
                     to.addAll(what);
+                    what = to;
                     System.out.println("To" + to);
                     return;
                 case "THICKNESS":
@@ -278,6 +286,7 @@ public class Dialog {
                     try {thickness = Double.valueOf(parameters.get(i+1));}
                     catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"thickness\".\n"; return;}
                     filterThickness(what,to, thickness);
+                    what = to;
                     break;
                 case "HEIGHT":
                     if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
@@ -288,6 +297,7 @@ public class Dialog {
                     try {height = Double.valueOf(parameters.get(i+1));}
                     catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"height\".\n"; return;}
                     filterHeight(what,to, height);
+                    what = to;
                     break;
                 case "SIZE":
                     if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
@@ -298,6 +308,7 @@ public class Dialog {
                     try {size = Double.valueOf(parameters.get(i+1));}
                     catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"size\".\n"; return;}
                     filterSize(what,to, size);
+                    what = to;
                     break;
                 case "ID":
                     if (parameters.get(i+1).matches("\\d+")){
@@ -308,6 +319,7 @@ public class Dialog {
                     try {id= Integer.valueOf(parameters.get(i+1));}
                     catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"id\".\n"; return;}
                     filterID(what,to, id);
+                    what = to;
                     break;
                 case "SHAPE":
                     String shape = parameters.get(i+1);
@@ -315,6 +327,7 @@ public class Dialog {
                         errorMsg = "Could not recognise the value for \"shape\".\n"; return;
                     }
                     filterShape(what,to,shape);
+                    what = to;
                     break;
                 case "DEGREE":
                     if (parameters.get(i+1).matches("\\d+")){
@@ -325,6 +338,7 @@ public class Dialog {
                     try {degree= Integer.valueOf(parameters.get(i+1));}
                     catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"degree\".\n"; return;}
                     filterDegree(what,to, degree);
+                    what = to;
                     break;
                 case "INDEGREE":
                     if (parameters.get(i+1).matches("\\d+")){
@@ -335,6 +349,7 @@ public class Dialog {
                     try {indegree= Integer.valueOf(parameters.get(i+1));}
                     catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"indegree\".\n"; return;}
                     filterInDegree(what,to, indegree);
+                    what = to;
                     break;
                 case "OUTDEGREE":
                     if (parameters.get(i+1).matches("\\d+")){
@@ -345,20 +360,25 @@ public class Dialog {
                     try {outdegree= Integer.valueOf(parameters.get(i+1));}
                     catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"outdegree\".\n"; return;}
                     filterOutDegree(what,to, outdegree);
+                    what = to;
                     break;
                 case "SELFLOOP":
                     filterHasSelfloop(what,to);
+                    what = to;
                     break;
 
                 case "NOSELFLOOP":
                     filterHasNoSelfloop(what,to);
+                    what = to;
                     break;
                 case "LABEL":
                     filterHasLabel(what,to);
+                    what = to;
                     break;
 
                 case "NOLABEL":
                     filterHasNoLabel(what,to);
+                    what = to;
                     break;
 
 
@@ -423,29 +443,55 @@ public class Dialog {
 
 
     // the main filtering funciton
+    // parameters contains (1) definition of what to filter (2) conditions (3) definitions where to save
+    // (1) is: selected/all vertices/edges
+    //         or an identifier
+    //         if the identifier is not found in the list of already defined identifiers: error message
+    // (2) is: see description in gralog-core/.../dialog/actions.txt
+    // (3) is: as (1), but if the identifier is not found in the list of already defined identifiers: create one
     public void filter(ArrayList<String> parameters, Structure structure, Highlights highlights) {
-        System.out.println(ANSI_RED + "Entering filter. parameters = [" + parameters + "], structure = [" + structure + "], highlights = [" + highlights + "]" + ANSI_RESET);
+        System.out.println(ANSI_RED + "Entering filter. parameters = [" + parameters + "]" + ANSI_RESET);
+
         if (parameters.get(1).equals("VERTICES") || vertexListS.containsKey(parameters.get(0))){ // vertex list
+
+            // check error
             if (parameters.get(1).equals("VERTICES") && edgeListS.containsKey(parameters.get(0))){
                 errorMsg = "List " + parameters.get(parameters.size()-1) + " already exists as an edge list. Choose another name.\n";
                 return;
             }
+
+            // compute to
             ArrayList<Vertex> to = getVertexTo(parameters.get(parameters.size()-1)); // where to filter to
             parameters.remove(parameters.size()-1); // remove name of to
-            ArrayList<Vertex> what = new ArrayList<Vertex>();; // where to filter from
+
+            //compute what
+            ArrayList<Vertex> what = new ArrayList<>(); // where to filter from
             if (parameters.get(0).equals("SELECTED"))
                 for (Object v : highlights.getSelection())
                     if (v instanceof Vertex)
                         what.add((Vertex) v);
             if (parameters.get(0).equals("ALL"))
                 what = new ArrayList<Vertex>(structure.getVertices());
-            if (vertexListS.containsKey(parameters.get(0))) // list already exists
+            if (vertexListS.containsKey(parameters.get(0))) { // list already exists
+                System.out.println("Found vertex list " + parameters.get(0));
                 what = vertexListS.get(parameters.get(0));
-            parameters.remove(1); // delete "vertices" / "edges"
-            parameters.remove(0); // delete "all" / "selected"
+            }
+
+            // remove now unnecessary parameters
+            if (parameters.get(1).equals("VERTICES")) {
+                parameters.remove(1); // delete "vertices"
+                parameters.remove(0); // delete "all" / "selected"
+            }
+            else
+                parameters.remove(0); // delete the identifier of what
+
+            // filter
             filterVertices(what,to,parameters);
 
+            // clean parameters
             parameters.clear();
+
+
             // debug only
             System.out.println("Did filterVertices.\nWhat: ");
             printVertexIdList(what);
@@ -472,6 +518,7 @@ public class Dialog {
                 what = new ArrayList<Edge>(structure.getEdges());
             if (edgeListS.containsKey(parameters.get(0)))
                 what = edgeListS.get(parameters.get(0));
+
             parameters.remove(1);
             parameters.remove(0);
             filterEdges(what,to,parameters);
