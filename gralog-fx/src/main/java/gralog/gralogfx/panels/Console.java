@@ -91,7 +91,7 @@ public class Console extends VBox implements GralogWindow{
                 }
                 historyPointer = historyPointer + 1;
                 try{
-                    input.setText(history.get(historyPointer));
+                    input.setText(history.get(history.size()-1-historyPointer));
                 }catch(IndexOutOfBoundsException ex){
                     historyPointer = historyPointer - 1;
                 }
@@ -104,7 +104,7 @@ public class Console extends VBox implements GralogWindow{
                     historyPointer = historyPointer - 1;
                 }else{
                     historyPointer = historyPointer - 1;
-                    input.setText(history.get(historyPointer));
+                    input.setText(history.get(history.size()-1-historyPointer));
                 }
                 
             }
@@ -293,41 +293,65 @@ public class Console extends VBox implements GralogWindow{
         );
     }
 
+    public void finalizeTextFieldAdd(TextField t){
+        t.setMaxWidth(output.getWidth());
+        t.getStyleClass().add("helloWorld");    
+        // t.setBackground(Background.EMPTY);
+        // t.setStyle("-fx-control-inner-background: orange;");
+        
+        
+
+        Platform.runLater(
+            () ->{
+
+                outputElements.getChildren().add(t); 
+                outputAdded = true;
+                output.setVvalue(1.0);
+            }
+        );
+    }
+
     public void output(String text){
         
         
 
-        Text t = new Text();
+        TextField t = new TextField();
         t.setText(text);
+        
         t.setFont(Font.font ("Verdana", 12));
-        t.setFill(Color.rgb(82, 86, 91));
+
+        // t.setFill(Color.rgb(82, 86, 91));
+        
 
 
-        finalizeTextAdd(t);
+        finalizeTextFieldAdd(t);
 
     }
 
     public void errorOutput(String text){
         
+        System.out.println("error output");
+
+        TextField t = new TextField();
+        t.setText(text);
+        t.setStyle("-fx-text-inner-color: red;");
         
 
-        Text t = new Text();
-        t.setText(text);
-        t.setFont(Font.font ("Verdana", 12));
-        t.setFill(Color.RED);
-        t.setStyle("-fx-background-color: #888888;");
+        
+        // t.setFont(Font.font ("Verdana", 12));
+        
 
-        finalizeTextAdd(t);
+        finalizeTextFieldAdd(t);
 
     }
 
-    public void output(Text t){
+    public void output(TextField t){
         
 
         
         t.setFont(Font.font ("Verdana", 12));
 
-        finalizeTextAdd(t);
+        finalizeTextFieldAdd(t);
 
     }
 

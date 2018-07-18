@@ -717,7 +717,8 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-width", 1200),
             Preferences.getInteger(getClass(), "main-window-height", 700));
 
-        scene.getStylesheets().add("/stylesheet.css");
+        scene.getStylesheets().add("stylesheet.css");
+        System.out.println("sheets: " + scene.getStylesheets());
 
         scene.getStylesheets().add(DockPane.class.getResource("default.css").toExternalForm());
         this.stage = primaryStage;
