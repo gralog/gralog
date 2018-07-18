@@ -409,20 +409,26 @@ public class PipingMessageHandler{
             // currentCommand.setStructure(currentStructure);
             return currentCommand;
             // this.out.println("ack");
-        }else if (commandKeyword.equals("requestVertex")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
-            
+        }else if (commandKeyword.equals("requestVertex")){
             currentCommand = new RequestVertexCommand(externalCommandSegments,currentStructure,piping);
             
-            // currentCommand.setStructure(currentStructure);
             return currentCommand;
-            // this.out.println("ack");
+        }else if (commandKeyword.equals("requestEdge")){
+            currentCommand = new RequestEdgeCommand(externalCommandSegments,currentStructure,piping);
+            
+            return currentCommand;
         }else if (commandKeyword.equals("requestRandomVertex")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
             // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
             
             currentCommand = new RequestRandomVertexCommand(externalCommandSegments,currentStructure);
             
             // currentCommand.setStructure(currentStructure);
+            return currentCommand;
+            // this.out.println("ack");
+        }else if (commandKeyword.equals("requestRandomEdge")){
+            
+            currentCommand = new RequestRandomEdgeCommand(externalCommandSegments,currentStructure);
+            
             return currentCommand;
             // this.out.println("ack");
         }else if (commandKeyword.equals("getVertexProperty")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)

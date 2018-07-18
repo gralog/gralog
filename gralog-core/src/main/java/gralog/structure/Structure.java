@@ -103,6 +103,17 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     public Collection<V> getVertices(){ return vertices.values(); }
 
+
+    /**
+     * @return A pseudo-randommly selected vertrex.
+     */
+    public Edge getRandomEdge(){ 
+        ArrayList<Edge> edges = new ArrayList<Edge>(this.getEdges());
+        int randomEdgeIndex = ThreadLocalRandom.current().nextInt(0, edges.size() );
+        Edge edge = edges.get(randomEdgeIndex);
+        return edge;
+    }
+
     /**
      * @return A pseudo-randommly selected vertrex.
      */

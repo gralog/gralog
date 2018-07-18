@@ -19,7 +19,9 @@ class Vertex:
 		self.incomingEdges = [];
 		self.outgoingEdges = [];
 		self.incidentEdges = [];
+		self.wasSourced = False;
 	def sourceProperties(self,stringFromGralog):
+		self.sourced = True;
 		self.sourced = True;
 		strings = stringFromGralog.split("|");
 		for string in strings:
@@ -38,6 +40,8 @@ class Vertex:
 		self.properties["label"] = label;
 		self.graph.setVertexLabel(self.id,label);
 	def getLabel(self):
+		if not self.wasSourced:
+			self.source();
 		return self.properties["label"];
 	def setFillColor(self,colorHex=-1,colorRGB=-1):
 		if not (colorHex == -1):
@@ -47,6 +51,8 @@ class Vertex:
 			self.properties["color"] =colorRGB;
 			self.graph.setVertexFillColor(self.id,colorRGB=colorRGB);
 	def getFillColor(self):
+		if not self.wasSourced:
+			self.source();
 		return self.properties["color"];
 	def setStrokeColor(self,colorHex=-1,colorRGB=-1):
 		if not (colorHex == -1):
@@ -56,21 +62,31 @@ class Vertex:
 			self.color=colorRGB;
 			self.graph.setVertexStrokeColor(self.id,colorRGB=colorRGB);
 	def getStrokeColor(self):
+		if not self.sourced:
+			self.source();
 		return self.properties["strokeColor"];
 	def setColor(self,colorHex=-1,colorRGB=-1):
 		self.graph.setVertexFillColor(self.id,colorHex,colorRGB);
 	def getColor(self):
+		if not self.sourced:
+			self.source();
 		return self.fillColor;
 	def setShape(self,shape):
 		self.shape = shape;
 		self.graph.setVertexShape(self.id,shape);
 	def getShape(self):
+		if not self.sourced:
+			self.source();
 		return self.shape;
 	def setOtherProperty(self,otherProperty,value):
 		self.properties[otherProperty] = value;
 		self.graph.setVertexProperty(self.id,otherProperty,value);
-	def getProperty(self,prop):
+	def get(self,prop):
+		if not self.sourced:
+			self.source();
 		return self.properties[prop];
+	def getNeighbours(self):
+		return self.graph.getNeighbours(self.id);
 	def delete(self):
 		return self.graph.deleteVertex(self);
 	def connect(self,v1,directed = False,edgeId=-1):
@@ -100,6 +116,7 @@ class Edge:
 		self.properties["contour"] = None;
 		self.properties["source"] = None;
 		self.properties["target"] = None;
+		self.wasSourced;
 
 	def sourceProperties(self,stringFromGralog):
 		self.sourced = True;
@@ -118,7 +135,10 @@ class Edge:
 		self.properties["label"] = label;
 		self.graph.setEdgeLabel(self.id,label);
 	def getLabel(self):
+		if not self.sourced:
+			self.source();
 		return self.properties["label"];
+
 	def setColor(self,colorHex=-1,colorRGB=-1):
 		if not (colorHex == -1):
 			self.properties["color"] = colorHex;
@@ -127,34 +147,46 @@ class Edge:
 			self.properties["color"] =colorRGB;
 			self.graph.setEdgeColor(self.id,colorRGB=colorRGB);
 	def getColor(self):
+		if not self.sourced:
+			self.source();
 		return self.properties["color"];
 	def setWeight(self,weight):
 		self.weight = int(weight);
 		self.graph.setEdgeWeight(self.id,weight);
 	def getWeight(self):
+		if not self.sourced:
+			self.source();
 		return self.weight;
 	def setContour(self,contour):
-		self.contour = int(contour);
+
 		self.graph.setEdgeContour(self.id,contour);
 	def getContour(self):
+		if not self.sourced:
+			self.source();
 		return self.contour;
 	def setSource(self,source):
 		self.properties["source"] = source;
 	def getSource(self):
+		if not self.sourced:
+			self.source();
 		return self.properties["source"];
 	def setTarget(self,target):
 		self.properties["target"] = target;
 	def getTarget(self):
+		if not self.sourced:
+			self.source();
 		return self.properties["target"];
 	def setOtherProperty(self,otherProperty,value):
 		self.properties[otherProperty] = value;
 		self.graph.setEdgeProperty(otherProperty,value);
-	def getProperty(self,prop):
+	def get(self,prop):
+		self.source();
 		return self.properties[prop];
 	def delete(self):
-		return self.graph.deleteEdge(self.id);
+		return self.graph.deleteEdge(self);
 	def source(self):
 		return self.graph.getEdge(self);
+
 
 	def __str__(self):
 		return str(self.getId());
@@ -749,6 +781,24 @@ class Graph:
 		vid = sys.stdin.readline().rstrip();
 		vertex = self.getVertexOrNew(vid);
 		return vertex;
+
+	def requestEdge(self):
+		line = "requestEdge#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		vid = sys.stdin.readline().rstrip();
+		edge = self.getEdgeOrNew(vid);
+		return edge;
+
+	def requestRandomEdge(self):
+		line = "requestRandomEdge#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		eid = sys.stdin.readline().rstrip();
+		edge = self.getEdgeOrNew(eid);
+		return edge;
 
 	# def getEdgesByPropertyValue(self,prop,val):
 	# 	#return: list of Edge objects with id only

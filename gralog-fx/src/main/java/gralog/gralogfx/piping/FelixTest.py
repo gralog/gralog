@@ -19,7 +19,7 @@ vertices = [];
 edges = [];
 seen = [];
 g.track("seen",seen);
-for x in range(40):
+for x in range(2):
 	vertices.append(g.addVertex());
 
 
@@ -27,6 +27,19 @@ for x in vertices:
 	for y in vertices:
 		if x != y:
 			edges.append(x.connect(y));
+
+for x in range(2):
+	e = g.requestEdge();
+	e.setColor("blue");
+	s = e.getSource();
+	t = e.getTarget();
+	s.setColor("blue");
+	t.setColor("orange");
+	g.pause();
+	e.delete();
+	t.delete();
+	s.delete();
+	
 
 # for x in edges:
 # 	if x.getId() < 10:
