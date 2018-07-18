@@ -959,28 +959,34 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(stream);
         doc.getDocumentElement().normalize();
-        System.out.println(doc.getDocumentElement());
         Element root = doc.getDocumentElement();
         if (!root.getTagName().equalsIgnoreCase("graphml"))
             throw new Exception("Not a GraphML file");
 
         NodeList children = root.getChildNodes();
-        System.out.println(children);
         for (int i = children.getLength() - 1; i >= 0; --i) {
             Node childNode = children.item(i);
-            System.out.println(childNode);
             if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
             Element child = (Element) childNode;
-            System.out.println("from input stream" + child.getTagName() + " child: " + child);
-            Object result = PluginManager.instantiateClass(child.getTagName());
-            System.out.println("lala " + result);
+            String className = child.getTagName();		// catch additional tag name(should be type) = buechiautomat/automaton if existent
+            if (child.getAttributes().getNamedItem("edgedefault")!=null) {
+            	if (child.getAttributes().getNamedItem("edgedefault").getNodeValue().equals("directed")) {
+            		if (child.getAttributes().getNamedItem("name")!=null) {
+            			className = child.getAttributes().getNamedItem("name").getNodeValue();
+            		} else {
+            			className = "digraph";
+            		}
+            	}
+            }
+            Object result = PluginManager.instantiateClass(className);
+            System.out.println("GralogStruc " + result);
             if (result == null)
                 continue;
-            System.out.println("AAAAAFTRE " + child.getTagName() + " child: " + child + "  " + result);
+            System.out.println("After " + result);
             if (result instanceof Structure) {
                 ((Structure) result).fromXml(child);
-                System.out.println("AAAAAAAAAAAAAFTRE " + child.getTagName() + "child: " + child);
+                System.out.println("After: " + result);
                 return (Structure) result;
             } 
         }

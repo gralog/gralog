@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <graphml>
-  <graph edgedefault="directed" name="automata">
+  <graph edgedefault="directed">
     <node fillcolor="#BBFFFF" id="n1" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="10.0" y="0.0" />
     <node fillcolor="#FFFFFF" id="n2" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="9.62917" y="2.69797" />
     <node fillcolor="#FFFFFF" id="n3" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="8.54419" y="5.19584" />
