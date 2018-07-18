@@ -91,6 +91,8 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
         e.isDirected = this.isDirected;
         this.structure.addEdge(e,sourceVertex,targetVertex);
 
+        
+
         this.setResponse(Integer.toString(e.getId()));
 
         return;

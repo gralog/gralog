@@ -74,6 +74,8 @@ public class Piping extends Thread{
     private boolean pauseWasPressed = false;
     public boolean windowDoesCloseNow = false;
     private Consumer sendMessageToConsole;
+    private Class classSelectionIsWaitingFor = null;
+    private IMovable selectedObject;
 
 
     public enum State{
@@ -89,6 +91,9 @@ public class Piping extends Thread{
     private HashMap<Integer,Structure> idGraphMap =  new HashMap<Integer,Structure>();
     private HashMap<Integer,StructurePane> idStructurePaneMap =  new HashMap<Integer,StructurePane>();
 
+    public void setClassSelectionIsWaitingFor(Class c){
+        this.classSelectionIsWaitingFor = c;
+    }
 
 
     public void subscribe(PipingWindow sub){
@@ -115,7 +120,7 @@ public class Piping extends Thread{
         this.waitForPauseToBeHandled = waitForPauseToBeHandled;
         this.waitForSelection = waitForSelection;
         this.pauseFunction = pauseFunction;
-        this.selectionFunction = pauseFunction;
+        this.selectionFunction = selectionFunction;
         this.sendMessageToConsole = sendMessageToConsole;
     }
 
@@ -147,8 +152,30 @@ public class Piping extends Thread{
         return true;
 
     
+    }
 
-   
+    public IMovable getSelectedObject(){
+        return this.selectedObject;
+    }
+
+    public Class getClassSelectionIsWaitingFor(){
+        return this.classSelectionIsWaitingFor;
+    }
+
+    public void profferSelectedObject(IMovable obj){
+        
+        System.out.println("profferin");
+        this.selectedObject = obj;
+        if (this.classSelectionIsWaitingFor != null && this.selectedObject.getClass() == this.classSelectionIsWaitingFor){
+            this.waitForSelection.countDown();
+            CountDownLatch newLatch = new CountDownLatch(1);
+            this.setSelectionCountDownLatch(newLatch);
+
+        }else{
+            System.out.println("sorry hoss try againe");
+        }
+
+        
     }
 
     private Structure getStructureWithId(int id){
@@ -225,7 +252,7 @@ public class Piping extends Thread{
     //     return this.exec("ack");
     // }
 
-    private void redrawMyStructurePanes(){
+    protected void redrawMyStructurePanes(){
         for (int i : this.idStructurePaneMap.keySet()){
             this.idStructurePaneMap.get(i).requestRedraw();
         }
@@ -252,8 +279,15 @@ public class Piping extends Thread{
         this.idStructurePaneMap.put(id,structurePane);
     }
 
-    public void setCountDownLatch(CountDownLatch latch){
+    public void setPauseCountDownLatch(CountDownLatch latch){
         this.waitForPauseToBeHandled = latch;
+    }
+    public void setSelectionCountDownLatch(CountDownLatch latch){
+        this.waitForSelection = latch;
+    }
+
+    public State getPipingState(){
+        return this.state;
     }
 
 
@@ -403,6 +437,7 @@ public class Piping extends Thread{
                     
                     if (!currentCommand.didFail()){
                         System.out.println("handling");
+                        System.out.println("we're looking at " + currentCommand);
                         currentCommand.handle();
                         System.out.println("handled");
                         String response;

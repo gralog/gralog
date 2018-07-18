@@ -300,6 +300,8 @@ public class Console extends VBox implements GralogWindow{
         Text t = new Text();
         t.setText(text);
         t.setFont(Font.font ("Verdana", 12));
+        t.setFill(Color.rgb(82, 86, 91));
+
 
         finalizeTextAdd(t);
 

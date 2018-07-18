@@ -328,10 +328,11 @@ public class StructurePane extends StackPane implements StructureListener {
                     break;
 
                 case SPACE:
+                    System.out.println("space rhymes with face");
                     Piping myPiping = this.getPiping();
                     if (myPiping != null && myPiping.isInitialized()){
                         if (myPiping.state == Piping.State.Paused){
-                            System.out.println("handlePlay");
+
                             this.handlePlay();
                         }else if(myPiping.state == Piping.State.InProgress){
                             this.handleSpontaneousPause();
@@ -360,7 +361,7 @@ public class StructurePane extends StackPane implements StructureListener {
         this.pipingUnderway = true;
         myPiping.waitForPauseToBeHandled.countDown();
         CountDownLatch newLatch = new CountDownLatch(1);
-        myPiping.setCountDownLatch(newLatch);
+        myPiping.setPauseCountDownLatch(newLatch);
         Platform.runLater(()->{
             PluginControlPanel.notifyPlayRequested();
         });
@@ -422,15 +423,21 @@ public class StructurePane extends StackPane implements StructureListener {
         return true;
     }
 
+   
+
 
     private void onMousePressed(MouseEvent e){
+
         Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
+
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
         IMovable selected = structure.findObject(lastMouseX, lastMouseY);
 
         //group selection handling for primary mouse button
         if(e.isPrimaryButtonDown()){
+            
+            
 
             //if selection hit something, select
             if (selected != null) {
@@ -479,12 +486,23 @@ public class StructurePane extends StackPane implements StructureListener {
         this.requestRedraw();
     }
     private void onMouseReleased(MouseEvent e){
+
         MouseButton b = e.getButton();
 
         Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
         IMovable selected = structure.findObject(lastMouseX, lastMouseY);
+
+        //Start: handle response to piping wanting a user selected vertex
+        if (!wasDraggingPrimary){
+            if (this.getPiping() != null && this.getPiping().getPipingState() == Piping.State.WaitingForSelection && selected != null){
+                System.out.println("dafuq");
+
+                this.getPiping().profferSelectedObject(selected);
+            }
+        }
+        //End
 
         if (dragging != null && hasGrid && snapToGrid) {
             structure.snapToGrid(gridSize);
@@ -547,6 +565,7 @@ public class StructurePane extends StackPane implements StructureListener {
         this.requestRedraw();
     }
     private void onMouseDragged(MouseEvent e) {
+
         if(e.isPrimaryButtonDown()){
             wasDraggingPrimary = true;
         }
@@ -684,6 +703,7 @@ public class StructurePane extends StackPane implements StructureListener {
         this.needsRepaintLock.lock();
         try {
             if (needsRepaint) {
+
                 draw(canvas.getGraphicsContext2D());
                 needsRepaint = false;
             }
@@ -737,6 +757,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
         //draw the selection box
         if(selectionBoxDragging){
+
             Point2D boxStartScreen = modelToScreen(boxingStartingPosition);
             ggc.selectionRectangle(boxStartScreen, boxingEndingPosition, selectionBoxColor);
         }

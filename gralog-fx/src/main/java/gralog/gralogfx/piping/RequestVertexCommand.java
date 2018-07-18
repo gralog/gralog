@@ -30,11 +30,17 @@ public class RequestVertexCommand extends CommandForGralogToExecute {
 
         this.selectionFunction.get();
         this.piping.state = Piping.State.WaitingForSelection;
-        try{ 
+        
+        try{
+            this.piping.redrawMyStructurePanes();
+            this.piping.setClassSelectionIsWaitingFor(Vertex.class);
             this.waitForSelection.await();
         }catch(Exception e){
             e.printStackTrace();
         }
+        this.piping.state = Piping.State.InProgress;
+        Vertex v = (Vertex)this.piping.getSelectedObject();
+        this.setResponse(Integer.toString(v.getId()));
         System.out.println("all done!");
 
         
