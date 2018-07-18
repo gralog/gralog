@@ -1172,12 +1172,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         ArrayList<Edge> tempEdges = new ArrayList<>();
 
         NodeList children = gnode.getChildNodes();
+        System.out.println(children);
         for (int i = 0; i < children.getLength(); ++i) {
             Node childNode = children.item(i);
             if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
             Element child = (Element) childNode;
+            System.out.println(child.getTagName());
             Object obj = PluginManager.instantiateClass(child.getTagName());
             if (obj instanceof Vertex) {
                 V v = addVertex();
@@ -1205,27 +1207,36 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(stream);
         doc.getDocumentElement().normalize();
-
         Element root = doc.getDocumentElement();
         if (!root.getTagName().equalsIgnoreCase("graphml"))
             throw new Exception("Not a GraphML file");
 
         NodeList children = root.getChildNodes();
-
         for (int i = children.getLength() - 1; i >= 0; --i) {
             Node childNode = children.item(i);
             if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
             Element child = (Element) childNode;
-
-            Object result = PluginManager.instantiateClass(child.getTagName());
+            String className = child.getTagName();		// catch additional tag name(should be type) = buechiautomat/automaton if existent
+            if (child.getAttributes().getNamedItem("edgedefault")!=null) {
+            	if (child.getAttributes().getNamedItem("edgedefault").getNodeValue().equals("directed")) {
+            		if (child.getAttributes().getNamedItem("name")!=null) {
+            			className = child.getAttributes().getNamedItem("name").getNodeValue();
+            		} else {
+            			className = "digraph";
+            		}
+            	}
+            }
+            Object result = PluginManager.instantiateClass(className);
+            System.out.println("GralogStruc " + result);
             if (result == null)
                 continue;
-
+            System.out.println("After " + result);
             if (result instanceof Structure) {
                 ((Structure) result).fromXml(child);
+                System.out.println("After: " + result);
                 return (Structure) result;
-            }
+            } 
         }
 
         return null;

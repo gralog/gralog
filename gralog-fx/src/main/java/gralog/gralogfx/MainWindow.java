@@ -307,6 +307,7 @@ public class MainWindow extends Application {
         // }
 
         try{
+<<<<<<< HEAD
             // this.waitForPause = new CountDownLatch(1);
 
             CountDownLatch waitForPause = new CountDownLatch(1);
@@ -317,6 +318,10 @@ public class MainWindow extends Application {
             this.tabs.getCurrentStructurePane().setPiping(pipeline);
             // pipeline.subscribe(this.pluginControlPanel);
             final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
+=======
+            Piping pipeline = new Piping();
+            final String fileName = "/home/michelle/gralog/gralog/gralog-layout/layout_python.py";//  "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
+>>>>>>> graphLayouts
 
             Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
             if (!initSuccess){
