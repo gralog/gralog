@@ -69,9 +69,8 @@ public class Dialog {
 
     private void filterWidth(ArrayList<Vertex> what, ArrayList<Vertex> to, double width){
         for (Vertex v : what){
-            if (v.radius == width){ // radius?
+            if (v.radius == width) // radius?
                 to.add(v);
-            }
         }
     }
     private void filterThickness(ArrayList<Vertex> what, ArrayList<Vertex> to, double thickness){
@@ -201,7 +200,6 @@ public class Dialog {
                         return;
                     }
                     filterWeight(what, to, weight);
-                    what = to;
                     break;
                 case "EDGETYPE":
                     String edgeType = parameters.get(i + 1);
@@ -210,17 +208,14 @@ public class Dialog {
                         return;
                     }
                     filterEdgeType(what, to, edgeType);
-                    what = to;
                     break;
                 case "COLOR":
-                    System.out.println("COLOR!err");
                     String color = parameters.get(i + 1);
                     if (!GralogColor.isColor(color)) {
                         errorMsg = "Could not recognise the value for \"color\".\n";
                         return;
                     }
                     filterEdgeColor(what, to, color);
-                    what = to;
                     break;
 
 
@@ -228,164 +223,132 @@ public class Dialog {
         }
     }
 
+    // checks if parameters are correct: colours are colours, number are numbers and so on
+    // returns a HashMap<property,value>
+    // empty if "NOCONDITION" is a parameter
+    private HashMap<String,String> getParameters(ArrayList<String> parameters){
+        HashMap<String, String> propertyValue = new HashMap<>();
+        for (int i = 0; i < parameters.size(); i += 2){
+            switch (parameters.get(i)){
+                case "STROKE": case "COLOR": case "FILL":
+                    if (GralogColor.isColor(parameters.get(i+1)))
+                        propertyValue.put(parameters.get(i),parameters.get(i+1));
+                    else
+                        errorMsg = "Warning: " + parameters.get(i+1) + " is not a color; skippping this parameter.\n";
+                    break;
+                case "WIDTH": case "THICKNESS": case "HEIGHT": case "SIZE": // double
+                    if (! parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")) {
+                        errorMsg = "\"width\" must be a number. Format: [0-9](.[0-9]+)?; skipping this parameter.\n";
+                        break;
+                    }
+                    propertyValue.putIfAbsent(parameters.get(i),parameters.get(i+1));
+                    break;
+                case "ID": case "DEGREE": case "INDEGREE": case "OUTDEGREE":
+                    if (parameters.get(i+1).matches("\\d+")) {
+                        errorMsg = parameters.get(i) + " must be a number. Format: [0-9]+\n";
+                        break;
+                    }
+                    propertyValue.put(parameters.get(i),parameters.get(i+1));
+                    break;
+                case "SHAPE":
+                    if (!RenderingShape.isShape(parameters.get(i+1))){
+                        errorMsg = "Could not recognise the value for \"shape\"; skipping this parameter.\n";
+                        break;
+                    }
+                case "SELFLOOP": case "NOSELFLOOP": case "LABEL": case "NOLABEL":
+                    propertyValue.put(parameters.get(i),"");
+                case "NOCONDITION":
+                    propertyValue.clear();
+                    return propertyValue;
+
+            }
+
+        }
+
+    }
+
+    // try to convert a string parameter s with key paramKey to Double
+    private Double parseReal(String s, String paramKey){
+        Double result = -1.0;
+        try {result = Double.valueOf(s);}
+        catch (NumberFormatException e){
+            errorMsg = "Could not recognise the value for " + paramKey + "; skipping this parameter.\n"; // this shouldn't happen
+        return result;
+    }
+}
+
+    // try to convert a string parameter s with key paramKey to Integer
+    private Integer parseInt(String s, String paramKey){
+        Integer result = -1;
+        try {result = Integer.valueOf(s);}
+        catch (NumberFormatException e){
+            errorMsg = "Could not recognise the value for " + paramKey + "; skipping this parameter.\n"; // this shouldn't happen
+            return result;
+        }
+    }
+
     // what: list to filter from, to: list to add items to
     // the function iterates over parameters, in an iteration extracts the next parameter and filers according to it
     private void filterVertices(ArrayList<Vertex> what, ArrayList<Vertex> to, ArrayList<String> parameters) {
-        for (int i = 0; i < parameters.size(); i += 2){
-            System.out.println("what = [" + what + "], to = [" + to + "], parameters = [" + parameters + "]");
-            System.out.println("i = " + i);
-            switch (parameters.get(i)){
-                case "STROKE": case "COLOR":
-                    String strokeColor = parameters.get(i+1);
-                    if (GralogColor.isColor(strokeColor)) {
-                        filterStroke(what, to, strokeColor);
-                        what = to;
-                    }
-                    else{
-                        errorMsg = "\"(stroke) color\" must be a color.\n";
-                        return;
-                    }
-                    break;
+        HashMap<String,String> propertyValue = getParameters(parameters);
+        if (propertyValue.isEmpty()) {
+            to.addAll(what);
+            return;
+        }
+        for (Vertex v : what){
+            boolean filteredOut = false;
+            for (String property : propertyValue.keySet()){
+                switch (property){
+                    case "STROKE": case "COLOR":
+                        if (!v.strokeColor.name().equals(propertyValue.get(property)))
+                            to.add(v);
+                        break;
+                    case "FILL":
+                        if (v.fillColor.name().equals(propertyValue.get(property)))
+                            to.add(v);
+                        break;
+                    case "WIDTH":
+                        if (v.radius == parseReal(propertyValue.get(property),"WIDTH")) { // TODO: check: radius?
+                            to.add(v);
+                            break;
+                        }
+                    case "THICKNESS":
+                        if (v.strokeWidth == parseReal(propertyValue.get(property),"THICKNESS"))
+                            to.add(v);
+                        break;
 
-                case "FILL":
-                    System.out.println(ANSI_RED + "filterVertices. Case FILL" + ANSI_RESET);
-                    String fillColor = parameters.get(i+1);
-                    if (GralogColor.isColor(fillColor)) {
-                        System.out.println("Is color, entring filterFill");
-                        filterFill(what, to, fillColor);
-                        what = to;
-                    }
-                    else{
-                        errorMsg = "\"stroke\" must be a color.\n";
-                        return;
-                    }
-                    break;
-                case "WIDTH":
-                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
-                        errorMsg = "\"width\" must be a number. Format: [0-9](.[0-9]+)?\n";
-                        return;
-                    }
-                    Double width;
-                    try {width = Double.valueOf(parameters.get(i+1));}
-                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"width\".\n"; return;}
-                    filterWidth(what,to, width);
-                    what = to;
-                    break;
-                case "NOCONDITION":
-                    System.out.println("What: " + what);
-                    to.addAll(what);
-                    what = to;
-                    System.out.println("To" + to);
-                    return;
-                case "THICKNESS":
-                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
-                        errorMsg = "\"thickness\" must be a number. Format: [0-9](.[0-9]+)?\n";
-                        return;
-                    }
-                    Double thickness;
-                    try {thickness = Double.valueOf(parameters.get(i+1));}
-                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"thickness\".\n"; return;}
-                    filterThickness(what,to, thickness);
-                    what = to;
-                    break;
-                case "HEIGHT":
-                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
-                        errorMsg = "\"height\" must be a number. Format: [0-9](.[0-9]+)?\n";
-                        return;
-                    }
-                    Double height;
-                    try {height = Double.valueOf(parameters.get(i+1));}
-                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"height\".\n"; return;}
-                    filterHeight(what,to, height);
-                    what = to;
-                    break;
-                case "SIZE":
-                    if (parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")){
-                        errorMsg = "\"size\" must be a number. Format: [0-9](.[0-9]+)?\n";
-                        return;
-                    }
-                    Double size;
-                    try {size = Double.valueOf(parameters.get(i+1));}
-                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"size\".\n"; return;}
-                    filterSize(what,to, size);
-                    what = to;
-                    break;
-                case "ID":
-                    if (parameters.get(i+1).matches("\\d+")){
-                        errorMsg = "\"id\" must be a number. Format: [0-9]+\n";
-                        return;
-                    }
-                    Integer id;
-                    try {id= Integer.valueOf(parameters.get(i+1));}
-                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"id\".\n"; return;}
-                    filterID(what,to, id);
-                    what = to;
-                    break;
-                case "SHAPE":
-                    String shape = parameters.get(i+1);
-                    if (!RenderingShape.isShape(shape)){
-                        errorMsg = "Could not recognise the value for \"shape\".\n"; return;
-                    }
-                    filterShape(what,to,shape);
-                    what = to;
-                    break;
-                case "DEGREE":
-                    if (parameters.get(i+1).matches("\\d+")){
-                        errorMsg = "\"degree\" must be a number. Format: [0-9]+\n";
-                        return;
-                    }
-                    Integer degree;
-                    try {degree= Integer.valueOf(parameters.get(i+1));}
-                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"degree\".\n"; return;}
-                    filterDegree(what,to, degree);
-                    what = to;
-                    break;
-                case "INDEGREE":
-                    if (parameters.get(i+1).matches("\\d+")){
-                        errorMsg = "\"indegree\" must be a number. Format: [0-9]+\n";
-                        return;
-                    }
-                    Integer indegree;
-                    try {indegree= Integer.valueOf(parameters.get(i+1));}
-                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"indegree\".\n"; return;}
-                    filterInDegree(what,to, indegree);
-                    what = to;
-                    break;
-                case "OUTDEGREE":
-                    if (parameters.get(i+1).matches("\\d+")){
-                        errorMsg = "\"outdegree\" must be a number. Format: [0-9]+\n";
-                        return;
-                    }
-                    Integer outdegree;
-                    try {outdegree= Integer.valueOf(parameters.get(i+1));}
-                    catch (NumberFormatException e){errorMsg = "Could not recognise the value for \"outdegree\".\n"; return;}
-                    filterOutDegree(what,to, outdegree);
-                    what = to;
-                    break;
-                case "SELFLOOP":
-                    filterHasSelfloop(what,to);
-                    what = to;
-                    break;
+                    case "HEIGHT":
+                        if (v.textHeight == parseReal(propertyValue.get(property),"THICKNESS"))
+                            to.add(v);
+                        break;
+                    case "SIZE":
+                        if (v.radius == parseReal(propertyValue.get(property),"THICKNESS")) // TODO: check
+                            to.add(v);
+                        break;
+                    case "ID":
+                        if (v.id == parseInt(propertyValue.get(property),"ID"))
+                            to.add(v);
+                        break;
+                    case "DEGREE":
+                        if (v.getDegree() == parseInt(propertyValue.get(property),"DEGREE"))
+                            to.add(v);
+                        break;
+                    case "INDEGREE":
+                        if (v.getInDegree() == parseInt(propertyValue.get(property),"INDEGREE"))
+                            to.add(v);
+                        break;
+                    case "OUTDEGREE":
+                        if (v.getOutDegree() == parseInt(propertyValue.get(property),"OUTDEGREE"))
+                            to.add(v);
+                        break;
+                    case "SHAPE":
+                        if (v.shape.equals(propertyValue.get(property)))
+                            to.add(v);
+                        break;
+                }
 
-                case "NOSELFLOOP":
-                    filterHasNoSelfloop(what,to);
-                    what = to;
-                    break;
-                case "LABEL":
-                    filterHasLabel(what,to);
-                    what = to;
-                    break;
+        }
 
-                case "NOLABEL":
-                    filterHasNoLabel(what,to);
-                    what = to;
-                    break;
-
-
-            }
-
-
-            }
 
         return;
     }
