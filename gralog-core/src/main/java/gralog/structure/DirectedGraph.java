@@ -5,6 +5,8 @@ package gralog.structure;
 import gralog.plugins.XmlName;
 import gralog.preferences.Configuration;
 
+import java.io.Serializable;
+
 /**
  *
  */
@@ -13,7 +15,7 @@ import gralog.preferences.Configuration;
     text = "",
     url = "https://en.wikipedia.org/wiki/Directed_graph")
 @XmlName(name = "digraph")
-public class DirectedGraph extends Structure<Vertex, Edge> {
+public class DirectedGraph extends Structure<Vertex, Edge> implements Serializable {
 
     @Override
     public Vertex createVertex() {

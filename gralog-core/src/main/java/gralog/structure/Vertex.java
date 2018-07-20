@@ -12,6 +12,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import gralog.core.annotations.DataField;
 
+import java.io.Serializable;
 import java.lang.reflect.*;
 import java.lang.annotation.Annotation;
 import gralog.core.annotations.DataField;
@@ -26,7 +27,7 @@ import java.util.*;
  * A vertex with a circle shape.
  */
 @XmlName(name = "node")
-public class Vertex extends XmlMarshallable implements IMovable {
+public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     @DataField(display=true,readOnly=true)
     public int id;

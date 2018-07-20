@@ -2,10 +2,12 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.rendering;
 
+import java.io.Serializable;
+
 /**
  *
  */
-public class GralogColor {
+public class GralogColor implements Serializable {
 
     public enum Colors{
         WHITE   (0xFFFFFF),

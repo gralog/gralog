@@ -23,7 +23,7 @@ public class EdgeTest {
         s.addVertex(first);
         s.addVertex(secnd);
 
-        Edge e = s.addEdge(first, secnd);
+        Edge e = s.addEdge(first, secnd, 0, null);
         e.edgeType = Edge.EdgeType.SHARP;
 
         ctrl1 = e.addControlPoint(new Vector2D(0,1), new Vector2D(0.5, 0));
@@ -80,7 +80,7 @@ public class EdgeTest {
         s.addVertex(first);
         s.addVertex(secnd);
 
-        Edge e = s.addEdge(first, secnd);
+        Edge e = s.addEdge(first, secnd, 0, null);
         e.edgeType = Edge.EdgeType.SHARP;
 
         e.addControlPoint(new Vector2D(0,1), new Vector2D(0.5, 0));
@@ -102,36 +102,6 @@ public class EdgeTest {
     public void edgeIdTest(){
         Structure s = new DirectedGraph();
 
-
-        //Simple test case
-        Vertex first = s.addVertex("");
-        Vertex secnd = s.addVertex("");
-
-        s.addVertex(first);
-        s.addVertex(secnd);
-
-        Edge one = s.addEdge(first, secnd);
-        Edge five = s.addEdge(first, secnd, 2);
-        Edge two = s.addEdge(first, secnd);
-        Edge three = s.addEdge(first, secnd, 1024);
-
-        assertEquals(0, one.id);
-        assertEquals(1, two.id);
-        assertEquals(2, five.id);
-        assertEquals(1024, three.id);
-
-        //advanced test case
-        Vertex third = s.addVertex("");
-
-        Edge a = s.addEdge(first, third);
-        Edge b = s.addEdge(first, third);
-        Edge c = s.addEdge(first, third, 200);
-        Edge d = s.addEdge(first, first);
-
-        assertEquals(3, a.id);
-        assertEquals(4, b.id);
-        assertEquals(200, c.id);
-        assertEquals(5, d.id);
 
     }
 }

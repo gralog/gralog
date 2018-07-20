@@ -10,6 +10,7 @@ import gralog.exportfilter.ExportFilter;
 import gralog.exportfilter.ExportFilterManager;
 import gralog.exportfilter.ExportFilterParameters;
 import gralog.gralogfx.input.MultipleKeyCombination;
+import gralog.gralogfx.undo.Undo;
 import gralog.preferences.Configuration;
 import gralog.gralogfx.threading.ScrollThread;
 import gralog.preferences.MenuPrefVariable;
@@ -47,7 +48,7 @@ import javafx.event.EventType;
 public class StructurePane extends StackPane implements StructureListener {
 
     public static final double DISTANCE_CURSOR_STOP_ALIGN = 0.3;
-    public static final double DISTANCE_START_ALIGN = 0.1;
+    public static final double DISTANCE_START_ALIGN = 0.3;
 
     // indices are respectively equal
     public static MenuPrefVariable[] menuVariables;
@@ -192,6 +193,7 @@ public class StructurePane extends StackPane implements StructureListener {
         addLoop.setOnAction(e -> {
             if(highlights.getSelection().size() == 1){
                 Vertex v = (Vertex)highlights.getSelection().iterator().next();
+                Undo.Record(structure);
                 structure.addEdge(v, v, config);
             }
             this.requestRedraw();
@@ -305,6 +307,12 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
+                case Z:
+                    if(e.isControlDown() || e.isMetaDown()){
+                        Undo.Revert(structure);
+                        this.requestRedraw();
+                    }
+                    break;
             }
         });
     }
@@ -377,6 +385,7 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         else if(b == MouseButton.PRIMARY){
             if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease && selectionBoxingActive){
+                Undo.Record(structure);
                 Vertex v = structure.addVertex(config);
                 v.coordinates = new Vector2D(
                         mousePositionModel.getX(),
@@ -398,6 +407,7 @@ public class StructurePane extends StackPane implements StructureListener {
             if(selected instanceof Vertex){
                 //right release on a vertex while drawing an edge = add edge
                 if(drawingEdge && currentEdgeStartingPoint != null){
+                    Undo.Record(structure);
                     structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected, config);
                 }
                 //right click opens context menu

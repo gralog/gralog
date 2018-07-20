@@ -6,11 +6,12 @@ import gralog.rendering.Vector2D;
 import javafx.util.StringConverter;
 import org.reflections.Reflections;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Set;
 
 
-public abstract class RenderingShape {
+public abstract class RenderingShape implements Serializable {
 
     /*
     * PossibleShapes needed to check in the console dialog if a property is a shape.

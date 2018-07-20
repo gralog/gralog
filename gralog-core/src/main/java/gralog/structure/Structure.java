@@ -7,6 +7,7 @@ import gralog.plugins.XmlMarshallable;
 import gralog.events.*;
 import gralog.preferences.Configuration;
 import gralog.rendering.*;
+
 import gralog.exportfilter.*;
 
 import java.util.*;
@@ -101,11 +102,21 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     //public Set<V> getVertices() { return Collections.unmodifiableSet(vertices); }
 
     public Collection<V> getVertices(){ return vertices.values(); }
+
+    /**
+     * Overrides vertices. Only for internal use
+     */
+    public void __SET_VERTICES_T(HashMap<Integer, V> verticesNew){ vertices = verticesNew; }
+    public HashMap<Integer, V> __GET_VERTICES_T(){ return vertices; }
+
+    public void __SET_EDGES_T(HashMap<Integer, E> edgesNew){ edges = edgesNew; }
+    public HashMap<Integer, E> __GET_EDGES_T(){ return edges; }
+
     /**
      * @return An unmodifiable set of edges.
      */
     public Set<E> getEdges() {
-        return new HashSet<E>(edges.values());
+        return new HashSet<>(edges.values());
     }
 
     public Set<IMovable> getAllMovablesModifiable(){
@@ -625,13 +636,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
 
-    private E addEdge(V source, V target) {
+    public E addEdge(V source, V target) {
         return addEdge(source, target, -1, null);
     }
     public E addEdge(V source, V target, Configuration config){
         return addEdge(source, target, -1, config);
     }
-    private E addEdge(V source, V target, int id) {
+    public E addEdge(V source, V target, int id) {
         return addEdge(source, target, id, null);
     }
 
