@@ -58,51 +58,44 @@ public class Dialog {
         }
     }
 
-    private void filterEdges(ArrayList<Edge> what, ArrayList<Edge> to, ArrayList<String> parameters){
-        for (int i = 0; i < parameters.size(); i += 2) {
-            switch (parameters.get(i)) {
-
-                case "WEIGHT":
-                    if (parameters.get(i + 1).matches("\\d*((\\.|,)\\d+)?")) {
-                        errorMsg = "\"weight\" must be a number. Format: [0-9](.[0-9]+)?\n";
-                        return;
-                    }
-                    Double weight;
-                    try {
-                        weight = Double.valueOf(parameters.get(i + 1));
-                    } catch (NumberFormatException e) {
-                        errorMsg = "Could not recognise the value for \"weight\".\n";
-                        return;
-                    }
-                    filterWeight(what, to, weight);
-                    break;
-                case "EDGETYPE":
-                    String edgeType = parameters.get(i + 1);
-                    if (Edge.isEdgeType(edgeType)) {
-                        errorMsg = "Could not recognise the value for \"shape\".\n";
-                        return;
-                    }
-                    filterEdgeType(what, to, edgeType);
-                    break;
-                case "COLOR":
-                    String color = parameters.get(i + 1);
-                    if (!GralogColor.isColor(color)) {
-                        errorMsg = "Could not recognise the value for \"color\".\n";
-                        return;
-                    }
-                    filterEdgeColor(what, to, color);
-                    break;
-
-
-            }
+    private void filterEdges(ArrayList<Edge> sourceList, ArrayList<Edge> targetList, ArrayList<String> parameters){
+        LinkedHashMap<String,String> propertyValue = getParameters(parameters);
+        if (propertyValue.isEmpty()) {
+            targetList.addAll(sourceList);
+            return;
         }
+        for (Edge e : sourceList){
+            if (targetList.contains(e))
+                continue;
+            boolean filteredOut = false;
+            for (String property : propertyValue.keySet()) {
+                switch (property) {
+                    case "COLOR":
+                        if (!e.color.name().equals(propertyValue.get(property)))
+                            filteredOut = true;
+                        break;
+                    case "WEIGHT":
+                        if (!(e.weight == parseReal(propertyValue.get(property), "WEIGHT"))) {
+                            filteredOut = true;
+                            break;
+                        }
+                    case "EDGETYPE":
+                        if (!(e.edgeType.name().equals(parseReal(propertyValue.get(property), "EDGETYPE"))))
+                            filteredOut = true;
+                        break;
+                }
+            }
+            if (!filteredOut)
+                targetList.add(e);
+        }
+        return;
     }
 
     // checks if parameters are correct: colours are colours, number are numbers and so on
     // returns a HashMap<property,value>
     // empty if "NOCONDITION" is a parameter
-    private HashMap<String,String> getParameters(ArrayList<String> parameters){
-        HashMap<String, String> propertyValue = new HashMap<>();
+    private LinkedHashMap<String,String> getParameters(ArrayList<String> parameters){
+        LinkedHashMap<String, String> propertyValue = new LinkedHashMap<>();
         for (int i = 0; i < parameters.size(); i += 2){
             switch (parameters.get(i)){
                 case "STROKE": case "COLOR": case "FILL":
@@ -111,7 +104,7 @@ public class Dialog {
                     else
                         errorMsg = "Warning: " + parameters.get(i+1) + " is not a color; skippping this parameter.\n";
                     break;
-                case "WIDTH": case "THICKNESS": case "HEIGHT": case "SIZE": // double
+                case "WIDTH": case "THICKNESS": case "HEIGHT": case "SIZE": case "WEIGHT":// double
                     if (! parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")) {
                         errorMsg = "\"width\" must be a number. Format: [0-9](.[0-9]+)?; skipping this parameter.\n";
                         break;
@@ -132,6 +125,13 @@ public class Dialog {
                     }
                 case "SELFLOOP": case "NOSELFLOOP": case "LABEL": case "NOLABEL":
                     propertyValue.put(parameters.get(i),"");
+                    break;
+                case "EDGETYPE":
+                    if (! Edge.isEdgeType(parameters.get(i+1))) {
+                        errorMsg = "Could not recognise the value for \"shape\".\n";
+                        break;
+                    }
+                    propertyValue.put(parameters.get(i),parameters.get(i+1));
                     break;
                 case "NOCONDITION":
                     propertyValue.clear();
@@ -168,7 +168,7 @@ public class Dialog {
     // what: list to filter from, to: list to add items to (no copies)
     // the function iterates over parameters, in an iteration extracts the next parameter and filers according to it
     private void filterVertices(ArrayList<Vertex> sourceList, ArrayList<Vertex> targetList, ArrayList<String> parameters) {
-        HashMap<String,String> propertyValue = getParameters(parameters);
+        LinkedHashMap<String,String> propertyValue = getParameters(parameters);
         if (propertyValue.isEmpty()) {
             targetList.addAll(sourceList);
             return;
@@ -319,21 +319,21 @@ public class Dialog {
                 return;
             }
 
-            // compute targetList
-            ArrayList<Vertex> to = getTargetVertexList(parameters.get(parameters.size()-1)); // where to filter to
-            parameters.remove(parameters.size()-1); // remove name of to
+            // compute targetVertexList: if it doesn't exist, create a new one
+            ArrayList<Vertex> targetVertexList = getTargetVertexList(parameters.get(parameters.size()-1)); // where to filter to
+            parameters.remove(parameters.size()-1); // remove name of targetVertexList
 
-            //compute sourceList
-            ArrayList<Vertex> sourceList = new ArrayList<>(); // where to filter from
+            //compute sourceVertexList
+            ArrayList<Vertex> sourceVertexList = new ArrayList<>(); // where to filter from
             if (parameters.get(0).equals("SELECTED"))
                 for (Object v : highlights.getSelection())
                     if (v instanceof Vertex)
-                        sourceList.add((Vertex) v);
+                        sourceVertexList.add((Vertex) v);
             if (parameters.get(0).equals("ALL"))
-                sourceList = new ArrayList<Vertex>(structure.getVertices());
+                sourceVertexList = new ArrayList<Vertex>(structure.getVertices());
             if (vertexListS.containsKey(parameters.get(0))) { // list already exists
                 System.out.println("Found vertex list " + parameters.get(0));
-                sourceList = vertexListS.get(parameters.get(0));
+                sourceVertexList = vertexListS.get(parameters.get(0));
             }
 
             // remove now unnecessary parameters
@@ -345,7 +345,7 @@ public class Dialog {
                 parameters.remove(0); // delete the identifier of sourceList
 
             // filter
-            filterVertices(sourceList,to,parameters);
+            filterVertices(sourceVertexList,targetVertexList,parameters);
 
             // clean parameters
             parameters.clear();
@@ -353,40 +353,56 @@ public class Dialog {
 
             // debug only
             System.out.println("Did filterVertices.\nsourceList: ");
-            printVertexIdList(sourceList);
+            printVertexIdList(sourceVertexList);
             System.out.println("\nto: ");
-            printVertexIdList(to);
+            printVertexIdList(targetVertexList);
             System.out.println("\n");
             System.out.println("vertexListS: ");
             printVertexListS();
             return;
         }
         if (parameters.get(1).equals("EDGES") || edgeListS.containsKey(parameters.get(0))){ // edge list
+
+            // check error
             if (parameters.get(1).equals("EDGES") && vertexListS.containsKey(parameters.get(0))){
                 errorMsg = "List " + parameters.get(parameters.size()-1) + " already exists as a vertex list. Choose another name.\n";
                 return;
             }
-            ArrayList<Edge> to = getTargetEdgeList(parameters.get(parameters.size()-1));
+
+            // compute targetEdgeList: if it doesn't exist, create a new one
+            ArrayList<Edge> targetEdgeList = getTargetEdgeList(parameters.get(parameters.size()-1));
             parameters.remove(parameters.size()-1);
-            ArrayList<Edge> sourceList = new ArrayList<Edge>();
+
+            // compute sourceEdgeList
+            ArrayList<Edge> sourceEdgeList = new ArrayList<Edge>();
             if (parameters.get(0).equals("SELECTED"))
                 for (Object v : highlights.getSelection())
                     if (v instanceof Edge)
-                        sourceList.add((Edge) v);
+                        sourceEdgeList.add((Edge) v);
             if (parameters.get(0).equals("ALL"))
-                sourceList = new ArrayList<Edge>(structure.getEdges());
+                sourceEdgeList = new ArrayList<Edge>(structure.getEdges());
             if (edgeListS.containsKey(parameters.get(0)))
-                sourceList = edgeListS.get(parameters.get(0));
+                sourceEdgeList = edgeListS.get(parameters.get(0));
 
-            parameters.remove(1);
-            parameters.remove(0);
-            filterEdges(sourceList,to,parameters);
+            // remove now unnecessary parameters
+            if (parameters.get(1).equals("EGDES")) {
+                parameters.remove(1);
+                parameters.remove(0);
+            }
+            else
+                parameters.remove(0);
+
+            // filter
+            filterEdges(sourceEdgeList,targetEdgeList,parameters);
+
+            // clean parameters
             parameters.clear();
+
             // debug only
             System.out.println("Did filterEdges.\nsourceList: ");
-            printEdgeIdList(sourceList);
+            printEdgeIdList(sourceEdgeList);
             System.out.println("\nto: ");
-            printEdgeIdList(to);
+            printEdgeIdList(targetEdgeList);
             return;
         }
 
