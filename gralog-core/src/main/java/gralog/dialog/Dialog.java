@@ -9,6 +9,125 @@ import java.util.*;
 import static gralog.dialog.DialogParser.ANSI_RED;
 import static gralog.dialog.DialogParser.ANSI_RESET;
 
+class ComparatorLEFTRIGHT implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getX() > w.coordinates.getX()) {
+            return 1;
+        }
+        else {
+            if (v.coordinates.getX() < w.coordinates.getX())
+                return -1;
+            else
+                return 0;
+        }
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorRIGHTLEFT implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getX() < w.coordinates.getX()) {
+            return 1;
+        }
+        else {
+            if (v.coordinates.getX() > w.coordinates.getX())
+                return -1;
+            else
+                return 0;
+        }
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorTOPDOWN implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getY() > w.coordinates.getY()) {
+            return 1;
+        }
+        else {
+            if (v.coordinates.getY() < w.coordinates.getY())
+                return -1;
+            else
+                return 0;
+        }
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorBOTTOMUP implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getY() < w.coordinates.getY()) {
+            return 1;
+        }
+        else {
+            if (v.coordinates.getY() > w.coordinates.getY())
+                return -1;
+            else
+                return 0;
+        }
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorIDasc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return v.id - w.id;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorIDdesc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return w.id - v.id;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorLabelAsc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return v.label.compareTo(w.label);
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorLabelDesc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return w.label.compareTo(v.label);
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
 
 public class Dialog {
 
@@ -35,26 +154,64 @@ public class Dialog {
         return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
     }
 
-    private void filterWeight(ArrayList<Edge> what, ArrayList<Edge> to, double weight){
-        for (Edge e : what){
-            if (e.weight == weight){
-                to.add(e);
-            }
-        }
-    }
-    private void filterEdgeType(ArrayList<Edge> what, ArrayList<Edge> to, String edgeType){
-        for (Edge e : what){
-            if (e.edgeType.name().equals(edgeType)){
-                to.add(e);
-            }
-        }
+    public void unionLists (ArrayList<Object> source1, ArrayList<Object> source2, ArrayList<Object> target){
+        HashSet<Object> tmp = new HashSet<Object> (source1);
+        for (Object x : source2)
+            tmp.add(x);
+        target.addAll(tmp);
     }
 
-    private void filterEdgeColor(ArrayList<Edge> what, ArrayList<Edge> to, String color){
-        for (Edge e : what){
-            if (e.color.equals(color)){
-                to.add(e);
-            }
+    // note: source1 and source2 are guaranteed to have every element only once
+    public void intersectionLists(ArrayList<Object> source1, ArrayList<Object> source2, ArrayList<Object> target){
+        HashSet tmp = new HashSet(source1);
+        for (Object x : source2)
+            if (tmp.contains(x))
+                target.add(x);
+    }
+
+    public void symmetricDifferenceLists(ArrayList<Object> source1, ArrayList<Object> source2, ArrayList<Object> target){
+        HashSet tmp1 = new HashSet(source1);
+        HashSet tmp2 = new HashSet(source2);
+        for (Object x : source1)
+            if (! tmp2.contains(x))
+                target.add(x);
+        for (Object x : source2)
+            if (! tmp1.contains(x))
+                target.add(x);
+    }
+
+    public void differenceLists(ArrayList<Object> source1, ArrayList<Object> source2, ArrayList<Object> target){
+        HashSet tmp = new HashSet(source2);
+        for (Object x : source1)
+            if (! tmp.contains(x))
+                target.add(x);
+    }
+
+    public void sort(ArrayList<String> parameters){
+        String listname = parameters.get(0);
+        if (! vertexListS.containsKey(listname)){
+            errorMsg = "No such list, cannot sort.\n";
+            return;
+        }
+        switch (parameters.get(1)){
+            case "LEFTTORIGHT":
+                Collections.sort(vertexListS.get(listname),new ComparatorLEFTRIGHT());
+            case "RIGHTTOLEFT":
+                Collections.sort(vertexListS.get(listname),new ComparatorRIGHTLEFT());
+            case "TOPDOWN":
+                Collections.sort(vertexListS.get(listname),new ComparatorTOPDOWN());
+            case "BOTTOMUP":
+                Collections.sort(vertexListS.get(listname),new ComparatorBOTTOMUP());
+            case "ID":
+                if (parameters.get(2).equals("ASC"))
+                    Collections.sort(vertexListS.get(listname),new ComparatorIDasc());
+                else
+                    Collections.sort(vertexListS.get(listname),new ComparatorIDdesc());
+            case "LABEL":
+                if (parameters.get(2).equals("ASC"))
+                    Collections.sort(vertexListS.get(listname), new ComparatorLabelAsc());
+                else
+                    Collections.sort(vertexListS.get(listname),new ComparatorLabelDesc());
         }
     }
 

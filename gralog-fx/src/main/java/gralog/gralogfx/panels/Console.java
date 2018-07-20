@@ -96,7 +96,6 @@ public class Console extends VBox implements GralogWindow{
         }
 
         parser.parse(text);
-        System.out.println(ANSI_RED + "\nconsole: parsed" + ANSI_RESET);
         System.out.println("text = [" + text + "], currentPane = [" + currentPane + "]");
         ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
         ArrayList<String> parameters = parser.getParameters();
@@ -176,6 +175,7 @@ public class Console extends VBox implements GralogWindow{
                                                 output(dialog.getErrorMsg());
                                                 parameters.clear();
                                                 break;
+                case SORT:                      dialog.sort(parameters);
                 case NONE:                      return;
             }
             parser.setDialogAction(NONE);

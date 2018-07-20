@@ -9,7 +9,8 @@ public enum DialogAction {
     CONNECT_LIST_A_TO_LIST_B,
     FILTER,
     HELP,
-    NONE
+    NONE,
+    SORT
 }
 
 /* possible commands
