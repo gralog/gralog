@@ -1,17 +1,30 @@
 #internal version of the preference system
-pref_id=0.0.2
-#other values
+pref_id=0.0.4
+
+#Editor
 newGraphOnStart=true
-Vertex_strokeColor=\#000000
+helpOnStart=true
+
+#Developing (not used in final program)
+Develop_requireConfirmation = true
+
+#Structure
 StructurePane_axisColor=\#000000
-Vertex_fillColor=\#FFFFFF
 StructurePane_showGrid=true
 StructurePane_snapToGrid=false
-Vertex_height=1.0
-Edge_thickness=0.025
-helpOnStart=true
-Vertex_width=1.0
 StructurePane_gridSize=1.0
+
+#Vertex
+Vertex_height=1.0
+Vertex_width=1.0
+Vertex_strokeColor=\#000000
+Vertex_fillColor=\#FFFFFF
+
+#Edge
 Edge_color=\#000000
-Edge_endPointDistance=0.2
+Edge_thickness=0.025
+Edge_endPointDistance=0.05
 Edge_startPointDistance=0
+
+#Hidden
+lastUsedStructure=

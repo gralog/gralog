@@ -3,6 +3,7 @@ import gralog.structure.*;
 import gralog.rendering.*;
 import java.util.Arrays;
 
+
 public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 	
 
@@ -14,10 +15,36 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 
 	public SetVertexStrokeColorCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
-        this.structure=structure;
+        this.structure = structure;
 		try{    
             this.changeId = Integer.parseInt(externalCommandSegments[2]);
         }catch(NumberFormatException e){
+            this.error = e;
+            this.fail();
+            return;
+        }catch(ArrayIndexOutOfBoundsException e){
+            this.error = e;
+            this.fail();
+            return;
+        }
+
+        this.vertex = this.structure.getVertexById(this.changeId);
+
+        if (this.vertex == null){
+
+            this.fail();
+            this.error = new Exception("error: vertex with id: " + this.changeId + " does not exist");
+            return;
+        }
+
+        try{
+            String color = this.externalCommandSegments[3];
+            if (color.substring(0,3).equals("hex")){
+                this.changeColor = PipingMessageHandler.colorConversionHex(color.substring(4,color.length()-1));
+            }else if(color.substring(0,3).equals("rgb")){
+                this.changeColor = PipingMessageHandler.colorConversionRGB(color.substring(4,color.length()-1));
+            }
+        }catch(Exception e){
             this.error = e;
             this.fail();
             return;
@@ -29,24 +56,6 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 
 	public void handle(){
 
-        // int changeId;
-       
-        
-        this.vertex = this.structure.getVertexById(this.changeId);
-
-        if (this.vertex == null){
-
-            this.fail();
-        	this.error = new Exception("error: vertex does not exist");
-            return;
-        }
-
-        if (this.externalCommandSegments.length == 4){
-            this.changeColor = PipingMessageHandler.colorConversion(Arrays.copyOfRange(externalCommandSegments, 3, 4));
-        }else{
-            this.changeColor = PipingMessageHandler.colorConversion(Arrays.copyOfRange(externalCommandSegments, 3, 6));
-        }
-        // this.changeColor = PipingMessageHandler.colorConversion(externalCommandSegments);
         
         this.vertex.strokeColor = changeColor;
 

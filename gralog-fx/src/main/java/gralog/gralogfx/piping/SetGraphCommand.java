@@ -6,10 +6,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import gralog.exportfilter.*;
 
+
 import gralog.exportfilter.TrivialGraphFormatExport;
 
 
-public class SendGraphCommand extends CommandForGralogToExecute {
+public class SetGraphCommand extends CommandForGralogToExecute {
 	
 
 	GraphType format;
@@ -17,7 +18,7 @@ public class SendGraphCommand extends CommandForGralogToExecute {
 
 
 
-	public SendGraphCommand(String[] externalCommandSegments,Structure structure){
+	public SetGraphCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
@@ -58,6 +59,7 @@ public class SendGraphCommand extends CommandForGralogToExecute {
 
 
         if (this.format == GraphType.Xml){
+        	System.out.println("Worked until here"+this);
             //parse the xml, possibly in a multi-line manner
         }
 

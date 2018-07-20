@@ -46,7 +46,7 @@ public class MainMenu {
      */
     public static class Handlers {
 
-        MenuAction onOpen, onSave, onDirectInput, onLoadPlugin, onExit;
+        MenuAction onOpen, onSaveAs, onSave, onDirectInput, onLoadPlugin, onExit;
         MenuAction onUndo, onRedo, onCut, onCopy, onPaste, onDelete;
         MenuAction onAlignHorizontally, onAlignVertically;
         MenuAction onAboutGralog, onAboutGraph;
@@ -59,6 +59,7 @@ public class MainMenu {
     // We remember some menu items because we want to disable them when there
     // is no structure available.
     private MenuItem menuFileSave;
+    private MenuItem menuFileSaveAs;
 
     // We need to keep track of the following submenus because they are
     // dynamically generated.
@@ -115,14 +116,19 @@ public class MainMenu {
         menuFileNew = new Menu("New");
         menuFileGenerators = new Menu("Generators");
 
-        // "Save" is initially disabled because we do not have a structure.
-        menuFileSave = createMenuItem("Save graph as...", handlers.onSave);
+
+        menuFileSave = createMenuItem("Save graph", handlers.onSave);
         menuFileSave.setDisable(true);
+
+        // "Save" is initially disabled because we do not have a structure.
+        menuFileSaveAs = createMenuItem("Save graph as...", handlers.onSaveAs);
+        menuFileSaveAs.setDisable(true);
         menuFile.getItems().addAll(
             menuFileNew, menuFileGenerators, new SeparatorMenuItem(),
             createMenuItem("Open graph...", handlers.onOpen),
             createMenuItem("Direct input...", handlers.onDirectInput),
-            menuFileSave,
+                menuFileSave,
+                menuFileSaveAs,
             new SeparatorMenuItem(),
             createMenuItem("Load plugin...", handlers.onLoadPlugin),
             new SeparatorMenuItem(),
@@ -144,8 +150,10 @@ public class MainMenu {
                 createMenuItem("Paste", handlers.onPaste),
                 createMenuItem("Delete", handlers.onDelete),
                 new SeparatorMenuItem(),
-                createMenuItem("Align Horizontally", handlers.onAlignHorizontally, new KeyCodeCombination(KeyCode.H, KeyCombination.ALT_DOWN)),
-                createMenuItem("Align Vertically", handlers.onAlignVertically, new KeyCodeCombination(KeyCode.V, KeyCombination.ALT_DOWN))
+                createMenuItem("Align Horizontally", handlers.onAlignHorizontally,
+                        new KeyCodeCombination(KeyCode.H, KeyCombination.ALT_DOWN)),
+                createMenuItem("Align Vertically", handlers.onAlignVertically,
+                        new KeyCodeCombination(KeyCode.V, KeyCombination.ALT_DOWN))
         );
         return menuEdit;
     }
@@ -231,7 +239,8 @@ public class MainMenu {
      */
     public void setCurrentStructure(Structure s) {
         this.currentStructure = s;
-        menuFileSave.setDisable(s == null);
+        menuFileSave.setDisable(s == null || !s.hasFileReference());
+        menuFileSaveAs.setDisable(s == null);
         updateAlgorithms();
     }
 }

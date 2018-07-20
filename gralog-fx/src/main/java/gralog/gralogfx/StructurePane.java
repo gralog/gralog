@@ -2,12 +2,18 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import gralog.exportfilter.ExportFilter;
+import gralog.exportfilter.ExportFilterDescription;
+import gralog.exportfilter.ExportFilterManager;
+import gralog.exportfilter.ExportFilterParameters;
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.preferences.Configuration;
 import gralog.gralogfx.threading.ScrollThread;
 import gralog.preferences.MenuPrefVariable;
+import gralog.preferences.Preferences;
 import gralog.structure.*;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -17,11 +23,13 @@ import gralog.gralogfx.piping.Piping;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import gralog.structure.controlpoints.ControlPoint;
+import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -31,6 +39,7 @@ import javafx.scene.layout.StackPane;
 import javafx.geometry.Point2D;
 
 import javafx.event.EventType;
+import javafx.stage.FileChooser;
 
 
 /**
@@ -167,6 +176,7 @@ public class StructurePane extends StackPane implements StructureListener {
         vertexMenu.getItems().addAll(addLoop, copy, delete);
 
     }
+
     public Structure getStructure() {
         return structure;
     }
@@ -734,7 +744,41 @@ public class StructurePane extends StackPane implements StructureListener {
     public void edgeChanged(EdgeEvent e) {
     }
 
+    public void saveStructure(){
+        if(structure.hasFileReference()){
+            try{
+                structure.getFileReference();
+                File file = new File(structure.getFileReference());
 
+                // has the user selected the native file-type or an export-filter?
+                String extension = file.getName(); // unclean way of getting file extension
+                int idx = extension.lastIndexOf('.');
+                extension = idx > 0 ? extension.substring(idx + 1) : "";
+
+                ExportFilter exportFilter = ExportFilterManager
+                        .instantiateExportFilterByExtension(structure.getClass(), extension);
+                if (exportFilter != null) {
+                    // configure export filter
+                    ExportFilterParameters params = exportFilter.getParameters(structure);
+                    if (params != null) {
+                        ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, null);
+                        exportStage.showAndWait();
+                        if (!exportStage.dialogResult)
+                            return;
+                    }
+                    exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
+                } else {
+                    structure.writeToFile(file.getAbsolutePath());
+                }
+                System.out.println("Saving " + file.getName() + " to: \t" + file.getPath());
+            }catch(Exception ex){
+                ExceptionBox x = new ExceptionBox();
+                x.showAndWait(ex);
+            }
+        }else{
+            MainWindow.Main_Application.onSaveAs();
+        }
+    }
     /**
      * Requests to close the current structure pane. After closing,
      * can also execute a given Runnable.
@@ -748,28 +792,68 @@ public class StructurePane extends StackPane implements StructureListener {
             return;
         }
 
-        //open a close save context window
-        Alert con = new Alert(Alert.AlertType.NONE);
-        con.setTitle("Close Structure");
-        con.setHeaderText("Do you want to discard all changes to this structure?");
+        if(!Preferences.getBoolean("Develop_requireConfirmation", true)){
+            afterClose.run();
+            return;
+        }
 
         ButtonType save = new ButtonType("Save Changes", ButtonBar.ButtonData.APPLY);
         ButtonType discard = new ButtonType("Discard", ButtonBar.ButtonData.NO);
         ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        con.getButtonTypes().addAll(save, discard, cancel);
+        String message = "You have made changes to this structure. Do you want to save them?";
 
-        Optional<ButtonType> result = con.showAndWait();
+        Alert alert = createAlertWithOptOut(Alert.AlertType.CONFIRMATION, "Exit", null,
+                message, "Never. (dev)",
+                param -> Preferences.setBoolean("Develop_requireConfirmation", !param), save, discard, cancel);
 
-        if (result.get() == cancel) {
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if(result.get() == save){
+            saveStructure();
+            if(structure.hasFileReference()){
+                Preferences.setString("lastUsedStructure", structure.getFileReference());
+            }
             afterClose.run();
-        } else {
-            System.out.println("Saved or discarded");
+        }else if(result.get() == discard){
             afterClose.run();
         }
+        //else canceling the closing routine
     }
 
     public Highlights getHighlights() {
         return highlights;
+    }
+
+    public static Alert createAlertWithOptOut(Alert.AlertType type, String title, String headerText,
+                                              String message, String optOutMessage, Consumer<Boolean> optOutAction,
+                                              ButtonType... buttonTypes) {
+        Alert alert = new Alert(type);
+        // Need to force the alert to layout in order to grab the graphic,
+        // as we are replacing the dialog pane with a custom pane
+        alert.getDialogPane().applyCss();
+        Node graphic = alert.getDialogPane().getGraphic();
+        // Create a new dialog pane that has a checkbox instead of the hide/show details button
+        // Use the supplied callback for the action of the checkbox
+        alert.setDialogPane(new DialogPane() {
+            @Override
+            protected Node createDetailsButton() {
+                CheckBox optOut = new CheckBox();
+                optOut.setText(optOutMessage);
+                optOut.setOnAction(e -> optOutAction.accept(optOut.isSelected()));
+                return optOut;
+            }
+        });
+        alert.getDialogPane().getButtonTypes().addAll(buttonTypes);
+        alert.getDialogPane().setContentText(message);
+        // Fool the dialog into thinking there is some expandable content
+        // a Group won't take up any space if it has no children
+        alert.getDialogPane().setExpandableContent(new Group());
+        alert.getDialogPane().setExpanded(true);
+        // Reset the dialog graphic using the default style
+        alert.getDialogPane().setGraphic(graphic);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        return alert;
     }
 }

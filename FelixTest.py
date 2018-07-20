@@ -8,51 +8,32 @@ from random import randint
 
 
 
-g = Graph("undirected");#type \in buechi, directed, etc. or None
+g = Graph(None);#type \in buechi, directed, etc. or None
 
-h = Graph("undirected");
+# h = Graph("undirected");
 
 # g1 = Graph("directed");
 
 
-
-numV = 10;
-
 vertices = [];
-
-gregarity = [0];
-
-
-
-g.track("g vertices",vertices);
-
-
-for x in range(numV):
+edges = [];
+for x in range(2):
 	vertices.append(g.addVertex());
-	h.addVertex();
-	g.setVertexLabel(x,str(x));
-	
-g.pauseUntilSpacePressed();
+
+for x in vertices:
+	x.setColor("purple");
+	x.setStrokeColor("green");
 
 for x in vertices:
 	for y in vertices:
-		g.addEdge(x,y);
-		# g.pauseUntilSpacePressed(2);
-	# g.pauseUntilSpacePressed(1);
-
-g.pauseUntilSpacePressed();
-
-for x in vertices:
-	for y in vertices:
-		g.setEdgeContour((x,y),"dashed");
-		
-	g.pauseUntilSpacePressed(5);
+		e=g.addEdge(x,y);
+		edges.append(e);
+		e.setColor("brown");
 
 
-g.pauseUntilSpacePressed();
 
-for x in vertices:
-	g.deleteVertex(x);
+# first = 
+
 
 
 

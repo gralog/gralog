@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 /**
  *
  */
-@XmlName(name = "state")
+//@XmlName(name = "n")
 public class State extends Vertex {
 
     public Boolean startState = false;

@@ -5,6 +5,7 @@ import gralog.rendering.shapes.*;
 import java.util.Iterator;
 import java.lang.reflect.Constructor;
 
+
 public class SetVertexShapeCommand extends CommandForGralogToExecute {
     
 
