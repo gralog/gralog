@@ -154,7 +154,7 @@ public class Dialog {
         return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
     }
 
-    public void unionLists (ArrayList<Object> source1, ArrayList<Object> source2, ArrayList<Object> target){
+    public void unionLists (ArrayList source1, ArrayList source2, ArrayList target){
         HashSet<Object> tmp = new HashSet<Object> (source1);
         for (Object x : source2)
             tmp.add(x);
@@ -162,14 +162,14 @@ public class Dialog {
     }
 
     // note: source1 and source2 are guaranteed to have every element only once
-    public void intersectionLists(ArrayList<Object> source1, ArrayList<Object> source2, ArrayList<Object> target){
+    public void intersectionLists(ArrayList source1, ArrayList source2, ArrayList target){
         HashSet tmp = new HashSet(source1);
         for (Object x : source2)
             if (tmp.contains(x))
                 target.add(x);
     }
 
-    public void symmetricDifferenceLists(ArrayList<Object> source1, ArrayList<Object> source2, ArrayList<Object> target){
+    public void symmetricDifferenceLists(ArrayList source1, ArrayList source2, ArrayList target){
         HashSet tmp1 = new HashSet(source1);
         HashSet tmp2 = new HashSet(source2);
         for (Object x : source1)
@@ -180,13 +180,34 @@ public class Dialog {
                 target.add(x);
     }
 
-    public void differenceLists(ArrayList<Object> source1, ArrayList<Object> source2, ArrayList<Object> target){
+    public void differenceLists(ArrayList source1, ArrayList source2, ArrayList target){
         HashSet tmp = new HashSet(source2);
         for (Object x : source1)
             if (! tmp.contains(x))
                 target.add(x);
     }
 
+    public void twoListsOp(ArrayList<String> parameters){
+        if (! vertexListS.containsKey(parameters.get(1))){
+            errorMsg = parameters.get(1) + " is not a name of a vertex list.\n";
+            return;
+        }
+        if (! vertexListS.containsKey(parameters.get(2))){
+            errorMsg = parameters.get(2) + " is not a name of a vertex list.\n";
+            return;
+        }
+        ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(3));
+        switch (parameters.get(0)){ // union, intersection, difference, symmetric
+            case "UNION":         unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+            case "INTERSECTION":  intersectionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+            case "DIFFERENCE":    differenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+            case "SYMMETRIC":     symmetricDifferenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+        }
+
+    }
+
+    
+    
     public void sort(ArrayList<String> parameters){
         String listname = parameters.get(0);
         if (! vertexListS.containsKey(listname)){
@@ -216,7 +237,7 @@ public class Dialog {
     }
 
     private void filterEdges(ArrayList<Edge> sourceList, ArrayList<Edge> targetList, ArrayList<String> parameters){
-        LinkedHashMap<String,String> propertyValue = getParameters(parameters);
+        LinkedHashMap<String,String> propertyValue = getConditions(parameters);
         if (propertyValue.isEmpty()) {
             targetList.addAll(sourceList);
             return;
@@ -248,10 +269,10 @@ public class Dialog {
         return;
     }
 
-    // checks if parameters are correct: colours are colours, number are numbers and so on
+    // checks if condiitons are correct: colours are colours, number are numbers and so on
     // returns a HashMap<property,value>
-    // empty if "NOCONDITION" is a parameter
-    private LinkedHashMap<String,String> getParameters(ArrayList<String> parameters){
+    // empty if "NOCONDITION" is a condition
+    private LinkedHashMap<String,String> getConditions(ArrayList<String> parameters){
         LinkedHashMap<String, String> propertyValue = new LinkedHashMap<>();
         for (int i = 0; i < parameters.size(); i += 2){
             switch (parameters.get(i)){
@@ -325,7 +346,7 @@ public class Dialog {
     // what: list to filter from, to: list to add items to (no copies)
     // the function iterates over parameters, in an iteration extracts the next parameter and filers according to it
     private void filterVertices(ArrayList<Vertex> sourceList, ArrayList<Vertex> targetList, ArrayList<String> parameters) {
-        LinkedHashMap<String,String> propertyValue = getParameters(parameters);
+        LinkedHashMap<String,String> propertyValue = getConditions(parameters);
         if (propertyValue.isEmpty()) {
             targetList.addAll(sourceList);
             return;
@@ -409,7 +430,7 @@ public class Dialog {
 
 
     // returns list of vertices to save the result of filtering to
-    // if the list with key s already exists, vertices are added to it (i fnot already there)
+    // if the list with key s already exists, vertices are added to it (if not already there)
     private ArrayList<Vertex> getTargetVertexList(String s){
         if (vertexListS.containsKey(s)) {
             return vertexListS.get(s);

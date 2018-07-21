@@ -33,6 +33,46 @@ public class DialogParser {
             "NO", "CONDITION", "LABEL", "X", "Q", "EXIT", "ABORT", "CANCEL",
             "SORT", "LEFTTORIGHT", "RIGHTTOLEFT", "TOPDOWN", "BOTTOMUP"};
 
+
+/*      CONSTRUCTOR      SETA     GETA        */
+
+    public DialogParser(){
+        dialogAction = NONE;
+        this.dialogState = DONE;
+        parameters = new ArrayList<String>();
+        errorMsg = "";
+    }
+
+    public void addParameter(String parameter){parameters.add(parameter);}
+
+    public void setDialogState(DialogState dialogState) {this.dialogState = dialogState;} // maybe make dialogState public
+    public void setDialogAction(DialogAction dialogAction) {this.dialogAction = dialogAction;} // maybe make dialogState public
+    public void clearParameters() {this.parameters.clear();}
+    public String getErrorMsg() {
+        return errorMsg;
+    }
+
+    public void setErrorMsg(String s){ errorMsg = s; }
+
+    public ActionType getType() {
+        return actionType;
+    }
+
+    public DialogAction getDialogAction() {
+        return dialogAction;
+    }
+
+    public ArrayList<String> getParameters() {
+        return parameters;
+    }
+
+    public DialogState getDialogState() {
+        return dialogState;
+    }
+
+
+    /*   CHECKING FORM    */
+
     private boolean hasValueForm(String s){
         // color or number or "PLAIN" or "DOTTED" or "DASHED"
         return (isColorValue(s) || s.matches("-?\\d*((\\.|,)\\d+)?")); // ... or is digit
@@ -47,6 +87,8 @@ public class DialogParser {
     private boolean isColorValue(String colorValueCandidate){
         return (GralogColor.isColor(colorValueCandidate));
     }
+
+    /*         TRANSITIONS         */
 
     private void transition(DialogState dialogState){
         this.dialogState = dialogState;
@@ -87,41 +129,8 @@ public class DialogParser {
     }
 
 
+    /*          PARSE                */
 
-
-    public DialogParser(){
-        dialogAction = NONE;
-        this.dialogState = DONE;
-        parameters = new ArrayList<String>();
-        errorMsg = "";
-    }
-
-    public void addParameter(String parameter){parameters.add(parameter);}
-
-    public void setDialogState(DialogState dialogState) {this.dialogState = dialogState;} // maybe make dialogState public
-    public void setDialogAction(DialogAction dialogAction) {this.dialogAction = dialogAction;} // maybe make dialogState public
-    public void clearParameters() {this.parameters.clear();}
-    public String getErrorMsg() {
-        return errorMsg;
-    }
-
-    public void setErrorMsg(String s){ errorMsg = s; }
-
-    public ActionType getType() {
-        return actionType;
-    }
-
-    public DialogAction getDialogAction() {
-        return dialogAction;
-    }
-
-    public ArrayList<String> getParameters() {
-        return parameters;
-    }
-
-    public DialogState getDialogState() {
-        return dialogState;
-    }
 
     public boolean parse(String text) {
         System.out.println(ANSI_RED + "parse: got string: " + text + ANSI_RESET); //debugging
@@ -173,22 +182,64 @@ public class DialogParser {
                         transition(DialogState.SORT);
                         break;
                     case "UNION":
-                        transition(DialogState.UNION);
+                        transition(DialogState.TWOLISTSOP,"UNION");
                         break;
                     case "INTERSECTION":
-                        transition(DialogState.INTERSECTION);
+                        transition(DialogState.TWOLISTSOP,"INTERSECTION");
                         break;
                     case "DIFFERENCE":
-                        transition(DialogState.DIFFERENCE);
+                        transition(DialogState.TWOLISTSOP,"DIFFERENCE");
                         break;
                     case "SYMMETRIC":
-                        transition(DialogState.SYMMETRIC);
+                        transition(DialogState.TWOLISTSOP,"SYMMETRIC");
                         break;
                     default:
                         errorMsg = "Parse error. Please, try again. (Abort: A)\n";
                         return true;
                 }
             }
+
+            /*     TWO SETS OPERATIONS*/
+
+            if (this.dialogState == DialogState.TWOLISTSOP){
+                if (i == inputWords.length){
+                    errorMsg = "Choose two existing lists. (Abort: A)\n";
+                    return true;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(TWOLISTSOP_WHAT,inputWords[i]);
+                    continue;
+                }
+                errorMsg = "Choose two existing lists. (Abort: A)\n";
+                return true;
+            }
+            if (this.dialogState == DialogState.TWOLISTSOP_WHAT){
+                if (i == inputWords.length){
+                    errorMsg = "Specify the second list. (Abort: A)\n";
+                    return true;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(TWOLISTSOP_WHAT_WHAT,inputWords[i]);
+                    return true;
+                }
+                errorMsg = "Specify the second list. (Abort: A)\n";
+                return true;
+            }
+            if (this.dialogState == DialogState.TWOLISTSOP_WHAT_WHAT){
+                if (i == inputWords.length){
+                    errorMsg = "Specify the target list. (Abort: A)\n";
+                    return true;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(DONE,DialogAction.TWO_LISTS_OP,inputWords[i]);
+                    return true;
+                }
+                errorMsg = "Specify the target list. (Abort: A)\n";
+                return true;
+            }
+
+            /*    SORT    */
+
             if (this.dialogState == DialogState.SORT){
                 if (i == inputWords.length){
                     errorMsg = "What to sort? Format: <list> [LEFTRIGHT|RIGHTLEFT|TOPDOWN|BOTTOMUP|ID [ASC|DESC]|LABEL [ASC|DESC]] (Abort: A)";
@@ -212,15 +263,15 @@ public class DialogParser {
                     return true;
                 }
                 if (inputWords[i].equals("RIGHTLEFT")){
-                    transition(DONE,"RIGHTLEFT");
+                    transition(DONE,DialogAction.SORT,"RIGHTLEFT");
                     return true;
                 }
                 if (inputWords[i].equals("TOPDOWN")){
-                    transition(DONE,"TOPDOWN");
+                    transition(DONE,DialogAction.SORT,"TOPDOWN");
                     return true;
                 }
                 if (inputWords[i].equals("BOTTOMUP")){
-                    transition(DONE,"BOTTOMUP");
+                    transition(DONE,DialogAction.SORT,"BOTTOMUP");
                     return true;
                 }
                 if (inputWords[i].equals("ID")){
@@ -241,16 +292,19 @@ public class DialogParser {
                     return true;
                 }
                 if (inputWords[i].equals("ASC")){
-                    transition(DONE,"ASC");
+                    transition(DONE,DialogAction.SORT,"ASC");
                     return true;
                 }
                 if (inputWords[i].equals("DESC")){
-                    transition(DONE,"DESC");
+                    transition(DONE,DialogAction.SORT,"DESC");
                     return true;
                 }
                 errorMsg = "Ascending (ASC) or descending (DESC)?  (Abort: A)";
                 return true;
             }
+
+            /*     SELECT  DESELECT     */
+
             if (this.dialogState == SELECT) {
                 if (i == inputWords.length) {
                     errorMsg = "What to select?  Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Abort: A)\n";
@@ -336,6 +390,10 @@ public class DialogParser {
                 errorMsg = "Edges or vertices? (accepted: DESELECT ALL) (Abort: A)\n";
                 return true;
             }
+
+
+            /*        FILTER        */
+
             if (this.dialogState == FILTER) {
                 if (i == inputWords.length) {
                     errorMsg = "What to filter? Format: <what> where|st|(such that)  <parameters> to <list> (accepted: FILTER) (Abort: A)\n";

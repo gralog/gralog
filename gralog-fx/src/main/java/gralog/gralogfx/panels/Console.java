@@ -176,6 +176,7 @@ public class Console extends VBox implements GralogWindow{
                                                 parameters.clear();
                                                 break;
                 case SORT:                      dialog.sort(parameters);
+                case TWO_LISTS_OP:              dialog.twoListsOp(parameters);
                 case NONE:                      return;
             }
             parser.setDialogAction(NONE);
