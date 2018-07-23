@@ -317,42 +317,76 @@ public class Dialog {
     // empty if "NOCONDITION" is a condition
     private LinkedHashMap<String,String> getConditions(ArrayList<String> parameters){
         LinkedHashMap<String, String> propertyValue = new LinkedHashMap<>();
-        for (int i = 0; i < parameters.size(); i += 2){
+        int i = 0;
+        while (i < parameters.size()) {
             switch (parameters.get(i)){
                 case "STROKE": case "COLOR": case "FILL":
                     if (GralogColor.isColor(parameters.get(i+1)))
                         propertyValue.put(parameters.get(i),parameters.get(i+1));
                     else
                         errorMsg = "Warning: " + parameters.get(i+1) + " is not a color; skippping this parameter.\n";
+                    i += 2;
                     break;
                 case "WIDTH": case "THICKNESS": case "HEIGHT": case "SIZE": case "WEIGHT":// double
                     if (! parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")) {
                         errorMsg = "\"width\" must be a number. Format: [0-9](.[0-9]+)?; skipping this parameter.\n";
                         break;
                     }
-                    propertyValue.putIfAbsent(parameters.get(i),parameters.get(i+1));
+                    if (parameters.get(i+1).equals("<")) {
+                        propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 1));
+                        i += 3;
+                    }
+                    else {
+                        if (parameters.get(i+1).equals("<")) {
+                            propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 1));
+                            i += 3;
+                        }
+                        else {
+                            propertyValue.putIfAbsent(parameters.get(i), parameters.get(i + 1));
+                            i += 2;
+                        }
+                    }
                     break;
                 case "ID": case "DEGREE": case "INDEGREE": case "OUTDEGREE":
-                    if (parameters.get(i+1).matches("\\d+")) {
+                    if (! parameters.get(i+1).matches("\\d+")) {
                         errorMsg = parameters.get(i) + " must be a number. Format: [0-9]+\n";
                         break;
                     }
-                    propertyValue.put(parameters.get(i),parameters.get(i+1));
+                    if (parameters.get(i+1).equals("<")) {
+                        propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 1));
+                        i += 3;
+                    }
+                    else {
+                        if (parameters.get(i+1).equals("<")) {
+                            propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 1));
+                            i += 3;
+                        }
+                        else {
+                            propertyValue.putIfAbsent(parameters.get(i), parameters.get(i + 1));
+                            i += 2;
+                        }
+                    }
                     break;
                 case "SHAPE":
                     if (!RenderingShape.isShape(parameters.get(i+1))){
                         errorMsg = "Could not recognise the value for \"shape\"; skipping this parameter.\n";
+                        i += 2;
                         break;
                     }
+                    propertyValue.putIfAbsent(parameters.get(i),parameters.get(i+1));
+                    break;
                 case "SELFLOOP": case "NOSELFLOOP": case "LABEL": case "NOLABEL":
+                    i += 2;
                     propertyValue.put(parameters.get(i),"");
                     break;
                 case "EDGETYPE":
                     if (! Edge.isEdgeType(parameters.get(i+1))) {
                         errorMsg = "Could not recognise the value for \"shape\".\n";
+                        i += 2;
                         break;
                     }
                     propertyValue.put(parameters.get(i),parameters.get(i+1));
+                    i += 2;
                     break;
                 case "NOCONDITION":
                     propertyValue.clear();
@@ -414,33 +448,98 @@ public class Dialog {
                             filteredOut = true;
                             break;
                         }
+                    case "WIDTH<":
+                        if (!(v.radius < parseReal(propertyValue.get(property), "WIDTH"))) { // TODO: check: radius?
+                            filteredOut = true;
+                            break;
+                        }
+                    case "WIDTH>":
+                        if (!(v.radius > parseReal(propertyValue.get(property), "WIDTH"))) { // TODO: check: radius?
+                            filteredOut = true;
+                            break;
+                        }
                     case "THICKNESS":
                         if (!(v.strokeWidth == parseReal(propertyValue.get(property), "THICKNESS")))
                             filteredOut = true;
                         break;
-
+                    case "THICKNESS<":
+                        if (!(v.strokeWidth < parseReal(propertyValue.get(property), "THICKNESS")))
+                            filteredOut = true;
+                        break;
+                    case "THICKNESS>":
+                        if (!(v.strokeWidth > parseReal(propertyValue.get(property), "THICKNESS")))
+                            filteredOut = true;
+                        break;
                     case "HEIGHT":
                         if (!(v.textHeight == parseReal(propertyValue.get(property), "THICKNESS")))
+                            filteredOut = true;
+                        break;
+                    case "HEIGHT<":
+                        if (!(v.textHeight < parseReal(propertyValue.get(property), "THICKNESS")))
+                            filteredOut = true;
+                        break;
+                    case "HEIGHT>":
+                        if (!(v.textHeight > parseReal(propertyValue.get(property), "THICKNESS")))
                             filteredOut = true;
                         break;
                     case "SIZE":
                         if (!(v.radius == parseReal(propertyValue.get(property), "THICKNESS"))) // TODO: check
                             filteredOut = true;
                         break;
+                    case "SIZE<":
+                        if (!(v.radius < parseReal(propertyValue.get(property), "THICKNESS"))) // TODO: check
+                            filteredOut = true;
+                        break;
+                    case "SIZE>":
+                        if (!(v.radius > parseReal(propertyValue.get(property), "THICKNESS"))) // TODO: check
+                            filteredOut = true;
+                        break;
                     case "ID":
                         if (!(v.id == parseInt(propertyValue.get(property), "ID")))
+                            filteredOut = true;
+                        break;
+                    case "ID<":
+                        if (!(v.id < parseInt(propertyValue.get(property), "ID")))
+                            filteredOut = true;
+                        break;
+                    case "ID>":
+                        if (!(v.id > parseInt(propertyValue.get(property), "ID")))
                             filteredOut = true;
                         break;
                     case "DEGREE":
                         if (!(v.getDegree() == parseInt(propertyValue.get(property), "DEGREE")))
                             filteredOut = true;
                         break;
+                    case "DEGREE<":
+                        if (!(v.getDegree() < parseInt(propertyValue.get(property), "DEGREE")))
+                            filteredOut = true;
+                        break;
+                    case "DEGREE>":
+                        if (!(v.getDegree() > parseInt(propertyValue.get(property), "DEGREE")))
+                            filteredOut = true;
+                        break;
                     case "INDEGREE":
                         if (!(v.getInDegree() == parseInt(propertyValue.get(property), "INDEGREE")))
                             filteredOut = true;
                         break;
+                    case "INDEGREE<":
+                        if (!(v.getInDegree() < parseInt(propertyValue.get(property), "INDEGREE")))
+                            filteredOut = true;
+                        break;
+                    case "INDEGREE>":
+                        if (!(v.getInDegree() > parseInt(propertyValue.get(property), "INDEGREE")))
+                            filteredOut = true;
+                        break;
                     case "OUTDEGREE":
                         if (!(v.getOutDegree() == parseInt(propertyValue.get(property), "OUTDEGREE")))
+                            filteredOut = true;
+                        break;
+                    case "OUTDEGREE<":
+                        if (!(v.getOutDegree() < parseInt(propertyValue.get(property), "OUTDEGREE")))
+                            filteredOut = true;
+                        break;
+                    case "OUTDEGREE>":
+                        if (!(v.getOutDegree() > parseInt(propertyValue.get(property), "OUTDEGREE")))
                             filteredOut = true;
                         break;
                     case "SHAPE":
@@ -455,10 +554,13 @@ public class Dialog {
                         if (v.getOutgoingNeighbours().contains(v))
                             filteredOut = true;
                         break;
-                    case "LABEL":
-                        if (v.label.isEmpty())
+                    case "LABELEMPTY":
+                        if (! v.label.isEmpty())
                             filteredOut = true;
                         break;
+                    case "LABELCONTAINS":
+                        if (! v.label.contains(propertyValue.get("LABELCONTAINS")))
+                            filteredOut = true;
                     case "NOLABEL":
                         if (!v.label.isEmpty())
                             filteredOut = true;

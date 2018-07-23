@@ -625,13 +625,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
 
-    private E addEdge(V source, V target) {
+    public E addEdge(V source, V target) {
         return addEdge(source, target, -1, null);
     }
     public E addEdge(V source, V target, Configuration config){
         return addEdge(source, target, -1, config);
     }
-    private E addEdge(V source, V target, int id) {
+    public E addEdge(V source, V target, int id) {
         return addEdge(source, target, id, null);
     }
 

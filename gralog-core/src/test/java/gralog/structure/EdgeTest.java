@@ -115,10 +115,10 @@ public class EdgeTest {
         Edge two = s.addEdge(first, secnd);
         Edge three = s.addEdge(first, secnd, 1024);
 
-        assertEquals(0, one.id);
-        assertEquals(1, two.id);
-        assertEquals(2, five.id);
-        assertEquals(1024, three.id);
+        assertEquals(0, one.getId());
+        assertEquals(1, two.getId());
+        assertEquals(2, five.getId());
+        assertEquals(1024, three.getId());
 
         //advanced test case
         Vertex third = s.addVertex("");
@@ -128,10 +128,10 @@ public class EdgeTest {
         Edge c = s.addEdge(first, third, 200);
         Edge d = s.addEdge(first, first);
 
-        assertEquals(3, a.id);
-        assertEquals(4, b.id);
-        assertEquals(200, c.id);
-        assertEquals(5, d.id);
+        assertEquals(3, a.getId());
+        assertEquals(4, b.getId());
+        assertEquals(200, c.getId());
+        assertEquals(5, d.getId());
 
     }
 }

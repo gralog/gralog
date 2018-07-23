@@ -535,7 +535,7 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("LABEL")){
-                    transition(FILTER_WHAT_WHERE_LABEL,"LABEL");
+                    transition(FILTER_WHAT_WHERE_LABEL);
                     continue;
                 }
                 if (inputWords[i].equals("FILL")){
@@ -551,23 +551,23 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("THICKNESS")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"THICKNESS");
+                    transition(FILTER_WHAT_WHERE_NUMPARAM,"THICKNESS");
                     continue;
                 }
                 if (inputWords[i].equals("WIDTH")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"WIDTH");
+                    transition(FILTER_WHAT_WHERE_NUMPARAM,"WIDTH");
                     continue;
                 }
                 if (inputWords[i].equals("HEIGHT")){
-                    transition(FILTER_WHAT_WHERE_PARAM, "HEIGHT");
+                    transition(FILTER_WHAT_WHERE_NUMPARAM, "HEIGHT");
                     continue;
                 }
                 if (inputWords[i].equals("SIZE")){
-                    transition(FILTER_WHAT_WHERE_PARAM, "SIZE");
+                    transition(FILTER_WHAT_WHERE_NUMPARAM, "SIZE");
                     continue;
                 }
                 if (inputWords[i].equals("ID")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"ID");
+                    transition(FILTER_WHAT_WHERE_NUMPARAM,"ID");
                     continue;
                 }
                 if (inputWords[i].equals("SHAPE")){
@@ -575,7 +575,7 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("WEIGHT")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"WEIGHT");
+                    transition(FILTER_WHAT_WHERE_NUMPARAM,"WEIGHT");
                     continue;
                 }
                 if (inputWords[i].equals("TYPE")){
@@ -591,15 +591,15 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("DEGREE")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"DEGREE");
+                    transition(FILTER_WHAT_WHERE_NUMPARAM,"DEGREE");
                     continue;
                 }
                 if (inputWords[i].equals("INDEGREE")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"INDEGREE");
+                    transition(FILTER_WHAT_WHERE_NUMPARAM,"INDEGREE");
                     continue;
                 }
                 if (inputWords[i].equals("OUTDEGREE")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"OUTDEGREE");
+                    transition(FILTER_WHAT_WHERE_NUMPARAM,"OUTDEGREE");
                     continue;
                 }
                 if (inputWords[i].equals("HAS")){
@@ -640,7 +640,23 @@ public class DialogParser {
             if (this.dialogState == FILTER_WHAT_WHERE_LABEL) {
                 if (i == inputWords.length) {
                     this.dialogState = FILTER_WHAT_WHERE_PARAM;
-                    errorMsg = "Specify what the label should contain or abort. (accepted: FILTER <OBJECT> WHERE/SUCH THAT LABEL) (Abort: A)\n";
+                    errorMsg = "Specify what the label should contain or that it should be empty: CONTAINS <SMTH> or EMPTY. (Abort: A)\n";
+                    return true;
+                }
+                if (inputWords[i].equals("CONTAINS")){
+                    transition(FILTER_WHAT_WHERE_LABEL_CONTAINS, "LABELCONTAINS");
+                    continue;
+                }
+                if (inputWords[i].equals("EMPTY")){
+                    transition(FILTER_WHAT_WHERE_COND,"LABELEMPTY");
+                    continue;
+                }
+                errorMsg = "Specify what the label should contain or that it should be empty: CONTAINS <SMTH> or EMPTY. (Abort: A)\n";
+                return true;
+            }
+            if (this.dialogState == dialogState.FILTER_WHAT_WHERE_LABEL_CONTAINS){
+                if (i == inputWords.length){
+                    errorMsg = "Specify what labels should contain (no quotes).\n";
                     return true;
                 }
                 transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
@@ -706,6 +722,26 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Specify a value. (accepted: FILTER <OBJECT> WHERE/SUCH THAT PROPERTY) (Abort: A)\n";
+                return true;
+            }
+            if (this.dialogState == FILTER_WHAT_WHERE_NUMPARAM){
+                if (i == inputWords.length){
+                    errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Abort: A)\n";
+                    return true;
+                }
+                if (hasValueForm(inputWords[i])){
+                    transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
+                    continue;
+                }
+                if (inputWords[i].equals("<")){
+                    transition(FILTER_WHAT_WHERE_PARAM,"<");
+                    continue;
+                }
+                if (inputWords[i].equals(">")){
+                    transition(FILTER_WHAT_WHERE_PARAM,">");
+                    continue;
+                }
+                errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Abort: A)\n";
                 return true;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_HAS) {

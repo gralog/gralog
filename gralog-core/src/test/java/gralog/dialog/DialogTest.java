@@ -37,8 +37,18 @@ public class DialogTest {
         parameters.add("TO");
         parameters.add("whiteList");
         dialog.filter(parameters, c20, highlights);
+        parameters.clear();
 
+        parameters.add("ALL");
+        parameters.add("VERTICES");
+        parameters.add("WHERE");
+        parameters.add("ID");
+        parameters.add("<");
+        parameters.add("2");
+        parameters.add("LESS2");
+        dialog.filter(parameters, c20, highlights);
 
     }
+
 
 }
