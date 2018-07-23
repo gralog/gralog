@@ -8,8 +8,12 @@ public enum DialogAction {
     ADD_VERTEX, ADD_EDGE, ADD_LIST_VERTICES, ADD_LIST_EDGES,
     CONNECT_LIST_A_TO_LIST_B,
     FILTER,
+    TWO_LISTS_OP,
+    DELETE,
+    COMPLEMENT,
     HELP,
-    NONE
+    NONE,
+    SORT
 }
 
 /* possible commands
