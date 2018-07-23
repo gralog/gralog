@@ -193,10 +193,55 @@ public class DialogParser {
                     case "SYMMETRIC":
                         transition(DialogState.TWOLISTSOP,"SYMMETRIC");
                         break;
+                    case "DELETE":
+                        transition(DialogState.DELETE);
+                        break;
+                    case "COMPLEMENT":
+                        transition(DialogState.COMPLEMENT);
                     default:
                         errorMsg = "Parse error. Please, try again. (Abort: A)\n";
                         return true;
                 }
+            }
+
+            /* ONE SET OPERATIONS  */
+
+            if (this.dialogState == DialogState.DELETE){
+                if (i == inputWords.length){
+                    errorMsg = "Specify an exsisting list to be deleted. (Abort: A).\n";
+                    return true;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(DONE,DialogAction.DELETE,inputWords[i]);
+                    return true;
+                }
+                errorMsg = "Specify an exsisting list to be deleted. (Abort: A).\n";
+                return true;
+            }
+
+            if (this.dialogState == DialogState.COMPLEMENT){
+                if (i == inputWords.length){
+                    errorMsg = "Specify source and target lists. (Abort: A)\n";
+                    return true;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(COMPLEMENT_WHAT,inputWords[i]);
+                    continue;
+                }
+                errorMsg = "I could not parse the source name " + inputWords[i] + ". Specify source and target lists. (Abort: A)\n";
+                return true;
+            }
+            if (this.dialogState == COMPLEMENT_WHAT){
+                if (i == inputWords.length){
+                    errorMsg = "Specify the target list. (Abort: A)\n";
+                    return true;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(DONE,DialogAction.COMPLEMENT,inputWords[i]);
+                    return true;
+                }
+                errorMsg = "I could not parse the target name " + inputWords[i] + ". Specify target list. (Abort: A)\n";
+                return true;
             }
 
             /*     TWO SETS OPERATIONS*/

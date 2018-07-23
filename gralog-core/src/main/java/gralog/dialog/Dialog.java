@@ -206,7 +206,50 @@ public class Dialog {
 
     }
 
-    
+    public void delete(ArrayList<String> parameters){
+        if (vertexListS.containsKey(parameters.get(0))){
+            vertexListS.remove(parameters.get(0));
+            return;
+        }
+        if (edgeListS.containsKey(parameters.get(0))){
+            edgeListS.remove(parameters.get(0));
+            return;
+        }
+        errorMsg = "No such list exists: " + parameters.get(0) + ".\n";
+    }
+
+    private void addComplementVertexList(ArrayList<Vertex> sourceList, ArrayList<Vertex> allVertices, ArrayList<Vertex> targetList){
+        for (Vertex v : allVertices)
+            if (! sourceList.contains(v))
+                targetList.add(v);
+    }
+
+    private void addComplementEdgeList(ArrayList<Edge> sourceList, ArrayList<Edge> allVertices, ArrayList<Edge> targetList){
+        for (Edge v : allVertices)
+            if (! sourceList.contains(v))
+                targetList.add(v);
+    }
+
+
+    public void complement(ArrayList<String> parameters, Structure structure){
+        if (vertexListS.containsKey(parameters.get(0))){
+            ArrayList<Vertex> allVertices = new ArrayList<Vertex>(structure.getVertices());
+            ArrayList<Vertex> sourceList = vertexListS.get(parameters.get(0));
+            ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(1));
+            if (! targetList.isEmpty())
+                errorMsg = "Note: target list " + parameters.get(1)  + " is not empty!\n";
+            addComplementVertexList(sourceList, allVertices, targetList);
+            return;
+        }
+        if (edgeListS.containsKey(parameters.get(0))){
+            ArrayList<Edge> allVertices = new ArrayList<Edge>(structure.getEdges());
+            ArrayList<Edge> sourceList = edgeListS.get(parameters.get(0));
+            ArrayList<Edge> targetList = getTargetEdgeList(parameters.get(1));
+            if (! targetList.isEmpty())
+                errorMsg = "Note: target list " + parameters.get(1)  + " is not empty!\n";
+            addComplementEdgeList(sourceList, allVertices, targetList);
+        }
+    }
     
     public void sort(ArrayList<String> parameters){
         String listname = parameters.get(0);
@@ -510,7 +553,6 @@ public class Dialog {
             if (parameters.get(0).equals("ALL"))
                 sourceVertexList = new ArrayList<Vertex>(structure.getVertices());
             if (vertexListS.containsKey(parameters.get(0))) { // list already exists
-                System.out.println("Found vertex list " + parameters.get(0));
                 sourceVertexList = vertexListS.get(parameters.get(0));
             }
 

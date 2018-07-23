@@ -9,6 +9,8 @@ public enum DialogAction {
     CONNECT_LIST_A_TO_LIST_B,
     FILTER,
     TWO_LISTS_OP,
+    DELETE,
+    COMPLEMENT,
     HELP,
     NONE,
     SORT
