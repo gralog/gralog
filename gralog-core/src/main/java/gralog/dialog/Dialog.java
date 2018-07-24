@@ -321,17 +321,10 @@ public class Dialog {
         while (i < parameters.size()) {
             switch (parameters.get(i)){
                 case "STROKE": case "COLOR": case "FILL":
-                    if (GralogColor.isColor(parameters.get(i+1)))
-                        propertyValue.put(parameters.get(i),parameters.get(i+1));
-                    else
-                        errorMsg = "Warning: " + parameters.get(i+1) + " is not a color; skippping this parameter.\n";
+                    propertyValue.put(parameters.get(i),parameters.get(i+1));
                     i += 2;
                     break;
                 case "WIDTH": case "THICKNESS": case "HEIGHT": case "SIZE": case "WEIGHT":// double
-                    if (! parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")) {
-                        errorMsg = "\"width\" must be a number. Format: [0-9](.[0-9]+)?; skipping this parameter.\n";
-                        break;
-                    }
                     if (parameters.get(i+1).equals("<")) {
                         propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 1));
                         i += 3;
@@ -348,10 +341,6 @@ public class Dialog {
                     }
                     break;
                 case "ID": case "DEGREE": case "INDEGREE": case "OUTDEGREE":
-                    if (! parameters.get(i+1).matches("\\d+")) {
-                        errorMsg = parameters.get(i) + " must be a number. Format: [0-9]+\n";
-                        break;
-                    }
                     if (parameters.get(i+1).equals("<")) {
                         propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 1));
                         i += 3;
@@ -368,11 +357,6 @@ public class Dialog {
                     }
                     break;
                 case "SHAPE":
-                    if (!RenderingShape.isShape(parameters.get(i+1))){
-                        errorMsg = "Could not recognise the value for \"shape\"; skipping this parameter.\n";
-                        i += 2;
-                        break;
-                    }
                     propertyValue.putIfAbsent(parameters.get(i),parameters.get(i+1));
                     break;
                 case "SELFLOOP": case "NOSELFLOOP": case "LABEL": case "NOLABEL":
@@ -380,11 +364,6 @@ public class Dialog {
                     propertyValue.put(parameters.get(i),"");
                     break;
                 case "EDGETYPE":
-                    if (! Edge.isEdgeType(parameters.get(i+1))) {
-                        errorMsg = "Could not recognise the value for \"shape\".\n";
-                        i += 2;
-                        break;
-                    }
                     propertyValue.put(parameters.get(i),parameters.get(i+1));
                     i += 2;
                     break;

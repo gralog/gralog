@@ -1,6 +1,8 @@
 package gralog.dialog;
 
 import gralog.rendering.GralogColor;
+import gralog.rendering.shapes.RenderingShape;
+import gralog.structure.Edge;
 
 import java.util.ArrayList;
 
@@ -10,6 +12,7 @@ import static gralog.dialog.DialogAction.*;
 import static gralog.dialog.DialogState.DESELECT_ALL;
 import static gralog.dialog.DialogState.FILTER;
 import static gralog.dialog.DialogState.SELECT_ALL;
+
 
 public class DialogParser {
 
@@ -33,8 +36,23 @@ public class DialogParser {
             "NO", "CONDITION", "LABEL", "X", "Q", "EXIT", "ABORT", "CANCEL",
             "SORT", "LEFTTORIGHT", "RIGHTTOLEFT", "TOPDOWN", "BOTTOMUP"};
 
+    private enum PossibleShapes {
+        // TODO SQUARE,
+        // TODO CYCLE,
+        ELLIPSE,
+        RECTANGLE,
+        DIAMOND
+    }
 
-/*      CONSTRUCTOR      SETA     GETA        */
+    private static boolean isShape(String s){
+        for (PossibleShapes ps : PossibleShapes.values())
+            if (ps.name().equalsIgnoreCase(s))
+                return true;
+        return false;
+    }
+
+
+    /*      CONSTRUCTOR      SETA     GETA        */
 
     public DialogParser(){
         dialogAction = NONE;
@@ -76,6 +94,14 @@ public class DialogParser {
     private boolean hasValueForm(String s){
         // color or number or "PLAIN" or "DOTTED" or "DASHED"
         return (isColorValue(s) || s.matches("-?\\d*((\\.|,)\\d+)?")); // ... or is digit
+    }
+
+    private boolean isInt(String s){
+        return s.matches("\\d+");
+    }
+
+    private boolean isFloat(String s){
+        return s.matches("-?\\d*((\\.|,)\\d+)?");
     }
 
     private boolean hasIdForm(String idCandidate){
@@ -551,31 +577,31 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("THICKNESS")){
-                    transition(FILTER_WHAT_WHERE_NUMPARAM,"THICKNESS");
+                    transition(FILTER_WHAT_WHERE_FLOATPARAM,"THICKNESS");
                     continue;
                 }
                 if (inputWords[i].equals("WIDTH")){
-                    transition(FILTER_WHAT_WHERE_NUMPARAM,"WIDTH");
+                    transition(FILTER_WHAT_WHERE_FLOATPARAM,"WIDTH");
                     continue;
                 }
                 if (inputWords[i].equals("HEIGHT")){
-                    transition(FILTER_WHAT_WHERE_NUMPARAM, "HEIGHT");
+                    transition(FILTER_WHAT_WHERE_FLOATPARAM, "HEIGHT");
                     continue;
                 }
                 if (inputWords[i].equals("SIZE")){
-                    transition(FILTER_WHAT_WHERE_NUMPARAM, "SIZE");
+                    transition(FILTER_WHAT_WHERE_FLOATPARAM, "SIZE");
                     continue;
                 }
                 if (inputWords[i].equals("ID")){
-                    transition(FILTER_WHAT_WHERE_NUMPARAM,"ID");
+                    transition(FILTER_WHAT_WHERE_INTPARAM,"ID");
                     continue;
                 }
                 if (inputWords[i].equals("SHAPE")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"SHAPE");
+                    transition(FILTER_WHAT_WHERE_SHAPE,"SHAPE");
                     continue;
                 }
                 if (inputWords[i].equals("WEIGHT")){
-                    transition(FILTER_WHAT_WHERE_NUMPARAM,"WEIGHT");
+                    transition(FILTER_WHAT_WHERE_FLOATPARAM,"WEIGHT");
                     continue;
                 }
                 if (inputWords[i].equals("TYPE")){
@@ -587,19 +613,19 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("EDGETYPE")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"EDGETYPE");
+                    transition(FILTER_WHAT_WHERE_EDGETYPE,"EDGETYPE");
                     continue;
                 }
                 if (inputWords[i].equals("DEGREE")){
-                    transition(FILTER_WHAT_WHERE_NUMPARAM,"DEGREE");
+                    transition(FILTER_WHAT_WHERE_INTPARAM,"DEGREE");
                     continue;
                 }
                 if (inputWords[i].equals("INDEGREE")){
-                    transition(FILTER_WHAT_WHERE_NUMPARAM,"INDEGREE");
+                    transition(FILTER_WHAT_WHERE_INTPARAM,"INDEGREE");
                     continue;
                 }
                 if (inputWords[i].equals("OUTDEGREE")){
-                    transition(FILTER_WHAT_WHERE_NUMPARAM,"OUTDEGREE");
+                    transition(FILTER_WHAT_WHERE_INTPARAM,"OUTDEGREE");
                     continue;
                 }
                 if (inputWords[i].equals("HAS")){
@@ -664,12 +690,12 @@ public class DialogParser {
             }
             if (this.dialogState == FILTER_WHAT_WHERE_FILL) {
                 if (i == inputWords.length) {
-                    this.dialogState = FILTER_WHAT_WHERE_PARAM;
+                    this.dialogState = FILTER_WHAT_WHERE_COLOR;
                     errorMsg = "Specify the fill color or abort. (accepted: FILTER <OBJECT> WHERE/SUCH THAT FILL) (Abort: A)\n";
                     return true;
                 }
                 if (inputWords[i].equals("COLOR")) {
-                    transition(FILTER_WHAT_WHERE_PARAM);
+                    transition(FILTER_WHAT_WHERE_COLOR);
                     continue;
                 }
                 if (isColorValue(inputWords[i])) {
@@ -681,11 +707,11 @@ public class DialogParser {
             }
             if (this.dialogState == FILTER_WHAT_WHERE_STROKE) {
                 if (i == inputWords.length) {
-                    transitionErr(FILTER_WHAT_WHERE_PARAM,"Specify the stroke color or abort. (accepted: FILTER <OBJECT> WHERE/SUCH THAT STROKE/COLOR) (Abort: A)\n");
+                    transitionErr(FILTER_WHAT_WHERE_PARAM,"Specify the stroke color. (accepted: FILTER <OBJECT> WHERE/SUCH THAT STROKE/COLOR) (Abort: A)\n");
                     return true;
                 }
                 if (inputWords[i].equals("COLOR")) {
-                    transition(FILTER_WHAT_WHERE_PARAM);
+                    transition(FILTER_WHAT_WHERE_COLOR);
                     continue;
                 }
                 if (isColorValue(inputWords[i])) {
@@ -724,12 +750,50 @@ public class DialogParser {
                 errorMsg = "Specify a value. (accepted: FILTER <OBJECT> WHERE/SUCH THAT PROPERTY) (Abort: A)\n";
                 return true;
             }
-            if (this.dialogState == FILTER_WHAT_WHERE_NUMPARAM){
+            if (this.dialogState == FILTER_WHAT_WHERE_EDGETYPE){
+                if (i == inputWords.length){
+                    errorMsg = "Specify an edge type. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY>) (Abort: A)\n";
+                    return true;
+                }
+                if (Edge.isEdgeType(inputWords[i])){
+                    transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
+                    continue;
+                }
+                errorMsg = "Specify an edge type. (accepted: FILTER <OBJECT> WHERE/SUCH THAT PROPERTY) (Abort: A)\n";
+                return true;
+            }
+
+            if (this.dialogState == FILTER_WHAT_WHERE_SHAPE){
+                if (i == inputWords.length){
+                    errorMsg = "Specify a shape. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY>) (Abort: A)\n";
+                    return true; // TODO: Specify a shape: ...
+                }
+                if (RenderingShape.isShape(inputWords[i])){
+                    transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
+                    continue;
+                }
+                errorMsg = "Specify a shape. (accepted: FILTER <OBJECT> WHERE/SUCH THAT PROPERTY) (Abort: A)\n";
+                return true; // TODO: Specify a shape: ...
+            }
+            if (this.dialogState == FILTER_WHAT_WHERE_COLOR){
+                if (i == inputWords.length){
+                    errorMsg = "Specify a color. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY>) (Abort: A)\n";
+                    return true;
+                }
+                if (isColorValue(inputWords[i])){
+                    transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
+                    continue;
+                }
+                errorMsg = "Specify a color. (accepted: FILTER <OBJECT> WHERE/SUCH THAT PROPERTY) (Abort: A)\n";
+                return true;
+            }
+
+            if (this.dialogState == FILTER_WHAT_WHERE_INTPARAM){
                 if (i == inputWords.length){
                     errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Abort: A)\n";
                     return true;
                 }
-                if (hasValueForm(inputWords[i])){
+                if (isInt(inputWords[i])){
                     transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
                     continue;
                 }
@@ -744,6 +808,27 @@ public class DialogParser {
                 errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Abort: A)\n";
                 return true;
             }
+            if (this.dialogState == FILTER_WHAT_WHERE_FLOATPARAM){
+                if (i == inputWords.length){
+                    errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Abort: A)\n";
+                    return true;
+                }
+                if (isFloat(inputWords[i])){
+                    transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
+                    continue;
+                }
+                if (inputWords[i].equals("<")){
+                    transition(FILTER_WHAT_WHERE_PARAM,"<");
+                    continue;
+                }
+                if (inputWords[i].equals(">")){
+                    transition(FILTER_WHAT_WHERE_PARAM,">");
+                    continue;
+                }
+                errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Abort: A)\n";
+                return true;
+            }
+
             if (this.dialogState == FILTER_WHAT_WHERE_HAS) {
                 if (i == inputWords.length) {
                     errorMsg = "Has what: selfloop or label? (accepted: FILTER <OBJECT> WHERE/SUCH THAT HAS) (Abort: A)\n";
