@@ -172,15 +172,23 @@ public class Console extends VBox implements GralogWindow{
                                                 dialog.filter(parser.getParameters(),
                                                                 currentPane.getStructure(),
                                                                 currentPane.getHighlights());
-                                                output(dialog.getErrorMsg());
-                                                parameters.clear();
                                                 break;
                 case SORT:                      dialog.sort(parameters);
+                                                break;
                 case TWO_LISTS_OP:              dialog.twoListsOp(parameters);
+                                                break;
                 case DELETE:                    dialog.delete(parameters);
+                                                break;
                 case COMPLEMENT:                dialog.complement(parameters,currentPane.getStructure());
+                                                break;
+                case PRINT:                     dialog.printLists(parameters);
+                                                break;
                 case NONE:                      return;
             }
+            output(dialog.getErrorMsg());
+            dialog.setErrorMsg("");
+            parameters.clear();
+            parser.clearParameters();
             parser.setDialogAction(NONE);
             parser.setDialogState(DONE);
             parser.setErrorMsg("");
