@@ -16,6 +16,7 @@ public abstract class RenderingShape {
     * PossibleShapes needed to check in the console dialog if a property is a shape.
     * */
 
+    // if changed, also change enum PossibleShapes in gralog-core.gralog.dialog
     private static enum PossibleShapes {
         // TODO SQUARE,
         // TODO CYCLE,
