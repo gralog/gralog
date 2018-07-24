@@ -47,4 +47,7 @@
 *
 * subdivide edge <edge id> <n times>
 * subdivide <edge list id> <n times>
+
+* CONNECT <list> <list> <formula>|BICLIQUE|MATCHING to <list>
+* CONNECT <list> <formula>|PATH|CYCLE|CLIQUE|(SUBDIV CLIQUE <num>) to <list>
 * */
