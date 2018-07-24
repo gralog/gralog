@@ -35,7 +35,7 @@ public class DeleteVertexCommand extends CommandForGralogToExecute {
 
             
         if (toDelete == null){
-        	this.error = new Exception("error: vertex " + this.toDeleteVertexId + " does not exist");
+        	this.error = new NonExistantVertexException("vertex " + this.toDeleteVertexId + " does not exist");
         	this.fail();
             return;
         }

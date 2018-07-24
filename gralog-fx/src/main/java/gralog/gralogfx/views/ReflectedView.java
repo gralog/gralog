@@ -68,7 +68,7 @@ public class ReflectedView extends GridPaneView<Object> {
                     Object value = f.get(displayObject);
                     Control valueControl = null;
                     Class<?> type = f.getType();
-                   
+
                     if (display){
                         if (type.equals(Double.class) || type.equals(double.class)) {
 

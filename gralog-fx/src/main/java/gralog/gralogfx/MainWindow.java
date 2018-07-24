@@ -13,7 +13,7 @@ import gralog.exportfilter.*;
 import gralog.generator.*;
 import gralog.algorithm.*;
 import gralog.gralogfx.piping.Piping;
-import java.util.concurrent.CountDownLatch;
+// import java.util.concurrent.CountDownLatch;
 
 import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
@@ -152,9 +152,7 @@ public class MainWindow extends Application {
         Runnable play = new Runnable(){
             public void run(){
                 Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
-                if (currentPiping != null){
-                    MainWindow.this.handlePlay(currentPiping);
-                }else{
+                if (!MainWindow.this.tabs.getCurrentStructurePane().handlePlay()){
                     Platform.runLater(
                         () -> {
                             Alert alert = new Alert(AlertType.INFORMATION);
@@ -174,8 +172,8 @@ public class MainWindow extends Application {
             public void run(){
                 System.out.println("skip");
                 Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
-                if (MainWindow.this.tabs.getCurrentStructurePane().getPiping() != null){
-                    MainWindow.this.handleSkip(currentPiping);
+                if (currentPiping != null){
+                    MainWindow.this.tabs.getCurrentStructurePane().handleSkip();
                 }else{
                     Platform.runLater(
                         () -> {
@@ -192,9 +190,7 @@ public class MainWindow extends Application {
 
         Runnable pause = new Runnable(){
             public void run(){
-                Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
-                if (currentPiping != null){
-                    MainWindow.this.handleSpontaneousPause(currentPiping);
+                if (!MainWindow.this.tabs.getCurrentStructurePane().handleSpontaneousPause()){
                 }else{
                     Platform.runLater(
                         () -> {
@@ -211,10 +207,7 @@ public class MainWindow extends Application {
 
         Runnable stop = new Runnable(){
             public void run(){
-                Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
-                if (currentPiping != null){
-                    MainWindow.this.handleSpontaneousStop(currentPiping);
-                }else{
+                if (!MainWindow.this.tabs.getCurrentStructurePane().handleSpontaneousStop()){
                     Platform.runLater(
                         () -> {
                             Alert alert = new Alert(AlertType.INFORMATION);
@@ -310,45 +303,28 @@ public class MainWindow extends Application {
 //<<<<<<< HEAD
             // this.waitForPause = new CountDownLatch(1);
 
-            CountDownLatch waitForPause = new CountDownLatch(1);
 
-            
-            Piping pipeline = new Piping(this::initGraph,this.tabs.getCurrentStructurePane(),waitForPause,this::handlePlannedPause);
-            pipelines.add(pipeline);
-            this.tabs.getCurrentStructurePane().setPiping(pipeline);
-            // pipeline.subscribe(this.pluginControlPanel);
-            final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
-//=======
-//            Piping pipeline = new Piping();
-//            final String fileName = "/home/michelle/gralog/gralog/gralog-layout/layout_python.py";//  "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
-//>>>>>>> graphLayouts
 
-            Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
-            if (!initSuccess){
+            if (this.tabs.getCurrentStructurePane() == null){
+                Platform.runLater(
+                    () -> {
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("No Structure Pane");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Youmust have an open graph to pipe it bro");
+                        alert.showAndWait();
+                    }
+                );
+
                 return;
             }
 
-            // if (externalCommandSegments[0].equals("error") ||
-            // (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
-            //     System.out.println("error: " + externalProcessInitResponse);
-            //     return;
-            // }
-            pipingUnderway = true;
-            pipeline.setFirstMessage(null);
-            pipeline.start();
-            
-            // waitForPause.await();
-            System.out.println("the wait is over!!!");
+            String fileName = this.getFileName();
 
-            try {
-                pipeline.join();
-                System.out.println("joined");
-            }catch( Exception e) {
-                System.out.println("Interrupted");
-            } 
-            System.out.println(pipeline);
-            pipingUnderway = false;
-            System.out.println("appears to be finished");
+            Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
+            this.pipelines.add(newPiping);
+            
+            
 
             // pipeline.run(this::initGraph);
             // if (!externalProcessInitResponse.equals("useCurrentGraph")){
@@ -370,6 +346,10 @@ public class MainWindow extends Application {
         } catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public String getFileName(){
+        return "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py";
     }
 
     public StructurePane initGraph(String graphType,Piping pipelineThatCalled){
@@ -418,6 +398,10 @@ public class MainWindow extends Application {
         Structure structure = StructureManager.instantiateStructure(structureName);
         tabs.addTab(structureName, structure);
         setStatus("created a " + structureName + "...");
+    }
+
+    public void sendOutsideMessageToConsole(String msg){
+        this.mainConsole.output(msg);
     }
 
     public void onSave() {
@@ -723,76 +707,12 @@ public class MainWindow extends Application {
         }
     }
 
-    class ThreadDemo extends Thread{
-        private Thread t;
-        private int id;
-        ThreadDemo(int id){
-            this.id = id;
-        }
-        public void run(){
-            for (int i = 0; i < 10; i ++){
-                System.out.println("thread number: " + this.id + " going to sleep for the " + i + "th time");
-                try{
-                    Thread.sleep(100*i*this.id);
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-                System.out.println("thread number: " + this.id + " rise and mother fuckin shine for the " + i + "th time");
-            }
-            System.out.println("all done running');");
-        }
-        public void start(){
-            pipingUnderway = true;
-            System.out.println("starting thread w id :" + this.id);
-            if (t == null){
-                t = new Thread(this,Integer.toString(this.id));
-                t.start();
-            }
-        }
-    }
+    
 
-    public boolean handleSkip(Piping currentPiping){
-        MainWindow.this.tabs.getCurrentStructurePane().getPiping().skipPressed();
-        this.handlePlay(currentPiping);
-        return true;
-    }
+    
 
-    public boolean handlePlay(Piping currentPiping){
-        pipingUnderway = true;
-        currentPiping.waitForPauseToBeHandled.countDown();
-        CountDownLatch newLatch = new CountDownLatch(1);
-        currentPiping.setCountDownLatch(newLatch);
-        Platform.runLater(()->{
-            this.pluginControlPanel.notifyPlayRequested();
-        });
-        return true;
-    }
-
-    public boolean handlePlannedPause(Piping currentPiping){
-        // this.pluginControlPanel.doVarStuff();
-        this.pipingUnderway = false;
-        Platform.runLater(()->{
-            this.pluginControlPanel.notifyPlannedPauseRequested(currentPiping.trackedVarArgs);
-        });
-
-        return true;
-    }
-
-    public boolean handleSpontaneousPause(Piping currentPiping){
-        // this.pluginControlPanel.doVarStuff();
-        this.pipingUnderway = false;
-        currentPiping.pausePressed();
-        Platform.runLater(()->{
-            this.pluginControlPanel.notifySpontaneousPauseRequested();
-        });
-        return true;
-    }
-
-    public boolean handleSpontaneousStop(Piping currentPiping){
-        this.pipingUnderway = false;
-        currentPiping.spontaneousStop();
-        return true;
-    }
+    
+    
 
     @Override
     public void start(Stage primaryStage) {
@@ -801,7 +721,8 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-width", 1200),
             Preferences.getInteger(getClass(), "main-window-height", 700));
 
-        scene.getStylesheets().add("/stylesheet.css");
+        scene.getStylesheets().add("stylesheet.css");
+        System.out.println("sheets: " + scene.getStylesheets());
 
         scene.getStylesheets().add(DockPane.class.getResource("default.css").toExternalForm());
         this.stage = primaryStage;
@@ -817,48 +738,7 @@ public class MainWindow extends Application {
         scene.setOnKeyPressed(event -> {
 
 
-            if (!pipingUnderway || pipingUnderway){
-                switch (event.getCode()){
-                    case SPACE:
-                        Piping currentPiping = this.tabs.getCurrentStructurePane().getPiping();
-                        if (currentPiping != null && currentPiping.isInitialized()){
-                            if (currentPiping.state == Piping.State.Paused){
-                                System.out.println("handlePlay");
-                                MainWindow.this.handlePlay(currentPiping);
-
-                            }else if(currentPiping.state == Piping.State.InProgress){
-                                System.out.println("handleSponrtlay");
-                                MainWindow.this.handleSpontaneousPause(currentPiping);
-                            }else{
-                                System.out.println("no piping in this puppy!" + (currentPiping == null));
-                            }
-                        }else{
-                            System.out.println("piping is null or unit!" + currentPiping);
-                        }
-                        // System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
-                        // pipeline.execWithAck();
-                        break;
-                    case ENTER:
-                        if (false){
-                            ThreadDemo t0 = new ThreadDemo(0);
-                            ThreadDemo t1 = new ThreadDemo(1);
-
-                            t0.start();
-                            t1.start();
-                            try {
-                                t1.join();
-                                t0.join();
-                            }catch( Exception e) {
-                                System.out.println("Interrupted");
-                            }
-                        }else{
-                            System.out.println("Thread demo disabled!");
-                        }
-                }
-            }else{
-                System.out.println("good try hoss but pipign is pipingUnderway");
-
-            }
+            
         });
 
         // Remember the size of the window.

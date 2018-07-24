@@ -83,7 +83,7 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
         
         Node viewNode = (Node) view;
 
-        System.out.println("viewNode: " + viewNode);
+
 
         sp.setContent(viewNode);
 

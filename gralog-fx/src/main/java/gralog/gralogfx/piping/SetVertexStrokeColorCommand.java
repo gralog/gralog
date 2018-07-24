@@ -33,7 +33,7 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
         if (this.vertex == null){
 
             this.fail();
-            this.error = new Exception("error: vertex with id: " + this.changeId + " does not exist");
+            this.error = new NonExistantVertexException("vertex with id: " + this.changeId + " does not exist");
             return;
         }
 

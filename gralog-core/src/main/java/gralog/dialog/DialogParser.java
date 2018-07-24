@@ -169,7 +169,7 @@ public class DialogParser {
                         transition(FILTER);
                         break;
                     default:
-                        errorMsg = "Parse error. Please, try again.\n";
+                        errorMsg = "Parse error. Please, try again.";
                         return true;
                 }
             }
