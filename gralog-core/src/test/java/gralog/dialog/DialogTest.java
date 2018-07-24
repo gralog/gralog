@@ -24,6 +24,8 @@ public class DialogTest {
         for (int i = 0; i < 10; i++)
             initialList.add(c20.getVertexById(i));
         highlights.selectAll(initialList);
+        assertEquals(20,c20.getVertices().size());
+        assertEquals(20,c20.getEdges().size());
     }
 
     @Test
@@ -31,17 +33,14 @@ public class DialogTest {
 
         parameters.add("ALL");
         parameters.add("VERTICES");
-        parameters.add("WHERE");
         parameters.add("FILL");
         parameters.add("WHITE");
-        parameters.add("TO");
         parameters.add("whiteList");
         dialog.filter(parameters, c20, highlights);
         parameters.clear();
 
         parameters.add("ALL");
         parameters.add("VERTICES");
-        parameters.add("WHERE");
         parameters.add("ID");
         parameters.add("<");
         parameters.add("2");
