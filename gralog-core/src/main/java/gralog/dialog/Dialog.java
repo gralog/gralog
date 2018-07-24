@@ -326,12 +326,12 @@ public class Dialog {
                     break;
                 case "WIDTH": case "THICKNESS": case "HEIGHT": case "SIZE": case "WEIGHT":// double
                     if (parameters.get(i+1).equals("<")) {
-                        propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 1));
+                        propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 2));
                         i += 3;
                     }
                     else {
                         if (parameters.get(i+1).equals("<")) {
-                            propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 1));
+                            propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 2));
                             i += 3;
                         }
                         else {
@@ -342,12 +342,12 @@ public class Dialog {
                     break;
                 case "ID": case "DEGREE": case "INDEGREE": case "OUTDEGREE":
                     if (parameters.get(i+1).equals("<")) {
-                        propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 1));
+                        propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 2));
                         i += 3;
                     }
                     else {
                         if (parameters.get(i+1).equals("<")) {
-                            propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 1));
+                            propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 2));
                             i += 3;
                         }
                         else {
@@ -391,6 +391,7 @@ public class Dialog {
     // try to convert a string parameter s with key paramKey to Integer
     private Integer parseInt(String s, String paramKey){
         Integer result = -1;
+        System.out.println("parseInt: s = [" + s + "], paramKey = [" + paramKey + "]");
         try {result = Integer.valueOf(s);}
         catch (NumberFormatException e){
             errorMsg = "Could not recognise the value for " + paramKey + "; skipping this parameter.\n"; // this shouldn't happen
