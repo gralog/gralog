@@ -442,7 +442,7 @@ public class Piping extends Thread{
                         System.out.println("handled");
                         String response;
                         if (! currentCommand.didFail() && (response = currentCommand.getResponse()) != null){
-                            System.out.println("no error, response is: |" + response + "|");
+                            System.out.println("no error, response is: \"" + response + "\"");
                             this.out.println(response);
                         }
                     }

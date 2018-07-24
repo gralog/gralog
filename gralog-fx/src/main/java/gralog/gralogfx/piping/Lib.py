@@ -116,9 +116,10 @@ class Edge:
 		self.properties["contour"] = None;
 		self.properties["source"] = None;
 		self.properties["target"] = None;
-		self.wasSourced;
+		self.wasSourced = False;
 
 	def sourceProperties(self,stringFromGralog):
+		# print("properties beforehand: ",self.properties);
 		self.sourced = True;
 		strings = stringFromGralog.split("|");
 		for string in strings:
@@ -126,9 +127,13 @@ class Edge:
 			try:
 				prop = propVal[0];
 				val = propVal[1];
+
 				self.properties[prop] = val;
+				if prop == "source" or prop == "target":
+					self.properties[prop] = self.graph.getVertexOrNew(val);
 			except:
 				pass;
+		# print("properties afterhand: ",self.properties);
 	def getId(self):
 		return self.id;
 	def setLabel(self,label):

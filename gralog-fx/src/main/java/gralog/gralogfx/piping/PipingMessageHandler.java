@@ -266,7 +266,7 @@ public class PipingMessageHandler{
     }
 
     public static String universalEdgeToGralogTuple(Edge e){
-        return "("+e.gralogPipify()+","+e.getSource().gralogPipify()+","+e.getTarget().gralogPipify()+")";
+        return e.gralogPipify()+"|source="+Integer.toString(e.getSource().getId())+"|target="+Integer.toString(e.getTarget().getId());
     }
 
 
