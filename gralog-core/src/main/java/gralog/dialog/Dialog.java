@@ -9,125 +9,7 @@ import java.util.*;
 import static gralog.dialog.DialogParser.ANSI_RED;
 import static gralog.dialog.DialogParser.ANSI_RESET;
 
-class ComparatorLEFTRIGHT implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getX() > w.coordinates.getX()) {
-            return 1;
-        }
-        else {
-            if (v.coordinates.getX() < w.coordinates.getX())
-                return -1;
-            else
-                return 0;
-        }
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
 
-class ComparatorRIGHTLEFT implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getX() < w.coordinates.getX()) {
-            return 1;
-        }
-        else {
-            if (v.coordinates.getX() > w.coordinates.getX())
-                return -1;
-            else
-                return 0;
-        }
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorTOPDOWN implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getY() > w.coordinates.getY()) {
-            return 1;
-        }
-        else {
-            if (v.coordinates.getY() < w.coordinates.getY())
-                return -1;
-            else
-                return 0;
-        }
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorBOTTOMUP implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getY() < w.coordinates.getY()) {
-            return 1;
-        }
-        else {
-            if (v.coordinates.getY() > w.coordinates.getY())
-                return -1;
-            else
-                return 0;
-        }
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorIDasc implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        return v.id - w.id;
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorIDdesc implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        return w.id - v.id;
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorLabelAsc implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        return v.label.compareTo(w.label);
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorLabelDesc implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        return w.label.compareTo(v.label);
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
 
 public class Dialog {
 
@@ -146,12 +28,38 @@ public class Dialog {
         edgeListS = new HashMap();
     }
 
+    public Map<String, ArrayList<Vertex>> getVertexListS(){
+        return this.vertexListS;
+    }
+    public Map<String, ArrayList<Edge>> getEdgeListS(){
+        return this.edgeListS;
+    }
+
+
     public boolean isID(String s) {
         return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
     }
 
     public boolean isListID(String s) {
         return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
+    }
+
+    public void printLists(ArrayList<String> parameters){
+        if (parameters.get(0).equals("PRINTALL")){
+            printVertexListS();
+            printEdgeListS();
+            return;
+        }
+        if (vertexListS.containsKey(parameters.get(0))){
+            printVertexList(parameters.get(0));
+            return;
+        }
+        if (edgeListS.containsKey(parameters.get(0))){
+            printEdgeList(parameters.get(0));
+            return;
+        }
+        errorMsg = "No such list: " + parameters.get(0);
+        return;
     }
 
     public void unionLists (ArrayList source1, ArrayList source2, ArrayList target){
@@ -198,10 +106,18 @@ public class Dialog {
         }
         ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(3));
         switch (parameters.get(0)){ // union, intersection, difference, symmetric
-            case "UNION":         unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
-            case "INTERSECTION":  intersectionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
-            case "DIFFERENCE":    differenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
-            case "SYMMETRIC":     symmetricDifferenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+            case "UNION":
+                unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                break;
+            case "INTERSECTION":
+                intersectionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                break;
+            case "DIFFERENCE":
+                differenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                break;
+            case "SYMMETRIC":
+                symmetricDifferenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                break;
         }
 
     }
@@ -260,22 +176,28 @@ public class Dialog {
         switch (parameters.get(1)){
             case "LEFTTORIGHT":
                 Collections.sort(vertexListS.get(listname),new ComparatorLEFTRIGHT());
+                break;
             case "RIGHTTOLEFT":
                 Collections.sort(vertexListS.get(listname),new ComparatorRIGHTLEFT());
+                break;
             case "TOPDOWN":
                 Collections.sort(vertexListS.get(listname),new ComparatorTOPDOWN());
+                break;
             case "BOTTOMUP":
                 Collections.sort(vertexListS.get(listname),new ComparatorBOTTOMUP());
+                break;
             case "ID":
                 if (parameters.get(2).equals("ASC"))
                     Collections.sort(vertexListS.get(listname),new ComparatorIDasc());
                 else
                     Collections.sort(vertexListS.get(listname),new ComparatorIDdesc());
+                break;
             case "LABEL":
                 if (parameters.get(2).equals("ASC"))
                     Collections.sort(vertexListS.get(listname), new ComparatorLabelAsc());
                 else
                     Collections.sort(vertexListS.get(listname),new ComparatorLabelDesc());
+                break;
         }
     }
 
@@ -346,7 +268,7 @@ public class Dialog {
                         i += 3;
                     }
                     else {
-                        if (parameters.get(i+1).equals("<")) {
+                        if (parameters.get(i+1).equals(">")) {
                             propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 2));
                             i += 3;
                         }
@@ -566,13 +488,40 @@ public class Dialog {
         }
     }
 
+    private void printVertexList(String listName){
+        System.out.print(ANSI_RED + "List " + listName + ": " + ANSI_RESET);
+        for (Vertex v : vertexListS.get(listName)){
+            System.out.print(v.id + " ");
+        }
+        System.out.println();
+    }
+
+    private void printEdgeList(String listName){
+        System.out.print(ANSI_RED + "List " + listName + ": " + ANSI_RESET);
+        for (Edge v : edgeListS.get(listName)){
+            System.out.print(v.getId() + " ");
+        }
+        System.out.println();
+    }
+
+
     private void printVertexListS(){
         for (Map.Entry<String, ArrayList<Vertex>> pair : vertexListS.entrySet()){
-            System.out.println(pair.getKey() + " ");
+            System.out.print(pair.getKey() + ": " + ANSI_RED);
             for (Vertex v :  pair.getValue()){
                 System.out.print(v.id + " ");
             }
-            System.out.println("");
+            System.out.println(ANSI_RESET);
+        }
+    }
+
+    private void printEdgeListS(){
+        for (Map.Entry<String, ArrayList<Edge>> pair : edgeListS.entrySet()){
+            System.out.print(pair.getKey() + " " + ANSI_RED);
+            for (Edge v :  pair.getValue()){
+                System.out.print(v.getId() + " ");
+            }
+            System.out.println(ANSI_RESET);
         }
     }
 
@@ -645,7 +594,6 @@ public class Dialog {
             }
             else
                 parameters.remove(0); // delete the identifier of sourceList
-
             // filter
             filterVertices(sourceVertexList,targetVertexList,parameters);
 
@@ -715,6 +663,9 @@ public class Dialog {
     public String getErrorMsg(){
         return errorMsg;
     }
+    public void setErrorMsg(String s){
+        this.errorMsg = s;
+    }
 
     public boolean addVertex(Vertex v) {
         return (vertices.add(v));
@@ -732,4 +683,124 @@ public class Dialog {
         return edges.remove(e);
     }
 
+}
+
+class ComparatorLEFTRIGHT implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getX() > w.coordinates.getX()) {
+            return 1;
+        }
+        else {
+            if (v.coordinates.getX() < w.coordinates.getX())
+                return -1;
+            else
+                return 0;
+        }
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorRIGHTLEFT implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getX() < w.coordinates.getX()) {
+            return 1;
+        }
+        else {
+            if (v.coordinates.getX() > w.coordinates.getX())
+                return -1;
+            else
+                return 0;
+        }
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorTOPDOWN implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getY() > w.coordinates.getY()) {
+            return 1;
+        }
+        else {
+            if (v.coordinates.getY() < w.coordinates.getY())
+                return -1;
+            else
+                return 0;
+        }
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorBOTTOMUP implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getY() < w.coordinates.getY()) {
+            return 1;
+        }
+        else {
+            if (v.coordinates.getY() > w.coordinates.getY())
+                return -1;
+            else
+                return 0;
+        }
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorIDasc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return v.id - w.id;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorIDdesc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return w.id - v.id;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorLabelAsc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return v.label.compareTo(w.label);
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorLabelDesc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return w.label.compareTo(v.label);
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
 }

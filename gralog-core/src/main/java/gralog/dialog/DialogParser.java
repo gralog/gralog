@@ -34,7 +34,8 @@ public class DialogParser {
             "ADD", "REMOVE", "DELETE", "CONTRACT", "EDGE",
             "GENERATE", "WHEEL", "GRID", "CLIQUE", "CYCLE", "PATH", "TORUS", "COMPLETE", "TREE", "CYLINDRICAL",
             "NO", "CONDITION", "LABEL", "X", "Q", "EXIT", "ABORT", "CANCEL",
-            "SORT", "LEFTTORIGHT", "RIGHTTOLEFT", "TOPDOWN", "BOTTOMUP"};
+            "SORT", "LEFTTORIGHT", "RIGHTTOLEFT", "TOPDOWN", "BOTTOMUP",
+            "PRINTALL"}; // TODO: add missing
 
     private enum PossibleShapes {
         // TODO SQUARE,
@@ -158,15 +159,15 @@ public class DialogParser {
     /*          PARSE                */
 
 
-    public boolean parse(String text) {
+    public void parse(String text) {
         System.out.println(ANSI_RED + "parse: got string: " + text + ANSI_RESET); //debugging
         dialogAction = NONE;
         errorMsg = "";
         if (text.isEmpty()) {// TODO: make an exception
             System.out.println("Something went wrong: Console got an empty string as input.\n");
-            return false;
+            return;
         }
-        String[] inputWords = text.trim().toUpperCase().split(" ");
+        String[] inputWords = text.trim().toUpperCase().replaceAll("<"," < ").replaceAll(">", " > ").replaceAll(" +", " ").split(" ");
         if (inputWords[0].equals("Q") ||
                 inputWords[0].equals("EXIT") ||
                 inputWords[0].equals("ABORT") ||
@@ -176,7 +177,7 @@ public class DialogParser {
             this.dialogState = DONE;
             dialogAction = NONE;
             parameters.clear();
-            return true;
+            return;
         }
 
         i = 0;
@@ -186,7 +187,7 @@ public class DialogParser {
                     "; inputWords.length=" + inputWords.length + ANSI_RESET);
             if (this.dialogState == DONE) {
                 if (i == inputWords.length)
-                    return true;
+                    return;
                 switch (inputWords[i]) {
                     case "H":
                     case "HELP":
@@ -194,7 +195,7 @@ public class DialogParser {
                         // this.dialogState = DONE;
                         dialogAction = HELP;
                         parameters.clear();
-                        return true;
+                        return;
                     case "SELECT":
                         transition(SELECT);
                         break;
@@ -224,9 +225,30 @@ public class DialogParser {
                         break;
                     case "COMPLEMENT":
                         transition(DialogState.COMPLEMENT);
+                        break;
+                    case "PRINT":
+                        transition(DialogState.PRINT);
+                        break;
                     default:
                         errorMsg = "Parse error. Please, try again. (Quit: Q)\n";
-                        return true;
+                        return;
+                }
+            }
+
+            /*   PRINT  */
+
+            if (this.dialogState == DialogState.PRINT){
+                if (i == inputWords.length){
+                    transition(DONE,DialogAction.PRINT, "PRINTALL");
+                    return;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(DONE,DialogAction.PRINT,inputWords[i]);
+                    return;
+                }
+                else {
+                    errorMsg = inputWords[i] + " cannot be a list name.\n";
+                    return;
                 }
             }
 
@@ -235,39 +257,45 @@ public class DialogParser {
             if (this.dialogState == DialogState.DELETE){
                 if (i == inputWords.length){
                     errorMsg = "Specify an exsisting list to be deleted. (Quit: Q).\n";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])){
                     transition(DONE,DialogAction.DELETE,inputWords[i]);
-                    return true;
+                    return;
                 }
-                errorMsg = "Specify an exsisting list to be deleted. (Quit: Q).\n";
-                return true;
+                else {
+                    errorMsg = "Specify an exsisting list to be deleted. (Quit: Q).\n";
+                    return;
+                }
             }
 
             if (this.dialogState == DialogState.COMPLEMENT){
                 if (i == inputWords.length){
                     errorMsg = "Specify source and target lists. (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])){
                     transition(COMPLEMENT_WHAT,inputWords[i]);
                     continue;
                 }
-                errorMsg = "I could not parse the source name " + inputWords[i] + ". Specify source and target lists. (Quit: Q)\n";
-                return true;
+                else {
+                    errorMsg = "I could not parse the source name " + inputWords[i] + ". Specify source and target lists. (Quit: Q)\n";
+                    return;
+                }
             }
             if (this.dialogState == COMPLEMENT_WHAT){
                 if (i == inputWords.length){
                     errorMsg = "Specify the target list. (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])){
                     transition(DONE,DialogAction.COMPLEMENT,inputWords[i]);
-                    return true;
+                    return;
                 }
-                errorMsg = "I could not parse the target name " + inputWords[i] + ". Specify target list. (Quit: Q)\n";
-                return true;
+                else {
+                    errorMsg = inputWords[i] + "cannot be a list name. Specify target list. (Quit: Q)\n";
+                    return;
+                }
             }
 
             /*     TWO SETS OPERATIONS*/
@@ -275,38 +303,42 @@ public class DialogParser {
             if (this.dialogState == DialogState.TWOLISTSOP){
                 if (i == inputWords.length){
                     errorMsg = "Choose two existing lists. (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])){
                     transition(TWOLISTSOP_WHAT,inputWords[i]);
                     continue;
                 }
-                errorMsg = "Choose two existing lists. (Quit: Q)\n";
-                return true;
+                else {
+                    errorMsg = "Choose two existing lists. (Quit: Q)\n";
+                    return;
+                }
             }
             if (this.dialogState == DialogState.TWOLISTSOP_WHAT){
                 if (i == inputWords.length){
                     errorMsg = "Specify the second list. (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])){
                     transition(TWOLISTSOP_WHAT_WHAT,inputWords[i]);
-                    return true;
+                    continue;
                 }
-                errorMsg = "Specify the second list. (Quit: Q)\n";
-                return true;
+                else {
+                    errorMsg = inputWords[i] + " is not a list name. (Quit: Q)\n";
+                    return;
+                }
             }
             if (this.dialogState == DialogState.TWOLISTSOP_WHAT_WHAT){
                 if (i == inputWords.length){
                     errorMsg = "Specify the target list. (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])){
                     transition(DONE,DialogAction.TWO_LISTS_OP,inputWords[i]);
-                    return true;
+                    return;
                 }
-                errorMsg = "Specify the target list. (Quit: Q)\n";
-                return true;
+                errorMsg = inputWords[i] + " cannot be a list name. Specify the target list. (Quit: Q)\n"; // todo: help for reserved words, format of identifiers (with examples)
+                return;
             }
 
             /*    SORT    */
@@ -314,7 +346,7 @@ public class DialogParser {
             if (this.dialogState == DialogState.SORT){
                 if (i == inputWords.length){
                     errorMsg = "What to sort? Format: <list> [LEFTRIGHT|RIGHTLEFT|TOPDOWN|BOTTOMUP|ID [ASC|DESC]|LABEL [ASC|DESC]] (Quit: Q)";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])){
                     transition(SORT_WHAT,inputWords[i]);
@@ -322,7 +354,7 @@ public class DialogParser {
                 }
                 else{
                     errorMsg = "What to sort? Format: <list> [LEFTRIGHT|RIGHTLEFT|TOPDOWN|BOTTOMUP|ID [ASC|DESC]|LABEL [ASC|DESC]] (Quit: Q)";
-                    return true;
+                    return;
                 }
             }
             if (this.dialogState == SORT_WHAT){
@@ -331,47 +363,47 @@ public class DialogParser {
                 }
                 if (inputWords[i].equals("LEFTRIGHT")){
                     transition(DONE,"LEFTRIGHT");
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("RIGHTLEFT")){
                     transition(DONE,DialogAction.SORT,"RIGHTLEFT");
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("TOPDOWN")){
                     transition(DONE,DialogAction.SORT,"TOPDOWN");
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("BOTTOMUP")){
                     transition(DONE,DialogAction.SORT,"BOTTOMUP");
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("ID")){
                     transition(SORT_WHAT_ID,"ID");
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("LABEL")){
                     transition(SORT_WHAT_ID,"LABEL"); // SORT_WHAT_LABEL would be the same
-                    return true;
+                    return;
                 }
                 errorMsg = "Please choose how to sort: [LEFTRIGHT|RIGHTLEFT|TOPDOWN|BOTTOMUP|ID [ASC|DESC]|LABEL [ASC|DESC]] (Quit: Q)";
-                return true;
+                return;
 
             }
             if (this.dialogState == SORT_WHAT_ID){
                 if (i == inputWords.length){
                     errorMsg = "Ascending (ASC) or descending (DESC)?  (Quit: Q)";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("ASC")){
                     transition(DONE,DialogAction.SORT,"ASC");
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("DESC")){
                     transition(DONE,DialogAction.SORT,"DESC");
-                    return true;
+                    return;
                 }
                 errorMsg = "Ascending (ASC) or descending (DESC)?  (Quit: Q)";
-                return true;
+                return;
             }
 
             /*     SELECT  DESELECT     */
@@ -379,17 +411,17 @@ public class DialogParser {
             if (this.dialogState == SELECT) {
                 if (i == inputWords.length) {
                     errorMsg = "What to select?  Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])) {
                     if (i == inputWords.length - 1) { // last word
                         transition(DONE, SELECT_LIST,inputWords[i]);
                         actionType = FX;
-                        return true;
+                        return;
                     } else {           // could not parse: select <id> <trash>
                         // dont change dialogState == SELECT
                         errorMsg = "What to select? Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Quit: Q)\n";
-                        return true;
+                        return;
                     }
                 }
                 if (inputWords[i].equals("ALL")) {
@@ -397,22 +429,22 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "What to select? Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == DESELECT) {
                 if (i == inputWords.length) {
                     errorMsg = "What to deselect?  Format: (all [vertices|edges]) | <list id> (accepted: DESELECT) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])) {
                     if (i == inputWords.length - 1) { // last word
                         transition(DONE,DESELECT_LIST,inputWords[i]);
                         actionType = FX;
-                        return true;
+                        return;
                     } else {           // could not parse: deselect <id> <trash>
                         // dont change dialogState == DESELECT
                         errorMsg = "What to deselect? Format: (all [vertices|edges]) | <list id> (accepted: DESELECT) (Quit: Q)\n";
-                        return true;
+                        return;
                     }
                 }
                 if (inputWords[i].equals("ALL")) {
@@ -420,46 +452,46 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "What to deselect? Format: (all [vertices|edges]) | <list id> (accepted: DESELECT) (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == DialogState.SELECT_ALL) {
                 if (i == inputWords.length) {
                     transition(DONE,DialogAction.SELECT_ALL);
                     parameters.clear();
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("VERTICES")) {
                     transition(DONE,SELECT_ALL_VERTICES);
                     parameters.clear();
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("EDGES")) {
                     transition(DONE,SELECT_ALL_EDGES);
                     parameters.clear();
-                    return true;
+                    return;
                 }
                 errorMsg = "Edges or vertices? (accepted: SELECT ALL) (Quit: Q)\n";
-                return true;
+                return;
 
             }
             if (this.dialogState == DESELECT_ALL) {
                 if (i == inputWords.length) {
                     transition(DONE,DialogAction.DESELECT_ALL);
                     parameters.clear();
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("VERTICES")) {
                     transition(DONE,DESELECT_ALL_VERTICES);
                     parameters.clear();
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("EDGES")) {
                     transition(DONE,DESELECT_ALL_EDGES);
                     parameters.clear();
-                    return true;
+                    return;
                 }
                 errorMsg = "Edges or vertices? (accepted: DESELECT ALL) (Quit: Q)\n";
-                return true;
+                return;
             }
 
 
@@ -468,7 +500,7 @@ public class DialogParser {
             if (this.dialogState == FILTER) {
                 if (i == inputWords.length) {
                     errorMsg = "What to filter? Format: <what> where|st|(such that)  <parameters> to <list> (accepted: FILTER) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("ALL")) {
                     transition(FILTER_ALL,"ALL");
@@ -482,13 +514,15 @@ public class DialogParser {
                     transition(FILTER_WHAT,inputWords[i]);
                     continue;
                 }
-                errorMsg = "What to filter? Format: <what> where|st|(such that)  <parameters> to <list> (accepted: FILTER) (Quit: Q)\n";
-                return true;
+                else {
+                    errorMsg = "What to filter? Format: <what> where|st|(such that)  <parameters> to <list> (accepted: FILTER) (Quit: Q)\n";
+                    return;
+                }
             }
             if (this.dialogState == FILTER_SELECTED){
                 if (i == inputWords.length){
                     errorMsg = "Vertices or edges? (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("VERTICES")){
                     transition(FILTER_WHAT,"VERTICES");
@@ -499,13 +533,13 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Vertices or edges? (accepted: FILTER SELECTED)  (Quit: Q)\n";
-                return true;
+                return;
 
             }
             if (this.dialogState == FILTER_ALL) {
                 if (i == inputWords.length) {
                     errorMsg = "Vertices or edges? (accepted: FILTER ALL) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("VERTICES")){
                     transition(FILTER_WHAT,"VERTICES");
@@ -521,12 +555,12 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Vertices or edges? (accepted: FILTER ALL) (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == FILTER_WHAT) {
                 if (i == inputWords.length) {
                     errorMsg = "Specify filter conditions. Start with \"where\". Enter \"help\" for help. (accepted: FILTER <OBJECT>) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("WHERE") || inputWords[i].equals("ST")) {
                     transition(FILTER_WHAT_WHERE);
@@ -537,24 +571,24 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Specify filter conditions. Start with \"where\". Enter \"help\" for help. (accepted: FILTER <OBJECT>) (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == FILTER_WHAT_SUCH) {
                 if (i == inputWords.length) {
                     errorMsg = "You probably mean \"such that\". Enter \"that\" or abort. (accepted: FILTER <OBJECT> WHERE/SUCH THAT) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("THAT")) {
                     transition(FILTER_WHAT_WHERE);
                     continue;
                 }
                 errorMsg = "You probably mean \"such that\". Enter \"that\" or abort. (accepted: FILTER <OBJECT> WHERE/SUCH THAT) (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == FILTER_WHAT_WHERE) {
                 if (i == inputWords.length) {
                     errorMsg = "Specify filter conditions. Enter \"help\" for help. (accepted: FILTER <OBJECT> WHERE/SUCH THAT) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("NO")){
                     transition(FILTER_WHAT_WHERE_NO,"NOCONDITION");
@@ -641,14 +675,14 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Mistyped? Add conditions. Enter \"help\" for help. (accepted: FILTER <OBJECT> WHERE/SUCH THAT) (Quit: Q)\n";
-                return true;
+                return;
             }
 
             if (this.dialogState == FILTER_WHAT_WHERE_NO) {
                 if (i == inputWords.length) {
                     this.dialogState = FILTER_WHAT_WHERE_COND;
                     errorMsg = "Specify more conditions or where to save the result. Start with \"to\", then give a list id. (accepted: FILTER <OBJECT> WHERE/SUCH THAT NO) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("CONDITION")) {
                     transition(FILTER_WHAT_WHERE_COND);
@@ -660,14 +694,14 @@ public class DialogParser {
                 }
                 this.dialogState = FILTER_WHAT_WHERE_COND;
                 errorMsg = "Specify more conditions or where to save the result. Start with \"to\", then give a list id. (accepted: FILTER <OBJECT> WHERE/SUCH THAT NO ) (Quit: Q)\n";
-                return true;
+                return;
 
             }
             if (this.dialogState == FILTER_WHAT_WHERE_LABEL) {
                 if (i == inputWords.length) {
                     this.dialogState = FILTER_WHAT_WHERE_PARAM;
                     errorMsg = "Specify what the label should contain or that it should be empty: CONTAINS <SMTH> or EMPTY. (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("CONTAINS")){
                     transition(FILTER_WHAT_WHERE_LABEL_CONTAINS, "LABELCONTAINS");
@@ -678,12 +712,12 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Specify what the label should contain or that it should be empty: CONTAINS <SMTH> or EMPTY. (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == dialogState.FILTER_WHAT_WHERE_LABEL_CONTAINS){
                 if (i == inputWords.length){
                     errorMsg = "Specify what labels should contain (no quotes).\n";
-                    return true;
+                    return;
                 }
                 transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
                 continue;
@@ -692,7 +726,7 @@ public class DialogParser {
                 if (i == inputWords.length) {
                     this.dialogState = FILTER_WHAT_WHERE_COLOR;
                     errorMsg = "Specify the fill color or abort. (accepted: FILTER <OBJECT> WHERE/SUCH THAT FILL) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("COLOR")) {
                     transition(FILTER_WHAT_WHERE_COLOR);
@@ -703,12 +737,12 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Specify a color or abort. (accepted: FILTER <OBJECT> WHERE/SUCH THAT FILL) (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_STROKE) {
                 if (i == inputWords.length) {
                     transitionErr(FILTER_WHAT_WHERE_PARAM,"Specify the stroke color. (accepted: FILTER <OBJECT> WHERE/SUCH THAT STROKE/COLOR) (Quit: Q)\n");
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("COLOR")) {
                     transition(FILTER_WHAT_WHERE_COLOR);
@@ -719,12 +753,12 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Specify a color or abort. (accepted: FILTER <OBJECT> WHERE/SUCH THAT STROKE/COLOR) (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_EDGE) {
                 if (i == inputWords.length) {
                     transitionErr(FILTER_WHAT_WHERE_PARAM, "Specify the edge type or abort. (accepted: FILTER <OBJECT> WHERE/SUCH THAT EDGE) (Quit: Q)\n");
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("TYPE")) {
                     transition(FILTER_WHAT_WHERE_PARAM);
@@ -735,63 +769,63 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Specify an edge type. (accepted: FILTER <OBJECT> WHERE/SUCH THAT EDGE) (Quit: Q)\n";
-                return true;
+                return;
 
             }
             if (this.dialogState == FILTER_WHAT_WHERE_PARAM){
                 if (i == inputWords.length){
                     errorMsg = "Specify a value. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY>) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (hasValueForm(inputWords[i])){
                     transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
                     continue;
                 }
                 errorMsg = "Specify a value. (accepted: FILTER <OBJECT> WHERE/SUCH THAT PROPERTY) (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_EDGETYPE){
                 if (i == inputWords.length){
                     errorMsg = "Specify an edge type. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY>) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (Edge.isEdgeType(inputWords[i])){
                     transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
                     continue;
                 }
                 errorMsg = "Specify an edge type. (accepted: FILTER <OBJECT> WHERE/SUCH THAT PROPERTY) (Quit: Q)\n";
-                return true;
+                return;
             }
 
             if (this.dialogState == FILTER_WHAT_WHERE_SHAPE){
                 if (i == inputWords.length){
                     errorMsg = "Specify a shape. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY>) (Quit: Q)\n";
-                    return true; // TODO: Specify a shape: ...
+                    return; // TODO: Specify a shape: ...
                 }
                 if (RenderingShape.isShape(inputWords[i])){
                     transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
                     continue;
                 }
                 errorMsg = "Specify a shape. (accepted: FILTER <OBJECT> WHERE/SUCH THAT PROPERTY) (Quit: Q)\n";
-                return true; // TODO: Specify a shape: ...
+                return; // TODO: Specify a shape: ...
             }
             if (this.dialogState == FILTER_WHAT_WHERE_COLOR){
                 if (i == inputWords.length){
                     errorMsg = "Specify a color. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY>) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (isColorValue(inputWords[i])){
                     transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
                     continue;
                 }
                 errorMsg = "Specify a color. (accepted: FILTER <OBJECT> WHERE/SUCH THAT PROPERTY) (Quit: Q)\n";
-                return true;
+                return;
             }
 
             if (this.dialogState == FILTER_WHAT_WHERE_INTPARAM){
                 if (i == inputWords.length){
                     errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (isInt(inputWords[i])){
                     transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
@@ -806,12 +840,12 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_FLOATPARAM){
                 if (i == inputWords.length){
                     errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (isFloat(inputWords[i])){
                     transition(FILTER_WHAT_WHERE_COND,inputWords[i]);
@@ -826,13 +860,13 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Specify a value or say < or >. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <NUMERICAL PROPERTY>) (Quit: Q)\n";
-                return true;
+                return;
             }
 
             if (this.dialogState == FILTER_WHAT_WHERE_HAS) {
                 if (i == inputWords.length) {
                     errorMsg = "Has what: selfloop or label? (accepted: FILTER <OBJECT> WHERE/SUCH THAT HAS) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("SELFLOOP")) {
                     transition(FILTER_WHAT_WHERE_COND, "SELFLOOP");
@@ -843,12 +877,12 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Possible properties to have are: selfloop, label. (accepted: FILTER <OBJECT> WHERE/SUCH THAT HAS)  (Quit: Q)\n";
-                return true;
+                return;
             }
             if (this.dialogState == FILTER_WHAT_WHERE_HASNT) {
                 if (i == inputWords.length) {
                     errorMsg = "Hasn\'t what: selfloop or value?  (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("SELFLOOP")) {
                     transition(FILTER_WHAT_WHERE_COND, "NOSELFLOOP");
@@ -859,13 +893,13 @@ public class DialogParser {
                     continue;
                 }
                 errorMsg = "Possible properties to have are: selfloop, label. (accepted: FILTER <OBJECT> WHERE/SUCH THAT HASNT) (Quit: Q)\n";
-                return true;
+                return;
             }
 
             if (this.dialogState == FILTER_WHAT_WHERE_COND) {
                 if (i == inputWords.length) {
                     errorMsg = "Specify further conditions or where to save the result (start with \"to\", then give a list id). (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY> <VALUE>) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (inputWords[i].equals("TO")) {
                     transition(FILTER_WHAT_WHERE_COND_TO);
@@ -878,18 +912,20 @@ public class DialogParser {
             if (this.dialogState == FILTER_WHAT_WHERE_COND_TO) {
                 if (i == inputWords.length) {
                     errorMsg = "Specify where to save the result. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY> <VALUE> TO) (Quit: Q)\n";
-                    return true;
+                    return;
                 }
                 if (hasIdForm(inputWords[i])) {
                     transition(DONE,DialogAction.FILTER,inputWords[i]);
-                    return true;
+                    return;
                 }
-                errorMsg = "Specify where to save the result. Format: (_|[a-Z])(_|[a-Z]|[0-9])*. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY> <VALUE> TO) (Quit: Q)\n";
-                return true;
+                else {
+                    errorMsg = "Specify where to save the result. Format: (_|[a-Z])(_|[a-Z]|[0-9])*. (accepted: FILTER <OBJECT> WHERE/SUCH THAT <PROPERTY> <VALUE> TO) (Quit: Q)\n";
+                    return;
+                }
             }
             errorMsg = "Something went wrong, I could not parse your command. Please, try to write the command in one line.\n";
-            return true;
+            return;
         }
-        return true;
+        return;
     }
 }

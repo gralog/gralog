@@ -11,6 +11,7 @@ public enum DialogAction {
     TWO_LISTS_OP,
     DELETE,
     COMPLEMENT,
+    PRINT,
     HELP,
     NONE,
     SORT
