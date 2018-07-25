@@ -475,6 +475,56 @@ public class Dialog {
         return;
     }
 
+    public void connectClique(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (Vertex v : list){
+            for (Vertex w : list){
+                if (v.id < w.id){
+                    structure.addEdge(v,w);
+                    structure.addEdge(w,v);
+                }
+            }
+        }
+    }
+
+    public void connectSelfloop(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (Vertex v : list)
+            structure.addEdge(v,v);
+    }
+
+    public void connectPath(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (int i = 0; i < list.size()-1; i++) {
+            structure.addEdge(list.get(i),list.get(i+1));
+        }
+    }
+
+    public void connectCycle(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (int i = 0; i < list.size()-1; i++) {
+            structure.addEdge(list.get(i),list.get(i+1));
+        }
+        structure.addEdge(list.get(list.size()-1),list.get(0));
+    }
+
+
 
     // returns list of vertices to save the result of filtering to
     // if the list with key s already exists, vertices are added to it (if not already there)

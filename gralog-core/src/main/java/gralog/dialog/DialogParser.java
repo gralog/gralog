@@ -35,6 +35,7 @@ public class DialogParser {
             "GENERATE", "WHEEL", "GRID", "CLIQUE", "CYCLE", "PATH", "TORUS", "COMPLETE", "TREE", "CYLINDRICAL",
             "NO", "CONDITION", "LABEL", "X", "Q", "EXIT", "ABORT", "CANCEL",
             "SORT", "LEFTTORIGHT", "RIGHTTOLEFT", "TOPDOWN", "BOTTOMUP",
+            "CONNECT",
             "PRINTALL"}; // TODO: add missing
 
     private enum PossibleShapes {
@@ -167,7 +168,13 @@ public class DialogParser {
             System.out.println("Something went wrong: Console got an empty string as input.\n");
             return;
         }
-        String[] inputWords = text.trim().toUpperCase().replaceAll("<"," < ").replaceAll(">", " > ").replaceAll(" +", " ").split(" ");
+        // trim
+        // upper case
+        // wtite space around <, >, =,
+        String tmpText = text.trim().toUpperCase().replaceAll("<"," < ").replaceAll(">", " > ").replaceAll("="," = ");
+        // delete extra spaces (leave one) in the formula after =
+        // split
+        String[] inputWords = tmpText.replaceAll(" +", " ").replaceAll(".*=.* ","").split(" ");
         if (inputWords[0].equals("Q") ||
                 inputWords[0].equals("EXIT") ||
                 inputWords[0].equals("ABORT") ||
@@ -226,6 +233,9 @@ public class DialogParser {
                     case "COMPLEMENT":
                         transition(DialogState.COMPLEMENT);
                         break;
+                    case "CONNECT":
+                        transition(DialogState.CONNECT);
+                        break;
                     case "PRINT":
                         transition(DialogState.PRINT);
                         break;
@@ -234,6 +244,74 @@ public class DialogParser {
                         return;
                 }
             }
+
+            if (this.dialogState == DialogState.CONNECT){
+                if (i == inputWords.length){
+                    errorMsg = "Specify what to connect. Format: CONNECT <list> <list> =<formula>|BICLIQUE|MATCHING or CONNECT <list> =<formula>|PATH|CYCLE|CLIQUE";
+                    return;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(CONNECT_WHAT,inputWords[i]);
+                    continue;
+                }
+                else {
+                    errorMsg = "Specify what to connect. Format: CONNECT <list> <list> =<formula>|BICLIQUE|MATCHING or CONNECT <list> =<formula>|PATH|CYCLE|CLIQUE";
+                    return;
+                }
+            }
+            if (this.dialogState == DialogState.CONNECT_WHAT){
+                if (i == inputWords.length){
+                    transition(DONE,DialogAction.CONNECT_CLIQUE);
+                    return;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(CONNECT_WHAT_WHAT,inputWords[i]);
+                    continue;
+                }
+                if (inputWords[i].substring(0,1).equals("=")){ // first character is =, a formula
+                    transition(DONE,DialogAction.CONNECT_FORMULA,inputWords[i].substring(1)); // everything but =
+                    return;
+                }
+                if (inputWords[i].equals("PATH")){
+                    transition(DONE,DialogAction.CONNECT_PATH);
+                    return;
+                }
+                if (inputWords[i].equals("CYCLE")){
+                    transition(DONE,DialogAction.CONNECT_CYCLE);
+                    return;
+                }
+                if (inputWords[i].equals("CLIQUE")){
+                    transition(DONE,DialogAction.CONNECT_CLIQUE);
+                    return;
+                }
+                if (inputWords[i].equals("SELFLOOP")){
+                    transition(DONE,DialogAction.CONNECT_SELFLOOP);
+                    return;
+                }
+                errorMsg = "Could not parse " + inputWords[i] + ".\n";
+                return;
+            }
+            if (this.dialogState == CONNECT_WHAT_WHAT){
+                if (i == inputWords.length){
+                    errorMsg = "Specify how to connect the lists. Format: BICLIQUE|MATCHING|=<formula>.\n";
+                    return;
+                }
+                if (inputWords[i].equals("BICLIQUE")){
+                    transition(DONE,DialogAction.CONNECT_BICLIQUE);
+                    return;
+                }
+                if (inputWords[i].equals("MATCHING")){
+                    transition(DONE,DialogAction.CONNECT_MATCHING);
+                    return;
+                }
+                if (inputWords[i].substring(0,1).equals("=")){ // first character is =, a formula
+                    transition(DONE,DialogAction.CONNECT_2_LISTS_FORMULA,inputWords[i].substring(1)); // everything but =
+                    return;
+                }
+                errorMsg = "Specify how to connect the lists. Format: BICLIQUE|MATCHING|=<formula>.\n";
+                return;
+            }
+
 
             /*   PRINT  */
 
