@@ -1,7 +1,6 @@
 package gralog.dialog;
 
-import gralog.rendering.GralogColor;
-import gralog.rendering.shapes.RenderingShape;
+
 import gralog.structure.*;
 
 import java.util.*;
@@ -523,7 +522,107 @@ public class Dialog {
         }
         structure.addEdge(list.get(list.size()-1),list.get(0));
     }
+    public void connectBiclique(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list1 = vertexListS.get(parameters.get(0));
 
+        if (!vertexListS.containsKey(parameters.get(1))){
+            errorMsg = "No such vertex list: " + parameters.get(1);
+            return;
+        }
+        ArrayList<Vertex> list2 = vertexListS.get(parameters.get(1));
+
+        for (Vertex v : list1)
+            for (Vertex w : list2)
+              structure.addEdge(v,w);
+    }
+    public void connectMatching(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        if (!vertexListS.containsKey(parameters.get(1))){
+            errorMsg = "No such vertex list: " + parameters.get(1);
+            return;
+        }
+        ArrayList<Vertex> list1;
+        ArrayList<Vertex> list2;
+        // choose s.t. list1 is shorter than list2
+        if (vertexListS.get(parameters.get(0)).size() < vertexListS.get(parameters.get(1)).size()) {
+            list1 = vertexListS.get(parameters.get(0));
+            list2 = vertexListS.get(parameters.get(1));
+        }
+        else{
+            list1 = vertexListS.get(parameters.get(1));
+            list2 = vertexListS.get(parameters.get(0));
+        }
+
+        for (int i = 0; i < list1.size(); i++) {
+            structure.addEdge(list1.get(i),list2.get(i));
+        }
+    }
+
+    public void connectFormula(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+
+        for (int i = 0; i < list.size(); i++) {
+            net.objecthunter.exp4j.Expression expression =
+                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(0))
+                            .variable("i")
+                            .build()
+                            .setVariable("i", i);
+            double j_double = expression.evaluate();
+            int j = (int) Math.floor(j_double);
+            if (0 <= j && j < list.size())
+                structure.addEdge(list.get(i),list.get(j));
+            else{
+                errorMsg = errorMsg + "Result of applying formula to "
+                        + i + " out of list "
+                        + parameters.get(0) +
+                        ". Skipping " + i + ".\n";
+            }
+
+        }
+    }// todo check use of exp4j
+    public void connect2ListsFormula(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        if (!vertexListS.containsKey(parameters.get(1))){
+            errorMsg = "No such vertex list: " + parameters.get(1);
+            return;
+        }
+        ArrayList<Vertex> list1 = vertexListS.get(parameters.get(0));
+        ArrayList<Vertex> list2 = vertexListS.get(parameters.get(1));
+        // choose s.t. list1 is shorter than list2
+
+        for (int i = 0; i < list1.size(); i++) {
+            net.objecthunter.exp4j.Expression expression =
+                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(0))
+                            .variable("i")
+                            .build()
+                            .setVariable("i", i);
+            double j_double = expression.evaluate();
+            int j = (int) Math.floor(j_double);
+            if (0 <= j && j < list2.size())
+                structure.addEdge(list1.get(i),list2.get(j));
+            else{
+                errorMsg = errorMsg + "Result of applying formula to "
+                        + i + " out of list "
+                        + parameters.get(1) +
+                        ". Skipping " + i + ".\n";
+            }
+
+        }
+    }// todo check use of exp4j
 
 
     // returns list of vertices to save the result of filtering to
