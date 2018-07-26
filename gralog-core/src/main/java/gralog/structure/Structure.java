@@ -225,7 +225,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             v.id = pollNextFreeVertexID();
             vertices.put(v.id, v);
         }
-    }
+    } //todo why depricated?
 
     /**
      * Adds a vertex to the structure. Has no effect if the vertex already

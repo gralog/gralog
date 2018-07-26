@@ -5,7 +5,7 @@ import gralog.structure.*;
 
 import java.util.*;
 
-import static gralog.dialog.DialogParser.ANSI_RED;
+import static gralog.dialog.DialogParser.ANSI_GREEN;
 import static gralog.dialog.DialogParser.ANSI_RESET;
 
 
@@ -167,16 +167,17 @@ public class Dialog {
     }
     
     public void sort(ArrayList<String> parameters){
+        System.out.println("Entring sort: parameters = [" + parameters + "]");
         String listname = parameters.get(0);
         if (! vertexListS.containsKey(listname)){
             errorMsg = "No such list, cannot sort.\n";
             return;
         }
         switch (parameters.get(1)){
-            case "LEFTTORIGHT":
+            case "LEFTRIGHT":
                 Collections.sort(vertexListS.get(listname),new ComparatorLEFTRIGHT());
                 break;
-            case "RIGHTTOLEFT":
+            case "RIGHTLEFT":
                 Collections.sort(vertexListS.get(listname),new ComparatorRIGHTLEFT());
                 break;
             case "TOPDOWN":
@@ -197,6 +198,9 @@ public class Dialog {
                 else
                     Collections.sort(vertexListS.get(listname),new ComparatorLabelDesc());
                 break;
+                default:
+                    errorMsg = parameters.get(1) + " is not a sort order.\n";
+                    break;
         }
     }
 
@@ -551,7 +555,7 @@ public class Dialog {
         ArrayList<Vertex> list1;
         ArrayList<Vertex> list2;
         // choose s.t. list1 is shorter than list2
-        if (vertexListS.get(parameters.get(0)).size() < vertexListS.get(parameters.get(1)).size()) {
+        if (vertexListS.get(parameters.get(0)).size() <= vertexListS.get(parameters.get(1)).size()) {
             list1 = vertexListS.get(parameters.get(0));
             list2 = vertexListS.get(parameters.get(1));
         }
@@ -638,7 +642,7 @@ public class Dialog {
     }
 
     private void printVertexList(String listName){
-        System.out.print(ANSI_RED + "List " + listName + ": " + ANSI_RESET);
+        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
         for (Vertex v : vertexListS.get(listName)){
             System.out.print(v.id + " ");
         }
@@ -646,7 +650,7 @@ public class Dialog {
     }
 
     private void printEdgeList(String listName){
-        System.out.print(ANSI_RED + "List " + listName + ": " + ANSI_RESET);
+        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
         for (Edge v : edgeListS.get(listName)){
             System.out.print(v.getId() + " ");
         }
@@ -656,7 +660,7 @@ public class Dialog {
 
     private void printVertexListS(){
         for (Map.Entry<String, ArrayList<Vertex>> pair : vertexListS.entrySet()){
-            System.out.print(pair.getKey() + ": " + ANSI_RED);
+            System.out.print(pair.getKey() + ": " + ANSI_GREEN);
             for (Vertex v :  pair.getValue()){
                 System.out.print(v.id + " ");
             }
@@ -666,7 +670,7 @@ public class Dialog {
 
     private void printEdgeListS(){
         for (Map.Entry<String, ArrayList<Edge>> pair : edgeListS.entrySet()){
-            System.out.print(pair.getKey() + " " + ANSI_RED);
+            System.out.print(pair.getKey() + " " + ANSI_GREEN);
             for (Edge v :  pair.getValue()){
                 System.out.print(v.getId() + " ");
             }
@@ -710,7 +714,7 @@ public class Dialog {
     // (2) is: see description in gralog-core/.../dialog/actions.txt
     // (3) is: as (1), but if the identifier is not found in the list of already defined identifiers: create one
     public void filter(ArrayList<String> parameters, Structure structure, Highlights highlights) {
-        System.out.println(ANSI_RED + "Entering filter. parameters = [" + parameters + "]" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "Entering filter. parameters = [" + parameters + "]" + ANSI_RESET);
 
         if (parameters.get(1).equals("VERTICES") || vertexListS.containsKey(parameters.get(0))){ // vertex list
 
@@ -731,7 +735,7 @@ public class Dialog {
                     if (v instanceof Vertex)
                         sourceVertexList.add((Vertex) v);
             if (parameters.get(0).equals("ALL"))
-                sourceVertexList = new ArrayList<Vertex>(structure.getVertices());
+                sourceVertexList = new ArrayList<Vertex>( (Collection<? extends Vertex>) structure.getVertices());
             if (vertexListS.containsKey(parameters.get(0))) { // list already exists
                 sourceVertexList = vertexListS.get(parameters.get(0));
             }
@@ -837,15 +841,11 @@ public class Dialog {
 class ComparatorLEFTRIGHT implements Comparator<Vertex>{
     @Override
     public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getX() > w.coordinates.getX()) {
+        if (v.coordinates.getX() > w.coordinates.getX())
             return 1;
-        }
-        else {
-            if (v.coordinates.getX() < w.coordinates.getX())
-                return -1;
-            else
-                return 0;
-        }
+        if (v.coordinates.getX() < w.coordinates.getX())
+            return -1;
+        return 0;
     }
     @Override
     public boolean equals(Object v) {
@@ -856,15 +856,11 @@ class ComparatorLEFTRIGHT implements Comparator<Vertex>{
 class ComparatorRIGHTLEFT implements Comparator<Vertex>{
     @Override
     public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getX() < w.coordinates.getX()) {
+        if (v.coordinates.getX() < w.coordinates.getX())
             return 1;
-        }
-        else {
-            if (v.coordinates.getX() > w.coordinates.getX())
+        if (v.coordinates.getX() > w.coordinates.getX())
                 return -1;
-            else
-                return 0;
-        }
+        return 0;
     }
     @Override
     public boolean equals(Object v) {
@@ -875,15 +871,11 @@ class ComparatorRIGHTLEFT implements Comparator<Vertex>{
 class ComparatorTOPDOWN implements Comparator<Vertex>{
     @Override
     public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getY() > w.coordinates.getY()) {
+        if (v.coordinates.getY() > w.coordinates.getY())
             return 1;
-        }
-        else {
-            if (v.coordinates.getY() < w.coordinates.getY())
-                return -1;
-            else
-                return 0;
-        }
+        if (v.coordinates.getY() < w.coordinates.getY())
+            return -1;
+        return 0;
     }
     @Override
     public boolean equals(Object v) {
@@ -894,15 +886,11 @@ class ComparatorTOPDOWN implements Comparator<Vertex>{
 class ComparatorBOTTOMUP implements Comparator<Vertex>{
     @Override
     public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getY() < w.coordinates.getY()) {
+        if (v.coordinates.getY() < w.coordinates.getY())
             return 1;
-        }
-        else {
-            if (v.coordinates.getY() > w.coordinates.getY())
-                return -1;
-            else
-                return 0;
-        }
+        if (v.coordinates.getY() > w.coordinates.getY())
+            return -1;
+        return 0;
     }
     @Override
     public boolean equals(Object v) {

@@ -185,7 +185,7 @@ public class ExpressionBuilder {
                 throw new IllegalArgumentException("A variable can not have the same name as a function [" + var + "]");
             }
         }
-        return new Expression(ShuntingYard.convertToRPN(this.expression, this.userFunctions, this.userOperators,
+        return new net.objecthunter.exp4j.Expression(ShuntingYard.convertToRPN(this.expression, this.userFunctions, this.userOperators,
                 this.variableNames, this.implicitMultiplication), this.userFunctions.keySet());
     }
 

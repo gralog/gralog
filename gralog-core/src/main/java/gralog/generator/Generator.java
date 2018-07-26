@@ -8,6 +8,9 @@ import gralog.structure.*;
 /**
  *
  */
+
+
+// todo: refactor Generator! Should be: Structure path20 = new Path(20);
 public abstract class Generator {
 
     // null means it has no parameters

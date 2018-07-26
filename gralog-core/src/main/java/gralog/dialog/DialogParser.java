@@ -16,7 +16,7 @@ import static gralog.dialog.DialogState.SELECT_ALL;
 
 public class DialogParser {
 
-    public static final String ANSI_RED = "\u001B[31m"; // for debugging
+    public static final String ANSI_GREEN = "\u001B[32m"; // for debugging
     public static final String ANSI_RESET = "\u001B[0m";
 
     private int i; // running variable
@@ -34,7 +34,7 @@ public class DialogParser {
             "ADD", "REMOVE", "DELETE", "CONTRACT", "EDGE",
             "GENERATE", "WHEEL", "GRID", "CLIQUE", "CYCLE", "PATH", "TORUS", "COMPLETE", "TREE", "CYLINDRICAL",
             "NO", "CONDITION", "LABEL", "X", "Q", "EXIT", "ABORT", "CANCEL",
-            "SORT", "LEFTTORIGHT", "RIGHTTOLEFT", "TOPDOWN", "BOTTOMUP",
+            "SORT", "LEFTRIGHT", "RIGHTLEFT", "TOPDOWN", "BOTTOMUP",
             "CONNECT",
             "PRINTALL"}; // TODO: add missing
 
@@ -161,7 +161,7 @@ public class DialogParser {
 
 
     public void parse(String text) {
-        System.out.println(ANSI_RED + "parse: got string: " + text + ANSI_RESET); //debugging
+        System.out.println(ANSI_GREEN + "parse: got string: " + text + ANSI_RESET); //debugging
         dialogAction = NONE;
         errorMsg = "";
         if (text.isEmpty()) {// TODO: make an exception
@@ -171,10 +171,24 @@ public class DialogParser {
         // trim
         // upper case
         // wtite space around <, >, =,
-        String tmpText = text.trim().toUpperCase().replaceAll("<"," < ").replaceAll(">", " > ").replaceAll("="," = ");
-        // delete extra spaces (leave one) in the formula after =
-        // split
-        String[] inputWords = tmpText.replaceAll(" +", " ").replaceAll(".*=.* ","").split(" ");
+        // delete multiple spaces
+        String tmpText = text.trim()
+                .replaceAll("<"," < ")
+                .replaceAll(">", " > ")
+                .replaceAll("="," =")
+                .replaceAll(" +", " ");
+        // delete all spaces in the formula after =
+        String tmpText2;
+        if (tmpText.contains("=")) {
+            tmpText2 = tmpText.substring(0, tmpText.indexOf('=') + 1).toUpperCase()
+                    + tmpText.substring(tmpText.indexOf('=') + 1).replaceAll(" ", "");
+
+        }
+        else{
+            tmpText2 = tmpText.toUpperCase();
+        }
+        String[] inputWords = tmpText2.split(" ");
+
         if (inputWords[0].equals("Q") ||
                 inputWords[0].equals("EXIT") ||
                 inputWords[0].equals("ABORT") ||
@@ -189,7 +203,7 @@ public class DialogParser {
 
         i = 0;
         while (i <= inputWords.length) {
-            System.out.println(ANSI_RED + "DialogParser: i=" + i +
+            System.out.println(ANSI_GREEN + "DialogParser: i=" + i +
                     "; dialogState=" + this.dialogState +
                     "; inputWords.length=" + inputWords.length + ANSI_RESET);
             if (this.dialogState == DONE) {
@@ -288,6 +302,11 @@ public class DialogParser {
                     transition(DONE,DialogAction.CONNECT_SELFLOOP);
                     return;
                 }
+                if (inputWords[i].substring(0,1).equals("=")){ // first character is =, a formula
+                    transition(DONE,DialogAction.CONNECT_FORMULA,inputWords[i].substring(1)); // everything but =
+                    return;
+                }
+
                 errorMsg = "Could not parse " + inputWords[i] + ".\n";
                 return;
             }
@@ -366,6 +385,10 @@ public class DialogParser {
                     errorMsg = "Specify the target list. (Quit: Q)\n";
                     return;
                 }
+                if (inputWords[i].equals("TO")){ // swallow "TO"
+                    transition(COMPLEMENT_WHAT);
+                    continue;
+                }
                 if (hasIdForm(inputWords[i])){
                     transition(DONE,DialogAction.COMPLEMENT,inputWords[i]);
                     return;
@@ -438,9 +461,10 @@ public class DialogParser {
             if (this.dialogState == SORT_WHAT){
                 if (i == inputWords.length){
                     errorMsg = "Please choose how to sort: [LEFTRIGHT|RIGHTLEFT|TOPDOWN|BOTTOMUP|ID [ASC|DESC]|LABEL [ASC|DESC]] (Quit: Q)";
+                    return;
                 }
                 if (inputWords[i].equals("LEFTRIGHT")){
-                    transition(DONE,"LEFTRIGHT");
+                    transition(DONE, DialogAction.SORT,"LEFTRIGHT");
                     return;
                 }
                 if (inputWords[i].equals("RIGHTLEFT")){
@@ -457,11 +481,11 @@ public class DialogParser {
                 }
                 if (inputWords[i].equals("ID")){
                     transition(SORT_WHAT_ID,"ID");
-                    return;
+                    continue;
                 }
                 if (inputWords[i].equals("LABEL")){
                     transition(SORT_WHAT_ID,"LABEL"); // SORT_WHAT_LABEL would be the same
-                    return;
+                    continue;
                 }
                 errorMsg = "Please choose how to sort: [LEFTRIGHT|RIGHTLEFT|TOPDOWN|BOTTOMUP|ID [ASC|DESC]|LABEL [ASC|DESC]] (Quit: Q)";
                 return;
