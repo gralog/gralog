@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
+import gralog.plugins.XmlName;
 import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
 import gralog.events.*;
@@ -28,6 +29,8 @@ import javax.xml.transform.OutputKeys;
 /**
  *
  */
+
+@XmlName(name = "graph")
 public abstract class Structure<V extends Vertex, E extends Edge>
     extends XmlMarshallable implements IMovable {
 
@@ -1111,8 +1114,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
     @Override
     public Element toXml(Document doc) throws Exception {
-        Element snode = super.toXml(doc);
-
+        Element snode = doc.createElement("graph");//super.toXml(doc);
+        if (this.getClass().getAnnotation(XmlName.class).name().equals("graph")) {
+        	snode.setAttribute("edgedefault", "undirected");
+        } else {
+        	snode.setAttribute("edgedefault", "directed");
+        }
+        snode.setAttribute("type", this.getClass().getAnnotation(XmlName.class).name());//super.xmlName());
+        
         HashMap<Vertex, String> ids = new HashMap<>();
         Integer i = 1;
         for (Vertex v : getVertices()) {
@@ -1223,27 +1232,30 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         ArrayList<Edge> tempEdges = new ArrayList<>();
 
         NodeList children = gnode.getChildNodes();
-        System.out.println(children);
+        System.out.println("children from Xml " + children);
         for (int i = 0; i < children.getLength(); ++i) {
             Node childNode = children.item(i);
+            System.out.println("children item " + childNode);
             if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
             Element child = (Element) childNode;
-            System.out.println(child.getTagName());
+            System.out.println("child tag name " + child.getTagName());
             Object obj = PluginManager.instantiateClass(child.getTagName());
             if (obj instanceof Vertex) {
+            	System.out.println("another vertex");
                 V v = addVertex();
                 v.copy((V) obj);
                 String id = v.fromXml(child);
                 vertexRegister.put(id, v);
             } else if (obj instanceof Edge) {
+            	System.out.println("another edge");
                 tempEdges.add((E) obj);
                 loadedFrom.put((E) obj, child);
             }
         }
-
         for (Edge e : tempEdges) {
+            System.out.println("tempEdges " + e.getSource() + e.getTarget());        	
             e.fromXml(loadedFrom.get(e), vertexRegister);
             edges.put(e.getId(),(E) e);
         }
@@ -1271,8 +1283,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             String className = child.getTagName();		// catch additional tag name(should be type) = buechiautomat/automaton if existent
             if (child.getAttributes().getNamedItem("edgedefault")!=null) {
             	if (child.getAttributes().getNamedItem("edgedefault").getNodeValue().equals("directed")) {
-            		if (child.getAttributes().getNamedItem("name")!=null) {
-            			className = child.getAttributes().getNamedItem("name").getNodeValue();
+            		if (child.getAttributes().getNamedItem("type")!=null) {
+            			className = child.getAttributes().getNamedItem("type").getNodeValue();
             		} else {
             			className = "digraph";
             		}
