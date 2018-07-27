@@ -45,3 +45,6 @@ SUBDIVIDE <edge list id> <n times>
 
 CONNECT <list> <list> =<formula>|BICLIQUE|MATCHING to <list>
 CONNECT <list> =<formula>|PATH|CYCLE|CLIQUE to <list>
+
+
+FIND <list id> | [VERTEX ]<vertex id>|[EDGE ]<edge id>
