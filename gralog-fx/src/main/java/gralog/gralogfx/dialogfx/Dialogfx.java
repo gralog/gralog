@@ -2,9 +2,9 @@ package gralog.gralogfx.dialogfx;
 
 import gralog.gralogfx.StructurePane;
 import gralog.structure.Structure;
+import gralog.dialog.*;
 
-import static gralog.gralogfx.panels.Console.ANSI_RED;
-import static gralog.gralogfx.panels.Console.ANSI_RESET;
+import java.util.ArrayList;
 
 
 public class Dialogfx {
@@ -26,6 +26,21 @@ public class Dialogfx {
         Structure structure = currentPane.getStructure();
         currentPane.selectAll(structure.getEdges());
         currentPane.requestRedraw();
+    }
+
+    public void selectList(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog){
+        Structure structure = currentPane.getStructure();
+        if (dialog.getVertexListS().containsKey(parameters.get(0))) {
+            currentPane.selectAll(dialog.getVertexListS().get(parameters.get(0)));
+            currentPane.requestRedraw();
+            return;
+        }
+        if (dialog.getEdgeListS().containsKey(parameters.get(0))){
+            currentPane.selectAll(dialog.getEdgeListS().get(parameters.get(0)));
+            currentPane.requestRedraw();
+            return;
+        }
+        dialog.setErrorMsg("No such list: " + parameters.get(0) + ".\n");
     }
 
     public void deselectAll(StructurePane currentPane){
