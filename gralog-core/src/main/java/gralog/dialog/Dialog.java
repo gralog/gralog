@@ -494,6 +494,22 @@ public class Dialog {
         }
     }
 
+    public void connectTClosure(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (Vertex v : list){
+            for (Vertex w : list){
+                if (v.id < w.id){
+                    structure.addEdge(v,w);
+                }
+            }
+        }
+    }
+
+
     public void connectSelfloop(ArrayList<String> parameters, Structure structure){
         if (!vertexListS.containsKey(parameters.get(0))){
             errorMsg = "No such vertex list: " + parameters.get(0);

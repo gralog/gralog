@@ -198,6 +198,9 @@ public class Console extends VBox implements GralogWindow{
                 case CONNECT_CYCLE:             dialog.connectCycle(parameters, currentPane.getStructure());
                                                 currentPane.requestRedraw();
                                                 break;
+                case CONNECT_TCLOSURE:          dialog.connectTClosure(parameters, currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
                 case CONNECT_MATCHING:          dialog.connectMatching(parameters, currentPane.getStructure());
                                                 currentPane.requestRedraw();
                                                 break;

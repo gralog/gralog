@@ -298,6 +298,11 @@ public class DialogParser {
                     transition(DONE,DialogAction.CONNECT_CLIQUE);
                     return;
                 }
+                if (inputWords[i].equals("TCLOSURE")){
+                    transition(DONE,DialogAction.CONNECT_TCLOSURE);
+                    return;
+                }
+
                 if (inputWords[i].equals("SELFLOOP")){
                     transition(DONE,DialogAction.CONNECT_SELFLOOP);
                     return;
