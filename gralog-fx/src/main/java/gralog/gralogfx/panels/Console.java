@@ -85,7 +85,7 @@ public class Console extends VBox implements GralogWindow{
                 input.clear();
             }else if(e.getCode() == KeyCode.UP){
                 
-                System.out.println("up up and awayyyyy");
+
                 if (historyPointer == -1){
                     currentlyEntered = inputText;
                 }
@@ -96,7 +96,7 @@ public class Console extends VBox implements GralogWindow{
                     historyPointer = historyPointer - 1;
                 }
             }else if(e.getCode() == KeyCode.DOWN){
-                System.out.println("down donw down");
+
                 if (historyPointer < 0){
                     //shimmy shake
                 }else if (historyPointer == 0){
@@ -286,21 +286,13 @@ public class Console extends VBox implements GralogWindow{
 
     }
 
-    public void finalizeTextAdd(Text t){
-        t.setWrappingWidth(this.getWidth());
-        Platform.runLater(
-            () ->{
+   
 
-                outputElements.getChildren().add(t); 
-                outputAdded = true;
-                output.setVvalue(1.0);
-            }
-        );
-    }
-
-    public void finalizeTextFieldAdd(TextField t){
+    public void finalizeConsoleFieldAdd(ConsoleField t){
         t.setMaxWidth(output.getWidth());
-        t.getStyleClass().add("helloWorld");    
+        t.getStyleClass().add("helloWorld");  
+        System.out.println("styleclass: " + t.getStyleClass());;  
+        t.setPrefHeight(2);
         // t.setBackground(Background.EMPTY);
         // t.setStyle("-fx-control-inner-background: orange;");
         
@@ -320,8 +312,8 @@ public class Console extends VBox implements GralogWindow{
         
         
 
-        TextField t = new TextField();
-        t.setText(text);
+        ConsoleField t = new ConsoleField(text);
+
         
         t.setFont(Font.font ("Verdana", 12));
 
@@ -329,7 +321,7 @@ public class Console extends VBox implements GralogWindow{
         
 
 
-        finalizeTextFieldAdd(t);
+        finalizeConsoleFieldAdd(t);
 
     }
 
@@ -337,8 +329,8 @@ public class Console extends VBox implements GralogWindow{
         
         System.out.println("error output");
 
-        TextField t = new TextField();
-        t.setText(text);
+        ConsoleField t = new ConsoleField(text);
+
         t.setStyle("-fx-text-inner-color: red;");
         
 
@@ -346,17 +338,17 @@ public class Console extends VBox implements GralogWindow{
         // t.setFont(Font.font ("Verdana", 12));
         
 
-        finalizeTextFieldAdd(t);
+        finalizeConsoleFieldAdd(t);
 
     }
 
-    public void output(TextField t){
+    public void output(ConsoleField t){
         
 
         
         t.setFont(Font.font ("Verdana", 12));
 
-        finalizeTextFieldAdd(t);
+        finalizeConsoleFieldAdd(t);
 
     }
 
