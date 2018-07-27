@@ -1,133 +1,14 @@
 package gralog.dialog;
 
-import gralog.rendering.GralogColor;
-import gralog.rendering.shapes.RenderingShape;
+
 import gralog.structure.*;
 
 import java.util.*;
 
-import static gralog.dialog.DialogParser.ANSI_RED;
+import static gralog.dialog.DialogParser.ANSI_GREEN;
 import static gralog.dialog.DialogParser.ANSI_RESET;
 
-class ComparatorLEFTRIGHT implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getX() > w.coordinates.getX()) {
-            return 1;
-        }
-        else {
-            if (v.coordinates.getX() < w.coordinates.getX())
-                return -1;
-            else
-                return 0;
-        }
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
 
-class ComparatorRIGHTLEFT implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getX() < w.coordinates.getX()) {
-            return 1;
-        }
-        else {
-            if (v.coordinates.getX() > w.coordinates.getX())
-                return -1;
-            else
-                return 0;
-        }
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorTOPDOWN implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getY() > w.coordinates.getY()) {
-            return 1;
-        }
-        else {
-            if (v.coordinates.getY() < w.coordinates.getY())
-                return -1;
-            else
-                return 0;
-        }
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorBOTTOMUP implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        if (v.coordinates.getY() < w.coordinates.getY()) {
-            return 1;
-        }
-        else {
-            if (v.coordinates.getY() > w.coordinates.getY())
-                return -1;
-            else
-                return 0;
-        }
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorIDasc implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        return v.id - w.id;
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorIDdesc implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        return w.id - v.id;
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorLabelAsc implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        return v.label.compareTo(w.label);
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
-
-class ComparatorLabelDesc implements Comparator<Vertex>{
-    @Override
-    public int compare(Vertex v, Vertex w){
-        return w.label.compareTo(v.label);
-    }
-    @Override
-    public boolean equals(Object v) {
-        return false;
-    }
-}
 
 public class Dialog {
 
@@ -146,12 +27,38 @@ public class Dialog {
         edgeListS = new HashMap();
     }
 
+    public Map<String, ArrayList<Vertex>> getVertexListS(){
+        return this.vertexListS;
+    }
+    public Map<String, ArrayList<Edge>> getEdgeListS(){
+        return this.edgeListS;
+    }
+
+
     public boolean isID(String s) {
         return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
     }
 
     public boolean isListID(String s) {
         return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
+    }
+
+    public void printLists(ArrayList<String> parameters){
+        if (parameters.get(0).equals("PRINTALL")){
+            printVertexListS();
+            printEdgeListS();
+            return;
+        }
+        if (vertexListS.containsKey(parameters.get(0))){
+            printVertexList(parameters.get(0));
+            return;
+        }
+        if (edgeListS.containsKey(parameters.get(0))){
+            printEdgeList(parameters.get(0));
+            return;
+        }
+        errorMsg = "No such list: " + parameters.get(0);
+        return;
     }
 
     public void unionLists (ArrayList source1, ArrayList source2, ArrayList target){
@@ -198,10 +105,18 @@ public class Dialog {
         }
         ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(3));
         switch (parameters.get(0)){ // union, intersection, difference, symmetric
-            case "UNION":         unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
-            case "INTERSECTION":  intersectionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
-            case "DIFFERENCE":    differenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
-            case "SYMMETRIC":     symmetricDifferenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+            case "UNION":
+                unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                break;
+            case "INTERSECTION":
+                intersectionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                break;
+            case "DIFFERENCE":
+                differenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                break;
+            case "SYMMETRIC":
+                symmetricDifferenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                break;
         }
 
     }
@@ -252,30 +167,40 @@ public class Dialog {
     }
     
     public void sort(ArrayList<String> parameters){
+        System.out.println("Entring sort: parameters = [" + parameters + "]");
         String listname = parameters.get(0);
         if (! vertexListS.containsKey(listname)){
             errorMsg = "No such list, cannot sort.\n";
             return;
         }
         switch (parameters.get(1)){
-            case "LEFTTORIGHT":
+            case "LEFTRIGHT":
                 Collections.sort(vertexListS.get(listname),new ComparatorLEFTRIGHT());
-            case "RIGHTTOLEFT":
+                break;
+            case "RIGHTLEFT":
                 Collections.sort(vertexListS.get(listname),new ComparatorRIGHTLEFT());
+                break;
             case "TOPDOWN":
                 Collections.sort(vertexListS.get(listname),new ComparatorTOPDOWN());
+                break;
             case "BOTTOMUP":
                 Collections.sort(vertexListS.get(listname),new ComparatorBOTTOMUP());
+                break;
             case "ID":
                 if (parameters.get(2).equals("ASC"))
                     Collections.sort(vertexListS.get(listname),new ComparatorIDasc());
                 else
                     Collections.sort(vertexListS.get(listname),new ComparatorIDdesc());
+                break;
             case "LABEL":
                 if (parameters.get(2).equals("ASC"))
                     Collections.sort(vertexListS.get(listname), new ComparatorLabelAsc());
                 else
                     Collections.sort(vertexListS.get(listname),new ComparatorLabelDesc());
+                break;
+                default:
+                    errorMsg = parameters.get(1) + " is not a sort order.\n";
+                    break;
         }
     }
 
@@ -317,42 +242,55 @@ public class Dialog {
     // empty if "NOCONDITION" is a condition
     private LinkedHashMap<String,String> getConditions(ArrayList<String> parameters){
         LinkedHashMap<String, String> propertyValue = new LinkedHashMap<>();
-        for (int i = 0; i < parameters.size(); i += 2){
+        int i = 0;
+        while (i < parameters.size()) {
             switch (parameters.get(i)){
                 case "STROKE": case "COLOR": case "FILL":
-                    if (GralogColor.isColor(parameters.get(i+1)))
-                        propertyValue.put(parameters.get(i),parameters.get(i+1));
-                    else
-                        errorMsg = "Warning: " + parameters.get(i+1) + " is not a color; skippping this parameter.\n";
+                    propertyValue.put(parameters.get(i),parameters.get(i+1));
+                    i += 2;
                     break;
                 case "WIDTH": case "THICKNESS": case "HEIGHT": case "SIZE": case "WEIGHT":// double
-                    if (! parameters.get(i+1).matches("\\d*((\\.|,)\\d+)?")) {
-                        errorMsg = "\"width\" must be a number. Format: [0-9](.[0-9]+)?; skipping this parameter.\n";
-                        break;
+                    if (parameters.get(i+1).equals("<")) {
+                        propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 2));
+                        i += 3;
                     }
-                    propertyValue.putIfAbsent(parameters.get(i),parameters.get(i+1));
+                    else {
+                        if (parameters.get(i+1).equals("<")) {
+                            propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 2));
+                            i += 3;
+                        }
+                        else {
+                            propertyValue.putIfAbsent(parameters.get(i), parameters.get(i + 1));
+                            i += 2;
+                        }
+                    }
                     break;
                 case "ID": case "DEGREE": case "INDEGREE": case "OUTDEGREE":
-                    if (parameters.get(i+1).matches("\\d+")) {
-                        errorMsg = parameters.get(i) + " must be a number. Format: [0-9]+\n";
-                        break;
+                    if (parameters.get(i+1).equals("<")) {
+                        propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 2));
+                        i += 3;
                     }
-                    propertyValue.put(parameters.get(i),parameters.get(i+1));
+                    else {
+                        if (parameters.get(i+1).equals(">")) {
+                            propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 2));
+                            i += 3;
+                        }
+                        else {
+                            propertyValue.putIfAbsent(parameters.get(i), parameters.get(i + 1));
+                            i += 2;
+                        }
+                    }
                     break;
                 case "SHAPE":
-                    if (!RenderingShape.isShape(parameters.get(i+1))){
-                        errorMsg = "Could not recognise the value for \"shape\"; skipping this parameter.\n";
-                        break;
-                    }
+                    propertyValue.putIfAbsent(parameters.get(i),parameters.get(i+1));
+                    break;
                 case "SELFLOOP": case "NOSELFLOOP": case "LABEL": case "NOLABEL":
+                    i += 2;
                     propertyValue.put(parameters.get(i),"");
                     break;
                 case "EDGETYPE":
-                    if (! Edge.isEdgeType(parameters.get(i+1))) {
-                        errorMsg = "Could not recognise the value for \"shape\".\n";
-                        break;
-                    }
                     propertyValue.put(parameters.get(i),parameters.get(i+1));
+                    i += 2;
                     break;
                 case "NOCONDITION":
                     propertyValue.clear();
@@ -378,6 +316,7 @@ public class Dialog {
     // try to convert a string parameter s with key paramKey to Integer
     private Integer parseInt(String s, String paramKey){
         Integer result = -1;
+        System.out.println("parseInt: s = [" + s + "], paramKey = [" + paramKey + "]");
         try {result = Integer.valueOf(s);}
         catch (NumberFormatException e){
             errorMsg = "Could not recognise the value for " + paramKey + "; skipping this parameter.\n"; // this shouldn't happen
@@ -414,33 +353,98 @@ public class Dialog {
                             filteredOut = true;
                             break;
                         }
+                    case "WIDTH<":
+                        if (!(v.radius < parseReal(propertyValue.get(property), "WIDTH"))) { // TODO: check: radius?
+                            filteredOut = true;
+                            break;
+                        }
+                    case "WIDTH>":
+                        if (!(v.radius > parseReal(propertyValue.get(property), "WIDTH"))) { // TODO: check: radius?
+                            filteredOut = true;
+                            break;
+                        }
                     case "THICKNESS":
                         if (!(v.strokeWidth == parseReal(propertyValue.get(property), "THICKNESS")))
                             filteredOut = true;
                         break;
-
+                    case "THICKNESS<":
+                        if (!(v.strokeWidth < parseReal(propertyValue.get(property), "THICKNESS")))
+                            filteredOut = true;
+                        break;
+                    case "THICKNESS>":
+                        if (!(v.strokeWidth > parseReal(propertyValue.get(property), "THICKNESS")))
+                            filteredOut = true;
+                        break;
                     case "HEIGHT":
                         if (!(v.textHeight == parseReal(propertyValue.get(property), "THICKNESS")))
+                            filteredOut = true;
+                        break;
+                    case "HEIGHT<":
+                        if (!(v.textHeight < parseReal(propertyValue.get(property), "THICKNESS")))
+                            filteredOut = true;
+                        break;
+                    case "HEIGHT>":
+                        if (!(v.textHeight > parseReal(propertyValue.get(property), "THICKNESS")))
                             filteredOut = true;
                         break;
                     case "SIZE":
                         if (!(v.radius == parseReal(propertyValue.get(property), "THICKNESS"))) // TODO: check
                             filteredOut = true;
                         break;
+                    case "SIZE<":
+                        if (!(v.radius < parseReal(propertyValue.get(property), "THICKNESS"))) // TODO: check
+                            filteredOut = true;
+                        break;
+                    case "SIZE>":
+                        if (!(v.radius > parseReal(propertyValue.get(property), "THICKNESS"))) // TODO: check
+                            filteredOut = true;
+                        break;
                     case "ID":
                         if (!(v.id == parseInt(propertyValue.get(property), "ID")))
+                            filteredOut = true;
+                        break;
+                    case "ID<":
+                        if (!(v.id < parseInt(propertyValue.get(property), "ID")))
+                            filteredOut = true;
+                        break;
+                    case "ID>":
+                        if (!(v.id > parseInt(propertyValue.get(property), "ID")))
                             filteredOut = true;
                         break;
                     case "DEGREE":
                         if (!(v.getDegree() == parseInt(propertyValue.get(property), "DEGREE")))
                             filteredOut = true;
                         break;
+                    case "DEGREE<":
+                        if (!(v.getDegree() < parseInt(propertyValue.get(property), "DEGREE")))
+                            filteredOut = true;
+                        break;
+                    case "DEGREE>":
+                        if (!(v.getDegree() > parseInt(propertyValue.get(property), "DEGREE")))
+                            filteredOut = true;
+                        break;
                     case "INDEGREE":
                         if (!(v.getInDegree() == parseInt(propertyValue.get(property), "INDEGREE")))
                             filteredOut = true;
                         break;
+                    case "INDEGREE<":
+                        if (!(v.getInDegree() < parseInt(propertyValue.get(property), "INDEGREE")))
+                            filteredOut = true;
+                        break;
+                    case "INDEGREE>":
+                        if (!(v.getInDegree() > parseInt(propertyValue.get(property), "INDEGREE")))
+                            filteredOut = true;
+                        break;
                     case "OUTDEGREE":
                         if (!(v.getOutDegree() == parseInt(propertyValue.get(property), "OUTDEGREE")))
+                            filteredOut = true;
+                        break;
+                    case "OUTDEGREE<":
+                        if (!(v.getOutDegree() < parseInt(propertyValue.get(property), "OUTDEGREE")))
+                            filteredOut = true;
+                        break;
+                    case "OUTDEGREE>":
+                        if (!(v.getOutDegree() > parseInt(propertyValue.get(property), "OUTDEGREE")))
                             filteredOut = true;
                         break;
                     case "SHAPE":
@@ -455,10 +459,13 @@ public class Dialog {
                         if (v.getOutgoingNeighbours().contains(v))
                             filteredOut = true;
                         break;
-                    case "LABEL":
-                        if (v.label.isEmpty())
+                    case "LABELEMPTY":
+                        if (! v.label.isEmpty())
                             filteredOut = true;
                         break;
+                    case "LABELCONTAINS":
+                        if (! v.label.contains(propertyValue.get("LABELCONTAINS")))
+                            filteredOut = true;
                     case "NOLABEL":
                         if (!v.label.isEmpty())
                             filteredOut = true;
@@ -470,6 +477,172 @@ public class Dialog {
         }
         return;
     }
+
+    public void connectClique(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (Vertex v : list){
+            for (Vertex w : list){
+                if (v.id < w.id){
+                    structure.addEdge(v,w);
+                    structure.addEdge(w,v);
+                }
+            }
+        }
+    }
+
+    public void connectTClosure(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (Vertex v : list){
+            for (Vertex w : list){
+                if (v.id < w.id){
+                    structure.addEdge(v,w);
+                }
+            }
+        }
+    }
+
+
+    public void connectSelfloop(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (Vertex v : list)
+            structure.addEdge(v,v);
+    }
+
+    public void connectPath(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (int i = 0; i < list.size()-1; i++) {
+            structure.addEdge(list.get(i),list.get(i+1));
+        }
+    }
+
+    public void connectCycle(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        for (int i = 0; i < list.size()-1; i++) {
+            structure.addEdge(list.get(i),list.get(i+1));
+        }
+        structure.addEdge(list.get(list.size()-1),list.get(0));
+    }
+    public void connectBiclique(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list1 = vertexListS.get(parameters.get(0));
+
+        if (!vertexListS.containsKey(parameters.get(1))){
+            errorMsg = "No such vertex list: " + parameters.get(1);
+            return;
+        }
+        ArrayList<Vertex> list2 = vertexListS.get(parameters.get(1));
+
+        for (Vertex v : list1)
+            for (Vertex w : list2)
+              structure.addEdge(v,w);
+    }
+    public void connectMatching(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        if (!vertexListS.containsKey(parameters.get(1))){
+            errorMsg = "No such vertex list: " + parameters.get(1);
+            return;
+        }
+        ArrayList<Vertex> list1;
+        ArrayList<Vertex> list2;
+        // choose s.t. list1 is shorter than list2
+        if (vertexListS.get(parameters.get(0)).size() <= vertexListS.get(parameters.get(1)).size()) {
+            list1 = vertexListS.get(parameters.get(0));
+            list2 = vertexListS.get(parameters.get(1));
+        }
+        else{
+            list1 = vertexListS.get(parameters.get(1));
+            list2 = vertexListS.get(parameters.get(0));
+        }
+
+        for (int i = 0; i < list1.size(); i++) {
+            structure.addEdge(list1.get(i),list2.get(i));
+        }
+    }
+
+    public void connectFormula(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+
+        for (int i = 0; i < list.size(); i++) {
+            net.objecthunter.exp4j.Expression expression =
+                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(0))
+                            .variable("i")
+                            .build()
+                            .setVariable("i", i);
+            double j_double = expression.evaluate();
+            int j = (int) Math.floor(j_double);
+            if (0 <= j && j < list.size())
+                structure.addEdge(list.get(i),list.get(j));
+            else{
+                errorMsg = errorMsg + "Result of applying formula to "
+                        + i + " out of list "
+                        + parameters.get(0) +
+                        ". Skipping " + i + ".\n";
+            }
+
+        }
+    }// todo check use of exp4j
+    public void connect2ListsFormula(ArrayList<String> parameters, Structure structure){
+        if (!vertexListS.containsKey(parameters.get(0))){
+            errorMsg = "No such vertex list: " + parameters.get(0);
+            return;
+        }
+        if (!vertexListS.containsKey(parameters.get(1))){
+            errorMsg = "No such vertex list: " + parameters.get(1);
+            return;
+        }
+        ArrayList<Vertex> list1 = vertexListS.get(parameters.get(0));
+        ArrayList<Vertex> list2 = vertexListS.get(parameters.get(1));
+        // choose s.t. list1 is shorter than list2
+
+        for (int i = 0; i < list1.size(); i++) {
+            net.objecthunter.exp4j.Expression expression =
+                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(0))
+                            .variable("i")
+                            .build()
+                            .setVariable("i", i);
+            double j_double = expression.evaluate();
+            int j = (int) Math.floor(j_double);
+            if (0 <= j && j < list2.size())
+                structure.addEdge(list1.get(i),list2.get(j));
+            else{
+                errorMsg = errorMsg + "Result of applying formula to "
+                        + i + " out of list "
+                        + parameters.get(1) +
+                        ". Skipping " + i + ".\n";
+            }
+
+        }
+    }// todo check use of exp4j
 
 
     // returns list of vertices to save the result of filtering to
@@ -484,13 +657,40 @@ public class Dialog {
         }
     }
 
+    private void printVertexList(String listName){
+        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
+        for (Vertex v : vertexListS.get(listName)){
+            System.out.print(v.id + " ");
+        }
+        System.out.println();
+    }
+
+    private void printEdgeList(String listName){
+        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
+        for (Edge v : edgeListS.get(listName)){
+            System.out.print(v.getId() + " ");
+        }
+        System.out.println();
+    }
+
+
     private void printVertexListS(){
         for (Map.Entry<String, ArrayList<Vertex>> pair : vertexListS.entrySet()){
-            System.out.println(pair.getKey() + " ");
+            System.out.print(pair.getKey() + ": " + ANSI_GREEN);
             for (Vertex v :  pair.getValue()){
                 System.out.print(v.id + " ");
             }
-            System.out.println("");
+            System.out.println(ANSI_RESET);
+        }
+    }
+
+    private void printEdgeListS(){
+        for (Map.Entry<String, ArrayList<Edge>> pair : edgeListS.entrySet()){
+            System.out.print(pair.getKey() + " " + ANSI_GREEN);
+            for (Edge v :  pair.getValue()){
+                System.out.print(v.getId() + " ");
+            }
+            System.out.println(ANSI_RESET);
         }
     }
 
@@ -530,7 +730,7 @@ public class Dialog {
     // (2) is: see description in gralog-core/.../dialog/actions.txt
     // (3) is: as (1), but if the identifier is not found in the list of already defined identifiers: create one
     public void filter(ArrayList<String> parameters, Structure structure, Highlights highlights) {
-        System.out.println(ANSI_RED + "Entering filter. parameters = [" + parameters + "]" + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "Entering filter. parameters = [" + parameters + "]" + ANSI_RESET);
 
         if (parameters.get(1).equals("VERTICES") || vertexListS.containsKey(parameters.get(0))){ // vertex list
 
@@ -551,7 +751,7 @@ public class Dialog {
                     if (v instanceof Vertex)
                         sourceVertexList.add((Vertex) v);
             if (parameters.get(0).equals("ALL"))
-                sourceVertexList = new ArrayList<Vertex>(structure.getVertices());
+                sourceVertexList = new ArrayList<Vertex>( (Collection<? extends Vertex>) structure.getVertices());
             if (vertexListS.containsKey(parameters.get(0))) { // list already exists
                 sourceVertexList = vertexListS.get(parameters.get(0));
             }
@@ -563,7 +763,6 @@ public class Dialog {
             }
             else
                 parameters.remove(0); // delete the identifier of sourceList
-
             // filter
             filterVertices(sourceVertexList,targetVertexList,parameters);
 
@@ -633,6 +832,9 @@ public class Dialog {
     public String getErrorMsg(){
         return errorMsg;
     }
+    public void setErrorMsg(String s){
+        this.errorMsg = s;
+    }
 
     public boolean addVertex(Vertex v) {
         return (vertices.add(v));
@@ -650,4 +852,108 @@ public class Dialog {
         return edges.remove(e);
     }
 
+}
+
+class ComparatorLEFTRIGHT implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getX() > w.coordinates.getX())
+            return 1;
+        if (v.coordinates.getX() < w.coordinates.getX())
+            return -1;
+        return 0;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorRIGHTLEFT implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getX() < w.coordinates.getX())
+            return 1;
+        if (v.coordinates.getX() > w.coordinates.getX())
+                return -1;
+        return 0;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorTOPDOWN implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getY() > w.coordinates.getY())
+            return 1;
+        if (v.coordinates.getY() < w.coordinates.getY())
+            return -1;
+        return 0;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorBOTTOMUP implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        if (v.coordinates.getY() < w.coordinates.getY())
+            return 1;
+        if (v.coordinates.getY() > w.coordinates.getY())
+            return -1;
+        return 0;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorIDasc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return v.id - w.id;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorIDdesc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return w.id - v.id;
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorLabelAsc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return v.label.compareTo(w.label);
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
+}
+
+class ComparatorLabelDesc implements Comparator<Vertex>{
+    @Override
+    public int compare(Vertex v, Vertex w){
+        return w.label.compareTo(v.label);
+    }
+    @Override
+    public boolean equals(Object v) {
+        return false;
+    }
 }

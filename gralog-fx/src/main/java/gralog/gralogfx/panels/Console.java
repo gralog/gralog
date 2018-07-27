@@ -32,7 +32,7 @@ import static gralog.dialog.DialogState.*;
 
 public class Console extends VBox implements GralogWindow{
 
-    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
 
 
@@ -197,7 +197,7 @@ public class Console extends VBox implements GralogWindow{
         ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
         ArrayList<String> parameters = parser.getParameters();
 
-        System.out.println(ANSI_RED + "console: dialogState=" + parser.getDialogState() + ANSI_RESET);
+        System.out.println(ANSI_GREEN + "console: dialogState=" + parser.getDialogState() + ANSI_RESET);
 
         // the input was "filter [all] selected"
         // if only vertices or only edges are selected, guess this, don't let the user write it
@@ -262,7 +262,8 @@ public class Console extends VBox implements GralogWindow{
                                                 break;
                 case SELECT_ALL_EDGES:          dialogfx.selectAllEdges(currentPane);
                                                 break;
-                case DESELECT_ALL:               dialogfx.deselectAll(currentPane);
+                case SELECT_LIST:               dialogfx.selectList(parameters,currentPane,dialog);
+                case DESELECT_ALL:              dialogfx.deselectAll(currentPane);
                                                 break;
                 case DESELECT_ALL_VERTICES:     dialogfx.deselectAllVertices(currentPane);
                                                 break;
@@ -273,15 +274,51 @@ public class Console extends VBox implements GralogWindow{
                                                 dialog.filter(parser.getParameters(),
                                                                 currentPane.getStructure(),
                                                                 currentPane.getHighlights());
-                                                errorOutput(dialog.getErrorMsg());
-                                                parameters.clear();
                                                 break;
                 case SORT:                      dialog.sort(parameters);
+                                                break;
                 case TWO_LISTS_OP:              dialog.twoListsOp(parameters);
+                                                break;
                 case DELETE:                    dialog.delete(parameters);
+                                                break;
                 case COMPLEMENT:                dialog.complement(parameters,currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case CONNECT_CLIQUE:            dialog.connectClique(parameters,currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case CONNECT_BICLIQUE:          dialog.connectBiclique(parameters, currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case CONNECT_SELFLOOP:          dialog.connectSelfloop(parameters, currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case CONNECT_PATH:              dialog.connectPath(parameters, currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case CONNECT_CYCLE:             dialog.connectCycle(parameters, currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case CONNECT_TCLOSURE:          dialog.connectTClosure(parameters, currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case CONNECT_MATCHING:          dialog.connectMatching(parameters, currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case CONNECT_FORMULA:           dialog.connectFormula(parameters, currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case CONNECT_2_LISTS_FORMULA:   dialog.connect2ListsFormula(parameters, currentPane.getStructure());
+                                                currentPane.requestRedraw();
+                                                break;
+                case PRINT:                     dialog.printLists(parameters);
+                                                break;
                 case NONE:                      return;
             }
+            output(dialog.getErrorMsg());
+            dialog.setErrorMsg("");
+            parameters.clear();
+            parser.clearParameters();
             parser.setDialogAction(NONE);
             parser.setDialogState(DONE);
             parser.setErrorMsg("");

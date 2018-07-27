@@ -1,50 +1,47 @@
-/* possible commands
-*select/deselect (all [vertices | edges] [ignored trash]) | <list id>
-*
-* filter <what> where|st|(such that)  <parameterS> to <list identifier> [ignored trash]
-*
-*   where <what> := (all vertices) | (all edges)| ([all ]?selected vertices) | ([all ]?selected edges)
+possible commands
+
+SELECT/DESELECT(ALL [VERTICES|EDGES] [ignored trash]) | <list id>
+
+FILTER <what> WHERE|ST|(SUCH THAT)  <parameterS> TO <list identifier> [ignored trash]
+
+  where <what> := (ALL VERTICES) | (ALL EDGES)| ([ALL ]?SELECTED VERTICES) | ([ALL ]?SELECTED EDGES)
     	  	    	 	   | <list id>
  				     	   // <list id> can be list of vertices or list of edges
 
-*         <parameterS> := <parameterS> <parameterS> | <parameter> <value> | <bool_parameter>
-	  	       	  	       		    | formula <integer expression (i)>
+        <parameterS> := <parameterS> <parameterS> | <parameter> <value> | <bool_parameter>
+	  	       	  	       		    | formula <integer expression (i)> // TODO
 
-*	           <parameter> := no condition | fill|(fill color) | stroke|(stroke color) | color
-	  	      	    	      | thickness | width | height | size | id | shape
-*                                     | weight | type | (edge type)|edgeType
-*                                     | degree | indegree | outdegree | butterfly?
+	           <parameter> := NO CONDITION | FILL|(FILL COLOR) | STROKE|(STROKE COLOR) | COLOR
+	  	      	    	      | THICKNESS | WIDTH | HEIGHT | SIZE | ID | SHAPE
+                                    | WEIGHT | TYPE | (EDGE TYPE)|EDGETYPE
+                                    | DEGREE | INDEGREE | OUTDEGREE | BUTTERFLY?
 
-*        	   <bool_parameter> := has selfloop | directed | has label
+       	   <bool_parameter> := HAS SELFLOOP | DIRECTED | HAS LABEL
 
-*
-*   // if <list id> already exists, new elements are added to the list
+
+  // if <list id> already exists, new elements are added to the list
     // color means stroke color
     // integer expression: e.g., 2*i + i^2 means filter all elements {2*i + i^2 : i in N}
-*
-* delete <list id>
-* union <list id> <list id> to <list id>
-* intersection <list id> <list id> to <list id>
-* difference <list id> <list id> to <list id>
-* symmetric difference <list id> <list id> to <list id>
-* complement <list id> to <list id>
-* connect <list id> <list id> <formula> to <list id>
-*     formula := <arithmetic expression with at most one variable i> =|>|>=|<|<= <arithmetic expression with one variable i>
-*     <arithmetic expression with one variable i> must return a natural number and be built from
-*     natural constants, i, +, *, /, %, ceil(.), floor(.), .^., root(.,.), exp(.,.)
-* add <obj id>|selected to <list id>
-* remove|delete <obj id>|selected from <list id>
-* contract (edges <edge list id>)|selected
-* contract edge <edge id>
-* contract subgraph <vertex list id>
-* butterfly contract <edge id>
-* butterfly contract <edge list id>
-* generarte <graph> [<generateParameterS>] to <list id>
-*   <graph> := grid <n,m>| wheel <n> | cycle <n> | path <n> | clique <n> | torus <n,m> | complete tree <deg,depth>
-*                        | cylindrical grid <n,m> | petersen | haus vom nikolaus | bull | butterfly | duerer |
-*                        | erdos-renyi <n,p> | complete bipartite <n,m> | matching <n> | cube | 3-dim cube |
-*                        | parallelepiped <n,m,k> | star <n>
-*
-* subdivide edge <edge id> <n times>
-* subdivide <edge list id> <n times>
-* */
+
+DELETE <list id>
+UNION <list id> <list id> TO <list id>
+INTERSECTION <list id> <list id> TO <list id>
+DIFFERENCE <list id> <list id> TO <list id>
+SYMMETRIC DIFFERENCE <list id> <list id> TO <list id>
+COMPLEMENT <list id> TO <list id>
+CONNECT <list id> <list id> <formula> TO <list id>
+    <formula> := <arithmetic expression with at most one variable i> =|>|>=|<|<= <arithmetic expression with one variable i>
+    <arithmetic expression with one variable i> must return a natural number and be built from
+    natural constants, i, +, *, /, %, ceil(.), floor(.), .^., root(.,.), exp(.,.)
+CONTRACT <vertex list id>|<edge list id>|selected
+BUTTERFLY CONTRACT <edge list id>
+GENERARTE <graph> [<generateParameterS>] TO <list id>
+  <graph> := GRID <n,m>| WHEEL <n> | CYCLE <n> | PATH <n> | CLIQUE <n> | TORUS <n,m> | COMPLETE TREE <deg,depth>
+                       | CYLINDRICAL GRID <n,m> | PETERSEN | HAUS VOM NIKOLAUS | BULL | BUTTERFLY | DUERER |
+                       | ERDOS-RENYI <n,p> | COMPLETE BIPARTITE <n,m> | MATCHING <n> | CUBE | 3-DIM CUBE |
+                       | PARALLELEPIPED <n,m,k> | STAR <n>
+
+SUBDIVIDE <edge list id> <n times>
+
+CONNECT <list> <list> =<formula>|BICLIQUE|MATCHING to <list>
+CONNECT <list> =<formula>|PATH|CYCLE|CLIQUE to <list>
