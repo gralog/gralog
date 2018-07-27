@@ -256,12 +256,38 @@ public class DialogParser {
                     case "FIND":
                         transition(DialogState.FIND);
                         break;
+                    case "LAYOUT":
+                        transition(DialogState.LAYOUT);
+                        break;
                     default:
                         errorMsg = "Parse error. Please, try again. (Quit: Q)\n";
                         return;
                 }
             }
 
+            if (this.dialogState == DialogState.LAYOUT){
+                if (i == inputWords.length){
+                    errorMsg = "Choose a layout. Format: CIRCLE|STAR|GRID|GRAPHOPT|FRUCHTERMAN_REINGOLD|KAMADA_KAWAI|MDS|LGL|REINGOLD_TILFORD|REINGOLD_TILFORD_CIRCULAR.\n";
+                    return;
+                }
+                if (inputWords[i].equals("CIRCLE")
+                        ||inputWords[i].equals("STAR")
+                        ||inputWords[i].equals("GRID")
+                        ||inputWords[i].equals("GRAPHOPT")
+                        ||inputWords[i].equals("FRUCHTERMAN_REINGOLD")
+                        ||inputWords[i].equals("KAMADA_KAWAI")
+                        ||inputWords[i].equals("MDS")
+                        ||inputWords[i].equals("LGL")
+                        ||inputWords[i].equals("REINGOLD_TILFORD_CIRCULAR")
+                ){
+                    transition(DONE,DialogAction.LAYOUT,inputWords[i]);
+                    return;
+                }
+                errorMsg = "Choose a layout. Format: CIRCLE|STAR|GRID|GRAPHOPT|FRUCHTERMAN_REINGOLD|KAMADA_KAWAI|MDS|LGL|REINGOLD_TILFORD|REINGOLD_TILFORD_CIRCULAR.\n";
+                return;
+            }
+            
+            
             if (this.dialogState == DialogState.FIND){
                 if (i == inputWords.length){
                     errorMsg = "Say what to find.\n";

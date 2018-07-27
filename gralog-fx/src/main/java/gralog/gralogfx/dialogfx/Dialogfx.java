@@ -84,13 +84,19 @@ public class Dialogfx {
         }
         return false;
     }
-    public boolean findGraphElement(ArrayList<String> parameters, Structure structure, StructurePane structurePane){
+    public boolean findGraphElement(ArrayList<String> parameters, StructurePane structurePane){
+        Structure structure = structurePane.getStructure();
         if (findVertex(parameters,structure,structurePane)){
             return true;
         }
         else{
             return findEdge(parameters,structure,structurePane);
         }
+    }
+    public boolean chooseLayout(ArrayList<String> parameters, StructurePane structurePane){
+        System.out.println("CHOOSING A LAYOUT NOT IMPLEMENTED YET!\n");
+        // TODO: Implement this
+        return false;
     }
 
 

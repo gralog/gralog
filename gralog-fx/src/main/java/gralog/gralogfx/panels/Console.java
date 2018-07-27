@@ -321,9 +321,9 @@ public class Console extends VBox implements GralogWindow{
                                                                   currentPane);
                                                 break;
                 case FIND_GRAPH_ELEMENT:        dialogfx.findGraphElement(parameters,
-                                                                          currentPane.getStructure(),
                                                                           currentPane);
                                                 break;
+                case LAYOUT:                    dialogfx.chooseLayout(parameters, currentPane);
                 case NONE:                      return;
             }
             output(dialog.getErrorMsg());
