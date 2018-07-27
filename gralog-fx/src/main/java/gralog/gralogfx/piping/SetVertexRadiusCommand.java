@@ -36,7 +36,7 @@ public class SetVertexRadiusCommand extends CommandForGralogToExecute {
         if (this.vertex == null){
             this.fail();
 
-        	this.error = new Exception("error: vertex does not exist");
+        	this.error = new NonExistantVertexException("vertex does not exist");
             return;
         }
 

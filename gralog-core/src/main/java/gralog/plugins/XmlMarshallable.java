@@ -11,17 +11,17 @@ import org.w3c.dom.Element;
 public class XmlMarshallable {
 
     public String xmlName() throws Exception {
-        Class c = this.getClass();
+        Class c = this.getClass().getSuperclass();
         if (!c.isAnnotationPresent(XmlName.class)) {
-        	Class d = c.getSuperclass();
-        	if (!c.isAnnotationPresent(XmlName.class)) {
-            	throw new Exception("Class " + c.getName() + " has no @XmlName annotation");        		
+        	Class d = this.getClass();
+        	if (!d.isAnnotationPresent(XmlName.class)) {
+            	throw new Exception("SuperClass " + c.getName() + " has no @XmlName annotation" + " as well as Class " + d.getName());        		
         	}
-            XmlName xmlname = this.getClass().getSuperclass().getAnnotation(XmlName.class);
+            XmlName xmlname = this.getClass().getAnnotation(XmlName.class);
             return xmlname.name();
 
         }
-        XmlName xmlname = this.getClass().getAnnotation(XmlName.class);
+        XmlName xmlname = this.getClass().getSuperclass().getAnnotation(XmlName.class);
         return xmlname.name();
 
     }

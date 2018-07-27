@@ -35,7 +35,7 @@ public class SetVertexShapeCommand extends CommandForGralogToExecute {
 
         if (this.vertex == null){
             this.fail();
-            this.error = new Exception("error: vertex with id " + Integer.toString(this.vertexId) + " does not exist");
+            this.error = new NonExistantVertexException("vertex with id " + Integer.toString(this.vertexId) + " does not exist");
             return;
         }
 

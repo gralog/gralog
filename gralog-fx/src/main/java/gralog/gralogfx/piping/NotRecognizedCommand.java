@@ -23,7 +23,7 @@ public class NotRecognizedCommand extends CommandForGralogToExecute {
             externalCommand = externalCommand.substring(0,externalCommand.length()-1);
         }
         this.fail();
-        this.error = new Exception("error: <" +externalCommand + "> is not a recognized command");
+        this.error = new MessageFormatException("<" +externalCommand + "> is not a recognized command");
 
 	}
 

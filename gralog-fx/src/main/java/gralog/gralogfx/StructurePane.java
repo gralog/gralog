@@ -19,6 +19,10 @@ import gralog.events.*;
 import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 import gralog.gralogfx.piping.Piping;
+import java.util.function.Function;
+import java.util.function.BiFunction;
+import java.util.concurrent.CountDownLatch;
+import gralog.gralogfx.panels.PluginControlPanel;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -101,6 +105,8 @@ public class StructurePane extends StackPane implements StructureListener {
     //UI Threads
     private Thread horizontalScrollThread;
     private Thread verticalScrollThread;
+
+    private boolean pipingUnderway = false;
 
     private double lastMouseX = -1d;
     private double lastMouseY = -1d;
@@ -200,6 +206,37 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
+    public Piping makeANewPiping(String fileName,BiFunction<String,Piping,StructurePane> initGraph,Consumer<String> sendOutsideMessageToConsole){
+        CountDownLatch waitForPause = new CountDownLatch(1);
+        CountDownLatch waitForVertexSelection = new CountDownLatch(1);
+
+        // List<BiFunction> functions = new ArrayList<BiFunction>(this::initGraph,this::handlePlannedPause,this::handlePlannedVertexSelectionthis::sendOutsideMessageToConsole);
+
+        
+        Piping pipeline = new Piping(initGraph,this,waitForPause,this::handlePlannedPause,waitForVertexSelection,this::handlePlannedVertexSelection,sendOutsideMessageToConsole);
+
+        this.setPiping(pipeline);
+        // pipeline.subscribe(this.pluginControlPanel);
+
+        /* at the moment this is hardcorded but it will soon be made dynamic!!!*/
+
+        Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
+        if (!initSuccess){
+            return null;
+        }
+
+        // if (externalCommandSegments[0].equals("error") ||
+        // (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
+        //     System.out.println("error: " + externalProcessInitResponse);
+        //     return;
+        // }
+        pipingUnderway = true;
+        pipeline.setFirstMessage(null);
+        pipeline.start();
+        return pipeline;
+        
+    }
+
     public void requestRedraw(Point2D from, Point2D to) {
         needsRepaintLock.lock();
         try {
@@ -289,17 +326,118 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     this.requestRedraw();
                     break;
+
+                case SPACE:
+                    System.out.println("space rhymes with face");
+                    Piping myPiping = this.getPiping();
+                    if (myPiping != null && myPiping.isInitialized()){
+                        if (myPiping.state == Piping.State.Paused){
+
+                            this.handlePlay();
+                        }else if(myPiping.state == Piping.State.InProgress){
+                            this.handleSpontaneousPause();
+                        }else if(myPiping.state == Piping.State.WaitingForSelection){
+                            this.handlePlannedVertexSelection();
+                        }else{
+                            System.out.println("no piping in this puppy!" + (myPiping == null));
+                        }
+                    }else{
+                        System.out.println("piping is null or unit!" + myPiping);
+                    }
+                    // System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
+                    // pipeline.execWithAck();
+                    break;
+                
+                
             }
         });
     }
+
+    public boolean handlePlay(){
+        Piping myPiping = this.getPiping();
+        if (myPiping == null){
+            return false;
+        }
+        this.pipingUnderway = true;
+        myPiping.waitForPauseToBeHandled.countDown();
+        CountDownLatch newLatch = new CountDownLatch(1);
+        myPiping.setPauseCountDownLatch(newLatch);
+        Platform.runLater(()->{
+            PluginControlPanel.notifyPlayRequested();
+        });
+        return true;
+    }
+
+    public boolean handleSkip(){
+        Piping myPiping = this.getPiping();
+        if (myPiping == null){
+            return false;
+        }
+        myPiping.skipPressed();
+        this.handlePlay();
+        return true;
+    }
+
+    public boolean handleSpontaneousPause(){
+        // this.pluginControlPanel.doVarStuff();
+        Piping myPiping = this.getPiping();
+        if (myPiping == null){
+            return false;
+        }
+        this.pipingUnderway = false;
+        myPiping.pausePressed();
+        Platform.runLater(()->{
+            PluginControlPanel.notifySpontaneousPauseRequested();
+        });
+        return true;
+    }
+
+    public boolean handlePlannedPause(){
+        // this.pluginControlPanel.doVarStuff();
+        this.pipingUnderway = false;
+        Platform.runLater(()->{
+            PluginControlPanel.notifyPlannedPauseRequested(getPiping().trackedVarArgs);
+        });
+
+        return true;
+    }
+
+    public boolean handleSpontaneousStop(){
+        if (this.getPiping() == null){
+            return false;
+        }
+        this.pipingUnderway = false;
+        this.getPiping().spontaneousStop();
+        return true;
+    }
+
+    public boolean handlePlannedVertexSelection(){
+        // this.pluginControlPanel.doVarStuff();
+        // this.pipingUnderway = false;
+        // Platform.runLater(()->{
+        //     this.pluginControlPanel.notifyPlannedPauseRequested(currentPiping.trackedVarArgs);
+        // });
+
+        //todo: this haha
+
+        return true;
+    }
+
+   
+
+
     private void onMousePressed(MouseEvent e){
+
         Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
+
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
         IMovable selected = structure.findObject(lastMouseX, lastMouseY);
 
         //group selection handling for primary mouse button
         if(e.isPrimaryButtonDown()){
+            
+            
 
             //if selection hit something, select
             if (selected != null) {
@@ -348,12 +486,23 @@ public class StructurePane extends StackPane implements StructureListener {
         this.requestRedraw();
     }
     private void onMouseReleased(MouseEvent e){
+
         MouseButton b = e.getButton();
 
         Point2D mousePositionModel = screenToModel(new Point2D(e.getX(), e.getY()));
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
         IMovable selected = structure.findObject(lastMouseX, lastMouseY);
+
+        //Start: handle response to piping wanting a user selected vertex
+        if (!wasDraggingPrimary){
+            if (this.getPiping() != null && this.getPiping().getPipingState() == Piping.State.WaitingForSelection && selected != null){
+                System.out.println("dafuq");
+
+                this.getPiping().profferSelectedObject(selected);
+            }
+        }
+        //End
 
         if (dragging != null && hasGrid && snapToGrid) {
             structure.snapToGrid(gridSize);
@@ -416,6 +565,7 @@ public class StructurePane extends StackPane implements StructureListener {
         this.requestRedraw();
     }
     private void onMouseDragged(MouseEvent e) {
+
         if(e.isPrimaryButtonDown()){
             wasDraggingPrimary = true;
         }
@@ -553,6 +703,7 @@ public class StructurePane extends StackPane implements StructureListener {
         this.needsRepaintLock.lock();
         try {
             if (needsRepaint) {
+
                 draw(canvas.getGraphicsContext2D());
                 needsRepaint = false;
             }
@@ -606,6 +757,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
         //draw the selection box
         if(selectionBoxDragging){
+
             Point2D boxStartScreen = modelToScreen(boxingStartingPosition);
             ggc.selectionRectangle(boxStartScreen, boxingEndingPosition, selectionBoxColor);
         }

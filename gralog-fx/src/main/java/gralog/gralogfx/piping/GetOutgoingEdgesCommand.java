@@ -30,7 +30,7 @@ public class GetOutgoingEdgesCommand extends CommandForGralogToExecute {
 
         if (this.sourceVertex == null){
             this.fail();
-            this.error = new Exception("error: source vertex does not exist");
+            this.error = new NonExistantVertexException("error: source vertex does not exist");
             return;
         }
 	}

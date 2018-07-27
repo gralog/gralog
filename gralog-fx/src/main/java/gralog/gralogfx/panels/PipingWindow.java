@@ -17,7 +17,7 @@ public interface PipingWindow
     /**
      * Implements a reaction to a pause command
      */
-    void notifyPlannedPauseRequested(List<String[]> args);
+    // void notifyPlannedPauseRequested(List<String[]> args);
 
     
 
