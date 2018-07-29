@@ -30,7 +30,7 @@ for x in vertices:
 
 for x in range(2):
 	e = g.requestEdge();
-	e.setColor("blue");
+	e.setColor("lolol");
 	s = e.getSource();
 	t = e.getTarget();
 	s.setColor("blue");

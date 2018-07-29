@@ -9,10 +9,13 @@ helpOnStart=true
 Develop_requireConfirmation = true
 
 #Structure
-StructurePane_axisColor=\#000000
+StructurePane_axisColor=\#000f00
 StructurePane_showGrid=true
 StructurePane_snapToGrid=false
 StructurePane_gridSize=1.0
+
+#Mainwindow
+MainWindow_pipingFile=helloWorld
 
 #Vertex
 Vertex_height=1.0

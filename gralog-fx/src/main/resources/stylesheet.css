@@ -4,10 +4,15 @@
 }
 */
 
-.helloWorld{
+.consoleTextStyle{
 	/*-fx-control-inner-background: transparent;*/
-	-fx-background-color:transparent;
-	-fx-padding: 1px 0px -5px -0px;
+	-fx-background-color: transparent;
+
+	-fx-padding: 1px 0px -0px -0px;
 
 
+}
+
+.consoleScrollViewStyle{
+	-fx-padding: 0px 0px 5px -0px;
 }

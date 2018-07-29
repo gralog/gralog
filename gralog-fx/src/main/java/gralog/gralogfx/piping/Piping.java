@@ -456,6 +456,8 @@ public class Piping extends Thread{
                     if (currentCommand.didFail()){
                         final String lineFinal = PipingMessageHandler.rejoinExternalCommandSegments(externalCommandSegments);
                         Exception e = currentCommand.getError();
+                        this.sendMessageToConsole.accept(e.toString());
+
                         Platform.runLater(
                             () -> {
                                 Alert alert = new Alert(AlertType.INFORMATION);

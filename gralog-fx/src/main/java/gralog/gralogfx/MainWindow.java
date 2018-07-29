@@ -349,7 +349,8 @@ public class MainWindow extends Application {
     }
 
     public String getFileName(){
-        return "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py";
+        String fileName = Preferences.getFile("MainWindow_pipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py");
+        return fileName;
     }
 
     public StructurePane initGraph(String graphType,Piping pipelineThatCalled){
@@ -401,7 +402,7 @@ public class MainWindow extends Application {
     }
 
     public void sendOutsideMessageToConsole(String msg){
-        this.mainConsole.output(msg);
+        this.mainConsole.errorOutput(msg);
     }
 
     public void onSave() {

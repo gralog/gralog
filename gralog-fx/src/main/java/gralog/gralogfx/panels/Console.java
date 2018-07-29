@@ -112,8 +112,10 @@ public class Console extends VBox implements GralogWindow{
 
         
         output = new ScrollPane();
+
         outputElements = new VBox();
         output.setContent(outputElements);
+        outputElements.getStyleClass().add("consoleScrollViewStyle");
         outputElements.setSpacing(5.0);
 
         output.vvalueProperty().addListener(
@@ -330,9 +332,10 @@ public class Console extends VBox implements GralogWindow{
 
     public void finalizeConsoleFieldAdd(ConsoleField t){
         t.setMaxWidth(output.getWidth());
-        t.getStyleClass().add("helloWorld");  
+        t.getStyleClass().add("consoleTextStyle");  
         System.out.println("styleclass: " + t.getStyleClass());;  
-        t.setPrefHeight(2);
+        // t.setPrefHeight(20);
+        t.setWrapText(true);
         // t.setBackground(Background.EMPTY);
         // t.setStyle("-fx-control-inner-background: orange;");
         
@@ -371,7 +374,7 @@ public class Console extends VBox implements GralogWindow{
 
         ConsoleField t = new ConsoleField(text);
 
-        t.setStyle("-fx-text-inner-color: red;");
+        t.setTextFill(Color.web("red"));
         
 
         

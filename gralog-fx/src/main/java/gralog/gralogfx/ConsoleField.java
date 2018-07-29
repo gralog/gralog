@@ -1,10 +1,10 @@
 package gralog.gralogfx.panels;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Label;
 
 
-public class ConsoleField extends TextField{
+public class ConsoleField extends Label{
     boolean changed = false;
     public ConsoleField(String text){
         super(text);
