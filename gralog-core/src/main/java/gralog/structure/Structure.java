@@ -34,8 +34,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     protected HashMap<Integer, V> vertices;
     protected HashMap<Integer, E> edges;
 
-
-
     private int id;
 
     public TreeSet<Interval> vertexIdHoles;
@@ -238,7 +236,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     @Deprecated
     public void addVertex(V v) {
-        if(!vertices.containsKey(v)){
+        if(!vertices.containsKey(v.id)){
             v.id = pollNextFreeVertexID();
             vertices.put(v.id, v);
         }
@@ -763,13 +761,29 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public void removeEdge(Edge e){
         removeEdge(e, true);
     }
+
+
     /**
-     * Creates an edge without adding it to the graph.
-     *
-     * @return The new edge.
+     * Inserts a list of edges/vertices in the structure. The objects are allowed
+     * to have arbitrary IDs (and are thus suited for e.g. pasting a deep-copied
+     * selection from clipboard)
      */
-    
-    public List<Object> duplicate(Set<Object> selection){ return duplicate(selection, 1); }
+    public void insertForeignSelection(Set<Object> selection){
+        // fill lists`
+        for(Object o : selection){
+            if(o instanceof Vertex){
+                ((V)o).setId(pollNextFreeVertexID());
+                this.vertices.put(((V)o).getId(), (V)o);
+            }
+        }
+        for(Object o : selection){
+            if(o instanceof Edge){
+                ((E)o).setId(pollNextFreeEdgeID());
+                this.edges.put(((E)o).getId(), (E)o);
+            }
+        }
+
+    }
 
     public List<Object> duplicate(Set<Object> selection, double offset) {
         List<Object> result = new ArrayList<>();

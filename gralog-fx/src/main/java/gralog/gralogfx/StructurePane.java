@@ -6,6 +6,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import com.rits.cloning.Cloner;
 import gralog.exportfilter.ExportFilter;
 import gralog.exportfilter.ExportFilterManager;
 import gralog.exportfilter.ExportFilterParameters;
@@ -54,6 +55,8 @@ public class StructurePane extends StackPane implements StructureListener {
     // indices are respectively equal
     public static MenuPrefVariable[] menuVariables;
     public static Field[] menuVariableFields;
+
+    public static LinkedHashSet<Object>  CLIPBOARD;
 
     static{
 
@@ -109,10 +112,6 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean wasDraggingPrimary = false;
     private boolean wasDraggingSecondary = false;
 
-    private boolean  resizeControlsActive = false;
-    private boolean draggingResizeControl = false;
-    private Vertex resizeVertex = null;
-
     private Point2D boxingStartingPosition; //model
     private Point2D boxingEndingPosition;   //screen
     private boolean selectionBoxingActive = false;
@@ -127,6 +126,9 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean selectedCurveControlPoint = false;
     private Edge holdingEdge = null;
     private Vector2D holdingEdgeStartingPosition;
+
+    // Utility
+    private Cloner cloner;
 
     //UI Threads
     private Thread horizontalScrollThread;
@@ -152,7 +154,7 @@ public class StructurePane extends StackPane implements StructureListener {
     public StructurePane(Structure<Vertex, Edge> structure, Configuration config) {
 
         this.config = config;
-
+        this.cloner = new Cloner();
         //init to config
         hasGrid = config.getValue("StructurePane_showGrid", Boolean::parseBoolean,true);
         gridSize = config.getValue("StructurePane_gridSize", Double::parseDouble, 1.0);
@@ -292,9 +294,21 @@ public class StructurePane extends StackPane implements StructureListener {
                     this.requestRedraw();
                     break;
                 case C:
-                    structure.collapseEdges(highlights.getSelection());
-                    this.requestRedraw();
+                    if(e.isControlDown() || e.isMetaDown()){
+                        CLIPBOARD = cloner.deepClone(highlights.getSelection());
+                    }else{
+                        structure.collapseEdges(highlights.getSelection());
+                        this.requestRedraw();
+                    }
                     break;
+                case V:
+                    if(e.isControlDown() || e.isMetaDown()){
+                        System.out.println(CLIPBOARD.size());
+                        structure.insertForeignSelection(CLIPBOARD);
+                        System.out.println(structure.getVertices().size());
+                        this.requestRedraw();
+                    }
+                    return;
                 case D:
                     List<Object> duplicates = structure.duplicate(highlights.getSelection(), gridSize);
                     if(snapToGrid){
