@@ -94,6 +94,9 @@ public abstract class GralogGraphicsContext {
         fillOval(center.getX(), center.getY(), width, height, color);
     }
 
+    public void fillOval(double x, double y, double width, double height) {
+        fillOval(x, y, width, height, GralogColor.BLACK);
+    }
 
     public abstract void fillRectangle(
         double x1, double y1, double x2, double y2, GralogColor color);

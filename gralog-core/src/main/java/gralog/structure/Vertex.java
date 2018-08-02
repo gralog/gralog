@@ -8,6 +8,7 @@ import gralog.preferences.Configuration;
 import gralog.rendering.*;
 import gralog.rendering.shapes.Ellipse;
 import gralog.rendering.shapes.RenderingShape;
+import gralog.structure.controlpoints.ResizeControls;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import gralog.core.annotations.DataField;
@@ -57,6 +58,8 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     public Vector2D coordinates = new Vector2D(0.0, 0.0);
 
+    public ArrayList<ResizeControls> controls;
+
     Set<VertexListener> listeners;
     Set<Edge> outgoingEdges;
     Set<Edge> incomingEdges;
@@ -64,6 +67,9 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
 
     public Vertex() {
+        controls = new ArrayList<>();
+        controls.add(new ResizeControls(this));
+
         listeners = new HashSet<>();
         outgoingEdges = new HashSet<>();
         incidentEdges = new HashSet<>();
@@ -316,7 +322,13 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         coordinates = new Vector2D(x, y);
     }
 
-
+    public IMovable findObject(double x, double y){
+        if(shape.containsCoordinate(new Vector2D(x, y), coordinates)){
+            return this;
+        }else{
+            return null;
+        }
+    }
 
     public void render(GralogGraphicsContext gc, Highlights highlights) {
         GralogColor c = highlights.isSelected(this) ? GralogColor.RED : strokeColor;

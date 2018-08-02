@@ -15,6 +15,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
 import gralog.structure.controlpoints.ControlPoint;
+import gralog.structure.controlpoints.ResizeControls;
 import javafx.geometry.Point2D;
 import org.w3c.dom.*;
 
@@ -141,8 +142,19 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
         }
 
-        for (Vertex v : getVertices())
+        for (Vertex v : getVertices()){
             v.render(gc, highlights);
+            for(ResizeControls c : v.controls){
+                if(highlights.getSelection().size() == 1
+                        && highlights.isSelected(v)){
+                    c.active = true;
+                    c.render(gc);
+                }else{
+                    c.active = false;
+                }
+            }
+        }
+
     }
 
     public void snapToGrid(double gridSize) {
@@ -865,8 +877,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public IMovable findObject(double x, double y) {
         Vector2D p = new Vector2D(x, y);
         for (Vertex v : getVertices()){
-            if (v.shape.containsCoordinate(p, v.coordinates)){
-                return v;
+            IMovable temp = v.findObject(x, y);
+            if(temp != null){
+                return temp;
             }
         }
 

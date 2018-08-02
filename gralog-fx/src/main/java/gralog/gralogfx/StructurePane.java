@@ -108,6 +108,9 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean wasDraggingPrimary = false;
     private boolean wasDraggingSecondary = false;
 
+    private boolean  resizeControlsActive = false;
+    private boolean draggingResizeControl = false;
+    private Vertex resizeVertex = null;
 
     private Point2D boxingStartingPosition; //model
     private Point2D boxingEndingPosition;   //screen
@@ -646,12 +649,14 @@ public class StructurePane extends StackPane implements StructureListener {
         GralogGraphicsContext ggc = new JavaFXGraphicsContext(gc, this);
         structure.render(ggc, highlights);
 
+
         //draw the selection box
         if(selectionBoxDragging){
             Point2D boxStartScreen = modelToScreen(boxingStartingPosition);
             ggc.selectionRectangle(boxStartScreen, boxingEndingPosition, selectionBoxColor);
         }
     }
+
     private void tryAddControlPoint(Vector2D mousePositionModel, Vector2D clickPosition){
         if(mousePositionModel.minus(holdingEdgeStartingPosition).length() > 0.2){
             ControlPoint ctrl = holdingEdge.addControlPoint(mousePositionModel, clickPosition);
