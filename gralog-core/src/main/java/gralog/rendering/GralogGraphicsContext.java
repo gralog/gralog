@@ -104,6 +104,9 @@ public abstract class GralogGraphicsContext {
     public abstract void strokeRectangle(
             double x1, double y1, double x2, double y2, double strokeWidth, GralogColor color);
 
+    public abstract void strokeRectangle(
+            double x1, double y1, double x2, double y2, double strokeWidth, LineType line);
+
     public abstract void strokeDiamond(
             double x1, double y1, double x2, double y2, double strokeWidth, GralogColor color);
 

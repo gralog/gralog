@@ -144,15 +144,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         for (Vertex v : getVertices()){
             v.render(gc, highlights);
-            for(ResizeControls c : v.controls){
-                if(highlights.getSelection().size() == 1
-                        && highlights.isSelected(v)){
-                    c.active = true;
-                    c.render(gc);
-                }else{
-                    c.active = false;
-                }
+            if(highlights.getSelection().size() == 1
+                    && highlights.isSelected(v)){
+                v.controls.active = true;
+                v.controls.render(gc);
+            }else{
+                v.controls.active = false;
             }
+
         }
 
     }

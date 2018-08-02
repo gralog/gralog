@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import gralog.structure.controlpoints.ControlPoint;
+import gralog.structure.controlpoints.ResizeControls;
 import javafx.application.Platform;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -337,7 +338,13 @@ public class StructurePane extends StackPane implements StructureListener {
                     selectAllExclusive(controlPoint.parent, selected);
                     dragging = highlights.getSelection();
                     selectedCurveControlPoint = true;
-                }else{
+                }
+                else if(selected instanceof ResizeControls.RControl){
+                    select(((ResizeControls.RControl)selected).parent.v);
+                    dragging = new HashSet<>();
+                    dragging.add(selected);
+                }
+                else{
                     //reassign selection to object that was not in the list
                     if(!e.isControlDown() && !highlights.isSelected(selected)){
                         selectExclusive(selected);
@@ -390,10 +397,8 @@ public class StructurePane extends StackPane implements StructureListener {
             if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease && selectionBoxingActive){
                 Undo.Record(structure);
                 Vertex v = structure.addVertex(config);
-                v.coordinates = new Vector2D(
-                        mousePositionModel.getX(),
-                        mousePositionModel.getY()
-                );
+                v.setCoordinates(mousePositionModel.getX(),
+                        mousePositionModel.getY());
                 if (hasGrid && snapToGrid){
                     v.snapToGrid(gridSize);
                 }

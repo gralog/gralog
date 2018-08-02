@@ -58,7 +58,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     public Vector2D coordinates = new Vector2D(0.0, 0.0);
 
-    public ArrayList<ResizeControls> controls;
+    public ResizeControls controls;
 
     Set<VertexListener> listeners;
     Set<Edge> outgoingEdges;
@@ -67,8 +67,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
 
     public Vertex() {
-        controls = new ArrayList<>();
-        controls.add(new ResizeControls(this));
+        controls = new ResizeControls(this);
 
         listeners = new HashSet<>();
         outgoingEdges = new HashSet<>();
@@ -316,13 +315,21 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     @Override
     public void move(Vector2D offset) {
         coordinates = coordinates.plus(offset);
+        controls.move(offset);
     }
 
     public void setCoordinates(double x, double y){
         coordinates = new Vector2D(x, y);
+        controls.setCoordinates();
     }
 
     public IMovable findObject(double x, double y){
+        if(controls.active){
+            IMovable temp = controls.findObject(x, y);
+            if(temp != null){
+                return temp;
+            }
+        }
         if(shape.containsCoordinate(new Vector2D(x, y), coordinates)){
             return this;
         }else{
@@ -372,7 +379,8 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     }
 
     public void snapToGrid(double gridSize) {
-        coordinates = coordinates.snapToGrid(gridSize);
+        Vector2D v = coordinates.snapToGrid(gridSize);
+        setCoordinates(v.getX(), v.getY());
     }
 
     /**
