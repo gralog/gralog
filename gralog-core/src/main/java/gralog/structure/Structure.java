@@ -8,14 +8,11 @@ import gralog.events.*;
 import gralog.preferences.Configuration;
 import gralog.rendering.*;
 
-import gralog.exportfilter.*;
-
 import java.util.*;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 
 import gralog.structure.controlpoints.ControlPoint;
-import gralog.structure.controlpoints.ResizeControls;
 import javafx.geometry.Point2D;
 import org.w3c.dom.*;
 
@@ -144,7 +141,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         for (Vertex v : getVertices()){
             v.render(gc, highlights);
-            if(highlights.getSelection().size() == 1
+            if(highlights.getSelection().size() >= 1
                     && highlights.isSelected(v)){
                 v.controls.active = true;
                 v.controls.render(gc);
@@ -217,9 +214,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
         Interval me = new Interval(id,id);
         Interval smallestGreaterThanOrEqual = this.vertexIdHoles.ceiling(me);
-        Interval greatestLessThanOrEqualTo = this.vertexIdHoles.floor(me);
         Interval newInterval = new Interval(0,0);
-        boolean addNewInterval = false;
         if (smallestGreaterThanOrEqual != null){ //if the next biggest 
             //interval starts with the id we want to add
             newInterval.a = id+1;
@@ -647,6 +642,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
 
+
+    /**
+     * @param sourceID ID of the source vertex
+     * @param targetID ID of the target vertex=
+     */
+    public E addEdge(int sourceID, int targetID){
+        return addEdge(vertices.get(sourceID), vertices.get(targetID));
+    }
     public E addEdge(V source, V target) {
         return addEdge(source, target, -1, null);
     }

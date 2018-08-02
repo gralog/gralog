@@ -490,6 +490,8 @@ public class StructurePane extends StackPane implements StructureListener {
                         if(o instanceof Vertex){
                             Vector2D rel = ((Vertex)o).coordinates.minus(
                                     mousePositionModel.getX(), mousePositionModel.getY());
+                            if(singleVertexDragPosition == null)
+                                continue;
                             Vector2D diffRel = singleVertexDragPosition.minus(rel);
                             if (dragging.size() == 1) {
                                 if(diffRel.length() < DISTANCE_CURSOR_STOP_ALIGN){
