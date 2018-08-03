@@ -1,10 +1,12 @@
 package gralog.rendering;
 
+import java.io.Serializable;
+
 /**
  * All public static arrows should have their pointer at the origin and their maximum
  * x-length should be 1, so that scaling the arrow across all types becomes consistent.
  */
-public class Arrow
+public class Arrow implements Serializable
 {
     public enum LineFlag {
         POLY,

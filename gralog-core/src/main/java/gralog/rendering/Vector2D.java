@@ -4,10 +4,12 @@ package gralog.rendering;
 
 import javafx.geometry.Point2D;
 
+import java.io.Serializable;
+
 /**
  * A 2-dimensional immutable vector.
  */
-public class Vector2D {
+public class Vector2D implements Serializable {
 
     private final double x, y;
 

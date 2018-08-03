@@ -8,6 +8,7 @@ import gralog.events.*;
 import gralog.preferences.Configuration;
 import gralog.rendering.*;
 
+import java.io.Serializable;
 import java.util.*;
 
 import gralog.structure.controlpoints.ControlPoint;
@@ -24,7 +25,7 @@ import gralog.core.annotations.DataField;
  *
  */
 @XmlName(name = "edge")
-public class Edge extends XmlMarshallable implements IMovable {
+public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
 
     public enum EdgeType{
@@ -35,7 +36,7 @@ public class Edge extends XmlMarshallable implements IMovable {
 
 
     @DataField(display=true,readOnly=true)
-    private Integer id = -1; //if not -1, then don't change the id
+    Integer id = -1; //if not -1, then don't change the id
 
     public static boolean isEdgeType(String type){
 

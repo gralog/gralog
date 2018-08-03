@@ -9,7 +9,9 @@ import gralog.structure.Highlights;
 import gralog.structure.IMovable;
 import gralog.structure.Vertex;
 
-public class ControlPoint extends XmlMarshallable implements IMovable {
+import java.io.Serializable;
+
+public class ControlPoint extends XmlMarshallable implements IMovable, Serializable {
 
     protected static final double drawRadius = 0.05;
     protected static final double drawRadiusSelected = 0.1;
