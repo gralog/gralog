@@ -767,13 +767,17 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * Inserts a list of edges/vertices in the structure. The objects are allowed
      * to have arbitrary IDs (and are thus suited for e.g. pasting a deep-copied
      * selection from clipboard)
+     *
+     * Also slightly offsets vertices
      */
-    public void insertForeignSelection(Set<Object> selection){
+    public void insertForeignSelection(Set<Object> selection, double offset){
         // fill lists`
         for(Object o : selection){
             if(o instanceof Vertex){
-                ((V)o).setId(pollNextFreeVertexID());
-                this.vertices.put(((V)o).getId(), (V)o);
+                V v = ((V)o);
+                v.setId(pollNextFreeVertexID());
+                v.move(Vector2D.one().multiply(offset));
+                this.vertices.put(v.getId(), v);
             }
         }
         for(Object o : selection){

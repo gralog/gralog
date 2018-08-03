@@ -304,8 +304,10 @@ public class StructurePane extends StackPane implements StructureListener {
                 case V:
                     if(e.isControlDown() || e.isMetaDown()){
                         System.out.println(CLIPBOARD.size());
-                        structure.insertForeignSelection(CLIPBOARD);
-                        System.out.println(structure.getVertices().size());
+                        structure.insertForeignSelection(CLIPBOARD, gridSize);
+                        if(snapToGrid){
+                            structure.snapToGrid(gridSize);
+                        }
                         this.requestRedraw();
                     }
                     return;

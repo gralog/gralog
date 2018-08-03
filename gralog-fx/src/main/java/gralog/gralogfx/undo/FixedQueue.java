@@ -13,6 +13,10 @@ public class FixedQueue<T> {
         return size;
     }
 
+    public int count(){
+        return count;
+    }
+
     public FixedQueue(int size){
         this.size = size;
         this.x = (T[])new Object[size];

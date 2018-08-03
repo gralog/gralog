@@ -33,7 +33,6 @@ public class Undo {
 
         FixedQueue<Structure> stack = structureStack.get(structure);
         stack.push(cloner.deepClone(structure));
-        System.out.println(stack.size());
     }
 
     /**
@@ -50,7 +49,7 @@ public class Undo {
         }
 
         FixedQueue<Structure> stack = structureStack.get(structure);
-        if(stack.size() != 0){
+        if(stack.count() != 0){
             Structure reference = stack.pop();
             structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
             structure.__SET_EDGES_T(reference.__GET_EDGES_T())  ;
