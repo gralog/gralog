@@ -313,6 +313,17 @@ public class Console extends VBox implements GralogWindow{
                                                 break;
                 case PRINT:                     dialog.printLists(parameters);
                                                 break;
+                case FIND_VERTEX:               dialogfx.findVertex(parameters,
+                                                                    currentPane.getStructure(),
+                                                                    currentPane);
+                case FIND_EDGE:                 dialogfx.findEdge(parameters,
+                                                                  currentPane.getStructure(),
+                                                                  currentPane);
+                                                break;
+                case FIND_GRAPH_ELEMENT:        dialogfx.findGraphElement(parameters,
+                                                                          currentPane.getStructure(),
+                                                                          currentPane);
+                                                break;
                 case NONE:                      return;
             }
             output(dialog.getErrorMsg());

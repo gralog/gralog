@@ -2,13 +2,12 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.rendering;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
 
 /**
  *
  */
-public class GralogColor {
+public class GralogColor implements Serializable {
 
     public enum Color {
         WHITE   (0xFFFFFF),

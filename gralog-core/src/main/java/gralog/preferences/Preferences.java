@@ -49,6 +49,7 @@ public final class Preferences {
             String id =PROPERTIES.getProperty("pref_id");
             if(id == null || !id.equals(VERSION))
             {
+                in.close();
                 createDefaultPrefs(path);
             }
         } catch (FileNotFoundException e) {
@@ -61,10 +62,11 @@ public final class Preferences {
 
     private static void createDefaultPrefs(String path){
         System.out.println("No config was found - add default prefs");
-        InputStream def = Preferences.class.getClassLoader().getResourceAsStream("default_preferences.txt");
-        URL r = Preferences.class.getClassLoader().getResource("default_preferences.txt");
+        InputStream def  = Preferences.class.getClassLoader().getResourceAsStream("default_preferences.txt");
+
         try{
             Files.copy(def, Paths.get(path + "/" + FILENAME), StandardCopyOption.REPLACE_EXISTING);
+            def.close();
             try (FileInputStream in = new FileInputStream(path + "/" + FILENAME)) {
                 PROPERTIES.load(in);
             }

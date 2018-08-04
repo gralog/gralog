@@ -8,10 +8,12 @@ import gralog.preferences.Configuration;
 import gralog.rendering.*;
 import gralog.rendering.shapes.Ellipse;
 import gralog.rendering.shapes.RenderingShape;
+import gralog.structure.controlpoints.ResizeControls;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import gralog.core.annotations.DataField;
 
+import java.io.Serializable;
 import java.lang.reflect.*;
 import java.lang.annotation.Annotation;
 import gralog.core.annotations.DataField;
@@ -26,7 +28,7 @@ import java.util.*;
  * A vertex with a circle shape.
  */
 @XmlName(name = "node")
-public class Vertex extends XmlMarshallable implements IMovable {
+public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     @DataField(display=true,readOnly=true)
     public int id;
@@ -56,6 +58,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
     public Vector2D coordinates = new Vector2D(0.0, 0.0);
 
+    public ResizeControls controls;
+
     Set<VertexListener> listeners;
     Set<Edge> outgoingEdges;
     Set<Edge> incomingEdges;
@@ -63,6 +67,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
 
 
     public Vertex() {
+        controls = new ResizeControls(this);
+
         listeners = new HashSet<>();
         outgoingEdges = new HashSet<>();
         incidentEdges = new HashSet<>();
@@ -312,8 +318,27 @@ public class Vertex extends XmlMarshallable implements IMovable {
     @Override
     public void move(Vector2D offset) {
         coordinates = coordinates.plus(offset);
+        controls.move(offset);
     }
 
+    public void setCoordinates(double x, double y){
+        coordinates = new Vector2D(x, y);
+        controls.setCoordinates();
+    }
+
+    public IMovable findObject(double x, double y){
+        if(controls.active){
+            IMovable temp = controls.findObject(x, y);
+            if(temp != null){
+                return temp;
+            }
+        }
+        if(shape.containsCoordinate(new Vector2D(x, y), coordinates)){
+            return this;
+        }else{
+            return null;
+        }
+    }
 
     public void render(GralogGraphicsContext gc, Highlights highlights) {
         GralogColor c = highlights.isSelected(this) ? GralogColor.RED : strokeColor;
@@ -357,7 +382,8 @@ public class Vertex extends XmlMarshallable implements IMovable {
     }
 
     public void snapToGrid(double gridSize) {
-        coordinates = coordinates.snapToGrid(gridSize);
+        Vector2D v = coordinates.snapToGrid(gridSize);
+        setCoordinates(v.getX(), v.getY());
     }
 
     /**

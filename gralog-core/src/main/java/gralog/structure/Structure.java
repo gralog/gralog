@@ -8,7 +8,6 @@ import gralog.plugins.XmlMarshallable;
 import gralog.events.*;
 import gralog.preferences.Configuration;
 import gralog.rendering.*;
-import gralog.exportfilter.*;
 
 import java.util.*;
 import javax.xml.transform.stream.StreamResult;
@@ -38,8 +37,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     protected HashMap<Integer, V> vertices;
     protected HashMap<Integer, E> edges;
-
-
 
     private int id;
 
@@ -106,7 +103,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     public Collection<V> getVertices(){ return vertices.values(); }
 
-
     /**
      * @return A pseudo-randommly selected vertrex.
      */
@@ -127,10 +123,19 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return vertex;
     }
     /**
+     * Overrides vertices. Only for internal use
+     */
+    public void __SET_VERTICES_T(HashMap<Integer, V> verticesNew){ vertices = verticesNew; }
+    public HashMap<Integer, V> __GET_VERTICES_T(){ return vertices; }
+
+    public void __SET_EDGES_T(HashMap<Integer, E> edgesNew){ edges = edgesNew; }
+    public HashMap<Integer, E> __GET_EDGES_T(){ return edges; }
+
+    /**
      * @return An unmodifiable set of edges.
      */
     public Set<E> getEdges() {
-        return new HashSet<E>(edges.values());
+        return new HashSet<>(edges.values());
     }
 
     public Set<IMovable> getAllMovablesModifiable(){
@@ -155,8 +160,18 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
         }
 
-        for (Vertex v : getVertices())
+        for (Vertex v : getVertices()){
             v.render(gc, highlights);
+            if(highlights.getSelection().size() >= 1
+                    && highlights.isSelected(v)){
+                v.controls.active = true;
+                v.controls.render(gc);
+            }else{
+                v.controls.active = false;
+            }
+
+        }
+
     }
 
     public void snapToGrid(double gridSize) {
@@ -220,9 +235,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
         Interval me = new Interval(id,id);
         Interval smallestGreaterThanOrEqual = this.vertexIdHoles.ceiling(me);
-        Interval greatestLessThanOrEqualTo = this.vertexIdHoles.floor(me);
         Interval newInterval = new Interval(0,0);
-        boolean addNewInterval = false;
         if (smallestGreaterThanOrEqual != null){ //if the next biggest 
             //interval starts with the id we want to add
             newInterval.a = id+1;
@@ -246,7 +259,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     @Deprecated
     public void addVertex(V v) {
-        if(!vertices.containsKey(v)){
+        if(!vertices.containsKey(v.id)){
             v.id = pollNextFreeVertexID();
             vertices.put(v.id, v);
         }
@@ -659,6 +672,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
     }
 
+    /**
+     * @param sourceID ID of the source vertex
+     * @param targetID ID of the target vertex=
+     */
+    public E addEdge(int sourceID, int targetID){
+        return addEdge(vertices.get(sourceID), vertices.get(targetID));
+    }
 
     public E addEdge(V source, V target) {
         return addEdge(source, target, -1, null);
@@ -792,13 +812,33 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public void removeEdge(Edge e){
         removeEdge(e, true);
     }
+
+
     /**
-     * Creates an edge without adding it to the graph.
+     * Inserts a list of edges/vertices in the structure. The objects are allowed
+     * to have arbitrary IDs (and are thus suited for e.g. pasting a deep-copied
+     * selection from clipboard)
      *
-     * @return The new edge.
+     * Also slightly offsets vertices
      */
-    
-    public List<Object> duplicate(Set<Object> selection){ return duplicate(selection, 1); }
+    public void insertForeignSelection(Set<Object> selection, double offset){
+        // fill lists`
+        for(Object o : selection){
+            if(o instanceof Vertex){
+                V v = ((V)o);
+                v.setId(pollNextFreeVertexID());
+                v.move(Vector2D.one().multiply(offset));
+                this.vertices.put(v.getId(), v);
+            }
+        }
+        for(Object o : selection){
+            if(o instanceof Edge){
+                ((E)o).setId(pollNextFreeEdgeID());
+                this.edges.put(((E)o).getId(), (E)o);
+            }
+        }
+
+    }
 
     public List<Object> duplicate(Set<Object> selection, double offset) {
         List<Object> result = new ArrayList<>();
@@ -908,8 +948,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public IMovable findObject(double x, double y) {
         Vector2D p = new Vector2D(x, y);
         for (Vertex v : getVertices()){
-            if (v.shape.containsCoordinate(p, v.coordinates)){
-                return v;
+            IMovable temp = v.findObject(x, y);
+            if(temp != null){
+                return temp;
             }
         }
 

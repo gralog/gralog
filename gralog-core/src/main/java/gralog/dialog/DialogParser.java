@@ -253,12 +253,63 @@ public class DialogParser {
                     case "PRINT":
                         transition(DialogState.PRINT);
                         break;
+                    case "FIND":
+                        transition(DialogState.FIND);
+                        break;
                     default:
                         errorMsg = "Parse error. Please, try again. (Quit: Q)\n";
                         return;
                 }
             }
 
+            if (this.dialogState == DialogState.FIND){
+                if (i == inputWords.length){
+                    errorMsg = "Say what to find.\n";
+                    return;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(DONE,DialogAction.FIND_LIST,inputWords[i]);
+                    return;
+                }
+                if (inputWords[i].equals("VERTEX")){
+                    transition(DialogState.FIND_VERTEX);
+                    continue;
+                }
+                if (inputWords[i].equals("EDGE")){
+                    transition(DialogState.FIND_EDGE);
+                    continue;
+                }
+                if (isInt(inputWords[i])){
+                    transition(DONE,FIND_GRAPH_ELEMENT,inputWords[i]);
+                    return;
+                }
+                errorMsg = "Say what to find.\n";
+                return;
+            }
+            if (this.dialogState == DialogState.FIND_VERTEX){
+                if (i == inputWords.length){
+                    errorMsg = "Specify vertex id.\n";
+                    return;
+                }
+                if (isInt(inputWords[i])){
+                    transition(DONE,DialogAction.FIND_VERTEX,inputWords[i]);
+                    return;
+                }
+                errorMsg = "Could not parse: " + inputWords[i] + ".\n";
+                return;
+            }
+            if (this.dialogState == DialogState.FIND_EDGE){
+                if (i == inputWords.length){
+                    errorMsg = "Specify edge id.\n";
+                    return;
+                }
+                if (isInt(inputWords[i])){
+                    transition(DONE,DialogAction.FIND_EDGE,inputWords[i]);
+                    return;
+                }
+                errorMsg = "Could not parse: " + inputWords[i] + ".\n";
+                return;
+            }
             if (this.dialogState == DialogState.CONNECT){
                 if (i == inputWords.length){
                     errorMsg = "Specify what to connect. Format: CONNECT <list> <list> =<formula>|BICLIQUE|MATCHING or CONNECT <list> =<formula>|PATH|CYCLE|CLIQUE";
