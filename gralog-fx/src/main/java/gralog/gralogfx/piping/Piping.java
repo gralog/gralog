@@ -544,6 +544,7 @@ public class Piping extends Thread{
 
             this.redrawMyStructurePanes();
             System.out.println("redr000");
+            this.sendMessageToConsole.accept("Program terminated");
             
 
 

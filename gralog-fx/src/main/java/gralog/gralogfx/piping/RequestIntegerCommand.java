@@ -30,6 +30,7 @@ public class RequestIntegerCommand extends CommandForGralogToExecute {
 
         // this.selectionFunction.get();
         this.piping.state = Piping.State.WaitingForConsoleInput;
+        this.piping.sendMessageToConsole.accept("Integer requested!");
         
         try{
             this.piping.redrawMyStructurePanes();

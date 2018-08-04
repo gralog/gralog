@@ -33,7 +33,7 @@ for x in vertices:
 		if x != y:
 			edges.append(x.connect(y));
 
-for x in range(2):
+for x in range(0):
 	e = g.requestEdge();
 	e.setColor("blue");
 	s = e.getSource();
@@ -44,6 +44,11 @@ for x in range(2):
 	e.delete();
 	# t.delete();
 	# s.delete();
+
+loops = g.requestInteger();
+for x in range(loops):
+	v = g.addVertex();
+	v.setLabel(str(x));
 	
 
 # for x in edges:
