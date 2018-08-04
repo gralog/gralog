@@ -14,13 +14,18 @@ g = Graph(None);#type \in buechi, directed, etc. or None
 
 # g1 = Graph("directed");
 
-
+string = g.requestString();
 vertices = [];
 edges = [];
 seen = [];
 g.track("seen",seen);
 for x in range(2):
-	vertices.append(g.addVertex());
+	v=g.addVertex()
+	vertices.append(v);
+	v.setLabel(string);
+
+
+
 
 
 for x in vertices:
@@ -30,15 +35,15 @@ for x in vertices:
 
 for x in range(2):
 	e = g.requestEdge();
-	e.setColor("lolol");
+	e.setColor("blue");
 	s = e.getSource();
 	t = e.getTarget();
 	s.setColor("blue");
 	t.setColor("orange");
 	g.pause();
 	e.delete();
-	t.delete();
-	s.delete();
+	# t.delete();
+	# s.delete();
 	
 
 # for x in edges:

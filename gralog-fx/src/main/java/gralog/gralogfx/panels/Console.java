@@ -26,6 +26,7 @@ import javafx.beans.value.ObservableValue;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import static gralog.dialog.DialogAction.NONE;
 import static gralog.dialog.DialogState.*;
@@ -48,6 +49,7 @@ public class Console extends VBox implements GralogWindow{
 
 
     private String currentlyEntered = "";
+    private Function<String,Boolean> profferTextToMainWindow;
 
 
 
@@ -58,9 +60,10 @@ public class Console extends VBox implements GralogWindow{
 
     private final Set<Consumer<String>> subscribers = new HashSet<>();
 
-    public Console(Tabs tabs){
+    public Console(Tabs tabs,Function<String,Boolean> profferTextToMainWindow){
 
         this.tabs = tabs;
+        this.profferTextToMainWindow = profferTextToMainWindow;
 
         input = new TextField();
         input.setMaxHeight(20);
@@ -76,11 +79,16 @@ public class Console extends VBox implements GralogWindow{
         input.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             String inputText = input.getText();
             if(e.getCode() == KeyCode.ENTER){
+
                 this.output("./> " + inputText + "");
 
                 if(!inputText.isEmpty()){
                     history.add(inputText);
-                    onEnter(inputText, tabs.getCurrentStructurePane());
+                    boolean accepted = this.profferTextToMainWindow.apply(inputText);
+                    if (!accepted){
+                        onEnter(inputText, tabs.getCurrentStructurePane());
+                    }
+                    
                 }
                 input.clear();
             }else if(e.getCode() == KeyCode.UP){
@@ -331,11 +339,12 @@ public class Console extends VBox implements GralogWindow{
    
 
     public void finalizeConsoleFieldAdd(ConsoleField t){
-        t.setMaxWidth(output.getWidth());
+        t.setMaxWidth(output.getWidth()*0.9);
+
         t.getStyleClass().add("consoleTextStyle");  
         System.out.println("styleclass: " + t.getStyleClass());;  
         // t.setPrefHeight(20);
-        t.setWrapText(true);
+        // t.setWrapText(true);
         // t.setBackground(Background.EMPTY);
         // t.setStyle("-fx-control-inner-background: orange;");
         
@@ -352,6 +361,7 @@ public class Console extends VBox implements GralogWindow{
     }
 
     public void output(String text){
+
         
         
 
@@ -373,13 +383,18 @@ public class Console extends VBox implements GralogWindow{
         System.out.println("error output");
 
         ConsoleField t = new ConsoleField(text);
+        t.getStyleClass().add("errorStyle"); 
 
-        t.setTextFill(Color.web("red"));
+       
+
+        finalizeConsoleFieldAdd(t);
+
+    }
+
+    public void outsideMessage(String text){
         
 
-        
-        // t.setFont(Font.font ("Verdana", 12));
-        
+        ConsoleField t = new ConsoleField(text);       
 
         finalizeConsoleFieldAdd(t);
 

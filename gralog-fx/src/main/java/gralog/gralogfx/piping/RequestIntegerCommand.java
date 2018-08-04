@@ -8,7 +8,7 @@ import java.util.concurrent.CountDownLatch;
 
 
 
-public class RequestVertexCommand extends CommandForGralogToExecute {
+public class RequestIntegerCommand extends CommandForGralogToExecute {
 
     Vertex vertex;
     private CountDownLatch waitForSelection;
@@ -16,32 +16,31 @@ public class RequestVertexCommand extends CommandForGralogToExecute {
     private Piping piping;
   
 
-	public RequestVertexCommand(String[] externalCommandSegments,Structure structure,Piping piping){
+	public RequestIntegerCommand(String[] externalCommandSegments,Structure structure,Piping piping){
 		
         this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         this.piping = piping;
         this.waitForSelection = piping.waitForSelection;
-        this.selectionFunction = piping.graphObjectSelectionFunction;
+
 
 	}
 
 	public void handle(){
 
-        this.selectionFunction.get();
-        this.piping.sendMessageToConsole.accept("Edge requested!");
-        this.piping.state = Piping.State.WaitingForSelection;
+        // this.selectionFunction.get();
+        this.piping.state = Piping.State.WaitingForConsoleInput;
         
         try{
             this.piping.redrawMyStructurePanes();
-            this.piping.setClassSelectionIsWaitingFor(Vertex.class);
+            this.piping.setClassSelectionIsWaitingFor(Integer.class);
             this.waitForSelection.await();
         }catch(Exception e){
             e.printStackTrace();
         }
         this.piping.state = Piping.State.InProgress;
-        Vertex v = (Vertex)this.piping.getSelectedObject();
-        this.setResponse(Integer.toString(v.getId()));
+        String consoleInputString= this.piping.getConsoleInput();
+        this.setResponse(consoleInputString);
         System.out.println("all done!");
 
         
