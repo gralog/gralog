@@ -142,7 +142,7 @@ public class MainWindow extends Application {
         }
 
 
-        mainConsole = new Console(tabs);
+        mainConsole = new Console(tabs, this::profferTextToMainWindow);
 
         ObjectInspector objectInspector = new ObjectInspector(tabs);
         //put lambdas here for controlling stuff
@@ -276,6 +276,8 @@ public class MainWindow extends Application {
         System.out.println("foo");
     }
 
+    public void handlePlannedConsoleInput(){}
+
     public void onLoadPlugin() {
         // FileChooser fileChooser = new FileChooser();
         // fileChooser.setInitialDirectory(new File(getLastDirectory()));
@@ -321,7 +323,7 @@ public class MainWindow extends Application {
 
             String fileName = this.getFileName();
 
-            Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
+            Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole,this::sendOutsideErrorMessageToConsole);
             this.pipelines.add(newPiping);
             
             
@@ -349,7 +351,8 @@ public class MainWindow extends Application {
     }
 
     public String getFileName(){
-        return "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py";
+        String fileName = Preferences.getFile("MainWindow_pipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py");
+        return fileName;
     }
 
     public StructurePane initGraph(String graphType,Piping pipelineThatCalled){
@@ -380,6 +383,14 @@ public class MainWindow extends Application {
         }
     }
 
+    public Boolean profferTextToMainWindow(String text){
+        Piping currentPiping = this.tabs.getCurrentStructurePane().getPiping();
+        if (currentPiping != null && currentPiping.getPipingState() == Piping.State.WaitingForConsoleInput){
+            return currentPiping.profferConsoleInput(text);
+        }
+        return false;
+    }
+
     public void doLoadPlugin(String filename) {
         try {
             this.setStatus("Loading Plugin " + filename + "...");
@@ -401,8 +412,14 @@ public class MainWindow extends Application {
     }
 
     public void sendOutsideMessageToConsole(String msg){
-        this.mainConsole.output(msg);
+        this.mainConsole.outsideMessage(msg);
     }
+
+    public void sendOutsideErrorMessageToConsole(String msg){
+        this.mainConsole.errorOutput(msg);
+    }
+
+    // public void 
 
     public void onSave() {
         onSave(getCurrentStructure(), this);

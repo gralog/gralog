@@ -10,6 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser;
+import java.io.File;
 
 import java.io.IOException;
 import java.net.URL;
@@ -29,11 +31,16 @@ public class PreferenceWindow extends Stage {
 
     private static final double WINDOW_WIDTH = 700;
     private static final double WINDOW_HEIGHT = 420;
+    FileChooser pipingSourceFileChooser;
+    File pipingFile = null;
+    File newPipingFile = null;
 
 
     public PreferenceWindow() {
         final Parent generalPageCopy;
         final Parent structurePageCopy;
+
+        this.pipingSourceFileChooser = new FileChooser();
 
         Parent root = new Pane();
         Pane generalPage = new Pane();
@@ -116,6 +123,18 @@ public class PreferenceWindow extends Stage {
                     GralogColor c = Preferences.getColor(node.getId(), GralogColor.BLACK);
                     ((ColorPicker)node).setValue(Color.rgb(c.r, c.g, c.b));
                 }
+                if(node instanceof Button){
+                    System.out.println("lehishtamesh");
+                    Button button = (Button)node;
+                    String fileName = Preferences.getFile(node.getId(),null);
+                    button.setText(fileName);
+                    this.pipingFile = new File(fileName);
+                    System.out.println("we got from tha config: " + this.pipingFile.getName());
+                    button.setOnAction(e -> {
+                        this.newPipingFile = this.pipingSourceFileChooser.showOpenDialog(this);
+                        button.setText(newPipingFile.getName());
+                    });
+                }
 
             }
         }
@@ -142,6 +161,13 @@ public class PreferenceWindow extends Stage {
                     if(node instanceof ColorPicker){
                         GralogColor c = GralogColor.parseColorAlpha(((ColorPicker)node).getValue().toString());
                         Preferences.setColor(node.getId(), c);
+                    }
+                    if(node instanceof Button){
+                        if (this.newPipingFile != null){
+                            this.pipingFile = this.newPipingFile;
+                        }
+                        Preferences.setFile(node.getId(),this.pipingFile);
+                        
                     }
                 }
             }

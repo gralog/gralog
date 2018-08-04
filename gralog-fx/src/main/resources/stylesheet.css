@@ -4,6 +4,17 @@
 }
 */
 
-.helloWorld{
-	-fx-control-inner-background: transparent;
+.consoleTextStyle{
+	/*-fx-control-inner-background: transparent;*/
+	-fx-background-color: transparent;
+
+	-fx-padding: 1px 0px -0px -0px;
+}
+
+.errorStyle{
+	-fx-text-inner-color: red;
+}
+
+.consoleScrollViewStyle{
+	-fx-padding: 0px 0px 5px -0px;
 }

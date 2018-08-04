@@ -413,6 +413,18 @@ public class PipingMessageHandler{
             currentCommand = new RequestVertexCommand(externalCommandSegments,currentStructure,piping);
             
             return currentCommand;
+        }else if (commandKeyword.equals("requestString")){
+            currentCommand = new RequestStringCommand(externalCommandSegments,currentStructure,piping);
+            
+            return currentCommand;
+        }else if (commandKeyword.equals("requestInteger")){
+            currentCommand = new RequestIntegerCommand(externalCommandSegments,currentStructure,piping);
+            
+            return currentCommand;
+        }else if (commandKeyword.equals("requestDouble")){
+            currentCommand = new RequestDoubleCommand(externalCommandSegments,currentStructure,piping);
+            
+            return currentCommand;
         }else if (commandKeyword.equals("requestEdge")){
             currentCommand = new RequestEdgeCommand(externalCommandSegments,currentStructure,piping);
             

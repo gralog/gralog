@@ -22,13 +22,14 @@ public class RequestEdgeCommand extends CommandForGralogToExecute {
 		this.structure = structure;
         this.piping = piping;
         this.waitForSelection = piping.waitForSelection;
-        this.selectionFunction = piping.selectionFunction;
+        this.selectionFunction = piping.graphObjectSelectionFunction;
 
 	}
 
 	public void handle(){
 
         this.selectionFunction.get();
+        this.piping.sendMessageToConsole.accept("Edge requested!");
         this.piping.state = Piping.State.WaitingForSelection;
         
         try{

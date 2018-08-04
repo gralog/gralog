@@ -70,12 +70,15 @@ public class Piping extends Thread{
     public Condition canContinue;
     public MainWindow caller;
     public Supplier<Boolean> pauseFunction;
-    public Supplier<Boolean> selectionFunction;
+    public Supplier<Boolean> graphObjectSelectionFunction;
+    public Supplier<String> receiveUserMessageFromConsole;
     private boolean pauseWasPressed = false;
     public boolean windowDoesCloseNow = false;
-    private Consumer sendMessageToConsole;
+    protected Consumer sendMessageToConsole;
+    protected Consumer sendErrorMessageToConsole;
     private Class classSelectionIsWaitingFor = null;
     private IMovable selectedObject;
+    private String consoleInputText;
 
 
     public enum State{
@@ -83,7 +86,8 @@ public class Piping extends Thread{
         Inintialized,
         InProgress,
         Paused,
-        WaitingForSelection
+        WaitingForSelection,
+        WaitingForConsoleInput
     }
     
     public State state = State.Null;
@@ -101,6 +105,7 @@ public class Piping extends Thread{
     }
 
     private void plannedPauseRequested(String[] externalCommandSegments, boolean rankGiven){
+        this.sendMessageToConsole.accept("Pause requested!");
         List<String[]> args = PipingMessageHandler.parsePauseVars(externalCommandSegments,rankGiven);
         trackedVarArgs = args;
         this.pauseFunction.get();
@@ -111,7 +116,7 @@ public class Piping extends Thread{
         return (this.state != State.Null);
     }
 
-    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Supplier<Boolean> pauseFunction,CountDownLatch waitForSelection,Supplier<Boolean> selectionFunction,Consumer<String> sendMessageToConsole){
+    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Supplier<Boolean> pauseFunction,CountDownLatch waitForSelection,Supplier<Boolean> graphObjectSelectionFunction,Consumer<String> sendMessageToConsole,Consumer<String> sendErrorMessageToConsole){
         this.newGraphMethod = newGraphMethod;
         this.resetInitialVals();
         this.structurePane = structurePane;
@@ -120,8 +125,9 @@ public class Piping extends Thread{
         this.waitForPauseToBeHandled = waitForPauseToBeHandled;
         this.waitForSelection = waitForSelection;
         this.pauseFunction = pauseFunction;
-        this.selectionFunction = selectionFunction;
+        this.graphObjectSelectionFunction = graphObjectSelectionFunction;
         this.sendMessageToConsole = sendMessageToConsole;
+        this.receiveUserMessageFromConsole = receiveUserMessageFromConsole;
     }
 
     
@@ -176,6 +182,47 @@ public class Piping extends Thread{
         }
 
         
+    }
+
+    public Boolean profferConsoleInput(String text){
+        this.consoleInputText = text;
+        Class c = this.classSelectionIsWaitingFor;
+        if (c == String.class){
+            this.waitForSelection.countDown();
+            CountDownLatch newLatch = new CountDownLatch(1);
+            this.setSelectionCountDownLatch(newLatch);
+            return true;
+        }else if (c == Double.class){
+            try{
+                Double.parseDouble(text); //if this doesn't fail the user has entered
+                //a valid doudle, and the gralog command should proceed
+                this.waitForSelection.countDown();
+                CountDownLatch newLatch = new CountDownLatch(1);
+                this.setSelectionCountDownLatch(newLatch);
+                return true;
+            }catch(Exception e){
+                this.sendErrorMessageToConsole.accept("Wrong class type - not a valid double!");
+            }
+        }else if (c == Integer.class){
+            try{
+                Integer.parseInt(text); //if this doesn't fail the user has entered
+                //a valid doudle, and the gralog command should proceed
+                this.waitForSelection.countDown();
+                CountDownLatch newLatch = new CountDownLatch(1);
+                this.setSelectionCountDownLatch(newLatch);
+                return true;
+            }catch(Exception e){
+                this.sendErrorMessageToConsole.accept("Wrong class type - not a valid integer!");
+            }
+        }else{
+            System.out.println("soarry apl;");
+            return false;
+        }
+        return false;
+    }
+
+    public String getConsoleInput(){
+        return this.consoleInputText;
     }
 
     private Structure getStructureWithId(int id){
@@ -456,6 +503,8 @@ public class Piping extends Thread{
                     if (currentCommand.didFail()){
                         final String lineFinal = PipingMessageHandler.rejoinExternalCommandSegments(externalCommandSegments);
                         Exception e = currentCommand.getError();
+                        this.sendMessageToConsole.accept(e.toString());
+
                         Platform.runLater(
                             () -> {
                                 Alert alert = new Alert(AlertType.INFORMATION);
@@ -495,6 +544,7 @@ public class Piping extends Thread{
 
             this.redrawMyStructurePanes();
             System.out.println("redr000");
+            this.sendMessageToConsole.accept("Program terminated");
             
 
 

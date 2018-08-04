@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import gralog.structure.controlpoints.ControlPoint;
 import gralog.structure.controlpoints.ResizeControls;
@@ -237,14 +238,14 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public Piping makeANewPiping(String fileName,BiFunction<String,Piping,StructurePane> initGraph,Consumer<String> sendOutsideMessageToConsole){
+    public Piping makeANewPiping(String fileName,BiFunction<String,Piping,StructurePane> initGraph,Consumer<String> sendOutsideMessageToConsole,Consumer<String> sendOutsideErrorMessageToConsole){
         CountDownLatch waitForPause = new CountDownLatch(1);
         CountDownLatch waitForVertexSelection = new CountDownLatch(1);
 
         // List<BiFunction> functions = new ArrayList<BiFunction>(this::initGraph,this::handlePlannedPause,this::handlePlannedVertexSelectionthis::sendOutsideMessageToConsole);
 
         
-        Piping pipeline = new Piping(initGraph,this,waitForPause,this::handlePlannedPause,waitForVertexSelection,this::handlePlannedVertexSelection,sendOutsideMessageToConsole);
+        Piping pipeline = new Piping(initGraph,this,waitForPause,this::handlePlannedPause,waitForVertexSelection,this::handlePlannedVertexSelection,sendOutsideMessageToConsole,sendOutsideErrorMessageToConsole);
 
         this.setPiping(pipeline);
         // pipeline.subscribe(this.pluginControlPanel);
