@@ -351,7 +351,7 @@ public class MainWindow extends Application {
     }
 
     public String getFileName(){
-        String fileName = Preferences.getFile("MainWindow_pipingFile", "/home/michelle/gralog/gralog/gralog-layout/layout_python.py");
+        String fileName = Preferences.getFile("MainWindow_pipingFile", "/home/michelle/gralog/gralog/gralog-layout/test.py");
         return fileName;
     }
 

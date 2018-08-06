@@ -137,7 +137,7 @@ public class Piping extends Thread{
    
     public boolean externalProcessInit(String fileName,String initMessage){
 
-        // System.out.println("creating new pipeline, it has pane: " + this.pane);
+         System.out.println("creating new pipeline, it has pane: " + this.structurePane);
 
         
             
@@ -341,9 +341,9 @@ public class Piping extends Thread{
 
     public void run() {
 
-        // System.out.println("exeqing, it has pane: " + this.pane);
+        System.out.println("run exeqing, it has pane: " + this.structurePane);
 
-        System.out.println("exec and state is: " + this.state);
+        System.out.println("run exec and state is: " + this.state);
         if (this.state == State.Null){
             return;// "error: should not being execing as process has not been inintialized";
         }
@@ -534,6 +534,7 @@ public class Piping extends Thread{
             }
 
             if (line == null){
+            	System.out.println("line is null");
                 this.makeNull();
             }else{
                 System.out.println("line is not null rather: " + line);
