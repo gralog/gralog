@@ -1232,33 +1232,29 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         ArrayList<Edge> tempEdges = new ArrayList<>();
 
         NodeList children = gnode.getChildNodes();
-        System.out.println("children from Xml " + children);
         for (int i = 0; i < children.getLength(); ++i) {
             Node childNode = children.item(i);
-            System.out.println("children item " + childNode);
             if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
 
             Element child = (Element) childNode;
-            System.out.println("child tag name " + child.getTagName());
             Object obj = PluginManager.instantiateClass(child.getTagName());
             if (obj instanceof Vertex) {
-            	System.out.println("another vertex");
                 V v = addVertex();
                 v.copy((V) obj);
                 String id = v.fromXml(child);
                 vertexRegister.put(id, v);
             } else if (obj instanceof Edge) {
-            	System.out.println("another edge");
                 tempEdges.add((E) obj);
                 loadedFrom.put((E) obj, child);
             }
         }
         for (Edge e : tempEdges) {
-            System.out.println("tempEdges " + e.getSource() + e.getTarget());        	
             e.fromXml(loadedFrom.get(e), vertexRegister);
+            e.setId(pollNextFreeEdgeID());
             edges.put(e.getId(),(E) e);
         }
+        System.out.println(edges);
     }
 
     public static Structure loadFromFile(String fileName) throws Exception {
@@ -1281,17 +1277,17 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 continue;
             Element child = (Element) childNode;
             String className = child.getTagName();		// catch additional tag name(should be type) = buechiautomat/automaton if existent
-            if (child.getAttributes().getNamedItem("edgedefault")!=null) {
-            	if (child.getAttributes().getNamedItem("edgedefault").getNodeValue().equals("directed")) {
-            		if (child.getAttributes().getNamedItem("type")!=null) {
-            			className = child.getAttributes().getNamedItem("type").getNodeValue();
-            		} else {
+            if (child.hasAttribute("type")) {
+            	className = child.getAttribute("type");
+            } else {
+            	if (child.hasAttribute("edgedefault")) {
+            		if (child.getAttribute("edgedefault").equals("directed")) {
             			className = "digraph";
             		}
             	}
             }
+            System.out.println(className);
             Object result = PluginManager.instantiateClass(className);
-            System.out.println("GralogStruc " + result);
             if (result == null)
                 continue;
             System.out.println("After " + result);
