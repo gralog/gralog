@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <graphml>
-  <automaton>
+  <graph edgedefault="directed" type="automaton">
     <node fillcolor="#FFFFFF" final="false" id="n1" initial="false" initialmarkangle="0.0" initialmarkcolor="#000000" initialmarkheadangle="40.0" initialmarkheadlength="0.4" initialmarklength="0.7" initialmarkwidth="0.026458333333333334" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="3.0" y="0.0"/>
     <node fillcolor="#FFFFFF" final="false" id="n2" initial="false" initialmarkangle="0.0" initialmarkcolor="#000000" initialmarkheadangle="40.0" initialmarkheadlength="0.4" initialmarklength="0.7" initialmarkwidth="0.026458333333333334" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="6.0" y="2.0"/>
     <node fillcolor="#FFFFFF" final="false" id="n3" initial="false" initialmarkangle="0.0" initialmarkcolor="#000000" initialmarkheadangle="40.0" initialmarkheadlength="0.4" initialmarklength="0.7" initialmarkwidth="0.026458333333333334" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="1.0" y="4.0"/>
     <node fillcolor="#FFFFFF" final="false" id="n4" initial="false" initialmarkangle="0.0" initialmarkcolor="#000000" initialmarkheadangle="40.0" initialmarkheadlength="0.4" initialmarklength="0.7" initialmarkwidth="0.026458333333333334" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="5.0" y="5.0"/>
-    <transition arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n1" symbol="" target="n4" weight="1.0" width="0.025"/>
-    <transition arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n2" symbol="" target="n4" weight="1.0" width="0.025"/>
-    <transition arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n4" symbol="" target="n3" weight="1.0" width="0.025"/>
-    <transition arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n4" symbol="" target="n3" weight="1.0" width="0.025"/>
-    <transition arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n3" symbol="" target="n1" weight="1.0" width="0.025"/>
-  </automaton>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n4" symbol="" target="n3" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n1" symbol="" target="n4" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n2" symbol="" target="n4" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n4" symbol="" target="n3" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n3" symbol="" target="n1" weight="1.0" width="0.025"/>
+  </graph>
 </graphml>
