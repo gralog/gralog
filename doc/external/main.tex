@@ -69,20 +69,54 @@
 \lstset{language=Python}
 
 \title{Gralog External Programming Manual}
-\author{felix.herron }
+\author{Felix Herron\\\texttt{felix.herron@tu-berlin.de} \and Roman
+  Rabinovich\\ \texttt{roman.rabinovich@tu-berlin.de}}
 \date{August 2018}
 
 \begin{document}
 
 \maketitle
 
-\section{Abstract}
-In this document you will find the following:
+\begin{abstract}
+  Gralog is a visual tool for working with graphs, logics, games,
+  transition systems and other structures based on undirected and
+  directed graphs. It can create, load, save and edit graphs in
+  various formats.
 
-\begin{itemize}
-    \item Documentation of methods and classes pertaining to the External Programming Module
-    \item Code examples for how to use these
-\end{itemize}
+  The key focus of Gralog is simplicity of use and a short time of
+  learning how to use it.
+
+  A special property of Gralog is that it helps the developer to write
+  programmes for graphs in any language capable of working with
+  pipes. Gralog visualises the run of the programme and can keep track
+  of values of user defined variables.
+
+  The interaction between Gralog and the external programme is
+  performed by a simple, but powerful protocol. In the first version
+  we implemented a library for Python that simplifies the interaction
+  and abstracts away the use of pipes. This paper describes the
+  protocol and the library, the External Programming Module (EPM). This
+  includes documentation of methods and classes pertaining to the
+  EPM and code examples for how to use these.
+\end{abstract}
+
+\section{Documentation and Installation}
+
+You can download Gralog from \url{www.gralog.org} (CHANGΕ THIS)
+
+Gralog is written in Java and does not need special installation. Just
+run the jar file by
+
+[code, including where the jar file is]
+
+or run Gralog directly from the source code by calling
+
+[code: ./gradlew].
+
+The documentation can be found in directory \texttt{doc/}. The main
+manual file is \texttt{gralog.pdf}. This part is additionally in the
+file \texttt{external.pdf}. [TODO: make a general manual, include this
+text there.]
 
 \section{Setting up your external program}
 To link your script to Gralog, locate the Gralog folder in your Terminal. Navigate to the "scripts" directory with gralog-fx piping subdirectory. That should entail something like:
@@ -216,3 +250,8 @@ Method & Arguments & Returns & Description \\ \hline
 
 
 \end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
