@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{amsmath}
 \usepackage[margin=1.0 in]{geometry}
+\usepackage{longtable}
 
 \usepackage{bbm}
 \usepackage{booktabs}
@@ -186,8 +187,8 @@ Instance Variable & Meaning and Usage \\ \hline
 \textbf{{\large Relevant Methods}}
 \textit{Note: optional parameters are in parentheses}
 
-\begin{table}[h]
-\begin{tabular}{m{\smallCol}m{\argsLen}m{\smallCol}m{\q}}
+
+\begin{longtable}{m{\smallCol}m{\argsLen}m{\smallCol}m{\q}}
 Method & Arguments & Returns & Description \\ \hline
 \textbf{Graph}& (str: format) & Graph Object & Returns a graph object. The parameter options are either nothing, ``directed'',``undirected'',``buechi'',``kripke'',``automaton'' \\\hline
 \\\multicolumn{4}{c}{\textbf{Graph Manipulating Methods}}\\\\\hline
@@ -196,12 +197,20 @@ Method & Arguments & Returns & Description \\ \hline
 \textbf{addEdge} & \makecell{Vertex: sourceVertex\\Vertex: targetVertex\\(Boolean: directed) \\ (int: edgeId)} & \textbf{Edge} object & creates a new Vertex object from the source vertex to the target vertex. If directed is not specifeed, un-directed is assumed. If un-directed, the order of target and source vertex is irrelevant. If no id is passed, a suitable id is chosen. If an id is passed that has already been assigned, a suitable new one is chosen \\ \hline
 \textbf{addDirectedEdge} & \makecell{Vertex: sourceVertex\\Vertex: targetVertex \\ (int: edgeId)} & \textbf{Edge} object & calls addEdge with directed=True \\ \hline
 \textbf{deleteEdge} & Edge object or id of edge & void &  Deletes the edge or the edge with the given id from the graph\\ \hline
-\textbf{deleteAllEdges} & void & void & removes all edges from the graph \\ \hline
+\textbf{deleteAllEdges} & (Vertex,Vertex): source, target & void & removes all directed edges from start to target, as well as all un-directed edges from between the two vertices \\ \hline
 \\\multicolumn{4}{c}{\textbf{Setter Functions}}\\\\\hline
 \textbf{setVertexFillColor} & \makecell{Vertex: vertex\\(str: colorHex)\\(int,int,int): colorRGB)} & void & sets the \textit{fill} color of the given vertex to the Hex code color specified or the RGB color specified. colorHex can also be a string of a common collor, such as "red" or "green."  \\ \hline
 \textbf{setVertexStrokeColor} & \makecell{Vertex: vertex\\(str: colorHex)\\(int,int,int): colorRGB)} & void & sets the \textit{stroke} color of the given vertex to the Hex code color specified or the RGB color specified. colorHex can also be a string of a common collor, such as "red" or "green."  \\ \hline
-\end{tabular}
-\end{table}
+\textbf{setEdgeContour} & \makecell{Edge: edge\\str: contour} & void & sets the \textit{contour} color of passed edge. Possible values are ``dashed",``dotted",``plain" \\ \hline
+\textbf{setEdgeColor} & \makecell{Edge: edge\\(str: colorHex)\\((int,int,int): colorRGB)} & void & sets the color of the given edge to the Hex code color specified or the RGB color specified. colorHex can also be a string of a common collor, such as "red" or "green."  \\ \hline
+\textbf{setVertexRadius} & \makecell{Vertex: vertex\\float: radius} & void & sets the radius of the given vertex to the radius specified  \\ \hline
+\textbf{setVertexHeight} & \makecell{Vertex: vertex\\float: height} & void & sets the height of the given vertex to the height specified  \\ \hline
+\textbf{setVertexWidth} & \makecell{Vertex: vertex\\float: width} & void & sets the width of the given vertex to the height specified  \\ \hline
+\textbf{setVertexDimension} & \makecell{Vertex: vertex\\float: width\\str: dimension} & void & sets the dimension of the given vertex to the dimension specified. This functionality is primarily useful for non-standard shapes, if you were to extend gralog to include such a thing. \\ \hline
+\textbf{setVertexShape} & \makecell{Vertex: vertex\\str: shape} & void & sets the given vertex to be the specified shape. Currently supported are ``ellipse,",``diamond", and ``rectangle"  \\ \hline
+\textbf{setEdgeWeight} & \makecell{Edge: edge\\float: weight} & void & sets edge weight (ie. thickness) to be as wide as you specified  \\ \hline
+\end{longtable}
+
 
 
 
