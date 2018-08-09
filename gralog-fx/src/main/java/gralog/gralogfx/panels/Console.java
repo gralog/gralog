@@ -349,12 +349,12 @@ public class Console extends VBox implements GralogWindow{
         );
     }
 
-    public void finalizeTextFieldAdd(TextField t){
+    public void finalizeTextFieldAdd(TextField t){ // todo: if panel width changes, t.width should change as well
         t.setMaxWidth(output.getWidth());
         t.getStyleClass().add("helloWorld");    
         // t.setBackground(Background.EMPTY);
         // t.setStyle("-fx-control-inner-background: orange;");
-        
+
         
 
         Platform.runLater(
