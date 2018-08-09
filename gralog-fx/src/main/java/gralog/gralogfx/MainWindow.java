@@ -322,6 +322,7 @@ public class MainWindow extends Application {
             }
 
             String fileName = this.getFileName();
+            System.out.println("with filename: " + fileName);
 
             Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole,this::sendOutsideErrorMessageToConsole);
             this.pipelines.add(newPiping);
@@ -351,7 +352,7 @@ public class MainWindow extends Application {
     }
 
     public String getFileName(){
-        String fileName = Preferences.getFile("MainWindow_pipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py");
+        String fileName = Preferences.getFile("MainWindow_pipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
         return fileName;
     }
 
@@ -775,7 +776,10 @@ public class MainWindow extends Application {
             }
 
             for (Piping p : this.pipelines){
-                p.killSelf();
+                if (p != null){
+                    p.killSelf();
+
+                }
             }
 
             e.consume();

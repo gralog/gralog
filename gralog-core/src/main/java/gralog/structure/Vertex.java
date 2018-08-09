@@ -171,7 +171,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         this.label = label;
     }
 
-    void connectEdge(Edge e) {
+    void connectEdge(Edge e){
         if (e.isDirected()){
             System.out.println("we're dealing wiht a direced boi" + e.isDirected);
             if(e.getSource() == this){
@@ -290,6 +290,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     /**
      * @return The set of adjacent vertices.
      */
+    @Deprecated
     public Set<Vertex> getAdjacentVertices() {
         Set<Vertex> result = new HashSet<>();
         for (Edge e : incidentEdges) {

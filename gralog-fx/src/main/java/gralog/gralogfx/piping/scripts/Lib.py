@@ -69,6 +69,10 @@ class Vertex:
 		self.graph.setVertexFillColor(self.id,colorHex,colorRGB);
 	def setRadius(self,radius):
 		self.graph.setVertexRadius(self.getId(),radius);
+	def setWidth(self,width):
+		self.graph.setVertexWidth(self.getId(),width);
+	def setHeight(self,height):
+		self.graph.setVertexHeight(self.getId(),height);
 	def getColor(self):
 		if not self.sourced:
 			self.source();
@@ -118,7 +122,7 @@ class Edge:
 		self.properties["contour"] = None;
 		self.properties["source"] = None;
 		self.properties["target"] = None;
-		self.wasSourced;
+		self.wasSourced = False;
 
 	def sourceProperties(self,stringFromGralog):
 		self.sourced = True;
@@ -450,10 +454,21 @@ class Graph:
 		# sys.stdin.readline();
 
 
+
+
 	def setVertexRadius(self,vertex,newRadius):
+		self.setVertexDimension(vertex,newRadius,"radius");
+
+	def setVertexHeight(self,vertex,newHeight):
+		self.setVertexDimension(vertex,newHeight,"height");
+
+	def setVertexWidth(self,vertex,newWidth):
+		self.setVertexDimension(vertex,newWidth,"width");
+
+	def setVertexDimension(self,vertex,newDimension,dimension):
 		vertex = vertexId(vertex);
 		
-		line = "setVertexRadius#"+str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#" + str(newRadius).rstrip();
+		line = "setVertexDimension#"+str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#" + str(newDimension).rstrip()+"#" +dimension.rstrip();
 		print line.rstrip();
 	
 		sys.stdout.flush();
@@ -470,13 +485,13 @@ class Graph:
 
 
 	def setEdgeWeight(self,edge,weight):
-		setEdgeProperty(edge,"weight",weight);
+		self.setEdgeProperty(edge,"weight",weight);
 
 	def setEdgeProperty(self,edge,property,value):
 		line = "setEdgeProperty#"+str(self.id).rstrip() + "#"
 		line = line + edgeSplitter(edge);
 
-		line = line + "#" + property.rstrip().lower() +  "#" + str(value).rstrip().lower()+idString.rstrip();
+		line = line + "#" + property.rstrip().lower() +  "#" + str(value).rstrip().lower();
 
 		print line.rstrip();
 		sys.stdout.flush();

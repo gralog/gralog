@@ -46,7 +46,7 @@ public class Tabs {
     }
 
     public void initializeTab(){
-        addTab("Unnamed", new DirectedGraph());
+        addTab("Untitled", new DirectedGraph());
     }
     /**
      * @return The underlying Node object.

@@ -126,9 +126,9 @@ public class PreferenceWindow extends Stage {
                 if(node instanceof Button){
                     System.out.println("lehishtamesh");
                     Button button = (Button)node;
-                    String fileName = Preferences.getFile(node.getId(),null);
-                    button.setText(fileName);
-                    this.pipingFile = new File(fileName);
+                    this.pipingFile = Preferences.getFile(node.getId(),null);
+                    String simpleName = this.pipingFile.getName();
+                    button.setText(simpleName);
                     System.out.println("we got from tha config: " + this.pipingFile.getName());
                     button.setOnAction(e -> {
                         this.newPipingFile = this.pipingSourceFileChooser.showOpenDialog(this);

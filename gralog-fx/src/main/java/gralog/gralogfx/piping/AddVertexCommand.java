@@ -28,7 +28,7 @@ public class AddVertexCommand extends CommandForGralogToExecute {
 		// }
 		this.vertex = this.structure.addVertex();
 		System.out.println("and his id is: " + this.vertex.getId());
-        this.vertex.coordinates = new Vector2D(
+        this.vertex.setCoordinates(
             ThreadLocalRandom.current().nextInt(0, 10+1),
             ThreadLocalRandom.current().nextInt(0, 10+1)
         );

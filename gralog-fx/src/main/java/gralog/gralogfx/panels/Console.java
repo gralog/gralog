@@ -21,6 +21,8 @@ import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 import javafx.application.Platform;
 import javafx.scene.Node;
+import javafx.beans.value.ChangeListener;
+import javafx.scene.control.ScrollBar;
 
 import javafx.beans.value.ObservableValue;
 
@@ -46,6 +48,9 @@ public class Console extends VBox implements GralogWindow{
     private Dialogfx dialogfx;
     private DialogParser parser;
     private boolean outputAdded = false;
+    public static final int LINEHEIGHT = 20;
+
+    private ArrayList<ConsoleField> nonUpdatedHeights = new ArrayList<ConsoleField>();
 
 
     private String currentlyEntered = "";
@@ -121,6 +126,8 @@ public class Console extends VBox implements GralogWindow{
         
         output = new ScrollPane();
 
+
+
         outputElements = new VBox();
         output.setContent(outputElements);
         outputElements.getStyleClass().add("consoleScrollViewStyle");
@@ -186,6 +193,27 @@ public class Console extends VBox implements GralogWindow{
 
     }
 
+    public int estimateHeight(String text){
+        int runningTotal = 0;
+
+        String[] chunks = text.split("\n");
+        int heightNumber = chunks.length;
+
+
+        for (String chunk : chunks){
+            Text fText = new Text(chunk);
+            fText.setFont(Font.font ("Verdana", 12));
+
+            heightNumber += (int)(fText.getLayoutBounds().getWidth()/(this.output.getWidth()-2));
+            System.out.println("adding: " + (int)(fText.getLayoutBounds().getWidth()/this.output.getWidth()) + " ie: " + fText.getLayoutBounds().getWidth() + " / " + this.output.getWidth());
+        }
+        System.out.println("heightNumber: " + heightNumber);
+
+        return (heightNumber * LINEHEIGHT + 10);
+    }
+
+    
+
     /**
      * Executes Consumer after console input has been submitted
      */
@@ -198,6 +226,8 @@ public class Console extends VBox implements GralogWindow{
     }
 
     public void onEnter(String text, StructurePane currentPane){
+
+        
         for(Consumer<String> consumer : subscribers){
             consumer.accept(text);
         }
@@ -336,7 +366,7 @@ public class Console extends VBox implements GralogWindow{
                                                 break;
                 case NONE:                      return;
             }
-            output(dialog.getErrorMsg());
+            errorOutput(dialog.getErrorMsg());
             dialog.setErrorMsg("");
             parameters.clear();
             parser.clearParameters();
@@ -350,7 +380,17 @@ public class Console extends VBox implements GralogWindow{
    
 
     public void finalizeConsoleFieldAdd(ConsoleField t){
-        t.setMaxWidth(output.getWidth()*0.9);
+
+        int height = estimateHeight(t.getText());
+        System.out.println("estimated: " + height);
+        t.setMaxHeight(height);
+        t.setMinHeight(height);
+        
+        t.setMaxWidth(output.getWidth()*1.0);
+
+        nonUpdatedHeights.add(t);
+        System.out.println("numba of items in nonUpdatedHeights: " + nonUpdatedHeights.size());
+        
 
         t.getStyleClass().add("consoleTextStyle");  
         System.out.println("styleclass: " + t.getStyleClass());;  
@@ -364,16 +404,21 @@ public class Console extends VBox implements GralogWindow{
         Platform.runLater(
             () ->{
 
-                outputElements.getChildren().add(t); 
+                outputElements.getChildren().add(t);
+
                 outputAdded = true;
                 output.setVvalue(1.0);
             }
         );
+
+       
     }
 
     public void output(String text){
 
-        
+
+        text = text.trim();
+        System.out.println("outputting " + text);
         
 
         ConsoleField t = new ConsoleField(text);
@@ -390,8 +435,9 @@ public class Console extends VBox implements GralogWindow{
     }
 
     public void errorOutput(String text){
+        text = text.trim();
         
-        System.out.println("error output");
+        System.out.println("error output" + text);
 
         ConsoleField t = new ConsoleField(text);
         t.getStyleClass().add("errorStyle"); 
@@ -403,6 +449,7 @@ public class Console extends VBox implements GralogWindow{
     }
 
     public void outsideMessage(String text){
+        text = text.trim();
         
 
         ConsoleField t = new ConsoleField(text);       

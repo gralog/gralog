@@ -50,6 +50,7 @@ public class Piping extends Thread{
     private Process external;
     private BufferedReader in;
     private PrintStream out;
+    private BufferedReader processErrors;
     private Structure structure;
     private StructurePane structurePane;
 
@@ -128,6 +129,7 @@ public class Piping extends Thread{
         this.graphObjectSelectionFunction = graphObjectSelectionFunction;
         this.sendMessageToConsole = sendMessageToConsole;
         this.receiveUserMessageFromConsole = receiveUserMessageFromConsole;
+        this.sendErrorMessageToConsole = sendErrorMessageToConsole;
     }
 
     
@@ -144,12 +146,21 @@ public class Piping extends Thread{
         System.out.println("external yo");
         String line;
         String[] execStr = {fileName,initMessage};
+        
+        try{
+            Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","chmod u+x " + fileName});
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         try{
             this.external = Runtime.getRuntime().exec(execStr); //e.g. formatRequest
             this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));
+            this.processErrors = new BufferedReader(new InputStreamReader(this.external.getErrorStream()));
             this.out = new PrintStream(external.getOutputStream(),true);
-        }catch(Exception e){
-            e.printStackTrace();
+        }catch(IOException e){
+            // e.printStackTrace();
+
+            this.sendErrorMessageToConsole.accept("The file was unable to be run. Perhaps it needs to be given permission?");
             return false;
         }
         System.out.println("execd and shit");
@@ -356,6 +367,7 @@ public class Piping extends Thread{
         try{
             String firstMessage = this.getFirstMessage();
             System.out.println("execing " + firstMessage);
+            this.sendMessageToConsole.accept("Running external program");
 
             String line;
 
@@ -461,16 +473,25 @@ public class Piping extends Thread{
 
                     }else if ((line = PipingMessageHandler.properGraphNames(line)) != null){
                         System.out.println("properGraphNames");
-                        StructurePane thisPane = this.newGraphMethod.apply(line,this);
+                        final String lineFinal = line;
+                        CountDownLatch graphWasInstantiated = new CountDownLatch(1);
+                        Platform.runLater(
+                            ()->{
+                                StructurePane thisPane = this.newGraphMethod.apply(lineFinal,this);
 
-                        idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
-                        idStructurePaneMap.put(thisPane.getStructure().getId(),thisPane);
+                                idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
+                                idStructurePaneMap.put(thisPane.getStructure().getId(),thisPane);
 
-                        this.state = State.InProgress;
-                        // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
-                        out.println(thisPane.getStructure().getId());
-
+                                this.state = State.InProgress;
+                                // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
+                                out.println(thisPane.getStructure().getId());
+                                graphWasInstantiated.countDown();
+                            }
+                        );
+                        graphWasInstantiated.await();
                         continue;
+                        
+
                     }
 
                     CommandForGralogToExecute currentCommand;
@@ -544,7 +565,7 @@ public class Piping extends Thread{
 
             this.redrawMyStructurePanes();
             System.out.println("redr000");
-            this.sendMessageToConsole.accept("Program terminated");
+            this.sendMessageToConsole.accept("External program terminated");
             
 
 
@@ -563,6 +584,28 @@ public class Piping extends Thread{
         System.out.println("makingue null");
         for (int i: idStructurePaneMap.keySet()){
             idStructurePaneMap.get(i).setPiping(null);
+        }
+        String line;
+        String wholeError = "";
+        try{
+            while (this.processErrors.ready() && ((line = this.processErrors.readLine())!= null)){
+                System.out.println("we gone done read a line: " + line);
+                wholeError += line + "\n";
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        try{
+            this.processErrors.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if (wholeError.length() > 0){
+            wholeError = wholeError.substring(0,wholeError.length()-1);
+        }
+
+        if (!wholeError.equals("")){
+            this.sendErrorMessageToConsole.accept("Error in external Program: \n" + wholeError);
         }
         this.redrawMyStructurePanes();
         return;

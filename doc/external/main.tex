@@ -7,6 +7,7 @@
 \usepackage{booktabs}
 
 \newcommand{\fabs}[1]{\mid {#1} \mid}
+\usepackage{hyperref}
 
 \newcommand{\bet}[1]{\llbracket {#1} \rrbracket^{\beta} }
 \usepackage{stmaryrd}
@@ -69,40 +70,43 @@
 \lstset{language=Python}
 
 \title{Gralog External Programming Manual}
+
 \author{Felix Herron\\\texttt{felix.herron@tu-berlin.de} \and Roman
   Rabinovich\\ \texttt{roman.rabinovich@tu-berlin.de}}
+
 \date{August 2018}
 
 \begin{document}
 
 \maketitle
 
+
 \begin{abstract}
-  Gralog is a visual tool for working with graphs, logics, games,
-  transition systems and other structures based on undirected and
-  directed graphs. It can create, load, save and edit graphs in
-  various formats.
+Gralog is a visual tool for working with graphs, logics, games,
+transition systems and other structures based on undirected and
+directed graphs. It can create, load, save and edit graphs in
+various formats.
 
-  The key focus of Gralog is simplicity of use and a short time of
-  learning how to use it.
+The key focus of Gralog is simplicity of use and a short time of
+learning how to use it.
 
-  A special property of Gralog is that it helps the developer to write
-  programmes for graphs in any language capable of working with
-  pipes. Gralog visualises the run of the programme and can keep track
-  of values of user defined variables.
+A special property of Gralog is that it helps the developer to write
+programmes for graphs in any language capable of working with
+pipes. Gralog visualises the run of the programme and can keep track
+of values of user defined variables.
 
-  The interaction between Gralog and the external programme is
-  performed by a simple, but powerful protocol. In the first version
-  we implemented a library for Python that simplifies the interaction
-  and abstracts away the use of pipes. This paper describes the
-  protocol and the library, the External Programming Module (EPM). This
-  includes documentation of methods and classes pertaining to the
-  EPM and code examples for how to use these.
+The interaction between Gralog and the external programme is
+performed by a simple, but powerful protocol. In the first version
+we implemented a library for Python that simplifies the interaction
+and abstracts away the use of pipes. This paper describes the
+protocol and the library, the External Programming Module (EPM). This
+includes documentation of methods and classes pertaining to the
+EPM and code examples for how to use these.
 \end{abstract}
 
 \section{Documentation and Installation}
 
-You can download Gralog from \url{www.gralog.org} (CHANGΕ THIS)
+You can download Gralog from \url{www.gralog.org} (Change this)
 
 Gralog is written in Java and does not need special installation. Just
 run the jar file by
@@ -117,6 +121,8 @@ The documentation can be found in directory \texttt{doc/}. The main
 manual file is \texttt{gralog.pdf}. This part is additionally in the
 file \texttt{external.pdf}. [TODO: make a general manual, include this
 text there.]
+
+
 
 \section{Setting up your external program}
 To link your script to Gralog, locate the Gralog folder in your Terminal. Navigate to the "scripts" directory with gralog-fx piping subdirectory. That should entail something like:
@@ -207,16 +213,16 @@ The documentation will now simply elaborate on these concepts.
 
 \textbf{{\large Instance Variables}}
 
-\begin{table}[h]
-\begin{tabular}{p{\q}p{\q}}
+
+\begin{longtable}{p{\q}p{\q}}
 Instance Variable & Meaning and Usage \\ \hline
 \textbf{Dictionary} \textit{vertices} & A dictionary that holds all of the Vertex objects known to the graph. This should ideally not be changed by the programmer \\\hline
 \textbf{Dictionary} \textit{edges} & A dictionary that holds all of the Edge objects known to the graph. This should ideally not be changed by the programmer \\\hline
 \textbf{Integer} \textit{id} & The id of the graph that is used in communication with gralog. This should ideally not be changed by the programmer \\ \hline
 \textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel during pauses. These may be changed \\ \hline
 \textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel during pauses. These may be changed \\ \hline
-\end{tabular}
-\end{table}
+\end{longtable}
+
 
 \textbf{{\large Relevant Methods}}
 \textit{Note: optional parameters are in parentheses}
@@ -248,10 +254,5 @@ Method & Arguments & Returns & Description \\ \hline
 
 
 
-
 \end{document}
 
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:

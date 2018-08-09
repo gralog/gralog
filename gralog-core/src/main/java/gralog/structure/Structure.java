@@ -893,7 +893,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public Set<Edge> edgesBetweenVertices(V a,V b){
         Set<Edge> edges = new HashSet<Edge>();
         for (Edge e : a.getIncidentEdges()){
-            if ((e.getSource() == a && e.getTarget() == b) || (e.getSource() == b && e.getTarget() == a)){
+            if ((e.getSource() == a && e.getTarget() == b) || ((!e.isDirected()) && e.getSource() == b && e.getTarget() == a)){
                 edges.add(e);
             }
         }
