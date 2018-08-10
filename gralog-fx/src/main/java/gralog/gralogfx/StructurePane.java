@@ -218,6 +218,9 @@ public class StructurePane extends StackPane implements StructureListener {
     public Structure getStructure() {
         return structure;
     }
+    public void setStructure(Structure structure){
+        this.structure = structure;
+    }
 
     public void setPiping(Piping pipeline){
         this.pipeline = pipeline;

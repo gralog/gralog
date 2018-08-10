@@ -67,8 +67,6 @@ class Vertex:
 		return self.properties["strokeColor"];
 	def setColor(self,colorHex=-1,colorRGB=-1):
 		self.graph.setVertexFillColor(self.id,colorHex,colorRGB);
-	def setRadius(self,radius):
-		self.graph.setVertexRadius(self.getId(),radius);
 	def getColor(self):
 		if not self.sourced:
 			self.source();
@@ -118,9 +116,10 @@ class Edge:
 		self.properties["contour"] = None;
 		self.properties["source"] = None;
 		self.properties["target"] = None;
-		self.wasSourced;
+		self.wasSourced = False;
 
 	def sourceProperties(self,stringFromGralog):
+		# print("properties beforehand: ",self.properties);
 		self.sourced = True;
 		strings = stringFromGralog.split("|");
 		for string in strings:
@@ -128,9 +127,13 @@ class Edge:
 			try:
 				prop = propVal[0];
 				val = propVal[1];
+
 				self.properties[prop] = val;
+				if prop == "source" or prop == "target":
+					self.properties[prop] = self.graph.getVertexOrNew(val);
 			except:
 				pass;
+		# print("properties afterhand: ",self.properties);
 	def getId(self):
 		return self.id;
 	def setLabel(self,label):
@@ -340,8 +343,12 @@ class Graph:
 
 
 	def setGraph(self,format):
-		line = "setGraph#"+str(self.id).rstrip() + "#" + format.rstrip();
+		line = "setGraph#"+str(self.id).rstrip() + "#" + format.rstrip()+"#";
+		#@Michelle: format entspricht z.B. XML oder TGF oder sowas. du muesst das also gemaess deines Formats entsprechend eingeben
+		#kommentiere die folgende Zeile aus und fuege deinen Kram hinzu...
+		#line = line + XML_NACH_MICHELLE
 		print line;
+		sys.stdout.flush();
 		##TODO: implement this somehow haha
 
 
@@ -407,8 +414,7 @@ class Graph:
 				line = line + rgbFormatter(colorRGB);
 			except:
 				self.sendErrorToGralog("the rgb color: " + str(colorRGB).rstrip() + " is not properly formatted!");
-		else:
-			self.sendErrorToGralog("neither Hex nor RGB color specified!");
+
 			
 		print(line.rstrip());
 		sys.stdout.flush();
@@ -802,6 +808,30 @@ class Graph:
 		eid = sys.stdin.readline().rstrip();
 		edge = self.getEdgeOrNew(eid);
 		return edge;
+
+	def requestInteger(self):
+		line = "requestInteger#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		i = sys.stdin.readline().rstrip();
+		return int(i);
+
+	def requestDouble(self):
+		line = "requestDouble#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		d = sys.stdin.readline().rstrip();
+		return float(d);
+
+	def requestString(self):
+		line = "requestString#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		st = sys.stdin.readline().rstrip();
+		return str(st);
 
 	# def getEdgesByPropertyValue(self,prop,val):
 	# 	#return: list of Edge objects with id only

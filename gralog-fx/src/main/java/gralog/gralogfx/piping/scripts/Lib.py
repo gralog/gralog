@@ -343,9 +343,14 @@ class Graph:
 		# sys.stdin.readline();
 
 
-	def setGraph(self,format):
-		line = "setGraph#"+str(self.id).rstrip() + "#" + format.rstrip();
-		print line;
+	def setGraph(self,format,graphString = None):
+		line = "setGraph#"+str(self.id).rstrip() + "#" + format.rstrip()+"#";
+		#@Michelle: format entspricht z.B. XML oder TGF oder sowas. du muesst das also gemaess deines Formats entsprechend eingeben
+		#kommentiere die folgende Zeile aus und fuege deinen Kram hinzu...
+		#line = line + XML_NACH_MICHELLE
+		XML_NACH_MICHELLE = "hello_world";
+		print line + XML_NACH_MICHELLE;
+		sys.stdout.flush();
 		##TODO: implement this somehow haha
 
 
@@ -894,7 +899,7 @@ class Graph:
 	def unTrack(self,name):
 		del self.variablesToTrack[name];
 
-	def send(self,toSend):
+	def sendMessage(self,toSend):
 		print toSend;
 		sys.stdout.flush();
 

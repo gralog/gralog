@@ -240,6 +240,11 @@ public class Piping extends Thread{
         return this.idGraphMap.get(id);
     }
 
+    public void setStructure(Structure structure){
+        this.structurePane.setStructure(structure);
+        this.redrawMyStructurePanes();
+    }
+
     private StructurePane getStructurePaneWithId(int id){
         return this.idStructurePaneMap.get(id);
     }

@@ -347,7 +347,7 @@ public class PipingMessageHandler{
 
         }else if (commandKeyword.equals("setGraph")){ //user input simulation
 
-            currentCommand = new SetGraphCommand(externalCommandSegments,currentStructure);
+            currentCommand = new SetGraphCommand(externalCommandSegments,currentStructure,piping);
             
             // currentCommand.setStructure(currentStructure);
             return currentCommand;
