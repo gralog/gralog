@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import sys
+## TODO: CORRECT, UNIVERSAL PATH!!
+sys.path.append('/home/michelle/gralog/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping')
 import math
 import xml.etree.cElementTree as ET
 import networkx as nx

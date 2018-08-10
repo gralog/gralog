@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import sys
+sys.path.append('/home/michelle/gralog/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping')
 import math
 import random
 import matplotlib.pyplot as plt
@@ -13,14 +14,14 @@ from Lib import *
 #gralog_xml  = g.getGraph("xml")
 
 ### import graph to ## IGRAPH + NX ###
-graph = './graphs/t_dir.graphml'
+graph = './graphs/a.graphml'
 g_ig   = ig.Graph.Read_GraphML(graph)
 print g_ig
     ##g_ig   = ig.Graph.Read_GraphML(gralog_xml)
 g_nx = nx.read_graphml(graph)
     ##g_nx = nx.read_graphml(gralog_xml)
 doc = ET.parse(graph)
-print doc.getroot().find('graph').attrib['name']
+print doc.getroot().find('graph').attrib['type']
 nodes = doc.getroot().find('graph').findall('node')
 x, y = [float(nodes[i].attrib['x']) for i in range(len(nodes))], [float(nodes[i].attrib['y']) for i in range(len(nodes))]
 center = (int(sum(x)/len(x)), int(sum(y)/len(y)))
