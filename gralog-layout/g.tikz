@@ -1,0 +1,23 @@
+%\documentclass{article}
+%\usepackage{pgf}
+%\usepackage{tikz}
+%\usepackage{amsmath, amssymb}
+%\usetikzlibrary{arrows.meta}
+%\usepackage[utf8]{inputenc}
+%\begin{document}
+    \begin{tikzpicture}[scale=0.6,auto]
+        \tikzset{>=Stealth}
+        \tikzstyle{every path}=[->,thick]
+        \tikzstyle{every node}=[circle,fill=white,draw=black,text=black,thin,minimum size=16pt,inner sep=1.5pt]
+
+        \node (n1) at (6.8184375cm,-2.0162500000000003cm) {};
+        \node (n2) at (12.308541666666668cm,-2.5189583333333334cm) {};
+        \node (n3) at (6.381875000000001cm,-4.55625cm) {};
+        \node (n4) at (12.970000000000002cm,-5.614583333333334cm) {};
+
+        \draw (n3) to (n4);
+        \draw (n2) to (n1);
+        \draw (n4) to (n2);
+        \draw (n1) to (n4);
+    \end{tikzpicture}
+%\end{document}
