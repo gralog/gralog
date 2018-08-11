@@ -1298,6 +1298,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         for (Edge e : tempEdges) {
             System.out.println("tempEdges " + e.getSource() + e.getTarget());        	
             e.fromXml(loadedFrom.get(e), vertexRegister);
+            e.setId(this.pollNextFreeEdgeID());
             edges.put(e.getId(),(E) e);
         }
     }
