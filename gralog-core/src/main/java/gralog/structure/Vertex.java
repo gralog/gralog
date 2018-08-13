@@ -416,6 +416,8 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         vnode.setAttribute("textheight", Double.toString(textHeight));
         vnode.setAttribute("strokewidth", Double.toString(strokeWidth));
         vnode.setAttribute("strokecolor", strokeColor.toHtmlString());
+        vnode.setAttribute("shapewidth", Double.toString(shape.sizeBox.width));
+        vnode.setAttribute("shapeheight", Double.toString(shape.sizeBox.height));
         return vnode;
     }
 
@@ -436,6 +438,10 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
             strokeWidth = Double.parseDouble(vnode.getAttribute("strokewidth"));
         if (vnode.hasAttribute("strokecolor"))
             strokeColor = GralogColor.parseColor(vnode.getAttribute("strokecolor"));
+        if (vnode.hasAttribute("shapewidth"))
+            shape.sizeBox.width = Double.parseDouble(vnode.getAttribute("shapewidth"));
+        if (vnode.hasAttribute("shapeheight"))
+        	shape.sizeBox.height = Double.parseDouble(vnode.getAttribute("shapeheight"));
 
         return vnode.getAttribute("id");
     }

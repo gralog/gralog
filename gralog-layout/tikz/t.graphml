@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml>
+  <graph edgedefault="directed" type="digraph">
+    <node fillcolor="#8099FF" id="n1" label="o l 0" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#001A80" strokewidth="0.026458333333333334" textheight="0.4" x="5.852708333333334" y="2.942291666666667"/>
+    <node fillcolor="#B3E6E6" id="n2" label="o r 1" radius="0.7" shapeheight="2.0" shapewidth="3.0" strokecolor="#003333" strokewidth="0.026458333333333334" textheight="0.4" x="13.102291666666668" y="3.180416666666667"/>
+    <node fillcolor="#FFFF80" id="n3" label="u l 2" radius="0.7" shapeheight="0.55" shapewidth="0.5" strokecolor="#B3B31A" strokewidth="0.026458333333333334" textheight="0.4" x="5.958541666666667" y="9.900833333333335"/>
+    <node fillcolor="#FF8080" id="n4" label="u r 3" radius="0.7" shapeheight="2.0" shapewidth="2.0" strokecolor="#B31A1A" strokewidth="0.026458333333333334" textheight="0.4" x="13.446250000000001" y="8.04875"/>
+  </graph>
+</graphml>

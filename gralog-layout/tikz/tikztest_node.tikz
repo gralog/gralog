@@ -1,0 +1,24 @@
+%\documentclass{article}
+%\usepackage{pgf}
+%\usepackage{tikz}
+%\usepackage{amsmath, amssymb}
+%\usetikzlibrary{arrows.meta}
+%\usepackage[utf8]{inputenc}
+%\begin{document}
+    \begin{tikzpicture}[scale=0.6,auto]
+        \tikzset{>=Stealth}
+        \tikzstyle{every path}=[->,thick]
+        \tikzstyle{every node}=[circle,fill=white,draw=black,text=black,thin,minimum size=16pt,inner sep=1.5pt]
+
+        \definecolor{gralog-fill-color}{HTML}{E6804D}
+        \definecolor{gralog-stroke-color}{HTML}{990000}
+        \node [class gralog.rendering.shapes.rectangle, minimum width = 3.0cm, minimum height = 1.0cm, fill=gralog-fill-color, draw=gralog-stroke-color, line width=0.026458333333333334cm] (n0) at (3.7625cm,-3.8154166666666667cm) {};
+        \definecolor{gralog-fill-color}{HTML}{334DB3}
+        \definecolor{gralog-stroke-color}{HTML}{1A0068}
+        \node [class gralog.rendering.shapes.diamond, minimum width = 2.0cm, minimum height = 2.0cm, fill=gralog-fill-color, draw=gralog-stroke-color, line width=0.026458333333333334cm] (n1) at (11.726458333333335cm,-3.8947916666666673cm) {};
+        \definecolor{gralog-fill-color}{HTML}{B3B34D}
+        \definecolor{gralog-stroke-color}{HTML}{1A4D1A}
+        \node [class gralog.rendering.shapes.ellipse, minimum width = 4.0cm, minimum height = 3.0cm, fill=gralog-fill-color, draw=gralog-stroke-color, line width=0.026458333333333334cm] (n2) at (7.440208333333334cm,-6.725833333333334cm) {};
+
+    \end{tikzpicture}
+%\end{document}

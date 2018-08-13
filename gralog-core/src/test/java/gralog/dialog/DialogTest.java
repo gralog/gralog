@@ -2,7 +2,6 @@ package gralog.dialog;
 
 import gralog.algorithm.StringAlgorithmParameter;
 import gralog.generator.Cycle;
-import gralog.generator.Path;
 import gralog.rendering.GralogColor;
 import gralog.structure.Edge;
 import gralog.structure.Highlights;
@@ -20,7 +19,6 @@ public class DialogTest {
     private Dialog dialog = new Dialog();
     ArrayList<String> parameters = new ArrayList<String>();
     Structure c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
-    Structure p10 = (new Path()).generate(new StringAlgorithmParameter("","10"));
     Highlights highlights = new Highlights();
 
     public DialogTest(){
@@ -43,8 +41,6 @@ public class DialogTest {
         parameters.add("<");
         parameters.add("5");
         parameters.add("P5");
-        assertEquals(10, p10.getVertices().size());
-        dialog.filter(parameters,p10,highlights);
         parameters.clear();
 
         parameters.add("ALL");
@@ -53,7 +49,6 @@ public class DialogTest {
         parameters.add(">");
         parameters.add("4");
         parameters.add("Q5");
-        dialog.filter(parameters,p10,highlights);
         parameters.clear();
     }
 
@@ -159,7 +154,6 @@ public class DialogTest {
         parameters.add("P5");
         parameters.add("Q5");
         parameters.add("i+1");
-        dialog.connect2ListsFormula(parameters,p10);
     }
 
 }
