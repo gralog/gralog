@@ -47,9 +47,9 @@ public class TikZExport extends ExportFilter {
         	nodeIndex.put(v, v.id);
         	final String label = v.label.isEmpty() ? "" : "$" + v.label + "$";
           
-        	String properties = "ellipse, minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height;
+        	//String properties = "ellipse, minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height;
         	
-        	//String properties = v.shape.getClass().toString().toLowerCase() + ", minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height + "cm";
+        	String properties = v.shape.getClass().getSimpleName().toLowerCase() + ", minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height + "cm";
         	out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
     		properties = properties + ", fill=gralog-fill-color";
 /*        	if (!v.fillColor.equals(GralogColor.WHITE)) {
