@@ -32,7 +32,7 @@ public class RequestStringCommand extends CommandForGralogToExecute {
 
         // this.selectionFunction.get();
         this.piping.state = Piping.State.WaitingForConsoleInput;
-        this.piping.sendMessageToConsole.accept("Waiting for string!");
+        this.piping.sendMessageToConsole.accept("Waiting for string!",Piping.MessageToConsoleFlag.Request);
         
         try{
             this.piping.redrawMyStructurePanes();

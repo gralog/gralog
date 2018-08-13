@@ -823,6 +823,30 @@ class Graph:
 		edge = self.getEdgeOrNew(eid);
 		return edge;
 
+	def requestInteger(self):
+		line = "requestInteger#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		i = sys.stdin.readline().rstrip();
+		return int(i);
+
+	def requestDouble(self):
+		line = "requestDouble#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		d = sys.stdin.readline().rstrip();
+		return float(d);
+
+	def requestString(self):
+		line = "requestString#"+str(self.id).rstrip();
+		print line.rstrip();
+		sys.stdout.flush();
+
+		st = sys.stdin.readline().rstrip();
+		return str(st);
+
 	# def getEdgesByPropertyValue(self,prop,val):
 	# 	#return: list of Edge objects with id only
 	# 	line = "getEdgesByPropertyValue#"+str(self.id).rstrip() + "#" + str(prop).rstrip() + "#" + str(val).rstrip();
@@ -903,6 +927,8 @@ class Graph:
 		print toSend;
 		sys.stdout.flush();
 
+
+
 	def sendErrorToGralog(self,toSend):
 		print "error#"+str(self.id).rstrip() + "#"+str(toSend).rstrip();
 		sys.stdout.flush();
@@ -923,6 +949,10 @@ class Graph:
 	def __str__(self):
 		return "todo: tgf"
 
+def gPrint(self,message):
+	line = "gPrint#"+message;
+	print line;
+	sys.stdout.flush();
 
 
 

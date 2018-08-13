@@ -30,7 +30,7 @@ public class RequestDoubleCommand extends CommandForGralogToExecute {
 
         // this.selectionFunction.get();
         this.piping.state = Piping.State.WaitingForConsoleInput;
-        this.piping.sendMessageToConsole.accept("Double requested!");
+        this.piping.sendMessageToConsole.accept("Double requested!",Piping.MessageToConsoleFlag.Request);
         try{
             this.piping.redrawMyStructurePanes();
             this.piping.setClassSelectionIsWaitingFor(Double.class);

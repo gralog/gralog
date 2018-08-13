@@ -584,6 +584,13 @@ public class PipingMessageHandler{
             return currentCommand;
 
             // this.out.println(handleEdgeResponse);
+        }else if (commandKeyword.equals("gPrint")){//format: addEdge <sourceId> <targetId> <directed?>
+            // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
+            currentCommand = new GPrintCommand(externalCommandSegments,piping);
+            // 
+            return currentCommand;
+
+            // this.out.println(handleEdgeResponse);
         }else if (commandKeyword.equals("error")){//format: addEdge <sourceId> <targetId> <directed?>
             // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
             System.out.println("error schmerror");

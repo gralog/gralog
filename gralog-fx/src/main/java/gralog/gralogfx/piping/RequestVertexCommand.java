@@ -30,6 +30,7 @@ public class RequestVertexCommand extends CommandForGralogToExecute {
 
         this.selectionFunction.get();
         this.piping.state = Piping.State.WaitingForSelection;
+        this.piping.sendMessageToConsole.accept("Vertex requested!",Piping.MessageToConsoleFlag.Request);
         
         try{
             this.piping.redrawMyStructurePanes();

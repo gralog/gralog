@@ -28,6 +28,14 @@
 	-fx-text-inner-color: red;
 }
 
+.gPrintStyle{
+    -fx-text-inner-color: blue;
+}
+
+.notificationStyle{
+    -fx-text-inner-color: green;
+}
+
 .consoleScrollViewStyle{
 	-fx-padding: 0px 0px 5px -0px;
 }

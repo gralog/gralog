@@ -14,3 +14,8 @@ g = Graph(None); #uses the current graph that is open
 # g.getGraph("xml");
 # g.pause();
 g.setGraph("xml","graph");
+v = g.requestVertex();
+n = g.requestInteger();
+for x in range(n):
+	z = g.addVertex();
+	z.setColor("purple");

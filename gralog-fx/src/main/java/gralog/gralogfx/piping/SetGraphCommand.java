@@ -77,7 +77,10 @@ public class SetGraphCommand extends CommandForGralogToExecute {
             try{
                 InputStream is = new ByteArrayInputStream(this.graphString.getBytes());
                 Structure structureFromXml = Structure.loadFromStream(is);
-                this.piping.setStructure(structureFromXml);
+                System.out.println("pr3v we had id: " + structureFromXml.getId());
+                structureFromXml.setId(this.structure.getId());
+                System.out.println("n0w we hav id: " + structureFromXml.getId());
+                this.piping.setStructureWithId(structureFromXml,structureFromXml.getId());
                 System.out.println("set structure");
 
             }catch(Exception e){

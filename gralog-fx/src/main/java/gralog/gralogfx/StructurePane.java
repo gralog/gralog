@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -21,8 +22,10 @@ import gralog.events.*;
 import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 import gralog.gralogfx.piping.Piping;
+import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
 import java.util.function.Function;
 import java.util.function.BiFunction;
+import java.util.function.BiConsumer;
 import java.util.concurrent.CountDownLatch;
 import gralog.gralogfx.panels.PluginControlPanel;
 
@@ -241,14 +244,14 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public Piping makeANewPiping(String fileName,BiFunction<String,Piping,StructurePane> initGraph,Consumer<String> sendOutsideMessageToConsole,Consumer<String> sendOutsideErrorMessageToConsole){
+    public Piping makeANewPiping(String fileName,BiFunction<String,Piping,StructurePane> initGraph,BiConsumer<String,MessageToConsoleFlag> sendOutsideMessageToConsole){
         CountDownLatch waitForPause = new CountDownLatch(1);
         CountDownLatch waitForVertexSelection = new CountDownLatch(1);
 
         // List<BiFunction> functions = new ArrayList<BiFunction>(this::initGraph,this::handlePlannedPause,this::handlePlannedVertexSelectionthis::sendOutsideMessageToConsole);
 
         
-        Piping pipeline = new Piping(initGraph,this,waitForPause,this::handlePlannedPause,waitForVertexSelection,this::handlePlannedVertexSelection,sendOutsideMessageToConsole,sendOutsideErrorMessageToConsole);
+        Piping pipeline = new Piping(initGraph,this,waitForPause,this::handlePlannedPause,waitForVertexSelection,this::handlePlannedVertexSelection,sendOutsideMessageToConsole);
 
         this.setPiping(pipeline);
         // pipeline.subscribe(this.pluginControlPanel);

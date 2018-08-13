@@ -28,7 +28,9 @@ import javafx.beans.value.ObservableValue;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
+import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
 
 import static gralog.dialog.DialogAction.NONE;
 import static gralog.dialog.DialogState.*;
@@ -37,6 +39,8 @@ public class Console extends VBox implements GralogWindow{
 
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
+
+    
 
 
     private TextField input;
@@ -435,12 +439,20 @@ public class Console extends VBox implements GralogWindow{
     }
 
     public void errorOutput(String text){
-        text = text.trim();
         
         System.out.println("error output" + text);
 
         ConsoleField t = new ConsoleField(text);
         t.getStyleClass().add("errorStyle"); 
+
+        finalizeConsoleFieldAdd(t);
+
+    }
+
+    public void gPrint(String text){
+
+        ConsoleField t = new ConsoleField(text);
+        t.getStyleClass().add("gPrintStyle"); 
 
        
 
@@ -449,13 +461,28 @@ public class Console extends VBox implements GralogWindow{
     }
 
     public void outsideMessage(String text){
-        text = text.trim();
         
 
         ConsoleField t = new ConsoleField(text);       
 
         finalizeConsoleFieldAdd(t);
+    }
 
+
+    public void outsideMessage(String msg,MessageToConsoleFlag flag){
+        msg = msg.trim();
+        if (flag == MessageToConsoleFlag.Error){
+            this.errorOutput(msg);
+        }else if(flag == MessageToConsoleFlag.GPrint){
+            this.gPrint(msg);
+        }else if(flag == MessageToConsoleFlag.Normal || flag == MessageToConsoleFlag.Request){
+            this.outsideMessage(msg);
+        }else if(flag == MessageToConsoleFlag.Notification){
+            this.gPrint(msg);
+        }else{
+            System.out.println("Unknown flag?");
+            this.outsideMessage(msg);
+        }
     }
 
     public void output(ConsoleField t){
