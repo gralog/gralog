@@ -48,6 +48,7 @@ subprojects {
     compile fileTree(dir: "../lib", include: "*.jar")
     compile 'org.reflections:reflections:0.9.11'
     compile 'uk.com.robust-it:cloning:1.9.10'
+    compile group: 'net.objecthunter', name: 'exp4j', version: '0.4.8'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'junit:junit:4.12'
   }
