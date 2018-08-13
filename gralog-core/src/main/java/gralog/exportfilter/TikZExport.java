@@ -48,10 +48,18 @@ public class TikZExport extends ExportFilter {
         	final String label = v.label.isEmpty() ? "" : "$" + v.label + "$";
           
         	String properties = "ellipse, minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height;
-        	if (!v.fillColor.equals(GralogColor.WHITE)) {
-        		out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
-        		properties = properties + ", fill=gralog-fill-color";
+        	
+        	//String properties = v.shape.getClass().toString().toLowerCase() + ", minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height + "cm";
+        	out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+    		properties = properties + ", fill=gralog-fill-color";
+/*        	if (!v.fillColor.equals(GralogColor.WHITE)) {
+  //      		out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+    //    		properties = properties + ", fill=gralog-fill-color";
+        	}*/ if (!v.strokeColor.equals(GralogColor.BLACK)) {
+        		out.writeLine("\\definecolor{gralog-stroke-color}{HTML}{" + v.strokeColor.toHtmlString().substring(1) + "}");
+        		properties = properties + ", draw=gralog-stroke-color";
         	}
+        	properties = properties + ", line width=" + v.strokeWidth + "cm";
           
         	out.writeLine("\\node [" + properties + "] " + "(n" + v.id + ") at ("
         			+ v.coordinates.getX() + "cm,"
