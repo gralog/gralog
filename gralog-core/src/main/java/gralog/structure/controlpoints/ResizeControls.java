@@ -79,6 +79,8 @@ public class ResizeControls implements IMovable, Serializable
     }
 
     public IMovable findObject(double x, double y){
+
+
         for(int i = 0; i < 4; i++){
             Vector2D vec = cs[i].position;
             Vector2D trgt = new Vector2D(x, y);

@@ -5,7 +5,9 @@ import java.util.Set;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import gralog.exportfilter.*;
-
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import gralog.exportfilter.TrivialGraphFormatExport;
 
@@ -14,22 +16,31 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 	
 
 	GraphType format;
+    String graphString;
     // String neighbourString;
+    Piping piping;
 
 
-
-	public SetGraphCommand(String[] externalCommandSegments,Structure structure){
+	public SetGraphCommand(String[] externalCommandSegments,Structure structure,Piping piping){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-
+        this.piping= piping;
         
-        this.format = PipingMessageHandler.properGraphFormats(externalCommandSegments[2]);
+
+        try{
+            this.format = PipingMessageHandler.properGraphFormats(externalCommandSegments[2]);
+            this.graphString = (String)PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
+        }catch(Exception e){
+            this.error = e;
+            this.fail();
+            return;
+        }
 
 
         if (this.format == GraphType.Null){
             this.fail();
-            this.error = new Exception("this.format.toString()" + " ain't no proper format");
-            
+            this.error = new Exception(this.format.toString() + " ain't no proper graph format");
+            return;
         }
 	}
 
@@ -39,6 +50,9 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 	
 
 	public void handle(){
+
+        /* for testing*/
+        this.graphString= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><graphml><graph edgedefault=\"directed\" type=\"digraph\"><node fillcolor=\"#CCEC35\" id=\"n1\" label=\"\" radius=\"0.7\" strokecolor=\"#000000\" strokewidth=\"0.026458333333333334\" textheight=\"0.4\" x=\"1.0\" y=\"2.0\"/><node fillcolor=\"#CCEC35\" id=\"n2\" label=\"\" radius=\"0.7\" strokecolor=\"#000000\" strokewidth=\"0.026458333333333334\" textheight=\"0.4\" x=\"2.0\" y=\"0.0\"/><node fillcolor=\"#CCEC35\" id=\"n3\" label=\"\" radius=\"0.7\" strokecolor=\"#000000\" strokewidth=\"0.026458333333333334\" textheight=\"0.4\" x=\"9.0\" y=\"6.0\"/><edge arrowheadlength=\"0.2\" color=\"#000000\" isdirected=\"false\" label=\"\" source=\"n2\" target=\"n3\" weight=\"1.0\" width=\"0.026458333333333334\"/><edge arrowheadlength=\"0.2\" color=\"#000000\" isdirected=\"false\" label=\"\" source=\"n1\" target=\"n2\" weight=\"1.0\" width=\"0.026458333333333334\"/><edge arrowheadlength=\"0.2\" color=\"#000000\" isdirected=\"false\" label=\"\" source=\"n1\" target=\"n3\" weight=\"1.0\" width=\"0.026458333333333334\"/></graph></graphml>";
 
         /*Gralog messages are in the format:
 
@@ -60,15 +74,28 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 
         if (this.format == GraphType.Xml){
         	System.out.println("Worked until here"+this);
+            try{
+                InputStream is = new ByteArrayInputStream(this.graphString.getBytes());
+                Structure structureFromXml = Structure.loadFromStream(is);
+                System.out.println("pr3v we had id: " + structureFromXml.getId());
+                structureFromXml.setId(this.structure.getId());
+                System.out.println("n0w we hav id: " + structureFromXml.getId());
+                this.piping.setStructureWithId(structureFromXml,structureFromXml.getId());
+                System.out.println("set structure");
+
+            }catch(Exception e){
+                this.error =e;
+                this.fail();
+                return;
+            }
             //parse the xml, possibly in a multi-line manner
-        }
 
-        if (this.format == GraphType.Tgf){
+        }else if (this.format == GraphType.Tgf){
             //parse the tgf, possibly in a multi-line manner
-        }
-
-        if (this.format == GraphType.Tikz){
+        }else if (this.format == GraphType.Tikz){
             //parse the tikz, possibly in a multi-line manner
+        }else{
+            this.error = new MessageFormatException("The format " + this.format.toString() + " ain't no proper graph format!");
         }
         
 

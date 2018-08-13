@@ -13,6 +13,7 @@ import gralog.exportfilter.*;
 import gralog.generator.*;
 import gralog.algorithm.*;
 import gralog.gralogfx.piping.Piping;
+import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
 // import java.util.concurrent.CountDownLatch;
 
 import gralog.gralogfx.events.RedrawOnProgress;
@@ -322,8 +323,9 @@ public class MainWindow extends Application {
             }
 
             String fileName = this.getFileName();
+            System.out.println("with filename: " + fileName);
 
-            Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole,this::sendOutsideErrorMessageToConsole);
+            Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
             this.pipelines.add(newPiping);
             
             
@@ -351,7 +353,9 @@ public class MainWindow extends Application {
     }
 
     public String getFileName(){
-        String fileName = Preferences.getFile("MainWindow_pipingFile", "/home/michelle/gralog/gralog/gralog-layout/test.py");
+
+        String fileName = Preferences.getFile("MainWindow_pipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
+
         return fileName;
     }
 
@@ -411,13 +415,10 @@ public class MainWindow extends Application {
         setStatus("created a " + structureName + "...");
     }
 
-    public void sendOutsideMessageToConsole(String msg){
-        this.mainConsole.outsideMessage(msg);
+    public void sendOutsideMessageToConsole(String msg, MessageToConsoleFlag flag){
+        this.mainConsole.outsideMessage(msg,flag);
     }
 
-    public void sendOutsideErrorMessageToConsole(String msg){
-        this.mainConsole.errorOutput(msg);
-    }
 
     // public void 
 
@@ -775,7 +776,10 @@ public class MainWindow extends Application {
             }
 
             for (Piping p : this.pipelines){
-                p.killSelf();
+                if (p != null){
+                    p.killSelf();
+
+                }
             }
 
             e.consume();

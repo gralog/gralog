@@ -4,15 +4,36 @@
 }
 */
 
-.consoleTextStyle{
+.consoleTextStyle, .consoleTextStyle .viewport, .consoleTextStyle .content{
 	/*-fx-control-inner-background: transparent;*/
-	-fx-background-color: transparent;
+	-fx-background-color:transparent;;
+
 
 	-fx-padding: 1px 0px -0px -0px;
+}
+.text-area .arrow-button  {
+    -fx-opacity: 0.0;
+    -fx-cursor: text;
+}
+.text-area .scroll-bar:vertical:disabled {
+    -fx-opacity: 0;
+}
+
+.scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
 }
 
 .errorStyle{
 	-fx-text-inner-color: red;
+}
+
+.gPrintStyle{
+    -fx-text-inner-color: blue;
+}
+
+.notificationStyle{
+    -fx-text-inner-color: green;
 }
 
 .consoleScrollViewStyle{

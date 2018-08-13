@@ -12,6 +12,7 @@ import gralog.events.*;
 import gralog.rendering.*;
 import gralog.gralogfx.panels.PipingWindow;
 
+
 import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.progresshandler.*;
@@ -21,6 +22,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.concurrent.locks.*;
 
@@ -47,9 +49,18 @@ import javafx.scene.control.Button;
 
 public class Piping extends Thread{
 
+    public enum MessageToConsoleFlag{
+        Normal,
+        Error,
+        GPrint,
+        Request,
+        Notification
+    }
+
     private Process external;
     private BufferedReader in;
     private PrintStream out;
+    private BufferedReader processErrors;
     private Structure structure;
     private StructurePane structurePane;
 
@@ -74,8 +85,7 @@ public class Piping extends Thread{
     public Supplier<String> receiveUserMessageFromConsole;
     private boolean pauseWasPressed = false;
     public boolean windowDoesCloseNow = false;
-    protected Consumer sendMessageToConsole;
-    protected Consumer sendErrorMessageToConsole;
+    protected BiConsumer sendMessageToConsole;
     private Class classSelectionIsWaitingFor = null;
     private IMovable selectedObject;
     private String consoleInputText;
@@ -105,7 +115,7 @@ public class Piping extends Thread{
     }
 
     private void plannedPauseRequested(String[] externalCommandSegments, boolean rankGiven){
-        this.sendMessageToConsole.accept("Pause requested!");
+        this.sendMessageToConsole.accept("Pause requested!",MessageToConsoleFlag.Notification);
         List<String[]> args = PipingMessageHandler.parsePauseVars(externalCommandSegments,rankGiven);
         trackedVarArgs = args;
         this.pauseFunction.get();
@@ -116,7 +126,7 @@ public class Piping extends Thread{
         return (this.state != State.Null);
     }
 
-    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Supplier<Boolean> pauseFunction,CountDownLatch waitForSelection,Supplier<Boolean> graphObjectSelectionFunction,Consumer<String> sendMessageToConsole,Consumer<String> sendErrorMessageToConsole){
+    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Supplier<Boolean> pauseFunction,CountDownLatch waitForSelection,Supplier<Boolean> graphObjectSelectionFunction,BiConsumer<String,MessageToConsoleFlag> sendMessageToConsole){
         this.newGraphMethod = newGraphMethod;
         this.resetInitialVals();
         this.structurePane = structurePane;
@@ -144,12 +154,21 @@ public class Piping extends Thread{
         System.out.println("external yo");
         String line;
         String[] execStr = {fileName,initMessage};
+        
+        try{
+            Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","chmod u+x " + fileName});
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         try{
             this.external = Runtime.getRuntime().exec(execStr); //e.g. formatRequest
             this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));
+            this.processErrors = new BufferedReader(new InputStreamReader(this.external.getErrorStream()));
             this.out = new PrintStream(external.getOutputStream(),true);
-        }catch(Exception e){
-            e.printStackTrace();
+        }catch(IOException e){
+            // e.printStackTrace();
+
+            this.sendMessageToConsole.accept("The file was unable to be run. Perhaps it needs to be given permission?",MessageToConsoleFlag.Error);
             return false;
         }
         System.out.println("execd and shit");
@@ -201,7 +220,7 @@ public class Piping extends Thread{
                 this.setSelectionCountDownLatch(newLatch);
                 return true;
             }catch(Exception e){
-                this.sendErrorMessageToConsole.accept("Wrong class type - not a valid double!");
+                this.sendMessageToConsole.accept("Wrong class type - not a valid double!",MessageToConsoleFlag.Error);
             }
         }else if (c == Integer.class){
             try{
@@ -212,7 +231,7 @@ public class Piping extends Thread{
                 this.setSelectionCountDownLatch(newLatch);
                 return true;
             }catch(Exception e){
-                this.sendErrorMessageToConsole.accept("Wrong class type - not a valid integer!");
+                this.sendMessageToConsole.accept("Wrong class type - not a valid integer!",MessageToConsoleFlag.Error);
             }
         }else{
             System.out.println("soarry apl;");
@@ -227,6 +246,12 @@ public class Piping extends Thread{
 
     private Structure getStructureWithId(int id){
         return this.idGraphMap.get(id);
+    }
+
+    public void setStructureWithId(Structure structure,int id){
+        this.structurePane.setStructure(structure);
+        this.idGraphMap.put(id,structure);
+        this.redrawMyStructurePanes();
     }
 
     private StructurePane getStructurePaneWithId(int id){
@@ -356,6 +381,7 @@ public class Piping extends Thread{
         try{
             String firstMessage = this.getFirstMessage();
             System.out.println("execing " + firstMessage);
+            this.sendMessageToConsole.accept("Running external program",MessageToConsoleFlag.Notification);
 
             String line;
 
@@ -461,16 +487,25 @@ public class Piping extends Thread{
 
                     }else if ((line = PipingMessageHandler.properGraphNames(line)) != null){
                         System.out.println("properGraphNames");
-                        StructurePane thisPane = this.newGraphMethod.apply(line,this);
+                        final String lineFinal = line;
+                        CountDownLatch graphWasInstantiated = new CountDownLatch(1);
+                        Platform.runLater(
+                            ()->{
+                                StructurePane thisPane = this.newGraphMethod.apply(lineFinal,this);
 
-                        idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
-                        idStructurePaneMap.put(thisPane.getStructure().getId(),thisPane);
+                                idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
+                                idStructurePaneMap.put(thisPane.getStructure().getId(),thisPane);
 
-                        this.state = State.InProgress;
-                        // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
-                        out.println(thisPane.getStructure().getId());
-
+                                this.state = State.InProgress;
+                                // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
+                                out.println(thisPane.getStructure().getId());
+                                graphWasInstantiated.countDown();
+                            }
+                        );
+                        graphWasInstantiated.await();
                         continue;
+                        
+
                     }
 
                     CommandForGralogToExecute currentCommand;
@@ -495,7 +530,7 @@ public class Piping extends Thread{
                     }
                     String msg;
                     if (!((msg = currentCommand.getConsoleMessage()) == null)){
-                        this.sendMessageToConsole.accept(msg);
+                        this.sendMessageToConsole.accept(msg,MessageToConsoleFlag.Notification);
                     }
 
 
@@ -503,7 +538,7 @@ public class Piping extends Thread{
                     if (currentCommand.didFail()){
                         final String lineFinal = PipingMessageHandler.rejoinExternalCommandSegments(externalCommandSegments);
                         Exception e = currentCommand.getError();
-                        this.sendMessageToConsole.accept(e.toString());
+                        this.sendMessageToConsole.accept(e.toString(),MessageToConsoleFlag.Error);
 
                         Platform.runLater(
                             () -> {
@@ -545,7 +580,7 @@ public class Piping extends Thread{
 
             this.redrawMyStructurePanes();
             System.out.println("redr000");
-            this.sendMessageToConsole.accept("Program terminated");
+            this.sendMessageToConsole.accept("External program terminated",MessageToConsoleFlag.Notification);
             
 
 
@@ -564,6 +599,28 @@ public class Piping extends Thread{
         System.out.println("makingue null");
         for (int i: idStructurePaneMap.keySet()){
             idStructurePaneMap.get(i).setPiping(null);
+        }
+        String line;
+        String wholeError = "";
+        try{
+            while (this.processErrors.ready() && ((line = this.processErrors.readLine())!= null)){
+                System.out.println("we gone done read a line: " + line);
+                wholeError += line + "\n";
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        try{
+            this.processErrors.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        if (wholeError.length() > 0){
+            wholeError = wholeError.substring(0,wholeError.length()-1);
+        }
+
+        if (!wholeError.equals("")){
+            this.sendMessageToConsole.accept("Error in external Program: \n" + wholeError,MessageToConsoleFlag.Error);
         }
         this.redrawMyStructurePanes();
         return;

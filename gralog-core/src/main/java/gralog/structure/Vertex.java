@@ -114,7 +114,8 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         this.strokeColor = new GralogColor(v.strokeColor);
         this.fillColor = new GralogColor(v.fillColor);
 
-        this.coordinates = new Vector2D(v.coordinates);
+        // this.coordinates = new Vector2D(v.coordinates);
+        this.setCoordinates(v.coordinates);
         this.listeners = new HashSet<>(v.listeners);
 
         this.incidentEdges = new HashSet<>(v.incidentEdges);
@@ -171,7 +172,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         this.label = label;
     }
 
-    void connectEdge(Edge e) {
+    void connectEdge(Edge e){
         if (e.isDirected()){
             System.out.println("we're dealing wiht a direced boi" + e.isDirected);
             if(e.getSource() == this){
@@ -290,6 +291,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     /**
      * @return The set of adjacent vertices.
      */
+    @Deprecated
     public Set<Vertex> getAdjacentVertices() {
         Set<Vertex> result = new HashSet<>();
         for (Edge e : incidentEdges) {
@@ -319,6 +321,11 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     public void move(Vector2D offset) {
         coordinates = coordinates.plus(offset);
         controls.move(offset);
+    }
+
+    public void setCoordinates(Vector2D v){
+        coordinates = v;
+        controls.setCoordinates();
     }
 
     public void setCoordinates(double x, double y){

@@ -67,6 +67,12 @@ class Vertex:
 		return self.properties["strokeColor"];
 	def setColor(self,colorHex=-1,colorRGB=-1):
 		self.graph.setVertexFillColor(self.id,colorHex,colorRGB);
+	def setRadius(self,radius):
+		self.graph.setVertexRadius(self.getId(),radius);
+	def setWidth(self,width):
+		self.graph.setVertexWidth(self.getId(),width);
+	def setHeight(self,height):
+		self.graph.setVertexHeight(self.getId(),height);
 	def getColor(self):
 		if not self.sourced:
 			self.source();
@@ -119,7 +125,6 @@ class Edge:
 		self.wasSourced = False;
 
 	def sourceProperties(self,stringFromGralog):
-		# print("properties beforehand: ",self.properties);
 		self.sourced = True;
 		strings = stringFromGralog.split("|");
 		for string in strings:
@@ -127,13 +132,9 @@ class Edge:
 			try:
 				prop = propVal[0];
 				val = propVal[1];
-
 				self.properties[prop] = val;
-				if prop == "source" or prop == "target":
-					self.properties[prop] = self.graph.getVertexOrNew(val);
 			except:
 				pass;
-		# print("properties afterhand: ",self.properties);
 	def getId(self):
 		return self.id;
 	def setLabel(self,label):
@@ -342,12 +343,13 @@ class Graph:
 		# sys.stdin.readline();
 
 
-	def setGraph(self,format):
+	def setGraph(self,format,graphString = None):
 		line = "setGraph#"+str(self.id).rstrip() + "#" + format.rstrip()+"#";
 		#@Michelle: format entspricht z.B. XML oder TGF oder sowas. du muesst das also gemaess deines Formats entsprechend eingeben
 		#kommentiere die folgende Zeile aus und fuege deinen Kram hinzu...
 		#line = line + XML_NACH_MICHELLE
-		print line;
+		XML_NACH_MICHELLE = "hello_world";
+		print line + XML_NACH_MICHELLE;
 		sys.stdout.flush();
 		##TODO: implement this somehow haha
 
@@ -414,7 +416,8 @@ class Graph:
 				line = line + rgbFormatter(colorRGB);
 			except:
 				self.sendErrorToGralog("the rgb color: " + str(colorRGB).rstrip() + " is not properly formatted!");
-
+		else:
+			self.sendErrorToGralog("neither Hex nor RGB color specified!");
 			
 		print(line.rstrip());
 		sys.stdout.flush();
@@ -456,10 +459,21 @@ class Graph:
 		# sys.stdin.readline();
 
 
+
+
 	def setVertexRadius(self,vertex,newRadius):
+		self.setVertexDimension(vertex,newRadius,"radius");
+
+	def setVertexHeight(self,vertex,newHeight):
+		self.setVertexDimension(vertex,newHeight,"height");
+
+	def setVertexWidth(self,vertex,newWidth):
+		self.setVertexDimension(vertex,newWidth,"width");
+
+	def setVertexDimension(self,vertex,newDimension,dimension):
 		vertex = vertexId(vertex);
 		
-		line = "setVertexRadius#"+str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#" + str(newRadius).rstrip();
+		line = "setVertexDimension#"+str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#" + str(newDimension).rstrip()+"#" +dimension.rstrip();
 		print line.rstrip();
 	
 		sys.stdout.flush();
@@ -476,13 +490,13 @@ class Graph:
 
 
 	def setEdgeWeight(self,edge,weight):
-		setEdgeProperty(edge,"weight",weight);
+		self.setEdgeProperty(edge,"weight",weight);
 
 	def setEdgeProperty(self,edge,property,value):
 		line = "setEdgeProperty#"+str(self.id).rstrip() + "#"
 		line = line + edgeSplitter(edge);
 
-		line = line + "#" + property.rstrip().lower() +  "#" + str(value).rstrip().lower()+idString.rstrip();
+		line = line + "#" + property.rstrip().lower() +  "#" + str(value).rstrip().lower();
 
 		print line.rstrip();
 		sys.stdout.flush();
@@ -909,9 +923,11 @@ class Graph:
 	def unTrack(self,name):
 		del self.variablesToTrack[name];
 
-	def send(self,toSend):
+	def sendMessage(self,toSend):
 		print toSend;
 		sys.stdout.flush();
+
+
 
 	def sendErrorToGralog(self,toSend):
 		print "error#"+str(self.id).rstrip() + "#"+str(toSend).rstrip();
@@ -933,6 +949,10 @@ class Graph:
 	def __str__(self):
 		return "todo: tgf"
 
+def gPrint(self,message):
+	line = "gPrint#"+message;
+	print line;
+	sys.stdout.flush();
 
 
 

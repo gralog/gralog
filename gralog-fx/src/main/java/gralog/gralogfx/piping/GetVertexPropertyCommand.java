@@ -28,7 +28,7 @@ public class GetVertexPropertyCommand extends CommandForGralogToExecute {
         //extract the property to be searched for, if it doesn't exist, terminate program
         try{
 
-            this.propertyString = PipingMessageHandler.extractNthPositionString(externalCommandSegments,structure,3);
+            this.propertyString = PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
         }catch(Exception e){
             this.fail();
             this.error = e;

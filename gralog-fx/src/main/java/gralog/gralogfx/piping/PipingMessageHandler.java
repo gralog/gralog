@@ -81,7 +81,7 @@ public class PipingMessageHandler{
         List<String> undirected = Arrays.asList("undirected");
         List<String> buchi = Arrays.asList("buchi","buechi","b\u00fcchi");
         List<String> kripke = Arrays.asList("kripke");
-        List<String> parity = Arrays.asList("parity","Game");
+        List<String> parity = Arrays.asList("parity","game");
         List<String> automaton = Arrays.asList("automaton");
         for (String piece : name.split(" ")){
 
@@ -238,7 +238,7 @@ public class PipingMessageHandler{
     
     }
 
-    public static String extractNthPositionString(String[] externalCommandSegments, Structure structure,int n) throws Exception{
+    public static String extractNthPositionString(String[] externalCommandSegments, int n) throws Exception{
         String string;
         try{
             string = externalCommandSegments[n];
@@ -347,7 +347,7 @@ public class PipingMessageHandler{
 
         }else if (commandKeyword.equals("setGraph")){ //user input simulation
 
-            currentCommand = new SetGraphCommand(externalCommandSegments,currentStructure);
+            currentCommand = new SetGraphCommand(externalCommandSegments,currentStructure,piping);
             
             // currentCommand.setStructure(currentStructure);
             return currentCommand;
@@ -475,10 +475,10 @@ public class PipingMessageHandler{
             // currentCommand.setStructure(currentStructure);
             return currentCommand;
             // this.out.println("ack");
-        }else if (commandKeyword.equals("setVertexRadius")){//format: setColor <vertexId> <newRadius>
+        }else if (commandKeyword.equals("setVertexDimension")){//format: setColor <vertexId> <newRadius>
             // PipingMessageHandler.handleSetVertexRadius(externalCommandSegments,this.structure);
             
-            currentCommand = new SetVertexRadiusCommand(externalCommandSegments,currentStructure);
+            currentCommand = new SetVertexDimensionCommand(externalCommandSegments,currentStructure);
             // 
             // currentCommand.setStructure(currentStructure);
             return currentCommand;
@@ -580,6 +580,13 @@ public class PipingMessageHandler{
             // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
             // System.out.println("")
             currentCommand = new SetVertexLabelCommand(externalCommandSegments,currentStructure);
+            // 
+            return currentCommand;
+
+            // this.out.println(handleEdgeResponse);
+        }else if (commandKeyword.equals("gPrint")){//format: addEdge <sourceId> <targetId> <directed?>
+            // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
+            currentCommand = new GPrintCommand(externalCommandSegments,piping);
             // 
             return currentCommand;
 
