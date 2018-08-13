@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 import sys
 ## TODO: CORRECT, UNIVERSAL PATH!!
@@ -8,7 +9,6 @@ import networkx as nx
 import igraph as ig
 from Lib import *
 n = 0
-print "layout_pythons"
 ### import graph ## GRALOG ###
 g      = Graph(None)
 gralog_xml  = g.getGraph("xml")
@@ -19,7 +19,7 @@ doc = ET.parse(gralog_xml)
 nodes = doc.getroot().find('graph').findall('node')
 x, y = [float(nodes[i].attrib['x']) for i in range(len(nodes))], [float(nodes[i].attrib['y']) for i in range(len(nodes))]
 center = (int(sum(x)/len(x)), int(sum(y)/len(y)))
-#print center
+
 ### DONE ## Write new coords into graphml-file ## ET ###
 nx_layouts = [nx.circular_layout(g_nx,10), nx.shell_layout(g_nx,None,7,None,2), nx.spring_layout(g_nx,None,None, None,50,1e-4,None,7), nx.kamada_kawai_layout(g_nx,None,None,'weight',10,None,2), nx.spectral_layout(g_nx,'weight',20,None,2)]
 nx_lay = nx_layouts[n]
