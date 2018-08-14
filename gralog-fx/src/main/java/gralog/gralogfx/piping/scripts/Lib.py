@@ -343,13 +343,18 @@ class Graph:
 		# sys.stdin.readline();
 
 
-	def setGraph(self,format,graphString = None):
-		line = "setGraph#"+str(self.id).rstrip() + "#" + format.rstrip()+"#";
+	def setGraph(self,graphFormat,graphString = "hello_world"):
+		line = "setGraph#"+str(self.id).rstrip() + "#" + graphFormat.rstrip()+"#";
 		#@Michelle: format entspricht z.B. XML oder TGF oder sowas. du muesst das also gemaess deines Formats entsprechend eingeben
 		#kommentiere die folgende Zeile aus und fuege deinen Kram hinzu...
 		#line = line + XML_NACH_MICHELLE
-		XML_NACH_MICHELLE = "hello_world";
-		print line + XML_NACH_MICHELLE;
+		# XML_NACH_MICHELLE = "hello_world";
+		
+		if graphFormat == "gtgf" or graphFormat == "tgf":
+			line += "$$\n";
+		line += graphString + "$\n";
+
+		print line;
 		sys.stdout.flush();
 		##TODO: implement this somehow haha
 

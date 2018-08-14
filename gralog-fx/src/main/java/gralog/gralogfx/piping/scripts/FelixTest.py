@@ -11,10 +11,11 @@ from random import randint
 g = Graph();#type \in buechi, directed, etc. or None
 
 # h = Graph("undirected");
+g.setGraph("xml");
 
-g1 = Graph("undirected");
+
 v = [];
-for x in range(1):
+for x in range(4):
 	v.append(g.addVertex());
 
 for x in v:
@@ -25,7 +26,13 @@ for x in v:
 gGraph = g.getGraph("gtgf");
 
 
-g.setGraph("xml");
+for v in g.getAllVertices():
+	v.delete();
+
+g.pause();
+g.setGraph("gtgf",gGraph);
+
+
 
 	
 

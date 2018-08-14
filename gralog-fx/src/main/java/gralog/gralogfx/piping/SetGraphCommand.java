@@ -9,7 +9,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import gralog.exportfilter.TrivialGraphFormatExport;
+import gralog.importfilter.TrivialGraphFormatImport;
+import gralog.importfilter.GralogTrivialGraphFormatImport;
 
 
 public class SetGraphCommand extends CommandForGralogToExecute {
@@ -94,6 +95,43 @@ public class SetGraphCommand extends CommandForGralogToExecute {
             //parse the tgf, possibly in a multi-line manner
         }else if (this.format == GraphType.Tikz){
             //parse the tikz, possibly in a multi-line manner
+        }else if (this.format == GraphType.GTgf){
+            String totalGraph;
+            try{
+                totalGraph = PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
+            }catch(Exception e){
+                doFail(e);
+                return;
+            }
+            if (!totalGraph.equals("$$")){
+                doFail(new MessageFormatException("no multiline syntax!"));
+            }
+            String line = "";
+            totalGraph = "";
+            try{
+                line = this.piping.getNextLine();
+                while (!line.equals("$")){
+                    System.out.println("Getsing the line: " + line);
+                    totalGraph += line + "\n";
+                    line = this.piping.getNextLine();
+                }
+            }catch(Exception e){
+                this.doFail(e);
+                return;
+            }
+            InputStream is = new ByteArrayInputStream(totalGraph.getBytes());
+            GralogTrivialGraphFormatImport importer = new GralogTrivialGraphFormatImport();
+            Structure structureFromGTGF;
+            System.out.println("post ness we gots uselvs: " + totalGraph);
+            try{
+                structureFromGTGF = importer.importGraph(is,null);
+            }catch(Exception e){
+                this.doFail(e);
+                return;
+            }
+            structureFromGTGF.setId(this.structure.getId());
+            this.piping.setStructureWithId(structureFromGTGF,structureFromGTGF.getId());
+
         }else{
             this.error = new MessageFormatException("The format " + this.format.toString() + " ain't no proper graph format!");
         }
@@ -110,5 +148,11 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 
         // return v;
 	}
+
+    public void doFail(Exception e){
+        this.error = e;
+        this.fail();
+        return;
+    }
 
 }

@@ -38,8 +38,7 @@ public class GralogTrivialGraphFormatExport extends ExportFilter {
 
         Set<Edge> E = (Set<Edge>)structure.getEdges();
         for (Edge e : E)
-            stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + linefeed + " " + Integer.toString(e.getId()));
-
+            stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + " " + Integer.toString(e.getId()) + linefeed);
         stream.write("#" + linefeed);
     }
 
