@@ -1,7 +1,12 @@
 \documentclass{article}
-\usepackage{amsmath}
-\usepackage[margin=1.0 in]{geometry}
+\usepackage[margin=1.0in]{geometry}
 \usepackage{longtable}
+
+\usepackage{amsmath}
+
+\newcounter{example}
+\newenvironment{example}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textit{Example~\theexample. #1} \rmfamily}{\medskip}
 
 \usepackage{bbm}
 \usepackage{booktabs}
@@ -124,15 +129,17 @@ text there.]
 
 
 
-\section{Setting up your external program}
-To link your script to Gralog, locate the Gralog folder in your Terminal. Navigate to the "scripts" directory with gralog-fx piping subdirectory. That should entail something like:
+\section{Setting up your External Python Programme}
+To link your script to Gralog, locate the Gralog folder in your
+Terminal. Navigate to the \emph{scripts} directory with gralog-fx piping
+subdirectory. That should entail something like:
 \begin{align*}
 &\text{~/path.to.gralog/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/scripts}
 \end{align*}
 
 Once there, you will find a file called Lib.py. This is the library that defines the interactions with Gralog.\\
 
-Now create a new file in the directory, called HelloWorld.py. In the docoument, paste the following code: 
+Now create a new file in the directory, called HelloWorld.py. In the document, paste the following code: 
 
 \begin{lstlisting}
 #!/usr/bin/python
@@ -145,7 +152,7 @@ v = g.addVertex();
 v.setLabel("Hello, world!");
 \end{lstlisting}
 
-Now before you can run this code, open Gralog and select Preferences from the File menu. Navigate to General, then select the file you created at "Ext. Prog. Source File". Click \textbf{``Ok''.}
+Now before you can run this code, open Gralog and select Preferences from the File menu. Navigate to General, then select the file you created at \emph{Ext. Prog. Source File}. Click \textbf{``Ok''.}
 
 Now you should be ready to run. Navigate to File Menu and select "Load Plugin". What you should get is something that looks like this: 
 
@@ -155,7 +162,12 @@ Now you should be ready to run. Navigate to File Menu and select "Load Plugin". 
 \end{figure}
 
 \subsection{Troubleshooting}
-First obviously make sure you have python installed (version 2.7). Also make sure that Lib.py is in the directory as the file you wish to execute. Obviously you can mess around with the file structure to fit your needs but in this configuration they must be in the same directory. For other outstanding problems feel free to shoot an email at felix.herron@gmail.com 
+First obviously make sure you have python installed (version $\ge
+2.7$). Also make sure that Lib.py is in the directory as the file you
+wish to execute. Obviously you can mess around with the file structure
+to fit your needs but in this configuration they must be in the same
+directory. For other outstanding problems feel free to shoot an email
+at \texttt{gralog@tu-berlin.de} (TODO: make the email address.)
 
 \section{Introduction}
 Now that you have the code running and set up, what will follow is a brief explanation of all of the functionality which we have built, structured in an intuitive manner.
@@ -167,7 +179,9 @@ The first relevant class is Graph. In every program, you must choose a graph on 
 g = Graph();
 \end{lstlisting}
 
-In the constructor you specify which type of graph you would like. No argument means use the graph that is currently opened, whatever (type) it may be.
+In the constructor you specify which type of graph (directed,
+undirected, a Kripke structure, a finite automaton, a Büchi automaton) you would like. No
+argument means use the graph that is currently opened in Gralog, whatever (type) it may be.
 
 The Graph class can be seen as the moderator of the program. You will use it to do all of the surface-level, more general commands pertaining to the graph itself. The more intricate details will be done using the following two:
 
@@ -216,43 +230,213 @@ The documentation will now simply elaborate on these concepts.
 
 \begin{longtable}{p{\q}p{\q}}
 Instance Variable & Meaning and Usage \\ \hline
-\textbf{Dictionary} \textit{vertices} & A dictionary that holds all of the Vertex objects known to the graph. This should ideally not be changed by the programmer \\\hline
-\textbf{Dictionary} \textit{edges} & A dictionary that holds all of the Edge objects known to the graph. This should ideally not be changed by the programmer \\\hline
-\textbf{Integer} \textit{id} & The id of the graph that is used in communication with gralog. This should ideally not be changed by the programmer \\ \hline
-\textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel during pauses. These may be changed \\ \hline
-\textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel during pauses. These may be changed \\ \hline
+\textbf{Dictionary} \textit{vertices} & A dictionary that holds all of the Vertex objects known to the graph. This should ideally not be changed by the programmer. \\\hline
+\textbf{Dictionary} \textit{edges} & A dictionary that holds all of the Edge objects known to the graph. This should ideally not be changed by the programmer. \\\hline
+\textbf{Integer} \textit{id} & The id of the graph that is used in communication with gralog. This should ideally not be changed by the programmer. \\ \hline
+\textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel. These may be changed. \\ \hline
+\textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel. These may be changed. \\ \hline
 \end{longtable}
 
 
 \textbf{{\large Relevant Methods}}
-\textit{Note: optional parameters are in parentheses}
+\textit{Note: optional parameters are in square brackets}
 
 
-\begin{longtable}{m{\smallCol}m{\argsLen}m{\smallCol}m{\q}}
-Method & Arguments & Returns & Description \\ \hline
-\textbf{Graph}& (str: format) & Graph Object & Returns a graph object. The parameter options are either nothing, ``directed'',``undirected'',``buechi'',``kripke'',``automaton'' \\\hline
-\\\multicolumn{4}{c}{\textbf{Graph Manipulating Methods}}\\\\\hline
-\textbf{addVertex}  & \makecell{(int: x)\\(int: y)\\(int: vertexId)} & \textbf{Vertex} object & creates a new Vertex object. If no coordinates passed, random coordinates are chosen. If no id is passed, a suitable id is chosen. If an id is passed that has already been assigned, a suitable new one is chosen\\\hline
-\textbf{deleteVertex} & Vertex Object or id of vertex & void & Deletes the vertex or the vertex with the given id from the graph\\ \hline
-\textbf{addEdge} & \makecell{Vertex: sourceVertex\\Vertex: targetVertex\\(Boolean: directed) \\ (int: edgeId)} & \textbf{Edge} object & creates a new Vertex object from the source vertex to the target vertex. If directed is not specifeed, un-directed is assumed. If un-directed, the order of target and source vertex is irrelevant. If no id is passed, a suitable id is chosen. If an id is passed that has already been assigned, a suitable new one is chosen \\ \hline
-\textbf{addDirectedEdge} & \makecell{Vertex: sourceVertex\\Vertex: targetVertex \\ (int: edgeId)} & \textbf{Edge} object & calls addEdge with directed=True \\ \hline
-\textbf{deleteEdge} & Edge object or id of edge & void &  Deletes the edge or the edge with the given id from the graph\\ \hline
-\textbf{deleteAllEdges} & (Vertex,Vertex): source, target & void & removes all directed edges from start to target, as well as all un-directed edges from between the two vertices \\ \hline
-\\\multicolumn{4}{c}{\textbf{Setter Functions}}\\\\\hline
-\textbf{setVertexFillColor} & \makecell{Vertex: vertex\\(str: colorHex)\\(int,int,int): colorRGB)} & void & sets the \textit{fill} color of the given vertex to the Hex code color specified or the RGB color specified. colorHex can also be a string of a common collor, such as "red" or "green."  \\ \hline
-\textbf{setVertexStrokeColor} & \makecell{Vertex: vertex\\(str: colorHex)\\(int,int,int): colorRGB)} & void & sets the \textit{stroke} color of the given vertex to the Hex code color specified or the RGB color specified. colorHex can also be a string of a common collor, such as "red" or "green."  \\ \hline
-\textbf{setEdgeContour} & \makecell{Edge: edge\\str: contour} & void & sets the \textit{contour} color of passed edge. Possible values are ``dashed",``dotted",``plain" \\ \hline
-\textbf{setEdgeColor} & \makecell{Edge: edge\\(str: colorHex)\\((int,int,int): colorRGB)} & void & sets the color of the given edge to the Hex code color specified or the RGB color specified. colorHex can also be a string of a common collor, such as "red" or "green."  \\ \hline
-\textbf{setVertexRadius} & \makecell{Vertex: vertex\\float: radius} & void & sets the radius of the given vertex to the radius specified  \\ \hline
-\textbf{setVertexHeight} & \makecell{Vertex: vertex\\float: height} & void & sets the height of the given vertex to the height specified  \\ \hline
-\textbf{setVertexWidth} & \makecell{Vertex: vertex\\float: width} & void & sets the width of the given vertex to the height specified  \\ \hline
-\textbf{setVertexDimension} & \makecell{Vertex: vertex\\float: width\\str: dimension} & void & sets the dimension of the given vertex to the dimension specified. This functionality is primarily useful for non-standard shapes, if you were to extend gralog to include such a thing. \\ \hline
-\textbf{setVertexShape} & \makecell{Vertex: vertex\\str: shape} & void & sets the given vertex to be the specified shape. Currently supported are ``ellipse,",``diamond", and ``rectangle"  \\ \hline
-\textbf{setEdgeWeight} & \makecell{Edge: edge\\float: weight} & void & sets edge weight (ie. thickness) to be as wide as you specified  \\ \hline
-\end{longtable}
+\begin{description}
+\item[Graph({[str: format]})] \emph{returns} a Graph Object.
 
 
+                                               The graph is the graph
+currently opened in the Gralog tab from which your script has been
+called. (TODO: finish description) Possible parameter options are:
+\begin{itemize}
+\item nothing, e.g.\@ \texttt{g = Graph()},
+\item \texttt{"directed"},
+\item \texttt{"{}undirected"},
+\item \texttt{"buechi"},
+\item \texttt{"kripke"},
+\item \texttt{"{}automaton"}.
+\end{itemize}
+\end{description}
 
+\subsection{Graph Manipulating Methods}
+
+\begin{description}
+\item[addVertex({[int: x\_coord, int: y\_coord]}{[int: vertexId]})]\emph{returns}
+  \texttt{Vertex} object
+
+  Creates a new Vertex object. If no coordinates (TODO: what means int
+  as a coordinate?) \texttt{x\_coord,y\_coord} passed,
+  random coordinates are chosen (TODO:) and the vertex is selected in
+  the Gralog UI. If no \texttt{vertexId} is passed, a suitable id is
+  chosen by Gralog automatically. If an id is passed that has already
+  been assigned, a suitable new one is silently chosen.
+
+  \begin{example}
+\begin{verbatim}
+g = Graph(undirected)
+v = addVertex(7)
+if (! v.id == 7)
+    print("Id 7 was already assigned to another vertex. The id of the
+new vertex is " + v.id)
+w = addVertex(2.3,4.0)
+print("Created a new vertex with coordinates x = 2.3 and y = 4.0 and id = " + w.id)
+u = addVertex(2.3,4.0,7)
+print("Created a new vertex with coordinates x = 2.3 and y = 4.0 " +
+            "(on top of the vertex with id = " + w.id + ") and id = " + u.id)
+if (u.id == 7)
+     print("Something went wrong!")
+\end{verbatim}
+  \end{example}
+
+
+  
+\item[deleteVertex(Vertex: v)] \emph{returns} \texttt{void}
+
+Deletes the vertex from the graph. If the vertex does not exist, does
+nothing. (TODO: Felix, is this correct?)
+
+\item[deleteVertex(int: vertexId)] \emph{returns} \texttt{void}
+
+Deletes the vertex with the given id from the graph. If the vertex does not exist, does
+nothing. (TODO: Felix, is this correct?)
+
+\item[addEdge(Vertex: source, Vertex target{[, Boolean: isDirected][,
+    int: egdeId]})] \emph{returns} \texttt{Edge} object
+
+
+Creates a new \texttt{Vertex} object from the source vertex to the
+target vertex. If \texttt{isDirected} is not specified, un-directed is
+assumed (TODO: it should depend on the graph). If un-directed, the
+order of target and source vertex is irrelevant. If no \texttt{edgeId}
+is passed, a suitable id is chosen. If an id is passed that has
+already been assigned, a suitable new one is silently chosen.
+
+\item[addDirectedEdge(Vertex: source, Vertex: target{[,int: edgeId]})]
+  \emph{returns} \texttt{Edge}
+
+(TODO: it should depend on the graph type, \texttt{addDirectedEdge} is
+not needed)
+
+
+\item[deleteEdge(Edge: e)] \emph{returns} \texttt{void}
+
+Deletes the edge from the graph. If the edge does not exist, nothing
+happens.
+
+\item[deleteEdge(int: edgeId)] \emph{returns} \texttt{void}
+
+Deletes the edge with id \texttt{edgeId} from the graph. If the edge does not exist, nothing
+happens.
+
+\item[deleteEdge(Vertex: source, Vertex: target)] \emph{returns}
+  \texttt{void}
+
+  Deletes the edge with the greatest id from the list of all edges
+  between vertex \texttt{source} and vertex \texttt{target} respecting
+  the direction if the graph has directed edges. If no such edge exists, nothing happens.
+
+  This is convenient if one is sure that there is at most one edge
+  between the vertices or it does not matter which edge is deleted.
+
+  (TODO: implement this)
+
+\item[deleteEdge(int: sourceVertexId, int: targetVertexId)] \emph{returns}
+  \texttt{void}
+
+  Deletes the edge with the greatest id from the list of all edges
+  between vertex with id \texttt{sourceVertexId} and vertex with id \texttt{targetVertexId} respecting
+  the direction if the graph has directed edges. If no such edge exists, nothing happens.
+
+  This is convenient if one is sure that there is at most one edge
+  between the vertices or it does not matter which edge is deleted.
+
+  (TODO: implement this)
+
+  (TODO: Do we have \texttt{existsEdge(Vertex: source, Vertex:
+    target)} and \texttt{existsEdge(id: sourceVertexId, int:
+    targetVertexId)}, \texttt{int: numberEdges(Vertex/int: source,
+    Vertex/int: target)}, \texttt{existsVertexId(int id)}, \texttt{existsEdgeId(int id)}?)
+\item[deleteAllEdges(Vertex: source, Vertex: target)] \emph{returns}
+  \texttt{void}
+
+  Deletes all existing edges with source \texttt{source} and target
+  \texttt{target}.
+  
+\end{description}
+
+\subsection{Setter Functions}
+\begin{description}
+\item[setVertexFillColor(Vertex: v, (str: color | int: r, int: g, int:
+  b))] \emph{returns} \texttt{void}
+
+Sets the \textit{fill} colour of the given vertex to the Hex code colour
+specified as a string or the RGB colour specified. colorHex can also be
+a string of a common colour, such as \texttt{"red"} or
+\texttt{"green."}  (TODO: make full list of available colours, insert
+a reference here.)
+
+\item[setVertexStrokeColor(Vertex: v, (str: color | int: r, int: g, int:
+  b))] \emph{returns} \texttt{void}
+
+  Sets the \textit{stroke} colour of the given vertex to the Hex code colour
+specified as a string or the RGB colour specified. colorHex can also be
+a string of a common colour, such as \texttt{"red"} or
+\texttt{"green."}  (TODO: make full list of available colours, insert
+a reference here.)
+
+\item[setEdgeContour(Edge: edge, str: contour)] \emph{returns}
+\texttt{void}
+
+Sets the contour of passed edge. Possible values are
+\texttt{"dashed"}, \texttt{"dotted"}, \texttt{"plain"}.
+
+\item[setEdgeColor(Edge: v, (str: color | int: r, int: g, int:
+  b))] \emph{returns} \texttt{void}
+
+  Sets the colour of the given edge to the Hex code colour
+specified as a string or the RGB colour specified. colorHex can also be
+a string of a common colour, such as \texttt{"red"} or
+\texttt{"green."}  (TODO: make full list of available colours, insert
+a reference here.)
+
+\item[setVertexRadius(Vertex: v, float: radius)] \emph{returns}
+  \texttt{void}
+
+Sets the radius of the given vertex to \texttt{radius}.
+
+\item[setVertexHeight(Vertex: v, float: height)] \emph{returns}
+  \texttt{void}
+
+Sets the height of the given vertex to \texttt{height}.
+
+\item[setVertexWidth(Vertex: v, float: width)] \emph{returns}
+  \texttt{void}
+
+Sets the width of the given vertex to \texttt{width}. (TODO: explain
+radius and width)
+
+\item[setVertexShape(Vertex: v, str: shape)] \emph{returns} \texttt{void}
+
+Sets the given vertex to be the specified shape. Currently supported
+are \texttt{"ellipse"}, \texttt{"diamond"}, and \texttt{"rectangle"}.
+  
+\item[setVertexDimension(Vertex: v, float: width, str: dimension)]
+  \emph{returns} \texttt{void}
+
+Sets the dimension of the given vertex to the dimension specified. This functionality is primarily useful for non-standard shapes, if you were to extend gralog to include such a thing.  
+
+\item[setEdgeWeight(Edge: e, float: weight)] \emph{returns} \texttt{void}
+
+Sets edge weight (i.e.\@ thickness) to \texttt{weight}. (TODO: rename
+to thickness, also in Gralog)
+  
+\end{description}
 
 \end{document}
 
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
