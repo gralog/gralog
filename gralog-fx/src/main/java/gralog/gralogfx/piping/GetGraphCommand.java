@@ -48,6 +48,7 @@ public class GetGraphCommand extends CommandForGralogToExecute {
         bla
         #
         bla
+        #
         $
 
 
@@ -82,6 +83,32 @@ public class GetGraphCommand extends CommandForGralogToExecute {
 
                 TrivialGraphFormatExport tgfExport = new TrivialGraphFormatExport();
                 tgfExport.export(this.structure,out,null);
+                out.flush();
+                String tgf = result.toString();
+                tgf = PipingPresets.multiLineIfyGraphString(tgf);
+                this.setResponse(tgf);
+
+
+            }catch(Exception e){
+                this.setResponse(e.toString());
+            }
+            
+            return;
+        }
+
+        if (this.format == GraphType.GTgf){
+            try{
+                //String tgf = TrivialGraphFormatExport.exportToString(this.structure);
+                // tgf = PipingPresets.multiLineIfyGraphString(tgf);
+                // this.setResponse(tgf);
+
+
+
+                ByteArrayOutputStream result = new ByteArrayOutputStream();
+                OutputStreamWriter out = new OutputStreamWriter(result);
+
+                GralogTrivialGraphFormatExport gTgfExport = new GralogTrivialGraphFormatExport();
+                gTgfExport.export(this.structure,out,null);
                 out.flush();
                 String tgf = result.toString();
                 tgf = PipingPresets.multiLineIfyGraphString(tgf);

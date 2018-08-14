@@ -19,7 +19,7 @@ public class GPrintCommand extends CommandForGralogToExecute {
 		this.piping=piping;
 		this.flag = Piping.MessageToConsoleFlag.GPrint;
 		try{
-			this.message = PipingMessageHandler.extractNthPositionString(externalCommandSegments,1);
+			this.message = PipingMessageHandler.extractNthPositionString(externalCommandSegments,2);
 		}catch(Exception e){
 			this.error = e;
 			this.fail();

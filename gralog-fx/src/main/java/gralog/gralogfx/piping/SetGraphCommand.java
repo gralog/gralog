@@ -81,7 +81,7 @@ public class SetGraphCommand extends CommandForGralogToExecute {
                 structureFromXml.setId(this.structure.getId());
                 System.out.println("n0w we hav id: " + structureFromXml.getId());
                 this.piping.setStructureWithId(structureFromXml,structureFromXml.getId());
-                System.out.println("set structure");
+                System.out.println("setted the structure");
 
             }catch(Exception e){
                 this.error =e;

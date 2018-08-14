@@ -112,7 +112,7 @@ class Vertex:
 class Edge:
 	def __init__(self,graph,eid):
 		self.sourced = False;
-		self.id = int(eid);
+		self.id = int(eid); #if -2, then imported without id like in TGF
 		self.graph = graph;
 		self.properties = dict();
 		self.properties["id"] = None;
@@ -529,37 +529,89 @@ class Graph:
 	#####getter functions
 
 
+	def edgifyTGFCommand(self,line):
+		line = line.strip();
+		endpoints = line.split(" ");
+		v1String = endpoints[0];
+		v1 = self.getVertexOrNew(int(v1String))
+		v2String = endpoints[1];
+		v2 = self.getVertexOrNew(int(v2String))
+		e = self.getEdgeOrNew(-2);
+		e.setSource(v1);
+		e.setTarget(v2);
+		# self.edges[e.getId()] = e;
 
+	def vertexifyTGFCommand(self,line):
+		line = line.strip();
+		vString = line[0];
+		v = self.getVertexOrNew(int(vString))
 
-	def getGraph(self,format):
+		self.vertices[v.getId()] = v;
+
+	def edgifyGTGFCommand(self,line):
+		line = line.strip();
+		endpoints = line.split(" ");
+		v1String = endpoints[0];
+		v1 = self.getVertexOrNew(int(v1String))
+		v2String = endpoints[1];
+		v2 = self.getVertexOrNew(int(v2String))
+		eid = int(endpoints[2]);
+		e = self.getEdgeOrNew(eid);
+		e.setSource(v1);
+		e.setTarget(v2);
+		self.edges[eid] = e;
+
+	def vertexifyGTGFCommand(self,line):
+		self.vertexifyTGFCommand(line);
+
+	def getGraph(self,graphFormat):
+		##warning!! importaing as pure TGF will mean edge id's will 
+		## be lost. This will result in errors on the Gralog side.
 		
-			
-		line = "getGraph#"+str(self.id).rstrip() + "#" + format.rstrip();
+
+		line = "getGraph#"+str(self.id).rstrip() + "#" + graphFormat.rstrip();
 		print line.rstrip();
 		i =0;
 	
 		sys.stdout.flush();
 
 		line = sys.stdin.readline();
-		graph = "";
+		graphString = "";
+		if graphFormat.lower() == "tgf" or graphFormat.lower() == "gtgf":
+			tgf = graphFormat.lower() == "tgf";
 
-		multiline = False;
-		if line[0] == line[1] == '$':
-			# line = line[2:];
-			multiline = True;
-			first = True;
-			
-
-		while multiline and (line[0] != '$' or first):
-			graph += line;
+			multiline = False;
+			if line[0] == line[1] == '$':
+				# line = line[2:];
+				multiline = True;
+				first = True;
 			line = sys.stdin.readline();
-			i += 1;
-			first = False;
-		# nextline = "also getting: " ,sys.stdin.readline();
+				
+			hashtagSeen = False;
+			while multiline and (line[0] != '$'):
+				# gPrint("line: " + line +" and line[0]: " + line[0] + " and line[0]!='$': " + str(line[0] != '$'));
+				graphString += line;
+				if line[0] == '#':
+			
+					hashtagSeen = True;
+				else:
+					if not first:
+						if hashtagSeen:
+							if tgf:
+								self.edgifyTGFCommand(line);
+							else:
+								self.edgifyGTGFCommand(line);
+						else:
+							if tgf:
+								self.vertexifyTGFCommand(line);
+							else:
+								self.vertexifyGTGFCommand(line);
+				line = sys.stdin.readline();
+				i += 1;
+				first = False;
 
-
-		return graph;
-
+			return graphString;
+		return "whoop that format hasn't been implimented yet sorry";
 	
 	
 
@@ -949,8 +1001,13 @@ class Graph:
 	def __str__(self):
 		return "todo: tgf"
 
-def gPrint(self,message):
-	line = "gPrint#"+message;
+def gPrint(message):
+	words = message.split(" ");
+	ret = "";
+	for word in words:
+		ret += " " + word.rstrip();
+	line = "gPrint#-1#"+ret.rstrip();
+	line = line.rstrip();
 	print line;
 	sys.stdout.flush();
 
