@@ -214,7 +214,7 @@ public class Piping extends Thread{
         }else if (c == Double.class){
             try{
                 Double.parseDouble(text); //if this doesn't fail the user has entered
-                //a valid doudle, and the gralog command should proceed
+                //a valid double, and the gralog command should proceed
                 this.waitForSelection.countDown();
                 CountDownLatch newLatch = new CountDownLatch(1);
                 this.setSelectionCountDownLatch(newLatch);
@@ -225,7 +225,7 @@ public class Piping extends Thread{
         }else if (c == Integer.class){
             try{
                 Integer.parseInt(text); //if this doesn't fail the user has entered
-                //a valid doudle, and the gralog command should proceed
+                //a valid double, and the gralog command should proceed
                 this.waitForSelection.countDown();
                 CountDownLatch newLatch = new CountDownLatch(1);
                 this.setSelectionCountDownLatch(newLatch);

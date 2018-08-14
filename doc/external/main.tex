@@ -206,13 +206,13 @@ v.delete();
 Each edge is represented as an object of hte Edge class. It is distinguished by its unique ID; however, in graphs without multi-edges, it can also be distinguished by its source and target vertices.
 
 \begin{lstlisting}
-e = g.createEdge(v1,v2,directed=False);
+e = g.createEdge(v1, v2, directed=False);
 \end{lstlisting}
 
 All methods pertaining to the individual edges, such as their color, adjacent edges, or label, are most easily manipulated using methods of this class. For example:
 
 \begin{lstlisting}
-e = g.createEdge(v1,v2,directed=False,id=451);
+e = g.createEdge(v1, v2, directed=False, id=451);
 e.setLabel("f00");
 adjacentEdges = e.getAdjacentEdges();
 target = e.getTarget();
@@ -301,7 +301,7 @@ nothing. (TODO: Felix, is this correct?)
 Deletes the vertex with the given id from the graph. If the vertex does not exist, does
 nothing. (TODO: Felix, is this correct?)
 
-\item[addEdge(Vertex: source, Vertex target{[, Boolean: isDirected][,
+\item[addEdge(Vertex: source, Vertex: target{[, Boolean: isDirected][,
     int: egdeId]})] \emph{returns} \texttt{Edge} object
 
 
@@ -367,7 +367,7 @@ happens.
 
 \subsection{Setter Functions}
 \begin{description}
-\item[setVertexFillColor(Vertex: v, (str: color | int: r, int: g, int:
+\item[setVertexFillColor(Vertex: v, (str: color $|$ int: r, int: g, int:
   b))] \emph{returns} \texttt{void}
 
 Sets the \textit{fill} colour of the given vertex to the Hex code colour
@@ -376,7 +376,7 @@ a string of a common colour, such as \texttt{"red"} or
 \texttt{"green."}  (TODO: make full list of available colours, insert
 a reference here.)
 
-\item[setVertexStrokeColor(Vertex: v, (str: color | int: r, int: g, int:
+\item[setVertexStrokeColor(Vertex: v, (str: color $|$ int: r, int: g, int:
   b))] \emph{returns} \texttt{void}
 
   Sets the \textit{stroke} colour of the given vertex to the Hex code colour
@@ -391,7 +391,7 @@ a reference here.)
 Sets the contour of passed edge. Possible values are
 \texttt{"dashed"}, \texttt{"dotted"}, \texttt{"plain"}.
 
-\item[setEdgeColor(Edge: v, (str: color | int: r, int: g, int:
+\item[setEdgeColor(Edge: v, (str: color $|$ int: r, int: g, int:
   b))] \emph{returns} \texttt{void}
 
   Sets the colour of the given edge to the Hex code colour
@@ -419,7 +419,7 @@ radius and width)
 \item[setVertexShape(Vertex: v, str: shape)] \emph{returns} \texttt{void}
 
 Sets the given vertex to be the specified shape. Currently supported
-are \texttt{"ellipse"}, \texttt{"diamond"}, and \texttt{"rectangle"}.
+are \texttt{"{}ellipse"}, \texttt{"diamond"}, and \texttt{"rectangle"}.
   
 \item[setVertexDimension(Vertex: v, float: width, str: dimension)]
   \emph{returns} \texttt{void}
