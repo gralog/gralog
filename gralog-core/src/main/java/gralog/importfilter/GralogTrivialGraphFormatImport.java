@@ -15,12 +15,12 @@ import java.util.StringTokenizer;
  *
  */
 @ImportFilterDescription(
-    name = "Trivial Graph Format",
+    name = "Gralog Trivial Graph Format",
     text = "",
     url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
     fileExtension = "tgf"
 )
-public class TrivialGraphFormatImport extends ImportFilter {
+public class GralogTrivialGraphFormatImport extends ImportFilter {
 
     @Override
     public Structure importGraph(InputStream stream,
@@ -50,6 +50,7 @@ public class TrivialGraphFormatImport extends ImportFilter {
                 StringTokenizer tokenizer = new StringTokenizer(s, " ");
                 String from = tokenizer.nextToken();
                 String to = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
+                String eid = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
 
                 if (to == null) {
                     Vertex newnode = result.addVertex(null,Integer.parseInt(from));
@@ -60,21 +61,28 @@ public class TrivialGraphFormatImport extends ImportFilter {
                 } else {
                     Vertex nodeA = nodeIndex.containsKey(from) ? nodeIndex.get(from) : null;
                     Vertex nodeB = nodeIndex.containsKey(to) ? nodeIndex.get(to) : null;
-
+                    
                     if (nodeA == null)
                         throw new Exception("Edge containing undefined Vertex-identifier \"" + from + "\"");
                     if (nodeB == null)
                         throw new Exception("Edge containing undefined Vertex-identifier \"" + to + "\"");
-                    Edge e = result.createEdge(-1,null);
+                    int edgeId;
+                    try{
+                        edgeId = Integer.parseInt(eid);
+                    }catch(Exception e){
+                        edgeId = -1;
+                    }
+                    
+                    Edge e = result.createEdge(edgeId,null);
                     result.addEdge(e,nodeA,nodeB);
                 }
                 s = br.readLine();
             }
 
             for (Vertex newnode : nodeIndex.values()) {
-                newnode.coordinates = new Vector2D(
+                newnode.setCoordinates(new Vector2D(
                     Math.random() * 3d * nodeIndex.size(),
-                    Math.random() * 3d * nodeIndex.size());
+                    Math.random() * 3d * nodeIndex.size()));
                 result.addVertex(newnode);
             }
         }

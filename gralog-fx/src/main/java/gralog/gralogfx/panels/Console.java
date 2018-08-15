@@ -453,7 +453,14 @@ public class Console extends VBox implements GralogWindow{
         ConsoleField t = new ConsoleField(text);
         t.getStyleClass().add("gPrintStyle"); 
 
-       
+        finalizeConsoleFieldAdd(t);
+
+    }
+
+    public void notificationPrint(String text){
+
+        ConsoleField t = new ConsoleField(text);
+        t.getStyleClass().add("notificationPrintStyle"); 
 
         finalizeConsoleFieldAdd(t);
 
@@ -477,7 +484,7 @@ public class Console extends VBox implements GralogWindow{
         }else if(flag == MessageToConsoleFlag.Normal || flag == MessageToConsoleFlag.Request){
             this.outsideMessage(msg);
         }else if(flag == MessageToConsoleFlag.Notification){
-            this.gPrint(msg);
+            this.notificationPrint(msg);
         }else{
             System.out.println("Unknown flag?");
             this.outsideMessage(msg);

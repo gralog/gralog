@@ -141,7 +141,9 @@ public class Piping extends Thread{
     }
 
     
-
+    public String getNextLine() throws Exception{
+        return this.in.readLine();
+    }
     // private PipingMessageHandler eventHandler = 
 
    
@@ -399,7 +401,7 @@ public class Piping extends Thread{
 
             
             System.out.println("191");
-            while ((line = this.in.readLine()) != null){//while python has not yet terminated
+            while ((line = this.getNextLine()) != null){//while python has not yet terminated
                 System.out.println("in while");
                 // System.out.println("current count: " + this.waitForPauseToBeHandled.getCount());
                 if (this.windowDoesCloseNow){
@@ -480,7 +482,7 @@ public class Piping extends Thread{
                         // // currentCommand = new NewGraphCommand(externalCommandSegments);
                         // // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
                         // // currentCommand.setStructure(currentStructure);
-                        System.out.println("useCurrentGraph");
+                        System.out.println("useCurrentGraph" + Integer.toString(this.structurePane.getStructure().getId()));
                         out.println(Integer.toString(this.structurePane.getStructure().getId()));
 
                         continue;
@@ -492,7 +494,7 @@ public class Piping extends Thread{
                         Platform.runLater(
                             ()->{
                                 StructurePane thisPane = this.newGraphMethod.apply(lineFinal,this);
-
+                                this.structurePane = thisPane;
                                 idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
                                 idStructurePaneMap.put(thisPane.getStructure().getId(),thisPane);
 
@@ -510,7 +512,8 @@ public class Piping extends Thread{
 
                     CommandForGralogToExecute currentCommand;
                     try{
-                        currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])),this);
+                        // currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])),this);
+                         currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.structurePane.getStructure(),this);
                         // mostRecentlyUsedStructurePane = currentCommand.getStructurePane();
                     }catch(Exception e){
                         e.printStackTrace();

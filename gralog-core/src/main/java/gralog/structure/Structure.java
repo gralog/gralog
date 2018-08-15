@@ -225,10 +225,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param id The id of which v will soon hopefully be the proud owner
      */
     public V addVertex(Configuration config,int id) {
+        System.out.println("creating vertex with id : " + id);
         // v.id = pollNextFreeVertexID();
         V v = createVertex(config);
         if (this.getVertexById(id) != null){
             //send warning to console that the id has already been assigned
+            System.out.println("warning! Id has already been assigned!");
             v.setId(pollNextFreeVertexID());
             vertices.put(v.getId(),v);
             return v;
@@ -1334,6 +1336,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 continue;
             System.out.println("After " + result);
             if (result instanceof Structure) {
+                System.out.println("isa structure");
                 ((Structure) result).fromXml(child);
                 System.out.println("After: " + result);
                 return (Structure) result;
