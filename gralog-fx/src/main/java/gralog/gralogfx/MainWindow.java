@@ -92,7 +92,9 @@ public class MainWindow extends Application {
         handlers.onSave = this::onSave;
         handlers.onSaveAs = this::onSaveAs;
         handlers.onDirectInput = this::onDirectInput;
-        handlers.onLoadPlugin = this::onLoadPlugin;
+        handlers.onLoadPluginFromSpecifiedFilepath = this::onLoadPluginFromSpecifiedFilepath;
+        handlers.onLoadPluginWithPromptForFile = this::onLoadPluginWithPromptForFile;
+        handlers.onLoadLastPlugin = this::onLoadLastPlugin;
         handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
@@ -278,8 +280,28 @@ public class MainWindow extends Application {
     }
 
     public void handlePlannedConsoleInput(){}
+    public void onLoadLastPlugin() {
+        onLoadPlugin(getLastFileName());
+    }
 
-    public void onLoadPlugin() {
+    public void onLoadPluginWithPromptForFile() {
+        Platform.runLater(
+            () -> {
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setTitle("from file!");
+                alert.setHeaderText(null);
+                alert.setContentText("dujuluberduski");
+                alert.showAndWait();
+            }
+        );
+    }
+
+    public void onLoadPluginFromSpecifiedFilepath(){
+        onLoadPlugin(getSpecifiedFileName());
+    }
+
+    public void onLoadPlugin(String fileName) {
+        Preferences.setFile("MainWindow_lastPipingFile",new File(fileName));
         // FileChooser fileChooser = new FileChooser();
         // fileChooser.setInitialDirectory(new File(getLastDirectory()));
         // fileChooser.setTitle("Load Plugins");
@@ -322,7 +344,7 @@ public class MainWindow extends Application {
                 return;
             }
 
-            String fileName = this.getFileName();
+
             System.out.println("with filename: " + fileName);
 
             Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
@@ -352,9 +374,16 @@ public class MainWindow extends Application {
         }
     }
 
-    public String getFileName(){
+    public String getSpecifiedFileName(){
 
         String fileName = Preferences.getFile("MainWindow_pipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
+
+        return fileName;
+    }
+
+    public String getLastFileName(){
+
+        String fileName = Preferences.getFile("MainWindow_lastPipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
 
         return fileName;
     }

@@ -1,14 +1,14 @@
 #!/usr/bin/python
 
 import sys
-from Lib import *
+from Gralog import *
 from random import randint
 
 
 
 
 
-g = Graph();#type \in buechi, directed, etc. or None
+g = Graph(None);#type \in buechi, directed, etc. or None
 
 # h = Graph("undirected");
 g.setGraph("xml");
@@ -31,10 +31,13 @@ gGraph = g.getGraph("gtgf");
 
 gPrint("just saved graph!");
 g.pause();
-for v in g.getAllVertices():
-	v.delete();
+for x in v:
+	for y in v:
+		if x < y:
+			g.deleteEdge((x,y));
+			g.pause();
 
-g.pause();
+
 g.setGraph("gtgf",gGraph);
 
 

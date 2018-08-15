@@ -16,6 +16,7 @@ StructurePane_gridSize=1.0
 
 #Mainwindow
 MainWindow_pipingFile=helloWorld
+MainWindow_lastPipingFile=helloAgaine
 
 #Vertex
 Vertex_height=1.0
