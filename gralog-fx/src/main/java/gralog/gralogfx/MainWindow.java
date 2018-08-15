@@ -31,6 +31,7 @@ import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.input.KeyCode;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -72,6 +73,15 @@ public class MainWindow extends Application {
 
     private Console mainConsole;
     private PluginControlPanel pluginControlPanel;
+
+
+    //panels
+    private DockPane mainDockPane;
+    private DockNode objDock;
+    private DockNode objListDock;
+    private DockNode pluginDock;
+    private DockNode structureNode;
+    private DockNode consoleDock;
 
     private boolean pipingUnderway = false;
 
@@ -146,10 +156,9 @@ public class MainWindow extends Application {
         mainConsole = new Console(tabs, this::profferTextToMainWindow);
 
         ObjectInspector objectInspector = new ObjectInspector(tabs);
+        ObjectListDisplay objectListDisplay = new ObjectListDisplay();
+
         //put lambdas here for controlling stuff
-        
-
-
         Runnable play = new Runnable(){
             public void run(){
                 Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
@@ -224,8 +233,8 @@ public class MainWindow extends Application {
         
 
 
-        DockPane mainDockPane = new DockPane();
-        DockNode structureNode = new DockNode(tabs.getTabPane());
+        mainDockPane = new DockPane();
+        structureNode = new DockNode(tabs.getTabPane());
 
         //  pluginControlPanel stuff commented out because
         // it is not properly integrated with multiple piping
@@ -237,34 +246,13 @@ public class MainWindow extends Application {
         // END
         
 
-        DockNode objDock = new DockNode(objectInspector, "Object Inspector", null);
-        DockNode pluginDock = new DockNode(this.pluginControlPanel, "Algorithm Control", null);
-        DockNode consoleDock = new DockNode(mainConsole, "Console", null);
-
-        structureNode.dock(mainDockPane, DockPos.CENTER);
-        structureNode.setMaxHeight(Double.MAX_VALUE);
-        structureNode.setPrefWidth(Double.MAX_VALUE);
-        structureNode.setPrefHeight(Double.MAX_VALUE);
-        structureNode.setDockTitleBar(null);
+        objDock = new DockNode(objectInspector, "Object Inspector", null);
+        objListDock = new DockNode(objectListDisplay, "List Overview", null);
+        pluginDock = new DockNode(this.pluginControlPanel, "Algorithm Control", null);
+        consoleDock = new DockNode(mainConsole, "Console", null);
 
 
-
-        objDock.dock(mainDockPane, DockPos.RIGHT);
-        objDock.setPrefHeight(250);
-        objDock.setMinWidth(270);
-        objDock.setMaxWidth(270);
-
-
-        //pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
-        pluginDock.setMaxWidth(270);
-        pluginDock.setPrefHeight(70);
-        pluginDock.setMinHeight(70);
-
-
-        consoleDock.dock(mainDockPane, DockPos.BOTTOM, structureNode);
-        consoleDock.setPrefWidth(200);
-        consoleDock.setMinHeight(200);
-        consoleDock.setMaxHeight(Double.MAX_VALUE);
+        dockPanels();
 
         Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
 
@@ -273,6 +261,37 @@ public class MainWindow extends Application {
         root.setCenter(mainDockPane);
         root.setBottom(statusBar.getStatusBar());
     }
+    public void dockPanels(){
+        structureNode.dock(mainDockPane, DockPos.LEFT);
+        structureNode.setMaxHeight(Double.MAX_VALUE);
+        structureNode.setPrefWidth(Double.MAX_VALUE);
+        structureNode.setPrefHeight(Double.MAX_VALUE);
+        structureNode.setDockTitleBar(null);
+
+        objDock.dock(mainDockPane, DockPos.RIGHT);
+        objDock.setPrefHeight(250);
+        objDock.setMinWidth(270);
+        objDock.setMaxWidth(270);
+
+        //pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
+        //pluginDock.setMaxWidth(270);
+        //pluginDock.setPrefHeight(70);
+        //pluginDock.setMinHeight(70);
+
+        consoleDock.dock(mainDockPane, DockPos.BOTTOM, structureNode);
+        consoleDock.setPrefWidth(Double.MAX_VALUE);
+        consoleDock.setMaxWidth(Double.MAX_VALUE);
+        consoleDock.setMinHeight(200);
+        consoleDock.setMaxHeight(Double.MAX_VALUE);
+    }
+
+    void dockPanels2(){
+        objListDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
+        objListDock.setMaxWidth(270);
+        objListDock.setPrefHeight(300);
+        objListDock.setMinHeight(300);
+    }
+
 
     public void foo(){
         System.out.println("foo");
@@ -756,7 +775,6 @@ public class MainWindow extends Application {
 
         scene.setOnKeyPressed(event -> {
 
-
             
         });
 
@@ -787,6 +805,9 @@ public class MainWindow extends Application {
 
         });
         primaryStage.show();
+
+
+        dockPanels2();
 
         MultipleKeyCombination.setupMultipleKeyCombination(scene);
 

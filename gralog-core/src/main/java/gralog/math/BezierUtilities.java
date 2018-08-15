@@ -23,6 +23,57 @@ public final class BezierUtilities {
         public boolean successful;
         public Vector2D result;
     }
+
+    public static class IntersectionResults{
+
+    }
+
+    /**
+     * ax + by = c
+     */
+    public static class Line{
+        public double a;
+        public double b;
+        public double c;
+    }
+
+
+    /**
+     * Returns an array of intersections between a given line l and a cubic bezier
+     * curve (parametrized by the given control points c0-c3)
+     * @return An array of size 3, which contains all intersections (if only 1 exists,
+     * other entries are copies)
+     */
+    public static Vector2D[] lineIntersectionCubicBezier(Line l, Vector2D c0, Vector2D c1, Vector2D c2, Vector2D c3){
+
+        final double p0 = c0.getX();
+        final double p1 = c0.getX();
+        final double p2 = c0.getX();
+        final double p3 = c0.getX();
+
+        final double q0 = c0.getY();
+        final double q1 = c1.getY();
+        final double q2 = c2.getY();
+        final double q3 = c3.getY();
+
+        final double a = l.a;
+        final double b = l.b;
+        final double c = l.c;
+
+        final double coeff_t3 = (a*(-p0 + 3*p1 - 3*p2 + p3) + b*(-q0 + 3*q1 - 3*q2 + q3));
+        final double coeff_t2 = (a*(-6*p1 + 3*p2) + b*(-6*q1 + 3*q2));
+        final double coeff_t1 = (3*a*p1 + 3*b*q1);
+        final double coeff_t0 = a*p0 + b*q0 - c;
+
+        Polynomial polynomial = new Polynomial(coeff_t3, coeff_t2, coeff_t1, coeff_t0);
+        System.out.println(polynomial.eval(0.5));
+        return null;
+    }
+
+    public static IntersectionResults lineIntersectionQuadraticBezier(){
+        return null;
+    }
+
     /**
      * This method implements an algorithm on point projections for cubic bezier curves.
      *
