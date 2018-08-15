@@ -23,9 +23,14 @@ for x in v:
 		if x < y:
 			g.addEdge(x,y);
 
+vertices = g.getAllVertices();
+for vertex in vertices:
+	gPrint("vertex: " + str(vertex));
+
 gGraph = g.getGraph("gtgf");
 
-
+gPrint("just saved graph!");
+g.pause();
 for v in g.getAllVertices():
 	v.delete();
 

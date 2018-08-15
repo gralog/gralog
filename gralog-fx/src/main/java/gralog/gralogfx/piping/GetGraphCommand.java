@@ -98,6 +98,7 @@ public class GetGraphCommand extends CommandForGralogToExecute {
 
         if (this.format == GraphType.GTgf){
             try{
+                System.out.println("GTgfin all up in here");
                 //String tgf = TrivialGraphFormatExport.exportToString(this.structure);
                 // tgf = PipingPresets.multiLineIfyGraphString(tgf);
                 // this.setResponse(tgf);
