@@ -510,6 +510,14 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         }
     }
 
+    public Vector2D getStartingPointSource(){
+        return source.coordinates;
+    }
+
+    public Vector2D getStartingPointTarget(){
+        return target.coordinates;
+    }
+
     public boolean containsVertex(Vertex v) {
         return source == v || target == v;
     }

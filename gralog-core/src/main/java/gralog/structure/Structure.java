@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
+import gralog.math.BezierUtilities;
 import gralog.plugins.XmlName;
 import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
@@ -1003,8 +1004,29 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 continue;
             }
             if(e.getControlPointCount() >= 1){
-                continue;
+                if(e.getEdgeType() == Edge.EdgeType.BEZIER){
+                    if(e.getControlPointCount() == 1){
+                        continue; // TODO:
+                    }
+                    if(e.getControlPointCount() == 2){
+                        BezierUtilities.Line l = new BezierUtilities.Line();
+                        l.a = 1;
+                        l.b = 0;
+                        l.c = px;
+                        BezierUtilities.lineIntersectionCubicBezier(l,
+                                e.getSource().coordinates,
+                                e.controlPoints.get(0).position,
+                                e.controlPoints.get(1).position,
+                                e.getTarget().coordinates);
+                        continue;
+                    }
+                }else if(e.getEdgeType() == Edge.EdgeType.SHARP){
+                    continue; // TODO:
+                }else if(e.getEdgeType() == Edge.EdgeType.ROUND){
+                    continue; // TODO:
+                }
             }
+
             Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
             Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(e.getOffset());
             Vector2D source = e.getSource().coordinates.plus(perpendicularToDiff);

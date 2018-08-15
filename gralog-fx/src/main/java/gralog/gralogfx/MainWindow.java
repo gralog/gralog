@@ -108,7 +108,7 @@ public class MainWindow extends Application {
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
         // pipeline = new Piping();
-        pipelines = new ArrayList<Piping>();
+        pipelines = new ArrayList<>();
         //controls
         handlers.onAlignHorizontally = () -> {
             if(tabs.getCurrentStructurePane() != null){
