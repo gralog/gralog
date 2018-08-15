@@ -176,8 +176,6 @@ public class Console extends HBox implements GralogWindow{
         getChildren().addAll(mainPart);
 
         this.widthProperty().addListener((obs, oldVal, newVal) -> {
-            System.out.println("borf diddly");
-
             List<Text> texts = new ArrayList<Text>();
 
             for (Node n : this.outputElements.getChildren()){

@@ -3,6 +3,7 @@
 package gralog.gralogfx;
 //test
 
+import gralog.dialog.GralogList;
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
 
@@ -287,7 +288,7 @@ public class MainWindow extends Application {
 
     void dockPanels2(){
         objListDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
-        objListDock.setMaxWidth(270);
+        //objListDock.setMaxWidth(270);
         objListDock.setPrefHeight(300);
         objListDock.setMinHeight(300);
     }
@@ -774,7 +775,7 @@ public class MainWindow extends Application {
 
 
         scene.setOnKeyPressed(event -> {
-
+            //if(event.getCode() == KeyCode.F2){ ((ObjectListDisplay)objListDock.getContents()).list.get(0).remove("abc"); } if(event.getCode() == KeyCode.F3){ GralogList<String> x = ((ObjectListDisplay)objListDock.getContents()).list.get(0); x.add("abc"); }
             
         });
 
