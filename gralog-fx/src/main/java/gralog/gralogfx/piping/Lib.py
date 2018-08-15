@@ -212,7 +212,7 @@ def hexFormatter(colorHex):
 	s += "("+str(colorHex).rstrip() + ")";
 	return s.rstrip();
 
-		
+
 def vertexId(vertex):
 	if isinstance(vertex,Vertex):
 		return vertex.getId();
@@ -256,13 +256,13 @@ class Graph:
 
 			self.lastIndex = -1;
 			self.id = sys.stdin.readline();
-			
-	
+
+
 		else:
 			print(format);
 			sys.stdout.flush();
 			self.id = sys.stdin.readline();
-	
+
 
 	####helper functions
 	def getVertexOrNew(self,currId):
@@ -303,10 +303,10 @@ class Graph:
 		return e;
 
 
-	
+
 
 	def representsInt(s):
-	    try: 
+	    try:
 	        int(s)
 	        return True
 	    except ValueError:
@@ -331,12 +331,12 @@ class Graph:
 		v = Vertex(self,vid);
 
 		self.vertices[v.getId()] = v;
-		
+
 		return v;
 
 	def deleteVertex(self,vertex):
 		vertex = vertexId(vertex);
-		
+
 		print "deleteVertex#" +str(self.id).rstrip() + "#" +  str(vertex);
 		sys.stdout.flush();
 		# sys.stdin.readline();
@@ -361,14 +361,14 @@ class Graph:
 		idSubString = "";
 		if not edgeId==-1:
 			idSubString = "#"+str(edgeId);
-			
+
 		line = "addEdge#"+str(self.id).rstrip() + "#" + str(sourceVertex).rstrip() + "#" + str(targetVertex).rstrip() + "#" + str(directed).lower()+idSubString.rstrip();
 
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		eid = sys.stdin.readline();
-		
+
 		e = Edge(self,eid);
 
 		self.edges[e.getId()] = e;
@@ -415,11 +415,11 @@ class Graph:
 			except:
 				self.sendErrorToGralog("the rgb color: " + str(colorRGB).rstrip() + " is not properly formatted!");
 
-			
+
 		print(line.rstrip());
 		sys.stdout.flush();
 		# sys.stdin.readline();
-	
+
 
 	def setVertexStrokeColor(self,vertex,colorHex=-1,colorRGB=-1):
 		vertex = vertexId(vertex);
@@ -434,7 +434,7 @@ class Graph:
 		# sys.stdin.readline();
 
 	def setEdgeContour(self, edge,contour):
-		
+
 		line = line = "setEdgeContour#"+str(self.id).rstrip() + "#";
 		line = line + edgeSplitter(edge);
 		line = line +"#" + str(contour).rstrip();
@@ -443,7 +443,7 @@ class Graph:
 
 
 	def setEdgeColor(self,edge,colorHex=-1,colorRGB=-1):
-		
+
 		line = "setEdgeColor#"+str(self.id).rstrip() + "#";
 		line = line + edgeSplitter(edge);
 		line = line + "#";
@@ -458,19 +458,19 @@ class Graph:
 
 	def setVertexRadius(self,vertex,newRadius):
 		vertex = vertexId(vertex);
-		
+
 		line = "setVertexRadius#"+str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#" + str(newRadius).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
 	def setVertexShape(self,vertex,shape):
 		vertex = vertexId(vertex);
-			
+
 		line = "setVertexShape#"+str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#" + str(shape).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
@@ -487,11 +487,11 @@ class Graph:
 		print line.rstrip();
 		sys.stdout.flush();
 
-	
+
 
 	def setEdgeLabel(self,edge, label):
-		
-		
+
+
 		line = "setEdgeLabel#"+str(self.id).rstrip() + "#";
 		line = line + edgeSplitter(edge);
 
@@ -518,12 +518,12 @@ class Graph:
 
 
 	def getGraph(self,format):
-		
-			
+
+
 		line = "getGraph#"+str(self.id).rstrip() + "#" + format.rstrip();
 		print line.rstrip();
 		i =0;
-	
+
 		sys.stdout.flush();
 
 		line = sys.stdin.readline();
@@ -534,7 +534,7 @@ class Graph:
 			# line = line[2:];
 			multiline = True;
 			first = True;
-			
+
 
 		while multiline and (line[0] != '$' or first):
 			graph += line;
@@ -546,15 +546,15 @@ class Graph:
 
 		return graph;
 
-	
-	
+
+
 
 	def getAllVertices(self):
 		#return: list of Vertex objects with id
-		
+
 		line = "getAllVertices#"+str(self.id).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		vertexIdStringList = (sys.stdin.readline()).split("#");
 		vertexList = [];
@@ -568,25 +568,25 @@ class Graph:
 	def getNeighbours(self,vertex):
 		#return: list of Vertex objects with id
 		vertex = vertexId(vertex);
-			
+
 		line = "getNeighbours#"+str(self.id).rstrip() + "#" + str(vertex).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		neighbourIdStringList = (sys.stdin.readline()).split("#");
 		neighboursList = [];
 		for neighbourIdString in neighbourIdStringList:
-			v = getVertexOrNew(neighbourIdString);
+			v = self.getVertexOrNew(neighbourIdString);
 			neighboursList.append(v);
 		return neighboursList;
 
 	def getOutgoingNeighbours(self,vertex):
 		#return: list of Vertex objects with id
 		vertex = vertexId(vertex);
-			
+
 		line = "getOutgoingNeighbours#"+str(self.id).rstrip() + "#" + str(vertex).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		outgoingNeighbourIdStringList = (sys.stdin.readline()).split("#");
 		outgoingNeighboursList = [];
@@ -599,10 +599,10 @@ class Graph:
 	def getIncomingNeighbours(self,vertex):
 		#return: list of Vertex objects with id
 		vertex = vertexId(vertex);
-			
+
 		line = "getIncomingNeighbours#"+str(self.id).rstrip() + "#" + str(vertex).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		incomingNeighbourIdStringList = (sys.stdin.readline()).split("#");
 		incomingNeighboursList = [];
@@ -611,13 +611,13 @@ class Graph:
 			incomingNeighboursList.append(v);
 		return incomingNeighboursList;
 
-	
+
 	def getAllEdges(self):
 		#return: list of fully sourced Edge objects with fully sourced endpoint Vertices
-			
+
 		line = "getAllEdges#"+str(self.id).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		endpointList = sys.stdin.readline();
 
@@ -628,7 +628,7 @@ class Graph:
 			term = endpointList[i].rstrip();
 			term = term[1:-1];
 			e = self.termToEdge(term);
-			
+
 			edges.append(e);
 
 			# endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
@@ -638,10 +638,10 @@ class Graph:
 		#return: list of Edge objects with id's only
 		vertex = vertexId(vertex);
 
-			
+
 		line = "getIncidentEdges#"+str(self.id).rstrip() + "#" + str(vertex).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		edgeIdList = (sys.stdin.readline()).split("#");
 		# print("endpointList: " , endpointList);
@@ -660,7 +660,7 @@ class Graph:
 		line = line + edgeSplitter(edge);
 
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		edgeIdList = (sys.stdin.readline()).split("#");
 		# print("endpointList: " , endpointList);
@@ -675,10 +675,10 @@ class Graph:
 	def getOutgoingEdges(self,vertex):
 		#return: list of Edge objects with id's only
 		vertex = vertexId(vertex);
-			
+
 		line = "getOutgoingEdges#"+str(self.id).rstrip() + "#" + str(vertex).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		edgeIdList = (sys.stdin.readline()).split("#");
 		# print("endpointList: " , endpointList);
@@ -696,7 +696,7 @@ class Graph:
 		vertex = vertexId(vertex);
 		line = "getIncomingEdges#"+str(self.id).rstrip() + "#" + str(vertex).rstrip();
 		print line.rstrip();
-	
+
 		sys.stdout.flush();
 		edgeIdList = (sys.stdin.readline()).split("#");
 		# print("endpointList: " , endpointList);
@@ -708,7 +708,7 @@ class Graph:
 			edges.append(e);
 		return edges;
 
-	
+
 
 	def getEdgeWeight(self,edge):
 		return self.getEdgeProperty(edge,"weight");
@@ -890,7 +890,7 @@ class Graph:
 				for each in x:
 					term = "#("+"arrayyyy"+str(each[0])+"="+str(each[1])+")";
 					argString = argString + term;
-			else:	
+			else:
 				term = "#("+str(x[0])+"="+str(x[1])+")";
 				argString = argString + term.rstrip();
 
@@ -932,7 +932,3 @@ class Graph:
 
 	def __str__(self):
 		return "todo: tgf"
-
-
-
-
