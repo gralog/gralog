@@ -192,13 +192,13 @@ v.delete();
 Each edge is represented as an object of hte Edge class. It is distinguished by its unique ID; however, in graphs without multi-edges, it can also be distinguished by its source and target vertices.
 
 \begin{lstlisting}
-e = g.createEdge(v1,v2,directed=False);
+e = g.createEdge(v1, v2, directed=False);
 \end{lstlisting}
 
 All methods pertaining to the individual edges, such as their color, adjacent edges, or label, are most easily manipulated using methods of this class. For example:
 
 \begin{lstlisting}
-e = g.createEdge(v1,v2,directed=False,id=451);
+e = g.createEdge(v1, v2, directed=False, id=451);
 e.setLabel("f00");
 adjacentEdges = e.getAdjacentEdges();
 target = e.getTarget();
@@ -225,32 +225,193 @@ Instance Variable & Meaning and Usage \\ \hline
 
 
 \textbf{{\large Relevant Methods}}
-\textit{Note: optional parameters are in parentheses}
+
+\textit{Note: optional parameters are in square brackets}
 
 
-\begin{longtable}{m{\smallCol}m{\argsLen}m{\smallCol}m{\q}}
-Method & Arguments & Returns & Description \\ \hline
-\textbf{Graph}& (str: format) & Graph Object & Returns a graph object. The parameter options are either nothing, ``directed'',``undirected'',``buechi'',``kripke'',``automaton'' \\\hline
-\\\multicolumn{4}{c}{\textbf{Graph Manipulating Methods}}\\\\\hline
-\textbf{addVertex}  & \makecell{(int: x)\\(int: y)\\(int: vertexId)} & \textbf{Vertex} object & creates a new Vertex object. If no coordinates passed, random coordinates are chosen. If no id is passed, a suitable id is chosen. If an id is passed that has already been assigned, a suitable new one is chosen\\\hline
-\textbf{deleteVertex} & Vertex Object or id of vertex & void & Deletes the vertex or the vertex with the given id from the graph\\ \hline
-\textbf{addEdge} & \makecell{Vertex: sourceVertex\\Vertex: targetVertex\\(Boolean: directed) \\ (int: edgeId)} & \textbf{Edge} object & creates a new Vertex object from the source vertex to the target vertex. If directed is not specifeed, un-directed is assumed. If un-directed, the order of target and source vertex is irrelevant. If no id is passed, a suitable id is chosen. If an id is passed that has already been assigned, a suitable new one is chosen \\ \hline
-\textbf{addDirectedEdge} & \makecell{Vertex: sourceVertex\\Vertex: targetVertex \\ (int: edgeId)} & \textbf{Edge} object & calls addEdge with directed=True \\ \hline
-\textbf{deleteEdge} & Edge object or id of edge & void &  Deletes the edge or the edge with the given id from the graph\\ \hline
-\textbf{deleteAllEdges} & (Vertex,Vertex): source, target & void & removes all directed edges from start to target, as well as all un-directed edges from between the two vertices \\ \hline
-\\\multicolumn{4}{c}{\textbf{Setter Functions}}\\\\\hline
-\textbf{setVertexFillColor} & \makecell{Vertex: vertex\\(str: colorHex)\\(int,int,int): colorRGB)} & void & sets the \textit{fill} color of the given vertex to the Hex code color specified or the RGB color specified. colorHex can also be a string of a common collor, such as "red" or "green."  \\ \hline
-\textbf{setVertexStrokeColor} & \makecell{Vertex: vertex\\(str: colorHex)\\(int,int,int): colorRGB)} & void & sets the \textit{stroke} color of the given vertex to the Hex code color specified or the RGB color specified. colorHex can also be a string of a common collor, such as "red" or "green."  \\ \hline
-\textbf{setEdgeContour} & \makecell{Edge: edge\\str: contour} & void & sets the \textit{contour} color of passed edge. Possible values are ``dashed",``dotted",``plain" \\ \hline
-\textbf{setEdgeColor} & \makecell{Edge: edge\\(str: colorHex)\\((int,int,int): colorRGB)} & void & sets the color of the given edge to the Hex code color specified or the RGB color specified. colorHex can also be a string of a common collor, such as "red" or "green."  \\ \hline
-\textbf{setVertexRadius} & \makecell{Vertex: vertex\\float: radius} & void & sets the radius of the given vertex to the radius specified  \\ \hline
-\textbf{setVertexHeight} & \makecell{Vertex: vertex\\float: height} & void & sets the height of the given vertex to the height specified  \\ \hline
-\textbf{setVertexWidth} & \makecell{Vertex: vertex\\float: width} & void & sets the width of the given vertex to the height specified  \\ \hline
-\textbf{setVertexDimension} & \makecell{Vertex: vertex\\float: width\\str: dimension} & void & sets the dimension of the given vertex to the dimension specified. This functionality is primarily useful for non-standard shapes, if you were to extend gralog to include such a thing. \\ \hline
-\textbf{setVertexShape} & \makecell{Vertex: vertex\\str: shape} & void & sets the given vertex to be the specified shape. Currently supported are ``ellipse,",``diamond", and ``rectangle"  \\ \hline
-\textbf{setEdgeWeight} & \makecell{Edge: edge\\float: weight} & void & sets edge weight (ie. thickness) to be as wide as you specified  \\ \hline
-\end{longtable}
+\begin{description}
+\item[Graph({[str: format]})] \emph{returns} a Graph Object.
 
+
+                                               The graph is the graph
+currently opened in the Gralog tab from which your script has been
+called. (TODO: finish description) Possible parameter options are:
+\begin{itemize}
+\item nothing, e.g.\@ \texttt{g = Graph()},
+\item \texttt{"directed"},
+\item \texttt{"{}undirected"},
+\item \texttt{"buechi"},
+\item \texttt{"kripke"},
+\item \texttt{"{}automaton"}.
+\end{itemize}
+\end{description}
+
+\subsection{Graph Manipulating Methods}
+
+\begin{description}
+\item[addVertex({[int: x\_coord, int: y\_coord]}{[int: vertexId]})]\emph{returns}
+  \texttt{Vertex} object
+
+  Creates a new Vertex object. If no coordinates (TODO: what means int
+  as a coordinate?) \texttt{x\_coord,y\_coord} passed,
+  random coordinates are chosen (TODO:) and the vertex is selected in
+  the Gralog UI. If no \texttt{vertexId} is passed, a suitable id is
+  chosen by Gralog automatically. If an id is passed that has already
+  been assigned, a suitable new one is silently chosen.
+
+  \begin{example}
+\begin{verbatim}
+g = Graph(undirected)
+v = addVertex(7)
+if (! v.id == 7)
+    print("Id 7 was already assigned to another vertex. The id of the
+new vertex is " + v.id)
+w = addVertex(2.3,4.0)
+print("Created a new vertex with coordinates x = 2.3 and y = 4.0 and id = " + w.id)
+u = addVertex(2.3,4.0,7)
+print("Created a new vertex with coordinates x = 2.3 and y = 4.0 " +
+            "(on top of the vertex with id = " + w.id + ") and id = " + u.id)
+if (u.id == 7)
+     print("Something went wrong!")
+\end{verbatim}
+  \end{example}
+
+
+  
+\item[deleteVertex(Vertex: v)] \emph{returns} \texttt{void}
+
+Deletes the vertex from the graph. If the vertex does not exist, does
+nothing. (TODO: Felix, is this correct?)
+
+\item[deleteVertex(int: vertexId)] \emph{returns} \texttt{void}
+
+Deletes the vertex with the given id from the graph. If the vertex does not exist, does
+nothing. (TODO: Felix, is this correct?)
+
+\item[addEdge(Vertex: source, Vertex: target{[, Boolean: isDirected][,
+    int: egdeId]})] \emph{returns} \texttt{Edge} object
+
+
+Creates a new \texttt{Vertex} object from the source vertex to the
+target vertex. If \texttt{isDirected} is not specified, un-directed is
+assumed (TODO: it should depend on the graph). If un-directed, the
+order of target and source vertex is irrelevant. If no \texttt{edgeId}
+is passed, a suitable id is chosen. If an id is passed that has
+already been assigned, a suitable new one is silently chosen.
+
+\item[addDirectedEdge(Vertex: source, Vertex: target{[,int: edgeId]})]
+  \emph{returns} \texttt{Edge}
+
+(TODO: it should depend on the graph type, \texttt{addDirectedEdge} is
+not needed)
+
+
+\item[deleteEdge(Edge: e)] \emph{returns} \texttt{void}
+
+Deletes the edge from the graph. If the edge does not exist, nothing
+happens.
+
+\item[deleteEdge(int: edgeId)] \emph{returns} \texttt{void}
+
+Deletes the edge with id \texttt{edgeId} from the graph. If the edge does not exist, nothing
+happens.
+
+\item[deleteEdge(Vertex: source, Vertex: target)] \emph{returns}
+  \texttt{void}
+
+  Deletes the edge with the greatest id from the list of all edges
+  between vertex \texttt{source} and vertex \texttt{target} respecting
+  the direction if the graph has directed edges. If no such edge exists, nothing happens.
+
+  This is convenient if one is sure that there is at most one edge
+  between the vertices or it does not matter which edge is deleted.
+
+  (TODO: implement this)
+
+\item[deleteEdge(int: sourceVertexId, int: targetVertexId)] \emph{returns}
+  \texttt{void}
+
+  Deletes the edge with the greatest id from the list of all edges
+  between vertex with id \texttt{sourceVertexId} and vertex with id \texttt{targetVertexId} respecting
+  the direction if the graph has directed edges. If no such edge exists, nothing happens.
+
+  This is convenient if one is sure that there is at most one edge
+  between the vertices or it does not matter which edge is deleted.
+
+  (TODO: implement this)
+
+  (TODO: Do we have \texttt{existsEdge(Vertex: source, Vertex:
+    target)} and \texttt{existsEdge(id: sourceVertexId, int:
+    targetVertexId)}, \texttt{int: numberEdges(Vertex/int: source,
+    Vertex/int: target)}, \texttt{existsVertexId(int id)}, \texttt{existsEdgeId(int id)}?)
+\item[deleteAllEdges(Vertex: source, Vertex: target)] \emph{returns}
+  \texttt{void}
+
+  Deletes all existing edges with source \texttt{source} and target
+  \texttt{target}.
+  
+\end{description}
+
+\subsection{Setter Functions}
+\begin{description}
+\item[setVertexFillColor(Vertex: v, (str: color $|$ int: r, int: g, int:
+  b))] \emph{returns} \texttt{void}
+
+Sets the \textit{fill} colour of the given vertex to the Hex code colour
+specified as a string or the RGB colour specified. colorHex can also be
+a string of a common colour, such as \texttt{"red"} or
+\texttt{"green."}  (TODO: make full list of available colours, insert
+a reference here.)
+
+\item[setVertexStrokeColor(Vertex: v, (str: color $|$ int: r, int: g, int:
+  b))] \emph{returns} \texttt{void}
+
+  Sets the \textit{stroke} colour of the given vertex to the Hex code colour
+specified as a string or the RGB colour specified. colorHex can also be
+a string of a common colour, such as \texttt{"red"} or
+\texttt{"green."}  (TODO: make full list of available colours, insert
+a reference here.)
+
+\item[setEdgeContour(Edge: edge, str: contour)] \emph{returns}
+\texttt{void}
+
+Sets the contour of passed edge. Possible values are
+\texttt{"dashed"}, \texttt{"dotted"}, \texttt{"plain"}.
+
+\item[setEdgeColor(Edge: v, (str: color $|$ int: r, int: g, int:
+  b))] \emph{returns} \texttt{void}
+
+  Sets the colour of the given edge to the Hex code colour
+specified as a string or the RGB colour specified. colorHex can also be
+a string of a common colour, such as \texttt{"red"} or
+\texttt{"green."}  (TODO: make full list of available colours, insert
+a reference here.)
+
+\item[setVertexRadius(Vertex: v, float: radius)] \emph{returns}
+  \texttt{void}
+
+Sets the radius of the given vertex to \texttt{radius}.
+
+\item[setVertexHeight(Vertex: v, float: height)] \emph{returns}
+  \texttt{void}
+
+Sets the height of the given vertex to \texttt{height}.
+
+\item[setVertexWidth(Vertex: v, float: width)] \emph{returns}
+  \texttt{void}
+
+Sets the width of the given vertex to \texttt{width}. (TODO: explain
+radius and width)
+
+\item[setVertexShape(Vertex: v, str: shape)] \emph{returns} \texttt{void}
+
+Sets the given vertex to be the specified shape. Currently supported
+are \texttt{"{}ellipse"}, \texttt{"diamond"}, and \texttt{"rectangle"}.
+  
+\item[setVertexDimension(Vertex: v, float: width, str: dimension)]
+  \emph{returns} \texttt{void}
+
+\end{description}
 
 
 

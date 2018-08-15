@@ -353,9 +353,9 @@ public class MainWindow extends Application {
     }
 
     public String getFileName(){
+//        String fileName = Preferences.getFile("MainWindow_pipingFile", "/home/michelle/gralog/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/test.py").getPath();
 
-        String fileName = Preferences.getFile("MainWindow_pipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
-
+        String fileName = Preferences.getFile("MainWindow_pipingFile", "/home/michelle/gralog/gralog/gralog-layout/DFS.py").getPath();
         return fileName;
     }
 
