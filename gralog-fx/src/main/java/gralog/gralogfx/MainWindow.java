@@ -5,6 +5,7 @@ package gralog.gralogfx;
 
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
+import javafx.event.EventHandler;
 
 import gralog.plugins.*;
 import gralog.structure.*;
@@ -19,6 +20,7 @@ import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
 import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
+import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 
 import java.io.FileInputStream;
 import java.io.File;
@@ -285,19 +287,31 @@ public class MainWindow extends Application {
     }
 
     public void onLoadPluginWithPromptForFile() {
-        Platform.runLater(
-            () -> {
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setTitle("from file!");
-                alert.setHeaderText(null);
-                alert.setContentText("dujuluberduski");
-                alert.showAndWait();
+        
+        ChooseFileForPipingWindow chooseFileForPipingWindow = new ChooseFileForPipingWindow();
+        chooseFileForPipingWindow.setOnHiding(new EventHandler<WindowEvent>() {
+
+             @Override
+             public void handle(WindowEvent event) {
+                 Platform.runLater(new Runnable() {
+
+                     @Override
+                    public void run() {
+                        String fileName = chooseFileForPipingWindow.fileName;
+                        if (fileName != null){
+                            MainWindow.this.onLoadPlugin(fileName);
+                        }else{
+                            System.out.println("twas the nullteenth of april");
+                        }
+                    }
+                });
             }
-        );
+        });
+
     }
 
     public void onLoadPluginFromSpecifiedFilepath(){
-        onLoadPlugin(getSpecifiedFileName());
+        this.onLoadPlugin(getSpecifiedFileName());
     }
 
     public void onLoadPlugin(String fileName) {
