@@ -123,7 +123,6 @@ public class MainMenu {
         menuFileNew = new Menu("New");
         menuFileGenerators = new Menu("Generators");
 
-
         menuFileSave = createMenuItem("Save graph", handlers.onSave);
         menuFileSave.setDisable(true);
 

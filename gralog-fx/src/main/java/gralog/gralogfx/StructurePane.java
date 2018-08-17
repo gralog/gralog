@@ -218,6 +218,24 @@ public class StructurePane extends StackPane implements StructureListener {
 
     }
 
+    public void copySelectionToClipboard(){
+        CLIPBOARD = cloner.deepClone(highlights.getSelection());
+    }
+
+    public void pasteFromClipboard(){
+        structure.insertForeignSelection(CLIPBOARD, gridSize);
+        this.requestRedraw();
+    }
+
+    public void undoStructure(){
+        Undo.Revert(structure);
+        this.requestRedraw();
+    }
+
+    public void redoStructure(){
+
+    }
+
     public Structure getStructure() {
         return structure;
     }
@@ -309,7 +327,9 @@ public class StructurePane extends StackPane implements StructureListener {
         this.requestRedraw();
     }
     private void setMouseEvents() {
-        canvas.setOnMouseClicked(e -> { });
+        canvas.setOnMouseClicked(e -> {
+            //System.out.println(screenToModel(new Point2D(e.getX(), e.getY())));
+        });
         canvas.setOnMousePressed(this::onMousePressed);
         canvas.setOnMouseReleased(this::onMouseReleased);
         canvas.setOnMouseDragged(this::onMouseDragged);
@@ -339,7 +359,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     break;
                 case C:
                     if(e.isControlDown() || e.isMetaDown()){
-                        CLIPBOARD = cloner.deepClone(highlights.getSelection());
+                        copySelectionToClipboard();
                     }else{
                         structure.collapseEdges(highlights.getSelection());
                         this.requestRedraw();
@@ -393,8 +413,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     break;
                 case Z:
                     if(e.isControlDown() || e.isMetaDown()){
-                        Undo.Revert(structure);
-                        this.requestRedraw();
+                        undoStructure();
                     }
                     break;
             }

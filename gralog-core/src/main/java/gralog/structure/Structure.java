@@ -1014,10 +1014,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         l.b = 0;
                         l.c = px;
                         BezierUtilities.lineIntersectionCubicBezier(l,
-                                e.getSource().coordinates,
+                                e.getStartingPointSource(),
                                 e.controlPoints.get(0).position,
                                 e.controlPoints.get(1).position,
-                                e.getTarget().coordinates);
+                                e.getStartingPointTarget());
                         continue;
                     }
                 }else if(e.getEdgeType() == Edge.EdgeType.SHARP){

@@ -107,6 +107,10 @@ public class MainWindow extends Application {
         handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
+        handlers.onCopy = this::onCopy;
+        handlers.onPaste = this::onPaste;
+        handlers.onUndo = this::onUndo;
+
         // pipeline = new Piping();
         pipelines = new ArrayList<>();
         //controls
@@ -646,6 +650,27 @@ public class MainWindow extends Application {
         }
     }
 
+    private void onCopy(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.copySelectionToClipboard();
+        }
+    }
+
+    private void onPaste(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.pasteFromClipboard();
+        }
+    }
+
+    private void onUndo(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.undoStructure();
+        }
+    }
+
     public void algorithmCompleted(StructurePane structurePane,
         AlgorithmThread algoThread) {
         try {
@@ -745,13 +770,6 @@ public class MainWindow extends Application {
             ex.printStackTrace();
         }
     }
-
-    
-
-    
-
-    
-    
 
     @Override
     public void start(Stage primaryStage) {
