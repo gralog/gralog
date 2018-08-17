@@ -3,7 +3,7 @@
 import sys
 from random import randint
 
-
+# debugging = False;
 
 class Vertex:
 	def __init__(self,graph,vid):
@@ -257,7 +257,7 @@ class Graph:
 
 			self.lastIndex = -1;
 			self.id = sys.stdin.readline();
-			
+			self.getGraph("gtgf");
 	
 		else:
 			print(format);
@@ -395,6 +395,7 @@ class Graph:
 
 		sys.stdout.flush();
 		# sys.stdin.readline();
+	
 
 	def deleteAllEdges(self,(sourceVertexId,targetVertexId)):
 

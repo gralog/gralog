@@ -5,6 +5,7 @@ package gralog.gralogfx;
 import gralog.algorithm.AlgorithmManager;
 import gralog.generator.GeneratorManager;
 import gralog.gralogfx.windows.PreferenceWindow;
+import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 import gralog.preferences.MenuPrefVariable;
 import gralog.structure.Structure;
 import gralog.structure.StructureManager;
@@ -49,7 +50,7 @@ public class MainMenu {
      */
     public static class Handlers {
 
-        MenuAction onOpen, onSaveAs, onSave, onDirectInput, onLoadPlugin, onExit;
+        MenuAction onOpen, onSaveAs, onSave, onDirectInput, onLoadPluginWithPromptForFile,onLoadPluginFromSpecifiedFilepath, onLoadLastPlugin, onExit;
         MenuAction onUndo, onRedo, onCut, onCopy, onPaste, onDelete;
         MenuAction onAlignHorizontally, onAlignVertically;
         MenuAction onAboutGralog, onAboutGraph;
@@ -63,6 +64,10 @@ public class MainMenu {
     // is no structure available.
     private MenuItem menuFileSave;
     private MenuItem menuFileSaveAs;
+    private MenuItem loadPluginFromSpecifiedFilepath;
+    private MenuItem loadLastPlugin;
+    private MenuItem loadPluginWithPromptForFile;
+    
 
     // We need to keep track of the following submenus because they are
     // dynamically generated.
@@ -137,7 +142,9 @@ public class MainMenu {
                 menuFileSave,
                 menuFileSaveAs,
             new SeparatorMenuItem(),
-            createMenuItem("Load plugin...", handlers.onLoadPlugin),
+            createMenuItem("Load spec'd plugin", handlers.onLoadPluginFromSpecifiedFilepath),
+            createMenuItem("Load plugin...", handlers.onLoadPluginWithPromptForFile),
+            createMenuItem("Load last plugin", handlers.onLoadLastPlugin),
             new SeparatorMenuItem(),
             createMenuItem("Preferences", PreferenceWindow::new),
             new SeparatorMenuItem(),

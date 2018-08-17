@@ -5,6 +5,7 @@ package gralog.gralogfx;
 
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
+import javafx.event.EventHandler;
 
 import gralog.plugins.*;
 import gralog.structure.*;
@@ -19,6 +20,7 @@ import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
 import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
+import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 
 import java.io.FileInputStream;
 import java.io.File;
@@ -92,7 +94,9 @@ public class MainWindow extends Application {
         handlers.onSave = this::onSave;
         handlers.onSaveAs = this::onSaveAs;
         handlers.onDirectInput = this::onDirectInput;
-        handlers.onLoadPlugin = this::onLoadPlugin;
+        handlers.onLoadPluginFromSpecifiedFilepath = this::onLoadPluginFromSpecifiedFilepath;
+        handlers.onLoadPluginWithPromptForFile = this::onLoadPluginWithPromptForFile;
+        handlers.onLoadLastPlugin = this::onLoadLastPlugin;
         handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
@@ -278,8 +282,40 @@ public class MainWindow extends Application {
     }
 
     public void handlePlannedConsoleInput(){}
+    public void onLoadLastPlugin() {
+        onLoadPlugin(getLastFileName());
+    }
 
-    public void onLoadPlugin() {
+    public void onLoadPluginWithPromptForFile() {
+        
+        ChooseFileForPipingWindow chooseFileForPipingWindow = new ChooseFileForPipingWindow();
+        chooseFileForPipingWindow.setOnHiding(new EventHandler<WindowEvent>() {
+
+             @Override
+             public void handle(WindowEvent event) {
+                 Platform.runLater(new Runnable() {
+
+                     @Override
+                    public void run() {
+                        String fileName = chooseFileForPipingWindow.fileName;
+                        if (fileName != null){
+                            MainWindow.this.onLoadPlugin(fileName);
+                        }else{
+                            System.out.println("twas the nullteenth of april");
+                        }
+                    }
+                });
+            }
+        });
+
+    }
+
+    public void onLoadPluginFromSpecifiedFilepath(){
+        this.onLoadPlugin(getSpecifiedFileName());
+    }
+
+    public void onLoadPlugin(String fileName) {
+        Preferences.setFile("MainWindow_lastPipingFile",new File(fileName));
         // FileChooser fileChooser = new FileChooser();
         // fileChooser.setInitialDirectory(new File(getLastDirectory()));
         // fileChooser.setTitle("Load Plugins");
@@ -322,7 +358,7 @@ public class MainWindow extends Application {
                 return;
             }
 
-            String fileName = this.getFileName();
+
             System.out.println("with filename: " + fileName);
 
             Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
@@ -352,10 +388,18 @@ public class MainWindow extends Application {
         }
     }
 
-    public String getFileName(){
-//        String fileName = Preferences.getFile("MainWindow_pipingFile", "/home/michelle/gralog/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/test.py").getPath();
+
+    public String getSpecifiedFileName(){
+
 
         String fileName = Preferences.getFile("MainWindow_pipingFile", "/home/michelle/gralog/gralog/gralog-layout/DFS.py").getPath();
+        return fileName;
+    }
+
+    public String getLastFileName(){
+
+        String fileName = Preferences.getFile("MainWindow_lastPipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
+
         return fileName;
     }
 
