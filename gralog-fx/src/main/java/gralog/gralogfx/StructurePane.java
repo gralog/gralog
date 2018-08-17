@@ -224,8 +224,19 @@ public class StructurePane extends StackPane implements StructureListener {
         this.requestRedraw();
     }
 
+
     public void copySelectionToClipboard(){
         CLIPBOARD = cloner.deepClone(highlights.getSelection());
+        for(Object o : CLIPBOARD){
+            if(o instanceof Vertex){
+                Vertex v = (Vertex)o;
+                for(Edge edge : v.getIncidentEdges()){
+                    if(!CLIPBOARD.contains(edge)){
+                        v.disconnectEdge(edge);
+                    }
+                }
+            }
+        }
     }
 
     public void pasteFromClipboard(){
@@ -268,14 +279,23 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public Piping makeANewPiping(String fileName,BiFunction<String,Piping,StructurePane> initGraph,BiConsumer<String,MessageToConsoleFlag> sendOutsideMessageToConsole){
+    public Piping makeANewPiping(String fileName,BiFunction<String,Piping,StructurePane> initGraph,
+                                 BiConsumer<String,MessageToConsoleFlag> sendOutsideMessageToConsole){
         CountDownLatch waitForPause = new CountDownLatch(1);
         CountDownLatch waitForVertexSelection = new CountDownLatch(1);
 
-        // List<BiFunction> functions = new ArrayList<BiFunction>(this::initGraph,this::handlePlannedPause,this::handlePlannedVertexSelectionthis::sendOutsideMessageToConsole);
+        // List<BiFunction> functions = new ArrayList<BiFunction>(
+        // this::initGraph,this::handlePlannedPause,
+        // this::handlePlannedVertexSelection,
+        // this::sendOutsideMessageToConsole);
 
         
-        Piping pipeline = new Piping(initGraph,this,waitForPause,this::handlePlannedPause,waitForVertexSelection,this::handlePlannedVertexSelection,sendOutsideMessageToConsole);
+        Piping pipeline = new Piping(initGraph,
+                this,waitForPause,
+                this::handlePlannedPause,
+                waitForVertexSelection,
+                this::handlePlannedVertexSelection,
+                sendOutsideMessageToConsole);
 
         this.setPiping(pipeline);
         // pipeline.subscribe(this.pluginControlPanel);
@@ -402,7 +422,8 @@ public class StructurePane extends StackPane implements StructureListener {
                     }else{
                         System.out.println("piping is null or unit!" + myPiping);
                     }
-                    // System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
+                    // System.out.println("space pressed and my scrutrue id is; "
+                    // + this.tabs.getCurrentStructurePane().getStructure().getId());
                     // pipeline.execWithAck();
                     break;
                 case Z:
