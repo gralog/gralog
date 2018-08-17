@@ -107,6 +107,7 @@ public class MainWindow extends Application {
         handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
+        handlers.onCut = this::onCut;
         handlers.onCopy = this::onCopy;
         handlers.onPaste = this::onPaste;
         handlers.onUndo = this::onUndo;
@@ -649,7 +650,12 @@ public class MainWindow extends Application {
             exbox.showAndWait(ex);
         }
     }
-
+    private void onCut(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.cutSelectionToClipboard();
+        }
+    }
     private void onCopy(){
         StructurePane s = tabs.getCurrentStructurePane();
         if(s != null){

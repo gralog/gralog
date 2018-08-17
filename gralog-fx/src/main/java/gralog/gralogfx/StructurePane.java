@@ -218,6 +218,12 @@ public class StructurePane extends StackPane implements StructureListener {
 
     }
 
+    public void cutSelectionToClipboard(){
+        copySelectionToClipboard();
+        deleteSelection();
+        this.requestRedraw();
+    }
+
     public void copySelectionToClipboard(){
         CLIPBOARD = cloner.deepClone(highlights.getSelection());
     }
@@ -337,25 +343,13 @@ public class StructurePane extends StackPane implements StructureListener {
 
             switch (e.getCode()) {
                 case DELETE:
-                    Set<Object> selection = new HashSet<>(highlights.getSelection());
-                    for (Object o : selection) {
-                        if (o instanceof Vertex) {
-                            structure.removeVertex((Vertex) o);
-                            clearSelection();
-                        }
-                        else if (o instanceof Edge && !selectedCurveControlPoint){
-                            structure.removeEdge((Edge) o);
-                            clearSelection();
-                        }
-                        else if (o instanceof ControlPoint){
-                            ControlPoint c = ((ControlPoint)o);
-                            c.parent.removeControlPoint(c);
-                            highlights.remove(c);
-                            selectedCurveControlPoint = false;
-                            break; //if not breaking, edge will be able to be deleted
-                        }
-                    }
+                    deleteSelection();
                     this.requestRedraw();
+                    break;
+                case X:
+                    if(e.isControlDown() || e.isMetaDown()){
+                        cutSelectionToClipboard();
+                    }
                     break;
                 case C:
                     if(e.isControlDown() || e.isMetaDown()){
