@@ -148,8 +148,10 @@ public class MainMenu {
     private Menu createEditMenu() {
         Menu menuEdit = new Menu("Edit");
         menuEdit.getItems().addAll(
-                createMenuItem("Undo", handlers.onUndo),
-                createMenuItem("Redo", handlers.onRedo),
+                createMenuItem("Undo", handlers.onUndo,
+                        new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN)),
+                createMenuItem("Redo", handlers.onRedo,
+                        new KeyCodeCombination(KeyCode.Y, KeyCombination.META_DOWN)),
                 new SeparatorMenuItem(),
                 createMenuItem("Cut", handlers.onCut),
                 createMenuItem("Copy", handlers.onCopy),

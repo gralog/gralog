@@ -250,7 +250,8 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     public void redoStructure(){
-
+        Undo.Redo(structure);
+        this.requestRedraw();
     }
 
     public Structure getStructure() {
@@ -425,11 +426,6 @@ public class StructurePane extends StackPane implements StructureListener {
                     // System.out.println("space pressed and my scrutrue id is; "
                     // + this.tabs.getCurrentStructurePane().getStructure().getId());
                     // pipeline.execWithAck();
-                    break;
-                case Z:
-                    if(e.isControlDown() || e.isMetaDown()){
-                        undoStructure();
-                    }
                     break;
             }
         });

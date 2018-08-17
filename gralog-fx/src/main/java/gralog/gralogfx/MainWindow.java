@@ -111,6 +111,7 @@ public class MainWindow extends Application {
         handlers.onCopy = this::onCopy;
         handlers.onPaste = this::onPaste;
         handlers.onUndo = this::onUndo;
+        handlers.onRedo = this::onRedo;
 
         // pipeline = new Piping();
         pipelines = new ArrayList<>();
@@ -174,7 +175,8 @@ public class MainWindow extends Application {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("No External Process");
                             alert.setHeaderText(null);
-                            alert.setContentText("You have not yet started a piping thread in this window, as such you cannot resume piping");
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such you cannot resume piping");
                             alert.showAndWait();
                         }
                     );
@@ -196,7 +198,8 @@ public class MainWindow extends Application {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("No External Process");
                             alert.setHeaderText(null);
-                            alert.setContentText("You have not yet started a piping thread in this window, as such there is nothing to skip");
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such there is nothing to skip");
                             alert.showAndWait();
                         }
                     );
@@ -213,7 +216,8 @@ public class MainWindow extends Application {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("No External Process");
                             alert.setHeaderText(null);
-                            alert.setContentText("You have not yet started a piping thread in this window, as such there is nothing to pause");
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such there is nothing to pause");
                             alert.showAndWait();
                         }
                     );
@@ -229,7 +233,8 @@ public class MainWindow extends Application {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("No External Process");
                             alert.setHeaderText(null);
-                            alert.setContentText("You have not yet started a piping thread in this window, as such there is nothing to pause");
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such there is nothing to pause");
                             alert.showAndWait();
                         }
                     );
@@ -351,7 +356,8 @@ public class MainWindow extends Application {
             String fileName = this.getFileName();
             System.out.println("with filename: " + fileName);
 
-            Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
+            Piping newPiping = this.tabs.getCurrentStructurePane().
+                    makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
             this.pipelines.add(newPiping);
             
             
@@ -380,7 +386,9 @@ public class MainWindow extends Application {
 
     public String getFileName(){
 
-        String fileName = Preferences.getFile("MainWindow_pipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
+        String fileName = Preferences.getFile("MainWindow_pipingFile",
+                "/Users/f002nb9/Documents/f002nb9/kroozing/" +
+                        "gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
 
         return fileName;
     }
@@ -674,6 +682,13 @@ public class MainWindow extends Application {
         StructurePane s = tabs.getCurrentStructurePane();
         if(s != null){
             s.undoStructure();
+        }
+    }
+
+    private void onRedo(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.redoStructure();
         }
     }
 

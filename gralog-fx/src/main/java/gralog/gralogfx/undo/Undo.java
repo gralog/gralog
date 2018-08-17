@@ -35,6 +35,21 @@ public class Undo {
         stack.push(cloner.deepClone(structure));
     }
 
+    public static void Redo(Structure structure){
+        if(!structureStack.containsKey(structure)){
+            return;
+        }
+
+        FixedQueue<Structure> stack = structureStack.get(structure);
+        if(stack.count() != 0){
+            Structure reference = stack.revertPop();
+            System.out.println(stack.poppedInRow);
+            if(reference != null){
+                structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
+                structure.__SET_EDGES_T(reference.__GET_EDGES_T());
+            }
+        }
+    }
     /**
      * Reverts changes to a structure to the last created checkpoint
      * To create a checkpoint use Undo.Record(..)
@@ -51,9 +66,9 @@ public class Undo {
         FixedQueue<Structure> stack = structureStack.get(structure);
         if(stack.count() != 0){
             Structure reference = stack.pop();
+            System.out.println(stack.poppedInRow);
             structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
             structure.__SET_EDGES_T(reference.__GET_EDGES_T())  ;
-            System.out.println(reference.__GET_VERTICES_T().values().size());
         }
     }
 
