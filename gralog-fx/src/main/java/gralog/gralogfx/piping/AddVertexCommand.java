@@ -7,12 +7,36 @@ import java.util.concurrent.ThreadLocalRandom;
 public class AddVertexCommand extends CommandForGralogToExecute {
 	
 
-	int newVertexId;
+	int newVertexId = -1;
 	Vertex vertex;
+	double x;
+	double y;
 
 	public AddVertexCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
-		this.newVertexId = Integer.parseInt(this.externalCommandSegments[1]);
+		int lenCommand = externalCommandSegments.length;
+		if (lenCommand == 3 || lenCommand == 5){
+			try{
+				this.newVertexId =Integer.parseInt(PipingMessageHandler.extractNthPositionString(externalCommandSegments,2));
+			}catch(Exception e){
+				this.error = e;
+				this.fail();
+				return;
+			}
+		}
+		if (lenCommand > 3){
+			try{
+				this.x =Double.parseDouble(PipingMessageHandler.extractNthPositionString(externalCommandSegments,lenCommand-2));
+				this.y =Double.parseDouble(PipingMessageHandler.extractNthPositionString(externalCommandSegments,lenCommand-1));
+			}catch(Exception e){
+				this.error = e;
+				this.fail();
+				return;
+			}
+		}else{
+			this.x = ThreadLocalRandom.current().nextDouble(0, 10+1);
+            this.y = ThreadLocalRandom.current().nextDouble(0, 10+1);
+		}
 		this.structure = structure;
 	}
 
@@ -27,11 +51,15 @@ public class AddVertexCommand extends CommandForGralogToExecute {
 		// 	this.vertex = this.structure.createVertex(Integer.parseInt(this.stringId));
 		// }
 		System.out.println("current vertices: " + this.structure.getVertices());
-		this.vertex = this.structure.addVertex();
+		if (this.newVertexId == -1 || false){
+			this.vertex = this.structure.addVertex();
+		}else{
+			this.vertex = this.structure.addVertex(null,this.newVertexId);
+		}
 		System.out.println("and his id is: " + this.vertex.getId());
         this.vertex.setCoordinates(
-            ThreadLocalRandom.current().nextInt(0, 10+1),
-            ThreadLocalRandom.current().nextInt(0, 10+1)
+            this.x,
+            this.y
         );
         this.vertex.fillColor = new GralogColor(204, 236, 53);
 

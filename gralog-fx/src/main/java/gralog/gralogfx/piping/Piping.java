@@ -54,7 +54,8 @@ public class Piping extends Thread{
         Error,
         GPrint,
         Request,
-        Notification
+        Notification,
+        Warning
     }
 
     private Process external;
@@ -533,7 +534,7 @@ public class Piping extends Thread{
                     }
                     String msg;
                     if (!((msg = currentCommand.getConsoleMessage()) == null)){
-                        this.sendMessageToConsole.accept(msg,MessageToConsoleFlag.Notification);
+                        this.sendMessageToConsole.accept(msg,MessageToConsoleFlag.Warning);
                     }
 
 

@@ -319,13 +319,27 @@ class Graph:
 
 	####Graph Manipulating Functions
 
-	def addVertex(self,x=None,y=None,vertexId=-1):
+	def addVertex(self,vertexId=-1,pos=(None,None)):
 		#return: Vertex object with id
-		idString = "";
+		line = "addVertex#" + str(self.id).rstrip();
+		x=-1;
+		y=-1;
+		vertexIdSwap = False;
+		
+		if type(vertexId) == tuple and pos == (None,None):
+			x = vertexId[0];
+			y = vertexId[1];
+			vertexId = -1;
+		else:
+			x=pos[0];
+			y=pos[1];
+
 		if vertexId != -1:
-			idString = "#"+str(vertexId).rstrip();
-		print ("addVertex#" + str(self.id).rstrip() + idString)
-		sys.stdout.flush();
+			line += "#"+str(vertexId).rstrip();
+		if x != None and y != None:
+			line += "#" + str(x).rstrip() + "#" + str(y).rstrip();
+		print(line);
+		sys.stdout.flush();	
 
 
 		vid = sys.stdin.readline();
@@ -335,10 +349,10 @@ class Graph:
 		
 		return v;
 
-	def deleteVertex(self,vertex):
-		vertex = vertexId(vertex);
+	def deleteVertex(self,v):
+		v = vertexId(v);
 		
-		print "deleteVertex#" +str(self.id).rstrip() + "#" +  str(vertex);
+		print "deleteVertex#" +str(self.id).rstrip() + "#" +  str(v);
 		sys.stdout.flush();
 		# sys.stdin.readline();
 

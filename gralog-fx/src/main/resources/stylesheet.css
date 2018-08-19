@@ -36,6 +36,10 @@
     -fx-text-inner-color: green;
 }
 
+.warningPrintStyle{
+    -fx-text-inner-color: #fc9611;
+}
+
 .consoleScrollViewStyle{
 	-fx-padding: 0px 0px 5px -0px;
 }

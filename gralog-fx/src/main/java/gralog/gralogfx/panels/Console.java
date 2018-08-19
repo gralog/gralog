@@ -466,11 +466,20 @@ public class Console extends VBox implements GralogWindow{
 
     }
 
+    public void warningPrint(String text){
+
+        ConsoleField t = new ConsoleField("non-fatal error:\n"+text);
+        t.getStyleClass().add("warningPrintStyle"); 
+
+        finalizeConsoleFieldAdd(t);
+
+    }
+
     public void outsideMessage(String text){
         
 
-        ConsoleField t = new ConsoleField(text);       
-
+        ConsoleField t = new ConsoleField(text);
+        
         finalizeConsoleFieldAdd(t);
     }
 
@@ -485,6 +494,8 @@ public class Console extends VBox implements GralogWindow{
             this.outsideMessage(msg);
         }else if(flag == MessageToConsoleFlag.Notification){
             this.notificationPrint(msg);
+        }else if(flag == MessageToConsoleFlag.Warning){
+            this.warningPrint(msg);
         }else{
             System.out.println("Unknown flag?");
             this.outsideMessage(msg);

@@ -1,7 +1,12 @@
 \documentclass{article}
-\usepackage{amsmath}
-\usepackage[margin=1.0 in]{geometry}
+\usepackage[margin=1.0in]{geometry}
 \usepackage{longtable}
+
+\usepackage{amsmath}
+
+\newcounter{example}
+\newenvironment{example}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textit{Example~\theexample. #1} \rmfamily}{\medskip}
 
 \usepackage{bbm}
 \usepackage{booktabs}
@@ -124,20 +129,16 @@ text there.]
 
 
 
-\section{Setting up your external program}
-To link your script to Gralog, locate the Gralog folder in your Terminal. Navigate to the "scripts" directory with gralog-fx piping subdirectory. That should entail something like:
-\begin{align*}
-&\text{~/path.to.gralog/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/scripts}
-\end{align*}
+\section{Setting up your External Python Program}
+To link your script to Gralog, create a python file and import (all of) it. This is easiest (and \textit{recommended} if you want the provided code snippet to work) if the library and your script are in the same directory - python can be finicky about such things.\\
 
-Once there, you will find a file called Lib.py. This is the library that defines the interactions with Gralog.\\
+In the new file you created, paste the following code.
 
-Now create a new file in the directory, called HelloWorld.py. In the docoument, paste the following code: 
 
-\begin{lstlisting}
+\begin{lstlisting}[title={Code Snippet 1},label=codeSnippet1]
 #!/usr/bin/python
 #HelloWorld.py
-from Lib import *
+from Gralog import *
 #A simple Gralog program which creates a vertex that says "Hello, world"
 
 g = Graph(None); #uses the current graph that is open
@@ -145,7 +146,7 @@ v = g.addVertex();
 v.setLabel("Hello, world!");
 \end{lstlisting}
 
-Now before you can run this code, open Gralog and select Preferences from the File menu. Navigate to General, then select the file you created at "Ext. Prog. Source File". Click \textbf{``Ok''.}
+Now before you can run this code, open Gralog and select Preferences from the File menu. Navigate to General, then select the file you created at \emph{Ext. Prog. Source File}. Click \textbf{``Ok''.}
 
 Now you should be ready to run. Navigate to File Menu and select "Load Plugin". What you should get is something that looks like this: 
 
@@ -155,7 +156,12 @@ Now you should be ready to run. Navigate to File Menu and select "Load Plugin". 
 \end{figure}
 
 \subsection{Troubleshooting}
-First obviously make sure you have python installed (version 2.7). Also make sure that Lib.py is in the directory as the file you wish to execute. Obviously you can mess around with the file structure to fit your needs but in this configuration they must be in the same directory. For other outstanding problems feel free to shoot an email at felix.herron@gmail.com 
+First obviously make sure you have python installed (version $\ge
+2.7$). Also make sure that Gralog.py is in the directory as the file you
+wish to execute. Obviously you can mess around with the file structure
+to fit your needs but in this configuration they must be in the same
+directory. For other outstanding problems feel free to shoot an email
+at \texttt{gralog@tu-berlin.de} (TODO: make the email address.)
 
 \section{Introduction}
 Now that you have the code running and set up, what will follow is a brief explanation of all of the functionality which we have built, structured in an intuitive manner.
@@ -167,7 +173,9 @@ The first relevant class is Graph. In every program, you must choose a graph on 
 g = Graph();
 \end{lstlisting}
 
-In the constructor you specify which type of graph you would like. No argument means use the graph that is currently opened, whatever (type) it may be.
+In the constructor you specify which type of graph (directed,
+undirected, a Kripke structure, a finite automaton, a Büchi automaton) you would like. No
+argument means use the graph that is currently opened in Gralog, whatever (type) it may be.
 
 The Graph class can be seen as the moderator of the program. You will use it to do all of the surface-level, more general commands pertaining to the graph itself. The more intricate details will be done using the following two:
 
@@ -192,20 +200,31 @@ v.delete();
 Each edge is represented as an object of hte Edge class. It is distinguished by its unique ID; however, in graphs without multi-edges, it can also be distinguished by its source and target vertices.
 
 \begin{lstlisting}
-e = g.createEdge(v1, v2, directed=False);
+e = g.createEdge(v1,v2,directed=False);
 \end{lstlisting}
 
 All methods pertaining to the individual edges, such as their color, adjacent edges, or label, are most easily manipulated using methods of this class. For example:
 
 \begin{lstlisting}
-e = g.createEdge(v1, v2, directed=False, id=451);
+e = g.createEdge(v1,v2,directed=False,id=451);
 e.setLabel("f00");
 adjacentEdges = e.getAdjacentEdges();
 target = e.getTarget();
 e.delete();
 \end{lstlisting}
 
-The documentation will now simply elaborate on these concepts.
+\subsection{Printing to the Console}
+To print to the Gralog console, please use the method gPrint(str: message). Please note that this message must be a single-line string. No new-lines please!
+
+\begin{lstlisting}
+#!/usr/bin/python
+#HelloWorld.py
+from Gralog import *
+g = Graph(None);
+#end boiler plate
+
+gPrint("hello world on the Gralog Console yeaaaahhh");
+\end{lstlisting}
 
 \section{Documentation}
 
@@ -216,79 +235,59 @@ The documentation will now simply elaborate on these concepts.
 
 \begin{longtable}{p{\q}p{\q}}
 Instance Variable & Meaning and Usage \\ \hline
-\textbf{Dictionary} \textit{vertices} & A dictionary that holds all of the Vertex objects known to the graph. This should ideally not be changed by the programmer \\\hline
-\textbf{Dictionary} \textit{edges} & A dictionary that holds all of the Edge objects known to the graph. This should ideally not be changed by the programmer \\\hline
-\textbf{Integer} \textit{id} & The id of the graph that is used in communication with gralog. This should ideally not be changed by the programmer \\ \hline
-\textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel during pauses. These may be changed \\ \hline
-\textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel during pauses. These may be changed \\ \hline
+\textbf{Dictionary} \textit{vertices} & A dictionary that holds all of the Vertex objects known to the graph. This should ideally not be changed by the programmer. \\\hline
+\textbf{Dictionary} \textit{edges} & A dictionary that holds all of the Edge objects known to the graph. This should ideally not be changed by the programmer. \\\hline
+\textbf{Integer} \textit{id} & The id of the graph that is used in communication with gralog. This should ideally not be changed by the programmer. \\ \hline
+\textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel. These may be changed. \\ \hline
+\textbf{Dictionary} \textit{variablesToTrack} & Objects in format (name,value). These are displayed in the Algorithm Control Panel. These may be changed. \\ \hline
 \end{longtable}
 
 
 \textbf{{\large Relevant Methods}}
-
 \textit{Note: optional parameters are in square brackets}
 
 
 \begin{description}
-\item[Graph({[str: format]})] \emph{returns} a Graph Object.
-
-
-                                               The graph is the graph
-currently opened in the Gralog tab from which your script has been
-called. (TODO: finish description) Possible parameter options are:
+\item[Graph({[str: format]})] \emph{returns} a Graph Object.\\\\
+This is the constructor for the Graph class. It returns one of two things, depending on the parameter passed. If None is passed as the parameter, then \textit{no new graph is created}. Rather, the graph that is currently open in Gralog is passed to your program and a reference to it is stored in the Graph object. This Graph object now also contains all relevant (rudimentary) features of the open graph. The other parameter options are:
 \begin{itemize}
-\item nothing, e.g.\@ \texttt{g = Graph()},
-\item \texttt{"directed"},
+\item nothing, e.g.\@ \texttt{g = Graph()}, (this is the default, which is interpreted as ''undirected")
 \item \texttt{"{}undirected"},
+\item \texttt{"directed"},
 \item \texttt{"buechi"},
 \item \texttt{"kripke"},
 \item \texttt{"{}automaton"}.
 \end{itemize}
 \end{description}
 
+Use of these parameters causes Gralog to create a new (empty) graph of the requested type, a reference to which is then passed back to your program and stored in the returned Graph object.
 \subsection{Graph Manipulating Methods}
 
 \begin{description}
-\item[addVertex({[int: x\_coord, int: y\_coord]}{[int: vertexId]})]\emph{returns}
+\item[addVertex({[int: vertexId]}{[(double, double): pos]})]\emph{returns}
   \texttt{Vertex} object
 
-  Creates a new Vertex object. If no coordinates (TODO: what means int
-  as a coordinate?) \texttt{x\_coord,y\_coord} passed,
-  random coordinates are chosen (TODO:) and the vertex is selected in
-  the Gralog UI. If no \texttt{vertexId} is passed, a suitable id is
+  Creates a new Vertex object. If both coordinates coordinates in coordinate Vector \texttt{(x\_coord,y\_coord)} are \textit{not} passed,
+  random coordinates are chosen
+  %and the vertex is selected in
+  %the Gralog UI.
+  If no \texttt{vertexId} is passed, a suitable id is
   chosen by Gralog automatically. If an id is passed that has already
   been assigned, a suitable new one is silently chosen.
-
-  \begin{example}
-\begin{verbatim}
-g = Graph(undirected)
-v = addVertex(7)
-if (! v.id == 7)
-    print("Id 7 was already assigned to another vertex. The id of the
-new vertex is " + v.id)
-w = addVertex(2.3,4.0)
-print("Created a new vertex with coordinates x = 2.3 and y = 4.0 and id = " + w.id)
-u = addVertex(2.3,4.0,7)
-print("Created a new vertex with coordinates x = 2.3 and y = 4.0 " +
-            "(on top of the vertex with id = " + w.id + ") and id = " + u.id)
-if (u.id == 7)
-     print("Something went wrong!")
-\end{verbatim}
-  \end{example}
-
+  
+  The vertex returned has the final id assigned to it.
 
   
 \item[deleteVertex(Vertex: v)] \emph{returns} \texttt{void}
 
-Deletes the vertex from the graph. If the vertex does not exist, does
-nothing. (TODO: Felix, is this correct?)
+Deletes the given vertex from the graph. If the vertex does not exist, the program continues\footnote{you will however receive a warning message in the console}
 
-\item[deleteVertex(int: vertexId)] \emph{returns} \texttt{void}
 
-Deletes the vertex with the given id from the graph. If the vertex does not exist, does
-nothing. (TODO: Felix, is this correct?)
+\item[deleteVertex(int: v)] \emph{returns} \texttt{void}
 
-\item[addEdge(Vertex: source, Vertex: target{[, Boolean: isDirected][,
+Deletes the vertex with the given id from the graph. If the vertex does not exist, the program continues\footnote{you will however receive a warning message in the console}
+
+\item[addEdge(Vertex: source, Vertex target{[, Boolean: isDirected][,
     int: egdeId]})] \emph{returns} \texttt{Edge} object
 
 
@@ -354,7 +353,7 @@ happens.
 
 \subsection{Setter Functions}
 \begin{description}
-\item[setVertexFillColor(Vertex: v, (str: color $|$ int: r, int: g, int:
+\item[setVertexFillColor(Vertex: v, (str: color | int: r, int: g, int:
   b))] \emph{returns} \texttt{void}
 
 Sets the \textit{fill} colour of the given vertex to the Hex code colour
@@ -363,7 +362,7 @@ a string of a common colour, such as \texttt{"red"} or
 \texttt{"green."}  (TODO: make full list of available colours, insert
 a reference here.)
 
-\item[setVertexStrokeColor(Vertex: v, (str: color $|$ int: r, int: g, int:
+\item[setVertexStrokeColor(Vertex: v, (str: color | int: r, int: g, int:
   b))] \emph{returns} \texttt{void}
 
   Sets the \textit{stroke} colour of the given vertex to the Hex code colour
@@ -378,7 +377,7 @@ a reference here.)
 Sets the contour of passed edge. Possible values are
 \texttt{"dashed"}, \texttt{"dotted"}, \texttt{"plain"}.
 
-\item[setEdgeColor(Edge: v, (str: color $|$ int: r, int: g, int:
+\item[setEdgeColor(Edge: v, (str: color | int: r, int: g, int:
   b))] \emph{returns} \texttt{void}
 
   Sets the colour of the given edge to the Hex code colour
@@ -406,14 +405,73 @@ radius and width)
 \item[setVertexShape(Vertex: v, str: shape)] \emph{returns} \texttt{void}
 
 Sets the given vertex to be the specified shape. Currently supported
-are \texttt{"{}ellipse"}, \texttt{"diamond"}, and \texttt{"rectangle"}.
+are \texttt{"ellipse"}, \texttt{"diamond"}, and \texttt{"rectangle"}.
   
 \item[setVertexDimension(Vertex: v, float: width, str: dimension)]
   \emph{returns} \texttt{void}
 
+Sets the dimension of the given vertex to the dimension specified. This functionality is primarily useful for non-standard shapes, if you were to extend gralog to include such a thing.  
+
+\item[setEdgeWeight(Edge: e, float: weight)] \emph{returns} \texttt{void}
+
+Sets edge weight (i.e.\@ thickness) to \texttt{weight}. (TODO: rename
+to thickness, also in Gralog)
+  
 \end{description}
 
+\section{Code Examples}
+
+\begin{description}
+\item[addVertex({[int: vertexId]}{[(double: x\_coord, double: y\_coord)]})]\emph{returns}
+  \texttt{Vertex} object
+
+  Creates a new Vertex object. If both coordinates coordinates in coordinate Vector \texttt{(x\_coord,y\_coord)} are \textit{not} passed,
+  random coordinates are chosen
+  %and the vertex is selected in
+  %the Gralog UI.
+  If no \texttt{vertexId} is passed, a suitable id is
+  chosen by Gralog automatically. If an id is passed that has already
+  been assigned, a suitable new one is silently chosen.
+  
+  The vertex returned has the final id assigned to it.
+
+  \begin{example}
+    \begin{lstlisting}[title={addVertex Example},label=addVertexExample]
+    #!/usr/bin/python
+    #HelloWorld.py
+    from Gralog import *
+    g = Graph(None);
+    #end boiler plate
+    
+    v = g.addVertex(); #adds a vertex with a random id and random coordinates
+    v.setLabel("v: " + str(v.getId()));#shows the id gralog assigned on the vertex in Gralog
+    
+    v1 = g.addVertex(420);
+    v1.setLabel("v1: " + str(v1.getId()));
+    
+    v2 = g.addVertex((-10,2.2)); #adds a vertex at (0,2.2) and random id*
+    v2.setLabel("v2: " + str(v2.getId()));
+    
+    v3 = g.addVertex(0,(11,-3)); #adds a vertex at (11,-3) with id=0
+    v3.setLabel("v3: " + str(v3.getId()));
+    
+    g.pause();
+    
+    #now we try and add a new vertex with an id that is in use
+    
+    vDuplicate = g.addVertex(420);
+    vDuplicate.setLabel("dup: " + str(vDuplicate.getId())); #it ends up not being 420
+    
+    \end{lstlisting}
+    *technically this should be \texttt{v2 = g.addVertex(pos=(0,2.2))}; however, in order to make it user friendly the library allows for the user to misuse parameters in order to preserve clarity and brevity
+  \end{example}
+\end{description}
 
 
 \end{document}
 
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
