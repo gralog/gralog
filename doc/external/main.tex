@@ -276,16 +276,18 @@ Use of these parameters causes Gralog to create a new (empty) graph of the reque
   been assigned, a suitable new one is silently chosen.
   
   The vertex returned has the final id assigned to it.
+  
+  \hyperref[addVertexExample]{Example}
 
   
 \item[deleteVertex(Vertex: v)] \emph{returns} \texttt{void}
 
-Deletes the given vertex from the graph. If the vertex does not exist, the program continues\footnote{you will however receive a warning message in the console}
+Deletes the given vertex from the graph. If the vertex does not exist, the program continues\footnote{you will however receive a warning message in the console \label{deleteVertexWarning}}
 
 
 \item[deleteVertex(int: v)] \emph{returns} \texttt{void}
 
-Deletes the vertex with the given id from the graph. If the vertex does not exist, the program continues\footnote{you will however receive a warning message in the console}
+Deletes the vertex with the given id from the graph. If the vertex does not exist, the program continues\textsuperscript{\ref{deleteVertexWarning}}
 
 \item[addEdge(Vertex: source, Vertex target{[, Boolean: isDirected][,
     int: egdeId]})] \emph{returns} \texttt{Edge} object
@@ -425,15 +427,6 @@ to thickness, also in Gralog)
 \item[addVertex({[int: vertexId]}{[(double: x\_coord, double: y\_coord)]})]\emph{returns}
   \texttt{Vertex} object
 
-  Creates a new Vertex object. If both coordinates coordinates in coordinate Vector \texttt{(x\_coord,y\_coord)} are \textit{not} passed,
-  random coordinates are chosen
-  %and the vertex is selected in
-  %the Gralog UI.
-  If no \texttt{vertexId} is passed, a suitable id is
-  chosen by Gralog automatically. If an id is passed that has already
-  been assigned, a suitable new one is silently chosen.
-  
-  The vertex returned has the final id assigned to it.
 
   \begin{example}
     \begin{lstlisting}[title={addVertex Example},label=addVertexExample]
