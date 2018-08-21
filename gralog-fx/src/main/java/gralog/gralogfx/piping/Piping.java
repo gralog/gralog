@@ -91,6 +91,8 @@ public class Piping extends Thread{
     private IMovable selectedObject;
     private String consoleInputText;
 
+    int nextStructurePaneId = 0;
+
 
     public enum State{
         Null,
@@ -103,8 +105,8 @@ public class Piping extends Thread{
     
     public State state = State.Null;
 
-    private HashMap<Integer,Structure> idGraphMap =  new HashMap<Integer,Structure>();
-    private HashMap<Integer,StructurePane> idStructurePaneMap =  new HashMap<Integer,StructurePane>();
+    private InjectiveMap<Integer,Structure> idGraphMap =  new InjectiveMap<Integer,Structure>();
+    private InjectiveMap<Integer,StructurePane> idStructurePaneMap =  new InjectiveMap<Integer,StructurePane>();
 
     public void setClassSelectionIsWaitingFor(Class c){
         this.classSelectionIsWaitingFor = c;
@@ -129,16 +131,14 @@ public class Piping extends Thread{
 
     public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Supplier<Boolean> pauseFunction,CountDownLatch waitForSelection,Supplier<Boolean> graphObjectSelectionFunction,BiConsumer<String,MessageToConsoleFlag> sendMessageToConsole){
         this.newGraphMethod = newGraphMethod;
-        this.resetInitialVals();
-        this.structurePane = structurePane;
-        this.idGraphMap.put(structurePane.getStructure().getId(),structurePane.getStructure());
-        this.idStructurePaneMap.put(structurePane.getStructure().getId(),structurePane);
+        this.resetInitialPipingSkipVals();
         this.waitForPauseToBeHandled = waitForPauseToBeHandled;
         this.waitForSelection = waitForSelection;
         this.pauseFunction = pauseFunction;
         this.graphObjectSelectionFunction = graphObjectSelectionFunction;
         this.sendMessageToConsole = sendMessageToConsole;
         this.receiveUserMessageFromConsole = receiveUserMessageFromConsole;
+        //check if structurePane is really necessary...
     }
 
     
@@ -247,21 +247,30 @@ public class Piping extends Thread{
         return this.consoleInputText;
     }
 
-    private Structure getStructureWithId(int id){
+    public Structure getStructureWithId(int id){
         return this.idGraphMap.get(id);
     }
-
-    public void setStructureWithId(Structure structure,int id){
-        this.structurePane.setStructure(structure);
-        this.idGraphMap.put(id,structure);
-        this.redrawMyStructurePanes();
-    }
-
-    private StructurePane getStructurePaneWithId(int id){
+    public StructurePane getStructurePaneWithId(int id){
         return this.idStructurePaneMap.get(id);
     }
 
-    private void resetInitialVals(){
+    public void pairLocalIdAndStructure(int id,Structure structure){
+        this.idGraphMap.set(id,structure);
+    }
+    public void pairLocalIdAndStructurePane(int id,StructurePane structurePane){
+        this.idStructurePaneMap.set(id,structurePane);
+    }
+
+    public int getIdWithStructure(Structure structure){
+        return this.idGraphMap.getId(structure);
+    }
+
+    public int getIdWithStructurePane(StructurePane structurePane){
+        return this.idStructurePaneMap.getId(structurePane);
+    }
+
+    
+    private void resetInitialPipingSkipVals(){
         this.skipPausesWithRankGreaterThanOrEqualTo = Integer.MAX_VALUE;
         this.currentSkipValue = Integer.MAX_VALUE;
     }
@@ -275,7 +284,7 @@ public class Piping extends Thread{
     //     // this.pane = pane;
     //     // System.out.println("running, it has pane: " + this.pane);
     //     this.newGraphMethod = newGraphMethod;
-    //     this.resetInitialVals();
+    //     this.resetInitialPipingSkipVals();
     //     // newGraphMethod.apply(("hello world".split(" ")));
 
     //     System.out.println("starting exec");
@@ -328,8 +337,8 @@ public class Piping extends Thread{
     // }
 
     protected void redrawMyStructurePanes(){
-        for (int i : this.idStructurePaneMap.keySet()){
-            this.idStructurePaneMap.get(i).requestRedraw();
+        for (StructurePane sp : this.idStructurePaneMap.valueSet()){
+            sp.requestRedraw();
         }
     }
 
@@ -350,9 +359,7 @@ public class Piping extends Thread{
         return this.firstMessage;
     }
 
-    public void addIdStructurePane(int id, StructurePane structurePane){
-        this.idStructurePaneMap.put(id,structurePane);
-    }
+    
 
     public void setPauseCountDownLatch(CountDownLatch latch){
         this.waitForPauseToBeHandled = latch;
@@ -472,19 +479,24 @@ public class Piping extends Thread{
                         }
                     }else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
                         
-                        // StructurePane thisPane = this.newGraphMethod.apply(externalCommandSegments[0],this);
-                        // this.state = State.InProgress;
-                        // // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
+                        final String lineFinal = externalCommandSegments[0];
+                        CountDownLatch graphWasInstantiated = new CountDownLatch(1);
+                        Platform.runLater(
+                            ()->{
+                                StructurePane thisPane = this.newGraphMethod.apply(lineFinal,this);
+                                this.pairLocalIdAndStructure(this.nextStructurePaneId,thisPane.getStructure());
+                                this.pairLocalIdAndStructurePane(this.nextStructurePaneId,thisPane);
 
+                                this.state = State.InProgress;
+                                // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
+                                out.println(this.nextStructurePaneId);
+                                this.nextStructurePaneId += 1;
+                                graphWasInstantiated.countDown();
+                            }
+                        );
+                        graphWasInstantiated.await();
 
-                        // idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
-                        // idStructurePaneMap.put(thisPane.getStructure().getId(),thisPane);
-
-                        // // currentCommand = new NewGraphCommand(externalCommandSegments);
-                        // // Structure currentStructure = getStructureWithId(Integer.parseInt(externalCommandSegments[1]));
-                        // // currentCommand.setStructure(currentStructure);
-                        System.out.println("useCurrentGraph" + Integer.toString(this.structurePane.getStructure().getId()));
-                        out.println(Integer.toString(this.structurePane.getStructure().getId()));
+                        
 
                         continue;
 
@@ -495,17 +507,17 @@ public class Piping extends Thread{
                         Platform.runLater(
                             ()->{
                                 StructurePane thisPane = this.newGraphMethod.apply(lineFinal,this);
-                                this.structurePane = thisPane;
-                                idGraphMap.put(thisPane.getStructure().getId(),thisPane.getStructure());
-                                idStructurePaneMap.put(thisPane.getStructure().getId(),thisPane);
-
+                                this.pairLocalIdAndStructure(this.nextStructurePaneId,thisPane.getStructure());
+                                this.pairLocalIdAndStructurePane(this.nextStructurePaneId,thisPane);
                                 this.state = State.InProgress;
                                 // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
-                                out.println(thisPane.getStructure().getId());
+                                out.println(this.nextStructurePaneId);
+                                this.nextStructurePaneId += 1;
                                 graphWasInstantiated.countDown();
                             }
                         );
                         graphWasInstantiated.await();
+
                         continue;
                         
 
@@ -514,7 +526,9 @@ public class Piping extends Thread{
                     CommandForGralogToExecute currentCommand;
                     try{
                         // currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])),this);
-                         currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.structurePane.getStructure(),this);
+                        int localStructureIndex = Integer.parseInt(PipingMessageHandler.extractNthPositionString(externalCommandSegments,1));
+                        Structure structureOfCurrentCommand = this.getStructureWithId(localStructureIndex);
+                        currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,structureOfCurrentCommand,this);
                         // mostRecentlyUsedStructurePane = currentCommand.getStructurePane();
                     }catch(Exception e){
                         e.printStackTrace();
@@ -602,7 +616,7 @@ public class Piping extends Thread{
         this.state = State.Null;
         System.out.println("makingue null");
         for (int i: idStructurePaneMap.keySet()){
-            idStructurePaneMap.get(i).setPiping(null);
+            this.getStructurePaneWithId(i).setPiping(null);
         }
         String line;
         String wholeError = "";

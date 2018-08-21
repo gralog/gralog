@@ -54,7 +54,7 @@ public class GralogTrivialGraphFormatImport extends ImportFilter {
 
                 if (to == null) {
                     Vertex newnode = result.addVertex(null,Integer.parseInt(from));
-                    newnode.label = from;
+                    // newnode.label = from;
                     if (nodeIndex.containsKey(from))
                         throw new Exception("Vertex-identifier \"" + from + "\" multiply defined");
                     nodeIndex.put(from, newnode);

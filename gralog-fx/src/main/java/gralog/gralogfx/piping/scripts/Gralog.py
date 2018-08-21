@@ -358,6 +358,7 @@ class Graph:
 
 
 	def setGraph(self,graphFormat,graphString = "hello_world"):
+		graphFormat = graphFormat.lower();
 		line = "setGraph#"+str(self.id).rstrip() + "#" + graphFormat.rstrip()+"#";
 		#@Michelle: format entspricht z.B. XML oder TGF oder sowas. du muesst das also gemaess deines Formats entsprechend eingeben
 		#kommentiere die folgende Zeile aus und fuege deinen Kram hinzu...
@@ -373,7 +374,7 @@ class Graph:
 		##TODO: implement this somehow haha
 
 
-	def addEdge(self,sourceVertex, targetVertex, directed = False, edgeId = -1):
+	def addEdge(self,sourceVertex, targetVertex, edgeId = -1):
 		#return: Edge object with id only
 		sourceVertex = vertexId(sourceVertex);
 		targetVertex = vertexId(targetVertex);
@@ -383,7 +384,7 @@ class Graph:
 		if not edgeId==-1:
 			idSubString = "#"+str(edgeId);
 			
-		line = "addEdge#"+str(self.id).rstrip() + "#" + str(sourceVertex).rstrip() + "#" + str(targetVertex).rstrip() + "#" + str(directed).lower()+idSubString.rstrip();
+		line = "addEdge#"+str(self.id).rstrip() + "#" + str(sourceVertex).rstrip() + "#" + str(targetVertex).rstrip() +idSubString.rstrip();
 
 		print line.rstrip();
 	
@@ -395,11 +396,7 @@ class Graph:
 		self.edges[e.getId()] = e;
 		return e;
 
-	def addDirectedEdge(self,sourceVertex, targetVertex, edgeId=-1):
-		#return: Edge object with id only
-		return self.addEdge(sourceVertex,targetVertex,directed=True,edgeId=edgeId);
-
-
+	
 	def deleteEdge(self,edge):
 
 		line = "deleteEdge#"+str(self.id).rstrip() + "#";

@@ -228,6 +228,10 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         return this.isDirected;
     }
 
+    public void setDirectedness(boolean directedness){
+        this.isDirected = directedness;
+    }
+
     public Vertex getTarget() {
         return target;
     }
