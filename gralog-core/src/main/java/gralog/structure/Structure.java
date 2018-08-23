@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
+import gralog.math.BezierCubic;
 import gralog.math.BezierUtilities;
 import gralog.plugins.XmlName;
 import gralog.plugins.PluginManager;
@@ -1012,15 +1013,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         continue; // TODO:
                     }
                     if(e.getControlPointCount() == 2){
-                        BezierUtilities.Line l = new BezierUtilities.Line();
-                        l.a = 1;
-                        l.b = 0;
-                        l.c = px;
-                        BezierUtilities.lineIntersectionCubicBezier(l,
-                                e.getStartingPointSource(),
-                                e.controlPoints.get(0).position,
-                                e.controlPoints.get(1).position,
-                                e.getStartingPointTarget());
+                        BezierCubic curve = BezierCubic.createFromEdge(e);
+                        System.out.println(px);
+                        BezierUtilities.xIntersectionCubicBezier(px, curve);
                         continue;
                     }
                 }else if(e.getEdgeType() == Edge.EdgeType.SHARP){

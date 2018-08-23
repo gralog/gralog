@@ -1,6 +1,5 @@
 package gralog.math;
 
-import gralog.math.sturm.ExpInterval;
 import gralog.math.sturm.Interval;
 import gralog.math.sturm.Polynomial;
 import gralog.math.sturm.SturmRootIsolator;
@@ -8,7 +7,6 @@ import gralog.rendering.Vector2D;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This class implements several utilities for calculating point projections
@@ -37,42 +35,28 @@ public final class BezierUtilities {
         public double c;
     }
 
+    public static Vector2D[] xIntersectionCubicBezier(double x, BezierCubic c){
 
-    /**
-     * Returns an array of intersections between a given line l and a cubic bezier
-     * curve (parametrized by the given control points c0-c3)
-     * @return An array of size 3, which contains all intersections (if only 1 exists,
-     * other entries are copies)
-     */
-    public static Vector2D[] lineIntersectionCubicBezier(Line l, Vector2D c0, Vector2D c1, Vector2D c2, Vector2D c3){
+        final double p0 = c.c0.getX();
+        final double p1 = c.c1.getX();
+        final double p2 = c.c2.getX();
+        final double p3 = c.c3.getX();
 
-        final double p0 = c0.getX();
-        final double p1 = c1.getX();
-        final double p2 = c2.getX();
-        final double p3 = c3.getX();
+        final double ct3 = -p0 + 3*p1 - 3*p2 + p3;
+        final double ct2 = 3*p0 -6*p1 + 3*p2;
+        final double ct1 = 3*p1;
+        final double ct0 = p0 - 2*x;
 
-        final double q0 = c0.getY();
-        final double q1 = c1.getY();
-        final double q2 = c2.getY();
-        final double q3 = c3.getY();
+        Polynomial polynomial = new Polynomial(ct3, ct2, ct1, ct0);
+        var intervals = SturmRootIsolator.findIntervals(polynomial);
 
-        final double a = l.a;
-        final double b = l.b;
-        final double c = l.c;
-
-        final double coeff_t3 = (a*(-p0 + 3*p1 - 3*p2 + p3) + b*(-q0 + 3*q1 - 3*q2 + q3));
-        final double coeff_t2 = (a*(-6*p1 + 3*p2) + b*(-6*q1 + 3*q2));
-        final double coeff_t1 = (3*a*p1 + 3*b*q1);
-        final double coeff_t0 = a*p0 + b*q0 - c;
-
-        Polynomial polynomial = new Polynomial(coeff_t3, coeff_t2, coeff_t1, coeff_t0);
-        //System.out.println(polynomial.eval(0.5));
+        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals);
+        for (int i = 0; i < roots.length; i++) {
+            System.out.print(roots[i] + ", ");
+        }
         return null;
     }
 
-    public static IntersectionResults lineIntersectionQuadraticBezier(){
-        return null;
-    }
 
     /**
      * This method implements an algorithm on point projections for cubic bezier curves.
@@ -84,10 +68,10 @@ public final class BezierUtilities {
      * (IMSCCS 2007), Iowa, United States.
      *
      * @param m The projection point.
-     * @param p0 Bezier-curve starting point.
+     * @param p0 BezierCubic-curve starting point.
      * @param p1 1st bezier control point.
      * @param p2 2nd bezier control point.
-     * @param p3 Bezier-curve ending point.
+     * @param p3 BezierCubic-curve ending point.
      * @return Returns the vector on the given bezier curve with minimal distance to m.
      *
      * @see <a href=https://hal.inria.fr/inria-00518379/PDF/Xiao-DiaoChen2007c.pdf>
@@ -130,7 +114,7 @@ public final class BezierUtilities {
         //List<Interval> intervals = new ArrayList<>();
         //intervals.add(new ExpInterval(2, 2));
 
-        double[] roots = SturmRootIsolator.findRoots(p, intervals);
+        double[] roots = SturmRootIsolator.findRootsDN(p, intervals);
         double min = Double.MAX_VALUE;
         double finX = Double.MAX_VALUE, finY = Double.MAX_VALUE;
 
@@ -185,7 +169,7 @@ public final class BezierUtilities {
 
         List<Interval> intervals = pruneIntervals(objective, SturmRootIsolator.findIntervals(objective));
 
-        double[] roots = SturmRootIsolator.findRoots(objective, intervals);
+        double[] roots = SturmRootIsolator.findRootsDN(objective, intervals);
         double min = Double.MAX_VALUE;
         double finX = Double.MAX_VALUE, finY = Double.MAX_VALUE;
 
@@ -233,10 +217,10 @@ public final class BezierUtilities {
      *
      * @param m The projection point.
      * @param subdivisions number of linear pieces uniformly distributed on the curve
-     * @param p0 Bezier-curve starting point.
+     * @param p0 BezierCubic-curve starting point.
      * @param p1 1st bezier control point.
      * @param p2 2nd bezier control point.
-     * @param p3 Bezier-curve ending point.
+     * @param p3 BezierCubic-curve ending point.
      * @return Returns the vector on the given linear approximation with minimal distance to m.
      */
     public static Vector2D pointProjectionLinear(Vector2D m, int subdivisions, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3){

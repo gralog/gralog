@@ -13,8 +13,8 @@ public class RootIsolatorTest {
     @Test
     public void testRootFinding(){
         Polynomial p = new Polynomial(1, -2.9, 3.2, -1.66, 0.3984, -0.03456);
-        assertEquals(0.6,SturmRootIsolator.findRoot(p, 0.42, 0.79, 100), 0.01);
-        assertEquals(0.9,SturmRootIsolator.findRoot(p, 0.82, 0.98, 100), 0.01);
+        assertEquals(0.6,SturmRootIsolator.findRootDN(p, 0.42, 0.79, 100), 0.01);
+        assertEquals(0.9,SturmRootIsolator.findRootDN(p, 0.82, 0.98, 100), 0.01);
     }
     @Test
     public void testSturmIsolation(){

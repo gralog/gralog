@@ -520,7 +520,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
             Vector2D ctrl1 = controlPoints.get(0).getPosition();
             Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
-            System.out.println(source.shape.getEdgePoint(sourceToCtrl1.theta(), source.coordinates));
+
             return source.shape.getEdgePoint(sourceToCtrl1.theta(), source.coordinates);
         }else if(edgeType == EdgeType.SHARP){
             return source.coordinates;
@@ -539,7 +539,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
             Vector2D ctrl2 = controlPoints.get(controlPoints.size() - 1).getPosition();
             Vector2D targetToCtrl1 = ctrl2.minus(target.coordinates).normalized();
-            System.out.println(target.shape.getEdgePoint(targetToCtrl1.theta(), target.coordinates));
+
             return target.shape.getEdgePoint(targetToCtrl1.theta(), target.coordinates);
         }else if(edgeType == EdgeType.SHARP){
             return target.coordinates;
