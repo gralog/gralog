@@ -30,9 +30,10 @@ public class Undo {
         if(!structureStack.containsKey(structure)){
             structureStack.put(structure, new FixedQueue<>(MAX_NR));
         }
-
+        System.out.println("done");
         FixedQueue<Structure> stack = structureStack.get(structure);
         stack.push(cloner.deepClone(structure));
+        System.out.println(stack.count());
     }
 
     public static void Redo(Structure structure){
@@ -43,7 +44,7 @@ public class Undo {
         FixedQueue<Structure> stack = structureStack.get(structure);
         if(stack.count() != 0){
             Structure reference = stack.revertPop();
-            System.out.println(stack.poppedInRow);
+            reference = cloner.deepClone(reference);
             if(reference != null){
                 structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
                 structure.__SET_EDGES_T(reference.__GET_EDGES_T());
@@ -65,10 +66,13 @@ public class Undo {
 
         FixedQueue<Structure> stack = structureStack.get(structure);
         if(stack.count() != 0){
-            Structure reference = stack.pop();
-            System.out.println(stack.poppedInRow);
-            structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
-            structure.__SET_EDGES_T(reference.__GET_EDGES_T())  ;
+            stack.pop();
+            Structure reference = stack.last();
+            if(reference != null){
+                reference = cloner.deepClone(reference);
+                structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
+                structure.__SET_EDGES_T(reference.__GET_EDGES_T())  ;
+            }
         }
     }
 

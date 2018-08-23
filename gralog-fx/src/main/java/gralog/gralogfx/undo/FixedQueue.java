@@ -32,7 +32,7 @@ public class FixedQueue<T> {
         if(poppedInRow > 0){
             count++;
             poppedInRow--;
-            return x[(startIndex + count) % size];
+            return x[(startIndex + count - 1) % size];
         }
         else{
             return null;
@@ -54,6 +54,11 @@ public class FixedQueue<T> {
         count--;
         poppedInRow++;
         return x[(startIndex + count) % size];
+    }
+
+    public T last(){
+        if(count == 0) { return null; }
+        return x[(startIndex + count - 1) % size];
     }
 
 

@@ -171,6 +171,8 @@ public class StructurePane extends StackPane implements StructureListener {
         snapToGrid = config.getValue("StructurePane_snapToGrid", Boolean::parseBoolean,true);
 
         this.structure = structure;
+        Undo.Record(this.structure); // initial copy
+
         canvas = new Canvas(500,500);
         this.getChildren().add(canvas);
 
@@ -209,8 +211,8 @@ public class StructurePane extends StackPane implements StructureListener {
         addLoop.setOnAction(e -> {
             if(highlights.getSelection().size() == 1){
                 Vertex v = (Vertex)highlights.getSelection().iterator().next();
-                Undo.Record(structure);
                 structure.addEdge(v, v, config);
+                Undo.Record(structure);
             }
             this.requestRedraw();
         });
@@ -594,7 +596,7 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         else if(b == MouseButton.PRIMARY){
             if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease && selectionBoxingActive){
-                Undo.Record(structure);
+
                 Vertex v = structure.addVertex(config);
                 v.setCoordinates(mousePositionModel.getX(),
                         mousePositionModel.getY());
@@ -602,6 +604,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     v.snapToGrid(gridSize);
                 }
                 structureSubscribers.forEach(s -> s.accept(structure));
+                Undo.Record(structure);
             }
             else if(selectionBoxDragging && selectionBoxingActive &&
                     distSquared(screenToModel(boxingStartingPosition), mousePositionModel) > 0.01){
@@ -614,8 +617,8 @@ public class StructurePane extends StackPane implements StructureListener {
             if(selected instanceof Vertex){
                 //right release on a vertex while drawing an edge = add edge
                 if(drawingEdge && currentEdgeStartingPoint != null){
-                    Undo.Record(structure);
                     structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected, config);
+                    Undo.Record(structure);
                 }
                 //right click opens context menu
                 else if(vertexMenu != null){
