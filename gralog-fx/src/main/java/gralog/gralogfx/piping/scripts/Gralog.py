@@ -95,8 +95,8 @@ class Vertex:
 		return self.graph.getNeighbours(self.id);
 	def delete(self):
 		return self.graph.deleteVertex(self);
-	def connect(self,v1,directed = False,edgeId=-1):
-		return self.graph.addEdge(self,v1,directed,edgeId);
+	def connect(self,v1,edgeId=-1):
+		return self.graph.addEdge(self,v1,edgeId);
 	def source(self):
 		return self.graph.getVertex(self);
 	def __str__(self):
@@ -396,6 +396,18 @@ class Graph:
 		self.edges[e.getId()] = e;
 		return e;
 
+	def existsEdge(self,edge):
+		line = "existsEdge#"+str(self.id).rstrip() + "#";
+		line = line + edgeSplitter(edge);
+
+		print line.rstrip();
+
+		sys.stdout.flush();
+		thereExistsAnEdge = sys.stdin.readline().rstrip();
+		gPrint(" we got: " + thereExistsAnEdge);
+		gPrint(str(thereExistsAnEdge.lower() == "true"));
+		return thereExistsAnEdge.lower() == "true";
+
 	
 	def deleteEdge(self,edge):
 
@@ -408,9 +420,12 @@ class Graph:
 		# sys.stdin.readline();
 	
 
-	def deleteAllEdges(self,(sourceVertexId,targetVertexId)):
+	def deleteAllEdges(self,vertexPair):
 
-		line = "deleteAllEdges#"+str(self.id).rstrip() + "#" + str(sourceVertexId).rstrip() + "#" + str(targetVertexId).rstrip();
+
+
+		line = "deleteAllEdges#"+str(self.id).rstrip() + "#";
+		line = line +edgeSplitter(vertexPair);
 
 		print line.rstrip();
 

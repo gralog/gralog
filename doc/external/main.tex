@@ -289,67 +289,72 @@ Deletes the given vertex from the graph. If the vertex does not exist, the progr
 
 Deletes the vertex with the given id from the graph. If the vertex does not exist, the program continues\textsuperscript{\ref{deleteVertexWarning}}
 
-\item[addEdge(Vertex: source, Vertex target{[, Boolean: isDirected][,
-    int: egdeId]})] \emph{returns} \texttt{Edge} object
+\item[addEdge(Vertex: source, Vertex target,{[int: egdeId]})] \emph{returns} \texttt{Edge} object
 
 
-Creates a new \texttt{Vertex} object from the source vertex to the
-target vertex. If \texttt{isDirected} is not specified, un-directed is
-assumed (TODO: it should depend on the graph). If un-directed, the
+Creates a new \texttt{Edge} object from the source vertex to the
+target vertex. The directedness of the Edge will correspond to the type of Graph the edge is being added to (directed Graph $\to$ directed edge, automaton $\to$ transition, etc.). If un-directed, the
 order of target and source vertex is irrelevant. If no \texttt{edgeId}
 is passed, a suitable id is chosen. If an id is passed that has
 already been assigned, a suitable new one is silently chosen.
-
-\item[addDirectedEdge(Vertex: source, Vertex: target{[,int: edgeId]})]
-  \emph{returns} \texttt{Edge}
-
-(TODO: it should depend on the graph type, \texttt{addDirectedEdge} is
-not needed)
 
 
 \item[deleteEdge(Edge: e)] \emph{returns} \texttt{void}
 
 Deletes the edge from the graph. If the edge does not exist, nothing
-happens.
+happens.\textsuperscript{\ref{deleteVertexWarning}}
 
 \item[deleteEdge(int: edgeId)] \emph{returns} \texttt{void}
 
 Deletes the edge with id \texttt{edgeId} from the graph. If the edge does not exist, nothing
-happens.
+happens.\textsuperscript{\ref{deleteVertexWarning}}
 
-\item[deleteEdge(Vertex: source, Vertex: target)] \emph{returns}
-  \texttt{void}
-
-  Deletes the edge with the greatest id from the list of all edges
-  between vertex \texttt{source} and vertex \texttt{target} respecting
-  the direction if the graph has directed edges. If no such edge exists, nothing happens.
-
-  This is convenient if one is sure that there is at most one edge
-  between the vertices or it does not matter which edge is deleted.
-
-  (TODO: implement this)
-
-\item[deleteEdge(int: sourceVertexId, int: targetVertexId)] \emph{returns}
-  \texttt{void}
+\item[deleteEdge((Vertex,Vertex): edge)] \emph{returns}
+  \texttt{void} \footnote{make sure this is actually a tuple, or it will not work! Also note vertices and vertex id's can be mixed and matched, should that be practical, such that you could call g.edgeMethodFoo((Vertex,id)) or g.edgeMethodFoo((id,Vertex)) and they would be equivalent \label{makeSureATupleWarning1}}
 
   Deletes the edge with the greatest id from the list of all edges
-  between vertex with id \texttt{sourceVertexId} and vertex with id \texttt{targetVertexId} respecting
+  between the vertex in the first position of the tuple \texttt{edge} and the vertex which is the second position in tuple \texttt{source} respecting
   the direction if the graph has directed edges. If no such edge exists, nothing happens.
 
-  This is convenient if one is sure that there is at most one edge
-  between the vertices or it does not matter which edge is deleted.
 
-  (TODO: implement this)
+\item[deleteEdge((int,int): edge)] \emph{returns}
+  \texttt{Boolean} \textsuperscript{\ref{makeSureATupleWarning1}}
 
-  (TODO: Do we have \texttt{existsEdge(Vertex: source, Vertex:
-    target)} and \texttt{existsEdge(id: sourceVertexId, int:
-    targetVertexId)}, \texttt{int: numberEdges(Vertex/int: source,
-    Vertex/int: target)}, \texttt{existsVertexId(int id)}, \texttt{existsEdgeId(int id)}?)
-\item[deleteAllEdges(Vertex: source, Vertex: target)] \emph{returns}
+  Deletes the edge with the greatest id from the list of all edges
+  between the vertex whose \texttt{id} is the first element of tuple \texttt{edge}, and the vertex whose \texttt{id} is the second element of tuple \texttt{source} respecting
+  the direction if the graph has directed edges. If no such edge exists, nothing happens.
+
+\item[existsEdge((Vertex,Vertex): edge)] \emph{returns}
+  \texttt{void} \textsuperscript{\ref{makeSureATupleWarning1}}
+
+  Returns whether there exists an edge between the first vertex of the tuple \texttt{edge} and the second (or from the first to the second in directed graphs).
+  
+  
+\item[existsEdge(Edge: edge)] \emph{returns}
+  \texttt{Boolean}
+
+  Returns whether that specified edge (ie. the one with ID associated with the object) currently exists in the specified graph in Gralog. 
+  
+\item[existsEdge(int: id)] \emph{returns}
+  \texttt{boolean}
+
+  Returns whether an edge with specified id currently exists in the specified graph in Gralog. 
+
+
+\item[deleteAllEdges((Vertex,Vertex): vertexPair)] \emph{returns}
   \texttt{void}
 
-  Deletes all existing edges with source \texttt{source} and target
-  \texttt{target}.
+  Deletes all edges in the graph
+  between the vertex in the first position of the tuple \texttt{vertexPair} and the vertex which is the second position in tuple \texttt{vertexPair} respecting
+  the direction if the graph has directed edges.
+  If no such edges exist, nothing happens.
+  
+\item[deleteAllEdges((int,int): vertexPair)] \emph{returns}
+  \texttt{void}
+
+  Deletes all edges
+  between the vertex whose \texttt{id} is the first element of tuple \texttt{edge}, and the vertex whose \texttt{id} is the second element of tuple \texttt{source} respecting
+  the direction if the graph has directed edges. If no such edges exist, nothing happens.
   
 \end{description}
 

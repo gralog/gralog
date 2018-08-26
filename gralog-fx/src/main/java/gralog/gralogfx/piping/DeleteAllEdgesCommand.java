@@ -6,51 +6,25 @@ import java.util.stream.Collectors;
 
 public class DeleteAllEdgesCommand extends CommandForGralogToExecute {
 	
-
-	int sourceId;
-    int targetId;
 	Vertex sourceVertex;
     Vertex targetVertex;
+    String edgeString;
 
 	public DeleteAllEdgesCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
         
-        try{    
-            this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        try{
+            this.sourceVertex = PipingMessageHandler.extractSourceFromEdge(externalCommandSegments,structure);
+            this.targetVertex = PipingMessageHandler.extractTargetFromEdge(externalCommandSegments,structure);
+            this.edgeString = PipingMessageHandler.extractNthPositionString(externalCommandSegments,2);
+        }catch(NonExistantEdgeException e){
+        }catch(Exception e){
+            this.fail();
+            this.setResponse(null);
             this.error = e;
-            this.fail();
             return;
         }
-
-        this.externalCommandSegments = externalCommandSegments;
-
-        try{    
-            this.targetId = Integer.parseInt(externalCommandSegments[3]);
-        }catch(NumberFormatException e){
-            this.error = e;
-            this.fail();
-            return;
-        }
-
-        this.sourceVertex = this.structure.getVertexById(this.sourceId);
-
-        if (this.sourceVertex == null){
-            this.fail();
-            this.error = new NonExistantVertexException("source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
-            return;
-        }
-
-        this.targetVertex = this.structure.getVertexById(this.targetId);
-
-        if (this.targetVertex == null){
-            this.fail();
-            this.error = new NonExistantVertexException("target vertex with id " + Integer.toString(this.targetId) + " does not exist");
-            return;
-        }
-
-        this.sourceVertex = this.structure.getVertexById(this.sourceId);
 
        
 
@@ -59,7 +33,15 @@ public class DeleteAllEdgesCommand extends CommandForGralogToExecute {
 
 	public void handle(){
 
-        
+        if (this.sourceVertex == null && this.targetVertex == null){
+            this.setResponse(null);
+            return;
+        }
+        if (this.sourceVertex == null || this.targetVertex == null){
+            this.error = new NonExistantVertexException("The edge: " + this.edgeString + " exhibits wonky behaviour");
+            this.fail();
+            return;
+        }
         Set<Edge> intersection = this.structure.edgesBetweenVertices(this.sourceVertex,this.targetVertex);
         System.out.println("intersection: " + intersection);
         System.out.println("target: " + targetVertex);

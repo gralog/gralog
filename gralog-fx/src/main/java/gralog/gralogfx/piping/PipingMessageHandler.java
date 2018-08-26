@@ -565,10 +565,10 @@ public class PipingMessageHandler{
 
             return currentCommand;
             // this.out.println(handleEdgeResponse);
-        }else if (commandKeyword.equals("deleteEdgeBetween")){//format: addEdge <sourceId> <targetId> <directed?>
+        }else if (commandKeyword.equals("existsEdge")){//format: addEdge <sourceId> <targetId> <directed?>
             // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
             // System.out.println("")
-            currentCommand = new DeleteEdgeBetweenCommand(externalCommandSegments,currentStructure);
+            currentCommand = new ExistsEdgeCommand(externalCommandSegments,currentStructure);
             // 
 
             return currentCommand;
