@@ -17,6 +17,7 @@ import java.io.*;
 
 import gralog.structure.controlpoints.ControlPoint;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import org.w3c.dom.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -984,6 +985,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         Vector2D vecFrom = new Vector2D(from.getX(), from.getY());
         Vector2D vecTo = new Vector2D(to.getX(), to.getY());
+
         double px = from.getX();
         double qx = to.getX();
         double py = from.getY();
@@ -991,6 +993,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         double cx = qx - px;
         double cy = qy - py;
+
+        Rectangle2D rect = new Rectangle2D(
+                Math.min(px, qx), Math.min(py, qy),
+                Math.abs(cx), Math.abs(cy));
+
         if(Math.abs(cx) < 0.01 || Math.abs(cy) < 0.01){
             return objects;
         }
@@ -1013,15 +1020,33 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         continue; // TODO:
                     }
                     if(e.getControlPointCount() == 2){
+
+                        if(rectContainsVector(rect, e.getStartingPointSource()) ||
+                                rectContainsVector(rect, e.getStartingPointTarget())){
+                            objects.add(e);
+                            continue;
+                        }
+
                         BezierCubic curve = BezierCubic.createFromEdge(e);
-                        BezierUtilities.xIntersectionCubicBezier(px, curve);
-                        continue;
+
+                        var intersectionsXF = BezierUtilities.xIntersectionCubicBezier(px, curve);
+                        var intersectionsXT = BezierUtilities.xIntersectionCubicBezier(qx, curve);
+                        var intersectionsYF = BezierUtilities.yIntersectionCubicBezier(py, curve);
+                        var intersectionsYT = BezierUtilities.yIntersectionCubicBezier(qy, curve);
+
+                        if(     checkContainsAnyX(intersectionsYF, rect) ||
+                                checkContainsAnyX(intersectionsYT, rect) ||
+                                checkContainsAnyY(intersectionsXF, rect) ||
+                                checkContainsAnyY(intersectionsXT, rect)){
+                            objects.add(e);
+                        }
                     }
                 }else if(e.getEdgeType() == Edge.EdgeType.SHARP){
                     continue; // TODO:
                 }else if(e.getEdgeType() == Edge.EdgeType.ROUND){
                     continue; // TODO:
                 }
+                continue;
             }
 
             Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
@@ -1055,6 +1080,32 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         }
         return objects;
+    }
+
+    private static boolean rectContainsVector(Rectangle2D rect, Vector2D c){
+        return rect.contains(c.getX(), c.getY());
+    }
+    private static boolean checkContainsAnyX(Vector2D[] vectors, Rectangle2D rect){
+        for(int i = 0; i < vectors.length; i++){
+            if(vectors[i] != null){
+                if(rect.getMinX() < vectors[i].getX() &&
+                        rect.getMaxX() > vectors[i].getX()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private static boolean checkContainsAnyY(Vector2D[] vectors, Rectangle2D rect){
+        for(int i = 0; i < vectors.length; i++){
+            if(vectors[i] != null){
+                if(rect.getMinY() < vectors[i].getY() &&
+                        rect.getMaxY() > vectors[i].getY()){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     //TODO: write comprehensive, more general SAT colision test

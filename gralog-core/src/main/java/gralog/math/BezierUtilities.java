@@ -23,19 +23,34 @@ public final class BezierUtilities {
         public Vector2D result;
     }
 
-    public static class IntersectionResults{
+    public static Vector2D[] yIntersectionCubicBezier(double y, BezierCubic c){
 
+        final double p0 = c.c0.getY();
+        final double p1 = c.c1.getY();
+        final double p2 = c.c2.getY();
+        final double p3 = c.c3.getY();
+
+        final double ct3 = -p0 + 3*p1 - 3*p2 + p3;
+        final double ct2 = 3*p0-6*p1 + 3*p2;
+        final double ct1 = -3*p0 + 3*p1;
+        final double ct0 = p0 - y;
+
+        Polynomial polynomial = new Polynomial(ct3, ct2, ct1, ct0);
+
+        var intervals = SturmRootIsolator.findIntervals(polynomial);
+
+        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
+        Vector2D[] intersections = new Vector2D[3];
+        if(roots.length == 0){
+            return intersections;
+        }
+        for(int i = 0; i < 3; i++){
+            if(i < roots.length){
+                intersections[i] = c.eval(roots[i]);
+            }
+        }
+        return intersections;
     }
-
-    /**
-     * ax + by = c
-     */
-    public static class Line{
-        public double a;
-        public double b;
-        public double c;
-    }
-
     public static Vector2D[] xIntersectionCubicBezier(double x, BezierCubic c){
 
         final double p0 = c.c0.getX();
@@ -53,12 +68,16 @@ public final class BezierUtilities {
         var intervals = SturmRootIsolator.findIntervals(polynomial);
 
         double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
-        for (int i = 0; i < roots.length; i++) {
-            System.out.print("t = "  + fmt(roots[i]) +
-                        "\t f(t) = " + fmt(polynomial.eval(roots[i])));
+        Vector2D[] intersections = new Vector2D[3];
+        if(roots.length == 0){
+            return intersections;
         }
-
-        return null;
+        for(int i = 0; i < 3; i++){
+            if(i < roots.length){
+                intersections[i] = c.eval(roots[i]);
+            }
+        }
+        return intersections;
     }
     static String fmt(double x){
         return new DecimalFormat("#.###").format(x);
