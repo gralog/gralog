@@ -3,6 +3,7 @@
 package gralog.structure;
 
 import gralog.math.BezierCubic;
+import gralog.math.BezierQuadratic;
 import gralog.math.BezierUtilities;
 import gralog.plugins.XmlName;
 import gralog.plugins.PluginManager;
@@ -1015,17 +1016,29 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 continue;
             }
             if(e.getControlPointCount() >= 1){
+                if(rectContainsVector(rect, e.getStartingPointSource()) ||
+                        rectContainsVector(rect, e.getStartingPointTarget())){
+                    objects.add(e);
+                    continue;
+                }
                 if(e.getEdgeType() == Edge.EdgeType.BEZIER){
                     if(e.getControlPointCount() == 1){
-                        continue; // TODO:
+
+                        BezierQuadratic curve = BezierQuadratic.createFromEdge(e);
+
+                        var intersectionsXF = BezierUtilities.xIntersectionQuadraticBezier(px, curve);
+                        var intersectionsXT = BezierUtilities.xIntersectionQuadraticBezier(qx, curve);
+                        var intersectionsYF = BezierUtilities.yIntersectionQuadraticBezier(py, curve);
+                        var intersectionsYT = BezierUtilities.yIntersectionQuadraticBezier(qy, curve);
+
+                        if(     checkContainsAnyX(intersectionsYF, rect) ||
+                                checkContainsAnyX(intersectionsYT, rect) ||
+                                checkContainsAnyY(intersectionsXF, rect) ||
+                                checkContainsAnyY(intersectionsXT, rect)){
+                            objects.add(e);
+                        }
                     }
                     if(e.getControlPointCount() == 2){
-
-                        if(rectContainsVector(rect, e.getStartingPointSource()) ||
-                                rectContainsVector(rect, e.getStartingPointTarget())){
-                            objects.add(e);
-                            continue;
-                        }
 
                         BezierCubic curve = BezierCubic.createFromEdge(e);
 

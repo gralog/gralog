@@ -22,7 +22,58 @@ public final class BezierUtilities {
         public boolean successful;
         public Vector2D result;
     }
+    public static Vector2D[] yIntersectionQuadraticBezier(double y, BezierQuadratic c){
 
+        final double p0 = c.c0.getY();
+        final double p1 = c.c1.getY();
+        final double p2 = c.c2.getY();
+
+        final double ct2 = p0 - 2*p1 + p2;
+        final double ct1 = -2*p0 + 2*p1;
+        final double ct0 = p0 - y;
+
+        Polynomial polynomial = new Polynomial(ct2, ct1, ct0);
+
+        var intervals = SturmRootIsolator.findIntervals(polynomial);
+
+        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
+        Vector2D[] intersections = new Vector2D[3];
+        if(roots.length == 0){
+            return intersections;
+        }
+        for(int i = 0; i < 3; i++){
+            if(i < roots.length){
+                intersections[i] = c.eval(roots[i]);
+            }
+        }
+        return intersections;
+    }
+    public static Vector2D[] xIntersectionQuadraticBezier(double x, BezierQuadratic c){
+
+        final double p0 = c.c0.getX();
+        final double p1 = c.c1.getX();
+        final double p2 = c.c2.getX();
+
+        final double ct2 = p0 - 2*p1 + p2;
+        final double ct1 = -2*p0 + 2*p1;
+        final double ct0 = p0 - x;
+
+        Polynomial polynomial = new Polynomial(ct2, ct1, ct0);
+
+        var intervals = SturmRootIsolator.findIntervals(polynomial);
+
+        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
+        Vector2D[] intersections = new Vector2D[3];
+        if(roots.length == 0){
+            return intersections;
+        }
+        for(int i = 0; i < 3; i++){
+            if(i < roots.length){
+                intersections[i] = c.eval(roots[i]);
+            }
+        }
+        return intersections;
+    }
     public static Vector2D[] yIntersectionCubicBezier(double y, BezierCubic c){
 
         final double p0 = c.c0.getY();
