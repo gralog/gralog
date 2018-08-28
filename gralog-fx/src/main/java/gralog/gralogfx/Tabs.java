@@ -47,11 +47,12 @@ public class Tabs {
     public void initializeTab(){
         DirectedGraph x = new DirectedGraph();
         Configuration confg = new Configuration(Preferences.getProperties());
+        /*
         x.addVertex(confg, 0).setCoordinates(3, 3);
         x.addVertex(confg, 1).setCoordinates(7, 3);
         Edge e = x.addEdge(0, 1);
         e.addControlPoint(new Vector2D(5, 1), null);
-        e.addControlPoint(new Vector2D(5, 5), null);
+        e.addControlPoint(new Vector2D(5, 5), null);*/
         addTab("Untitled", x);
     }
     /**
