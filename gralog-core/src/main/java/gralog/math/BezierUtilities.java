@@ -1,14 +1,13 @@
 package gralog.math;
 
-import gralog.math.sturm.ExpInterval;
 import gralog.math.sturm.Interval;
 import gralog.math.sturm.Polynomial;
 import gralog.math.sturm.SturmRootIsolator;
 import gralog.rendering.Vector2D;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This class implements several utilities for calculating point projections
@@ -23,6 +22,119 @@ public final class BezierUtilities {
         public boolean successful;
         public Vector2D result;
     }
+
+    public static Vector2D[] yIntersectionQuadraticBezier(double y, BezierQuadratic c){
+
+        final double p0 = c.c0.getY();
+        final double p1 = c.c1.getY();
+        final double p2 = c.c2.getY();
+
+        final double ct2 = p0 - 2*p1 + p2;
+        final double ct1 = -2*p0 + 2*p1;
+        final double ct0 = p0 - y;
+
+        Polynomial polynomial = new Polynomial(ct2, ct1, ct0);
+
+        var intervals = SturmRootIsolator.findIntervals(polynomial);
+
+        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
+        Vector2D[] intersections = new Vector2D[3];
+        if(roots.length == 0){
+            return intersections;
+        }
+        for(int i = 0; i < 3; i++){
+            if(i < roots.length){
+                intersections[i] = c.eval(roots[i]);
+            }
+        }
+        return intersections;
+    }
+    public static Vector2D[] xIntersectionQuadraticBezier(double x, BezierQuadratic c){
+
+        final double p0 = c.c0.getX();
+        final double p1 = c.c1.getX();
+        final double p2 = c.c2.getX();
+
+        final double ct2 = p0 - 2*p1 + p2;
+        final double ct1 = -2*p0 + 2*p1;
+        final double ct0 = p0 - x;
+
+        Polynomial polynomial = new Polynomial(ct2, ct1, ct0);
+
+        var intervals = SturmRootIsolator.findIntervals(polynomial);
+
+        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
+        Vector2D[] intersections = new Vector2D[3];
+        if(roots.length == 0){
+            return intersections;
+        }
+        for(int i = 0; i < 3; i++){
+            if(i < roots.length){
+                intersections[i] = c.eval(roots[i]);
+            }
+        }
+        return intersections;
+    }
+    public static Vector2D[] yIntersectionCubicBezier(double y, BezierCubic c){
+
+        final double p0 = c.c0.getY();
+        final double p1 = c.c1.getY();
+        final double p2 = c.c2.getY();
+        final double p3 = c.c3.getY();
+
+        final double ct3 = -p0 + 3*p1 - 3*p2 + p3;
+        final double ct2 = 3*p0-6*p1 + 3*p2;
+        final double ct1 = -3*p0 + 3*p1;
+        final double ct0 = p0 - y;
+
+        Polynomial polynomial = new Polynomial(ct3, ct2, ct1, ct0);
+
+        var intervals = SturmRootIsolator.findIntervals(polynomial);
+
+        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
+        Vector2D[] intersections = new Vector2D[3];
+        if(roots.length == 0){
+            return intersections;
+        }
+        for(int i = 0; i < 3; i++){
+            if(i < roots.length){
+                intersections[i] = c.eval(roots[i]);
+            }
+        }
+        return intersections;
+    }
+    public static Vector2D[] xIntersectionCubicBezier(double x, BezierCubic c){
+
+        final double p0 = c.c0.getX();
+        final double p1 = c.c1.getX();
+        final double p2 = c.c2.getX();
+        final double p3 = c.c3.getX();
+
+        final double ct3 = -p0 + 3*p1 - 3*p2 + p3;
+        final double ct2 = 3*p0-6*p1 + 3*p2;
+        final double ct1 = -3*p0 + 3*p1;
+        final double ct0 = p0 - x;
+
+        Polynomial polynomial = new Polynomial(ct3, ct2, ct1, ct0);
+
+        var intervals = SturmRootIsolator.findIntervals(polynomial);
+
+        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
+        Vector2D[] intersections = new Vector2D[3];
+        if(roots.length == 0){
+            return intersections;
+        }
+        for(int i = 0; i < 3; i++){
+            if(i < roots.length){
+                intersections[i] = c.eval(roots[i]);
+            }
+        }
+        return intersections;
+    }
+    static String fmt(double x){
+        return new DecimalFormat("#.###").format(x);
+    }
+
     /**
      * This method implements an algorithm on point projections for cubic bezier curves.
      *
@@ -33,10 +145,10 @@ public final class BezierUtilities {
      * (IMSCCS 2007), Iowa, United States.
      *
      * @param m The projection point.
-     * @param p0 Bezier-curve starting point.
+     * @param p0 BezierCubic-curve starting point.
      * @param p1 1st bezier control point.
      * @param p2 2nd bezier control point.
-     * @param p3 Bezier-curve ending point.
+     * @param p3 BezierCubic-curve ending point.
      * @return Returns the vector on the given bezier curve with minimal distance to m.
      *
      * @see <a href=https://hal.inria.fr/inria-00518379/PDF/Xiao-DiaoChen2007c.pdf>
@@ -79,7 +191,7 @@ public final class BezierUtilities {
         //List<Interval> intervals = new ArrayList<>();
         //intervals.add(new ExpInterval(2, 2));
 
-        double[] roots = SturmRootIsolator.findRoots(p, intervals);
+        double[] roots = SturmRootIsolator.findRootsDN(p, intervals);
         double min = Double.MAX_VALUE;
         double finX = Double.MAX_VALUE, finY = Double.MAX_VALUE;
 
@@ -134,7 +246,7 @@ public final class BezierUtilities {
 
         List<Interval> intervals = pruneIntervals(objective, SturmRootIsolator.findIntervals(objective));
 
-        double[] roots = SturmRootIsolator.findRoots(objective, intervals);
+        double[] roots = SturmRootIsolator.findRootsDN(objective, intervals);
         double min = Double.MAX_VALUE;
         double finX = Double.MAX_VALUE, finY = Double.MAX_VALUE;
 
@@ -182,10 +294,10 @@ public final class BezierUtilities {
      *
      * @param m The projection point.
      * @param subdivisions number of linear pieces uniformly distributed on the curve
-     * @param p0 Bezier-curve starting point.
+     * @param p0 BezierCubic-curve starting point.
      * @param p1 1st bezier control point.
      * @param p2 2nd bezier control point.
-     * @param p3 Bezier-curve ending point.
+     * @param p3 BezierCubic-curve ending point.
      * @return Returns the vector on the given linear approximation with minimal distance to m.
      */
     public static Vector2D pointProjectionLinear(Vector2D m, int subdivisions, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3){

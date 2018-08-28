@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.util.*;
 
 import gralog.structure.controlpoints.ControlPoint;
+import javafx.application.Application;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -507,6 +508,45 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
             return projection.result.minus(m).length() < multiEdgeOffset * 0.5;
         }else{
             return false;
+        }
+    }
+
+    public Vector2D getStartingPointSource(){
+        if(controlPoints.size() == 0){
+            return source.coordinates;
+        }
+
+        if(edgeType == EdgeType.BEZIER){
+
+            Vector2D ctrl1 = controlPoints.get(0).getPosition();
+            Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
+
+            return source.shape.getEdgePoint(sourceToCtrl1.theta(), source.coordinates);
+        }else if(edgeType == EdgeType.SHARP){
+            return source.coordinates;
+        }else if(edgeType == EdgeType.ROUND){
+            return source.coordinates;
+        }else{
+            return source.coordinates;
+        }
+    }
+
+    public Vector2D getStartingPointTarget(){
+        if(controlPoints.size() == 0){
+            return target.coordinates;
+        }
+        if(edgeType == EdgeType.BEZIER){
+
+            Vector2D ctrl2 = controlPoints.get(controlPoints.size() - 1).getPosition();
+            Vector2D targetToCtrl1 = ctrl2.minus(target.coordinates).normalized();
+
+            return target.shape.getEdgePoint(targetToCtrl1.theta(), target.coordinates);
+        }else if(edgeType == EdgeType.SHARP){
+            return target.coordinates;
+        }else if(edgeType == EdgeType.ROUND){
+            return target.coordinates;
+        }else{
+            return target.coordinates;
         }
     }
 

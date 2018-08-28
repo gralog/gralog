@@ -2,6 +2,9 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
+import gralog.math.BezierCubic;
+import gralog.math.BezierQuadratic;
+import gralog.math.BezierUtilities;
 import gralog.plugins.XmlName;
 import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
@@ -15,6 +18,7 @@ import java.io.*;
 
 import gralog.structure.controlpoints.ControlPoint;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import org.w3c.dom.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -405,9 +409,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
             int edgeId = e.getId();
-            System.out.println("we're looking at id pairs: " + targetId + "," + inputTargetId + " and " + sourceId + "," + inputSourceId + " and " + edgeId + "," + inputEdgeId);;
+            System.out.println("we're looking at id pairs: " + targetId
+                    + "," + inputTargetId + " and " + sourceId + ","
+                    + inputSourceId + " and " + edgeId + "," + inputEdgeId);;
             if (targetId == inputTargetId && sourceId == inputSourceId && edgeId == inputEdgeId){
-                System.out.println("ok we found edge with target: " + targetId + "=" + inputTargetId + " and source: " + sourceId + "=" + inputSourceId);
+                System.out.println("ok we found edge with target: " + targetId + "="
+                        + inputTargetId + " and source: " + sourceId + "=" + inputSourceId);
                 return e;
             }else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId) && edgeId == inputEdgeId){
                 return e;
@@ -981,6 +988,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         Vector2D vecFrom = new Vector2D(from.getX(), from.getY());
         Vector2D vecTo = new Vector2D(to.getX(), to.getY());
+
         double px = from.getX();
         double qx = to.getX();
         double py = from.getY();
@@ -988,6 +996,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         double cx = qx - px;
         double cy = qy - py;
+
+        Rectangle2D rect = new Rectangle2D(
+                Math.min(px, qx), Math.min(py, qy),
+                Math.abs(cx), Math.abs(cy));
+
         if(Math.abs(cx) < 0.01 || Math.abs(cy) < 0.01){
             return objects;
         }
@@ -1005,8 +1018,52 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 continue;
             }
             if(e.getControlPointCount() >= 1){
+                if(rectContainsVector(rect, e.getStartingPointSource()) ||
+                        rectContainsVector(rect, e.getStartingPointTarget())){
+                    objects.add(e);
+                    continue;
+                }
+                if(e.getEdgeType() == Edge.EdgeType.BEZIER){
+                    if(e.getControlPointCount() == 1){
+
+                        BezierQuadratic curve = BezierQuadratic.createFromEdge(e);
+
+                        var intersectionsXF = BezierUtilities.xIntersectionQuadraticBezier(px, curve);
+                        var intersectionsXT = BezierUtilities.xIntersectionQuadraticBezier(qx, curve);
+                        var intersectionsYF = BezierUtilities.yIntersectionQuadraticBezier(py, curve);
+                        var intersectionsYT = BezierUtilities.yIntersectionQuadraticBezier(qy, curve);
+
+                        if(     checkContainsAnyX(intersectionsYF, rect) ||
+                                checkContainsAnyX(intersectionsYT, rect) ||
+                                checkContainsAnyY(intersectionsXF, rect) ||
+                                checkContainsAnyY(intersectionsXT, rect)){
+                            objects.add(e);
+                        }
+                    }
+                    if(e.getControlPointCount() == 2){
+
+                        BezierCubic curve = BezierCubic.createFromEdge(e);
+
+                        var intersectionsXF = BezierUtilities.xIntersectionCubicBezier(px, curve);
+                        var intersectionsXT = BezierUtilities.xIntersectionCubicBezier(qx, curve);
+                        var intersectionsYF = BezierUtilities.yIntersectionCubicBezier(py, curve);
+                        var intersectionsYT = BezierUtilities.yIntersectionCubicBezier(qy, curve);
+
+                        if(     checkContainsAnyX(intersectionsYF, rect) ||
+                                checkContainsAnyX(intersectionsYT, rect) ||
+                                checkContainsAnyY(intersectionsXF, rect) ||
+                                checkContainsAnyY(intersectionsXT, rect)){
+                            objects.add(e);
+                        }
+                    }
+                }else if(e.getEdgeType() == Edge.EdgeType.SHARP){
+                    continue; // TODO:
+                }else if(e.getEdgeType() == Edge.EdgeType.ROUND){
+                    continue; // TODO:
+                }
                 continue;
             }
+
             Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
             Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(e.getOffset());
             Vector2D source = e.getSource().coordinates.plus(perpendicularToDiff);
@@ -1038,6 +1095,32 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         }
         return objects;
+    }
+
+    private static boolean rectContainsVector(Rectangle2D rect, Vector2D c){
+        return rect.contains(c.getX(), c.getY());
+    }
+    private static boolean checkContainsAnyX(Vector2D[] vectors, Rectangle2D rect){
+        for(int i = 0; i < vectors.length; i++){
+            if(vectors[i] != null){
+                if(rect.getMinX() < vectors[i].getX() &&
+                        rect.getMaxX() > vectors[i].getX()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    private static boolean checkContainsAnyY(Vector2D[] vectors, Rectangle2D rect){
+        for(int i = 0; i < vectors.length; i++){
+            if(vectors[i] != null){
+                if(rect.getMinY() < vectors[i].getY() &&
+                        rect.getMaxY() > vectors[i].getY()){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     //TODO: write comprehensive, more general SAT colision test
@@ -1320,7 +1403,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
             Element child = (Element) childNode;
-            String className = child.getTagName();		// catch additional tag name(should be type) = buechiautomat/automaton if existent
+            String className = child.getTagName();		// catch additional
+                                                        // tag name(should be type) = buechiautomat/automaton if existent
             if (child.hasAttribute("type")) {
             	className = child.getAttribute("type");
             } else {

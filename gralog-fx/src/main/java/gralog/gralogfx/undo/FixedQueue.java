@@ -7,6 +7,8 @@ public class FixedQueue<T> {
     private int count;
     private int startIndex;
 
+    public int poppedInRow = 0;
+
     private T[] x;
 
     public int size(){
@@ -22,9 +24,19 @@ public class FixedQueue<T> {
         this.x = (T[])new Object[size];
     }
 
-    public void removeBottom(){
-        startIndex++;
-        count--;
+    /**
+     * Reverts the pop-operation (you can revert n times if you popped
+     * n consecutive times). Every push discards the reversion
+     */
+    public T revertPop(){
+        if(poppedInRow > 0){
+            count++;
+            poppedInRow--;
+            return x[(startIndex + count - 1) % size];
+        }
+        else{
+            return null;
+        }
     }
 
     public void push(T obj){
@@ -34,11 +46,19 @@ public class FixedQueue<T> {
         }else{
             count++;
         }
+        poppedInRow = 0;
     }
 
     public T pop(){
+        if(count == 0) { return null; }
         count--;
+        poppedInRow++;
         return x[(startIndex + count) % size];
+    }
+
+    public T last(){
+        if(count == 0) { return null; }
+        return x[(startIndex + count - 1) % size];
     }
 
 

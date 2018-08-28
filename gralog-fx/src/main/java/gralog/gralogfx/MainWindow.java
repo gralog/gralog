@@ -3,6 +3,7 @@
 package gralog.gralogfx;
 //test
 
+import gralog.dialog.GralogList;
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
 import javafx.event.EventHandler;
@@ -33,6 +34,7 @@ import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.input.KeyCode;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -75,6 +77,15 @@ public class MainWindow extends Application {
     private Console mainConsole;
     private PluginControlPanel pluginControlPanel;
 
+
+    //panels
+    private DockPane mainDockPane;
+    private DockNode objDock;
+    private DockNode objListDock;
+    private DockNode pluginDock;
+    private DockNode structureNode;
+    private DockNode consoleDock;
+
     private boolean pipingUnderway = false;
 
 
@@ -100,8 +111,14 @@ public class MainWindow extends Application {
         handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
+        handlers.onCut = this::onCut;
+        handlers.onCopy = this::onCopy;
+        handlers.onPaste = this::onPaste;
+        handlers.onUndo = this::onUndo;
+        handlers.onRedo = this::onRedo;
+
         // pipeline = new Piping();
-        pipelines = new ArrayList<Piping>();
+        pipelines = new ArrayList<>();
         //controls
         handlers.onAlignHorizontally = () -> {
             if(tabs.getCurrentStructurePane() != null){
@@ -150,10 +167,9 @@ public class MainWindow extends Application {
         mainConsole = new Console(tabs, this::profferTextToMainWindow);
 
         ObjectInspector objectInspector = new ObjectInspector(tabs);
+        ObjectListDisplay objectListDisplay = new ObjectListDisplay();
+
         //put lambdas here for controlling stuff
-        
-
-
         Runnable play = new Runnable(){
             public void run(){
                 Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
@@ -163,7 +179,8 @@ public class MainWindow extends Application {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("No External Process");
                             alert.setHeaderText(null);
-                            alert.setContentText("You have not yet started a piping thread in this window, as such you cannot resume piping");
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such you cannot resume piping");
                             alert.showAndWait();
                         }
                     );
@@ -185,7 +202,8 @@ public class MainWindow extends Application {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("No External Process");
                             alert.setHeaderText(null);
-                            alert.setContentText("You have not yet started a piping thread in this window, as such there is nothing to skip");
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such there is nothing to skip");
                             alert.showAndWait();
                         }
                     );
@@ -202,7 +220,8 @@ public class MainWindow extends Application {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("No External Process");
                             alert.setHeaderText(null);
-                            alert.setContentText("You have not yet started a piping thread in this window, as such there is nothing to pause");
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such there is nothing to pause");
                             alert.showAndWait();
                         }
                     );
@@ -218,7 +237,8 @@ public class MainWindow extends Application {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("No External Process");
                             alert.setHeaderText(null);
-                            alert.setContentText("You have not yet started a piping thread in this window, as such there is nothing to pause");
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such there is nothing to pause");
                             alert.showAndWait();
                         }
                     );
@@ -228,8 +248,8 @@ public class MainWindow extends Application {
         
 
 
-        DockPane mainDockPane = new DockPane();
-        DockNode structureNode = new DockNode(tabs.getTabPane());
+        mainDockPane = new DockPane();
+        structureNode = new DockNode(tabs.getTabPane());
 
         //  pluginControlPanel stuff commented out because
         // it is not properly integrated with multiple piping
@@ -241,33 +261,13 @@ public class MainWindow extends Application {
         // END
         
 
-        DockNode objDock = new DockNode(objectInspector, "Object Inspector", null);
-        DockNode pluginDock = new DockNode(this.pluginControlPanel, "Algorithm Control", null);
-        DockNode consoleDock = new DockNode(mainConsole, "Console", null);
-
-        structureNode.dock(mainDockPane, DockPos.CENTER);
-        structureNode.setMaxHeight(Double.MAX_VALUE);
-        structureNode.setPrefWidth(Double.MAX_VALUE);
-        structureNode.setPrefHeight(Double.MAX_VALUE);
-        structureNode.setDockTitleBar(null);
+        objDock = new DockNode(objectInspector, "Object Inspector", null);
+        objListDock = new DockNode(objectListDisplay, "List Overview", null);
+        pluginDock = new DockNode(this.pluginControlPanel, "Algorithm Control", null);
+        consoleDock = new DockNode(mainConsole, "Console", null);
 
 
-
-        objDock.dock(mainDockPane, DockPos.RIGHT);
-        objDock.setPrefHeight(250);
-        objDock.setPrefWidth(270);
-        objDock.setMinWidth(270);
-
-
-        pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
-        pluginDock.setPrefHeight(70);
-        pluginDock.setMinHeight(70);
-
-
-        consoleDock.dock(mainDockPane, DockPos.BOTTOM, pluginDock);
-        consoleDock.setPrefWidth(200);
-        consoleDock.setMinHeight(200);
-        consoleDock.setMaxHeight(Double.MAX_VALUE);
+        dockPanels();
 
         Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
 
@@ -276,6 +276,37 @@ public class MainWindow extends Application {
         root.setCenter(mainDockPane);
         root.setBottom(statusBar.getStatusBar());
     }
+    public void dockPanels(){
+        structureNode.dock(mainDockPane, DockPos.LEFT);
+        structureNode.setMaxHeight(Double.MAX_VALUE);
+        structureNode.setPrefWidth(Double.MAX_VALUE);
+        structureNode.setPrefHeight(Double.MAX_VALUE);
+        structureNode.setDockTitleBar(null);
+
+        objDock.dock(mainDockPane, DockPos.RIGHT);
+        objDock.setPrefHeight(250);
+        objDock.setMinWidth(270);
+        objDock.setMaxWidth(270);
+
+        //pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
+        //pluginDock.setMaxWidth(270);
+        //pluginDock.setPrefHeight(70);
+        //pluginDock.setMinHeight(70);
+
+        consoleDock.dock(mainDockPane, DockPos.BOTTOM, structureNode);
+        consoleDock.setPrefWidth(Double.MAX_VALUE);
+        consoleDock.setMaxWidth(Double.MAX_VALUE);
+        consoleDock.setMinHeight(200);
+        consoleDock.setMaxHeight(Double.MAX_VALUE);
+    }
+
+    void dockPanels2(){
+        objListDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
+        //objListDock.setMaxWidth(270);
+        objListDock.setPrefHeight(300);
+        objListDock.setMinHeight(300);
+    }
+
 
     public void foo(){
         System.out.println("foo");
@@ -361,7 +392,8 @@ public class MainWindow extends Application {
 
             System.out.println("with filename: " + fileName);
 
-            Piping newPiping = this.tabs.getCurrentStructurePane().makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
+            Piping newPiping = this.tabs.getCurrentStructurePane().
+                    makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
             this.pipelines.add(newPiping);
             
             
@@ -392,14 +424,16 @@ public class MainWindow extends Application {
     public String getSpecifiedFileName(){
 
 
-        String fileName = Preferences.getFile("MainWindow_pipingFile", "/home/michelle/gralog/gralog/gralog-layout/DFS.py").getPath();
+        String fileName = Preferences.getFile("MainWindow_pipingFile",
+                "/home/michelle/gralog/gralog/gralog-layout/DFS.py").getPath();
         return fileName;
     }
 
     public String getLastFileName(){
 
-        String fileName = Preferences.getFile("MainWindow_lastPipingFile", "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
-
+        String fileName = Preferences.getFile("MainWindow_pipingFile",
+                "/Users/f002nb9/Documents/f002nb9/kroozing/" +
+                        "gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
         return fileName;
     }
 
@@ -668,6 +702,39 @@ public class MainWindow extends Application {
             exbox.showAndWait(ex);
         }
     }
+    private void onCut(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.cutSelectionToClipboard();
+        }
+    }
+    private void onCopy(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.copySelectionToClipboard();
+        }
+    }
+
+    private void onPaste(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.pasteFromClipboard();
+        }
+    }
+
+    private void onUndo(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.undoStructure();
+        }
+    }
+
+    private void onRedo(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.redoStructure();
+        }
+    }
 
     public void algorithmCompleted(StructurePane structurePane,
         AlgorithmThread algoThread) {
@@ -769,13 +836,6 @@ public class MainWindow extends Application {
         }
     }
 
-    
-
-    
-
-    
-    
-
     @Override
     public void start(Stage primaryStage) {
         Scene scene = new Scene(
@@ -798,8 +858,7 @@ public class MainWindow extends Application {
 
 
         scene.setOnKeyPressed(event -> {
-
-
+            //if(event.getCode() == KeyCode.F2){ ((ObjectListDisplay)objListDock.getContents()).list.get(0).remove("abc"); } if(event.getCode() == KeyCode.F3){ GralogList<String> x = ((ObjectListDisplay)objListDock.getContents()).list.get(0); x.add("abc"); }
             
         });
 
@@ -830,6 +889,9 @@ public class MainWindow extends Application {
 
         });
         primaryStage.show();
+
+
+        dockPanels2();
 
         MultipleKeyCombination.setupMultipleKeyCombination(scene);
 
