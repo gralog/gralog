@@ -302,6 +302,8 @@ public class PipingMessageHandler{
         
         String colorName;
 
+        
+        
         if ((colorName = PipingPresets.getHexByColorName(color)) != null){
             return hexToGralogColor(colorName);
         }else{
@@ -569,6 +571,14 @@ public class PipingMessageHandler{
             // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
             // System.out.println("")
             currentCommand = new ExistsEdgeCommand(externalCommandSegments,currentStructure);
+            // 
+
+            return currentCommand;
+            // this.out.println(handleEdgeResponse);
+        }else if (commandKeyword.equals("existsVertex")){//format: addEdge <sourceId> <targetId> <directed?>
+            // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
+            // System.out.println("")
+            currentCommand = new ExistsVertexCommand(externalCommandSegments,currentStructure);
             // 
 
             return currentCommand;

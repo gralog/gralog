@@ -68,7 +68,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     public double arrowHeadAngle = 40d; // degrees
     // @InspectorName(name = "thickness")
     @DataField(display=true)
-    public Double width = 2.54 / 96; // cm
+    public Double thickness = 2.54 / 96; // cm
     @DataField(display=true)
     public GralogColor color = GralogColor.BLACK;
     @DataField(display=true)
@@ -102,7 +102,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         color = config.getValue("Edge_color", GralogColor::parseColor, GralogColor.BLACK);
         endPointDistance = config.getValue("Edge_endPointDistance", Double::parseDouble, 0.0);
         startPointDistance = config.getValue("Edge_startPointDistance", Double::parseDouble, 0.0);
-        width = config.getValue("Edge_thickness", Double::parseDouble, 0.025);
+        thickness = config.getValue("Edge_thickness", Double::parseDouble, 0.025);
     }
 
     public void setEdgeType(EdgeType e){
@@ -338,7 +338,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         l.tangentStart = Vector2D.getVectorAtAngle(angleStart, 1).orthogonal();
         l.tangentEnd = Vector2D.getVectorAtAngle(angleEnd, 1).orthogonal();
 
-        gc.loop(l,1.5, correction, edgeColor, width, type);
+        gc.loop(l,1.5, correction, edgeColor, thickness, type);
 
     }
     public void render(GralogGraphicsContext gc, Highlights highlights){
@@ -534,7 +534,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         enode.setAttribute("isdirected", isDirected ? "true" : "false");
         enode.setAttribute("label", label);
         enode.setAttribute("weight", Double.toString(weight));
-        enode.setAttribute("width", Double.toString(width));
+        enode.setAttribute("thickness", Double.toString(thickness));
         enode.setAttribute("arrowheadlength", Double.toString(arrowHeadLength));
         enode.setAttribute("color", color.toHtmlString());
 
@@ -561,8 +561,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         if (enode.hasAttribute("weight"))
             weight = Double.parseDouble(enode.getAttribute("weight"));
 
-        if (enode.hasAttribute("width"))
-            width = Double.parseDouble(enode.getAttribute("width"));
+        if (enode.hasAttribute("thickness"))
+            thickness = Double.parseDouble(enode.getAttribute("thickness"));
 
         if (enode.hasAttribute("arrowheadlength"))
             arrowHeadLength = Double.parseDouble(enode.getAttribute("arrowheadlength"));

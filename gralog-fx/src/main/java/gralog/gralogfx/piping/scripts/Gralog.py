@@ -163,6 +163,14 @@ class Edge:
 		if not self.sourced:
 			self.source();
 		return self.weight;
+
+	def setThickness(self,thickness):
+		self.thickness = int(thickness);
+		self.graph.setEdgeThickness(self.id,thickness);
+	def getThickness(self):
+		if not self.sourced:
+			self.source();
+		return self.thickness;
 	def setContour(self,contour):
 
 		self.graph.setEdgeContour(self.id,contour);
@@ -313,6 +321,41 @@ class Graph:
 	    except ValueError:
 	        return False
 
+	def edgifyTGFCommand(self,line):
+		line = line.strip();
+		endpoints = line.split(" ");
+		v1String = endpoints[0];
+		v1 = self.getVertexOrNew(int(v1String))
+		v2String = endpoints[1];
+		v2 = self.getVertexOrNew(int(v2String))
+		e = self.getEdgeOrNew(-2);
+		e.setSource(v1);
+		e.setTarget(v2);
+		# self.edges[e.getId()] = e;
+
+	def vertexifyTGFCommand(self,line):
+		line = line.strip();
+		vString = line[0];
+		v = self.getVertexOrNew(int(vString))
+
+		self.vertices[v.getId()] = v;
+
+	def edgifyGTGFCommand(self,line):
+		line = line.strip();
+		endpoints = line.split(" ");
+		v1String = endpoints[0];
+		v1 = self.getVertexOrNew(int(v1String))
+		v2String = endpoints[1];
+		v2 = self.getVertexOrNew(int(v2String))
+		eid = int(endpoints[2]);
+		e = self.getEdgeOrNew(eid);
+		e.setSource(v1);
+		e.setTarget(v2);
+		self.edges[eid] = e;
+
+	def vertexifyGTGFCommand(self,line):
+		self.vertexifyTGFCommand(line);
+
 
 	####end helper functions
 
@@ -407,6 +450,16 @@ class Graph:
 		gPrint(" we got: " + thereExistsAnEdge);
 		gPrint(str(thereExistsAnEdge.lower() == "true"));
 		return thereExistsAnEdge.lower() == "true";
+
+	def existsVertex(self,vertex):
+		line = "existsVertex#"+str(self.id).rstrip() + "#";
+		line = line + str(vertex).rstrip()
+
+		print line.rstrip();
+
+		sys.stdout.flush();
+		thereExistsAVertex = sys.stdin.readline().rstrip();
+		return thereExistsAVertex.lower() == "true";
 
 	
 	def deleteEdge(self,edge):
@@ -524,6 +577,9 @@ class Graph:
 	def setEdgeWeight(self,edge,weight):
 		self.setEdgeProperty(edge,"weight",weight);
 
+	def setEdgeThickness(self,edge,thickness):
+		self.setEdgeProperty(edge,"thickness",thickness);
+
 	def setEdgeProperty(self,edge,property,value):
 		line = "setEdgeProperty#"+str(self.id).rstrip() + "#"
 		line = line + edgeSplitter(edge);
@@ -561,40 +617,7 @@ class Graph:
 	#####getter functions
 
 
-	def edgifyTGFCommand(self,line):
-		line = line.strip();
-		endpoints = line.split(" ");
-		v1String = endpoints[0];
-		v1 = self.getVertexOrNew(int(v1String))
-		v2String = endpoints[1];
-		v2 = self.getVertexOrNew(int(v2String))
-		e = self.getEdgeOrNew(-2);
-		e.setSource(v1);
-		e.setTarget(v2);
-		# self.edges[e.getId()] = e;
-
-	def vertexifyTGFCommand(self,line):
-		line = line.strip();
-		vString = line[0];
-		v = self.getVertexOrNew(int(vString))
-
-		self.vertices[v.getId()] = v;
-
-	def edgifyGTGFCommand(self,line):
-		line = line.strip();
-		endpoints = line.split(" ");
-		v1String = endpoints[0];
-		v1 = self.getVertexOrNew(int(v1String))
-		v2String = endpoints[1];
-		v2 = self.getVertexOrNew(int(v2String))
-		eid = int(endpoints[2]);
-		e = self.getEdgeOrNew(eid);
-		e.setSource(v1);
-		e.setTarget(v2);
-		self.edges[eid] = e;
-
-	def vertexifyGTGFCommand(self,line):
-		self.vertexifyTGFCommand(line);
+	
 
 	def getGraph(self,graphFormat):
 		##warning!! importaing as pure TGF will mean edge id's will 

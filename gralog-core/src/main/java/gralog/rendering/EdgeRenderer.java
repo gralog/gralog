@@ -64,9 +64,9 @@ public class EdgeRenderer {
         curve.target = curve.target.minus(targetToCtrl2.multiply(corr)); //correction for the arrow
 
         if(controlPoints.size() == 1){
-            gc.drawQuadratic(curve, c, e.width, e.type);
+            gc.drawQuadratic(curve, c, e.thickness, e.type);
         }else{
-            gc.drawBezier(curve, c, e.width, e.type);
+            gc.drawBezier(curve, c, e.thickness, e.type);
         }
     }
 
@@ -85,13 +85,13 @@ public class EdgeRenderer {
             return;
         }
 
-        gc.line(e.getSource().coordinates, ctrl.get(0).getPosition(), c, e.width, e.type);
+        gc.line(e.getSource().coordinates, ctrl.get(0).getPosition(), c, e.thickness, e.type);
 
         for(int i = 1; i < ctrl.size(); i++){
-            gc.line(ctrl.get(i-1).getPosition(), ctrl.get(i).getPosition(), c, e.width, e.type);
+            gc.line(ctrl.get(i-1).getPosition(), ctrl.get(i).getPosition(), c, e.thickness, e.type);
         }
 
-        gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates, c, e.width, e.type);
+        gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates, c, e.thickness, e.type);
     }
 
     private static void drawStraightEdge(Edge e, GralogGraphicsContext gc, GralogColor c){
@@ -107,10 +107,10 @@ public class EdgeRenderer {
         intersection = intersection.minus(diff.normalized().multiply(e.endPointDistance / 2)); //no idea why I divide
         if(e.isDirected){
             Vector2D adjust = intersection.plus(diff.normalized().multiply(e.arrowType.endPoint * e.arrowHeadLength));
-            gc.line(sourceOffset, adjust, c, e.width, e.type);
+            gc.line(sourceOffset, adjust, c, e.thickness, e.type);
             gc.arrow(diff, intersection, e.arrowType, e.arrowHeadLength, c);
         }else{
-            gc.line(sourceOffset, intersection, c, e.width, e.type);
+            gc.line(sourceOffset, intersection, c, e.thickness, e.type);
         }
     }
 }
