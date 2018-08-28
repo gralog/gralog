@@ -22,6 +22,7 @@ public final class BezierUtilities {
         public boolean successful;
         public Vector2D result;
     }
+
     public static Vector2D[] yIntersectionQuadraticBezier(double y, BezierQuadratic c){
 
         final double p0 = c.c0.getY();

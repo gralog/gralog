@@ -516,8 +516,6 @@ public class StructurePane extends StackPane implements StructureListener {
 
         //group selection handling for primary mouse button
         if(e.isPrimaryButtonDown()){
-            
-            
 
             //if selection hit something, select
             if (selected != null) {
@@ -536,7 +534,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 }
                 else{
                     //reassign selection to object that was not in the list
-                    if(!e.isControlDown() && !highlights.isSelected(selected)){
+                    if(!e.isShiftDown() && !highlights.isSelected(selected)){
                         selectExclusive(selected);
                     }else{
                         select(selected);
@@ -552,7 +550,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 }
             }
             //if selection hit nothing, start boxing
-            else if(!e.isControlDown()){
+            else{
                 boxingStartingPosition = new Point2D(lastMouseX, lastMouseY);
                 selectionBoxingActive = true;
 
@@ -560,7 +558,8 @@ public class StructurePane extends StackPane implements StructureListener {
                 if(!highlights.getSelection().isEmpty()){
                     blockVertexCreationOnRelease = true;
                 }
-                clearSelection();
+                if(!e.isShiftDown())
+                    clearSelection();
             }
         }else if(e.isSecondaryButtonDown()){
             //start an edge if secondary mouse down on a vertex
@@ -861,8 +860,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
 
         //draw the selection box
-        if(selectionBoxDragging){
-
+        if(selectionBoxDragging && boxingStartingPosition != null){
             Point2D boxStartScreen = modelToScreen(boxingStartingPosition);
             ggc.selectionRectangle(boxStartScreen, boxingEndingPosition, selectionBoxColor);
         }
