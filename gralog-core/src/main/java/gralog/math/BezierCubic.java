@@ -15,4 +15,12 @@ public class BezierCubic {
         b.c3 = e.getStartingPointTarget();
         return b;
     }
+
+    public Vector2D eval(double t){
+        return  c0.multiply(Math.pow(1-t, 3)).plus(
+                c1.multiply(3 * Math.pow(1-t, 2) * t)).plus(
+                c2.multiply(3 * (1-t)*t*t)).plus(
+                c3.multiply(Math.pow(t, 3)));
+    }
+
 }

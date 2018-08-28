@@ -5,6 +5,7 @@ import gralog.math.sturm.Polynomial;
 import gralog.math.sturm.SturmRootIsolator;
 import gralog.rendering.Vector2D;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,20 +44,25 @@ public final class BezierUtilities {
         final double p3 = c.c3.getX();
 
         final double ct3 = -p0 + 3*p1 - 3*p2 + p3;
-        final double ct2 = 3*p0 -6*p1 + 3*p2;
-        final double ct1 = 3*p1;
-        final double ct0 = p0 - 2*x;
+        final double ct2 = 3*p0-6*p1 + 3*p2;
+        final double ct1 = -3*p0 + 3*p1;
+        final double ct0 = p0 - x;
 
         Polynomial polynomial = new Polynomial(ct3, ct2, ct1, ct0);
+
         var intervals = SturmRootIsolator.findIntervals(polynomial);
 
-        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals);
+        double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
         for (int i = 0; i < roots.length; i++) {
-            System.out.print(roots[i] + ", ");
+            System.out.print("t = "  + fmt(roots[i]) +
+                        "\t f(t) = " + fmt(polynomial.eval(roots[i])));
         }
+
         return null;
     }
-
+    static String fmt(double x){
+        return new DecimalFormat("#.###").format(x);
+    }
 
     /**
      * This method implements an algorithm on point projections for cubic bezier curves.

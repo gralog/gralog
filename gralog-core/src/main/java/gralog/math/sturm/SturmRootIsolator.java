@@ -57,11 +57,12 @@ public class SturmRootIsolator {
         return roots;
     }
 
-    public static double[] findRoots(Polynomial p, List<Interval> intervals){
+
+    public static double[] findRoots(Polynomial p, List<Interval> intervals, int iterations){
         double[] roots = new double[intervals.size()];
         for(int i = 0; i < roots.length; i++){
             Interval interval = intervals.get(i);
-            roots[i] = findRoot(p, interval.lowerBound(), interval.upperBound(), 10);
+            roots[i] = findRoot(p, interval.lowerBound(), interval.upperBound(), iterations);
         }
         return roots;
     }

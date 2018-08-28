@@ -15,12 +15,13 @@ public class BezierUtilitiesTest {
         Vector2D ctrl2  = new Vector2D(1, 1).plus(1, 1);
         Vector2D target = new Vector2D(1, 0).plus(1, 1);
 
-        BezierUtilities.Line l = new BezierUtilities.Line();
-        l.a = 1;
-        l.b = 0;
-        l.c = 1.5;
+        BezierCubic b = new BezierCubic();
+        b.c0 = source;
+        b.c1 = ctrl1;
+        b.c2 = ctrl2;
+        b.c3 = target;
 
-        BezierUtilities.lineIntersectionCubicBezier(l, source, ctrl1, ctrl2, target);
+        BezierUtilities.xIntersectionCubicBezier(1.1, b);
     }
 
 }

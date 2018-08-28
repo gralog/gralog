@@ -1014,7 +1014,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     }
                     if(e.getControlPointCount() == 2){
                         BezierCubic curve = BezierCubic.createFromEdge(e);
-                        System.out.println(px);
                         BezierUtilities.xIntersectionCubicBezier(px, curve);
                         continue;
                     }
