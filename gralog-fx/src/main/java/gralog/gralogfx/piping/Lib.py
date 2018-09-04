@@ -932,3 +932,8 @@ class Graph:
 
 	def __str__(self):
 		return "todo: tgf"
+
+	def message(self, message):
+		line = str(message);
+		print(line);
+		sys.stdout.flush();
