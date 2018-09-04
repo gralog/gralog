@@ -934,6 +934,5 @@ class Graph:
 		return "todo: tgf"
 
 	def message(self, message):
-		line = str(message);
-		print(line);
+		print "message#"+str(self.id).rstrip() + "#"+str(message).rstrip();
 		sys.stdout.flush();

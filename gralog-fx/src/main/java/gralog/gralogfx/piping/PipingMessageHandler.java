@@ -612,6 +612,11 @@ public class PipingMessageHandler{
             return currentCommand;
 
             // this.out.println(handleEdgeResponse);
+        }else if (commandKeyword.equals("message")){
+        	System.out.println(externalCommandSegments[2]);
+        	currentCommand = new MessageCommand(externalCommandSegments,currentStructure);
+        	//
+        	return currentCommand;
         }
 
 
