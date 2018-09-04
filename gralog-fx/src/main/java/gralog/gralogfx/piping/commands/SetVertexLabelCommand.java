@@ -39,7 +39,13 @@ public class SetVertexLabelCommand extends CommandForGralogToExecute {
         
 
         // this.generateLabel(externalCommandSegments);
-        this.label = externalCommandSegments[3];
+        try{    
+            this.label = PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
+        }catch(Exception e){
+            this.error = e;
+            this.fail();
+            return;
+        }
 
     }
 

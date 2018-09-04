@@ -114,7 +114,7 @@ public class SetGraphCommand extends CommandForGralogToExecute {
             try{
                 line = this.piping.getNextLine();
                 while (!line.equals("$")){
-                    System.out.println("Getsing the line: " + line);
+
                     totalGraph += line + "\n";
                     line = this.piping.getNextLine();
                 }
@@ -125,7 +125,6 @@ public class SetGraphCommand extends CommandForGralogToExecute {
             InputStream is = new ByteArrayInputStream(totalGraph.getBytes());
             GralogTrivialGraphFormatImport importer = new GralogTrivialGraphFormatImport();
             Structure structureFromGTGF;
-            System.out.println("post ness we gots uselvs: " + totalGraph);
             try{
                 structureFromGTGF = importer.importGraph(is,null);
             }catch(Exception e){

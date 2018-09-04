@@ -14,7 +14,7 @@ public class GPrintCommand extends CommandForGralogToExecute {
 	String message;
 	Piping.MessageToConsoleFlag flag;
 
-	public GPrintCommand(String[] externalCommandSegments,Piping piping){
+	public GPrintCommand(String[] externalCommandSegments,Structure structure,Piping piping){
 		this.externalCommandSegments = externalCommandSegments;
 		this.piping=piping;
 		this.flag = Piping.MessageToConsoleFlag.GPrint;
