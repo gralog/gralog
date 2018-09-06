@@ -1,0 +1,103 @@
+\section{Working with the console}
+
+The console is a tool to work with graphs by entering commands rather
+than by clicking the mouse buttons. This is especially convenient if
+you want to create large subgraphs with a regular pattern.
+
+By default, the console is the frame below the main frame with the
+graph. Here, in the bottom line, you can enter commands just like in a
+terminal.
+
+\subsection{Lists}
+
+The objects you work with are \emph{lists:} lists of vertices and
+lists of edges. We concentrate on vertex lists in this manual, edge
+lists behave in the same way. All lists can be created out of the
+default list of all vertices and the internal list of all currently
+selected vertices. The latter can be made with the mouse in the
+obvious way or you can write in the command line:
+\begin{tcolorbox}
+  select all vertices,
+\end{tcolorbox}
+\noindent
+to select all vertices. By the way, in a similar way, all vertices are
+deselected:
+\begin{tcolorbox}
+deselect all vertices.
+\end{tcolorbox}
+
+Now use the selection to create a new list. The corresponding command
+is \texttt{filter}: one filters the elements from an existing list
+according to certain criteria and saves them into another list. If the
+other list already exists, the new elements are appended to it (even
+if they are already contained in the target list). 
+
+\begin{tcolorbox}
+  filter all selected where no condition to VL1
+\end{tcolorbox}
+
+\subsection{Filter}
+
+Now we created a new list \texttt{VL1} containing all vertices of the
+graph. Let us now create a new list that contains only vertices with a
+certain property, say those whose colour is blue. We can now use
+\texttt{VL1} as a source of vertices.
+
+\begin{tcolorbox}
+  filter VL1 where fill color blue to VLblue
+\end{tcolorbox}
+
+Now the list \texttt{VLblue} contains all vertices with fill color
+\texttt{blue}. Ne create a new list containing all vertices whose fill
+color is red. Note in the following example that instead of the
+keyword \texttt{where} one can write \texttt{such that} or
+\texttt{st}. Note also that instead of \texttt{fill color} it is
+possible to use just \texttt{fill}:
+
+\begin{tcolorbox}
+  filter VL1 st fill red to VLred
+\end{tcolorbox}
+
+The full specification of the filter command is as follows. Note that
+Gralog does not distinguish between the upper and the lower cases.
+
+
+\begin{tcolorbox}
+  FILTER <what> WHERE|ST|(SUCH THAT) <parameterS> TO <list identifier>
+  [ignored trash]
+\end{tcolorbox}
+ 
+\noindent where
+
+\begin{tcolorbox}
+  
+  \begin{tabular}[H]{rl}
+    <what> := &(ALL VERTICES) | (ALL EDGES)\\
+              &| ([ALL ]?SELECTED VERTICES) | ([ALL ]?SELECTED EDGES)\\
+              & | <list id> 
+  \end{tabular}
+and \texttt{<list>} can be a list of vertices or a list of edges;
+\begin{tabular}[H]{rl}
+  <parameterS> := &<parameterS> <parameterS> | <parameter> <value> \\
+                  & | <bool\_parameter> | formula <integer expression
+                    (i)>\\
+  \end{tabular}
+  and
+  \begin{tabular}[H]{rl}
+  <parameter> := &NO CONDITION | FILL|(FILL COLOR) | STROKE|(STROKE
+    COLOR) \\
+                 &| THICKNESS | WIDTH | HEIGHT | SIZE | ID\\
+                 &| SHAPE | WEIGHT | TYPE | (EDGE TYPE)|EDGETYPE \\
+                 &| DEGREE | INDEGREE | OUTDEGREE\\
+                 &| BUTTERFLY // not implemented yet
+  \end{tabular}
+  and finally
+  \begin{tabular}[H]{rl}
+  <bool\_parameter> := &HAS SELFLOOP | DIRECTED | HAS LABEL
+  \end{tabular}
+\end{tcolorbox}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
