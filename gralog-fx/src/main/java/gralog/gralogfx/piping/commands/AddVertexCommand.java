@@ -61,7 +61,7 @@ public class AddVertexCommand extends CommandForGralogToExecute {
             this.x,
             this.y
         );
-        this.vertex.fillColor = new GralogColor(204, 236, 53);
+
 
         this.newVertexId = this.vertex.getId();
         System.out.println("about to set response");

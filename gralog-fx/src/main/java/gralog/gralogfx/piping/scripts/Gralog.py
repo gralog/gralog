@@ -37,13 +37,16 @@ class Vertex:
 	def getId(self):
 		return self.id;
 	def setLabel(self,label):
+		label = str(label);
 		self.properties["label"] = label;
 		self.graph.setVertexLabel(self.id,label);
+
 	def setCoordinates(self,coordinates):
 		co = self.properties["coordinates"];
 		
 		x = coordinates[0];
 		y = coordinates[1];
+
 		if co == None:
 			co = (None,None);
 		if x == None:
@@ -51,8 +54,9 @@ class Vertex:
 		if y == None:
 			y = co[1];
 		newCoordinates = (x,y);
+
 		self.properties["coordinates"] = newCoordinates
-		self.graph.setVertexCoordinates(self.id,coordinates);
+		self.graph.setVertexCoordinates(self.id,newCoordinates);
 	def getLabel(self):
 		if not self.wasSourced:
 			self.source();
@@ -60,20 +64,11 @@ class Vertex:
 	def setFillColor(self,colorHex=-1,colorRGB=-1):
 		self.setColor(colorHex,colorRGB);
 	def getFillColor(self):
+		return self.getColor();
+	def getColor(self):
 		if not self.wasSourced:
 			self.source();
 		return self.properties["color"];
-	def setStrokeColor(self,colorHex=-1,colorRGB=-1):
-		if not (colorHex == -1):
-			self.properties["strokeColor"] = colorHex;
-			self.graph.setVertexStrokeColor(self.id,colorHex=colorHex);
-		elif not (colorRGB == -1) and len(colorRGB) == 3:
-			self.properties["strokeColor"] = colorRGB;
-			self.graph.setVertexStrokeColor(self.id,colorRGB=colorRGB);
-	def getStrokeColor(self):
-		if not self.sourced:
-			self.source();
-		return self.properties["strokeColor"];
 	def setColor(self,colorHex=-1,colorRGB=-1):
 		if colorHex != -1:
 			self.properties["fillColor"] = colorHex;
@@ -82,21 +77,29 @@ class Vertex:
 		else:
 			return;
 		self.graph.setVertexFillColor(self.id,colorHex,colorRGB);
+	def setStrokeColor(self,colorHex=-1,colorRGB=-1):
+		if colorHex != -1:
+			self.properties["strokeColor"] = colorHex;
+		elif colorRGB != -1:
+			self.properties["strokeColor"] = colorRGB;
+		else:
+			return;
+		self.graph.setVertexStrokeColor(self.id,colorHex,colorRGB);
+	def getStrokeColor(self):
+		if not self.sourced:
+			self.source();
+		return self.properties["strokeColor"];
 	def setRadius(self,radius):
 		self.properties["radius"] = radius;
 		self.properties["width"] = radius;
 		self.properties["height"] = radius;
-		self.graph.setVertexRadius(self.getId(),radius);
+		self.graph.setVertexRadius(self.id,radius);
 	def setWidth(self,width):
 		self.properties["width"] = width;
 		self.graph.setVertexWidth(self.getId(),width);
 	def setHeight(self,height):
 		self.properties["height"] = height;
 		self.graph.setVertexHeight(self.getId(),height);
-	def getColor(self):
-		if not self.sourced:
-			self.source();
-		return self.properties["color"];
 	def setShape(self,shape):
 		self.properties["shape"] = shape;
 		self.graph.setVertexShape(self.id,shape);
@@ -104,15 +107,27 @@ class Vertex:
 		if not self.sourced:
 			self.source();
 		return self.properties["shape"];
-	def setOtherProperty(self,otherProperty,value):
+	def setProperty(self,otherProperty,value):
 		self.properties[otherProperty] = value;
 		self.graph.setVertexProperty(self.id,otherProperty,value);
+	def deleteAllEdgesBetween(self,vertex2):
+		self.graph.deleteAllEdgesBetween((v.id,vertex2));
 	def get(self,prop):
 		if not self.sourced:
 			self.source();
 		return self.properties[prop];
 	def getNeighbours(self):
 		return self.graph.getNeighbours(self.id);
+	def getOutgoingNeighbours(self):
+		return self.graph.getOutgoingNeighbours(self.id);
+	def getIncomingNeighbours(self):
+		return self.graph.getIncomingNeighbours(self.id);
+	def getOutgoingEdges(self):
+		return self.graph.getOutgoingEdges(self.id);
+	def getIncomingEdges(self):
+		return self.graph.getIncomingEdges(self.id);
+	def getIncidentEdges(self):
+		return self.graph.getIncidentEdges(self.id);
 	def delete(self):
 		return self.graph.deleteVertex(self);
 	def connect(self,v1,edgeId=-1):
@@ -122,8 +137,6 @@ class Vertex:
 	def __str__(self):
 		return str(self.getId());
 
-	# def getIncidentEdges:
-	# 	return self.incidentEdges;
 
 	#what if i want to get a vertex? should i also get all its neighbours? how about incidenet edges? This is all v aufw\"andig and leads to the paradigm by which we just store the grpah in python???
 
@@ -168,6 +181,7 @@ class Edge:
 	def getId(self):
 		return self.id;
 	def setLabel(self,label):
+		label = str(label);
 		self.properties["label"] = label;
 		self.graph.setEdgeLabel(self.id,label);
 	def getLabel(self):
@@ -176,12 +190,13 @@ class Edge:
 		return self.properties["label"];
 
 	def setColor(self,colorHex=-1,colorRGB=-1):
-		if not (colorHex == -1):
+		if colorHex != -1:
 			self.properties["color"] = colorHex;
-			self.graph.setEdgeColor(self.id,colorHex=colorHex);
-		elif not (colorRGB == -1) and len(colorRGB) == 3:
-			self.properties["color"] =colorRGB;
-			self.graph.setEdgeColor(self.id,colorRGB=colorRGB);
+		elif colorRGB != -1:
+			self.properties["color"] = colorRGB;
+		else:
+			return;
+		self.graph.setEdgeColor(self.id,colorHex,colorRGB);
 	def getColor(self):
 		if not self.sourced:
 			self.source();
@@ -218,16 +233,18 @@ class Edge:
 		if not self.sourced:
 			self.source();
 		return self.properties["target"];
-	def setOtherProperty(self,otherProperty,value):
+	def setProperty(self,otherProperty,value):
 		self.properties[otherProperty] = value;
 		self.graph.setEdgeProperty(otherProperty,value);
 	def get(self,prop):
 		self.source();
 		return self.properties[prop];
 	def delete(self):
-		return self.graph.deleteEdge(self);
+		return self.graph.deleteEdge(self.id);
 	def source(self):
-		return self.graph.getEdge(self);
+		return self.graph.getEdge(self.id);
+	def getAdjacentEdges(self):
+		return self.graph.getAdjacentEdges(self.id);
 
 
 	def __str__(self):
@@ -411,6 +428,29 @@ class Graph:
 		edgeId = sys.stdin.readline().rstrip();
 		return edgeId;
 
+	def getVertex(self,vertex):
+		line = "getVertex#"+str(self.id).rstrip() + "#"
+		line = line + str(vertex).rstrip();
+
+		print line.rstrip();
+		sys.stdout.flush();
+
+		vertexTuple = sys.stdin.readline().rstrip();
+
+		vertex.sourceProperties(vertexTuple);
+		return vertex;
+
+	def getEdge(self,edge):
+		line = "getEdge#"+str(self.id).rstrip() + "#"
+		line = line + edgeSplitter(edge)
+
+		print line.rstrip();
+		sys.stdout.flush();
+
+		edgeTuple = sys.stdin.readline().rstrip();
+		edge.sourceProperties(edgeTuple);
+		return edge;
+
 
 	####end helper functions
 
@@ -512,11 +552,9 @@ class Graph:
 		# sys.stdin.readline();
 	
 
-	def deleteAllEdges(self,vertexPair):
+	def deleteAllEdgesBetween(self,vertexPair):
 
-
-
-		line = "deleteAllEdges#"+str(self.id).rstrip() + "#";
+		line = "deleteAllEdgesBetween#"+str(self.id).rstrip() + "#";
 		line = line +edgeSplitter(vertexPair);
 
 		print line.rstrip();
@@ -529,18 +567,16 @@ class Graph:
 
 	###setter functions
 
+	###begin: best for private use!
+
 	def setVertexFillColor(self,vertex,colorHex=-1,colorRGB=-1):
-		# print("colorhex: " + str(colorHex));
-		v = self.getVertexOrNew(vertex);
 
 		vertex = vertexId(vertex);
 		line = "setVertexFillColor#" + str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#"
 		if not (colorHex==-1):
 			line = line + hexFormatter(str(colorHex));
-			v.properties["color"] = colorHex;
 		elif not (colorRGB == -1):
 			try:
-				v.properties["color"] = colorHex;
 				line = line + rgbFormatter(colorRGB);
 			except:
 				self.sendErrorToGralog("the rgb color: " + str(colorRGB).rstrip() + " is not properly formatted!");
@@ -553,36 +589,19 @@ class Graph:
 	
 
 	def setVertexStrokeColor(self,vertex,colorHex=-1,colorRGB=-1):
-		v = self.getVertexOrNew(vertex);
 		vertex = vertexId(vertex);
 		# print("colorhex: " + str(colorHex));
 		line = "setVertexStrokeColor#"+str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#"
 		if not (colorHex==-1):
 			line = line + hexFormatter(str(colorHex));
-			v.properties["color"] = colorHex;
 		elif not (colorRGB == -1) and len(colorRGB) == 3:
-			v.properties["color"] = colorRGB;
 			line = line + rgbFormatter(colorRGB);
 		print line.rstrip();
 		sys.stdout.flush();
 		# sys.stdin.readline();
 
 	def setVertexCoordinates(self,vertex,coordinates):
-		##internal
-		v = self.getVertexOrNew(vertex);
-		co = v.properties["coordinates"];
-		x = coordinates[0];
-		y = coordinates[1];
-		if co == None:
-			co = (None,None);
-		if x == None:
-			x = co[0];
-		if y == None:
-			y = co[1];
-		newCoordinates = (x,y);
-		v.properties["coordinates"] = newCoordinates
-		##
-
+		
 		line = "setVertexCoordinates#" + str(self.id).rstrip()+"#" + str(vertexId(vertex)).rstrip();
 		x=-1;
 		y=-1;
@@ -601,9 +620,6 @@ class Graph:
 
 
 	def setEdgeContour(self, edge,contour):
-		e = self.getEdgeOrNew(edge);
-		e.properties["contour"] = contour;
-		
 		line = line = "setEdgeContour#"+str(self.id).rstrip() + "#";
 		line = line + edgeSplitter(edge);
 		line = line +"#" + str(contour).rstrip();
@@ -630,20 +646,13 @@ class Graph:
 
 
 	def setVertexRadius(self,vertex,newRadius):
-		v = self.getVertexOrNew(vertex);
-		v.properties["radius"] = newRadius;
-		v.properties["height"] = newRadius;
-		v.properties["width"] = newRadius;
 		self.setVertexDimension(vertex,newRadius,"radius");
 
 	def setVertexHeight(self,vertex,newHeight):
-		v = self.getVertexOrNew(vertex);
-		v.properties["height"] = newHeight;
+
 		self.setVertexDimension(vertex,newHeight,"height");
 
 	def setVertexWidth(self,vertex,newWidth):
-		v = self.getVertexOrNew(vertex);
-		v.properties["width"] = newWidth;
 		self.setVertexDimension(vertex,newWidth,"width");
 
 	def setVertexDimension(self,vertex,newDimension,dimension):
@@ -656,9 +665,6 @@ class Graph:
 		# sys.stdin.readline();
 
 	def setVertexShape(self,vertex,shape):
-		v = self.getVertexOrNew(vertex);
-		v.properties["shape"] = shape;
-
 		vertex = vertexId(vertex);
 			
 		line = "setVertexShape#"+str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#" + str(shape).rstrip();
@@ -677,9 +683,6 @@ class Graph:
 		self.setEdgeProperty(edge,"thickness",thickness);
 
 	def setEdgeProperty(self,edge,propertyName,value):
-		e = self.getEdgeOrNew(edge);
-		e.properties[propertyName] = value;
-
 		line = "setEdgeProperty#"+str(self.id).rstrip() + "#"
 		line = line + edgeSplitter(edge);
 
@@ -689,8 +692,6 @@ class Graph:
 		sys.stdout.flush();
 
 	def setVertexProperty(self,vertex,propertyName,value):
-		v = self.getVertexOrNew(vertex);
-		v.properties[propertyName] = value;
 		line = "setVertexProperty#"+str(self.id).rstrip() + "#"
 		line = line + str(vertexId(vertex)).rstrip();
 
@@ -700,9 +701,6 @@ class Graph:
 		sys.stdout.flush();
 
 	def setEdgeLabel(self,edge, label):
-		e = self.getEdgeOrNew(edge);
-		e.properties["label"] = label;
-		
 		line = "setEdgeLabel#"+str(self.id).rstrip() + "#";
 		line = line + edgeSplitter(edge);
 
@@ -713,15 +711,15 @@ class Graph:
 		# sys.stdin.readline();
 
 	def setVertexLabel(self,vertex, label):
-		v = self.getVertexOrNew(vertex);
-		v.properties["label"] = label;
-
 		vertex = vertexId(vertex);
 		line = "setVertexLabel#"+str(self.id).rstrip() + "#" + str(vertex).rstrip() + "#" + label;
 		print line.rstrip();
 
 		sys.stdout.flush();
 		# sys.stdin.readline();
+
+
+	####end: best for private use!
 
 
 	def setGraph(self,graphFormat,graphString = "hello_world"):
@@ -816,6 +814,30 @@ class Graph:
 		return vertexList;
 
 
+	def getAllEdges(self):
+		#return: list of fully sourced Edge objects with fully sourced endpoint Vertices
+			
+		line = "getAllEdges#"+str(self.id).rstrip();
+		print line.rstrip();
+	
+		sys.stdout.flush();
+		endpointList = sys.stdin.readline();
+
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			e = self.termToEdge(term);
+			if e != None:
+				edges.append(e);
+
+			# endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
+		return edges;
+
+	###start: best for private use!
+
 	def getNeighbours(self,vertex):
 		#return: list of Vertex objects with id
 		vertex = vertexId(vertex);
@@ -867,27 +889,7 @@ class Graph:
 		return incomingNeighboursList;
 
 	
-	def getAllEdges(self):
-		#return: list of fully sourced Edge objects with fully sourced endpoint Vertices
-			
-		line = "getAllEdges#"+str(self.id).rstrip();
-		print line.rstrip();
 	
-		sys.stdout.flush();
-		endpointList = sys.stdin.readline();
-
-		endpointList = endpointList.split("#");
-		edges = [];
-
-		for i in range(len(endpointList)):
-			term = endpointList[i].rstrip();
-			term = term[1:-1];
-			e = self.termToEdge(term);
-			if e != None:
-				edges.append(e);
-
-			# endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
-		return edges;
 
 	def getIncidentEdges(self,vertex):
 		#return: list of Edge objects with id's only
@@ -975,16 +977,7 @@ class Graph:
 	def getEdgeColor(self,edge):
 		return self.getEdgeProperty(edge,"color");
 
-	def getEdge(self,edge):
-		line = "getEdge#"+str(self.id).rstrip() + "#"
-		line = line + edgeSplitter(edge)
-
-		print line.rstrip();
-		sys.stdout.flush();
-
-		edgeTuple = sys.stdin.readline().rstrip();
-		edge.sourceProperties(edgeTuple);
-		return edge;
+	
 
 
 	def getEdgeProperty(self,edge,prop):
@@ -1002,17 +995,7 @@ class Graph:
 		edge.sourceProperties(edgeTuple);
 		return edge.getProperty(prop);
 
-	def getVertex(self,vertex):
-		line = "getVertex#"+str(self.id).rstrip() + "#"
-		line = line + str(vertex).rstrip();
-
-		print line.rstrip();
-		sys.stdout.flush();
-
-		vertexTuple = sys.stdin.readline().rstrip();
-
-		vertex.sourceProperties(vertexTuple);
-		return vertex;
+	
 
 	def getVertexProperty(self,vertex,prop):
 		#internally: fill edge property dictionary
@@ -1030,6 +1013,8 @@ class Graph:
 		vertexTuple = sys.stdin.readline().rstrip();
 		vertex.sourceProperties(vertexTuple);
 		return vertex.getProperty(prop);
+
+	###end: best use privately!
 
 
 	def requestVertex(self):

@@ -14,6 +14,7 @@
 \newcommand{\fabs}[1]{\mid {#1} \mid}
 
 
+
 \newcommand{\bet}[1]{\llbracket {#1} \rrbracket^{\beta} }
 \usepackage{stmaryrd}
 \usepackage{graphicx}
@@ -463,7 +464,38 @@ Sets the vertex's label to the \texttt{label}
 
 Returns a string representation of the graph. Several formats are supported: GraphXML (parameter "XML"), TikZ (parameter "tikz"), Trivial Graph Format (paramter "TGF"), and Gralog Trivial Graph Format (pamater "GTGF"). \hyperref[graphFormatsInDetail]{Read more about them here}.
 
-This is useful in at least the following two scenarios: 1: to take the graph Gralog has given, and import it into an external library for processing there (such as NetworkX, or TODO: another popular library). 2: to copy the contents of one graph into another Gralog graph. \hyperref[getGraphExample]{See an example here}. 
+This is useful in at least the following two scenarios: 1: to take the graph Gralog has given, and import it into an external library for processing there (such as NetworkX, or TODO: another popular library). 2: to copy the contents of one graph into another Gralog graph. \hyperref[getGraphExample]{See an example here}.
+
+\item[getAllVertices()]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices in the graph.
+
+
+\item[getAllVertices()]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices in the graph.
+
+\item[getAllEdges()]\emph{returns}
+  \texttt{list of Edge objects}
+
+Returns a list of all the edges graph.
+
+\item[getNeighbours(Vertex: vertex)]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices connected to \texttt{vertex}, regardless of direction.
+
+\item[getOutgoingNeighbours(Vertex: vertex)]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices v' such that there is an edge from \texttt{Vertex} to v' in directed graphs (equivalent to getNeighbours in undirected graphs)
+
+\item[getIncomingNeighbours(Vertex: vertex)]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices v' such that there is an edge from v' to \texttt{Vertex} in directed graphs (equivalent to getNeighbours in undirected graphs)
 
 \end{description}
 

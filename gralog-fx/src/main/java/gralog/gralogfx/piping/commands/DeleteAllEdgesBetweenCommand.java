@@ -4,13 +4,13 @@ import gralog.rendering.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DeleteAllEdgesCommand extends CommandForGralogToExecute {
+public class DeleteAllEdgesBetweenCommand extends CommandForGralogToExecute {
 	
 	Vertex sourceVertex;
     Vertex targetVertex;
     String edgeString;
 
-	public DeleteAllEdgesCommand(String[] externalCommandSegments,Structure structure){
+	public DeleteAllEdgesBetweenCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
         
