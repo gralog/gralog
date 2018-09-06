@@ -791,8 +791,8 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("COLOR")){
-                    transition(FILTER_WHAT_WHERE_PARAM,"COLOR");
-                    continue;
+                    errorMsg = "Do you mean \"fill color\" or \"stroke color\"?\n";
+                    return;
                 }
                 if (inputWords[i].equals("THICKNESS")){
                     transition(FILTER_WHAT_WHERE_FLOATPARAM,"THICKNESS");

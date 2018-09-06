@@ -11,7 +11,7 @@ FILTER <what> WHERE|ST|(SUCH THAT)  <parameterS> TO <list identifier> [ignored t
         <parameterS> := <parameterS> <parameterS> | <parameter> <value> | <bool_parameter>
 	  	       	  	       		    | formula <integer expression (i)> // TODO
 
-	           <parameter> := NO CONDITION | FILL|(FILL COLOR) | STROKE|(STROKE COLOR) | COLOR
+	           <parameter> := NO CONDITION | FILL|(FILL COLOR) | STROKE|(STROKE COLOR)
 	  	      	    	      | THICKNESS | WIDTH | HEIGHT | SIZE | ID | SHAPE
                                     | WEIGHT | TYPE | (EDGE TYPE)|EDGETYPE
                                     | DEGREE | INDEGREE | OUTDEGREE | BUTTERFLY?
