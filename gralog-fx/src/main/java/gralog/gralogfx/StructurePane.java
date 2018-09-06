@@ -259,9 +259,16 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public void pasteFromClipboard(){
-        structure.insertForeignSelection(CLIPBOARD, gridSize);
-        this.requestRedraw();
+    public void pasteFromClipboard(){ pasteFromClipboard(true);}
+
+    public void pasteFromClipboard(boolean redraw){
+        var clipBoardCopy = (new Cloner()).deepClone(CLIPBOARD);
+        structure.insertForeignSelection(clipBoardCopy, gridSize);
+        highlights.clearSelection();
+        selectAll(clipBoardCopy);
+
+        if(redraw)
+            this.requestRedraw();
     }
 
     public void undoStructure(){
@@ -405,8 +412,7 @@ public class StructurePane extends StackPane implements StructureListener {
                         if(CLIPBOARD == null){
                             break;
                         }
-                        System.out.println(CLIPBOARD.size());
-                        structure.insertForeignSelection(CLIPBOARD, gridSize);
+                        pasteFromClipboard(false);
                         if(snapToGrid){
                             structure.snapToGrid(gridSize);
                         }
