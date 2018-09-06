@@ -5,6 +5,7 @@ package gralog.gralogfx.views;
 import gralog.rendering.GralogColor;
 
 import java.lang.reflect.*;
+import java.util.List;
 import java.util.function.Consumer;
 
 import gralog.rendering.GralogGraphicsContext;
@@ -38,6 +39,7 @@ public class ReflectedView extends GridPaneView<Object> {
         this.getChildren().clear();
 
         setVgap(5);
+
         //this.setPrefWidth(280);
         int i = 0;
         try {
@@ -69,7 +71,6 @@ public class ReflectedView extends GridPaneView<Object> {
                     if (display){
                         if (type.equals(Double.class) || type.equals(double.class)) {
                             valueControl = createDoubleValueField(value, readOnly, f, displayObject);
-
                         } else if (type.equals(Integer.class) || type.equals(int.class)) {
                             valueControl = createIntValueField(value, readOnly, f, displayObject);
                         } else if (type.equals(GralogColor.class)) {
@@ -81,7 +82,6 @@ public class ReflectedView extends GridPaneView<Object> {
                         } else if (type.isAssignableFrom(GralogGraphicsContext.LineType.class)) {
                             valueControl = createLineTypeValueField(value, readOnly, f, displayObject);
                         } else if (type.isAssignableFrom(Edge.EdgeType.class)) {
-
                             valueControl = createEdgeTypeValueField(value, readOnly, f, displayObject);
                         } else if (type.isAssignableFrom(RenderingShape.class)){
                             addRenderingShapeControls(value, readOnly, f, displayObject, i);

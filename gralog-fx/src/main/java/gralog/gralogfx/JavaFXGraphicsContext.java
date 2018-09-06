@@ -48,6 +48,9 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
 
     }
 
+    public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color){
+        arrow(dir, pos, arrowType, scale, color, (2.54 / 96));
+    }
     @Override
     public void polygon(double[] x, double[] y, int count, GralogColor c){
         gc.setFill(Color.rgb(c.r, c.g, c.b));
@@ -59,10 +62,11 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.fillPolygon(x, y, count);
     }
     @Override
-    public void lines(double[] x, double[] y, int count, GralogColor c){
+    public void lines(double[] x, double[] y, int count, GralogColor c, double lineWidth){
         gc.setLineCap(StrokeLineCap.ROUND);
         gc.setStroke(Color.rgb(c.r, c.g, c.b));
-        gc.setLineWidth((2.54 / 96) * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        gc.setLineWidth(lineWidth * pane.zoomFactor * (pane.screenResolutionX / 2.54));
+        //gc.setLineWidth((2.54 / 96) * pane.zoomFactor * pane.screenResolutionX / 2.54);
         for (int i = 0; i < count; i++)
         {
             x[i] = pane.modelToScreenX(x[i]);

@@ -22,13 +22,13 @@ public class EdgeRenderer {
      *
      * @param e Has all the necessary information to render the curve
      * @param gc The graphics context used to draw the curve
-     * @param c The color of the curve
+     * @param isSelected The color of the curve
      */
-    public static void drawBezierEdge(Edge e, GralogGraphicsContext gc, GralogColor c){
+    public static void drawBezierEdge(Edge e, GralogGraphicsContext gc, boolean isSelected){
         List<ControlPoint> controlPoints = e.controlPoints;
 
         if(controlPoints.isEmpty() || controlPoints.size() > 2){
-            drawStraightEdge(e, gc, c);
+            drawStraightEdge(e, gc, isSelected);
             return;
         }
 
@@ -55,18 +55,28 @@ public class EdgeRenderer {
         curve.target = curve.target.plus(curve.target.minus(e.getTarget().coordinates).multiply(e.endPointDistance));
         curve.source = curve.source.plus(curve.source.minus(e.getSource().coordinates).multiply(e.startPointDistance));
 
-        if(e.isDirected){
-            gc.arrow(targetToCtrl2.multiply(-1), curve.target, e.arrowType, e.arrowHeadLength, c);
-        }else{
-            corr = 0;
-        }
+        corr = e.isDirected ? corr : 0;
 
         curve.target = curve.target.minus(targetToCtrl2.multiply(corr)); //correction for the arrow
 
         if(controlPoints.size() == 1){
-            gc.drawQuadratic(curve, c, e.width, e.type);
+            if(isSelected){
+                gc.drawQuadratic(curve, GralogColor.RED, e.width + Edge.edgeSelectionOffset, e.type);
+            }
+            gc.drawQuadratic(curve, e.color, e.width, e.type);
         }else{
-            gc.drawBezier(curve, c, e.width, e.type);
+            if(isSelected){
+                gc.drawBezier(curve, GralogColor.RED, e.width + Edge.edgeSelectionOffset, e.type);
+            }
+            gc.drawBezier(curve, e.color, e.width, e.type);
+        }
+
+        if(e.isDirected){
+            if(isSelected){
+                gc.arrow(targetToCtrl2.multiply(-1), curve.target,
+                        e.arrowType, e.arrowHeadLength, GralogColor.RED, e.width + Edge.edgeSelectionOffset);
+            }
+            gc.arrow(targetToCtrl2.multiply(-1), curve.target, e.arrowType, e.arrowHeadLength, e.color);
         }
     }
 
@@ -75,26 +85,35 @@ public class EdgeRenderer {
      *
      * @param e Has all the necessary information to render the curve
      * @param gc The graphics context used to draw the curve
-     * @param c The color of the curve
      */
-    public static void drawSharpEdge(Edge e, GralogGraphicsContext gc, GralogColor c){
+    public static void drawSharpEdge(Edge e, GralogGraphicsContext gc, boolean isSelected){
         List<ControlPoint> ctrl = e.controlPoints;
 
         if(ctrl.isEmpty()){
-            drawStraightEdge(e, gc, c);
+            drawStraightEdge(e, gc, isSelected);
             return;
         }
 
-        gc.line(e.getSource().coordinates, ctrl.get(0).getPosition(), c, e.width, e.type);
+        if(isSelected)
+            gc.line(e.getSource().coordinates, ctrl.get(0).getPosition(), GralogColor.RED, e.width + Edge.edgeSelectionOffset, e.type);
+        gc.line(e.getSource().coordinates, ctrl.get(0).getPosition(), e.color, e.width, e.type);
 
         for(int i = 1; i < ctrl.size(); i++){
-            gc.line(ctrl.get(i-1).getPosition(), ctrl.get(i).getPosition(), c, e.width, e.type);
+            if(isSelected){
+                gc.line(ctrl.get(i-1).getPosition(), ctrl.get(i).getPosition(),
+                        GralogColor.RED, e.width + Edge.edgeSelectionOffset, e.type);
+            }
+            gc.line(ctrl.get(i-1).getPosition(), ctrl.get(i).getPosition(), e.color, e.width, e.type);
+        }
+        if(isSelected){
+            gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates,
+                    GralogColor.RED, e.width + Edge.edgeSelectionOffset, e.type);
         }
 
-        gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates, c, e.width, e.type);
+        gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates, e.color, e.width, e.type);
     }
 
-    private static void drawStraightEdge(Edge e, GralogGraphicsContext gc, GralogColor c){
+    private static void drawStraightEdge(Edge e, GralogGraphicsContext gc, boolean isSelected){
         double offset = e.getOffset();
 
         Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
@@ -107,10 +126,17 @@ public class EdgeRenderer {
         intersection = intersection.minus(diff.normalized().multiply(e.endPointDistance / 2)); //no idea why I divide
         if(e.isDirected){
             Vector2D adjust = intersection.plus(diff.normalized().multiply(e.arrowType.endPoint * e.arrowHeadLength));
-            gc.line(sourceOffset, adjust, c, e.width, e.type);
-            gc.arrow(diff, intersection, e.arrowType, e.arrowHeadLength, c);
+            if(isSelected){
+                gc.line(sourceOffset, adjust, GralogColor.RED, e.width + Edge.edgeSelectionOffset, e.type);
+                gc.arrow(diff, intersection, e.arrowType, e.arrowHeadLength, GralogColor.RED, e.width + Edge.edgeSelectionOffset);
+            }
+
+            gc.line(sourceOffset, adjust, e.color, e.width, e.type);
+            gc.arrow(diff, intersection, e.arrowType, e.arrowHeadLength, e.color);
         }else{
-            gc.line(sourceOffset, intersection, c, e.width, e.type);
+            if(isSelected)
+                gc.line(sourceOffset, intersection, GralogColor.RED, e.width + Edge.edgeSelectionOffset, e.type);
+            gc.line(sourceOffset, intersection, e.color, e.width, e.type);
         }
     }
 }
