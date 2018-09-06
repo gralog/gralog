@@ -154,11 +154,18 @@ public class MainMenu {
 
     private Menu createEditMenu() {
         Menu menuEdit = new Menu("Edit");
+        final String os = System.getProperty("os.name").toUpperCase();
+        final KeyCodeCombination undo, redo;
+        if(os.contains("MAC")){
+            undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN);
+            redo = new KeyCodeCombination(KeyCode.Y, KeyCombination.META_DOWN);
+        }else{
+            undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN);
+            redo = new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN);
+        }
         menuEdit.getItems().addAll(
-                createMenuItem("Undo", handlers.onUndo,
-                        new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN)),
-                createMenuItem("Redo", handlers.onRedo,
-                        new KeyCodeCombination(KeyCode.Y, KeyCombination.META_DOWN)),
+                createMenuItem("Undo", handlers.onUndo, undo),
+                createMenuItem("Redo", handlers.onRedo, redo),
                 new SeparatorMenuItem(),
                 createMenuItem("Cut", handlers.onCut),
                 createMenuItem("Copy", handlers.onCopy),

@@ -34,6 +34,16 @@ public class ObjectListDisplay extends VBox
 
         //list.add(new GralogList<String>("list1"));
     }
+    public String getUniqueDefaultName(){
+        outer : for(int i = 0; true; i++){
+            for(GralogList l : list){
+                if(l.name.getValue().equals("List (" + i + ")")){
+                    continue outer;
+                }
+            }
+            return "List (" + i + ")";
+        }
 
+    }
 
 }

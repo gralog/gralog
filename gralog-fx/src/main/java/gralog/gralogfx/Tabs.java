@@ -3,6 +3,7 @@
 package gralog.gralogfx;
 
 import gralog.gralogfx.panels.GralogWindow;
+import gralog.gralogfx.panels.ObjectListDisplay;
 import gralog.preferences.Configuration;
 import gralog.preferences.Preferences;
 import gralog.rendering.Vector2D;
@@ -30,7 +31,7 @@ public class Tabs {
     private final ArrayList<StructurePane> panes = new ArrayList<>();
     private final ArrayList<Tab> tabsArray = new ArrayList<>();
 
-
+    public ObjectListDisplay objectListDisplay;
     /**
      * @param onChangeTab Handler to be called when a new tab is selected or a
      * tab is closed.
@@ -84,6 +85,7 @@ public class Tabs {
             e.consume();
         });
 
+        structurePane.setObjectListDisplay(objectListDisplay);
         panes.add(structurePane);
         tabsArray.add(t);
 

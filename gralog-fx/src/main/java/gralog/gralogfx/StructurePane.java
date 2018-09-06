@@ -8,10 +8,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import com.rits.cloning.Cloner;
+import gralog.dialog.GralogList;
 import gralog.exportfilter.ExportFilter;
 import gralog.exportfilter.ExportFilterManager;
 import gralog.exportfilter.ExportFilterParameters;
 import gralog.gralogfx.input.MultipleKeyCombination;
+import gralog.gralogfx.panels.ObjectListDisplay;
 import gralog.gralogfx.undo.Undo;
 import gralog.preferences.Configuration;
 import gralog.gralogfx.threading.ScrollThread;
@@ -113,6 +115,8 @@ public class StructurePane extends StackPane implements StructureListener {
     //context menu
     private ContextMenu vertexMenu;
 
+    private ObjectListDisplay objectListDisplay;
+
     //temporary drawing state variables
     private boolean blockVertexCreationOnRelease = false;
 
@@ -201,13 +205,15 @@ public class StructurePane extends StackPane implements StructureListener {
 
         MenuItem copy = new MenuItem("Copy");
         copy.setAccelerator(new MultipleKeyCombination(KeyCode.CONTROL, KeyCode.C));
+        copy.setOnAction(e -> {
+            copySelectionToClipboard();
+        });
         MenuItem delete = new MenuItem("Delete");
         delete.setOnAction(e -> {
             deleteSelection();
             this.requestRedraw();
         });
         MenuItem addLoop = new MenuItem("Add loop");
-
         addLoop.setOnAction(e -> {
             if(highlights.getSelection().size() == 1){
                 Vertex v = (Vertex)highlights.getSelection().iterator().next();
@@ -216,10 +222,22 @@ public class StructurePane extends StackPane implements StructureListener {
             }
             this.requestRedraw();
         });
-        vertexMenu.getItems().addAll(addLoop, copy, delete);
+        MenuItem addList = new MenuItem("Create new list");
+
+        addList.setOnAction(e -> {
+            createListFromSelection();
+        });
+        vertexMenu.getItems().addAll(addList, new SeparatorMenuItem(), addLoop, copy, delete);
 
     }
 
+    public void setObjectListDisplay(ObjectListDisplay obj){
+        objectListDisplay = obj;
+    }
+
+    public ObjectListDisplay getObjectListDisplay(){
+        return objectListDisplay;
+    }
     public void cutSelectionToClipboard(){
         copySelectionToClipboard();
         deleteSelection();
@@ -384,6 +402,9 @@ public class StructurePane extends StackPane implements StructureListener {
                     break;
                 case V:
                     if(e.isControlDown() || e.isMetaDown()){
+                        if(CLIPBOARD == null){
+                            break;
+                        }
                         System.out.println(CLIPBOARD.size());
                         structure.insertForeignSelection(CLIPBOARD, gridSize);
                         if(snapToGrid){
@@ -616,8 +637,12 @@ public class StructurePane extends StackPane implements StructureListener {
             if(selected instanceof Vertex){
                 //right release on a vertex while drawing an edge = add edge
                 if(drawingEdge && currentEdgeStartingPoint != null){
-                    structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected, config);
-                    Undo.Record(structure);
+                    if(currentEdgeStartingPoint == selected){
+                        vertexMenu.show(canvas, e.getScreenX(), e.getScreenY());
+                    }else{
+                        structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected, config);
+                        Undo.Record(structure);
+                    }
                 }
                 //right click opens context menu
                 else if(vertexMenu != null){
@@ -994,6 +1019,17 @@ public class StructurePane extends StackPane implements StructureListener {
             }
         }
     }
+
+    private void createListFromSelection(){
+        GralogList<Vertex> g = new GralogList<>(objectListDisplay.getUniqueDefaultName());
+        for(Object o : highlights.getSelection()){
+            if(o instanceof Vertex){
+                g.add((Vertex)o);
+            }
+        }
+        objectListDisplay.list.add(g);
+    }
+
     public void clearSelection() {
         boolean wasEmpty = false;
         if(highlights.getSelection().isEmpty()){

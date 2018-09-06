@@ -88,7 +88,7 @@ public class MainWindow extends Application {
 
     private boolean pipingUnderway = false;
 
-
+    private ObjectListDisplay objectListDisplay;
 
     //argument configs
     private boolean dontAskWhenClosing = false; // <==> argument 'dawc'
@@ -152,22 +152,20 @@ public class MainWindow extends Application {
 
         rightBox = new HBox();
         //inspectorSplit = new SplitPane();
-
-
-
         tabs = new Tabs(this::onSwitchCurrentStructure);
+
+        ObjectInspector objectInspector = new ObjectInspector(tabs);
+        objectListDisplay = new ObjectListDisplay();
+
+        tabs.objectListDisplay = objectListDisplay;
+
         String lastOpenedFilePath = Preferences.getString(PREF_LAST_USED_STRUCTURE, "");
         if(lastOpenedFilePath.isEmpty()){
             tabs.initializeTab();
         }else{
             doOpenFile(new File(lastOpenedFilePath));
         }
-
-
         mainConsole = new Console(tabs, this::profferTextToMainWindow);
-
-        ObjectInspector objectInspector = new ObjectInspector(tabs);
-        ObjectListDisplay objectListDisplay = new ObjectListDisplay();
 
         //put lambdas here for controlling stuff
         Runnable play = new Runnable(){
