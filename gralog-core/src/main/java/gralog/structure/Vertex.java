@@ -333,6 +333,10 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         controls.setCoordinates();
     }
 
+    public Vector2D getCoordinates(){
+        return this.coordinates;
+    }
+
     public IMovable findObject(double x, double y){
         if(controls.active){
             IMovable temp = controls.findObject(x, y);

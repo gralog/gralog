@@ -450,8 +450,7 @@ public class MainWindow extends Application {
                 System.out.println("well that's an L" + graphType);
                 return null;
             }
-            System.out.println("intsantiaed structuer with id: ");
-            System.out.println(temp.getId());
+         
             tabs.addTab("new " + graphType,temp);
 
             tabs.getCurrentStructurePane().setPiping(pipelineThatCalled);

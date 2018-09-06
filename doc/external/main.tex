@@ -12,7 +12,8 @@
 \usepackage{booktabs}
 
 \newcommand{\fabs}[1]{\mid {#1} \mid}
-\usepackage{hyperref}
+
+
 
 \newcommand{\bet}[1]{\llbracket {#1} \rrbracket^{\beta} }
 \usepackage{stmaryrd}
@@ -20,6 +21,11 @@
 \usepackage{tikz}
 \usepackage{wrapfig}
 \usepackage{makecell}
+\usepackage[colorlinks = true,
+            linkcolor = blue,
+            urlcolor  = blue,
+            citecolor = blue,
+            anchorcolor = blue]{hyperref}
 
 % \usepackage{mathabx}
 \usepackage{amssymb,forest}
@@ -35,6 +41,7 @@
 
 
 \newcommand{\lto}{\mathbin{\to}}
+\newcommand{\changeurlcolor}[1]{\hypersetup{urlcolor=#1}}   
 \usepackage{booktabs}
 \usepackage{enumitem} 
 \usepackage{array}% for extended column definitions
@@ -155,6 +162,7 @@ Now you should be ready to run. Navigate to File Menu and select "Load Plugin". 
 \includegraphics[width=\textwidth]{helloWorld.png}
 \end{figure}
 
+
 \subsection{Troubleshooting}
 First obviously make sure you have python installed (version $\ge
 2.7$). Also make sure that Gralog.py is in the directory as the file you
@@ -262,12 +270,13 @@ This is the constructor for the Graph class. It returns one of two things, depen
 
 Use of these parameters causes Gralog to create a new (empty) graph of the requested type, a reference to which is then passed back to your program and stored in the returned Graph object.
 \subsection{Graph Manipulating Methods}
+\textbf{Note:} every time a \texttt{Vertex} object is a function \textit{parameter}, the programmer may pass \textit{either} a \texttt{Vertex} object \textit{or} a valid vertex id; likewise for \texttt{Edge} objects as parameters and edge id's. In order to avoid redundancy, there are not duplicate method descriptions.
 
 \begin{description}
 \item[addVertex({[int: vertexId]}{[(double, double): pos]})]\emph{returns}
   \texttt{Vertex} object
 
-  Creates a new Vertex object. If both coordinates coordinates in coordinate Vector \texttt{(x\_coord,y\_coord)} are \textit{not} passed,
+  Creates a new \texttt{Vertex} object. If both coordinates coordinates in coordinate Vector \texttt{(x\_coord,y\_coord)} are \textit{not} passed,
   random coordinates are chosen
   %and the vertex is selected in
   %the Gralog UI.
@@ -275,121 +284,137 @@ Use of these parameters causes Gralog to create a new (empty) graph of the reque
   chosen by Gralog automatically. If an id is passed that has already
   been assigned, a suitable new one is silently chosen.
   
-  The vertex returned has the final id assigned to it.
+  The \texttt{vertex} returned has the final id assigned to it.
+  
+  \hyperref[addVertexExample]{Example}
 
   
 \item[deleteVertex(Vertex: v)] \emph{returns} \texttt{void}
 
-Deletes the given vertex from the graph. If the vertex does not exist, the program continues\footnote{you will however receive a warning message in the console}
+Deletes the given vertex from the graph. If the vertex does not exist, the program continues\footnote{you will however receive a warning message in the console \label{deleteVertexWarning}}
 
 
-\item[deleteVertex(int: v)] \emph{returns} \texttt{void}
-
-Deletes the vertex with the given id from the graph. If the vertex does not exist, the program continues\footnote{you will however receive a warning message in the console}
-
-\item[addEdge(Vertex: source, Vertex target{[, Boolean: isDirected][,
-    int: egdeId]})] \emph{returns} \texttt{Edge} object
+\item[addEdge(Vertex: source, Vertex target,{[int: egdeId]})] \emph{returns} \texttt{Edge} object
 
 
-Creates a new \texttt{Vertex} object from the source vertex to the
-target vertex. If \texttt{isDirected} is not specified, un-directed is
-assumed (TODO: it should depend on the graph). If un-directed, the
+Creates a new \texttt{Edge} object from the source vertex to the
+target vertex. The directedness of the Edge will correspond to the type of Graph the edge is being added to (directed Graph $\to$ directed edge, automaton $\to$ transition, etc.). If un-directed, the
 order of target and source vertex is irrelevant. If no \texttt{edgeId}
 is passed, a suitable id is chosen. If an id is passed that has
 already been assigned, a suitable new one is silently chosen.
-
-\item[addDirectedEdge(Vertex: source, Vertex: target{[,int: edgeId]})]
-  \emph{returns} \texttt{Edge}
-
-(TODO: it should depend on the graph type, \texttt{addDirectedEdge} is
-not needed)
 
 
 \item[deleteEdge(Edge: e)] \emph{returns} \texttt{void}
 
 Deletes the edge from the graph. If the edge does not exist, nothing
-happens.
+happens.\textsuperscript{\ref{deleteVertexWarning}}
 
-\item[deleteEdge(int: edgeId)] \emph{returns} \texttt{void}
 
-Deletes the edge with id \texttt{edgeId} from the graph. If the edge does not exist, nothing
-happens.
-
-\item[deleteEdge(Vertex: source, Vertex: target)] \emph{returns}
-  \texttt{void}
+\item[deleteEdge((Vertex,Vertex): edge)] \emph{returns}
+  \texttt{void} \footnote{make sure this is actually a tuple, or it will not work! Also note vertices and vertex id's can be mixed and matched, should that be practical, such that you could call g.edgeMethodFoo((Vertex,id)) or g.edgeMethodFoo((id,Vertex)) and they would be equivalent \label{makeSureATupleWarning1}}
 
   Deletes the edge with the greatest id from the list of all edges
-  between vertex \texttt{source} and vertex \texttt{target} respecting
+  between the vertex in the first position of the tuple \texttt{edge} and the vertex which is the second position in tuple \texttt{source} respecting
   the direction if the graph has directed edges. If no such edge exists, nothing happens.
 
-  This is convenient if one is sure that there is at most one edge
-  between the vertices or it does not matter which edge is deleted.
 
-  (TODO: implement this)
+%\item[deleteEdge((int,int): edge)] \emph{returns}
+%  \texttt{Boolean} \textsuperscript{\ref{makeSureATupleWarning1}}
 
-\item[deleteEdge(int: sourceVertexId, int: targetVertexId)] \emph{returns}
+  %Deletes the edge with the greatest id from the list of all edges
+%  between the vertex whose \texttt{id} is the first element of tuple \texttt{edge}, and the vertex whose \texttt{id} is the second element of tuple \texttt{source} respecting
+%  the direction if the graph has directed edges. If no such edge exists, nothing happens.
+
+\item[existsEdge((Vertex,Vertex): edge)] \emph{returns}
+  \texttt{void} \textsuperscript{\ref{makeSureATupleWarning1}}
+
+  Returns whether there exists an edge between the first vertex of the tuple \texttt{edge} and the second (or from the first to the second in directed graphs).
+  
+  
+\item[existsEdge(Edge: edge)] \emph{returns}
+  \texttt{Boolean}
+
+  Returns whether that specified edge (ie. the one with ID associated with the object) currently exists in the specified graph in Gralog. 
+  
+%\item[existsEdge(int: id)] \emph{returns}
+%  \texttt{boolean}
+
+%  Returns whether an edge with specified id currently exists in the specified graph in Gralog. 
+  
+\item[existsVertex(Vertex: vertex)] \emph{returns}
+  \texttt{Boolean}
+
+  Returns whether that specified Vertex (ie. the one with ID associated with the object) currently exists in the specified graph in Gralog. 
+  
+%\item[existsVertex(int: id)] \emph{returns}
+%  \texttt{boolean}
+
+%  Returns whether a Vertex with specified id currently exists in the specified graph in Gralog. 
+
+
+\item[deleteAllEdges((Vertex,Vertex): vertexPair)] \emph{returns}
   \texttt{void}
 
-  Deletes the edge with the greatest id from the list of all edges
-  between vertex with id \texttt{sourceVertexId} and vertex with id \texttt{targetVertexId} respecting
-  the direction if the graph has directed edges. If no such edge exists, nothing happens.
+  Deletes all edges in the graph
+  between the vertex in the first position of the tuple \texttt{vertexPair} and the vertex which is the second position in tuple \texttt{vertexPair} respecting
+  the direction if the graph has directed edges.
+  If no such edges exist, nothing happens.
+  
+%\item[deleteAllEdges((int,int): vertexPair)] \emph{returns}
+%  \texttt{void}
 
-  This is convenient if one is sure that there is at most one edge
-  between the vertices or it does not matter which edge is deleted.
-
-  (TODO: implement this)
-
-  (TODO: Do we have \texttt{existsEdge(Vertex: source, Vertex:
-    target)} and \texttt{existsEdge(id: sourceVertexId, int:
-    targetVertexId)}, \texttt{int: numberEdges(Vertex/int: source,
-    Vertex/int: target)}, \texttt{existsVertexId(int id)}, \texttt{existsEdgeId(int id)}?)
-\item[deleteAllEdges(Vertex: source, Vertex: target)] \emph{returns}
-  \texttt{void}
-
-  Deletes all existing edges with source \texttt{source} and target
-  \texttt{target}.
+%  Deletes all edges
+%  between the vertex whose \texttt{id} is the first element of tuple \texttt{edge}, and the vertex whose \texttt{id} is the second element of tuple \texttt{source} respecting
+%  the direction if the graph has directed edges. If no such edges exist, nothing happens.
   
 \end{description}
 
 \subsection{Setter Functions}
 \begin{description}
-\item[setVertexFillColor(Vertex: v, (str: color | int: r, int: g, int:
-  b))] \emph{returns} \texttt{void}
+\item[setVertexFillColor(Vertex: v,{[int: colorHex]},{[(int,int,int): colorRGB]})]\emph{returns}
+  \texttt{void}
 
-Sets the \textit{fill} colour of the given vertex to the Hex code colour
+Sets the \textit{fill} colour of the given \texttt{Vertex} to the Hex code colour
 specified as a string or the RGB colour specified. colorHex can also be
 a string of a common colour, such as \texttt{"red"} or
-\texttt{"green."}  (TODO: make full list of available colours, insert
-a reference here.)
+\texttt{"green."} \hyperref[colorNamesSupportedByGralog]{Full list of gralog supported color names}
 
-\item[setVertexStrokeColor(Vertex: v, (str: color | int: r, int: g, int:
-  b))] \emph{returns} \texttt{void}
+Note that one of the two optional color parameters \textit{must} be filled, and both of them \textit{cannot} be filled.
 
-  Sets the \textit{stroke} colour of the given vertex to the Hex code colour
+\hyperref[colorNamesSupportedByGralog]{Color setting example}
+
+\item[setVertexStrokeColor(Vertex: v,{[int: colorHex]},{[(int,int,int): colorRGB]}))] \emph{returns} \texttt{void}
+
+Sets the \textit{stroke} colour of the given \texttt{Vertex} to the Hex code colour
 specified as a string or the RGB colour specified. colorHex can also be
 a string of a common colour, such as \texttt{"red"} or
-\texttt{"green."}  (TODO: make full list of available colours, insert
-a reference here.)
+\texttt{"green."} \hyperref[colorNamesSupportedByGralog]{Full list of gralog supported color names}
+
+Note that one of the two optional color parameters \textit{must} be filled, and both of them \textit{cannot} be filled.
+
+\hyperref[colorNamesSupportedByGralog]{Color setting example}
 
 \item[setEdgeContour(Edge: edge, str: contour)] \emph{returns}
 \texttt{void}
 
-Sets the contour of passed edge. Possible values are
+Sets the contour of passed \texttt{Edge}. Possible values are
 \texttt{"dashed"}, \texttt{"dotted"}, \texttt{"plain"}.
 
-\item[setEdgeColor(Edge: v, (str: color | int: r, int: g, int:
-  b))] \emph{returns} \texttt{void}
+\item[setEdgeColor(Edge: v, {[int: colorHex]},{[(int,int,int): colorRGB]}))] \emph{returns} \texttt{void}
 
-  Sets the colour of the given edge to the Hex code colour
+Sets the colour of the given \texttt{Edge} to the Hex code colour
 specified as a string or the RGB colour specified. colorHex can also be
 a string of a common colour, such as \texttt{"red"} or
-\texttt{"green."}  (TODO: make full list of available colours, insert
-a reference here.)
+\texttt{"green."} \hyperref[colorNamesSupportedByGralog]{Full list of gralog supported color names}
+
+Note that one of the two optional color parameters \textit{must} be filled, and both of them \textit{cannot} be filled.
+
+\hyperref[colorNamesSupportedByGralog]{Color setting example}
 
 \item[setVertexRadius(Vertex: v, float: radius)] \emph{returns}
   \texttt{void}
 
-Sets the radius of the given vertex to \texttt{radius}.
+Sets the radius (ie width and height) of the given vertex shape to \texttt{radius}.
 
 \item[setVertexHeight(Vertex: v, float: height)] \emph{returns}
   \texttt{void}
@@ -399,24 +424,79 @@ Sets the height of the given vertex to \texttt{height}.
 \item[setVertexWidth(Vertex: v, float: width)] \emph{returns}
   \texttt{void}
 
-Sets the width of the given vertex to \texttt{width}. (TODO: explain
-radius and width)
+Sets the width of the given vertex to \texttt{width}. 
 
-\item[setVertexShape(Vertex: v, str: shape)] \emph{returns} \texttt{void}
+\hyperref[radiusWidthHeightDiagram]{\textit{An explanation of width, height, and radius}}
 
-Sets the given vertex to be the specified shape. Currently supported
-are \texttt{"ellipse"}, \texttt{"diamond"}, and \texttt{"rectangle"}.
   
 \item[setVertexDimension(Vertex: v, float: width, str: dimension)]
   \emph{returns} \texttt{void}
 
-Sets the dimension of the given vertex to the dimension specified. This functionality is primarily useful for non-standard shapes, if you were to extend gralog to include such a thing.  
+Sets the dimension of the given vertex to the dimension specified. This functionality is primarily useful for non-standard shapes, if you were to extend gralog to include such a thing. Other than in this case, it is recommended that you use the built-in functions.
+
+\item[setVertexShape(Vertex: v, str: shape)] \emph{returns} \texttt{void}
+
+Sets the given vertex to be the specified shape. Currently supported
+are ``\texttt{ellipse"}, \texttt{"diamond"}, and \texttt{"rectangle"}.
 
 \item[setEdgeWeight(Edge: e, float: weight)] \emph{returns} \texttt{void}
 
-Sets edge weight (i.e.\@ thickness) to \texttt{weight}. (TODO: rename
-to thickness, also in Gralog)
+Sets edge weight to \texttt{weight}. Not to be confused with setEdgeThickness
+
+\item[setEdgeThickness(Edge: e, float: thiccness)] \emph{returns} \texttt{void}
+
+Sets edge thiccness to \texttt{thiccness}. Not to be confused with setEdgeWeight
+
+\item[setVertexLabel(Vertex: v, str: label)] \emph{returns} \texttt{void}
+
+Sets the edge's label to the \texttt{label}
+
+\item[setEdgeLabel(Edge: v, str: label)] \emph{returns} \texttt{void}
+
+Sets the vertex's label to the \texttt{label}
   
+\end{description}
+
+\subsection{Setter Functions}
+\begin{description}
+\item[getGraph(str: graphFormat)]\emph{returns}
+  \texttt{str}
+
+Returns a string representation of the graph. Several formats are supported: GraphXML (parameter "XML"), TikZ (parameter "tikz"), Trivial Graph Format (paramter "TGF"), and Gralog Trivial Graph Format (pamater "GTGF"). \hyperref[graphFormatsInDetail]{Read more about them here}.
+
+This is useful in at least the following two scenarios: 1: to take the graph Gralog has given, and import it into an external library for processing there (such as NetworkX, or TODO: another popular library). 2: to copy the contents of one graph into another Gralog graph. \hyperref[getGraphExample]{See an example here}.
+
+\item[getAllVertices()]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices in the graph.
+
+
+\item[getAllVertices()]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices in the graph.
+
+\item[getAllEdges()]\emph{returns}
+  \texttt{list of Edge objects}
+
+Returns a list of all the edges graph.
+
+\item[getNeighbours(Vertex: vertex)]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices connected to \texttt{vertex}, regardless of direction.
+
+\item[getOutgoingNeighbours(Vertex: vertex)]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices v' such that there is an edge from \texttt{Vertex} to v' in directed graphs (equivalent to getNeighbours in undirected graphs)
+
+\item[getIncomingNeighbours(Vertex: vertex)]\emph{returns}
+  \texttt{list of Vertex objects}
+
+Returns a list of all the vertices v' such that there is an edge from v' to \texttt{Vertex} in directed graphs (equivalent to getNeighbours in undirected graphs)
+
 \end{description}
 
 \section{Code Examples}
@@ -425,15 +505,6 @@ to thickness, also in Gralog)
 \item[addVertex({[int: vertexId]}{[(double: x\_coord, double: y\_coord)]})]\emph{returns}
   \texttt{Vertex} object
 
-  Creates a new Vertex object. If both coordinates coordinates in coordinate Vector \texttt{(x\_coord,y\_coord)} are \textit{not} passed,
-  random coordinates are chosen
-  %and the vertex is selected in
-  %the Gralog UI.
-  If no \texttt{vertexId} is passed, a suitable id is
-  chosen by Gralog automatically. If an id is passed that has already
-  been assigned, a suitable new one is silently chosen.
-  
-  The vertex returned has the final id assigned to it.
 
   \begin{example}
     \begin{lstlisting}[title={addVertex Example},label=addVertexExample]
@@ -465,8 +536,122 @@ to thickness, also in Gralog)
     \end{lstlisting}
     *technically this should be \texttt{v2 = g.addVertex(pos=(0,2.2))}; however, in order to make it user friendly the library allows for the user to misuse parameters in order to preserve clarity and brevity
   \end{example}
+
+\item[Color Setting examples]
+
+
+  \begin{example}
+    \begin{lstlisting}[title={Color Setting Example},label=colorSettingExample]
+    #!/usr/bin/python
+    #HelloWorld.py
+    from Gralog import *
+    g = Graph("directed");
+    #end boiler plate
+    
+    v = g.addVertex();
+    v.setColor("PUCE");
+    g.pause();
+    v.setColor(colorHex="123456");
+    g.pause();
+    v.setColor(colorRGB = (255,255,255));
+    g.pause();
+    v.setStrokeColor("red");
+    g.pause();
+    v.setStrokeColor("#101010");
+    g.pause();
+    v.setStrokeColor(colorRGB = (1,2,3));
+    g.pause();
+    v2 = g.addVertex();
+    e = g.addEdge(v,v2);
+    e.setColor("green");
+    g.pause();
+    e.setColor(colorHex="99999f");
+    g.pause();
+    e.setColor(colorRGB = (23,45,131));
+    #the following will not work
+    e.setColor((23,45,131));
+    \end{lstlisting}
+  \end{example}
+  
+
+\item[Color Setting examples]
+
+
+  \begin{example}
+    \begin{lstlisting}[title={getGraph Example},label=Example]
+    #!/usr/bin/python
+    #Showing how to load a graph from python into a string, then transfer it to another graph
+    from Gralog import *
+    g = Graph("directed");
+    g2 = Graph("directed");
+    #end boiler plate
+    
+    #populate g with 10 vertices in random locations
+    for x in range(10):
+      g.addVertex();
+    
+    gString = g.getGraph("GTGF");#load g into a string
+    g2.setGraph("GTGF",gString);#set g2 to graph isomorphic to g
+    \end{lstlisting}
+  \end{example}
 \end{description}
 
+\begin{figure}[H]
+\title{An explanation of the width, height, and radius properties of a \texttt{Vertex} object}
+\label{radiusWidthHeightDiagram}
+\centering
+\includegraphics[width=200pt]{radiusWidthHeightDiagram.png}
+\end{figure}
+
+\section{Appendix}
+
+
+\begin{table}[h!]
+  \begin{center}
+    \caption{Color Names supported by Gralog}
+    \label{colorNamesSupportedByGralog}
+    \begin{tabular}{c|c} % <-- Alignments: 1st column left, 2nd middle and 3rd right, with vertical lines in between
+      \textbf{Gralog color name} & \textbf{Hex Value}\\
+      WHITE   &\#FFFFFF\\
+\hline
+BLACK   &\#000000\\
+\hline
+BLUE    &\#0000FF\\
+\hline
+GREEN   &\#00FF00\\
+\hline
+RED     &\#FF0000\\
+\hline
+GRAY    &\#808080\\
+\hline
+YELLOW  &\#FFFF00\\
+\hline
+CYAN    &\#00FFFF\\
+\hline
+MAGENTA &\#FF00FF\\
+\hline
+SILVER  &\#C0C0C0\\
+\hline
+MAROON  &\#800000\\
+\hline
+OLIVE &\#808000\\
+\hline
+DARK GREEN &\#008000\\
+\hline
+PURPLE  &\#800080\\
+\hline
+TEAL  &\#008080\\
+\hline
+NAVY    &\#000080\\
+\hline
+ORANGE  &\#FF4500
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\subsection{Graph formats in detail}
+\label{graphFormatsInDetail}
+The four graph formats Gralog supports are the following: \href{https://en.wikipedia.org/wiki/GraphML}{GraphML}, \href{https://en.wikipedia.org/wiki/Trivial\_Graph\_Format}{Trivial Graph Format}, \href{https://en.wikipedia.org/wiki/PGF/TikZ}{TikZ}, and Gralog Trivial Graph Format. The first three are cross-platform compatible with other libraries, and can be imported and exported easily with the Gralog Python library. The last is primarily useful for intra-gralog communication. It is a simple extension of TGF, that introduces edge id's in the format. This allows simple graphs to be passed between the Gralog Python programs and Gralog without losing any basic data that cannot be retrieved. The locations, colors, labels, weights etc. are not preserved in this format (hence trivial) but for simple uses it is quick and practical.
 
 \end{document}
 

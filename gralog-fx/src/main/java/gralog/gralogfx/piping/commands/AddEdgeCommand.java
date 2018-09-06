@@ -56,15 +56,10 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
             return;
         }
 
-        try{
-            this.isDirected = externalCommandSegments[4].equals("true");
-        }catch(ArrayIndexOutOfBoundsException e){
-            this.error = e;
-            this.fail();
-        }
+        
 
         try{
-            this.id = Integer.parseInt(externalCommandSegments[5]);
+            this.id = Integer.parseInt(externalCommandSegments[4]);
         }catch(Exception e){
             System.out.println("no id given, who gives a fuck");
         }
@@ -87,8 +82,6 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
             this.setResponse("fail");
             return;
         }
-         
-        e.isDirected = this.isDirected;
         this.structure.addEdge(e,sourceVertex,targetVertex);
 
         

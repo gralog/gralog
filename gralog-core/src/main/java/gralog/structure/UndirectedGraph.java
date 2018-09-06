@@ -30,7 +30,7 @@ public class UndirectedGraph extends Structure<Vertex, Edge> implements Serializ
     @Override
     public Edge createEdge(Configuration config) {
         Edge result = new Edge(config);
-        result.isDirected = false;
+        result.setDirectedness(false);
         return result;
     }
 }

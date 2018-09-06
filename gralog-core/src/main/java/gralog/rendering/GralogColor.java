@@ -26,11 +26,15 @@ public class GralogColor implements Serializable {
         PURPLE	(0x800080),
         TEAL	(0x008080),
         NAVY    (0x000080),
-        ORANGE  (0xFF4500);
+        ORANGE  (0xFF4500),
+        PUCE    (0xCC8899);
 
         int value;
 
         Color(int c) {this.value = c;}
+        public int getValue(){
+            return this.value;
+        }
     }
 
     public int getValue(Color c){

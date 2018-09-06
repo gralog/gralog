@@ -30,6 +30,8 @@ public class DirectedGraph extends Structure<Vertex, Edge> implements Serializab
 
     @Override
     public Edge createEdge(Configuration config) {
-        return new Edge(config);
+        Edge e = new Edge(config);
+        e.setDirectedness(true);
+        return e;
     }
 }

@@ -42,8 +42,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     protected HashMap<Integer, V> vertices;
     protected HashMap<Integer, E> edges;
 
-    private int id;
-
     public TreeSet<Interval> vertexIdHoles;
     public TreeSet<Interval> edgeIdHoles;
 
@@ -89,13 +87,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edgeIdHoles.add(new Interval(0,Integer.MAX_VALUE));
     }
 
-    public void setId(int id){
-        this.id = id;
-    }
-
-    public int getId(){
-        return this.id;
-    }
 
     public boolean isEmpty(){
         return vertices.size() + edges.size() == 0;
