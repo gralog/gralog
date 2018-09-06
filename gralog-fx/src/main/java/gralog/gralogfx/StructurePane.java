@@ -1022,6 +1022,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
     private void createListFromSelection(){
         GralogList<Vertex> g = new GralogList<>(objectListDisplay.getUniqueDefaultName());
+        g.overrideToString(v -> "" + v.getId());
         for(Object o : highlights.getSelection()){
             if(o instanceof Vertex){
                 g.add((Vertex)o);

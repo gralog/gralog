@@ -4,6 +4,8 @@ import javafx.beans.property.SimpleStringProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class GralogList<T> {
 
@@ -12,15 +14,31 @@ public class GralogList<T> {
 
     private List<T> list = new ArrayList<>();
 
+    private Function<T, String> toString;
+
     public GralogList(String name){
         this.name = new SimpleStringProperty(name);
         this.stringData = new SimpleStringProperty("");
     }
 
+    public void overrideToString(Function<T, String> toString){
+        this.toString = toString;
+    }
+
     public void updateStringData(){
         StringBuffer sb = new StringBuffer();
-        for(T elem : list){
-            sb.append(elem.toString() + ", ");
+        for (int i = 0; i < list.size(); i++) {
+            T elem = list.get(i);
+            if(toString == null){
+                sb.append(elem.toString());
+            }
+            else{
+                sb.append(toString.apply(elem));
+            }
+
+            if(i < list.size() - 1){
+                sb.append(", ");
+            }
         }
         stringData.set(sb.toString());
     }
