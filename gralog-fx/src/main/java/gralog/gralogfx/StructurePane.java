@@ -264,9 +264,9 @@ public class StructurePane extends StackPane implements StructureListener {
     public void pasteFromClipboard(boolean redraw){
         var clipBoardCopy = (new Cloner()).deepClone(CLIPBOARD);
         structure.insertForeignSelection(clipBoardCopy, gridSize);
+        Undo.Record(structure);
         highlights.clearSelection();
         selectAll(clipBoardCopy);
-
         if(redraw)
             this.requestRedraw();
     }
@@ -392,6 +392,7 @@ public class StructurePane extends StackPane implements StructureListener {
             switch (e.getCode()) {
                 case DELETE:
                     deleteSelection();
+                    Undo.Record(structure);
                     this.requestRedraw();
                     break;
                 case X:
@@ -616,9 +617,13 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         //End
 
-        if (dragging != null && hasGrid && snapToGrid) {
-            structure.snapToGrid(gridSize);
-            this.requestRedraw();
+
+        if (dragging != null) {
+            Undo.Record(structure);
+            if(hasGrid && snapToGrid){
+                structure.snapToGrid(gridSize);
+                this.requestRedraw();
+            }
         }
         else if(b == MouseButton.PRIMARY){
             if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease && selectionBoxingActive){
