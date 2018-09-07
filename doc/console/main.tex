@@ -15,7 +15,6 @@
 \usepackage{booktabs}
 
 \newcommand{\fabs}[1]{\mid {#1} \mid}
-\usepackage{hyperref}
 
 \newcommand{\bet}[1]{\llbracket {#1} \rrbracket^{\beta} }
 \usepackage{stmaryrd}
@@ -53,13 +52,10 @@
 
 \usepackage{lipsum}
 \usepackage{listings}
-\usepackage{color}
 
-\definecolor{dkgreen}{rgb}{0,0.6,0}
-\definecolor{gray}{rgb}{0.5,0.5,0.5}
-\definecolor{mauve}{rgb}{0.58,0,0.82}
+\newcommand{\tcr}[1]{\textcolor{red}{#1}}
+
 \definecolor{palegreen}{rgb}{0.9,1,0.9}
-
 \usepackage[most]{tcolorbox}
 \tcbset{
     frame code={}
@@ -76,6 +72,17 @@
     arc=0pt,outer arc=0pt,
   }
 
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightpink}{rgb}{1.0,0.9,0.9}
+\definecolor{darkblue}{rgb}{0,0,0.4}
+
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true,linkcolor=darkblue,citecolor=darkblue}
 
 
 
@@ -97,12 +104,12 @@
 }
 \lstset{language=Python}
 
-\title{Gralog External Programming Manual}
+\title{Gralog Console Manual}
 
 \author{Roman
   Rabinovich\\ \texttt{roman.rabinovich@tu-berlin.de}}
 
-\date{August 2018}
+\date{\today}
 
 \begin{document}
 
