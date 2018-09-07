@@ -340,7 +340,6 @@ public class Dialog {
             for (String property : propertyValue.keySet()) {
                 switch (property) {
                     case "STROKE":
-                    case "COLOR":
                         if (!v.strokeColor.name().equals(propertyValue.get(property)))
                             filteredOut = true;
                         break;
