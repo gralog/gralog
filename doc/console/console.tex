@@ -87,7 +87,7 @@ Gralog does not distinguish between the upper and the lower cases.
 
 
 \begin{tcolorbox}[colback=lightpink]
-  FILTER <what> WHERE|ST|(SUCH THAT) <parameterS> TO <list identifier>
+  FILTER <what> WHERE|ST|(SUCH THAT) <parameters> TO <list identifier>
   [ignored trash]
 \end{tcolorbox}
  
@@ -282,7 +282,7 @@ The following operations are currently supported:
 One can either connect one list of vertices to another, which, however, can be the same list, or connect vertices of one list in a certain way. The first is done by the command
 
 \begin{tcolorbox}[colback=lightpink]
-  CONNECT <list1> <list2> =<formula> | BICLIQUE | MATCHING to <target>
+  CONNECT <list1> <list2> =<formula> | BICLIQUE | MATCHING
 \end{tcolorbox}
 
 The easier case is to use a standard way of connection, for example,
@@ -290,7 +290,8 @@ The easier case is to use a standard way of connection, for example,
 \begin{tcolorbox}[colback=palegreen]
   CONNECT upper lower MATCHING to matching
 \end{tcolorbox}
-which produces a matching
+which produces a matching connecting the $i$th vertex of
+\texttt{list1} to the $i$th vertex of \texttt{list2}
 
 %%% Local Variables:
 %%% mode: latex
