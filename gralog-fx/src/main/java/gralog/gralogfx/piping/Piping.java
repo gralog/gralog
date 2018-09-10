@@ -157,12 +157,19 @@ public class Piping extends Thread{
         System.out.println("external yo");
         String line;
         String[] execStr = {fileName,initMessage};
+        CountDownLatch execd = new CountDownLatch(1);
         
         try{
             Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","chmod u+x " + fileName});
+            execd.countDown();
         }catch(Exception e){
-            e.printStackTrace();
+            this.sendMessageToConsole.accept("The file was unable to be granted permission to be run",MessageToConsoleFlag.Error);
+            execd.countDown();
         }
+        try{
+            execd.await();            
+        }catch(Exception e){}
+
         try{
             this.external = Runtime.getRuntime().exec(execStr); //e.g. formatRequest
             this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));

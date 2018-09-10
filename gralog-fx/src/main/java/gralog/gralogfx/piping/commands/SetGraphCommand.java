@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import gralog.gralogfx.StructurePane;
-
+import java.util.Arrays;
 import gralog.importfilter.TrivialGraphFormatImport;
 import gralog.importfilter.GralogTrivialGraphFormatImport;
 
@@ -33,7 +33,7 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 
         try{
             this.format = PipingMessageHandler.properGraphFormats(externalCommandSegments[2]);
-            this.graphString = (String)PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
+            this.graphString = String.join("#",Arrays.copyOfRange(externalCommandSegments, 3, externalCommandSegments.length));
         }catch(Exception e){
             this.error = e;
             this.fail();
@@ -58,8 +58,7 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 	public void handle(){
 
         /* for testing*/
-        this.graphString= "<?xml version=\"1.0\" encoding=\"UTF-8\"?><graphml><graph edgedefault=\"directed\" type=\"digraph\"><node fillcolor=\"#CCEC35\" id=\"n1\" label=\"\" radius=\"0.7\" strokecolor=\"#000000\" strokewidth=\"0.026458333333333334\" textheight=\"0.4\" x=\"1.0\" y=\"2.0\"/><node fillcolor=\"#CCEC35\" id=\"n2\" label=\"\" radius=\"0.7\" strokecolor=\"#000000\" strokewidth=\"0.026458333333333334\" textheight=\"0.4\" x=\"2.0\" y=\"0.0\"/><node fillcolor=\"#CCEC35\" id=\"n3\" label=\"\" radius=\"0.7\" strokecolor=\"#000000\" strokewidth=\"0.026458333333333334\" textheight=\"0.4\" x=\"9.0\" y=\"6.0\"/><edge arrowheadlength=\"0.2\" color=\"#000000\" isdirected=\"false\" label=\"\" source=\"n2\" target=\"n3\" weight=\"1.0\" width=\"0.026458333333333334\"/><edge arrowheadlength=\"0.2\" color=\"#000000\" isdirected=\"false\" label=\"\" source=\"n1\" target=\"n2\" weight=\"1.0\" width=\"0.026458333333333334\"/><edge arrowheadlength=\"0.2\" color=\"#000000\" isdirected=\"false\" label=\"\" source=\"n1\" target=\"n3\" weight=\"1.0\" width=\"0.026458333333333334\"/></graph></graphml>";
-
+        
         /*Gralog messages are in the format:
 
         $$
@@ -94,7 +93,44 @@ public class SetGraphCommand extends CommandForGralogToExecute {
             //parse the xml, possibly in a multi-line manner
 
         }else if (this.format == GraphType.Tgf){
-            //parse the tgf, possibly in a multi-line manner
+            String totalGraph = "";
+            String firstLine;
+            try{
+                firstLine = PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
+            }catch(Exception e){
+                doFail(e);
+                return;
+            }
+            if (!firstLine.equals("$$")){
+                doFail(new MessageFormatException("no multiline syntax!"));
+            }
+            String line = "";
+            
+            try{
+                line = this.piping.getNextLine();
+                while (!line.equals("$")){
+
+                    totalGraph += line + "\n";
+                    line = this.piping.getNextLine();
+                }
+            }catch(Exception e){
+                this.doFail(e);
+                return;
+            }
+            InputStream is = new ByteArrayInputStream(totalGraph.getBytes());
+            TrivialGraphFormatImport importer = new TrivialGraphFormatImport();
+            Structure structureFromTGF;
+            try{
+                structureFromTGF = importer.importGraph(is,null);
+            }catch(Exception e){
+                this.doFail(e);
+                return;
+            }
+            this.currentStructurePane.setStructure(structureFromTGF);
+            System.out.println("id: " + localStructureId);
+            System.out.println("structure: " + structureFromTGF);
+            System.out.println("ol structure: " + this.structure);
+            this.piping.pairLocalIdAndStructure(localStructureId,structureFromTGF);
         }else if (this.format == GraphType.Tikz){
             //parse the tikz, possibly in a multi-line manner
         }else if (this.format == GraphType.GTgf){

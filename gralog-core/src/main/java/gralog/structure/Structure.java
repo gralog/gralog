@@ -83,6 +83,22 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         edgeIdHoles.add(new Interval(0,Integer.MAX_VALUE));
     }
 
+    static protected String pythonifyClass(Class c){
+        System.out.println("class: " + c.toString() + " equality " + (c==Integer.class) + " " +(c==Double.class) + " "+(c==Boolean.class) + " "+ (c == double.class));
+        if (c == String.class){
+            return "string";
+        }
+        if (c == Integer.class || c == int.class){
+            return "int";
+        }
+        if (c == Double.class || c==double.class){
+            return "float";
+        }
+        if (c == Boolean.class || c == boolean.class){
+            return "bool";
+        }
+        return "notAPythonifiableClass";
+    }
 
     public boolean isEmpty(){
         return vertices.size() + edges.size() == 0;

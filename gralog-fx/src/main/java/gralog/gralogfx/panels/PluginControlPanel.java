@@ -219,7 +219,6 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         for (int i = 0; i < args.size(); i ++){
             String[] arg = args.get(i);
             String labelString = arg[0] + ": " + arg[1];
-            System.out.println("labelString: " + labelString);
             Label inter = new Label(labelString);
             inter.setMinWidth(Region.USE_PREF_SIZE);
             labels.add(inter);

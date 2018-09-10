@@ -8,7 +8,7 @@ import java.util.concurrent.CountDownLatch;
 
 
 
-public class RequestDoubleCommand extends CommandForGralogToExecute {
+public class RequestFloatCommand extends CommandForGralogToExecute {
 
     Vertex vertex;
     private CountDownLatch waitForSelection;
@@ -16,7 +16,7 @@ public class RequestDoubleCommand extends CommandForGralogToExecute {
     private Piping piping;
   
 
-	public RequestDoubleCommand(String[] externalCommandSegments,Structure structure,Piping piping){
+	public RequestFloatCommand(String[] externalCommandSegments,Structure structure,Piping piping){
 		
         this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
@@ -30,7 +30,7 @@ public class RequestDoubleCommand extends CommandForGralogToExecute {
 
         // this.selectionFunction.get();
         this.piping.state = Piping.State.WaitingForConsoleInput;
-        this.piping.sendMessageToConsole.accept("Double requested!",Piping.MessageToConsoleFlag.Request);
+        this.piping.sendMessageToConsole.accept("Float requested!",Piping.MessageToConsoleFlag.Request);
         try{
             this.piping.redrawMyStructurePanes();
             this.piping.setClassSelectionIsWaitingFor(Double.class);
