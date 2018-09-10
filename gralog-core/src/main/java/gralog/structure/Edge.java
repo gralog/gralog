@@ -660,7 +660,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
             if (toBeSent){
                 ret = ret + f.getName() + "=";
                 try{
-                    ret = ret+f.get(this).toString() + "|";
+                    ret = ret+f.get(this).toString() + "|" + Structure.pythonifyClass(f.getDeclaringClass()) + "#";
                 }catch(Exception e){
                     //todo: to handle!!!
                 }

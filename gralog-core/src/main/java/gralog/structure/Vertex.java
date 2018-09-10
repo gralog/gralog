@@ -24,6 +24,7 @@ import java.util.*;
 
 
 
+
 /**
  * A vertex with a circle shape.
  */
@@ -34,7 +35,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     public int id;
     @DataField(display=true)
     public String label = "";
-    @DataField(display=false)
+    @DataField(display=true)
     public double radius = 0.7;     // cm
 
     //the position of the loop center on the circle
@@ -134,6 +135,8 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
                 ", coordinates=" + coordinates + '}';
     }
 
+    
+
     public String gralogPipify(){
         Class<?> c = this.getClass();
         String ret = "";
@@ -153,7 +156,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
                 ret = ret + f.getName() + "=";
                 try{
-                    ret = ret+f.get(this).toString() + "|";
+                    ret = ret+f.get(this).toString() + "|" + Structure.pythonifyClass(f.getType()) + "#";
                 }catch(Exception e){
                     //todo: to handle!!!
                 }

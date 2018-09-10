@@ -32,9 +32,15 @@ gPrint("first: " + str(first));
 
 for u in g.getAllVertices()[1:]:
 	e = g.addEdge(first,u);
+	e.getLabel();
 	g.setEdgeContour(e,"dashed");
 
-g.pause();
+g.pause(("hello","world"));
 for v in g.getOutgoingNeighbours(first):
 	v.setColor(colorHex=(v.getId()*v.getId()));
 	v.setLabel(v.getId());
+
+
+
+for v in g.getAllVertices():
+	gPrint("str: " + str(v.get("radius")));

@@ -242,6 +242,8 @@ public class PipingMessageHandler{
         }
     }
 
+    
+
     public static Vertex extractVertex(String[] externalCommandSegments, Structure structure) throws Exception{
         String vertex;
         try{
@@ -293,7 +295,7 @@ public class PipingMessageHandler{
     }
 
     public static String universalEdgeToGralogTuple(Edge e){
-        return e.gralogPipify()+"|source="+Integer.toString(e.getSource().getId())+"|target="+Integer.toString(e.getTarget().getId());
+        return e.gralogPipify()+"#source="+Integer.toString(e.getSource().getId())+"|vertex"+"#target="+Integer.toString(e.getTarget().getId())+"|vertex";
     }
 
 
