@@ -13,22 +13,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DialogTest {
 
     private Dialog dialog = new Dialog();
     ArrayList<String> parameters = new ArrayList<String>();
-    Structure c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
+    Structure c20;
     Highlights highlights = new Highlights();
 
     public DialogTest(){
+        c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
+        assertEquals(20,c20.getVertices().size());
+        assertEquals(20,c20.getEdges().size());
         ArrayList<Vertex> initialList = new ArrayList<Vertex>();
         for (int i = 0; i < 10; i++)
             initialList.add(c20.getVertexById(i));
         highlights.selectAll(initialList);
-        assertEquals(20,c20.getVertices().size());
-        assertEquals(20,c20.getEdges().size());
-
         initLists();
         }
 
@@ -41,6 +42,7 @@ public class DialogTest {
         parameters.add("<");
         parameters.add("5");
         parameters.add("P5");
+        dialog.filter(parameters,c20,highlights);
         parameters.clear();
 
         parameters.add("ALL");
@@ -49,6 +51,7 @@ public class DialogTest {
         parameters.add(">");
         parameters.add("4");
         parameters.add("Q5");
+        dialog.filter(parameters,c20,highlights);
         parameters.clear();
     }
 
@@ -151,9 +154,11 @@ public class DialogTest {
 
     @Test
     public void testConnect(){
+        initLists();
         parameters.add("P5");
         parameters.add("Q5");
         parameters.add("i+1");
+        dialog.connect2ListsFormula(parameters,c20);
     }
 
 }
