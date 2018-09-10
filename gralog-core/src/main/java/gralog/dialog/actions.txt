@@ -35,7 +35,6 @@ CONNECT <list id> <list id> <formula> TO <list id>
     natural constants, i, +, *, /, %, ceil(.), floor(.), .^., root(.,.), exp(.,.)
 CONTRACT <vertex list id>|<edge list id>|selected
 BUTTERFLY CONTRACT <edge list id>
-GENERARTE <graph> [<generateParameterS>] TO <list id>
   <graph> := GRID <n,m>| WHEEL <n> | CYCLE <n> | PATH <n> | CLIQUE <n> | TORUS <n,m> | COMPLETE TREE <deg,depth>
                        | CYLINDRICAL GRID <n,m> | PETERSEN | HAUS VOM NIKOLAUS | BULL | BUTTERFLY | DUERER |
                        | ERDOS-RENYI <n,p> | COMPLETE BIPARTITE <n,m> | MATCHING <n> | CUBE | 3-DIM CUBE |

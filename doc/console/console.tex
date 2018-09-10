@@ -152,7 +152,6 @@ Table~\ref{tab:parsAndVals} explains which values the parameters can have.
 
 \begin{table}
   \centering
-  \renewcommand{\arraystretch}{2}
   \begin{tabular}{p{3cm}|p{5cm}|p{1.8cm}|p{5cm}}
     \textbf{parameter} &  \textbf{possible values} & \textbf{applicable to}  & \textbf{meaning}\\
     \hline
@@ -241,7 +240,7 @@ number~$i$. The lists can be sorted by
 
 \begin{tcolorbox}[colback=lightpink]
   SORT <list id> <parameter>
-\end{tcolorbox}
+\end{tcolorbox}%
 where \texttt{parameter} is one of \texttt{LEFTRIGHT},
 \texttt{RIGHTLEFT}, \texttt{TOPDOWN}, \texttt{BOTTOMUP}, \texttt{ID
   ASC}, \texttt{ID DECS}, \texttt{LABEL ASC}, \texttt{LABEL DESC}. The
@@ -251,6 +250,47 @@ in  the ascending order, \texttt{ID DESC} sorts by the id
 in  the descending order and \texttt{LABEL} sorts alphabetically
 (ascending or descending) by the label. If the labels of two vertices
 are equal, the vertices keep their relative order.
+
+\subsection{Operations on lists (before connecting)}
+
+The following operations are currently supported:
+
+\begin{tcolorbox}[colback=lightpink]
+  \begin{tabular}[H]{p{7cm}|p{8cm}}
+    \textbf{operation}    & \textbf{meaning}\\
+    DELETE <list id> & deletes the list, but not the elements of the list from the graph\\
+
+    UNION <source1> <source2> TO <target> & creates the union of \texttt{source1} and \texttt{source2} and stores the result in \texttt{target}\\
+
+    INTERSECTION <list1 id> <list2 id> TO <list3 id> &creates the intersection of \texttt{source1} and \texttt{source2} and stores the result in \texttt{target}\\
+    
+    DIFFERENCE <source1> <source2> TO <target> & creates the difference of \texttt{source1} and \texttt{source2} and stores the result in \texttt{target}\\
+    
+    SYMMETRIC DIFFERENCE <source1> <source2> TO <target>  & creates the symmetric difference of \texttt{source1} and \texttt{source2} and stores the result in \texttt{target}\\
+    
+    COMPLEMENT <list id> TO <target>  & creates the complement of \texttt{list id} and stores the result in \texttt{target}.\\
+    
+    CONTRACT <vertex list id> | <edge list id> | SELECTED & builds a minor of the graph by contracting the subgraph induced by the elements of the list or by the selected elements (if \texttt{SELECTED} is specified and some elements are selected) to a single vertex. Works for all kinds of graphs. Not implemented yet.\\
+    BUTTERFLY CONTRACT <edge list id> & builds a butterfly minor of the graph by butterfly contracting all butterfly contractable edges. On undirected edges the operation has no effect. Not implemented yet.\\
+
+    SUBDIVIDE <edge list id> <$n$> & subdivides every edge from the list $n$ times where $n$ must be a natural number. Directed edges are replaced by directed paths of length $n+1$. Not implemented yet.
+  \end{tabular}
+\end{tcolorbox}
+
+\subsection{Connecting lists of vertices}
+
+One can either connect one list of vertices to another, which, however, can be the same list, or connect vertices of one list in a certain way. The first is done by the command
+
+\begin{tcolorbox}[colback=lightpink]
+  CONNECT <list1> <list2> =<formula> | BICLIQUE | MATCHING to <target>
+\end{tcolorbox}
+
+The easier case is to use a standard way of connection, for example,
+
+\begin{tcolorbox}[colback=palegreen]
+  CONNECT upper lower MATCHING to matching
+\end{tcolorbox}
+which produces a matching
 
 %%% Local Variables:
 %%% mode: latex
