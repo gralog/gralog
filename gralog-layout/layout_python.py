@@ -1,23 +1,23 @@
 #!/usr/bin/python
 
 import sys
-sys.path.append('/home/michelle/gralog/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping')
 import math
 import xml.etree.cElementTree as ET
 import networkx as nx
 import igraph as ig
-from Lib import *
+import Gralog
 
 n = 0
 ### import graph ## GRALOG ###
 g      = Graph(None)
 gralog_xml  = g.getGraph("xml")
 grlgML_file = open("tmp.txt","w")
-grlgML_file.write("lasl")
+grlgML_file.write(gralog_xml)
 grlgML_file.close()
-graph = './graphs/a.graphml'
+graph = 'tmp.txt'
 ### import graph to ## IGRAPH + NX ###
-g_ig   = ig.Graph.Read_GraphML(grlgML_file)
+g_ig   = ig.Graph.Read_GraphML(graph)
+print(g_ig.vs)
 g_nx = nx.read_graphml(graph)
 doc = ET.parse(graph)
 nodes = doc.getroot().find('graph').findall('node')
@@ -27,13 +27,15 @@ center = (int(sum(x)/len(x)), int(sum(y)/len(y)))
 ### DONE ## Write new coords into graphml-file ## ET ###
 nx_layouts = [nx.circular_layout(g_nx,10), nx.shell_layout(g_nx,None,7,None,2), nx.spring_layout(g_nx,None,None, None,50,1e-4,None,7), nx.kamada_kawai_layout(g_nx,None,None,'weight',10,None,2), nx.spectral_layout(g_nx,'weight',20,None,2)]
 nx_lay = nx_layouts[n]
+nx.set_node_attributes(G,"coordinates",nx_lay)
 nx_doc = ET.parse(graph)
-nx_root = nx_doc.getroot()
-for nl in range(len(nx_lay)):
-    nx_node = nx_root.find('graph').findall('node')[nl].attrib
-    nx_node['x'] = str(round(nx_lay[nx_node['id']][0], 5))
-    nx_node['y'] = str(round(nx_lay[nx_node['id']][1], 5))
-#ET.tostring(nx_root, encoding="utf8").sendGraph("xml")
+#nx_root = nx_doc.getroot()
+#for nl in range(len(nx_lay)):
+#    nx_node = nx_root.find('graph').findall('node')[nl].attrib
+#    nx_node['x'] = str(round(nx_lay[nx_node['id']][0], 5))
+#    nx_node['y'] = str(round(nx_lay[nx_node['id']][1], 5))
+ET.tostring(nx_doc.getroot(), encoding="utf8")
+
 ig_layouts = ["circle","star","grid","graphopt","fruchterman_reingold","kamada_kawai",
             "mds","lgl","reingold_tilford","reingold_tilford_circular"]#,"sugiyama"]
 ig_lay = g_ig.layout(ig_layouts[n])
@@ -45,4 +47,9 @@ for il in range(len(ig_lay)):
     ig_node = ig_root.find('graph').findall('node')[il].attrib
     ig_node['x'] = str(round(ig_lay[il][0], 5))
     ig_node['y'] = str(round(ig_lay[il][1], 5))
-g.setGraph("xml",ET.tostring(ig_root, encoding="utf8"))
+#g.setGraph("xml",ET.tostring(ig_root, encoding="utf8"))
+
+for v in g.getAllVertices():
+    print(v)
+    print(ig_lay.coords[v.getId()])
+    v.setCoordinates((ig_lay.coords[v.getId()][0],ig_lay.coords[v.getId()][1]))

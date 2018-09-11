@@ -74,6 +74,7 @@ public class PipingMessageHandler{
         List<String> trivial = Arrays.asList("trivial","tgf");
         List<String> xml = Arrays.asList("xml");
         List<String> gtgf = Arrays.asList("gtgf");
+        List<String> incm = Arrays.asList("incm");
      
         GraphType graphType = GraphType.Null;
         for (String piece : format.split(" ")){
@@ -95,6 +96,10 @@ public class PipingMessageHandler{
 
             if (gtgf.contains(piece)){
                 graphType = GraphType.GTgf;
+            }
+            
+            if (incm.contains(piece)) {
+            	graphType = GraphType.IncM;
             }
         }
         return graphType;

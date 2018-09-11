@@ -145,6 +145,15 @@ public class GetGraphCommand extends CommandForGralogToExecute {
             return;
         }
         
+        if (this.format == GraphType.IncM) {
+        	try {
+        		String inc = this.structure.incToString();
+                this.setResponse(inc);        		
+        	}catch(Exception e) {
+        		this.setResponse(e.toString());
+        	}
+        }
+        
 
         // int changeId;
         this.setResponse("User wanted it in format : " + this.format.toString());
