@@ -1,7 +1,7 @@
 package gralog.gralogfx.panels;
 
 import gralog.dialog.GralogList;
-import gralog.structure.Vertex;
+import javafx.scene.image.Image;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,13 +10,14 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
 
-public class ObjectListDisplay extends VBox
+public class    ObjectListDisplay extends VBox
 {
     public ObservableList<GralogList> list = FXCollections.observableList(new ArrayList<>());
 
@@ -40,12 +41,13 @@ public class ObjectListDisplay extends VBox
                         final TableCell<GralogList, String> cell = new TableCell<>()
                         {
 
-                            final Button btn = new Button("Del");
+                            final Button btn = new Button();
 
                             @Override
                             public void updateItem(String item, boolean empty)
                             {
                                 btn.setTextAlignment(TextAlignment.CENTER);
+                                btn.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/Rubbish.png"))));
                                 super.updateItem(item, empty);
                                 if (empty)
                                 {
