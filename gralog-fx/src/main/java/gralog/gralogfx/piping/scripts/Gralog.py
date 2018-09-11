@@ -2,6 +2,10 @@
 
 import sys
 from random import randint
+import os
+import networkx as nx
+import igraph as ig
+import xml.etree.cElementTree as ET
 
 # debugging = False;
 
@@ -771,7 +775,32 @@ class Graph:
 	#####getter functions
 
 
+	def toIgraph(self):
+		grlgML_file = open("tmp.graphml","w")
+		grlgML_file.write(self.toXml())
+		grlgML_file.close()
+		g_ig = ig.Graph.Read_GraphML("tmp.graphml")
+		os.remove("tmp.graphml")
+		return g_ig
 
+	def toNx(self):
+		grlgML_file = open("tmp.graphml","w")
+		grlgML_file.write(self.toXml())
+		grlgML_file.close()
+		g_nx = nx.read_graphml("tmp.graphml")
+		os.remove("tmp.graphml")
+		return g_nx
+
+	def toElementTree(self):
+		grlgML_file = open("tmp.graphml","w")
+		grlgML_file.write(self.toXml())
+		grlgML_file.close()
+		g_ET = ET.parse("tmp.graphml")
+		os.remove("tmp.graphml")
+		return g_ET
+
+	def toXml(self):
+		return self.getGraph("xml")
 
 	def getGraph(self,graphFormat):
 		##warning!! importaing as pure TGF will mean edge id's will

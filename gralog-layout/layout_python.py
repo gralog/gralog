@@ -9,18 +9,14 @@ import Gralog as Gralog
 
 ### import graph ## GRALOG ###
 g           = Gralog.Graph(None)
-graph       = "tmp.graphml"
-grlgML_file = open(graph,"w")
-grlgML_file.write(g.getGraph("xml"))
-grlgML_file.close()
 g.message("load")
 
 ### import graph to ## IGRAPH + NX ###
-g_ig    = ig.Graph.Read_GraphML(graph)
-g_nx    = nx.read_graphml(graph)
+g_ig    = g.toIgraph()
+g_nx    = g.toNx()
 
 ### compute center of point cloud ###
-doc = ET.parse(graph)
+doc = g.toElementTree()
 nodes = doc.getroot().find('graph').findall('node')
 x, y = [float(nodes[i].attrib['x']) for i in range(len(nodes))], [float(nodes[i].attrib['y']) for i in range(len(nodes))]
 center = (int(sum(x)/len(x)), int(sum(y)/len(y)))
@@ -41,7 +37,10 @@ for i in range(len(nx_layouts)):
 
 for i in range(len(ig_layouts)):
     ig_lay      = g_ig.layout(ig_layouts[i])
-    ig_lay.scale(len(ig_layouts)/2)
+    if i<3:
+        ig_lay.scale(len(ig_layouts)/2)
+    else:
+        ig_lay.scale(len(ig_layouts)/4)
     g.message(ig_layouts[i])
     for v in g.getAllVertices():
         ig_v = ig_lay.coords[v.getId()]
