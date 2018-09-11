@@ -29,7 +29,8 @@ public abstract class GralogGraphicsContext {
         line(from.getX(), from.getY(), to.getX(), to.getY(), color, width, type);
     }
 
-    public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color){
+    public abstract void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color);
+    public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color, double lineWidth){
         double theta = Math.toRadians(dir.theta());
 
         double[] xs = Arrays.copyOf(arrowType.xPoints, arrowType.xPoints.length);
@@ -47,13 +48,13 @@ public abstract class GralogGraphicsContext {
         if(arrowType.flag == Arrow.LineFlag.POLY){
             polygon(xs, ys, arrowType.count, color);
         }else{
-            lines(xs, ys, arrowType.count, color);
+            lines(xs, ys, arrowType.count, color, lineWidth);
         }
     }
 
     public abstract void polygon(double[] x, double[] y, int count, GralogColor color);
 
-    public abstract void lines(double[] x, double[] y, int count, GralogColor color);
+    public abstract void lines(double[] x, double[] y, int count, GralogColor color, double lineWidth);
     /**
      * Draws a curved bezier line from start to end. The control points are positively perpendicular
      * to the line from start to end. The length of control points can be set.

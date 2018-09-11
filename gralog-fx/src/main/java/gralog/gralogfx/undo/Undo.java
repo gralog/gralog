@@ -11,7 +11,7 @@ import java.util.Stack;
  * to navigate between saved checkpoints of a structure (Ctrl+Z)
  */
 public class Undo {
-    private static final int MAX_NR = 200;
+    private static final int MAX_NR = 300;
 
     private static HashMap<Structure, FixedQueue<Structure>> structureStack;
     private static Cloner cloner;

@@ -8,10 +8,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import com.rits.cloning.Cloner;
+import gralog.dialog.GralogList;
 import gralog.exportfilter.ExportFilter;
 import gralog.exportfilter.ExportFilterManager;
 import gralog.exportfilter.ExportFilterParameters;
 import gralog.gralogfx.input.MultipleKeyCombination;
+import gralog.gralogfx.panels.ObjectListDisplay;
 import gralog.gralogfx.undo.Undo;
 import gralog.preferences.Configuration;
 import gralog.gralogfx.threading.ScrollThread;
@@ -113,6 +115,8 @@ public class StructurePane extends StackPane implements StructureListener {
     //context menu
     private ContextMenu vertexMenu;
 
+    private ObjectListDisplay objectListDisplay;
+
     //temporary drawing state variables
     private boolean blockVertexCreationOnRelease = false;
 
@@ -125,6 +129,9 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean selectionBoxingActive = false;
     private boolean selectionBoxDragging = false;
 
+
+    private Vector2D resizeControlDragPosition; //relative to origin
+    private boolean alreadyAlignedResize = false;
     private Vector2D singleVertexDragPosition; //relative to origin
     private boolean alreadyAligned = false;
 
@@ -201,13 +208,15 @@ public class StructurePane extends StackPane implements StructureListener {
 
         MenuItem copy = new MenuItem("Copy");
         copy.setAccelerator(new MultipleKeyCombination(KeyCode.CONTROL, KeyCode.C));
+        copy.setOnAction(e -> {
+            copySelectionToClipboard();
+        });
         MenuItem delete = new MenuItem("Delete");
         delete.setOnAction(e -> {
             deleteSelection();
             this.requestRedraw();
         });
         MenuItem addLoop = new MenuItem("Add loop");
-
         addLoop.setOnAction(e -> {
             if(highlights.getSelection().size() == 1){
                 Vertex v = (Vertex)highlights.getSelection().iterator().next();
@@ -216,10 +225,22 @@ public class StructurePane extends StackPane implements StructureListener {
             }
             this.requestRedraw();
         });
-        vertexMenu.getItems().addAll(addLoop, copy, delete);
+        MenuItem addList = new MenuItem("Create new list");
+
+        addList.setOnAction(e -> {
+            createListFromSelection();
+        });
+        vertexMenu.getItems().addAll(addList, new SeparatorMenuItem(), addLoop, copy, delete);
 
     }
 
+    public void setObjectListDisplay(ObjectListDisplay obj){
+        objectListDisplay = obj;
+    }
+
+    public ObjectListDisplay getObjectListDisplay(){
+        return objectListDisplay;
+    }
     public void cutSelectionToClipboard(){
         copySelectionToClipboard();
         deleteSelection();
@@ -241,9 +262,16 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public void pasteFromClipboard(){
-        structure.insertForeignSelection(CLIPBOARD, gridSize);
-        this.requestRedraw();
+    public void pasteFromClipboard(){ pasteFromClipboard(true);}
+
+    public void pasteFromClipboard(boolean redraw){
+        var clipBoardCopy = (new Cloner()).deepClone(CLIPBOARD);
+        structure.insertForeignSelection(clipBoardCopy, gridSize);
+        Undo.Record(structure);
+        highlights.clearSelection();
+        selectAll(clipBoardCopy);
+        if(redraw)
+            this.requestRedraw();
     }
 
     public void undoStructure(){
@@ -367,6 +395,7 @@ public class StructurePane extends StackPane implements StructureListener {
             switch (e.getCode()) {
                 case DELETE:
                     deleteSelection();
+                    Undo.Record(structure);
                     this.requestRedraw();
                     break;
                 case X:
@@ -384,8 +413,10 @@ public class StructurePane extends StackPane implements StructureListener {
                     break;
                 case V:
                     if(e.isControlDown() || e.isMetaDown()){
-                        System.out.println(CLIPBOARD.size());
-                        structure.insertForeignSelection(CLIPBOARD, gridSize);
+                        if(CLIPBOARD == null){
+                            break;
+                        }
+                        pasteFromClipboard(false);
                         if(snapToGrid){
                             structure.snapToGrid(gridSize);
                         }
@@ -531,6 +562,9 @@ public class StructurePane extends StackPane implements StructureListener {
                     select(((ResizeControls.RControl)selected).parent.v);
                     dragging = new HashSet<>();
                     dragging.add(selected);
+
+                    resizeControlDragPosition = ((ResizeControls.RControl)selected).
+                            position.minus(lastMouseX, lastMouseY);
                 }
                 else{
                     //reassign selection to object that was not in the list
@@ -589,9 +623,13 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         //End
 
-        if (dragging != null && hasGrid && snapToGrid) {
-            structure.snapToGrid(gridSize);
-            this.requestRedraw();
+
+        if (dragging != null) {
+            Undo.Record(structure);
+            if(hasGrid && snapToGrid){
+                structure.snapToGrid(gridSize);
+                this.requestRedraw();
+            }
         }
         else if(b == MouseButton.PRIMARY){
             if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease && selectionBoxingActive){
@@ -616,8 +654,12 @@ public class StructurePane extends StackPane implements StructureListener {
             if(selected instanceof Vertex){
                 //right release on a vertex while drawing an edge = add edge
                 if(drawingEdge && currentEdgeStartingPoint != null){
-                    structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected, config);
-                    Undo.Record(structure);
+                    if(currentEdgeStartingPoint == selected){
+                        vertexMenu.show(canvas, e.getScreenX(), e.getScreenY());
+                    }else{
+                        structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected, config);
+                        Undo.Record(structure);
+                    }
                 }
                 //right click opens context menu
                 else if(vertexMenu != null){
@@ -636,6 +678,8 @@ public class StructurePane extends StackPane implements StructureListener {
         selectionBoxDragging = false;
         holdingEdge = null;
         dragging = null;
+
+        alreadyAlignedResize = false;
 
         currentEdgeStartingPoint = null;
         drawingEdge = false;
@@ -686,6 +730,26 @@ public class StructurePane extends StackPane implements StructureListener {
                                     mousePositionModel.getY() - lastMouseY
                             );
                             ((IMovable) o).move(offset);
+                        }
+                        if(o instanceof ResizeControls.RControl){
+                            var c = (ResizeControls.RControl)o;
+
+
+                            Vector2D rel = ((ResizeControls.RControl)o).position.minus(
+                                    mousePositionModel.getX(), mousePositionModel.getY());
+
+                            if(resizeControlDragPosition == null)
+                                continue;
+
+                            Vector2D diffRel = resizeControlDragPosition.minus(rel);
+                            if(diffRel.length() < DISTANCE_CURSOR_STOP_ALIGN){
+                                alreadyAlignedResize = tryAlignToDiagonal(c);
+                            }else {
+
+                                ((IMovable)o).move(diffRel);
+                                tryAlignToDiagonal(c);
+                                alreadyAlignedResize = false;
+                            }
                         }
                         //only align when the difference between initial relative dragging point
                         //and current relative position is small enough
@@ -878,6 +942,44 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
+    private boolean tryAlignToDiagonal(ResizeControls.RControl c){
+        Vector2D parentPosition = c.parent.v.coordinates;
+        Vector2D rPosition = c.position;
+
+        var diff = rPosition.minus(parentPosition);
+        double theta = diff.theta();
+
+        if(theta < 90){
+            double scale = diff.multiply(new Vector2D(1, 1))/2;
+            var newPos = (new Vector2D(scale, scale)).plus(parentPosition);
+            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
+                c.move(newPos.minus(c.position));
+                return true;
+            }
+        }else if(theta < 180){
+            double scale = diff.multiply(new Vector2D(-1, 1))/2;
+            var newPos = (new Vector2D(-scale, scale)).plus(parentPosition);
+            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
+                c.move(newPos.minus(c.position));
+                return true;
+            }
+        }else if(theta < 270){
+            double scale = diff.multiply(new Vector2D(-1, -1))/2;
+            var newPos = (new Vector2D(-scale, -scale)).plus(parentPosition);
+            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
+                c.move(newPos.minus(c.position));
+                return true;
+            }
+        }else{
+            double scale = diff.multiply(new Vector2D(1, -1))/2;
+            var newPos = (new Vector2D(scale, -scale)).plus(parentPosition);
+            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
+                c.move(newPos.minus(c.position));
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * Aligns the given vertex to a nearby node. Also Draws helper
      * lines (node alignment) if the vertex is close enough to the x/y
@@ -994,6 +1096,18 @@ public class StructurePane extends StackPane implements StructureListener {
             }
         }
     }
+
+    private void createListFromSelection(){
+        GralogList<Vertex> g = new GralogList<>(objectListDisplay.getUniqueDefaultName());
+        g.overrideToString(v -> "" + v.getId());
+        for(Object o : highlights.getSelection()){
+            if(o instanceof Vertex){
+                g.add((Vertex)o);
+            }
+        }
+        objectListDisplay.list.add(g);
+    }
+
     public void clearSelection() {
         boolean wasEmpty = false;
         if(highlights.getSelection().isEmpty()){

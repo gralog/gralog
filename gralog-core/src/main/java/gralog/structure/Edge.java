@@ -48,6 +48,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     }
 
 
+    public static double edgeSelectionOffset = 0.02;
     public static double multiEdgeOffset = 0.2;
 
     Set<EdgeListener> listeners = new HashSet<>();
@@ -344,17 +345,15 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     }
     public void render(GralogGraphicsContext gc, Highlights highlights){
 
-        GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
-
         if(isLoop()){
             renderLoop(gc, highlights);
             return;
         }
 
         if(edgeType == EdgeType.BEZIER){
-            EdgeRenderer.drawBezierEdge(this, gc, edgeColor);
+            EdgeRenderer.drawBezierEdge(this, gc, highlights.isSelected(this));
         }else if(edgeType == EdgeType.SHARP){
-            EdgeRenderer.drawSharpEdge(this, gc, edgeColor);
+            EdgeRenderer.drawSharpEdge(this, gc, highlights.isSelected(this));
         }
 
     }
@@ -495,8 +494,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
             corr = 0;
         }
         //TODO: replace with shape.getEdgePoint
-        Vector2D source = this.source.coordinates.plus(sourceToCtrl1.multiply(this.source.radius));
-        Vector2D target = this.target.coordinates.plus(targetToCtrl2.multiply(this.target.radius - corr));
+        Vector2D source = getStartingPointSource();
+        Vector2D target = getStartingPointTarget();
         BezierUtilities.ProjectionResults projection;
 
         if(controlPoints.size() == 1){
@@ -543,8 +542,11 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
             Vector2D ctrl2 = controlPoints.get(controlPoints.size() - 1).getPosition();
             Vector2D targetToCtrl1 = ctrl2.minus(target.coordinates).normalized();
-
-            return target.shape.getEdgePoint(targetToCtrl1.theta(), target.coordinates);
+            double corr = arrowType.endPoint * arrowHeadLength;
+            if(isDirected){ corr = 0;}
+            var x = target.shape.getEdgePoint(targetToCtrl1.theta(), target.coordinates);
+            x = x.plus(targetToCtrl1.multiply(corr));
+            return x;
         }else if(edgeType == EdgeType.SHARP){
             return target.coordinates;
         }else if(edgeType == EdgeType.ROUND){
