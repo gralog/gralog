@@ -5,6 +5,7 @@ package gralog.gralogfx;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import com.rits.cloning.Cloner;
@@ -132,6 +133,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
     private Vector2D resizeControlDragPosition; //relative to origin
     private boolean alreadyAlignedResize = false;
+    private double initialThetaDrag = -1;
     private Vector2D singleVertexDragPosition; //relative to origin
     private boolean alreadyAligned = false;
 
@@ -680,6 +682,7 @@ public class StructurePane extends StackPane implements StructureListener {
         dragging = null;
 
         alreadyAlignedResize = false;
+        initialThetaDrag = -1;
 
         currentEdgeStartingPoint = null;
         drawingEdge = false;
@@ -731,7 +734,15 @@ public class StructurePane extends StackPane implements StructureListener {
                             );
                             ((IMovable) o).move(offset);
                         }
-                        if(o instanceof ResizeControls.RControl){
+                        if(o instanceof ResizeControls.RControl && (e.isMetaDown() || e.isControlDown())){
+                            var c = (ResizeControls.RControl)o;
+                            if(initialThetaDrag == -1){
+                                Vector2D parentPosition = c.parent.v.coordinates;
+                                Vector2D rPosition = c.position;
+                                initialThetaDrag = rPosition.minus(parentPosition).theta();
+                            }
+                            tryAlignToDiagonal(c, initialThetaDrag);
+                            /*
                             var c = (ResizeControls.RControl)o;
 
 
@@ -749,7 +760,7 @@ public class StructurePane extends StackPane implements StructureListener {
                                 ((IMovable)o).move(diffRel);
                                 tryAlignToDiagonal(c);
                                 alreadyAlignedResize = false;
-                            }
+                            } */
                         }
                         //only align when the difference between initial relative dragging point
                         //and current relative position is small enough
@@ -943,40 +954,35 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     private boolean tryAlignToDiagonal(ResizeControls.RControl c){
+        return tryAlignToDiagonal(c, -1);
+    }
+
+    private boolean tryAlignToDiagonal(ResizeControls.RControl c, double thetaForce){
         Vector2D parentPosition = c.parent.v.coordinates;
         Vector2D rPosition = c.position;
 
         var diff = rPosition.minus(parentPosition);
-        double theta = diff.theta();
+        double theta = thetaForce == -1 ? diff.theta() : thetaForce;
 
         if(theta < 90){
             double scale = diff.multiply(new Vector2D(1, 1))/2;
             var newPos = (new Vector2D(scale, scale)).plus(parentPosition);
-            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
-                c.move(newPos.minus(c.position));
-                return true;
-            }
+            c.move(newPos.minus(c.position));
+            return true;
         }else if(theta < 180){
             double scale = diff.multiply(new Vector2D(-1, 1))/2;
             var newPos = (new Vector2D(-scale, scale)).plus(parentPosition);
-            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
-                c.move(newPos.minus(c.position));
-                return true;
-            }
+            c.move(newPos.minus(c.position));
         }else if(theta < 270){
             double scale = diff.multiply(new Vector2D(-1, -1))/2;
             var newPos = (new Vector2D(-scale, -scale)).plus(parentPosition);
-            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
-                c.move(newPos.minus(c.position));
-                return true;
-            }
+            c.move(newPos.minus(c.position));
+            return true;
         }else{
             double scale = diff.multiply(new Vector2D(1, -1))/2;
             var newPos = (new Vector2D(scale, -scale)).plus(parentPosition);
-            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
-                c.move(newPos.minus(c.position));
-                return true;
-            }
+            c.move(newPos.minus(c.position));
+            return true;
         }
         return false;
     }
