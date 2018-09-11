@@ -1273,6 +1273,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         return snode;
     }
+    
+    public int[][] toIncM() {	//TODO: write function ToIncidenceMatrix()
+    	int[][] M = new int[1][1];
+    	return M;
+    }
 
     public void writeToFile(String filename) throws Exception {
         writeToStream(new StreamResult(filename));
@@ -1327,6 +1332,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         return strObject;
 
+    }
+    
+    public String incToString() throws Exception{	//TODO: Write Function IncidenceMatrix to String
+    	return "";
     }
 
     public String tgfToString() throws Exception{
