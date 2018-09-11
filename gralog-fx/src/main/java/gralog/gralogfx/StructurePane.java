@@ -129,6 +129,9 @@ public class StructurePane extends StackPane implements StructureListener {
     private boolean selectionBoxingActive = false;
     private boolean selectionBoxDragging = false;
 
+
+    private Vector2D resizeControlDragPosition; //relative to origin
+    private boolean alreadyAlignedResize = false;
     private Vector2D singleVertexDragPosition; //relative to origin
     private boolean alreadyAligned = false;
 
@@ -559,6 +562,9 @@ public class StructurePane extends StackPane implements StructureListener {
                     select(((ResizeControls.RControl)selected).parent.v);
                     dragging = new HashSet<>();
                     dragging.add(selected);
+
+                    resizeControlDragPosition = ((ResizeControls.RControl)selected).
+                            position.minus(lastMouseX, lastMouseY);
                 }
                 else{
                     //reassign selection to object that was not in the list
@@ -673,6 +679,8 @@ public class StructurePane extends StackPane implements StructureListener {
         holdingEdge = null;
         dragging = null;
 
+        alreadyAlignedResize = false;
+
         currentEdgeStartingPoint = null;
         drawingEdge = false;
 
@@ -722,6 +730,26 @@ public class StructurePane extends StackPane implements StructureListener {
                                     mousePositionModel.getY() - lastMouseY
                             );
                             ((IMovable) o).move(offset);
+                        }
+                        if(o instanceof ResizeControls.RControl){
+                            var c = (ResizeControls.RControl)o;
+
+
+                            Vector2D rel = ((ResizeControls.RControl)o).position.minus(
+                                    mousePositionModel.getX(), mousePositionModel.getY());
+
+                            if(resizeControlDragPosition == null)
+                                continue;
+
+                            Vector2D diffRel = resizeControlDragPosition.minus(rel);
+                            if(diffRel.length() < DISTANCE_CURSOR_STOP_ALIGN){
+                                alreadyAlignedResize = tryAlignToDiagonal(c);
+                            }else {
+
+                                ((IMovable)o).move(diffRel);
+                                tryAlignToDiagonal(c);
+                                alreadyAlignedResize = false;
+                            }
                         }
                         //only align when the difference between initial relative dragging point
                         //and current relative position is small enough
@@ -914,6 +942,44 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
+    private boolean tryAlignToDiagonal(ResizeControls.RControl c){
+        Vector2D parentPosition = c.parent.v.coordinates;
+        Vector2D rPosition = c.position;
+
+        var diff = rPosition.minus(parentPosition);
+        double theta = diff.theta();
+
+        if(theta < 90){
+            double scale = diff.multiply(new Vector2D(1, 1))/2;
+            var newPos = (new Vector2D(scale, scale)).plus(parentPosition);
+            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
+                c.move(newPos.minus(c.position));
+                return true;
+            }
+        }else if(theta < 180){
+            double scale = diff.multiply(new Vector2D(-1, 1))/2;
+            var newPos = (new Vector2D(-scale, scale)).plus(parentPosition);
+            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
+                c.move(newPos.minus(c.position));
+                return true;
+            }
+        }else if(theta < 270){
+            double scale = diff.multiply(new Vector2D(-1, -1))/2;
+            var newPos = (new Vector2D(-scale, -scale)).plus(parentPosition);
+            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
+                c.move(newPos.minus(c.position));
+                return true;
+            }
+        }else{
+            double scale = diff.multiply(new Vector2D(1, -1))/2;
+            var newPos = (new Vector2D(scale, -scale)).plus(parentPosition);
+            if(newPos.minus(rPosition).length() < DISTANCE_START_ALIGN / 2){
+                c.move(newPos.minus(c.position));
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * Aligns the given vertex to a nearby node. Also Draws helper
      * lines (node alignment) if the vertex is close enough to the x/y
