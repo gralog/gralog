@@ -23,19 +23,33 @@ class Vertex:
 		self.wasSourced = False;
 	def sourceProperties(self,stringFromGralog):
 		self.sourced = True;
-		strings = stringFromGralog.split("|");
+		strings = stringFromGralog.split("#");
 		for string in strings:
 			propVal = string.split("=");
+			valueType = "";
 			try:
 				prop = propVal[0];
-				val = propVal[1];
-				self.properties[prop] = val;
+				valueType = propVal[1];
+
 			except:
 				print("fuck")
 				pass;
+			try:
+
+				valueType = valueType.split("|");
+				val = valueType[0];
+				typ = valueType[1];
+				castedValue = self.graph.castValueToType(val,typ);
+				self.properties[prop] = castedValue;
+			except:
+				print("fuckfuck");
 
 	def getId(self):
 		return self.id;
+	def getLabel(self):
+		if not self.wasSourced:
+			self.source();
+		return self.properties["label"];
 	def setLabel(self,label):
 		label = str(label);
 		self.properties["label"] = label;
@@ -57,10 +71,7 @@ class Vertex:
 
 		self.properties["coordinates"] = newCoordinates
 		self.graph.setVertexCoordinates(self.id,newCoordinates);
-	def getLabel(self):
-		if not self.wasSourced:
-			self.source();
-		return self.properties["label"];
+
 	def setFillColor(self,colorHex=-1,colorRGB=-1):
 		self.setColor(colorHex,colorRGB);
 	def getFillColor(self):
@@ -103,15 +114,9 @@ class Vertex:
 	def setShape(self,shape):
 		self.properties["shape"] = shape;
 		self.graph.setVertexShape(self.id,shape);
-	def getShape(self):
-		if not self.sourced:
-			self.source();
-		return self.properties["shape"];
 	def setProperty(self,otherProperty,value):
 		self.properties[otherProperty] = value;
 		self.graph.setVertexProperty(self.id,otherProperty,value);
-	def deleteAllEdgesBetween(self,vertex2):
-		self.graph.deleteAllEdgesBetween((v.id,vertex2));
 	def get(self,prop):
 		if not self.sourced:
 			self.source();
@@ -132,6 +137,8 @@ class Vertex:
 		return self.graph.deleteVertex(self);
 	def connect(self,v1,edgeId=-1):
 		return self.graph.addEdge(self,v1,edgeId);
+	def deleteAllEdgesBetween(self,vertex2):
+		self.graph.deleteAllEdgesBetween((v.id,vertex2));
 	def source(self):
 		return self.graph.getVertex(self);
 	def __str__(self):
@@ -161,13 +168,16 @@ class Edge:
 
 	def sourceProperties(self,stringFromGralog):
 		self.sourced = True;
-		strings = stringFromGralog.split("|");
+		strings = stringFromGralog.split("#");
 		for string in strings:
 			propVal = string.split("=");
 			try:
 				prop = propVal[0];
-				val = propVal[1];
-				self.properties[prop] = val;
+				valueType = propVal[1];
+				valueType = valueType.split("|");
+				val = valueType[0];
+				typ = valueType[1];
+				self.properties[prop] = self.graph.castValueToType(val,typ);
 			except:
 				pass;
 
@@ -242,7 +252,7 @@ class Edge:
 	def delete(self):
 		return self.graph.deleteEdge(self.id);
 	def source(self):
-		return self.graph.getEdge(self.id);
+		return self.graph.getEdge(self);
 	def getAdjacentEdges(self):
 		return self.graph.getAdjacentEdges(self.id);
 
@@ -319,6 +329,21 @@ class Graph:
 
 
 	####helper functions
+
+	def castValueToType(self,val,typ):
+
+		if typ == "float":
+			return float(val);
+		if typ == "int":
+			return int(val);
+		if typ == "bool":
+			return bool(val);
+		if typ == "string":
+			return str(val);
+		if typ == "vertex":
+			return self.getVertexOrNew(val);
+		return val;
+
 	def getVertexOrNew(self,currId):
 
 		v = currId;
@@ -329,7 +354,7 @@ class Graph:
 				v=self.vertices[currId];
 				gPrint("i got my v: " + str(v));
 			except:
-				gPrint("kriminiy!" + currId);
+				gPrint("kriminiy!" + str(currId));
 				v=Vertex(self,currId);
 
 			return v;
@@ -413,7 +438,7 @@ class Graph:
 		e.setSource(v1);
 		e.setTarget(v2);
 		self.edges[eid] = e;
-
+089d2965cd55562ba20b7f76574c2a019540376f
 	def vertexifyGTGFCommand(self,line):
 		self.vertexifyTGFCommand(line);
 
@@ -732,7 +757,9 @@ class Graph:
 
 		if graphFormat == "gtgf" or graphFormat == "tgf":
 			line += "$$\n";
-		line += graphString + "$\n";
+		line += graphString;
+		if graphFormat == "gtgf" or graphFormat == "tgf":
+			line += "$\n";
 
 		print line;
 		sys.stdout.flush();
@@ -793,7 +820,8 @@ class Graph:
 				first = False;
 
 			return graphString;
-		return "whoop that format hasn't been implimented yet sorry";
+		if graphFormat.lower() == "xml":
+			return line;
 
 
 
@@ -974,9 +1002,8 @@ class Graph:
 	def getEdgeWeight(self,edge):
 		return self.getEdgeProperty(edge,"weight");
 
-	def getEdgeColor(self,edge):
-		return self.getEdgeProperty(edge,"color");
-
+	def getEdgeLabel(self,edge):
+		return self.getEdgeProperty(edge,"label");
 
 
 
@@ -1061,8 +1088,8 @@ class Graph:
 		i = sys.stdin.readline().rstrip();
 		return int(i);
 
-	def requestDouble(self):
-		line = "requestDouble#"+str(self.id).rstrip();
+	def requestFloat(self):
+		line = "requestFloat#"+str(self.id).rstrip();
 		print line.rstrip();
 		sys.stdout.flush();
 
@@ -1157,9 +1184,6 @@ class Graph:
 		print toSend;
 		sys.stdout.flush();
 
-	def message(self, message):
-		print "message#"+str(self.id).rstrip() + "#"+str(message).rstrip();
-		sys.stdout.flush();
 
 
 	def sendErrorToGralog(self,toSend):
