@@ -736,6 +736,9 @@ public class StructurePane extends StackPane implements StructureListener {
                         }
                         if(o instanceof ResizeControls.RControl && (e.isMetaDown() || e.isControlDown())){
                             var c = (ResizeControls.RControl)o;
+                            c.position = (new Vector2D(
+                                    mousePositionModel.getX(),
+                                    mousePositionModel.getY()));
                             if(initialThetaDrag == -1){
                                 Vector2D parentPosition = c.parent.v.coordinates;
                                 Vector2D rPosition = c.position;
@@ -953,14 +956,14 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    private boolean tryAlignToDiagonal(ResizeControls.RControl c){
-        return tryAlignToDiagonal(c, -1);
+    private void tryAlignToDiagonal(ResizeControls.RControl c){
+        tryAlignToDiagonal(c, -1);
     }
 
-    private boolean tryAlignToDiagonal(ResizeControls.RControl c, double thetaForce){
+    private void tryAlignToDiagonal(ResizeControls.RControl c, double thetaForce){
         Vector2D parentPosition = c.parent.v.coordinates;
         Vector2D rPosition = c.position;
-
+        var size = c.parent.v.shape.sizeBox;
         var diff = rPosition.minus(parentPosition);
         double theta = thetaForce == -1 ? diff.theta() : thetaForce;
 
@@ -968,7 +971,6 @@ public class StructurePane extends StackPane implements StructureListener {
             double scale = diff.multiply(new Vector2D(1, 1))/2;
             var newPos = (new Vector2D(scale, scale)).plus(parentPosition);
             c.move(newPos.minus(c.position));
-            return true;
         }else if(theta < 180){
             double scale = diff.multiply(new Vector2D(-1, 1))/2;
             var newPos = (new Vector2D(-scale, scale)).plus(parentPosition);
@@ -977,14 +979,28 @@ public class StructurePane extends StackPane implements StructureListener {
             double scale = diff.multiply(new Vector2D(-1, -1))/2;
             var newPos = (new Vector2D(-scale, -scale)).plus(parentPosition);
             c.move(newPos.minus(c.position));
-            return true;
         }else{
             double scale = diff.multiply(new Vector2D(1, -1))/2;
             var newPos = (new Vector2D(scale, -scale)).plus(parentPosition);
             c.move(newPos.minus(c.position));
-            return true;
         }
-        return false;
+        double diffSize = Math.abs(size.width - size.height);
+
+        if(size.width > size.height){
+            if(c.position.getY() > c.parentCenter().getY()){
+                c.move(new Vector2D(0, diffSize));
+            }else{
+                c.move(new Vector2D(0, -diffSize));
+            }
+        }
+        else{
+            if(c.position.getX() > c.parentCenter().getX()){
+                c.move(new Vector2D(diffSize, 0));
+            }else{
+                c.move(new Vector2D(-diffSize, 0));
+            }
+        }
+        this.requestRedraw(() -> this.draw(gc -> drawProportionalResizeLines(gc, c)));
     }
     /**
      * Aligns the given vertex to a nearby node. Also Draws helper
@@ -1044,7 +1060,22 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         return xAligned || yAligned;
     }
+    private void drawProportionalResizeLines(GraphicsContext gc, ResizeControls.RControl c){
+        gc.setLineWidth(0.03 * zoomFactor * screenResolutionX / 2.54);
+        gc.setStroke(Color.GRAY);
+        gc.setLineDashes(0.03 * zoomFactor * screenResolutionX / 2.54,
+                0.15 * zoomFactor * screenResolutionX / 2.54);
 
+        Vector2D from = modelToScreen(c.position);
+        Vector2D to = modelToScreen(c.getDiagonalSibling().position);
+        gc.strokeLine(from.getX(), from.getY(), to.getX(), to.getY());
+
+        from = modelToScreen(c.getNextSibling().position);
+        to = modelToScreen(c.getPreviousSibling().position);
+        gc.strokeLine(from.getX(), from.getY(), to.getX(), to.getY());
+
+        gc.setLineDashes();
+    }
     private void drawAlignmentLines(GraphicsContext gc, Point2D from, Point2D to){
         gc.setLineWidth(0.03 * zoomFactor * screenResolutionX / 2.54);
         gc.setStroke(Color.GRAY);
