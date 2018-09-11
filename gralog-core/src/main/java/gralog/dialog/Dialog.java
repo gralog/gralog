@@ -340,7 +340,6 @@ public class Dialog {
             for (String property : propertyValue.keySet()) {
                 switch (property) {
                     case "STROKE":
-                    case "COLOR":
                         if (!v.strokeColor.name().equals(propertyValue.get(property)))
                             filteredOut = true;
                         break;
@@ -568,19 +567,11 @@ public class Dialog {
             errorMsg = "No such vertex list: " + parameters.get(1);
             return;
         }
-        ArrayList<Vertex> list1;
-        ArrayList<Vertex> list2;
-        // choose s.t. list1 is shorter than list2
-        if (vertexListS.get(parameters.get(0)).size() <= vertexListS.get(parameters.get(1)).size()) {
-            list1 = vertexListS.get(parameters.get(0));
-            list2 = vertexListS.get(parameters.get(1));
-        }
-        else{
-            list1 = vertexListS.get(parameters.get(1));
-            list2 = vertexListS.get(parameters.get(0));
-        }
+        ArrayList<Vertex> list1 = vertexListS.get(parameters.get(0));
+        ArrayList<Vertex> list2 = vertexListS.get(parameters.get(1));
 
-        for (int i = 0; i < list1.size(); i++) {
+        int len = Math.min(list1.size(),list2.size());
+        for (int i = 0; i < len; i++) {
             structure.addEdge(list1.get(i),list2.get(i));
         }
     }

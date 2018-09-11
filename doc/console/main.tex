@@ -1,0 +1,171 @@
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+
+\usepackage[margin=1.0in]{geometry}
+\usepackage{longtable}
+
+\usepackage{amsmath}
+
+\newcounter{example}
+\newenvironment{example}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textit{Example~\theexample. #1} \rmfamily}{\medskip}
+
+\usepackage{bbm}
+\usepackage{booktabs}
+
+\newcommand{\fabs}[1]{\mid {#1} \mid}
+
+\newcommand{\bet}[1]{\llbracket {#1} \rrbracket^{\beta} }
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{wrapfig}
+\usepackage{makecell}
+
+% \usepackage{mathabx}
+\usepackage{amssymb,forest}
+
+\usepackage{float}
+\usepackage{MnSymbol}
+\newlength\q
+\newlength\smallCol
+\newlength\argsLen
+\setlength\q{\dimexpr .5\textwidth -2\tabcolsep}
+\setlength\smallCol{\dimexpr .15\textwidth}
+\setlength\argsLen{\dimexpr .2\textwidth}
+
+
+\newcommand{\lto}{\mathbin{\to}}
+\usepackage{booktabs}
+\usepackage{enumitem} 
+\usepackage{array}% for extended column definitions
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{tabto}
+\newcommand{\ov}[2]{\ensuremath{\overset{\cdot {#2} \cdot}{#1}}}
+\newcommand{\imp}{\rightarrow}
+
+\usepackage{xstring}
+\usepackage[german]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{lipsum}
+\usepackage{listings}
+
+\newcommand{\tcr}[1]{\textcolor{red}{#1}}
+
+\definecolor{palegreen}{rgb}{0.9,1,0.9}
+\usepackage[most]{tcolorbox}
+\tcbset{
+    frame code={}
+    center title,
+    left=0pt,
+    right=0pt,
+    top=0pt,
+    bottom=0pt,
+    colback=palegreen,
+    colframe=white,
+    width=\dimexpr\textwidth\relax,
+    enlarge left by=0mm,
+    boxsep=5pt,
+    arc=0pt,outer arc=0pt,
+    after={\par\vspace{\baselineskip}\noindent},
+  }
+  \renewcommand{\arraystretch}{2}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightpink}{rgb}{1.0,0.9,0.9}
+\definecolor{darkblue}{rgb}{0,0,0.4}
+
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true,linkcolor=darkblue,citecolor=darkblue}
+
+
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\lstset{language=Python}
+
+\title{Gralog Console Manual}
+
+\author{Roman
+  Rabinovich\\ \texttt{roman.rabinovich@tu-berlin.de}}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+Gralog is a visual tool for working with graphs, logics, games,
+transition systems and other structures based on undirected and
+directed graphs. It can create, load, save and edit graphs in
+various formats.
+
+The key focus of Gralog is simplicity of use and a short time of
+learning how to use it.
+
+A special property of Gralog is that it helps the developer to write
+programmes for graphs in any language capable of working with
+pipes. Gralog visualises the run of the programme and can keep track
+of values of user defined variables.
+
+The interaction between Gralog and the external programme is
+performed by a simple, but powerful protocol. In the first version
+we implemented a library for Python that simplifies the interaction
+and abstracts away the use of pipes. This paper describes the
+protocol and the library, the External Programming Module (EPM). This
+includes documentation of methods and classes pertaining to the
+EPM and code examples for how to use these.
+\end{abstract}
+
+\section{Documentation and Installation}
+
+You can download Gralog from \url{www.gralog.org} (Change this)
+
+Gralog is written in Java and does not need special installation. Just
+run the jar file by
+
+[code, including where the jar file is]
+
+or run Gralog directly from the source code by calling
+
+[code: ./gradlew].
+
+The documentation can be found in directory \texttt{doc/}. The main
+manual file is \texttt{gralog.pdf}. This part is additionally in the
+file \texttt{external.pdf}. [TODO: make a general manual, include this
+text there.]
+
+\input{console}
+
+
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

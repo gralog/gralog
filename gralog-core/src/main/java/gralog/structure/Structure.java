@@ -708,13 +708,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     public E addEdge(V source, V target, int id, Configuration config) {
         E e = createEdge(id, config);
-        System.out.println("after adding" + e.getSource() + e.getTarget());
-        
         if(addEdge(e, source, target)){
-            System.out.println("are we try8ing to add null bois???" + e.getSource() + target);
-            System.out.println("connecting tha edge in a secky deck");
-            System.out.println("source: " + e.getSource() + " and targ : " + e.getTarget());
-            return e;    
+            return e;
         }
         return null;
     }
