@@ -438,7 +438,7 @@ class Graph:
 		e.setSource(v1);
 		e.setTarget(v2);
 		self.edges[eid] = e;
-089d2965cd55562ba20b7f76574c2a019540376f
+
 	def vertexifyGTGFCommand(self,line):
 		self.vertexifyTGFCommand(line);
 
@@ -1184,7 +1184,9 @@ class Graph:
 		print toSend;
 		sys.stdout.flush();
 
-
+	def message(self, message):
+		print "message#"+str(self.id).rstrip() + "#"+str(message).rstrip();
+		sys.stdout.flush();
 
 	def sendErrorToGralog(self,toSend):
 		print "error#"+str(self.id).rstrip() + "#"+str(toSend).rstrip();
