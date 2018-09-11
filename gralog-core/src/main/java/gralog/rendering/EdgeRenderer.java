@@ -123,6 +123,9 @@ public class EdgeRenderer {
         Vector2D targetOffset = e.getTarget().coordinates.plus(perpendicularToEdge);
 
         Vector2D intersection = e.getTarget().shape.getIntersection(sourceOffset, targetOffset, e.getTarget().coordinates);
+        if(Double.isNaN(intersection.getX()) || Double.isNaN(intersection.getY())){
+            intersection = targetOffset.minus(diff.normalized().multiply(e.getTarget().shape.sizeBox.width/2));
+        }
         intersection = intersection.minus(diff.normalized().multiply(e.endPointDistance)); //no idea why I divide
         if(e.isDirected){
             Vector2D adjust = intersection.plus(diff.normalized().multiply(e.arrowType.endPoint * e.arrowHeadLength));
