@@ -258,7 +258,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         this.incidentEdges.add(e);
     }
 
-    void disconnectEdge(Edge e) {
+    public void disconnectEdge(Edge e) {
         if(e.getSource() == this || (!e.isDirected && e.getTarget() == this)){
             outgoingEdges.remove(e);
         }

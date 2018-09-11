@@ -17,7 +17,7 @@ grlgML_file.write("lasl")
 grlgML_file.close()
 graph = './graphs/a.graphml'
 ### import graph to ## IGRAPH + NX ###
-g_ig   = ig.Graph.Read_GraphML(graph)
+g_ig   = ig.Graph.Read_GraphML(grlgML_file)
 g_nx = nx.read_graphml(graph)
 doc = ET.parse(graph)
 nodes = doc.getroot().find('graph').findall('node')

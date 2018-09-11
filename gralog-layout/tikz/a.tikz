@@ -1,0 +1,25 @@
+%\documentclass{article}
+%\usepackage{pgf}
+%\usepackage{tikz}
+%\usepackage{amsmath, amssymb}
+%\usetikzlibrary{arrows.meta}
+%\usepackage[utf8]{inputenc}
+%\begin{document}
+    \begin{tikzpicture}[scale=0.6,auto]
+        \tikzset{>=Stealth}
+        \tikzstyle{every path}=[->,thick]
+        \tikzstyle{every node}=[circle,fill=white,draw=black,text=black,thin,minimum size=16pt,inner sep=1.5pt]
+
+        \definecolor{gralog-fill-color}{HTML}{FFFF4D}
+        \definecolor{gralog-stroke-color}{HTML}{999900}
+        \node [ellipse, minimum width = 2.957916666666667cm, minimum height = 2.613958333333333cm, fill=gralog-fill-color, draw=gralog-stroke-color, line width=0.026458333333333334cm] (n0) at (2.307291666666666cm,-1.434166666666667cm) {};
+        \definecolor{gralog-fill-color}{HTML}{FFFFFF}
+        \node [diamond, minimum width = 3.4108333333333336cm, minimum height = 3.14625cm, fill=gralog-fill-color, line width=0.026458333333333334cm] (n1) at (10.795cm,-1.989791666666667cm) {};
+        \definecolor{gralog-fill-color}{HTML}{FFFFFF}
+        \node [ellipse, minimum width = 7.799791666666668cm, minimum height = 2.825625000000003cm, fill=gralog-fill-color, line width=0.026458333333333334cm] (n2) at (8.188854166666667cm,-6.739062500000003cm) {};
+
+        \draw (n0) to (n2);
+        \draw (n1) to (n0);
+        \draw (n2) to (n1);
+    \end{tikzpicture}
+%\end{document}

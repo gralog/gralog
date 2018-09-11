@@ -443,7 +443,7 @@ public class Piping extends Thread{
                     }
 
 
-
+                    
 
                     if (externalCommandSegments[0].equals("pauseUntilSpacePressed")){
                         
@@ -484,7 +484,10 @@ public class Piping extends Thread{
                             out.println("skipped");
                             continue;
                         }
-                    }else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
+                    } else if (externalCommandSegments[0].equals("message")) {
+                    	this.sendMessageToConsole.accept(externalCommandSegments[2],MessageToConsoleFlag.Notification);
+                    	continue;
+                	}else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
                         
                         final String lineFinal = externalCommandSegments[0];
                         CountDownLatch graphWasInstantiated = new CountDownLatch(1);

@@ -351,6 +351,7 @@ public class PipingMessageHandler{
 
 
 
+
         Class<? extends CommandForGralogToExecute> myClass = commandNameToClassMap.get(commandKeyword.toLowerCase());
         try{
             currentCommand = myClass.getDeclaredConstructor(args2).newInstance(externalCommandSegments,currentStructure);
@@ -361,6 +362,7 @@ public class PipingMessageHandler{
                 System.out.println("error: not a recognized command dumbfuck did you not read the documentation");
                 currentCommand = new NotRecognizedCommand(externalCommandSegments,null);
             }
+
         }
         return currentCommand;
 

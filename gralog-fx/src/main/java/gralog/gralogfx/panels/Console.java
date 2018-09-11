@@ -9,6 +9,7 @@ import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.TextFlow;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -35,7 +36,7 @@ import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
 import static gralog.dialog.DialogAction.NONE;
 import static gralog.dialog.DialogState.*;
 
-public class Console extends VBox implements GralogWindow{
+public class Console extends HBox implements GralogWindow{
 
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
@@ -73,6 +74,8 @@ public class Console extends VBox implements GralogWindow{
 
         this.tabs = tabs;
         this.profferTextToMainWindow = profferTextToMainWindow;
+
+        VBox mainPart = new VBox();
 
         input = new TextField();
         input.setMaxHeight(20);
@@ -167,11 +170,12 @@ public class Console extends VBox implements GralogWindow{
         // output.setMaxHeight(this.heightProperty().subtract(20));
         
         output.prefHeightProperty().bind(this.heightProperty().subtract(20));
-        getChildren().addAll(output, input);
+
+
+        mainPart.getChildren().addAll(output, input);
+        getChildren().addAll(mainPart);
 
         this.widthProperty().addListener((obs, oldVal, newVal) -> {
-            System.out.println("borf diddly");
-
             List<Text> texts = new ArrayList<Text>();
 
             for (Node n : this.outputElements.getChildren()){

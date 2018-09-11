@@ -171,6 +171,8 @@ public class StructurePane extends StackPane implements StructureListener {
         snapToGrid = config.getValue("StructurePane_snapToGrid", Boolean::parseBoolean,true);
 
         this.structure = structure;
+        Undo.Record(this.structure); // initial copy
+
         canvas = new Canvas(500,500);
         this.getChildren().add(canvas);
 
@@ -209,13 +211,49 @@ public class StructurePane extends StackPane implements StructureListener {
         addLoop.setOnAction(e -> {
             if(highlights.getSelection().size() == 1){
                 Vertex v = (Vertex)highlights.getSelection().iterator().next();
-                Undo.Record(structure);
                 structure.addEdge(v, v, config);
+                Undo.Record(structure);
             }
             this.requestRedraw();
         });
         vertexMenu.getItems().addAll(addLoop, copy, delete);
 
+    }
+
+    public void cutSelectionToClipboard(){
+        copySelectionToClipboard();
+        deleteSelection();
+        this.requestRedraw();
+    }
+
+
+    public void copySelectionToClipboard(){
+        CLIPBOARD = cloner.deepClone(highlights.getSelection());
+        for(Object o : CLIPBOARD){
+            if(o instanceof Vertex){
+                Vertex v = (Vertex)o;
+                for(Edge edge : v.getIncidentEdges()){
+                    if(!CLIPBOARD.contains(edge)){
+                        v.disconnectEdge(edge);
+                    }
+                }
+            }
+        }
+    }
+
+    public void pasteFromClipboard(){
+        structure.insertForeignSelection(CLIPBOARD, gridSize);
+        this.requestRedraw();
+    }
+
+    public void undoStructure(){
+        Undo.Revert(structure);
+        this.requestRedraw();
+    }
+
+    public void redoStructure(){
+        Undo.Redo(structure);
+        this.requestRedraw();
     }
 
     public Structure getStructure() {
@@ -244,14 +282,23 @@ public class StructurePane extends StackPane implements StructureListener {
         }
     }
 
-    public Piping makeANewPiping(String fileName,BiFunction<String,Piping,StructurePane> initGraph,BiConsumer<String,MessageToConsoleFlag> sendOutsideMessageToConsole){
+    public Piping makeANewPiping(String fileName,BiFunction<String,Piping,StructurePane> initGraph,
+                                 BiConsumer<String,MessageToConsoleFlag> sendOutsideMessageToConsole){
         CountDownLatch waitForPause = new CountDownLatch(1);
         CountDownLatch waitForVertexSelection = new CountDownLatch(1);
 
-        // List<BiFunction> functions = new ArrayList<BiFunction>(this::initGraph,this::handlePlannedPause,this::handlePlannedVertexSelectionthis::sendOutsideMessageToConsole);
+        // List<BiFunction> functions = new ArrayList<BiFunction>(
+        // this::initGraph,this::handlePlannedPause,
+        // this::handlePlannedVertexSelection,
+        // this::sendOutsideMessageToConsole);
 
         
-        Piping pipeline = new Piping(initGraph,this,waitForPause,this::handlePlannedPause,waitForVertexSelection,this::handlePlannedVertexSelection,sendOutsideMessageToConsole);
+        Piping pipeline = new Piping(initGraph,
+                this,waitForPause,
+                this::handlePlannedPause,
+                waitForVertexSelection,
+                this::handlePlannedVertexSelection,
+                sendOutsideMessageToConsole);
 
         this.setPiping(pipeline);
         // pipeline.subscribe(this.pluginControlPanel);
@@ -309,7 +356,9 @@ public class StructurePane extends StackPane implements StructureListener {
         this.requestRedraw();
     }
     private void setMouseEvents() {
-        canvas.setOnMouseClicked(e -> { });
+        canvas.setOnMouseClicked(e -> {
+            //System.out.println(screenToModel(new Point2D(e.getX(), e.getY())));
+        });
         canvas.setOnMousePressed(this::onMousePressed);
         canvas.setOnMouseReleased(this::onMouseReleased);
         canvas.setOnMouseDragged(this::onMouseDragged);
@@ -317,29 +366,17 @@ public class StructurePane extends StackPane implements StructureListener {
 
             switch (e.getCode()) {
                 case DELETE:
-                    Set<Object> selection = new HashSet<>(highlights.getSelection());
-                    for (Object o : selection) {
-                        if (o instanceof Vertex) {
-                            structure.removeVertex((Vertex) o);
-                            clearSelection();
-                        }
-                        else if (o instanceof Edge && !selectedCurveControlPoint){
-                            structure.removeEdge((Edge) o);
-                            clearSelection();
-                        }
-                        else if (o instanceof ControlPoint){
-                            ControlPoint c = ((ControlPoint)o);
-                            c.parent.removeControlPoint(c);
-                            highlights.remove(c);
-                            selectedCurveControlPoint = false;
-                            break; //if not breaking, edge will be able to be deleted
-                        }
-                    }
+                    deleteSelection();
                     this.requestRedraw();
+                    break;
+                case X:
+                    if(e.isControlDown() || e.isMetaDown()){
+                        cutSelectionToClipboard();
+                    }
                     break;
                 case C:
                     if(e.isControlDown() || e.isMetaDown()){
-                        CLIPBOARD = cloner.deepClone(highlights.getSelection());
+                        copySelectionToClipboard();
                     }else{
                         structure.collapseEdges(highlights.getSelection());
                         this.requestRedraw();
@@ -388,14 +425,9 @@ public class StructurePane extends StackPane implements StructureListener {
                     }else{
                         System.out.println("piping is null or unit!" + myPiping);
                     }
-                    // System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
+                    // System.out.println("space pressed and my scrutrue id is; "
+                    // + this.tabs.getCurrentStructurePane().getStructure().getId());
                     // pipeline.execWithAck();
-                    break;
-                case Z:
-                    if(e.isControlDown() || e.isMetaDown()){
-                        Undo.Revert(structure);
-                        this.requestRedraw();
-                    }
                     break;
             }
         });
@@ -484,8 +516,6 @@ public class StructurePane extends StackPane implements StructureListener {
 
         //group selection handling for primary mouse button
         if(e.isPrimaryButtonDown()){
-            
-            
 
             //if selection hit something, select
             if (selected != null) {
@@ -504,7 +534,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 }
                 else{
                     //reassign selection to object that was not in the list
-                    if(!e.isControlDown() && !highlights.isSelected(selected)){
+                    if(!e.isShiftDown() && !highlights.isSelected(selected)){
                         selectExclusive(selected);
                     }else{
                         select(selected);
@@ -520,7 +550,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 }
             }
             //if selection hit nothing, start boxing
-            else if(!e.isControlDown()){
+            else{
                 boxingStartingPosition = new Point2D(lastMouseX, lastMouseY);
                 selectionBoxingActive = true;
 
@@ -528,7 +558,8 @@ public class StructurePane extends StackPane implements StructureListener {
                 if(!highlights.getSelection().isEmpty()){
                     blockVertexCreationOnRelease = true;
                 }
-                clearSelection();
+                if(!e.isShiftDown())
+                    clearSelection();
             }
         }else if(e.isSecondaryButtonDown()){
             //start an edge if secondary mouse down on a vertex
@@ -564,7 +595,7 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         else if(b == MouseButton.PRIMARY){
             if(selected == null && !selectionBoxDragging && !blockVertexCreationOnRelease && selectionBoxingActive){
-                Undo.Record(structure);
+
                 Vertex v = structure.addVertex(config);
                 v.setCoordinates(mousePositionModel.getX(),
                         mousePositionModel.getY());
@@ -572,6 +603,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     v.snapToGrid(gridSize);
                 }
                 structureSubscribers.forEach(s -> s.accept(structure));
+                Undo.Record(structure);
             }
             else if(selectionBoxDragging && selectionBoxingActive &&
                     distSquared(screenToModel(boxingStartingPosition), mousePositionModel) > 0.01){
@@ -584,8 +616,8 @@ public class StructurePane extends StackPane implements StructureListener {
             if(selected instanceof Vertex){
                 //right release on a vertex while drawing an edge = add edge
                 if(drawingEdge && currentEdgeStartingPoint != null){
-                    Undo.Record(structure);
                     structure.addEdge((Vertex)currentEdgeStartingPoint, (Vertex)selected, config);
+                    Undo.Record(structure);
                 }
                 //right click opens context menu
                 else if(vertexMenu != null){
@@ -828,8 +860,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
 
         //draw the selection box
-        if(selectionBoxDragging){
-
+        if(selectionBoxDragging && boxingStartingPosition != null){
             Point2D boxStartScreen = modelToScreen(boxingStartingPosition);
             ggc.selectionRectangle(boxStartScreen, boxingEndingPosition, selectionBoxColor);
         }

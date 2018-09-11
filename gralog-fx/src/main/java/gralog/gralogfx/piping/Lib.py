@@ -932,3 +932,7 @@ class Graph:
 
 	def __str__(self):
 		return "todo: tgf"
+
+	def message(self, message):
+		print "message#"+str(self.id).rstrip() + "#"+str(message).rstrip();
+		sys.stdout.flush();
