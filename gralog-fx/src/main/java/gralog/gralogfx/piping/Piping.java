@@ -161,7 +161,9 @@ public class Piping extends Thread{
         
         try{
             Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","chmod u+x " + fileName});
+
             execd.countDown();
+            System.out.println("permission granted");
         }catch(Exception e){
             this.sendMessageToConsole.accept("The file was unable to be granted permission to be run",MessageToConsoleFlag.Error);
             execd.countDown();
@@ -170,8 +172,10 @@ public class Piping extends Thread{
             execd.await();            
         }catch(Exception e){}
 
+        System.out.println("piping it up");
         try{
             this.external = Runtime.getRuntime().exec(execStr); //e.g. formatRequest
+            System.out.println("bull hucky");
             this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));
             this.processErrors = new BufferedReader(new InputStreamReader(this.external.getErrorStream()));
             this.out = new PrintStream(external.getOutputStream(),true);

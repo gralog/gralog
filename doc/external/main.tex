@@ -258,16 +258,15 @@ There are instance variables - however, they are not meant to be directly access
 \textit{Note: optional parameters are in square brackets}
 \subsection{Manipulating Methods}
 \begin{description}
-\item[delete()] \emph{returns} \texttt{void}\\
+\label{deleteVertexClass}\item[delete()] \emph{returns} \texttt{void}(corresponds to \textit{deleteVertex})\\
 Deletes self from the graph.
 
-\item[connect(Vertex: v1, {[Integer: edgeId]})] \emph{returns} \texttt{Edge}\\
+\label{addEdgeClass}\item[connect(Vertex: v1, {[Integer: edgeId]})] \emph{returns} \texttt{Edge} (corresponds to \textit{addEdge})\\
 Creates a new \texttt{Edge} object from self to \texttt{v1}. The directedness of the Edge will correspond to the type of Graph the edge is being added to (directed Graph $\to$ directed edge, automaton $\to$ transition, etc.). If un-directed, v.connect(v1) is equivalent to v1.connect(v). If no \texttt{edgeId}
 is passed, a suitable id is chosen. If an id is passed that has
 already been assigned, a suitable new one is silently chosen.
 
-\item[deleteAllEdgesBetween(Vertex: v1)] \emph{returns}
-\texttt{void}
+\label{getAllEdgesBetweenClass}\item[getAllEdgesBetween(Vertex: v1)] \emph{returns}\texttt{void} (corresponds to \textit{getAllEdgesBetween)}
 
 Deletes all edges in the graph
 between self and \texttt{v1} respecting
@@ -296,23 +295,21 @@ Returns the stroke color of the \texttt{Vertex} object, in the format that the u
 \item[get(String: property)] \emph{returns} \texttt{class specified by property}\\
 Returns the value of \texttt{prop}. For example, v.get("label") would return a string. Possible values for \texttt{prop} are label, radius, fillColor, strokeColor, and shape, although the most common queried attributes have their own query methods. This is also useful if you wish to define your own vertex attributes in an extension of the Vertex class.
 
-\item[getNeighbours()]\emph{returns}
-  \texttt{list of Vertex objects}
+\label{getNeighboursClass}\item[getNeighbours()]\emph{returns}\texttt{list of Vertex objects}\quad(corresponds to \textit{getNeighbours})
+
 
 Returns a list of all the vertices connected to self, regardless of direction.
 
-\item[getOutgoingNeighbours()]\emph{returns}
-  \texttt{list of Vertex objects}
+\label{getOutgoingNeighboursClass}\item[getOutgoingNeighbours()]\emph{returns} \texttt{list of Vertex objects}\quad(corresponds to \textit{getOutgoingNeighbours})
 
 Returns a list of all the vertices v' such that there is an edge from self to v' in directed graphs (equivalent to getNeighbours in undirected graphs)
 
-\item[getIncomingNeighbours()]\emph{returns}
-  \texttt{list of Vertex objects}
+\label{getIncomingNeighboursClass}\item[getIncomingNeighbours()]\emph{returns} \texttt{list of Vertex objects}\quad(corresponds to \textit{getIncomingNeighbours})
 
 Returns a list of all the vertices v' such that there is an edge from v' to self in directed graphs (equivalent to getNeighbours in undirected graphs)
 
-\item[getIncidentEdges()]\emph{returns}
-  \texttt{list of Edge objects}
+\label{getIncidentEdgesClass}\item[getIncidentEdges()]\emph{returns} \texttt{list of Edge objects}\quad(corresponds to \textit{getIncidentEdges})
+
 
 Returns a list of all the Edges e with an endpoint at self, regardless of their direction.
 
@@ -321,24 +318,44 @@ Returns a list of all the Edges e with an endpoint at self, regardless of their 
 
 Returns a list of all the Edges e with an \textit{source Vertex} = self.
 
-\item[getIncomingEdges()]\emph{returns}
-  \texttt{list of Edge objects}
+\label{getIncomingEdgesClass}\item[getIncomingEdges()]\emph{returns} \texttt{list of Edge objects}\quad(corresponds to \textit{getIncomingEdges})
 
 Returns a list of all the Edges e with an \textit{target Vertex} = self.
 
 \end{description}
 \subsection{Setter Methods}
 \begin{description}
-\item[setLabel(String: label)]\emph{returns}
-  \texttt{void}\\
+\label{setVertexLabelClass}\item[setLabel(String: label)]\emph{returns} \texttt{void}\\\quad(corresponds to \textit{setVertexLabel})
+
 Sets the vertex's label.
+
+\label{setVertexRadiusClass}\item[setRadius(float: radius)] \emph{returns}\texttt{void}(corresponds to \textit{setVertexR})
+
+Sets the radius (ie width and height) of self to \texttt{radius}.
+
+\item[setHeight(float: height)] \emph{returns}
+  \texttt{void}
+
+Sets the height of self to \texttt{height}.
+
+\label{setVertexShapeClass}\item[setShape(String: shape)] \emph{returns} \texttt{void}\quad(corresponds to \textit{setVertexShape})
+
+
+Sets the shape of self to \texttt{shape}. Currently supported shapes are ``ellipse",``diamond",and ``rectangle".
+
+\item[setWidth(float: width)] \emph{returns}
+  \texttt{void}
+
+Sets the width of self to \texttt{width}. 
+
+\hyperref[radiusWidthHeightDiagram]{\textit{An explanation of width, height, and radius}}
 
 \item[setCoordinates((Integer,Integer): coordinates)]\emph{returns}
   \texttt{void}\\
 Sets the vertex's coordinates to the coordinate pair passed. It is possible to specify only one of the two, for example by saying v.setCoordinates((None,42)); which sets the vertex's y coordinate to 42 and doesn't affect the x coordinate.
 
-\item[setFillColor({[string: colorHex]},{[(int,int,int): colorRGB]})]\emph{returns}
-  \texttt{void}
+\label{setVertexFillColorClass}\item[setFillColor({[string: colorHex]},{[(int,int,int): colorRGB]})]\emph{returns}
+  \texttt{void} (corresponds to \textit{setVertexFillColor})
 
 Sets the \textit{fill} colour to the Hex code colour
 specified as a string or the RGB colour specified. colorHex can also be
@@ -354,7 +371,7 @@ Note that one of the two optional color parameters \textit{must} be filled, and 
   
 Same as setFillColor
 
-\item[setStrokeColor({[int: colorHex]},{[(int,int,int): colorRGB]}))] \emph{returns} \texttt{void}
+\label{setVertexStrokeColorClass}\item[setStrokeColor({[int: colorHex]},{[(int,int,int): colorRGB]}))] \emph{returns} \texttt{void} (corresponds to \textit{setVertexStrokeColor})
 
 Sets the \textit{stroke} colour to the Hex code colour
 specified as a string or the RGB colour specified. colorHex can also be
@@ -365,8 +382,8 @@ Note that one of the two optional color parameters \textit{must} be filled, and 
 
 \hyperref[colorNamesSupportedByGralog]{Color setting example}
 
-\item[setVertexRadius(Vertex: v, float: radius)] \emph{returns}
-  \texttt{void}
+\item[\textbf{*}setVertexRadius(Vertex: v, float: radius)] \emph{returns}\texttt{void}\quad \hyperref[setVertexRadiusClass]{\textit{See proper method}}
+
 
 Sets the radius (ie width and height) of the given vertex shape to \texttt{radius}.
 
@@ -378,7 +395,7 @@ Sets the height of the given vertex to \texttt{height}.
 \item[setVertexWidth(Vertex: v, float: width)] \emph{returns}
   \texttt{void}
   
-\item[setProperty(String: propertyName, String: propertyValue)] \emph{returns} \texttt{void}
+\label{setVertexPropertyClass}\item[setProperty(String: propertyName, String: propertyValue)] \emph{returns} \texttt{void}\quad(corresponds to \textit{setVertexProperty})
 
 Sets self's attribute specified by \texttt{propertyName} to the value in \texttt{propertyValue}. Be careful using this method! If you can, use the pre-programmed methods instead.
 
@@ -397,7 +414,7 @@ There are instance variables - however, they are not meant to be directly access
 \textit{Note: optional parameters are in square brackets}
 \subsection{Manipulating Methods}
 \begin{description}
-\item[delete()] \emph{returns} \texttt{void}\\
+\label{deleteEdgeClass}\item[delete()] \emph{returns} \texttt{void} (corresponds to \textit{deleteEdge})\\
 Deletes self from the graph.
 
 
@@ -408,8 +425,16 @@ Deletes self from the graph.
 \item[getId()] \emph{returns} \texttt{int}\\
 Returns the id of self
 
-\item[getLabel()] \emph{returns} \texttt{string}\\
+\label{getEdgeLabelClass}\item[getLabel()] \emph{returns} \texttt{string}\quad(corresponds to \textit{getEdgeLabel})\\
 Returns the label of self
+
+\label{getEdgeWeightClass}\item[getWeight()] \emph{returns} \texttt{float}\quad(corresponds to \textit{getEdgeWeight})
+\\
+Returns the weight of self
+
+
+\label{getEdgePropertyClass}\item[get(String: property)] \emph{returns} \texttt{class specified by property}\quad(corresponds to \textit{getEdgeProperty})\\
+Returns the value of \texttt{prop}. For example, e.get("label") would return a string. Possible values for prop are label, weight, isDirected, thickness, color, type, and edge-Type, although the most common queried attributes have their own query methods. This is also useful if you wish to define your own vertex attributes in an extension of the Vertex class.
 
 \item[getColor()] \emph{returns} \texttt{string}\\
 Returns the color of self, in the format that the user \textit{had} specified (hex or rgb).
@@ -423,6 +448,10 @@ Returns the target endpoint of self
 \item[get(String: property)] \emph{returns} \texttt{class specified by property}\\
 Returns the value of \texttt{prop}. For example, e.get("label") would return a string. Possible values for \texttt{prop} are label, radius, fillColor, strokeColor, and shape, although the most common queried attributes have their own query methods. This is also useful if you wish to define your own vertex attributes in an extension of the Vertex class.
 
+\item[getProperty(String: property)] \emph{returns} \texttt{class specified by property}\\
+Returns the value of \texttt{prop}. 
+Same as \textit{get(String: property)}
+
 \item[getAdjacentEdges()]\emph{returns}
   \texttt{list of Edge objects}
 
@@ -431,19 +460,16 @@ Returns a list of all the Edges that share an endpoint with self.
 \end{description}
 \subsection{Setter Methods}
 \begin{description}
-\item[setLabel(String: label)]\emph{returns}
-  \texttt{void}\\
+\label{setEdgeLabelClass}\item[setLabel(String: label)]\emph{returns} \texttt{void}\\\quad(corresponds to \textit{setEdgeLabel})
+
 Sets the vertex's label.
 
-\item[setContour(str: contour)] \emph{returns}
-\texttt{void}
+\label{setEdgeContourClass}\item[setContour(str: contour)] \emph{returns} \texttt{void}\quad(corresponds to \textit{setEdgeContour})
 
 Sets the contour of passed self. Possible values are
 \texttt{"dashed"}, \texttt{"dotted"}, \texttt{"plain"}.
 
-\item[setColor({[string: colorHex]},{[(int,int,int): colorRGB]})]\emph{returns}
-  \texttt{void}
-
+\label{setEdgeColorClass}\item[setColor({[string: colorHex]},{[(int,int,int): colorRGB]})]\emph{returns} \texttt{void}\quad(corresponds to \textit{setEdgeColor})
 Sets the colour to the Hex code colour
 specified as a string or the RGB colour specified. colorHex can also be
 a string of a common colour, such as \texttt{"red"} or
@@ -453,7 +479,15 @@ Note that one of the two optional color parameters \textit{must} be filled, and 
 
 \hyperref[colorNamesSupportedByGralog]{Color setting example}
 
-\item[setProperty(String: propertyName, String: propertyValue)] \emph{returns} \texttt{void}
+\label{setEdgeWeightClass}\item[setWeight({float: weight})]\emph{returns} \texttt{void}\quad(corresponds to \textit{setEdgeWeight})
+
+Set's the weight of self to the given weight.
+
+\label{setEdgeThiccnessClass}\item[setThickness({float: weight})]\emph{returns} \texttt{void}\quad(corresponds to \textit{setEdgeThickness})
+
+Set's the thickness of the line of self to the given thickness.
+
+\label{setEdgePropertyClass}\item[setProperty(String: propertyName, String: propertyValue)] \emph{returns} \texttt{void}\quad(corresponds to \textit{setEdgeProperty})
 
 Sets self's attribute specified by \texttt{propertyName} to the value in \texttt{propertyValue}. Be careful using this method! If you can, use the pre-programmed methods instead.
 \end{description}
@@ -492,7 +526,7 @@ This is the constructor for the Graph class. It returns one of two things, depen
 Use of these parameters causes Gralog to create a new (empty) graph of the requested type, a reference to which is then passed back to your program and stored in the returned Graph object.
 \subsection{Graph Manipulating Methods}
 \textbf{Note:} every time a \texttt{Vertex} object is a function \textit{parameter}, the programmer may pass \textit{either} a \texttt{Vertex} object \textit{or} a valid vertex id; likewise for \texttt{Edge} objects as parameters and edge id's. In order to avoid redundancy, there are not duplicate method descriptions.\\\\
-\textbf{Another Note:} vertex/edge manipulating methods (such as getting/setting label or some other attribute) can be done using the following methods. However, they are actually not designed to be directly used. Rather, you must use the methods in the Vertex and Edge classes that correspond to each. If you do use these methods directly, it may cause inconsistency between python and Gralog, leading to avoidable conundra and discontent. Corresponding methods are linked.
+\textbf{Another Note:} vertex/edge manipulating methods (such as getting/setting label or some other attribute) can be done using the following methods. However, they are actually not designed to be directly used. Rather, you must use the methods in the Vertex and Edge classes that correspond to each. If you do use these methods directly, it may cause inconsistency between python and Gralog, leading to avoidable conundra and discontent. Corresponding methods are linked, and methods to be avoided are marked with a \textbf{*}.
 
 \begin{description}
 \item[addVertex({[int: vertexId]}{[(double, double): pos]})]\emph{returns}
@@ -511,12 +545,12 @@ Use of these parameters causes Gralog to create a new (empty) graph of the reque
   \hyperref[addVertexExample]{Example}
 
   
-\item[deleteVertex(Vertex: v)] \emph{returns} \texttt{void}
+\item[\textbf{*}deleteVertex(Vertex: v)] \emph{returns} \texttt{void}\quad \hyperref[deleteVertexClass]{\textit{See proper method}}
 
 Deletes the given vertex from the graph. If the vertex does not exist, the program continues\footnote{you will however receive a warning message in the console \label{deleteVertexWarning}}
 
 
-\item[addEdge(Vertex: source, Vertex target,{[int: egdeId]})] \emph{returns} \texttt{Edge} object
+\item[\textbf{*}addEdge(Vertex: source, Vertex target,{[int: egdeId]})] \emph{returns} \texttt{Edge} object\quad \hyperref[addEdgeClass]{\textit{See proper method}}
 
 
 Creates a new \texttt{Edge} object from the source vertex to the
@@ -526,14 +560,13 @@ is passed, a suitable id is chosen. If an id is passed that has
 already been assigned, a suitable new one is silently chosen.
 
 
-\item[deleteEdge(Edge: e)] \emph{returns} \texttt{void}
+\item[\textbf{*}deleteEdge(Edge: e)] \emph{returns} \texttt{void}\quad \hyperref[deleteEdgeClass]{\textit{See proper method}}
 
 Deletes the edge from the graph. If the edge does not exist, nothing
 happens.\textsuperscript{\ref{deleteVertexWarning}}
 
 
-\item[deleteEdge((Vertex,Vertex): edge)] \emph{returns}
-  \texttt{void} \footnote{make sure this is actually a tuple, or it will not work! Also note vertices and vertex id's can be mixed and matched, should that be practical, such that you could call g.edgeMethodFoo((Vertex,id)) or g.edgeMethodFoo((id,Vertex)) and they would be equivalent \label{makeSureATupleWarning1}}
+\item[deleteEdge((Vertex,Vertex): edge)] \emph{returns} \texttt{void} \footnote{make sure this is actually a tuple, or it will not work! Also note vertices and vertex id's can be mixed and matched, should that be practical, such that you could call g.edgeMethodFoo((Vertex,id)) or g.edgeMethodFoo((id,Vertex)) and they would be equivalent \label{makeSureATupleWarning1}}
 
   Deletes the edge with the greatest id from the list of all edges
   between the vertex in the first position of the tuple \texttt{edge} and the vertex which is the second position in tuple \texttt{source} respecting
@@ -574,10 +607,9 @@ happens.\textsuperscript{\ref{deleteVertexWarning}}
 %  Returns whether a Vertex with specified id currently exists in the specified graph in Gralog. 
 
 
-\item[deleteAllEdgesBetween((Vertex,Vertex): vertexPair)] \emph{returns}
-  \texttt{void}
+\item[\textbf{*}getAllEdgesBetween((Vertex,Vertex): vertexPair)] \emph{returns} \texttt{void}\quad \hyperref[getAllEdgesBetweenClass]{\textit{See proper method}}
 
-  Deletes all edges in the graph
+  Returns all edges in the graph
   between the vertex in the first position of the tuple \texttt{vertexPair} and the vertex which is the second position in tuple \texttt{vertexPair} respecting
   the direction if the graph has directed edges.
   If no such edges exist, nothing happens.
@@ -593,8 +625,7 @@ happens.\textsuperscript{\ref{deleteVertexWarning}}
 
 \subsection{Setter Functions}
 \begin{description}
-\item[setVertexFillColor(Vertex: v,{[string: colorHex]},{[(int,int,int): colorRGB]})]\emph{returns}
-  \texttt{void}
+\item[\textbf{*}setVertexFillColor(Vertex: v,{[string: colorHex]},{[(int,int,int): colorRGB]})]\emph{returns}\texttt{void}\quad \hyperref[setVertexFillColorClass]{\textit{See proper method}}
 
 Sets the \textit{fill} colour of the given \texttt{Vertex} to the Hex code colour
 specified as a string or the RGB colour specified. colorHex can also be
@@ -605,7 +636,7 @@ Note that one of the two optional color parameters \textit{must} be filled, and 
 
 \hyperref[colorNamesSupportedByGralog]{Color setting example}
 
-\item[setVertexStrokeColor(Vertex: v,{[string: colorHex]},{[(int,int,int): colorRGB]}))] \emph{returns} \texttt{void}
+\item[\textbf{*}setVertexStrokeColor(Vertex: v,{[string: colorHex]},{[(int,int,int): colorRGB]}))] \emph{returns} \texttt{void}\quad \hyperref[setVertexStrokeColorClass]{\textit{See proper method}}
 
 Sets the \textit{stroke} colour of the given \texttt{Vertex} to the Hex code colour
 specified as a string or the RGB colour specified. colorHex can also be
@@ -616,13 +647,12 @@ Note that one of the two optional color parameters \textit{must} be filled, and 
 
 \hyperref[colorNamesSupportedByGralog]{Color setting example}
 
-\item[setEdgeContour(Edge: edge, str: contour)] \emph{returns}
-\texttt{void}
+\item[\textbf{*}setEdgeContour(Edge: edge, str: contour)] \emph{returns}\texttt{void}\quad \hyperref[setEdgeContourClass]{\textit{See proper method}}
 
 Sets the contour of passed \texttt{Edge}. Possible values are
 \texttt{"dashed"}, \texttt{"dotted"}, \texttt{"plain"}.
 
-\item[setEdgeColor(Edge: v, {[string: colorHex]},{[(int,int,int): colorRGB]}))] \emph{returns} \texttt{void}
+\item[\textbf{*}setEdgeColor(Edge: v, {[string: colorHex]},{[(int,int,int): colorRGB]}))] \emph{returns} \texttt{void}\quad \hyperref[setEdgeColorClass]{\textit{See proper method}}
 
 Sets the colour of the given \texttt{Edge} to the Hex code colour
 specified as a string or the RGB colour specified. colorHex can also be
@@ -633,55 +663,44 @@ Note that one of the two optional color parameters \textit{must} be filled, and 
 
 \hyperref[colorNamesSupportedByGralog]{Color setting example}
 
-\item[setRadius(float: radius)] \emph{returns}
-  \texttt{void}
 
-Sets the radius (ie width and height) of self to \texttt{radius}.
-
-\item[setHeight(float: height)] \emph{returns}
-  \texttt{void}
-
-Sets the height of self to \texttt{height}.
-
-\item[setWidth(float: width)] \emph{returns}
-  \texttt{void}
-
-Sets the width of self to \texttt{width}. 
-
-\hyperref[radiusWidthHeightDiagram]{\textit{An explanation of width, height, and radius}}
 
   
-\item[setVertexDimension(Vertex: v, float: width, str: dimension)]
-  \emph{returns} \texttt{void}
+\item[setVertexDimension(Vertex: v, float: width, str: dimension)]\emph{returns} \texttt{void}
 
 Sets the dimension of the given vertex to the dimension specified. This functionality is primarily useful for non-standard shapes, if you were to extend gralog to include such a thing. Other than in this case, it is recommended that you use the built-in functions.
 
-\item[setVertexShape(Vertex: v, str: shape)] \emph{returns} \texttt{void}
+\item[\textbf{*}setVertexShape(Vertex: v, str: shape)] \emph{returns} \texttt{void}\quad \hyperref[setVertexShapeClass]{\textit{See proper method}}
+
 
 Sets the given vertex to be the specified shape. Currently supported
 are ``\texttt{ellipse"}, \texttt{"diamond"}, and \texttt{"rectangle"}.
 
-\item[setEdgeWeight(Edge: e, float: weight)] \emph{returns} \texttt{void}
+\item[\textbf{*}setEdgeWeight(Edge: e, float: weight)] \emph{returns} \texttt{void}\quad \hyperref[setEdgeWeightClass]{\textit{See proper method}}
+
 
 Sets edge weight to \texttt{weight}. Not to be confused with setEdgeThickness
 
-\item[setEdgeThickness(Edge: e, float: thiccness)] \emph{returns} \texttt{void}
+\item[\textbf{*}setEdgeThickness(Edge: e, float: thickness)] \emph{returns} \texttt{void}\quad \hyperref[setEdgeThiccnessClass]{\textit{See proper method}}
 
-Sets edge thiccness to \texttt{thiccness}. Not to be confused with setEdgeWeight
 
-\item[setEdgeProperty(Edge: edge, String: propertyName, String: propertyValue)] \emph{returns} \texttt{void}
+Sets edge thickness to \texttt{thickness}. Not to be confused with setEdgeWeight
+
+\item[\textbf{*}setEdgeProperty(Edge: edge, String: propertyName, String: propertyValue)] \emph{returns} \texttt{void}\quad \hyperref[setEdgePropertyClass]{\textit{See proper method}}
+
 
 Sets \texttt{edge}'s attribute specified by \texttt{propertyName} to the value in \texttt{propertyValue}.
 
-\item[setVertexProperty(Vertex: vertex, String: propertyName, String: propertyValue)] \emph{returns} \texttt{void}
+\item[\textbf{*}setVertexProperty(Vertex: vertex, String: propertyName, String: propertyValue)] \emph{returns} \texttt{void}\quad \hyperref[setVertexPropertyClass]{\textit{See proper method}}
+
 
 Sets \texttt{vertex}'s attribute specified by \texttt{propertyName} to the value in \texttt{propertyValue}.
 
-\item[setVertexLabel(Vertex: v, str: label)] \emph{returns} \texttt{void}
+\item[\textbf{*}setVertexLabel(Vertex: v, str: label)] \emph{returns} \texttt{void}\quad \hyperref[setVertexLabelClass]{\textit{See proper method}}
 
 Sets the edge's label to the \texttt{label}
 
-\item[setEdgeLabel(Edge: v, str: label)] \emph{returns} \texttt{void}
+\item[\textbf{*}setEdgeLabel(Edge: v, str: label)] \emph{returns} \texttt{void}\quad \hyperref[setEdgeLabelClass]{\textit{See proper method}}
 
 Sets the vertex's label to the \texttt{label}
   
@@ -707,33 +726,28 @@ Returns a list of all the vertices in the graph.
 
 Returns a list of all the edges graph.
 
-\item[getNeighbours(Vertex: vertex)]\emph{returns}
-  \texttt{list of Vertex objects}
+\item[\textbf{*}getNeighbours(Vertex: vertex)]\emph{returns} \texttt{list of Vertex objects}\quad \hyperref[getNeighboursClass]{\textit{See proper method}}
 
 Returns a list of all the vertices connected to \texttt{vertex}, regardless of direction.
 
-\item[getOutgoingNeighbours(Vertex: vertex)]\emph{returns}
-  \texttt{list of Vertex objects}
+\item[\textbf{*}getOutgoingNeighbours(Vertex: vertex)]\emph{returns} \texttt{list of Vertex objects}\quad \hyperref[getOutgoingNeighboursClass]{\textit{See proper method}}
 
 Returns a list of all the vertices v' such that there is an edge from \texttt{vertex} to v' in directed graphs (equivalent to getNeighbours in undirected graphs)
 
-\item[getIncomingNeighbours(Vertex: vertex)]\emph{returns}
-  \texttt{list of Vertex objects}
+\item[\textbf{*}getIncomingNeighbours(Vertex: vertex)]\emph{returns} \texttt{list of Vertex objects}\quad \hyperref[getIncomingNeighboursClass]{\textit{See proper method}}
 
 Returns a list of all the vertices v' such that there is an edge from v' to \texttt{vertex} in directed graphs (equivalent to getNeighbours in undirected graphs)
 
-\item[getIncidentEdges(Vertex: vertex)]\emph{returns}
-  \texttt{list of Edge objects}
+\item[\textbf{*}getIncidentEdges(Vertex: vertex)]\emph{returns} \texttt{list of Edge objects}\quad \hyperref[getIncidentEdgesClass]{\textit{See proper method}}
+
 
 Returns a list of all the Edges e with an endpoint at \texttt{vertex}, regardless of their direction.
 
-\item[getOutgoingEdges(Vertex: vertex)]\emph{returns}
-  \texttt{list of Edge objects}
+\label{getOutgoingEdgesClass}\item[getOutgoingEdges(Vertex: vertex)]\emph{returns} \texttt{list of Edge objects}\quad(corresponds to \textit{getOutgoingEdges})
 
 Returns a list of all the Edges e with an \textit{source Vertex} = \texttt{vertex}.
 
-\item[getIncomingEdges(Vertex: vertex)]\emph{returns}
-  \texttt{list of Edge objects}
+\item[getIncomingEdges(Vertex: vertex)]\emph{returns} \texttt{list of Edge objects}
 
 Returns a list of all the Edges e with an \textit{target Vertex} = \texttt{vertex}.
 
@@ -742,25 +756,22 @@ Returns a list of all the Edges e with an \textit{target Vertex} = \texttt{verte
 
 Returns a list of all the Edges e' that share an endpoint with \texttt{edge}.
 
-\item[getEdgeWeight(Edge: edge)]\emph{returns}
-  \texttt{float}
+\item[\textbf{*}getEdgeWeight(Edge: edge)]\emph{returns} \texttt{float}\quad \hyperref[getEdgeWeightClass]{\textit{See proper method}}
 
 Returns the weight of \texttt{edge}.
 
-\item[getEdgeLabel(Edge: edge)]\emph{returns}
-  \texttt{string}
+\item[\textbf{*}getEdgeLabel(Edge: edge)]\emph{returns} \texttt{string}\quad \hyperref[getEdgeLabelClass]{\textit{See proper method}}
 
- Returns the label of \texttt{edge}.
+Returns the label of \texttt{edge}.
 
-\item[getEdgeProperty(Edge: edge, String: prop)]\emph{returns}
-  \texttt{type of prop}
+\item[\textbf{*}getEdgeProperty(Edge: edge, String: prop)]\emph{returns} \texttt{type of prop}\quad \hyperref[getEdgePropertyClass]{\textit{See proper method}}
 
 Returns the value of \texttt{prop} in the passed \texttt{Edge}. For example, g.getEdgeProperty(e1,"weight") would return a float. Possible values for \texttt{prop} are label, weight, isDirected, thickness, color, type, and edgeType, although the most common queried attributes have their own query methods. This is also useful if you wish to define your own edge attributes in an extension of the Edge class.
 
-\item[getVertexProperty(Vertex: vertex, String: property)]\emph{returns}
+\item[getVertexProperty(Vertex: vertex, String: prop )]\emph{returns}
   \texttt{class specified by prop}
 
-Returns the value of \texttt{prop} in the passed \texttt{Vertex}. For example, g.getVertexProperty(v1,"label") would return a string. Possible values for \texttt{prop} are label, radius, fillColor, strokeColor, and shape, although the most common queried attributes have their own query methods. This is also useful is you wish to define your own vertex attributes in an extension of the Vertex class.
+Returns the value of \texttt{prop} in the passed \texttt{Vertex}. For example, g.getVertex(v1,"label") would return a string. Possible values for \texttt{prop} are label, radius, fillColor, strokeColor, and shape, although the most common queried attributes have their own query methods. This is also useful is you wish to define your own vertex attributes in an extension of the Vertex class.
 
 {\Large End: private!}
 
@@ -797,17 +808,18 @@ Waits for user to click a string, then returns the string that the user clicks o
 \subsection{Control Functions}
 \begin{description}
 
-\item[pauseUntilSpacePressed(String[]: *args)]\emph{returns}
-  \texttt{void}
-Waits for user to either press the space bar, or the ``play" icon in the Algorithm Control Panel. While paused, tracked variables are displayed in the Algorithm Control Panel. Optionally, in the args input, you can add variables you would like to track individually in the moment, in the form of name-value \begin{lstlisting}
+
+\item[pause(String{[]}: *args)]\emph{returns}
+  \texttt{void}\\
+Waits for user to either press the space bar, or the ``play" icon in the Algorithm Control Panel. While paused, tracked variables are displayed in the Algorithm Control Panel. Optionally, in the args input, you can add the following options:
+\begin{itemize}
+    \item you can give, as the first parameter, the rank of the pause. In this way you can give the pauses a hierarchy. If during a pause of rank "n", you press the ``skip" button the Algorithm Control Panel, afterwards all pauses of rank n or higher will be ignored.
+    \item You can add variables you would like to track individually in the moment, in the form of name-value \begin{lstlisting}
 g.pause(("name1","val1"),("name2",var2),...("nameN",varN));
 \end{lstlisting}
+\end{itemize}
 
 Either strings or variables can be passed as the value, and a string representation of the variables will be displayed by Gralog.
-
-\item[pause()]\emph{returns}
-  \texttt{void}\\
-Same as pauseUntilSpacePressed.
 
 \item[track(String: name, Variable: var)]\emph{returns}
   \texttt{void}\\
