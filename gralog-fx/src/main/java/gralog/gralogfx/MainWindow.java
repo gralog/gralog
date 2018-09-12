@@ -291,10 +291,7 @@ public class MainWindow extends Application {
         objDock.setMaxWidth(270);
 
 
-        //pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
-        //pluginDock.setMaxWidth(270);
-        //pluginDock.setPrefHeight(70);
-        //pluginDock.setMinHeight(70);
+
 
         consoleDock.dock(mainDockPane, DockPos.BOTTOM, structureNode);
         consoleDock.setPrefWidth(Double.MAX_VALUE);
@@ -310,6 +307,12 @@ public class MainWindow extends Application {
         //objListDock.setMaxWidth(Double.MAX_VALUE);
         objListDock.setPrefHeight(300);
         objListDock.setMinHeight(300);
+
+        pluginDock.dock(mainDockPane, DockPos.RIGHT, consoleDock);
+        //pluginDock.setMaxWidth(270);
+        pluginDock.setMinWidth(200);
+        pluginDock.setPrefHeight(70);
+        pluginDock.setMinHeight(70);
     }
 
 
