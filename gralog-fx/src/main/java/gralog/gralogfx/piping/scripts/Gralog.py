@@ -6,6 +6,7 @@ import os
 import networkx as nx
 import igraph as ig
 import xml.etree.cElementTree as ET
+import math
 
 # debugging = False;
 
@@ -121,6 +122,10 @@ class Vertex:
 	def setProperty(self,otherProperty,value):
 		self.properties[otherProperty] = value;
 		self.graph.setVertexProperty(self.id,otherProperty,value);
+	def getProperty(self,otherProperty):
+		if not self.sourced:
+			self.source();
+		return self.properties[otherProperty];
 	def get(self,prop):
 		if not self.sourced:
 			self.source();
@@ -141,8 +146,8 @@ class Vertex:
 		return self.graph.deleteVertex(self);
 	def connect(self,v1,edgeId=-1):
 		return self.graph.addEdge(self,v1,edgeId);
-	def deleteAllEdgesBetween(self,vertex2):
-		self.graph.deleteAllEdgesBetween((v.id,vertex2));
+	def getAllEdgesBetween(self,vertex2):
+		return self.graph.getAllEdgesBetween((self.id,vertex2));
 	def source(self):
 		return self.graph.getVertex(self);
 	def __str__(self):
@@ -250,6 +255,10 @@ class Edge:
 	def setProperty(self,otherProperty,value):
 		self.properties[otherProperty] = value;
 		self.graph.setEdgeProperty(otherProperty,value);
+	def getProperty(self,otherProperty):
+		if not self.sourced:
+			self.source();
+		return self.properties[otherProperty];
 	def get(self,prop):
 		self.source();
 		return self.properties[prop];
@@ -294,7 +303,8 @@ def edgeId(edge):
 
 
 def extractIdFromProperties(stringFromGralog):
-	strings = stringFromGralog.split("|");
+	gPrint("stringFromGralog: " + stringFromGralog);
+	strings = stringFromGralog.split(",");
 	for string in strings:
 
 		propVal = string.split("=");
@@ -356,9 +366,8 @@ class Graph:
 		if (isinstance(currId,int)):
 			try:
 				v=self.vertices[currId];
-				gPrint("i got my v: " + str(v));
 			except:
-				gPrint("kriminiy!" + str(currId));
+
 				v=Vertex(self,currId);
 
 			return v;
@@ -384,18 +393,20 @@ class Graph:
 
 	def termToEdge(self,term):
 		endpoints = term.split(",");
-		eid = self.extractIdFromProperties(endpoints[0]);
+		eid = int(endpoints[0]);
+
 		e = self.edges[eid];
+		gPrint("e: " + str(e));
 		e.sourceProperties(endpoints[0]);
-		sourceId = self.extractIdFromProperties(endpoints[1]);
+		sourceId = int(endpoints[1]);
 		source = self.getVertexOrNew(sourceId);
-		targetId = self.extractIdFromProperties(endpoints[2]);
+		targetId = int(endpoints[2]);
 		target = self.getVertexOrNew(targetId);
 
-		####possibly to remove
-		source.sourceProperties(endpoints[1]);
-		target.sourceProperties(endpoints[2]);
-		####fin
+		# ####possibly to remove
+		# source.sourceProperties(endpoints[1]);
+		# target.sourceProperties(endpoints[2]);
+		# ####fin
 
 		e.setSource(source);
 		e.setTarget(target);
@@ -581,15 +592,53 @@ class Graph:
 		# sys.stdin.readline();
 
 
-	def deleteAllEdgesBetween(self,vertexPair):
+	def getAllEdgesBetween(self,vertexPair):
 
-		line = "deleteAllEdgesBetween#"+str(self.id).rstrip() + "#";
+		line = "getAllEdgesBetween#"+str(self.id).rstrip() + "#";
 		line = line +edgeSplitter(vertexPair);
 
 		print line.rstrip();
 
 		sys.stdout.flush();
-		# sys.stdin.readline();
+		endpointList = sys.stdin.readline();
+
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			e = self.termToEdge(term);
+			if e != None:
+				edges.append(e);
+
+			# endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
+		return edges;
+
+	def generateRandomGraph(self,vertexCount):
+		height = int(math.log(vertexCount,2)) + 1;
+		parts = 2;
+		adder = 1;
+		vertices = [];
+		coordinates = [];
+		gPrint("height: " + str(height) + " parts: " + str(parts));
+		for x in range(height*2-1):
+			for y in range(parts-1):
+				coordinates.append((3*y*height/parts,3*x));
+			if parts > height:
+				adder = -1;
+			parts += adder;
+
+
+		for x in range(vertexCount):
+			vertices.append(self.addVertex(coordinates[x]));
+		for x in vertices:
+			for y in vertices:
+				if x < y:
+					r = randint(0,3);
+					if r == 3:
+						x.connect(y);
+
 
 
 	####end manilupative functions
@@ -657,8 +706,7 @@ class Graph:
 
 
 	def setEdgeColor(self,edge,colorHex=-1,colorRGB=-1):
-		e = self.getEdgeOrNew(edge);
-		e.properties["contour"] = contour;
+		
 
 		line = "setEdgeColor#"+str(self.id).rstrip() + "#";
 		line = line + edgeSplitter(edge);
@@ -886,6 +934,7 @@ class Graph:
 		for i in range(len(endpointList)):
 			term = endpointList[i].rstrip();
 			term = term[1:-1];
+			gPrint("term: " + term);
 			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
@@ -957,13 +1006,16 @@ class Graph:
 		print line.rstrip();
 
 		sys.stdout.flush();
-		edgeIdList = (sys.stdin.readline()).split("#");
-		# print("endpointList: " , endpointList);
-		edges = [];
-		for i in range(len(edgeIdList)):
-			id = edgeIdList[i].rstrip();
+		endpointList = sys.stdin.readline();
 
-			e = self.getEdgeOrNew(id);
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			gPrint("term: " + term);
+			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
 
@@ -977,13 +1029,16 @@ class Graph:
 		print line.rstrip();
 
 		sys.stdout.flush();
-		edgeIdList = (sys.stdin.readline()).split("#");
-		# print("endpointList: " , endpointList);
-		edges = [];
-		for i in range(len(edgeIdList)):
-			id = edgeIdList[i].rstrip();
+		endpointList = sys.stdin.readline();
 
-			e = self.getEdgeOrNew(id);
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			gPrint("term: " + term);
+			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
 
@@ -996,15 +1051,19 @@ class Graph:
 		print line.rstrip();
 
 		sys.stdout.flush();
-		edgeIdList = (sys.stdin.readline()).split("#");
-		# print("endpointList: " , endpointList);
-		edges = [];
-		for i in range(len(edgeIdList)):
-			id = edgeIdList[i].rstrip();
+		endpointList = sys.stdin.readline();
 
-			e = self.getEdgeOrNew(id);
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			gPrint("term: " + term);
+			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
+
 		return edges;
 
 
@@ -1015,15 +1074,19 @@ class Graph:
 		print line.rstrip();
 
 		sys.stdout.flush();
-		edgeIdList = (sys.stdin.readline()).split("#");
-		# print("endpointList: " , endpointList);
-		edges = [];
-		for i in range(len(edgeIdList)):
-			id = edgeIdList[i].rstrip();
+		endpointList = sys.stdin.readline();
 
-			e = self.getEdgeOrNew(id);
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			gPrint("term: " + term);
+			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
+
 		return edges;
 
 

@@ -83,9 +83,9 @@ public class SetVertexPropertyCommand extends CommandForGralogToExecute {
                     return;
                 }
             }
-            this.fail();
-            this.error = new Exception("class Vertex does not have property : " + this.propertyString);
-            return;
+            // this.fail();
+            // this.error = new Exception("class Vertex does not have property : " + this.propertyString);
+            // return;
         }
         this.setResponse(null);
         return;

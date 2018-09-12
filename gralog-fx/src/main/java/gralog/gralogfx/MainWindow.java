@@ -410,7 +410,7 @@ public class MainWindow extends Application {
             // }else{
             //     pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
 
-            // }
+            // }e
 
 
         } catch(Exception e){
@@ -429,9 +429,10 @@ public class MainWindow extends Application {
 
     public String getLastFileName(){
 
-        String fileName = Preferences.getFile("MainWindow_pipingFile",
+        String fileName = Preferences.getFile("MainWindow_lastPipingFile",
                 "/Users/f002nb9/Documents/f002nb9/kroozing/" +
                         "gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
+    
         return fileName;
     }
 

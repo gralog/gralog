@@ -45,11 +45,11 @@ public class GetOutgoingEdgesCommand extends CommandForGralogToExecute {
         
         
 
-        Set<Edge> conncetedEdges = this.sourceVertex.getOutgoingEdges();
+        Set<Edge> connectedEdges = this.sourceVertex.getOutgoingEdges();
 
         String edgeString = "";
-        for (Edge e : conncetedEdges){
-            edgeString = edgeString + Integer.toString(e.getId())+ "#";
+        for (Edge e : connectedEdges){
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToTuple(e)+ "#";
         }
         if (edgeString.length() > 0 && null != edgeString){
             edgeString = edgeString.substring(0,edgeString.length()-1);

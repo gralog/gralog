@@ -36,20 +36,21 @@ public class GetIncomingEdgesCommand extends CommandForGralogToExecute {
         
         
 
-        Set<Edge> conncetedEdges = this.sourceVertex.getIncomingEdges();
+        Set<Edge> connectedEdges = this.sourceVertex.getIncomingEdges();
 
         
 
         String edgeString = "";
 
-        for (Edge e : conncetedEdges){
-            edgeString = edgeString + Integer.toString(e.getId())+ "#";
+        for (Edge e : connectedEdges){
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToTuple(e)+ "#";
         }
         if (edgeString.length() > 0 && null != edgeString){
             edgeString = edgeString.substring(0,edgeString.length()-1);
         }
 
-        this.setResponse(edgeString.trim());
+
+        this.setResponse(edgeString);
 
         return;
 

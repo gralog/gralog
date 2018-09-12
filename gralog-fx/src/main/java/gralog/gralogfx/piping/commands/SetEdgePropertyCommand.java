@@ -84,9 +84,9 @@ public class SetEdgePropertyCommand extends CommandForGralogToExecute {
                     return;
                 }
             }
-            this.fail();
-            this.error = new Exception("class Edge does not have property : " + this.propertyString);
-            return;
+            // this.fail();
+            // this.error = new Exception("class Edge does not have property : " + this.propertyString);
+            // return;
         }
         this.setResponse(null);
         return;
