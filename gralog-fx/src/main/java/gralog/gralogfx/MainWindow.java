@@ -85,10 +85,12 @@ public class MainWindow extends Application {
     private DockNode pluginDock;
     private DockNode structureNode;
     private DockNode consoleDock;
+    private DockNode variableDock;
 
     private boolean pipingUnderway = false;
 
     private ObjectListDisplay objectListDisplay;
+    private VariablePanel variablePanel;
 
     //argument configs
     private boolean dontAskWhenClosing = false; // <==> argument 'dawc'
@@ -154,8 +156,10 @@ public class MainWindow extends Application {
         //inspectorSplit = new SplitPane();
         tabs = new Tabs(this::onSwitchCurrentStructure);
 
+
         ObjectInspector objectInspector = new ObjectInspector(tabs);
         objectListDisplay = new ObjectListDisplay();
+        variablePanel = new VariablePanel();
 
         tabs.objectListDisplay = objectListDisplay;
 
@@ -263,7 +267,7 @@ public class MainWindow extends Application {
         objListDock = new DockNode(objectListDisplay, "List Overview", null);
         pluginDock = new DockNode(this.pluginControlPanel, "Algorithm Control", null);
         consoleDock = new DockNode(mainConsole, "Console", null);
-
+        variableDock = new DockNode(variablePanel, "Variables List", null);
 
         dockPanels();
 
@@ -275,7 +279,7 @@ public class MainWindow extends Application {
         root.setBottom(statusBar.getStatusBar());
     }
     public void dockPanels(){
-        structureNode.dock(mainDockPane, DockPos.LEFT);
+        structureNode.dock(mainDockPane, DockPos.CENTER);
         structureNode.setMaxHeight(Double.MAX_VALUE);
         structureNode.setPrefWidth(Double.MAX_VALUE);
         structureNode.setPrefHeight(Double.MAX_VALUE);
@@ -286,10 +290,8 @@ public class MainWindow extends Application {
         objDock.setMinWidth(270);
         objDock.setMaxWidth(270);
 
-        //pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
-        //pluginDock.setMaxWidth(270);
-        //pluginDock.setPrefHeight(70);
-        //pluginDock.setMinHeight(70);
+
+
 
         consoleDock.dock(mainDockPane, DockPos.BOTTOM, structureNode);
         consoleDock.setPrefWidth(Double.MAX_VALUE);
@@ -299,10 +301,18 @@ public class MainWindow extends Application {
     }
 
     void dockPanels2(){
-        objListDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
-        //objListDock.setMaxWidth(270);
+
+        //objListDock.setMaxWidth(0);
+        objListDock.dock(mainDockPane, DockPos.LEFT);
+        //objListDock.setMaxWidth(Double.MAX_VALUE);
         objListDock.setPrefHeight(300);
         objListDock.setMinHeight(300);
+
+        pluginDock.dock(mainDockPane, DockPos.RIGHT, consoleDock);
+        //pluginDock.setMaxWidth(270);
+        pluginDock.setMinWidth(200);
+        pluginDock.setPrefHeight(70);
+        pluginDock.setMinHeight(70);
     }
 
 
@@ -856,7 +866,6 @@ public class MainWindow extends Application {
 
 
         scene.setOnKeyPressed(event -> {
-            //if(event.getCode() == KeyCode.F2){ ((ObjectListDisplay)objListDock.getContents()).list.get(0).remove("abc"); } if(event.getCode() == KeyCode.F3){ GralogList<String> x = ((ObjectListDisplay)objListDock.getContents()).list.get(0); x.add("abc"); }
             
         });
 

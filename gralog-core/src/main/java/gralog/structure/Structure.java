@@ -173,7 +173,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         for (Vertex v : getVertices()){
             v.render(gc, highlights);
-            if(highlights.getSelection().size() >= 1
+            if(highlights.getSelection().size() == 1
                     && highlights.isSelected(v)){
                 v.controls.active = true;
                 v.controls.render(gc);

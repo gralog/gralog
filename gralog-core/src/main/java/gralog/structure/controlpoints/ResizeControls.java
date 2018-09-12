@@ -38,6 +38,18 @@ public class ResizeControls implements IMovable, Serializable
             }
             parent.updateVertexShape();
         }
+        public Vector2D parentCenter(){
+            return parent.v.coordinates;
+        }
+        public RControl getNextSibling(){
+            return parent.cs[(4 + id + 1) % 4];
+        }
+        public RControl getPreviousSibling(){
+            return parent.cs[(4 + id - 1) % 4];
+        }
+        public RControl getDiagonalSibling(){
+            return parent.cs[(4 + id + 2) % 4];
+        }
 
         public void setX(double x){
             position = new Vector2D(x, position.getY());
