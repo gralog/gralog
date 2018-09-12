@@ -9,5 +9,6 @@ public enum GraphType{
     Tikz,
     Xml,
     Tgf,
-    GTgf
+    GTgf,
+    IncM
 }
