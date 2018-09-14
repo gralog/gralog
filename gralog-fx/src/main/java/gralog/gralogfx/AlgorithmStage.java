@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
+import java.util.ArrayList;
 
 /**
  *
@@ -61,8 +62,13 @@ public class AlgorithmStage extends Stage {
 
         objectInspector = new ObjectInspector();
         try {
-            objectInspector.setObject(params, null, (b) -> runButton.setDisable(!b));
+            // objectInspector.setObject(params, null, (b) -> runButton.setDisable(!b));
+            ArrayList<Object> myList = new ArrayList<Object>();
+            myList.add(params);
+            objectInspector.setObject(myList,(b) -> runButton.setDisable(!b));
         } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("gecatcht");
         }
 
         root = new BorderPane();

@@ -13,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
+import java.util.ArrayList;
+
 
 /**
  *
@@ -59,7 +61,9 @@ public class GeneratorStage extends Stage {
 
         objectInspector = new ObjectInspector();
         try {
-            objectInspector.setObject(params, null, (b) -> runButton.setDisable(!b));
+            ArrayList<Object> myList = new ArrayList<Object>();
+            myList.add(params);
+            objectInspector.setObject(myList, (b) -> runButton.setDisable(!b));
         } catch (Exception ex) {
         }
 

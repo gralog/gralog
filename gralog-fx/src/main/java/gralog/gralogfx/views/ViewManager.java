@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+
 import javafx.scene.Node;
 
 /**
@@ -58,12 +59,20 @@ public final class ViewManager {
     }
 
     public static View instantiateView(Class<?> forClass) throws Exception {
+        System.out.println("VIEW_REGISTER: " + VIEW_REGISTER);
         for (Class sup = forClass; sup != null; sup = sup.getSuperclass()) {
+            System.out.println("going at class: " + sup);
             if (VIEW_REGISTER.containsKey(sup)) {
                 Constructor<? extends View> ctor = VIEW_REGISTER.get(sup);
                 return ctor.newInstance();
+            }else{
+                for (Class inter : VIEW_REGISTER.keySet()){
+
+                    System.out.println("sup: " + sup.getName() + " inter: " + inter.getName() + " " +inter.getName().equals(sup.getName()));
+                }
             }
         }
+        System.out.println("nully");
 
         return null;
     }
@@ -124,7 +133,6 @@ public final class ViewManager {
                 if (!c.isAnnotationPresent(ViewDescription.class))
                     throw new Exception("class " + c.getName() + " has no @ViewDescription annotation");
                 ViewDescription descr = c.getAnnotation(ViewDescription.class);
-
                 // Register it
                 VIEW_REGISTER.put(descr.forClass(), ctor);
             }

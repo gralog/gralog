@@ -38,6 +38,7 @@ public class ReflectedView extends GridPaneView<Object> {
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
+        System.out.println("hello there world!");
 
         setVgap(5);
 
@@ -46,8 +47,9 @@ public class ReflectedView extends GridPaneView<Object> {
         try {
             if (displayObject != null) {
                 Class<?> c = displayObject.getClass();
-                
+
                 for (Field f : c.getDeclaredFields()) {
+
                     f.setAccessible(true);
                     boolean display = false;
                     boolean readOnly = false;

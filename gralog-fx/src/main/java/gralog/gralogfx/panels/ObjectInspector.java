@@ -68,9 +68,11 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
 
         if(obj == null){
             return;
+        }else{
+            System.out.println("object: " + obj);
         }
         view = ViewManager.instantiateView(obj.getClass());
-        System.out.println("we a working with an object: " + obj + " and the view is: " + view);
+
 
         if (view == null)
             return;
@@ -78,8 +80,10 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
             throw new Exception("Class " + view.getClass().getName() + " is not derived from javafx.scene.Node");
 
         view.setObject(obj, submitPossible);
-        // System.out.println("ok so now i've set the object: " + view.object);
-        view.setStructurePane(tabView.getCurrentStructurePane());
+        System.out.println("ok so now i've set the view: " + view.getClass());
+        try{
+            view.setStructurePane(tabView.getCurrentStructurePane());
+        }catch(Exception e){}
         
         Node viewNode = (Node) view;
 
@@ -103,6 +107,7 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
     @Deprecated
     public void setObject(Object obj, StructurePane pane, Consumer<Boolean> submitPossible){
         //has been replaced with setObject(Collection<?> list)
+        System.out.println("schwuppscollect");
     }
     public Node getNode(){
         return null;

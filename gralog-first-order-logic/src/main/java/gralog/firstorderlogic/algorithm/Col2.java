@@ -14,9 +14,15 @@ import java.util.*;
 
 @AlgorithmDescription(
     name = "Col2",
-    text = "",
+    text = "An algorithm that does weird stuff",
     url = "")
 public class Col2 extends Algorithm {
+
+    @Override
+    public AlgorithmParameters getParameters(Structure s) {
+        System.out.println("col2");
+        return new Col2Parameters();
+    }
 
     public static StringBuilder convertToBase3(long n, int nVertices) {
         StringBuilder ans = new StringBuilder();
@@ -98,11 +104,9 @@ public class Col2 extends Algorithm {
 
     public Object run(DirectedGraph s, AlgorithmParameters p,
         Set<Object> selection, ProgressHandler onprogress) throws Exception {
-        Scanner in = new Scanner(System.in, "UTF-8");
-        System.out.println("enter the number of vertices");
-        final int nVertices = in.nextInt();
-        System.out.println("enter the edge density");
-        final double prob = in.nextDouble();
+        Col2Parameters col2p = (Col2Parameters)p;
+        int nVertices = col2p.nVertices;
+        double prob = col2p.prob;
         for (int iter = 1; iter <= 100; iter++) {
             s = generate(s, nVertices, prob);
             /*SpringEmbedder embedder = new SpringEmbedder();

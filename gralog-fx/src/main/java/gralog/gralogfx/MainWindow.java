@@ -798,11 +798,14 @@ public class MainWindow extends Application {
     public void onRunAlgorithm(String algorithmName) {
         try {
             // Prepare
+            System.out.println("prep8ing algo");
             StructurePane structurePane = tabs.getCurrentStructurePane();
             Structure structure = structurePane.structure;
             Algorithm algo = AlgorithmManager.instantiateAlgorithm(structure.getClass(), algorithmName);
 
             AlgorithmParameters params = algo.getParameters(structure);
+
+
             if (params != null) {
                 AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
                 algostage.showAndWait();
@@ -817,14 +820,18 @@ public class MainWindow extends Application {
             algoThread.setOnThreadComplete(t -> Platform.runLater(() -> {
                 algorithmCompleted(structurePane, t);
             }));
+            System.out.println("823");
             this.setStatus("Running Algorithm \"" + algorithmName + "\"...");
             algoThread.start();
         } catch (InvocationTargetException ex) {
             this.setStatus("");
+            ex.printStackTrace();
+            System.out.println("lard!");
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait((Exception) ex.getCause());
         } catch (Exception ex) {
             this.setStatus("");
+            ex.printStackTrace();
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }

@@ -11,7 +11,7 @@ public class StringAlgorithmParameter extends AlgorithmParameters {
 
     public String parameter = "";
     private SyntaxChecker syntaxChecker = null;
-    private final String label, explanation;
+    public final String label, explanation;
 
     public StringAlgorithmParameter(String label, String initialValue) {
         this.label = label;
