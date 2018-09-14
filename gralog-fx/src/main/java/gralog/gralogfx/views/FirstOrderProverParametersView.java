@@ -1,14 +1,14 @@
 /* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
-package gralog.firstorderlogic.view;
+package gralog.gralogfx.views;
 
 import gralog.firstorderlogic.algorithm.FirstOrderProver;
-import gralog.gralogfx.RecentQueries;
+import gralog.RecentQueries;
 import gralog.firstorderlogic.parser.FirstOrderSyntaxChecker;
 import gralog.parser.SyntaxChecker;
 import gralog.firstorderlogic.algorithm.FirstOrderProverParameters;
 import gralog.gralogfx.UIConstants;
-import gralog.gralogfx.views.*;
+
 import java.util.function.Consumer;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -21,7 +21,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Text;
-import gralog.firstorderlogic.algorithm.FirstOrderProverParameters;
 
 /**
  *
