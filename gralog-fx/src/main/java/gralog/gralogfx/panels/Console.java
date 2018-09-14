@@ -297,8 +297,7 @@ public class Console extends HBox implements GralogWindow{
 
 
 
-        if(!parser.getErrorMsg().isEmpty())
-            errorOutput(parser.getErrorMsg());
+        errorOutput(parser.getErrorMsg());
 
         parser.setErrorMsg("");
 
@@ -374,8 +373,7 @@ public class Console extends HBox implements GralogWindow{
                 case NONE:                      return;
             }
 
-            if(!dialog.getErrorMsg().isEmpty())
-                errorOutput(dialog.getErrorMsg());
+            errorOutput(dialog.getErrorMsg());
 
             dialog.setErrorMsg("");
             parameters.clear();
@@ -444,7 +442,10 @@ public class Console extends HBox implements GralogWindow{
     }
 
     public void errorOutput(String text){
-        
+        if(text.isEmpty()){
+            System.out.println("error output is empty");
+            return;
+        }
         System.out.println("error output" + text);
 
         ConsoleField t = new ConsoleField(text);
@@ -509,13 +510,8 @@ public class Console extends HBox implements GralogWindow{
     }
 
     public void output(ConsoleField t){
-        
-
-        
         t.setFont(Font.font ("Verdana", 12));
-
         finalizeConsoleFieldAdd(t);
-
     }
 
     public void clear(){
@@ -524,7 +520,6 @@ public class Console extends HBox implements GralogWindow{
             historyPointer = -1;
         }
     }
-
     
 
     @Override
