@@ -65,14 +65,6 @@ public final class ViewManager {
             if (VIEW_REGISTER.containsKey(sup)) {
                 Constructor<? extends View> ctor = VIEW_REGISTER.get(sup);
                 return ctor.newInstance();
-            }else{
-                for (Class inter : VIEW_REGISTER.keySet()){
-                    if (inter.getName().equals(sup.getName())){
-                        Constructor<? extends View> ctor = VIEW_REGISTER.get(inter);
-                        return ctor.newInstance();
-                    }
-                    System.out.println("sup: " + sup.getName() + " inter: " + inter.getName() + " " +inter.getName().equals(sup.getName()));
-                }
             }
         }
         System.out.println("nully is a nice girl");
@@ -85,9 +77,7 @@ public final class ViewManager {
         File plugin = new File(pathToPlugin);
 
         // Add the plugin to the classpath
-
-        URLClassLoader sysloader = new URLClassLoader(new URL[] {plugin.toURL()}, ClassLoader.getSystemClassLoader());
-
+        var sysloader = ClassLoader.getSystemClassLoader();
         // Load the classes
         Collection<Class<?>> classes = new ArrayList<>();
         try (JarFile jar = new JarFile(pathToPlugin)) {

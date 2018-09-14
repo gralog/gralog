@@ -71,8 +71,9 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
         }else{
             System.out.println("object: " + obj);
         }
+        System.out.println("preob");
         view = ViewManager.instantiateView(obj.getClass());
-
+        System.out.println("postob" + view.getClass());
 
         if (view == null)
             return;
@@ -84,6 +85,7 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
         try{
             view.setStructurePane(tabView.getCurrentStructurePane());
         }catch(Exception e){}
+        System.out.println("sp: " + view.getStructurePane());
         
         Node viewNode = (Node) view;
 
