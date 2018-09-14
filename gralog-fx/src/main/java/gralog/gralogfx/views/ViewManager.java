@@ -67,12 +67,15 @@ public final class ViewManager {
                 return ctor.newInstance();
             }else{
                 for (Class inter : VIEW_REGISTER.keySet()){
-
+                    if (inter.getName().equals(sup.getName())){
+                        Constructor<? extends View> ctor = VIEW_REGISTER.get(inter);
+                        return ctor.newInstance();
+                    }
                     System.out.println("sup: " + sup.getName() + " inter: " + inter.getName() + " " +inter.getName().equals(sup.getName()));
                 }
             }
         }
-        System.out.println("nully");
+        System.out.println("nully is a nice girl");
 
         return null;
     }
