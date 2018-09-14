@@ -81,13 +81,17 @@ public class ObjectListDisplay extends AnchorPane
         listID.setCellValueFactory(
                 p -> new ReadOnlyObjectWrapper(table.getItems().indexOf(p.getValue()))
         );
+
         listID.setSortable(false);
+        objectIDs.setSortable(false);
+        actionCol.setSortable(false);
+
         listName.setCellValueFactory(cellData -> cellData.getValue().name);
         objectIDs.setCellValueFactory(cellData -> cellData.getValue().stringData);
 
-        listID.setPrefWidth(20);
+        listID.setPrefWidth(25);
         DoubleBinding usedWidth = listName.widthProperty().add(20);
-        objectIDs.prefWidthProperty().bind(table.widthProperty().subtract(usedWidth).subtract(55));
+        objectIDs.prefWidthProperty().bind(table.widthProperty().subtract(usedWidth).subtract(60));
         actionCol.prefWidthProperty().bind(table.widthProperty().multiply(0).add(35));
         table.setItems(list);
         table.getColumns().addAll(listID, listName, objectIDs, actionCol);
