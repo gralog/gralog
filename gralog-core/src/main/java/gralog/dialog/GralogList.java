@@ -9,10 +9,11 @@ import java.util.function.Supplier;
 
 public class GralogList<T> {
 
+
     public SimpleStringProperty name;
     public SimpleStringProperty stringData;
 
-    private List<T> list = new ArrayList<>();
+    public List<T> list = new ArrayList<>();
 
     private Function<T, String> toString;
 

@@ -1,6 +1,9 @@
 package gralog.gralogfx.panels;
 
 import gralog.dialog.GralogList;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
@@ -8,8 +11,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -27,8 +31,10 @@ public class ObjectListDisplay extends AnchorPane
         var table = new TableView<GralogList>();
 
 
-        var listID = new TableColumn<GralogList, String>("No.");
+        var listID = new TableColumn<GralogList, String>("#");
+        var listName = new TableColumn<GralogList, String>("Name");
         var objectIDs = new TableColumn<GralogList, String>("Objects");
+
         TableColumn actionCol = new TableColumn("");
         // taken from StackOverflow https://stackoverflow.com/a/29490190
         Callback<TableColumn<GralogList, String>, TableCell<GralogList, String>> cellFactory
@@ -72,14 +78,19 @@ public class ObjectListDisplay extends AnchorPane
 
         actionCol.setCellFactory(cellFactory);
 
-        listID.setCellValueFactory(cellData -> cellData.getValue().name);
+        listID.setCellValueFactory(
+                p -> new ReadOnlyObjectWrapper(table.getItems().indexOf(p.getValue()))
+        );
+        listID.setSortable(false);
+        listName.setCellValueFactory(cellData -> cellData.getValue().name);
         objectIDs.setCellValueFactory(cellData -> cellData.getValue().stringData);
 
-        DoubleBinding usedWidth = listID.widthProperty().add(0);
+        listID.setPrefWidth(20);
+        DoubleBinding usedWidth = listName.widthProperty().add(20);
         objectIDs.prefWidthProperty().bind(table.widthProperty().subtract(usedWidth).subtract(55));
         actionCol.prefWidthProperty().bind(table.widthProperty().multiply(0).add(35));
         table.setItems(list);
-        table.getColumns().addAll(listID, objectIDs, actionCol);
+        table.getColumns().addAll(listID, listName, objectIDs, actionCol);
 
         getChildren().addAll(table);
 

@@ -18,13 +18,22 @@ public class Dialog {
     private Map<String, ArrayList<Vertex>> vertexListS;
     private Map<String, ArrayList<Edge>> edgeListS;
 
+    private List<GralogList<Vertex>> vertexList;
+    private List<GralogList<Edge>> edgeList;
+
+
+
     private String errorMsg = "";
 
     public Dialog() {
-        vertices = new ArrayList<Vertex>();
-        edges = new ArrayList<Edge>();
-        vertexListS = new HashMap();
-        edgeListS = new HashMap();
+        vertices = new ArrayList<>();
+        edges = new ArrayList<>();
+
+        vertexListS = new HashMap<>();
+        edgeListS = new HashMap<>();
+
+        vertexList = new ArrayList<>();
+        edgeList = new ArrayList<>();
     }
 
     public Map<String, ArrayList<Vertex>> getVertexListS(){
@@ -61,39 +70,6 @@ public class Dialog {
         return;
     }
 
-    public void unionLists (ArrayList source1, ArrayList source2, ArrayList target){
-        HashSet<Object> tmp = new HashSet<Object> (source1);
-        for (Object x : source2)
-            tmp.add(x);
-        target.addAll(tmp);
-    }
-
-    // note: source1 and source2 are guaranteed to have every element only once
-    public void intersectionLists(ArrayList source1, ArrayList source2, ArrayList target){
-        HashSet tmp = new HashSet(source1);
-        for (Object x : source2)
-            if (tmp.contains(x))
-                target.add(x);
-    }
-
-    public void symmetricDifferenceLists(ArrayList source1, ArrayList source2, ArrayList target){
-        HashSet tmp1 = new HashSet(source1);
-        HashSet tmp2 = new HashSet(source2);
-        for (Object x : source1)
-            if (! tmp2.contains(x))
-                target.add(x);
-        for (Object x : source2)
-            if (! tmp1.contains(x))
-                target.add(x);
-    }
-
-    public void differenceLists(ArrayList source1, ArrayList source2, ArrayList target){
-        HashSet tmp = new HashSet(source2);
-        for (Object x : source1)
-            if (! tmp.contains(x))
-                target.add(x);
-    }
-
     public void twoListsOp(ArrayList<String> parameters){
         if (! vertexListS.containsKey(parameters.get(1))){
             errorMsg = parameters.get(1) + " is not a name of a vertex list.\n";
@@ -106,16 +82,16 @@ public class Dialog {
         ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(3));
         switch (parameters.get(0)){ // union, intersection, difference, symmetric
             case "UNION":
-                unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
                 break;
             case "INTERSECTION":
-                intersectionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.intersectionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
                 break;
             case "DIFFERENCE":
-                differenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.differenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
                 break;
             case "SYMMETRIC":
-                symmetricDifferenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.symmetricDifferenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
                 break;
         }
 
@@ -652,7 +628,7 @@ public class Dialog {
             return vertexListS.get(s);
         }
         else{
-            vertexListS.put(s,new ArrayList<Vertex>());
+            vertexListS.put(s,new ArrayList<>());
             return (vertexListS.get(s));
         }
     }
@@ -741,7 +717,8 @@ public class Dialog {
             }
 
             // compute targetVertexList: if it doesn't exist, create a new one
-            ArrayList<Vertex> targetVertexList = getTargetVertexList(parameters.get(parameters.size()-1)); // where to filter to
+            var targetVertexList = getTargetVertexList(parameters.get(parameters.size()-1)); // where to filter to
+
             parameters.remove(parameters.size()-1); // remove name of targetVertexList
 
             //compute sourceVertexList
