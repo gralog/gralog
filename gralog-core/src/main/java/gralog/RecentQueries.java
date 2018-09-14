@@ -1,6 +1,6 @@
 /* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
-package gralog.gralogfx;
+package gralog;
 
 import gralog.preferences.Preferences;
 import java.util.Arrays;
@@ -12,11 +12,13 @@ import java.util.List;
  */
 public final class RecentQueries {
 
+    public static final int MAX_RECENT_QUERIES = 20;
+
     private RecentQueries() {
     }
 
     private static List<String> respectCapacity(List<String> queries) {
-        if (queries.size() > UIConstants.MAX_RECENT_QUERIES)
+        if (queries.size() > MAX_RECENT_QUERIES)
             return queries.subList(0, queries.size() - 1);
         return queries;
     }
