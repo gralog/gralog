@@ -624,9 +624,10 @@ public class Dialog {
         ArrayList<Vertex> list2 = vertexListS.get(parameters.get(1));
         // choose s.t. list1 is shorter than list2
 
+        System.out.println(ANSI_GREEN + parameters + ANSI_RESET);
         for (int i = 0; i < list1.size(); i++) {
             net.objecthunter.exp4j.Expression expression =
-                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(0))
+                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(2))
                             .variable("i")
                             .build()
                             .setVariable("i", i);
@@ -804,7 +805,7 @@ public class Dialog {
                 sourceEdgeList = edgeListS.get(parameters.get(0));
 
             // remove now unnecessary parameters
-            if (parameters.get(1).equals("EGDES")) {
+            if (parameters.get(1).equals("EDGES")) {
                 parameters.remove(1);
                 parameters.remove(0);
             }
