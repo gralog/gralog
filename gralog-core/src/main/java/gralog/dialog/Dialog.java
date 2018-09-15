@@ -625,24 +625,8 @@ public class Dialog {
         // choose s.t. list1 is shorter than list2
 
         System.out.println(ANSI_GREEN + parameters + ANSI_RESET);
-        for (int i = 0; i < list1.size(); i++) {
-            net.objecthunter.exp4j.Expression expression =
-                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(2))
-                            .variable("i")
-                            .build()
-                            .setVariable("i", i);
-            double j_double = expression.evaluate();
-            int j = (int) Math.floor(j_double);
-            if (0 <= j && j < list2.size())
-                structure.addEdge(list1.get(i),list2.get(j));
-            else{
-                errorMsg = errorMsg + "Result of applying formula to "
-                        + i + " out of list "
-                        + parameters.get(1) +
-                        ". Skipping " + i + ".\n";
-            }
 
-        }
+
     }// todo check use of exp4j
 
 
