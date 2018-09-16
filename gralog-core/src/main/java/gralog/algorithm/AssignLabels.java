@@ -29,7 +29,7 @@ public class AssignLabels extends Algorithm {
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
         ProgressHandler onprogress) throws Exception {
-        System.out.println("runnin");
+
         StringAlgorithmParameter stringparam = (StringAlgorithmParameter) p;
         Preferences.setString(this.getClass(), "prefix", stringparam.parameter);
 

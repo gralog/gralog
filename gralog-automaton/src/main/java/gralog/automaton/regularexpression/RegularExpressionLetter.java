@@ -27,7 +27,7 @@ public class RegularExpressionLetter extends RegularExpression {
 
         State s = a.createVertex();
         s.startState = true;
-        s.coordinates = new Vector2D(0d, 0d);
+        s.setCoordinates(0d, 0d);
         a.addVertex(s);
 
         State t = s;
@@ -35,7 +35,7 @@ public class RegularExpressionLetter extends RegularExpression {
             s = t;
 
             t = a.createVertex();
-            t.coordinates = new Vector2D(scale * i + scale, 0d);
+            t.setCoordinates(scale * i + scale, 0d);
             a.addVertex(t);
 
             Transition e = a.createEdge(null);

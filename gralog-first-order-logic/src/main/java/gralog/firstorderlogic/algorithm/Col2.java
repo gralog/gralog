@@ -20,7 +20,7 @@ public class Col2 extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        System.out.println("col2");
+
         return new Col2Parameters();
     }
 
@@ -79,7 +79,7 @@ public class Col2 extends Algorithm {
         Integer coor = 1;
         for (Integer i = 0; i < nVertices; i++) {
             Vertex v = s.createVertex();
-            v.coordinates = new Vector2D(Math.random() * 100, Math.random() * 100);
+            v.setCoordinates(Math.random() * 100, Math.random() * 100);
             v.label = Integer.toString(i);
 
             s.addVertex(v);

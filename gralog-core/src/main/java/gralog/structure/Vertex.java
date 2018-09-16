@@ -429,7 +429,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     }
 
     public String fromXml(Element vnode) {
-        coordinates = new Vector2D(
+        this.setCoordinates(
             Double.parseDouble(vnode.getAttribute("x")),
             Double.parseDouble(vnode.getAttribute("y"))
         );

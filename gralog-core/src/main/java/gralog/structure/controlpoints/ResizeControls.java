@@ -86,7 +86,7 @@ public class ResizeControls implements IMovable, Serializable
     private void updateVertexShape(){
         v.shape.setWidth(Math.abs(cs[0].position.getX() - cs[2].position.getX()));
         v.shape.setHeight(Math.abs(cs[0].position.getY() - cs[2].position.getY()));
-        v.coordinates = new Vector2D( (cs[1].position.getX() + cs[0].position.getX()) / 2,
+        v.setCoordinates( (cs[1].position.getX() + cs[0].position.getX()) / 2,
                                       (cs[2].position.getY() + cs[1].position.getY()) / 2);
     }
 

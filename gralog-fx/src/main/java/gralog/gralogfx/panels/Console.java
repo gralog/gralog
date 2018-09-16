@@ -184,7 +184,7 @@ public class Console extends HBox implements GralogWindow{
                 }
             }
             for (Text t : texts){
-                System.out.println("t: " + t);;
+
                 t.setWrappingWidth((Double)newVal);
             }
         });
@@ -213,9 +213,7 @@ public class Console extends HBox implements GralogWindow{
             fText.setFont(Font.font ("Verdana", 12));
 
             heightNumber += (int)(fText.getLayoutBounds().getWidth()/(this.output.getWidth()-2));
-            System.out.println("adding: " + (int)(fText.getLayoutBounds().getWidth()/this.output.getWidth()) + " ie: " + fText.getLayoutBounds().getWidth() + " / " + this.output.getWidth());
         }
-        System.out.println("heightNumber: " + heightNumber);
 
         return (heightNumber * LINEHEIGHT + 10);
     }
@@ -230,7 +228,7 @@ public class Console extends HBox implements GralogWindow{
     }
 
     public void onSpace(String text, StructurePane currentPane){
-        System.out.println("space!");
+
     }
 
     public void onEnter(String text, StructurePane currentPane){
@@ -389,18 +387,18 @@ public class Console extends HBox implements GralogWindow{
     public void finalizeConsoleFieldAdd(ConsoleField t){
 
         int height = estimateHeight(t.getText());
-        System.out.println("estimated: " + height);
+
         t.setMaxHeight(height);
         t.setMinHeight(height);
         
         t.setMaxWidth(output.getWidth()*1.0);
 
         nonUpdatedHeights.add(t);
-        System.out.println("numba of items in nonUpdatedHeights: " + nonUpdatedHeights.size());
+
         
 
         t.getStyleClass().add("consoleTextStyle");  
-        System.out.println("styleclass: " + t.getStyleClass());;  
+ 
         // t.setPrefHeight(20);
         // t.setWrapText(true);
         // t.setBackground(Background.EMPTY);
@@ -425,7 +423,7 @@ public class Console extends HBox implements GralogWindow{
 
 
         text = text.trim();
-        System.out.println("outputting " + text);
+
         
 
         ConsoleField t = new ConsoleField(text);
@@ -443,7 +441,7 @@ public class Console extends HBox implements GralogWindow{
 
     public void errorOutput(String text){
         
-        System.out.println("error output" + text);
+
 
         ConsoleField t = new ConsoleField(text);
         t.getStyleClass().add("errorStyle"); 

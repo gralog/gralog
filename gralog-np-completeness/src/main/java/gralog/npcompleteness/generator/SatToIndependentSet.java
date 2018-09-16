@@ -57,16 +57,14 @@ public class SatToIndependentSet extends Generator {
         // create gadgets for the literals
         int i = 0;
         for (String var : vars) {
-            Vertex pos = result.createVertex(); // the positive literal
-            pos.coordinates = new Vector2D(6d * i, 10d);
+            Vertex pos = result.addVertex(); // the positive literal
+            pos.setCoordinates(6d * i, 10d);
             pos.label = var;
-            result.addVertex(pos);
             posNode.put(var, pos);
 
-            Vertex neg = result.createVertex(); // the negative literal
-            neg.coordinates = new Vector2D(6d * i + 2, 10d);
+            Vertex neg = result.addVertex(); // the negative literal
+            neg.setCoordinates(6d * i + 2, 10d);
             neg.label = "¬" + var;
-            result.addVertex(neg);
             negNode.put(var, neg);
 
             result.addEdge(result.createEdge(pos, neg)); // connect them
@@ -86,13 +84,12 @@ public class SatToIndependentSet extends Generator {
             int j = 0;
             Set<Vertex> vertsOfClause = new HashSet<>();
             for (PropositionalLogicFormula literal : literals) {
-                Vertex clauseVert = result.createVertex();
-                clauseVert.coordinates = new Vector2D(
+                Vertex clauseVert = result.addVertex();
+                clauseVert.setCoordinates(
                     6d * i + 2 * Math.cos(j * Math.PI / (literals.size() - 1)),
                     3d - Math.sin(j * Math.PI / (literals.size() - 1))
                 );
                 clauseVert.label = literal.toString();
-                result.addVertex(clauseVert);
 
                 // connect vert to all verts in the same clause
                 for (Vertex w : vertsOfClause)

@@ -51,13 +51,13 @@ public class RegularExpressionAlternation extends RegularExpression {
         b.move(bOffset);
 
         // create new, common start- and final-state
-        State s = a.createVertex();
+        State s = a.addVertex();
         s.startState = true;
-        s.coordinates = new Vector2D(0d, Math.max(aMaxY, bMaxY) + scale / 2.0d);
+        s.setCoordinates(0d, Math.max(aMaxY, bMaxY) + scale / 2.0d);
 
-        State t = a.createVertex();
+        State t = a.addVertex();
         t.finalState = true;
-        t.coordinates = new Vector2D(
+        t.setCoordinates(
             Math.max(aMaxX, bMaxX) + scale * 2d,
             Math.max(aMaxY, bMaxY) + scale / 2d
         );
@@ -84,8 +84,7 @@ public class RegularExpressionAlternation extends RegularExpression {
             ((State) v).startState = false;
         }
 
-        a.addVertex(s);
-        a.addVertex(t);
+        
         return a;
     }
 }

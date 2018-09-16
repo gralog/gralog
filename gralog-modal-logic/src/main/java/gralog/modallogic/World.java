@@ -14,6 +14,7 @@ import org.w3c.dom.Element;
 @XmlName(name = "world")
 public class World extends Vertex {
 
+
     public String propositions = "";
 
 

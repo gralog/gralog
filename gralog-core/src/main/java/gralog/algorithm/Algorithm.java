@@ -20,7 +20,7 @@ public abstract class Algorithm {
 
     public Object doRun(Structure structure, AlgorithmParameters params,
         Set<Object> selection, ProgressHandler onprogress) throws Exception {
-        System.out.println("Schwuppsiwup");
+
         Object algoResult = null;
         Method[] methods = this.getClass().getMethods();
         for (Method method : methods) {
@@ -33,7 +33,7 @@ public abstract class Algorithm {
             algoResult = method.invoke(this, new Object[]{structure, params, selection, onprogress});
             break;
         }
-        System.out.println("retting");
+
         return algoResult;
     }
 
