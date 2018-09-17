@@ -214,7 +214,7 @@ public class Console extends HBox implements GralogWindow{
             heightNumber += (int)(fText.getLayoutBounds().getWidth()/(this.output.getWidth()-2));
         }
 
-        return (heightNumber * LINEHEIGHT + 10);
+        return (heightNumber * LINEHEIGHT + 20);
     }
 
     
@@ -385,8 +385,8 @@ public class Console extends HBox implements GralogWindow{
     public void finalizeConsoleFieldAdd(ConsoleField t){
 
         int height = estimateHeight(t.getText());
-        t.setMaxHeight(height);
-        t.setMinHeight(height);
+        t.setMaxHeight(height*0.55);
+        t.setMinHeight(height*0.55);
         
         t.setMaxWidth(output.getWidth()*1.0);
 
@@ -418,6 +418,7 @@ public class Console extends HBox implements GralogWindow{
 
 
         text = text.trim();
+    System.out.println("text: |"+text+"|");
         
 
         ConsoleField t = new ConsoleField(text);
