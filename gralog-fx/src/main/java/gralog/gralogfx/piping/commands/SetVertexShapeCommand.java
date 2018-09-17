@@ -63,16 +63,12 @@ public class SetVertexShapeCommand extends CommandForGralogToExecute {
 
         Diamond diamond = new Diamond(new SizeBox(4.0,4.0));
         Class<? extends RenderingShape> curr = RenderingShape.renderingShapeClasses.get(0);
-        System.out.println("borscht: " + RenderingShape.renderingShapeClasses.get(0));
-        System.out.println("truthsong: "  + curr.getSimpleName());
         boolean wasInstance = false;
 
         for (int i = 0; i < RenderingShape.renderingShapeClasses.size(); i ++){
             if (this.shape.equals(RenderingShape.renderingShapeClasses.get(i).getSimpleName().toLowerCase())){
                 wasInstance = true;
-                System.out.println("i have found the enemy and he is: " + RenderingShape.renderingShapeClasses.get(i).getSimpleName().toLowerCase());
                 SizeBox currentSizebox = this.vertex.shape.sizeBox;
-                System.out.println("constructors: " + RenderingShape.renderingShapeClasses.get(i).getConstructors()[0]);
                 try{
                     ///here!
                     Constructor cs = RenderingShape.renderingShapeClasses.get(i).getConstructors()[0];

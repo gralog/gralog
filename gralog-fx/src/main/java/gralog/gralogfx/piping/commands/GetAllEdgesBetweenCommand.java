@@ -53,7 +53,7 @@ public class GetAllEdgesBetweenCommand extends CommandForGralogToExecute {
             edgeString = edgeString.substring(0,edgeString.length()-1);
         }
 
-        System.out.println("setting edgestring");
+
         this.setResponse(edgeString);
 
         // Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);

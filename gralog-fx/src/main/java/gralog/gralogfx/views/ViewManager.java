@@ -59,15 +59,12 @@ public final class ViewManager {
     }
 
     public static View instantiateView(Class<?> forClass) throws Exception {
-        System.out.println("VIEW_REGISTER: " + VIEW_REGISTER);
         for (Class sup = forClass; sup != null; sup = sup.getSuperclass()) {
-            System.out.println("going at class: " + sup);
             if (VIEW_REGISTER.containsKey(sup)) {
                 Constructor<? extends View> ctor = VIEW_REGISTER.get(sup);
                 return ctor.newInstance();
             }
         }
-        System.out.println("nully is a nice girl");
 
         return null;
     }

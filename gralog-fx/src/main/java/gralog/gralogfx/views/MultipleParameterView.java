@@ -39,7 +39,6 @@ public class MultipleParameterView extends GridPaneView<Object> {
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
-        System.out.println("hello there world!");
 
         setVgap(5);
 
@@ -158,7 +157,6 @@ public class MultipleParameterView extends GridPaneView<Object> {
         }
  
         valueField.selectedProperty().addListener(e -> {
-            System.out.println("halpppp they're changing meeeeee");
             try {
                 f.set(displayObject, valueField.isSelected());
                 requestRedraw();

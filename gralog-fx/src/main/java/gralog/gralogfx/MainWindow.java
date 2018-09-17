@@ -484,7 +484,6 @@ public class MainWindow extends Application {
     }
 
     public void onNew(String structureName) throws Exception {
-        System.out.println("instantiating structrure called: " + structureName);
         Structure structure = StructureManager.instantiateStructure(structureName);
         tabs.addTab(structureName, structure);
         setStatus("created a " + structureName + "...");
@@ -533,7 +532,6 @@ public class MainWindow extends Application {
                     } else {
                         structure.writeToFile(file.getAbsolutePath());
                     }
-                    System.out.println("Saving " + file.getName() + " to: \t" + file.getPath());
                 }
             }
         } catch (Exception ex) {

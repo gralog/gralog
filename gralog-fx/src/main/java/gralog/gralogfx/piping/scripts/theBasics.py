@@ -3,5 +3,7 @@
 from Gralog import *
 g = Graph("undirected");
 
-v = g.addVertex();
-v.setColor("blue");
+for x in range(10):
+	v = g.addVertex();
+	v.setColor("blue");
+	g.pause();

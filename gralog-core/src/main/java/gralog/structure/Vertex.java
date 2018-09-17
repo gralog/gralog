@@ -177,7 +177,6 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     void connectEdge(Edge e){
         if (e.isDirected()){
-            System.out.println("we're dealing wiht a direced boi" + e.isDirected);
             if(e.getSource() == this){
                 //deprecated local id Vergabe. 
                 // if(e.getId() == -1 && incidentEdges.isEmpty()){

@@ -124,12 +124,11 @@ public class PreferenceWindow extends Stage {
                     ((ColorPicker)node).setValue(Color.rgb(c.r, c.g, c.b));
                 }
                 if(node instanceof Button){
-                    System.out.println("lehishtamesh");
+
                     Button button = (Button)node;
                     this.pipingFile = Preferences.getFile(node.getId(),null);
                     String simpleName = this.pipingFile.getName();
                     button.setText(simpleName);
-                    System.out.println("we got from tha config: " + this.pipingFile.getName());
                     button.setOnAction(e -> {
                         this.newPipingFile = this.pipingSourceFileChooser.showOpenDialog(this);
                         button.setText(newPipingFile.getName());

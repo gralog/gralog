@@ -61,7 +61,7 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
         try{
             this.id = Integer.parseInt(externalCommandSegments[4]);
         }catch(Exception e){
-            System.out.println("no id given, who gives a fuck");
+            //no id given; no matter
         }
 	}
 

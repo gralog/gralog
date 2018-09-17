@@ -1238,7 +1238,6 @@ public class StructurePane extends StackPane implements StructureListener {
                 } else {
                     structure.writeToFile(file.getAbsolutePath());
                 }
-                System.out.println("Saving " + file.getName() + " to: \t" + file.getPath());
             }catch(Exception ex){
                 ExceptionBox x = new ExceptionBox();
                 x.showAndWait(ex);

@@ -69,7 +69,7 @@ public class SetEdgePropertyCommand extends CommandForGralogToExecute {
                             f.set(this.edge,Integer.parseInt(this.propertyStringValue));
                         }else{ //string lol
                             // Constructor cs = f.get(this.edge).getClass().getConstructors()[0];
-                            // System.out.println("constructor? : " + cs);
+
                             // cs.newInstance(this.propertyStringValue);
                             f.set(this.edge,this.propertyStringValue);
                             

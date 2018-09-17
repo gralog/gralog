@@ -68,7 +68,7 @@ public class SetVertexPropertyCommand extends CommandForGralogToExecute {
                             f.set(this.vertex,Integer.parseInt(this.propertyStringValue));
                         }else{ //string lol
                             // Constructor cs = f.get(this.vertex).getClass().getConstructors()[0];
-                            // System.out.println("constructor? : " + cs);
+
                             // cs.newInstance(this.propertyStringValue);
                             f.set(this.vertex,this.propertyStringValue);
                             

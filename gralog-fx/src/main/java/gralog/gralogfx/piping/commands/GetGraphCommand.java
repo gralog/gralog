@@ -21,10 +21,10 @@ public class GetGraphCommand extends CommandForGralogToExecute {
 	public GetGraphCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-        System.out.println("init GetGraphCommand");
+
         
         this.format = PipingMessageHandler.properGraphFormats(externalCommandSegments[2]);
-        System.out.println("this.format: " + this.format.toString());
+
 
         if (this.format == GraphType.Null){
             this.fail();
@@ -98,7 +98,7 @@ public class GetGraphCommand extends CommandForGralogToExecute {
 
         if (this.format == GraphType.GTgf){
             try{
-                System.out.println("GTgfin all up in here");
+
                 //String tgf = TrivialGraphFormatExport.exportToString(this.structure);
                 // tgf = PipingPresets.multiLineIfyGraphString(tgf);
                 // this.setResponse(tgf);

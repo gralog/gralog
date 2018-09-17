@@ -62,7 +62,6 @@ public class SetVertexCoordinatesCommand extends CommandForGralogToExecute {
         Vector2D coordinates = this.vertex.getCoordinates();
         this.x = (stringX == null) ? coordinates.getX() : Double.parseDouble(stringX);
         this.y = (stringY == null) ? coordinates.getY() : Double.parseDouble(stringY);
-        System.out.println("we got x: " + x+ "  and y: " + y + " and ubergeben is: " + stringX + " and " + stringY);
     }
 
     
@@ -79,8 +78,6 @@ public class SetVertexCoordinatesCommand extends CommandForGralogToExecute {
         
         Vector2D newCoordinates = new Vector2D(x,y);
         this.vertex.setCoordinates(newCoordinates);
-        System.out.println("we gave: " + newCoordinates);
-        System.out.println("we've got new vector: " + this.vertex.getCoordinates());
 
         this.setResponse(null);
 
