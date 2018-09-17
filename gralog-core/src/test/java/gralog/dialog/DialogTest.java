@@ -41,6 +41,7 @@ public class DialogTest {
         parameters.add("<");
         parameters.add("5");
         parameters.add("P5");
+        dialog.filter(parameters,c20,highlights);
         parameters.clear();
 
         parameters.add("ALL");
@@ -49,6 +50,7 @@ public class DialogTest {
         parameters.add(">");
         parameters.add("4");
         parameters.add("Q5");
+        dialog.filter(parameters,c20,highlights);
         parameters.clear();
     }
 
@@ -150,10 +152,21 @@ public class DialogTest {
     }
 
     @Test
+    public void testFilterNoEdges(){
+        highlights.clearSelection();
+        parameters.add("SELECTED");
+        parameters.add("EDGES");
+        parameters.add("LISTEMPTY");
+        dialog.filter(parameters,c20,highlights);
+
+    }
+
+    @Test
     public void testConnect(){
         parameters.add("P5");
         parameters.add("Q5");
         parameters.add("i+1");
+        dialog.connectFormula(parameters,c20);
     }
 
 }

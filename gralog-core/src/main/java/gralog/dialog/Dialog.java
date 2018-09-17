@@ -624,24 +624,9 @@ public class Dialog {
         ArrayList<Vertex> list2 = vertexListS.get(parameters.get(1));
         // choose s.t. list1 is shorter than list2
 
-        for (int i = 0; i < list1.size(); i++) {
-            net.objecthunter.exp4j.Expression expression =
-                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(0))
-                            .variable("i")
-                            .build()
-                            .setVariable("i", i);
-            double j_double = expression.evaluate();
-            int j = (int) Math.floor(j_double);
-            if (0 <= j && j < list2.size())
-                structure.addEdge(list1.get(i),list2.get(j));
-            else{
-                errorMsg = errorMsg + "Result of applying formula to "
-                        + i + " out of list "
-                        + parameters.get(1) +
-                        ". Skipping " + i + ".\n";
-            }
+        System.out.println(ANSI_GREEN + parameters + ANSI_RESET);
 
-        }
+
     }// todo check use of exp4j
 
 
@@ -804,7 +789,7 @@ public class Dialog {
                 sourceEdgeList = edgeListS.get(parameters.get(0));
 
             // remove now unnecessary parameters
-            if (parameters.get(1).equals("EGDES")) {
+            if (parameters.get(1).equals("EDGES")) {
                 parameters.remove(1);
                 parameters.remove(0);
             }
