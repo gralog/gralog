@@ -22,7 +22,6 @@ public class SpringEmbedder extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-        System.out.println("schnurg");
         return new SpringEmbedderParameters();
     }
 

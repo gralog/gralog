@@ -44,9 +44,7 @@ public class AlgorithmResultStage extends Stage {
         try {
             ArrayList<Object> myList = new ArrayList<Object>();
             myList.add(result);
-            System.out.println("pre");
             objectInspector.setObject(myList);
-            System.out.println("post");
             // objectInspector.setObject(result, structurePane);
         } catch (Exception ex) {
         }

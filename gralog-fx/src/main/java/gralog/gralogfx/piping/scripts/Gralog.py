@@ -37,7 +37,6 @@ class Vertex:
 				valueType = propVal[1];
 
 			except:
-				print("fuck")
 				pass;
 			try:
 
@@ -47,7 +46,7 @@ class Vertex:
 				castedValue = self.graph.castValueToType(val,typ);
 				self.properties[prop] = castedValue;
 			except:
-				print("fuckfuck");
+				pass;
 
 	def getId(self):
 		return self.id;

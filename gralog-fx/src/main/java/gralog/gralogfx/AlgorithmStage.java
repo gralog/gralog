@@ -68,7 +68,6 @@ public class AlgorithmStage extends Stage {
             objectInspector.setObject(myList,(b) -> runButton.setDisable(!b));
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.out.println("gecatcht");
         }
 
         root = new BorderPane();

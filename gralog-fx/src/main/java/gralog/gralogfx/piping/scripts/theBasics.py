@@ -19,9 +19,14 @@ g = Graph("undirected");
 
 # g.pause();
 
-
-for x in range(10):
+vertices = [];
+for x in range(500):
 	v = g.addVertex();
+	vertices.append(v);
 	v.setColor("blue");
-	# g.pause();
+
+for x in vertices:
+	for y in vertices:
+		if x.getId() < y.getId():
+			x.connect(y);
 
