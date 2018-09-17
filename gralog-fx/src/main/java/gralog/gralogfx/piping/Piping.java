@@ -143,7 +143,11 @@ public class Piping extends Thread{
 
     
     public String getNextLine() throws Exception{
-        return this.in.readLine();
+        try{
+            return this.in.readLine();
+        }catch(Exception e){
+            return null;
+        }
     }
     // private PipingMessageHandler eventHandler = 
 
