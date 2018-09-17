@@ -35,12 +35,11 @@ public class Cycle extends Generator {
 
         DirectedGraph result = new DirectedGraph();
 
-        Vertex first = result.createVertex();
+        Vertex first = result.addVertex();
         first.setCoordinates(
             Math.sin(0 * 2 * Math.PI / n) * 3.5 + 3.5,
             Math.cos(0 * 2 * Math.PI / n) * 3.5 + 3.5
         );
-        result.addVertex(first);
 
         Vertex last = first;
         for (int i = 1; i < n; i++) {
@@ -52,7 +51,6 @@ public class Cycle extends Generator {
             result.addEdge(result.createEdge(last, next));
 
             last = next;
-
         }
         result.addEdge(result.createEdge(last, first));
 

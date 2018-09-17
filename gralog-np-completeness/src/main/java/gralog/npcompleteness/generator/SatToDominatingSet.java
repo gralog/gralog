@@ -56,24 +56,20 @@ public class SatToDominatingSet extends Generator {
             Vertex pos = result.addVertex(); // the positive literal
             pos.setCoordinates(6d * i, 10d);
             pos.label = var;
-
             posNode.put(var, pos);
 
             Vertex neg = result.addVertex(); // the negative literal
             neg.setCoordinates(6d * i + 2, 10d);
             neg.label = "¬" + var;
-
             negNode.put(var, neg);
 
             Vertex dummy1 = result.addVertex(); // 2 dummies
             dummy1.setCoordinates(6d * i, 12d);
             dummy1.label = var + "'";
 
-
             Vertex dummy2 = result.addVertex();
             dummy2.setCoordinates(6d * i + 2, 12d);
             dummy2.label = var + "''";
-
 
             result.addEdge(result.createEdge(pos, neg)); // connections
             result.addEdge(result.createEdge(pos, dummy1));
@@ -94,7 +90,6 @@ public class SatToDominatingSet extends Generator {
             Vertex clauseVert = result.addVertex();
             clauseVert.setCoordinates(6d * i, 1d);
             clauseVert.label = clause.toString();
-
 
             // connect clause-vertices to the nodes of their member-literals
             literals.clear();

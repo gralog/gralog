@@ -43,7 +43,6 @@ public class Grid extends Generator {
             temp.setCoordinates(1d, 2d * j + 1d);
             if (j > 0)
                 result.addEdge(result.createEdge(last.get(j - 1), temp));
-
         }
 
         for (int i = 1; i < n; i++) {

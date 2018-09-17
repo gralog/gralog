@@ -155,6 +155,8 @@ public final class Preferences {
      * */
     
     public static File getFile(String key, String defaultValue){
+        System.out.println("key: " + key + " + defaultValue" + defaultValue);
+        System.out.println("meanwhile, for key: StructurePane_gridSize the default is : " + PROPERTIES.getProperty("StructurePane_gridSize", "null"));
         String fileName = PROPERTIES.getProperty(key, defaultValue);
         File f = new File(PROPERTIES.getProperty(key, defaultValue));
         return f;
@@ -163,7 +165,7 @@ public final class Preferences {
 
    
     public static void setFile(String key, File file){
-
+        System.out.println("we gettin : " + file.getPath());
         PROPERTIES.setProperty(key, file.getPath());
         flush();
     }

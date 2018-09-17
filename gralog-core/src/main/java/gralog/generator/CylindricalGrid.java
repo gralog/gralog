@@ -47,7 +47,6 @@ public class CylindricalGrid extends Generator {
             );
             if (j > 0)
                 result.addEdge(result.createEdge(first.get(j - 1), temp));
-
         }
 
         ArrayList<Vertex> last = first;
@@ -68,7 +67,6 @@ public class CylindricalGrid extends Generator {
                         result.addEdge(result.createEdge(temp, lasttemp));
 
                 result.addEdge(result.createEdge(last.get(j), temp));
-
 
                 lasttemp = temp;
             }

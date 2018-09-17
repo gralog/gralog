@@ -38,11 +38,13 @@ public class Wheel extends Generator {
         Vertex center = result.addVertex();
         center.setCoordinates(3.5, 3.5);
 
+
         Vertex first = result.addVertex();
         first.setCoordinates(
             Math.sin(0 * 2 * Math.PI / n) * 3.5 + 3.5,
             Math.cos(0 * 2 * Math.PI / n) * 3.5 + 3.5
         );
+
 
         Vertex last = first;
         for (int i = 1; i < n; i++) {
@@ -56,6 +58,7 @@ public class Wheel extends Generator {
             result.addEdge(result.createEdge(last, center));
 
             last = next;
+
         }
         result.addEdge(result.createEdge(last, first));
         result.addEdge(result.createEdge(last, center));

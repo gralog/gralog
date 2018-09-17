@@ -22,7 +22,7 @@ public class SpringEmbedder extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-
+        System.out.println("schnurg");
         return new SpringEmbedderParameters();
     }
 
@@ -84,7 +84,7 @@ public class SpringEmbedder extends Algorithm {
                 Math.random() * dimensionLimits.getX(),
                 Math.random() * dimensionLimits.getY()
             );
-            a.setCoordinates(coordinates);
+            a.coordinates = coordinates;
             // should make sure that no two vertices have the same position
 
             tractions.add(new Vector2D(0d, 0d));
@@ -130,7 +130,7 @@ public class SpringEmbedder extends Algorithm {
                     Math.max(0.0d,
                         Math.min(dimensionLimits.getY(), oldCoordinates.getY()) + p.delta * tractions.get(i).getY())
                 );
-                a.setCoordinates(newCoordinates);
+                a.coordinates = newCoordinates;
 
                 // for the loop condition
                 double current_movement

@@ -62,11 +62,13 @@ public class SatToVertexCover extends Generator {
             Vertex pos = result.addVertex(); // the positive literal
             pos.setCoordinates(6d * i, 10d);
             pos.label = var;
+
             posNode.put(var, pos);
 
             Vertex neg = result.addVertex(); // the negative literal
             neg.setCoordinates(6d * i + 2, 10d);
             neg.label = "¬" + var;
+
             negNode.put(var, neg);
 
             result.addEdge(result.createEdge(pos, neg));
@@ -87,11 +89,14 @@ public class SatToVertexCover extends Generator {
             Vertex clauseVert1 = result.addVertex();
             clauseVert1.setCoordinates(5d * i, 3d);
 
+
             Vertex clauseVert2 = result.addVertex();
             clauseVert2.setCoordinates(5d * i + 2, 3d);
 
+
             Vertex clauseVert3 = result.addVertex();
             clauseVert3.setCoordinates(5d * i + 1, 2d);
+
 
             result.addEdge(result.createEdge(clauseVert1, clauseVert2));
             result.addEdge(result.createEdge(clauseVert2, clauseVert3));

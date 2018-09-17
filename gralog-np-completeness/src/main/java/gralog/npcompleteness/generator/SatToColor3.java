@@ -62,33 +62,28 @@ public class SatToColor3 extends Generator {
         Vertex trueVert = result.addVertex();
         trueVert.setCoordinates(8d, 14d);
         trueVert.label = "true";
-        result.addVertex(trueVert);
 
         Vertex falseVert = result.addVertex();
         falseVert.setCoordinates(12d, 14d);
         falseVert.label = "false";
-
         result.addEdge(result.createEdge(trueVert, falseVert));
 
-        Vertex dummyVert = result.createVertex();
+        Vertex dummyVert = result.addVertex();
         dummyVert.setCoordinates(10d, 12d);
-
         result.addEdge(result.createEdge(trueVert, dummyVert));
         result.addEdge(result.createEdge(falseVert, dummyVert));
 
         // create gadgets for the literals
         int i = 0;
         for (String var : vars) {
-            Vertex pos = result.createVertex(); // the positive literal
+            Vertex pos = result.addVertex(); // the positive literal
             pos.setCoordinates(6d * i, 8d);
             pos.label = var;
-            result.addVertex(pos);
             posNode.put(var, pos);
 
-            Vertex neg = result.createVertex(); // the negative literal
+            Vertex neg = result.addVertex(); // the negative literal
             neg.setCoordinates(6d * i + 2, 8d);
             neg.label = "¬" + var;
-            result.addVertex(neg);
             negNode.put(var, neg);
 
             result.addEdge(result.createEdge(pos, neg));
@@ -111,28 +106,22 @@ public class SatToColor3 extends Generator {
             // create gadget for clause (6 nodes)
             Vertex leftBottomVert = result.addVertex();
             leftBottomVert.setCoordinates(8d * i, 4d);
-            result.addVertex(leftBottomVert);
 
             Vertex leftTopVert = result.addVertex();
             leftTopVert.setCoordinates(8d * i, 2d);
-            result.addVertex(leftTopVert);
 
             Vertex centerBottomVert = result.addVertex();
             centerBottomVert.setCoordinates(8d * i + 2, 3d);
-            result.addVertex(centerBottomVert);
 
             Vertex centerTopVert = result.addVertex();
             centerTopVert.setCoordinates(8d * i + 2, 1d);
             centerTopVert.label = clause.toString();
-            result.addVertex(centerTopVert);
 
             Vertex rightBottomVert = result.addVertex();
             rightBottomVert.setCoordinates(8d * i + 4, 4d);
-            result.addVertex(rightBottomVert);
 
             Vertex rightTopVert = result.addVertex();
             rightTopVert.setCoordinates(8d * i + 4, 2d);
-            result.addVertex(rightTopVert);
 
             // create edges in gadget
             result.addEdge(result.createEdge(centerTopVert, leftTopVert));

@@ -20,7 +20,7 @@ public class Col2 extends Algorithm {
 
     @Override
     public AlgorithmParameters getParameters(Structure s) {
-
+        System.out.println("col2");
         return new Col2Parameters();
     }
 

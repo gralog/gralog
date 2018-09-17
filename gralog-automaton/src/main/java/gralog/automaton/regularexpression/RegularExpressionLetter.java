@@ -25,18 +25,16 @@ public class RegularExpressionLetter extends RegularExpression {
     public Automaton thompsonConstruction(double scale) {
         Automaton a = new Automaton();
 
-        State s = a.createVertex();
+        State s = a.addVertex();
         s.startState = true;
         s.setCoordinates(0d, 0d);
-        a.addVertex(s);
 
         State t = s;
         for (int i = 0; i < string.length(); i++) {
             s = t;
 
-            t = a.createVertex();
+            t = a.addVertex();
             t.setCoordinates(scale * i + scale, 0d);
-            a.addVertex(t);
 
             Transition e = a.createEdge(null);
             e.setSource(s);

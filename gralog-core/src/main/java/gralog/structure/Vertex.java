@@ -115,7 +115,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         this.strokeColor = new GralogColor(v.strokeColor);
         this.fillColor = new GralogColor(v.fillColor);
 
-        // this.coordinates = new Vector2D(v.coordinates);
+        // this.setCoordinates(v.coordinates);
         this.setCoordinates(v.coordinates);
         this.listeners = new HashSet<>(v.listeners);
 
@@ -428,7 +428,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     }
 
     public String fromXml(Element vnode) {
-        this.setCoordinates(
+        coordinates = new Vector2D(
             Double.parseDouble(vnode.getAttribute("x")),
             Double.parseDouble(vnode.getAttribute("y"))
         );

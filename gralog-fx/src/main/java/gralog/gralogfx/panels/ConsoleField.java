@@ -15,6 +15,8 @@ public class ConsoleField extends TextArea{
         super.textProperty().addListener(new ChangeListener<String>(){
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                System.out.println("changed: " + changed);
+                System.out.println("oldvalue: " + oldValue + " newValue " + newValue);
                 if (!ConsoleField.this.changed){
                     ConsoleField.this.changed = true;
                     setText(oldValue);

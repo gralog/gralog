@@ -44,7 +44,7 @@ public class GeneratorCosetAutomaton extends Generator {
             state.label = "" + i;
 
             states.add(state);
-            // result.addVertex(state);
+
         }
 
         for (int i = 0; i < n; i++) {

@@ -84,7 +84,6 @@ public class RegularExpressionAlternation extends RegularExpression {
             ((State) v).startState = false;
         }
 
-        
         return a;
     }
 }

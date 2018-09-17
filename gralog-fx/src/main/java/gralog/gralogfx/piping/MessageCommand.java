@@ -15,6 +15,7 @@ public class MessageCommand extends CommandForGralogToExecute {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
+        System.out.println("messagecommand");
 	}
 
 

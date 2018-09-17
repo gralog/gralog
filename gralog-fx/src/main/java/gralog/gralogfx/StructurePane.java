@@ -442,6 +442,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     this.requestRedraw();
                     break;
                 case SPACE:
+                    System.out.println("space rhymes with face");
                     Piping myPiping = this.getPiping();
                     if (myPiping != null && myPiping.isInitialized()){
                         if (myPiping.state == Piping.State.Paused){
@@ -451,6 +452,8 @@ public class StructurePane extends StackPane implements StructureListener {
                             this.handleSpontaneousPause();
                         }else if(myPiping.state == Piping.State.WaitingForSelection){
                             this.handlePlannedVertexSelection();
+                        }else{
+                            System.out.println("no piping in this puppy!" + (myPiping == null));
                         }
                     }else{
                         System.out.println("piping is null or unit!" + myPiping);
@@ -573,7 +576,7 @@ public class StructurePane extends StackPane implements StructureListener {
                         select(selected);
                     }
                     dragging = highlights.getSelection();
-                    if(dragging.size() == 1 && (selected instanceof Vertex) );{
+                    if(dragging.size() == 1 && selected instanceof Vertex){
                         singleVertexDragPosition = ((Vertex)selected).coordinates.minus(lastMouseX, lastMouseY);
                     }
                     if(selected instanceof Edge){
@@ -615,6 +618,7 @@ public class StructurePane extends StackPane implements StructureListener {
         //Start: handle response to piping wanting a user selected vertex
         if (!wasDraggingPrimary){
             if (this.getPiping() != null && this.getPiping().getPipingState() == Piping.State.WaitingForSelection && selected != null){
+                System.out.println("dafuq");
 
                 this.getPiping().profferSelectedObject(selected);
             }

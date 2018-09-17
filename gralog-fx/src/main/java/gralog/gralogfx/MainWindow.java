@@ -194,6 +194,7 @@ public class MainWindow extends Application {
 
         Runnable skip = new Runnable(){
             public void run(){
+                System.out.println("skip");
                 Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
                 if (currentPiping != null){
                     MainWindow.this.tabs.getCurrentStructurePane().handleSkip();
@@ -315,7 +316,9 @@ public class MainWindow extends Application {
     }
 
 
-   
+    public void foo(){
+        System.out.println("foo");
+    }
 
     public void handlePlannedConsoleInput(){}
     public void onLoadLastPlugin() {
@@ -336,6 +339,8 @@ public class MainWindow extends Application {
                         String fileName = chooseFileForPipingWindow.fileName;
                         if (fileName != null){
                             MainWindow.this.onLoadPlugin(fileName);
+                        }else{
+                            System.out.println("twas the nullteenth of april");
                         }
                     }
                 });
@@ -393,6 +398,7 @@ public class MainWindow extends Application {
             }
 
 
+            System.out.println("with filename: " + fileName);
 
             Piping newPiping = this.tabs.getCurrentStructurePane().
                     makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
@@ -441,12 +447,16 @@ public class MainWindow extends Application {
     }
 
     public StructurePane initGraph(String graphType,Piping pipelineThatCalled){
+        System.out.println("here in initgraph!!!!" + graphType);
         if (!graphType.equals("useCurrentGraph")){
+            System.out.println("trying to make a grpah with type : " + graphType);
+            System.out.println("previosly current structure pane was : " + this.tabs.getCurrentStructurePane());
             Structure temp;
             try{
                 temp = StructureManager.instantiateStructure(graphType);
             }catch(Exception e){
                 e.printStackTrace();
+                System.out.println("well that's an L" + graphType);
                 return null;
             }
          
@@ -454,6 +464,7 @@ public class MainWindow extends Application {
 
             tabs.getCurrentStructurePane().setPiping(pipelineThatCalled);
 
+            System.out.println("postwardly current structure pane is : " + this.tabs.getCurrentStructurePane());
             
             return tabs.getCurrentStructurePane();
         }else{

@@ -9,7 +9,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.function.Consumer;
 
-
 import gralog.rendering.GralogGraphicsContext;
 import gralog.rendering.shapes.RenderingShape;
 import gralog.rendering.shapes.SizeBox;
@@ -25,7 +24,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import java.lang.annotation.Annotation;
 import gralog.core.annotations.DataField;
-import java.util.List;
 
 
 import javax.sound.sampled.Line;
@@ -40,7 +38,7 @@ public class ReflectedView extends GridPaneView<Object> {
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
-
+        System.out.println("hello there world!");
 
         setVgap(5);
 
@@ -50,8 +48,6 @@ public class ReflectedView extends GridPaneView<Object> {
             if (displayObject != null) {
                 Class<?> c = displayObject.getClass();
 
-
-                
                 for (Field f : c.getFields()) {
 
                     f.setAccessible(true);
@@ -76,7 +72,6 @@ public class ReflectedView extends GridPaneView<Object> {
                     Class<?> type = f.getType();
 
                     if (display){
-
                         if (type.equals(Double.class) || type.equals(double.class)) {
                             valueControl = createDoubleValueField((double)value, readOnly, f, displayObject);
                         } else if (type.equals(Integer.class) || type.equals(int.class)) {
@@ -139,8 +134,6 @@ public class ReflectedView extends GridPaneView<Object> {
         return valueField;
     }
 
-   
-
     private Control createIntValueField(Object value, boolean readOnly, Field f, Object displayObject){
         String valueString = value.toString();
         TextField valueField = new TextField(valueString);
@@ -184,7 +177,7 @@ public class ReflectedView extends GridPaneView<Object> {
         if (!readOnly){
 
             valueField.selectedProperty().addListener(e -> {
-
+                System.out.println("halpppp they're changing meeeeee");
                 try {
                     f.set(displayObject, valueField.isSelected());
                     requestRedraw();
