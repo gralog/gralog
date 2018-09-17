@@ -199,7 +199,6 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         try{
             labelsAndSeparators.add(labels.get(i));
         }catch(Exception e){
-            e.printStackTrace();
         }
 
     }
