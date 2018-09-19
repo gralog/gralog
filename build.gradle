@@ -41,12 +41,10 @@ configure(subprojects.findAll {it.name != 'gralog-core'}) {
   }
 }
 
-//If you want to include libraries for every module, do it here
+// If you want to include libraries for every module, do it here.
 subprojects {
   // All subprojects use junit and hamcrest for their tests.
   dependencies {
-    //includes all libraries found in the lib folder
-    compile fileTree(dir: "../lib", include: "*.jar")
     compile 'org.reflections:reflections:0.9.11'
     compile 'uk.com.robust-it:cloning:1.9.10'
     compile group: 'net.objecthunter', name: 'exp4j', version: '0.4.8'
@@ -115,7 +113,6 @@ project(':gralog-fx') {
 // Use the "compile" configuration for external dependencies.
 project(':gralog-dockfx') {
   dependencies{
-
   }
 }
 project(':gralog-automaton') {
