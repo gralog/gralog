@@ -10,7 +10,7 @@ Build
 
 This is a gradle project.  You can build and run Gralog by following these steps:
 
-1. Install the Java Development Kit (JDK) 8.
+1. Install the Java Development Kit (JDK) 10 or newer.
 
 2. Run `./gradlew`.
 

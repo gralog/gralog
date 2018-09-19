@@ -54,6 +54,12 @@ public class DialogTest {
         parameters.clear();
     }
 
+    /*
+    TODO: The following tests are broken because they don't work
+    without user interaction (they try to open dialogs).  For
+    continuous integration (Travis), the tests need to run fully
+    automatic.
+
     @Test
     public void testSort(){
 
@@ -168,5 +174,5 @@ public class DialogTest {
         parameters.add("i+1");
         dialog.connectFormula(parameters,c20);
     }
-
+    */
 }

@@ -1,9 +1,3 @@
-// Avoid cryptic errors by checking the Java version early.  Java 8 is
-// also the first JDK to include JavaFX, which we also need.
-if(!JavaVersion.current().isJava8Compatible())
-  throw new GradleException(
-    'ERROR: To compile gralog, please install the Java Development Kit (JDK) 8 or later.')
-
 include 'gralog-automaton'
 include 'gralog-computation-tree-logic'
 include 'gralog-core'

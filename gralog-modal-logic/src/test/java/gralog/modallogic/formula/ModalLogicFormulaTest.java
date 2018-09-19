@@ -28,24 +28,15 @@ public class ModalLogicFormulaTest {
         c = addVertex("Q");
         d = addVertex("P,R");
 
-        addEdge(a, b);
-        addEdge(a, c);
-        addEdge(d, a);
+        structure.addEdge(a, b);
+        structure.addEdge(a, c);
+        structure.addEdge(d, a);
     }
 
     private static World addVertex(String propositions) {
-        World v = structure.createVertex();
+        World v = structure.addVertex();
         v.propositions = propositions;
-        structure.addVertex(v);
         return v;
-    }
-
-    private static Action addEdge(World source, World target) {
-        Action e = structure.createEdge(null);
-        e.setSource(source);
-        e.setTarget(target);
-        structure.addEdge(e);
-        return e;
     }
 
     @Test
