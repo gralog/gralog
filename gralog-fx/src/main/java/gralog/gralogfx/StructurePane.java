@@ -5,7 +5,6 @@ package gralog.gralogfx;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 import com.rits.cloning.Cloner;
@@ -26,7 +25,7 @@ import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 import gralog.gralogfx.piping.Piping;
 import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
-import java.util.function.Function;
+
 import java.util.function.BiFunction;
 import java.util.function.BiConsumer;
 import java.util.concurrent.CountDownLatch;
@@ -36,7 +35,6 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import gralog.structure.controlpoints.ControlPoint;
 import gralog.structure.controlpoints.ResizeControls;
@@ -227,7 +225,7 @@ public class StructurePane extends StackPane implements StructureListener {
             }
             this.requestRedraw();
         });
-        MenuItem addList = new MenuItem("Create new list");
+        MenuItem addList = new MenuItem("Create new List");
 
         addList.setOnAction(e -> {
             createListFromSelection();
@@ -569,7 +567,7 @@ public class StructurePane extends StackPane implements StructureListener {
                             position.minus(lastMouseX, lastMouseY);
                 }
                 else{
-                    //reassign selection to object that was not in the list
+                    //reassign selection to object that was not in the vertexList
                     if(!e.isShiftDown() && !highlights.isSelected(selected)){
                         selectExclusive(selected);
                     }else{
@@ -1142,7 +1140,7 @@ public class StructurePane extends StackPane implements StructureListener {
                 g.add((Vertex)o);
             }
         }
-        objectListDisplay.list.add(g);
+        objectListDisplay.vertexList.add(g);
     }
 
     public void clearSelection() {

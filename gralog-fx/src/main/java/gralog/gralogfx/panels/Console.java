@@ -8,9 +8,7 @@ import gralog.structure.Edge;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.TextFlow;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -19,17 +17,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.paint.Color;
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.beans.value.ChangeListener;
-import javafx.scene.control.ScrollBar;
 
 import javafx.beans.value.ObservableValue;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
 
@@ -84,7 +78,7 @@ public class Console extends HBox implements GralogWindow{
         input.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
 
         dialogfx = new Dialogfx();
-        dialog = new Dialog(ObjectListDisplay.list);
+        dialog = new Dialog(ObjectListDisplay.vertexList, ObjectListDisplay.edgeList);
         parser = new DialogParser();
 
 

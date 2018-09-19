@@ -1,9 +1,9 @@
 package gralog.gralogfx.panels;
 
 import gralog.dialog.GralogList;
+import gralog.structure.Edge;
+import gralog.structure.Vertex;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.image.Image;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
@@ -11,12 +11,10 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 
@@ -24,16 +22,17 @@ import java.util.ArrayList;
 
 public class ObjectListDisplay extends AnchorPane
 {
-    public static ObservableList<GralogList> list = FXCollections.observableList(new ArrayList<>());
+    public static ObservableList<GralogList<Vertex>> vertexList = FXCollections.observableList(new ArrayList<>());
+    public static ObservableList<GralogList<Edge>> edgeList = FXCollections.observableList(new ArrayList<>());
 
     public ObjectListDisplay(){
 
-        var table = new TableView<GralogList>();
+        var table = new TableView<GralogList<Vertex>>();
 
 
-        var listID = new TableColumn<GralogList, String>("#");
-        var listName = new TableColumn<GralogList, String>("Name");
-        var objectIDs = new TableColumn<GralogList, String>("Value");
+        var listID = new TableColumn<GralogList<Vertex>, String>("#");
+        var listName = new TableColumn<GralogList<Vertex>, String>("Name");
+        var objectIDs = new TableColumn<GralogList<Vertex>, String>("Value");
 
         TableColumn actionCol = new TableColumn("");
         // taken from StackOverflow https://stackoverflow.com/a/29490190
@@ -45,7 +44,7 @@ public class ObjectListDisplay extends AnchorPane
                     @Override
                     public TableCell<GralogList, String> call(final TableColumn<GralogList, String> param)
                     {
-                        final TableCell<GralogList, String> cell = new TableCell<>()
+                        return new TableCell<>()
                         {
 
                             final Button btn = new Button();
@@ -63,16 +62,13 @@ public class ObjectListDisplay extends AnchorPane
                                     setText(null);
                                 } else
                                 {
-                                    btn.setOnAction(event -> {
-                                        list.remove(getIndex());
-                                    });
+                                    btn.setOnAction(event -> vertexList.remove(getIndex()));
                                     setGraphic(btn);
                                     setText(null);
                                 }
 
                             }
                         };
-                        return cell;
                     }
                 };
 
@@ -93,7 +89,7 @@ public class ObjectListDisplay extends AnchorPane
         DoubleBinding usedWidth = listName.widthProperty().add(20);
         objectIDs.prefWidthProperty().bind(table.widthProperty().subtract(usedWidth).subtract(60));
         actionCol.prefWidthProperty().bind(table.widthProperty().multiply(0).add(35));
-        table.setItems(list);
+        table.setItems(vertexList);
         table.getColumns().addAll(listID, listName, objectIDs, actionCol);
 
         getChildren().addAll(table);
@@ -103,11 +99,11 @@ public class ObjectListDisplay extends AnchorPane
         AnchorPane.setLeftAnchor(table, 0d);
         AnchorPane.setRightAnchor(table, 0d);
 
-        //list.add(new GralogList<String>("list1"));
+        //vertexList.add(new GralogList<String>("list1"));
     }
     public String getUniqueDefaultName(){
         outer : for(int i = 0; true; i++){
-            for(GralogList l : list){
+            for(GralogList l : vertexList){
                 if(l.name.getValue().equals("list" + i)){
                     continue outer;
                 }
