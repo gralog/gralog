@@ -33,13 +33,13 @@ public class Dialogfx {
 
     public void selectList(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog){
         Structure structure = currentPane.getStructure();
-        if (dialog.getVertexListS().containsKey(parameters.get(0))) {
-            currentPane.selectAll(dialog.getVertexListS().get(parameters.get(0)));
+        if (dialog.existsVertexList(parameters.get(0))) {
+            currentPane.selectAll(dialog.findVertexList(parameters.get(0)));
             currentPane.requestRedraw();
             return;
         }
-        if (dialog.getEdgeListS().containsKey(parameters.get(0))){
-            currentPane.selectAll(dialog.getEdgeListS().get(parameters.get(0)));
+        if (dialog.existsEdgeList(parameters.get(0))){
+            currentPane.selectAll(dialog.findEdgeList(parameters.get(0)));
             currentPane.requestRedraw();
             return;
         }

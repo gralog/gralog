@@ -1,6 +1,9 @@
 package gralog.gralogfx.panels;
 
 import gralog.dialog.GralogList;
+import gralog.structure.Edge;
+import gralog.structure.Vertex;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.scene.image.Image;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
@@ -9,10 +12,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Callback;
 
@@ -20,15 +22,18 @@ import java.util.ArrayList;
 
 public class ObjectListDisplay extends AnchorPane
 {
-    public ObservableList<GralogList> list = FXCollections.observableList(new ArrayList<>());
+    public static ObservableList<GralogList<Vertex>> vertexList = FXCollections.observableList(new ArrayList<>());
+    public static ObservableList<GralogList<Edge>> edgeList = FXCollections.observableList(new ArrayList<>());
 
     public ObjectListDisplay(){
 
-        var table = new TableView<GralogList>();
+        var table = new TableView<GralogList<Vertex>>();
 
 
-        var listID = new TableColumn<GralogList, String>("No.");
-        var objectIDs = new TableColumn<GralogList, String>("Objects");
+        var listID = new TableColumn<GralogList<Vertex>, String>("#");
+        var listName = new TableColumn<GralogList<Vertex>, String>("Name");
+        var objectIDs = new TableColumn<GralogList<Vertex>, String>("Value");
+
         TableColumn actionCol = new TableColumn("");
         // taken from StackOverflow https://stackoverflow.com/a/29490190
         Callback<TableColumn<GralogList, String>, TableCell<GralogList, String>> cellFactory
@@ -39,7 +44,7 @@ public class ObjectListDisplay extends AnchorPane
                     @Override
                     public TableCell<GralogList, String> call(final TableColumn<GralogList, String> param)
                     {
-                        final TableCell<GralogList, String> cell = new TableCell<>()
+                        return new TableCell<>()
                         {
 
                             final Button btn = new Button();
@@ -57,29 +62,35 @@ public class ObjectListDisplay extends AnchorPane
                                     setText(null);
                                 } else
                                 {
-                                    btn.setOnAction(event -> {
-                                        list.remove(getIndex());
-                                    });
+                                    btn.setOnAction(event -> vertexList.remove(getIndex()));
                                     setGraphic(btn);
                                     setText(null);
                                 }
 
                             }
                         };
-                        return cell;
                     }
                 };
 
         actionCol.setCellFactory(cellFactory);
 
-        listID.setCellValueFactory(cellData -> cellData.getValue().name);
+        listID.setCellValueFactory(
+                p -> new ReadOnlyObjectWrapper(table.getItems().indexOf(p.getValue()))
+        );
+
+        listID.setSortable(false);
+        objectIDs.setSortable(false);
+        actionCol.setSortable(false);
+
+        listName.setCellValueFactory(cellData -> cellData.getValue().name);
         objectIDs.setCellValueFactory(cellData -> cellData.getValue().stringData);
 
-        DoubleBinding usedWidth = listID.widthProperty().add(0);
-        objectIDs.prefWidthProperty().bind(table.widthProperty().subtract(usedWidth).subtract(55));
+        listID.setPrefWidth(25);
+        DoubleBinding usedWidth = listName.widthProperty().add(20);
+        objectIDs.prefWidthProperty().bind(table.widthProperty().subtract(usedWidth).subtract(60));
         actionCol.prefWidthProperty().bind(table.widthProperty().multiply(0).add(35));
-        table.setItems(list);
-        table.getColumns().addAll(listID, objectIDs, actionCol);
+        table.setItems(vertexList);
+        table.getColumns().addAll(listID, listName, objectIDs, actionCol);
 
         getChildren().addAll(table);
 
@@ -88,16 +99,16 @@ public class ObjectListDisplay extends AnchorPane
         AnchorPane.setLeftAnchor(table, 0d);
         AnchorPane.setRightAnchor(table, 0d);
 
-        //list.add(new GralogList<String>("list1"));
+        //vertexList.add(new GralogList<String>("list1"));
     }
     public String getUniqueDefaultName(){
         outer : for(int i = 0; true; i++){
-            for(GralogList l : list){
-                if(l.name.getValue().equals("List (" + i + ")")){
+            for(GralogList l : vertexList){
+                if(l.name.getValue().equals("list" + i)){
                     continue outer;
                 }
             }
-            return "List (" + i + ")";
+            return "list" + i;
         }
 
     }
