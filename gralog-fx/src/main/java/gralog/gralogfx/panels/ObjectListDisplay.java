@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 public class ObjectListDisplay extends AnchorPane
 {
-    public ObservableList<GralogList> list = FXCollections.observableList(new ArrayList<>());
+    public static ObservableList<GralogList> list = FXCollections.observableList(new ArrayList<>());
 
     public ObjectListDisplay(){
 
@@ -108,11 +108,11 @@ public class ObjectListDisplay extends AnchorPane
     public String getUniqueDefaultName(){
         outer : for(int i = 0; true; i++){
             for(GralogList l : list){
-                if(l.name.getValue().equals("List (" + i + ")")){
+                if(l.name.getValue().equals("list" + i)){
                     continue outer;
                 }
             }
-            return "List (" + i + ")";
+            return "list" + i;
         }
 
     }

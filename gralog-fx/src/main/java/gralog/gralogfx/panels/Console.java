@@ -84,7 +84,7 @@ public class Console extends HBox implements GralogWindow{
         input.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
 
         dialogfx = new Dialogfx();
-        dialog = new Dialog();
+        dialog = new Dialog(ObjectListDisplay.list);
         parser = new DialogParser();
 
 

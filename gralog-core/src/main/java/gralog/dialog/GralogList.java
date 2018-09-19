@@ -3,16 +3,14 @@ package gralog.dialog;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.function.Function;
 
-public class GralogList<T> {
+public class GralogList<T> extends ArrayList<T>{
     //default toString methods to choose from
 
     public SimpleStringProperty name;
     public SimpleStringProperty stringData;
-
-    public ArrayList<T> list = new ArrayList<>();
-
     private Function<T, String> toString;
 
 
@@ -32,8 +30,8 @@ public class GralogList<T> {
 
     public void updateStringData(){
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < list.size(); i++) {
-            T elem = list.get(i);
+        for (int i = 0; i < size(); i++) {
+            T elem = get(i);
             if(toString == null){
                 sb.append(elem.toString());
             }
@@ -41,7 +39,7 @@ public class GralogList<T> {
                 sb.append(toString.apply(elem));
             }
 
-            if(i < list.size() - 1){
+            if(i < size() - 1){
                 sb.append(", ");
             }
         }
@@ -53,18 +51,24 @@ public class GralogList<T> {
         return stringData.getValue();
     }
 
-    public void add(T element){
-        list.add(element);
+    @Override
+    public boolean add(T element){
+        var ret = super.add(element);
         updateStringData();
+        return ret;
+    }
+    @Override
+    public boolean addAll(Collection<? extends T> c){
+        var ret = super.addAll(c);
+        updateStringData();
+        return ret;
     }
 
-    public void remove(int index){
-        list.remove(index);
-    }
-
-    public void remove(T element){
-        list.remove(element);
+    @Override
+    public boolean remove(Object element){
+        var ret = super.remove(element);
         updateStringData();
+        return ret;
     }
 
 }

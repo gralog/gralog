@@ -22,9 +22,15 @@ public class Dialog {
     private List<GralogList<Vertex>> allVertexLists;
     private List<GralogList<Edge>> allEdgeLists;
 
-
+    private List<GralogList> allCollection;
 
     private String errorMsg = "";
+
+    public Dialog(List<GralogList> allCollection){
+        this();
+        this.allCollection = allCollection;
+
+    }
 
     public Dialog() {
         vertices = new ArrayList<>();
@@ -71,28 +77,35 @@ public class Dialog {
     }
 
     public void twoListsOp(ArrayList<String> parameters){
-        if (! vertexListS.containsKey(parameters.get(1))){
+        if (!existsVertexList(parameters.get(1))){
             errorMsg = parameters.get(1) + " is not a name of a vertex list.\n";
             return;
         }
-        if (! vertexListS.containsKey(parameters.get(2))){
+        if (!existsVertexList(parameters.get(2))){
             errorMsg = parameters.get(2) + " is not a name of a vertex list.\n";
             return;
         }
         var gralogList = getTargetVertexList(parameters.get(3));
-        ArrayList<Vertex> targetList = gralogList.list;
+        ArrayList<Vertex> targetList = gralogList;
+
+        var first = findVertexList(parameters.get(1));
+        var second = findVertexList(parameters.get(2));
+
         switch (parameters.get(0)){ // union, intersection, difference, symmetric
             case "UNION":
-                GraphOperations.unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.unionLists(first, second ,targetList);
+                printVertexIdList(first);
+
+                printVertexIdList(targetList);
                 break;
             case "INTERSECTION":
-                GraphOperations.intersectionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.intersectionLists(first, second,targetList);
                 break;
             case "DIFFERENCE":
-                GraphOperations.differenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.differenceLists(first, second ,targetList);
                 break;
             case "SYMMETRIC":
-                GraphOperations.symmetricDifferenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.symmetricDifferenceLists(first, second, targetList);
                 break;
         }
 
@@ -127,7 +140,7 @@ public class Dialog {
         if (vertexListS.containsKey(parameters.get(0))){
             ArrayList<Vertex> allVertices = new ArrayList<>(structure.getVertices());
             ArrayList<Vertex> sourceList = vertexListS.get(parameters.get(0));
-            ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(1)).list;
+            ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(1));
             if (! targetList.isEmpty())
                 errorMsg = "Note: target list " + parameters.get(1)  + " is not empty!\n";
             addComplementVertexList(sourceList, allVertices, targetList);
@@ -136,7 +149,7 @@ public class Dialog {
         if (edgeListS.containsKey(parameters.get(0))){
             ArrayList<Edge> allVertices = new ArrayList<Edge>(structure.getEdges());
             ArrayList<Edge> sourceList = edgeListS.get(parameters.get(0));
-            ArrayList<Edge> targetList = getTargetEdgeList(parameters.get(1)).list;
+            ArrayList<Edge> targetList = getTargetEdgeList(parameters.get(1));
             if (! targetList.isEmpty())
                 errorMsg = "Note: target list " + parameters.get(1)  + " is not empty!\n";
             addComplementEdgeList(sourceList, allVertices, targetList);
@@ -622,7 +635,10 @@ public class Dialog {
     }// todo check use of exp4j
 
 
-    private GralogList findVertexList(String s){
+    private boolean existsVertexList(String s){ return findVertexList(s) != null;}
+    private boolean existsEdgeList(String s) { return findEdgeList(s) != null;}
+
+    private GralogList<Vertex> findVertexList(String s){
         for(GralogList g : allVertexLists){
             if(g.name.getValue().equals(s))
                 return g;
@@ -630,7 +646,7 @@ public class Dialog {
         return null;
     }
 
-    private GralogList findEdgeList(String s){
+    private GralogList<Edge> findEdgeList(String s){
         for(GralogList g : allEdgeLists){
             if(g.name.getValue().equals(s))
                 return g;
@@ -647,6 +663,7 @@ public class Dialog {
         }else{
             GralogList<Vertex> v = new GralogList<>(s, StringConverterCollection.VERTEX_ID);
             allVertexLists.add(v);
+            allCollection.add(v);
             return v;
         }
     }
@@ -660,6 +677,7 @@ public class Dialog {
         }else{
             GralogList<Edge> v = new GralogList<>(s, StringConverterCollection.EDGE_ID);
             allEdgeLists.add(v);
+            allCollection.add(v);
             return v;
         }
     }
@@ -736,8 +754,7 @@ public class Dialog {
             }
 
             // compute targetVertexList: if it doesn't exist, create a new one
-            GralogList gralogList = getTargetVertexList(parameters.get(parameters.size()-1));
-            var targetVertexList = gralogList.list; // where to filter to
+            var targetVertexList = getTargetVertexList(parameters.get(parameters.size()-1)); // where to filter to
 
             parameters.remove(parameters.size()-1); // remove name of targetVertexList
 
@@ -785,7 +802,7 @@ public class Dialog {
             }
 
             // compute targetEdgeList: if it doesn't exist, create a new one
-            ArrayList<Edge> targetEdgeList = getTargetEdgeList(parameters.get(parameters.size()-1)).list;
+            ArrayList<Edge> targetEdgeList = getTargetEdgeList(parameters.get(parameters.size()-1));
             parameters.remove(parameters.size()-1);
 
             // compute sourceEdgeList
