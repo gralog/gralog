@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-sys.path.append('/home/michelle/gralog/gralog/gralog-fx/src/main/java/gralog/gralogfx/piping')
+sys.path.append('../../gralog-fx/src/main/java/gralog/gralogfx/piping')
 from Lib import *
 import igraph as ig
 
