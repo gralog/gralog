@@ -4,6 +4,7 @@ if(!JavaVersion.current().isJava8Compatible())
   throw new GradleException(
     'ERROR: To compile gralog, please install the Java Development Kit (JDK) 8 or later.')
 
+include 'dockfx'
 include 'gralog-automaton'
 include 'gralog-computation-tree-logic'
 include 'gralog-core'
@@ -14,4 +15,3 @@ include 'gralog-modal-logic'
 include 'gralog-modal-mu-calculus'
 include 'gralog-np-completeness'
 include 'gralog-jgrapht-bridge'
-include 'gralog-dockfx'

@@ -96,10 +96,10 @@ subprojects {
 
 project(':gralog-fx') {
   dependencies {
+    gralog project(':dockfx')
     gralog project(':gralog-core')
     gralog project(':gralog-finite-game')
     gralog project(':gralog-first-order-logic')
-    gralog project(':gralog-dockfx')
   }
   // This subproject contains the main class.
   jar {
@@ -112,11 +112,8 @@ project(':gralog-fx') {
 // Configure the dependencies of the individual subprojects.  Rule:
 // Use the "gralog" configuration for "gralog-" internal dependencies.
 // Use the "compile" configuration for external dependencies.
-project(':gralog-dockfx') {
-  dependencies{
+project(':dockfx') {}
 
-  }
-}
 project(':gralog-automaton') {
   dependencies {
     gralog project(':gralog-core')
