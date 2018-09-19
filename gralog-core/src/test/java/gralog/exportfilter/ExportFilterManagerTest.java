@@ -80,8 +80,8 @@ public class ExportFilterManagerTest {
         // Because vertices in TGF have no labels, their order is undetermined.
         // So we accept both possibilities.
         assertThat(result.toString(),
-            isOneOf("1\n2\n#\n1 2\n#\n",
-                    "1\n2\n#\n2 1\n#\n"));
+            isOneOf("0\n1\n#\n0 1\n#\n",
+                    "0\n1\n#\n1 0\n#\n"));
     }
 
     @Test

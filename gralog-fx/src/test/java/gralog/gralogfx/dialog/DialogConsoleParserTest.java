@@ -1,7 +1,6 @@
 package gralog.gralogfx.dialog;
 
 import gralog.algorithm.StringAlgorithmParameter;
-import gralog.dialog.Dialog;
 import gralog.dialog.DialogAction;
 import gralog.dialog.DialogParser;
 import gralog.dialog.DialogState;
@@ -10,29 +9,22 @@ import gralog.generator.CylindricalGrid;
 import gralog.generator.Grid;
 import gralog.generator.Wheel;
 import gralog.gralogfx.StructurePane;
-import gralog.plugins.PluginManager;
 import gralog.structure.Structure;
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
 
 import static gralog.dialog.DialogAction.*;
 import static gralog.dialog.DialogState.DONE;
-import static gralog.dialog.DialogState.SELECT;
 import static org.junit.Assert.*;
 
 public class DialogConsoleParserTest {
 
-    private Structure anEdge;
     Structure c20;
     Structure cylGrid;
     Structure grid5x5;
     Structure wheel5;
 
     private DialogParser dialogParser;
-    private StructurePane currentStructure;
-
 
     public DialogConsoleParserTest(){
         dialogParser = new DialogParser();
@@ -59,8 +51,6 @@ public class DialogConsoleParserTest {
         dialogParser.setDialogAction(NONE);
 
     }
-
-
 
     @Test
     public void testParser(){
@@ -229,11 +219,10 @@ public class DialogConsoleParserTest {
         assertEquals("ALL", dialogParser.getParameters().get(0));
         assertEquals(DialogState.FILTER_ALL,dialogParser.getDialogState());
         assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
-        assertEquals("Vertices or edges?\n",dialogParser.getErrorMsg());
+        assertEquals("Vertices or edges? (accepted: FILTER ALL) (Quit: Q)\n",
+            dialogParser.getErrorMsg());
 
         // TODO: write more filter tests
-
-
     }
 
     private Structure getGraph(String fileName){
