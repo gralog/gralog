@@ -63,26 +63,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public Structure() {
         vertices = new HashMap<>();
         edges = new HashMap<>();
-        vertexIdHoles = new TreeSet<>(new Comparator<>() {
-            /**
-             * Returns a positive value if number1 is larger than number 2, a
-             * negative number if number1 is less than number2, and 0 if they
-             * are equal. 
-             */
-            public int compare(Interval first, Interval second) {
-                return first.a - second.a;
-            }
-        });
-        edgeIdHoles = new TreeSet<>(new Comparator<>() {
-            /**
-             * Returns a positive value if number1 is larger than number 2, a
-             * negative number if number1 is less than number2, and 0 if they
-             * are equal. 
-             */
-            public int compare(Interval first, Interval second) {
-                return first.a - second.a;
-            }
-        });
+        vertexIdHoles = new TreeSet<>(
+            (Interval first, Interval second) -> first.a - second.a);
+        edgeIdHoles = new TreeSet<>(
+            (Interval first, Interval second) -> first.a - second.a);
         vertexIdHoles.add(new Interval(0,Integer.MAX_VALUE));
         edgeIdHoles.add(new Interval(0,Integer.MAX_VALUE));
     }

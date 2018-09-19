@@ -8,7 +8,6 @@ import javafx.geometry.VPos;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcType;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -48,6 +47,7 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
 
     }
 
+    @Override
     public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color){
         arrow(dir, pos, arrowType, scale, color, (2.54 / 96));
     }
@@ -99,6 +99,7 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.closePath();
         gc.setLineDashes(0);
     }
+    @Override
     public void drawBezier(Bezier curve, GralogColor color, double width, LineType type){
         Vector2D a = pane.modelToScreen(curve.source);
         Vector2D b = pane.modelToScreen(curve.target);
@@ -120,6 +121,7 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.closePath();
         gc.setLineDashes(0);
     }
+    @Override
     public void drawQuadratic(Bezier curve, GralogColor color, double width, LineType type){
         Vector2D a = pane.modelToScreen(curve.source);
         Vector2D b = pane.modelToScreen(curve.target);

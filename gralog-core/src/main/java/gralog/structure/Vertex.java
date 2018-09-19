@@ -11,7 +11,6 @@ import gralog.rendering.shapes.RenderingShape;
 import gralog.structure.controlpoints.ResizeControls;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import gralog.core.annotations.DataField;
 
 import java.io.Serializable;
 import java.lang.reflect.*;

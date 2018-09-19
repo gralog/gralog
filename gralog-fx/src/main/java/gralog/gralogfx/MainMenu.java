@@ -5,7 +5,6 @@ package gralog.gralogfx;
 import gralog.algorithm.AlgorithmManager;
 import gralog.generator.GeneratorManager;
 import gralog.gralogfx.windows.PreferenceWindow;
-import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 import gralog.preferences.MenuPrefVariable;
 import gralog.structure.Structure;
 import gralog.structure.StructureManager;

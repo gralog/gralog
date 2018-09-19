@@ -1,9 +1,7 @@
 /* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
-//test
 
-import gralog.dialog.GralogList;
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
 import javafx.event.EventHandler;
@@ -16,7 +14,6 @@ import gralog.generator.*;
 import gralog.algorithm.*;
 import gralog.gralogfx.piping.Piping;
 import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
-// import java.util.concurrent.CountDownLatch;
 
 import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
@@ -34,7 +31,6 @@ import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.input.KeyCode;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -86,8 +82,6 @@ public class MainWindow extends Application {
     private DockNode structureNode;
     private DockNode consoleDock;
     private DockNode variableDock;
-
-    private boolean pipingUnderway = false;
 
     private ObjectListDisplay objectListDisplay;
     private VariablePanel variablePanel;
@@ -492,9 +486,6 @@ public class MainWindow extends Application {
         this.mainConsole.outsideMessage(msg,flag);
     }
 
-
-    // public void 
-
     public void onSave() {
         onSave(getCurrentStructure(), this);
     }
@@ -509,28 +500,26 @@ public class MainWindow extends Application {
             if(structure.hasFileReference()){
                 structure.getFileReference();
                 File file = new File(structure.getFileReference());
-                if (file != null) {
-                    setLastDirectory(file);
-                    // has the user selected the native file-type or an export-filter?
-                    String extension = file.getName(); // unclean way of getting file extension
-                    int idx = extension.lastIndexOf('.');
-                    extension = idx > 0 ? extension.substring(idx + 1) : "";
+                setLastDirectory(file);
+                // has the user selected the native file-type or an export-filter?
+                String extension = file.getName(); // unclean way of getting file extension
+                int idx = extension.lastIndexOf('.');
+                extension = idx > 0 ? extension.substring(idx + 1) : "";
 
-                    ExportFilter exportFilter = ExportFilterManager
-                            .instantiateExportFilterByExtension(structure.getClass(), extension);
-                    if (exportFilter != null) {
-                        // configure export filter
-                        ExportFilterParameters params = exportFilter.getParameters(structure);
-                        if (params != null) {
-                            ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, app);
-                            exportStage.showAndWait();
-                            if (!exportStage.dialogResult)
-                                return;
-                        }
-                        exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
-                    } else {
-                        structure.writeToFile(file.getAbsolutePath());
+                ExportFilter exportFilter = ExportFilterManager
+                        .instantiateExportFilterByExtension(structure.getClass(), extension);
+                if (exportFilter != null) {
+                    // configure export filter
+                    ExportFilterParameters params = exportFilter.getParameters(structure);
+                    if (params != null) {
+                        ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, app);
+                        exportStage.showAndWait();
+                        if (!exportStage.dialogResult)
+                            return;
                     }
+                    exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
+                } else {
+                    structure.writeToFile(file.getAbsolutePath());
                 }
             }
         } catch (Exception ex) {
