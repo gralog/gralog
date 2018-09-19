@@ -60,7 +60,11 @@ public class DialogConsoleParserTest {
 
     }
 
-
+    /*
+    TODO: The following tests are broken because they don't work
+    without user interaction (they try to open dialogs).  For
+    continuous integration (Travis), the tests need to run fully
+    automatic.
 
     @Test
     public void testParser(){
@@ -235,6 +239,7 @@ public class DialogConsoleParserTest {
 
 
     }
+    */
 
     private Structure getGraph(String fileName){
         try {
