@@ -33,7 +33,7 @@ public class ObjectListDisplay extends AnchorPane
 
         var listID = new TableColumn<GralogList, String>("#");
         var listName = new TableColumn<GralogList, String>("Name");
-        var objectIDs = new TableColumn<GralogList, String>("Objects");
+        var objectIDs = new TableColumn<GralogList, String>("Value");
 
         TableColumn actionCol = new TableColumn("");
         // taken from StackOverflow https://stackoverflow.com/a/29490190

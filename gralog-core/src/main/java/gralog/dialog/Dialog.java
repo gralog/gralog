@@ -2,6 +2,7 @@ package gralog.dialog;
 
 
 import gralog.structure.*;
+import gralog.utility.StringConverterCollection;
 
 import java.util.*;
 
@@ -18,8 +19,8 @@ public class Dialog {
     private Map<String, ArrayList<Vertex>> vertexListS;
     private Map<String, ArrayList<Edge>> edgeListS;
 
-    private List<GralogList<Vertex>> vertexList;
-    private List<GralogList<Edge>> edgeList;
+    private List<GralogList<Vertex>> allVertexLists;
+    private List<GralogList<Edge>> allEdgeLists;
 
 
 
@@ -32,8 +33,8 @@ public class Dialog {
         vertexListS = new HashMap<>();
         edgeListS = new HashMap<>();
 
-        vertexList = new ArrayList<>();
-        edgeList = new ArrayList<>();
+        allVertexLists = new ArrayList<>();
+        allEdgeLists = new ArrayList<>();
     }
 
     public Map<String, ArrayList<Vertex>> getVertexListS(){
@@ -54,8 +55,8 @@ public class Dialog {
 
     public void printLists(ArrayList<String> parameters){
         if (parameters.get(0).equals("PRINTALL")){
-            printVertexListS();
-            printEdgeListS();
+            printAllVertexList();
+            printAllEdgeList();
             return;
         }
         if (vertexListS.containsKey(parameters.get(0))){
@@ -67,7 +68,6 @@ public class Dialog {
             return;
         }
         errorMsg = "No such list: " + parameters.get(0);
-        return;
     }
 
     public void twoListsOp(ArrayList<String> parameters){
@@ -79,7 +79,8 @@ public class Dialog {
             errorMsg = parameters.get(2) + " is not a name of a vertex list.\n";
             return;
         }
-        ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(3));
+        var gralogList = getTargetVertexList(parameters.get(3));
+        ArrayList<Vertex> targetList = gralogList.list;
         switch (parameters.get(0)){ // union, intersection, difference, symmetric
             case "UNION":
                 GraphOperations.unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
@@ -124,9 +125,9 @@ public class Dialog {
 
     public void complement(ArrayList<String> parameters, Structure structure){
         if (vertexListS.containsKey(parameters.get(0))){
-            ArrayList<Vertex> allVertices = new ArrayList<Vertex>(structure.getVertices());
+            ArrayList<Vertex> allVertices = new ArrayList<>(structure.getVertices());
             ArrayList<Vertex> sourceList = vertexListS.get(parameters.get(0));
-            ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(1));
+            ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(1)).list;
             if (! targetList.isEmpty())
                 errorMsg = "Note: target list " + parameters.get(1)  + " is not empty!\n";
             addComplementVertexList(sourceList, allVertices, targetList);
@@ -135,7 +136,7 @@ public class Dialog {
         if (edgeListS.containsKey(parameters.get(0))){
             ArrayList<Edge> allVertices = new ArrayList<Edge>(structure.getEdges());
             ArrayList<Edge> sourceList = edgeListS.get(parameters.get(0));
-            ArrayList<Edge> targetList = getTargetEdgeList(parameters.get(1));
+            ArrayList<Edge> targetList = getTargetEdgeList(parameters.get(1)).list;
             if (! targetList.isEmpty())
                 errorMsg = "Note: target list " + parameters.get(1)  + " is not empty!\n";
             addComplementEdgeList(sourceList, allVertices, targetList);
@@ -621,63 +622,81 @@ public class Dialog {
     }// todo check use of exp4j
 
 
+    private GralogList findVertexList(String s){
+        for(GralogList g : allVertexLists){
+            if(g.name.getValue().equals(s))
+                return g;
+        }
+        return null;
+    }
+
+    private GralogList findEdgeList(String s){
+        for(GralogList g : allEdgeLists){
+            if(g.name.getValue().equals(s))
+                return g;
+        }
+        return null;
+    }
+
     // returns list of vertices to save the result of filtering to
     // if the list with key s already exists, vertices are added to it (if not already there)
-    private ArrayList<Vertex> getTargetVertexList(String s){
-        if (vertexListS.containsKey(s)) {
-            return vertexListS.get(s);
-        }
-        else{
-            vertexListS.put(s,new ArrayList<>());
-            return (vertexListS.get(s));
-        }
-    }
-
-    private void printVertexList(String listName){
-        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
-        for (Vertex v : vertexListS.get(listName)){
-            System.out.print(v.id + " ");
-        }
-        System.out.println();
-    }
-
-    private void printEdgeList(String listName){
-        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
-        for (Edge v : edgeListS.get(listName)){
-            System.out.print(v.getId() + " ");
-        }
-        System.out.println();
-    }
-
-
-    private void printVertexListS(){
-        for (Map.Entry<String, ArrayList<Vertex>> pair : vertexListS.entrySet()){
-            System.out.print(pair.getKey() + ": " + ANSI_GREEN);
-            for (Vertex v :  pair.getValue()){
-                System.out.print(v.id + " ");
-            }
-            System.out.println(ANSI_RESET);
-        }
-    }
-
-    private void printEdgeListS(){
-        for (Map.Entry<String, ArrayList<Edge>> pair : edgeListS.entrySet()){
-            System.out.print(pair.getKey() + " " + ANSI_GREEN);
-            for (Edge v :  pair.getValue()){
-                System.out.print(v.getId() + " ");
-            }
-            System.out.println(ANSI_RESET);
+    private GralogList<Vertex> getTargetVertexList(String s){
+        var found = findVertexList(s);
+        if(found != null){
+            return found;
+        }else{
+            GralogList<Vertex> v = new GralogList<>(s, StringConverterCollection.VERTEX_ID);
+            allVertexLists.add(v);
+            return v;
         }
     }
 
     // returns list of edges to save the result of filtering to
     // if the list with key s already exists, edges are added to it
-    private ArrayList<Edge> getTargetEdgeList(String s){
-        if (edgeListS.containsKey(s))
-            return edgeListS.get(s);
-        else{
-            edgeListS.put(s,new ArrayList<Edge>());
-            return (edgeListS.get(s));
+    private GralogList<Edge> getTargetEdgeList(String s){
+        var found = findEdgeList(s);
+        if(found != null){
+            return found;
+        }else{
+            GralogList<Edge> v = new GralogList<>(s, StringConverterCollection.EDGE_ID);
+            allEdgeLists.add(v);
+            return v;
+        }
+    }
+
+    private void printVertexList(String listName){
+        GralogList vertexList = findVertexList(listName);
+        if(vertexList == null){
+            System.out.println("List " + listName + " doesn't exist.");
+            return;
+        }
+        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
+        System.out.println(vertexList.toString());
+        System.out.println();
+    }
+
+    private void printEdgeList(String listName){
+        GralogList edgeList = findEdgeList(listName);
+        if(edgeList == null){
+            System.out.println("List " + listName + " doesn't exist.");
+            return;
+        }
+        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
+        System.out.println(edgeList.toString());
+        System.out.println();
+    }
+
+
+
+    private void printAllVertexList(){
+        for(GralogList g : allVertexLists){
+            System.out.println(g.name.getValue() + " : " + g.toString());
+        }
+    }
+
+    private void printAllEdgeList(){
+        for(GralogList g : allVertexLists){
+            System.out.println(g.name.getValue() + " : " + g.toString());
         }
     }
 
@@ -717,7 +736,8 @@ public class Dialog {
             }
 
             // compute targetVertexList: if it doesn't exist, create a new one
-            var targetVertexList = getTargetVertexList(parameters.get(parameters.size()-1)); // where to filter to
+            GralogList gralogList = getTargetVertexList(parameters.get(parameters.size()-1));
+            var targetVertexList = gralogList.list; // where to filter to
 
             parameters.remove(parameters.size()-1); // remove name of targetVertexList
 
@@ -728,7 +748,7 @@ public class Dialog {
                     if (v instanceof Vertex)
                         sourceVertexList.add((Vertex) v);
             if (parameters.get(0).equals("ALL"))
-                sourceVertexList = new ArrayList<Vertex>( (Collection<? extends Vertex>) structure.getVertices());
+                sourceVertexList = new ArrayList<>( (Collection<? extends Vertex>) structure.getVertices());
             if (vertexListS.containsKey(parameters.get(0))) { // list already exists
                 sourceVertexList = vertexListS.get(parameters.get(0));
             }
@@ -752,9 +772,8 @@ public class Dialog {
             printVertexIdList(sourceVertexList);
             System.out.println("\nto: ");
             printVertexIdList(targetVertexList);
-            System.out.println("\n");
-            System.out.println("vertexListS: ");
-            printVertexListS();
+            System.out.println("\nvertexListS: ");
+            printAllVertexList();
             return;
         }
         if (parameters.get(1).equals("EDGES") || edgeListS.containsKey(parameters.get(0))){ // edge list
@@ -766,7 +785,7 @@ public class Dialog {
             }
 
             // compute targetEdgeList: if it doesn't exist, create a new one
-            ArrayList<Edge> targetEdgeList = getTargetEdgeList(parameters.get(parameters.size()-1));
+            ArrayList<Edge> targetEdgeList = getTargetEdgeList(parameters.get(parameters.size()-1)).list;
             parameters.remove(parameters.size()-1);
 
             // compute sourceEdgeList

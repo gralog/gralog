@@ -3,23 +3,27 @@ package gralog.dialog;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class GralogList<T> {
-
+    //default toString methods to choose from
 
     public SimpleStringProperty name;
     public SimpleStringProperty stringData;
 
-    public List<T> list = new ArrayList<>();
+    public ArrayList<T> list = new ArrayList<>();
 
     private Function<T, String> toString;
+
 
     public GralogList(String name){
         this.name = new SimpleStringProperty(name);
         this.stringData = new SimpleStringProperty("");
+    }
+
+    public GralogList(String name, Function<T, String> toString){
+        this(name);
+        overrideToString(toString);
     }
 
     public void overrideToString(Function<T, String> toString){
@@ -42,6 +46,11 @@ public class GralogList<T> {
             }
         }
         stringData.set(sb.toString());
+    }
+    @Override
+    public String toString(){
+        updateStringData();
+        return stringData.getValue();
     }
 
     public void add(T element){
