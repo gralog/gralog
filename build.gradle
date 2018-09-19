@@ -1,7 +1,8 @@
 defaultTasks 'run'
 
 apply plugin: 'java'
-
+sourceCompatibility = 1.10
+targetCompatibility = 1.10
 
 subprojects {
   repositories {
