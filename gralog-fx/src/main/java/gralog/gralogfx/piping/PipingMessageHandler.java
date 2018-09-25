@@ -275,7 +275,10 @@ public class PipingMessageHandler{
         try{
             string = externalCommandSegments[n];
         }catch(Exception e){
-            throw new MessageFormatException("the command " + rejoinExternalCommandSegments(externalCommandSegments) + " did not have a paramater at index: " + n + "! Did you remember that Informatiker count from 0?");
+            throw new MessageFormatException("the command " +
+                    rejoinExternalCommandSegments(externalCommandSegments) +
+                    " did not have a paramater at index: " +
+                    n);
         }
         return string;
     
