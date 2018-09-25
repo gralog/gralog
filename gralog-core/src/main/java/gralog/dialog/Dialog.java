@@ -220,7 +220,7 @@ public class Dialog {
         return;
     }
 
-    // checks if condiitons are correct: colours are colours, number are numbers and so on
+    // checks if conditons are correct: colours are colours, number are numbers and so on
     // returns a HashMap<property,value>
     // empty if "NOCONDITION" is a condition
     private LinkedHashMap<String,String> getConditions(ArrayList<String> parameters){
@@ -268,8 +268,8 @@ public class Dialog {
                     propertyValue.putIfAbsent(parameters.get(i),parameters.get(i+1));
                     break;
                 case "SELFLOOP": case "NOSELFLOOP": case "LABEL": case "NOLABEL":
-                    i += 2;
                     propertyValue.put(parameters.get(i),"");
+                    i += 1;
                     break;
                 case "EDGETYPE":
                     propertyValue.put(parameters.get(i),parameters.get(i+1));
@@ -462,6 +462,15 @@ public class Dialog {
     }
 
     public void connectClique(ArrayList<String> parameters, Structure structure){
+        boolean undirected = true;
+        try{
+            undirected = structure.getDescription().name().equals("Undirected Graph");
+        }
+        catch (Exception e){
+            System.err.println("Could not determine the type of graph (undirected or not). Error: " +
+            e.toString());
+        }
+
         if (!existsVertexList(parameters.get(0))){
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
@@ -470,8 +479,12 @@ public class Dialog {
         for (Vertex v : list){
             for (Vertex w : list){
                 if (v.id < w.id){
-                    structure.addEdge(v,w);
-                    structure.addEdge(w,v);
+                    if (undirected)
+                        structure.addEdge(v,w);
+                    else {
+                        structure.addEdge(v, w);
+                        structure.addEdge(w, v);
+                    }
                 }
             }
         }
