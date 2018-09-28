@@ -53,27 +53,23 @@ public class SatToDominatingSet extends Generator {
         // create gadgets for the literals
         int i = 0;
         for (String var : vars) {
-            Vertex pos = result.createVertex(); // the positive literal
-            pos.coordinates = new Vector2D(6d * i, 10d);
+            Vertex pos = result.addVertex(); // the positive literal
+            pos.setCoordinates(6d * i, 10d);
             pos.label = var;
-            result.addVertex(pos);
             posNode.put(var, pos);
 
-            Vertex neg = result.createVertex(); // the negative literal
-            neg.coordinates = new Vector2D(6d * i + 2, 10d);
+            Vertex neg = result.addVertex(); // the negative literal
+            neg.setCoordinates(6d * i + 2, 10d);
             neg.label = "¬" + var;
-            result.addVertex(neg);
             negNode.put(var, neg);
 
-            Vertex dummy1 = result.createVertex(); // 2 dummies
-            dummy1.coordinates = new Vector2D(6d * i, 12d);
+            Vertex dummy1 = result.addVertex(); // 2 dummies
+            dummy1.setCoordinates(6d * i, 12d);
             dummy1.label = var + "'";
-            result.addVertex(dummy1);
 
-            Vertex dummy2 = result.createVertex();
-            dummy2.coordinates = new Vector2D(6d * i + 2, 12d);
+            Vertex dummy2 = result.addVertex();
+            dummy2.setCoordinates(6d * i + 2, 12d);
             dummy2.label = var + "''";
-            result.addVertex(dummy2);
 
             result.addEdge(result.createEdge(pos, neg)); // connections
             result.addEdge(result.createEdge(pos, dummy1));
@@ -91,10 +87,9 @@ public class SatToDominatingSet extends Generator {
 
         i = 0;
         for (PropositionalLogicFormula clause : clauses) {
-            Vertex clauseVert = result.createVertex();
-            clauseVert.coordinates = new Vector2D(6d * i, 1d);
+            Vertex clauseVert = result.addVertex();
+            clauseVert.setCoordinates(6d * i, 1d);
             clauseVert.label = clause.toString();
-            result.addVertex(clauseVert);
 
             // connect clause-vertices to the nodes of their member-literals
             literals.clear();

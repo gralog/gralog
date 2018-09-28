@@ -86,12 +86,12 @@ public class Minimization extends Algorithm {
             if (equivalent == null) {
                 equivalent = (State) result.createVertex();
                 result.addVertex(equivalent);
-                equivalent.coordinates = new Vector2D(0d, 0d); // initial coordinate (0,0)
+                equivalent.setCoordinates(0d, 0d); // initial coordinate (0,0)
                 nerodeRelationEquivalenceClassSize.put(equivalent, 0);
             }
 
             // add current coordinates to coordinates of <equivalent> state
-            equivalent.coordinates = new Vector2D(
+            equivalent.setCoordinates(
                 equivalent.coordinates.getX() + states.get(y).coordinates.getX(),
                 equivalent.coordinates.getY() + states.get(y).coordinates.getY()
             );
@@ -102,7 +102,7 @@ public class Minimization extends Algorithm {
         // divide coordinates by number of equivalent states
         // i.e. resulting state is in the center of the equivalent states
         for (Vertex v : result.getVertices()) {
-            v.coordinates = new Vector2D(
+            v.setCoordinates(
                 v.coordinates.getX() / nerodeRelationEquivalenceClassSize.get((State) v),
                 v.coordinates.getY() / nerodeRelationEquivalenceClassSize.get((State) v)
             );

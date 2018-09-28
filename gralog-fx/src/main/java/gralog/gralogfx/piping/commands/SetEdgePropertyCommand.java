@@ -69,7 +69,7 @@ public class SetEdgePropertyCommand extends CommandForGralogToExecute {
                             f.set(this.edge,Integer.parseInt(this.propertyStringValue));
                         }else{ //string lol
                             // Constructor cs = f.get(this.edge).getClass().getConstructors()[0];
-                            // System.out.println("constructor? : " + cs);
+
                             // cs.newInstance(this.propertyStringValue);
                             f.set(this.edge,this.propertyStringValue);
                             
@@ -84,9 +84,9 @@ public class SetEdgePropertyCommand extends CommandForGralogToExecute {
                     return;
                 }
             }
-            this.fail();
-            this.error = new Exception("class Edge does not have property : " + this.propertyString);
-            return;
+            // this.fail();
+            // this.error = new Exception("class Edge does not have property : " + this.propertyString);
+            // return;
         }
         this.setResponse(null);
         return;

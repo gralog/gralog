@@ -4,13 +4,13 @@ import gralog.rendering.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DeleteAllEdgesBetweenCommand extends CommandForGralogToExecute {
+public class GetAllEdgesBetweenCommand extends CommandForGralogToExecute {
 	
 	Vertex sourceVertex;
     Vertex targetVertex;
     String edgeString;
 
-	public DeleteAllEdgesBetweenCommand(String[] externalCommandSegments,Structure structure){
+	public GetAllEdgesBetweenCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
         
@@ -43,23 +43,25 @@ public class DeleteAllEdgesBetweenCommand extends CommandForGralogToExecute {
             return;
         }
         Set<Edge> intersection = this.structure.edgesBetweenVertices(this.sourceVertex,this.targetVertex);
-        System.out.println("intersection: " + intersection);
-        System.out.println("target: " + targetVertex);
-        System.out.println("inc: " + targetVertex.getIncomingEdges());
-        System.out.println("outg: " + sourceVertex.getOutgoingEdges());
-        System.out.println("meanwhile all edges: " + this.structure.getEdges());
         
-
+        String edgeString = "";
+        
         for (Edge e : intersection){
-            this.structure.removeEdge(e);
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToTuple(e)+ "#";
         }
+        if (edgeString.length() > 0 && null != edgeString){
+            edgeString = edgeString.substring(0,edgeString.length()-1);
+        }
+
+
+        this.setResponse(edgeString);
 
         // Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
             
         // e.isDirected = (externalCommandSegments[3].equals("true"));
        
 
-        this.setResponse(null);
+
 
         return;
 

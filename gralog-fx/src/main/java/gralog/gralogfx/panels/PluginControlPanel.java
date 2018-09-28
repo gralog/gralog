@@ -57,7 +57,7 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         Runnable checkBoxClickHandler = new Runnable(){
             public void run(){
                 if (!wrapped.isSelected()){
-                    System.out.println("is now unchecked");
+
                     // System.out.println("before he was " + vbox.getChildren().get(3).getWrapText());
                     varBox.getChildren().clear();
 
@@ -70,10 +70,8 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
                     sourceVarBox();
                     // System.out.println("after readding I've got: " + vbox.getChildren().get(3));
                 }else{
-                    System.out.println("is now checked");
                     
                     varBox.getChildren().clear();
-                    System.out.println("after removal I've got: " + varBox.getChildren());
 
 
                     for (Label x : PluginControlPanel.this.labels){
@@ -82,7 +80,6 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
                         x.setWrapText(true);
                     }
 
-                    System.out.println("after readding I've got: " + varBox.getChildren());
                     sourceVarBox();
                 }
 
@@ -202,14 +199,12 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         try{
             labelsAndSeparators.add(labels.get(i));
         }catch(Exception e){
-            System.out.println("buppo");
         }
 
     }
 
     public static void notifyPlannedPauseRequested(List<String[]> args){
         varBox.getChildren().clear();
-        System.out.println("yooooooooooo a pause br000");
 
         pauseOrPlay.getChildren().clear();
         pauseOrPlay.getChildren().add(play);

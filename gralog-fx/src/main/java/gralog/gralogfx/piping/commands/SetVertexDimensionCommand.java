@@ -60,20 +60,7 @@ public class SetVertexDimensionCommand extends CommandForGralogToExecute {
             return;
         }
 
-        // System.out.println("perusing; " + vertex.shape.sizebox.getClass());
-        // for (Field f : vertex.shape.getClass().getFields()){
-        //     System.out.println("name: " + f.getName() + " : " + f.getName().equals(this.dimension));
-        //     if (f.getName().equals(this.dimension)){
-        //         try{
-        //             f.set(vertex.shape,this.newDimension);
-        //         }catch(Exception e){
-        //             this.error = e;
-        //             this.fail();
-        //             return;
-        //         }
-        //     }
-        // }
-        // System.out.println("schwupps! dimension = " + this.dimension);
+      
 
         if (this.dimension.equals("height")){
             vertex.shape.setHeight(this.newDimension);

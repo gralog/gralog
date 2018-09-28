@@ -41,12 +41,11 @@ public class GeneratorKnuthMorrisPratt extends Generator {
         ArrayList<Boolean> next = new ArrayList<>();
         ArrayList<State> states = new ArrayList<>();
         for (int i = 0; i < n + 1; i++) {
-            State s = result.createVertex();
-            s.coordinates = new Vector2D(i * 3d, 1d);
+            State s = result.addVertex();
+            s.setCoordinates(i * 3d, 1d);
             s.startState = (i == 0);
             s.finalState = (i == n);
             s.label = str.substring(0, i);
-            result.addVertex(s);
             states.add(s);
 
             current.add(false);

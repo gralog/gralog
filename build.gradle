@@ -98,6 +98,7 @@ project(':gralog-fx') {
   dependencies {
     gralog project(':gralog-core')
     gralog project(':gralog-finite-game')
+    gralog project(':gralog-first-order-logic')
     gralog project(':gralog-dockfx')
   }
   // This subproject contains the main class.
@@ -145,8 +146,8 @@ project(':gralog-finite-game') {
 
 project(':gralog-first-order-logic') {
   dependencies {
-    gralog project(':gralog-fx')
     gralog project(':gralog-core')
+    gralog project(':gralog-finite-game')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
   declareParserTasks(

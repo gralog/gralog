@@ -38,6 +38,18 @@ public class ResizeControls implements IMovable, Serializable
             }
             parent.updateVertexShape();
         }
+        public Vector2D parentCenter(){
+            return parent.v.coordinates;
+        }
+        public RControl getNextSibling(){
+            return parent.cs[(4 + id + 1) % 4];
+        }
+        public RControl getPreviousSibling(){
+            return parent.cs[(4 + id - 1) % 4];
+        }
+        public RControl getDiagonalSibling(){
+            return parent.cs[(4 + id + 2) % 4];
+        }
 
         public void setX(double x){
             position = new Vector2D(x, position.getY());
@@ -74,7 +86,7 @@ public class ResizeControls implements IMovable, Serializable
     private void updateVertexShape(){
         v.shape.setWidth(Math.abs(cs[0].position.getX() - cs[2].position.getX()));
         v.shape.setHeight(Math.abs(cs[0].position.getY() - cs[2].position.getY()));
-        v.coordinates = new Vector2D( (cs[1].position.getX() + cs[0].position.getX()) / 2,
+        v.setCoordinates( (cs[1].position.getX() + cs[0].position.getX()) / 2,
                                       (cs[2].position.getY() + cs[1].position.getY()) / 2);
     }
 

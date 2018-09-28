@@ -38,13 +38,13 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         a.move(aOffset);
 
         // create new, common start- and final-state
-        State s = a.createVertex();
+        State s = a.addVertex();
         s.startState = true;
-        s.coordinates = new Vector2D(0d, aMaxY / 2d + scale);
+        s.setCoordinates(0d, aMaxY / 2d + scale);
 
-        State t = a.createVertex();
+        State t = a.addVertex();
         t.finalState = true;
-        t.coordinates = new Vector2D(
+        t.setCoordinates(
             aMaxX + 2d * scale,
             aMaxY / 2d + scale
         );
@@ -78,8 +78,6 @@ public class RegularExpressionKleeneStar extends RegularExpression {
             ((State) v).startState = false;
         }
 
-        a.addVertex(s);
-        a.addVertex(t);
         return a;
     }
 }

@@ -17,8 +17,8 @@ public class EdgeTest {
 
         ControlPoint ctrl1, ctrl2, ctrl3;
 
-        first.coordinates = new Vector2D(0, 0);
-        secnd.coordinates = new Vector2D(1, 0);
+        first.setCoordinates(0, 0);
+        secnd.setCoordinates(1, 0);
 
         s.addVertex(first);
         s.addVertex(secnd);
@@ -74,8 +74,8 @@ public class EdgeTest {
         Vertex first = s.createVertex();
         Vertex secnd = s.createVertex();
 
-        first.coordinates = new Vector2D(0, 0);
-        secnd.coordinates = new Vector2D(1, 0);
+        first.setCoordinates(0, 0);
+        secnd.setCoordinates(1, 0);
 
         s.addVertex(first);
         s.addVertex(secnd);

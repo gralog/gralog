@@ -18,7 +18,10 @@
 .text-area .scroll-bar:vertical:disabled {
     -fx-opacity: 0;
 }
-
+.table-view {
+  -fx-table-cell-border-color: transparent;
+  -fx-table-header-border-color: transparent;
+}
 .scroll-pane {
     -fx-hbar-policy: never;
     -fx-vbar-policy: never;

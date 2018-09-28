@@ -5,6 +5,7 @@ package gralog.gralogfx.views;
 import gralog.rendering.GralogColor;
 
 import java.lang.reflect.*;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -45,8 +46,9 @@ public class ReflectedView extends GridPaneView<Object> {
         try {
             if (displayObject != null) {
                 Class<?> c = displayObject.getClass();
-                
-                for (Field f : c.getDeclaredFields()) {
+
+                for (Field f : c.getFields()) {
+
                     f.setAccessible(true);
                     boolean display = false;
                     boolean readOnly = false;
@@ -70,7 +72,7 @@ public class ReflectedView extends GridPaneView<Object> {
 
                     if (display){
                         if (type.equals(Double.class) || type.equals(double.class)) {
-                            valueControl = createDoubleValueField(value, readOnly, f, displayObject);
+                            valueControl = createDoubleValueField((double)value, readOnly, f, displayObject);
                         } else if (type.equals(Integer.class) || type.equals(int.class)) {
                             valueControl = createIntValueField(value, readOnly, f, displayObject);
                         } else if (type.equals(GralogColor.class)) {
@@ -112,13 +114,14 @@ public class ReflectedView extends GridPaneView<Object> {
 
     }
 
-    private Control createDoubleValueField(Object value, boolean readOnly, Field f, Object displayObject){
-        String valueString = value.toString();
+    private Control createDoubleValueField(double value, boolean readOnly, Field f, Object displayObject){
+        String valueString = String.format("%.4f", value);
         TextField valueField = new TextField(valueString);
         if (!readOnly){
             valueField.textProperty().addListener(e -> {
                 try {
-                    f.set(displayObject, Double.parseDouble(valueField.getText()));
+                    f.set(displayObject,
+                            Double.parseDouble(valueField.getText()));
                     requestRedraw();
                 } catch (IllegalAccessException | IllegalArgumentException ex) {
 
@@ -173,7 +176,6 @@ public class ReflectedView extends GridPaneView<Object> {
         if (!readOnly){
 
             valueField.selectedProperty().addListener(e -> {
-                System.out.println("halpppp they're changing meeeeee");
                 try {
                     f.set(displayObject, valueField.isSelected());
                     requestRedraw();
@@ -264,8 +266,10 @@ public class ReflectedView extends GridPaneView<Object> {
             choiceBox.setDisable(true);
         }
 
-        TextField widthField = new TextField(shape.sizeBox.width.toString());
-        TextField heightField = new TextField(shape.sizeBox.height.toString());
+        String widthText = String.format("%.3f", shape.sizeBox.width);
+        String heightText = String.format("%.3f", shape.sizeBox.height);
+        TextField widthField = new TextField(widthText);
+        TextField heightField = new TextField(heightText);
         if (!readOnly){
             widthField.textProperty().addListener(e -> {
                 try {

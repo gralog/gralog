@@ -60,9 +60,7 @@ public class PipingMessageHandler{
         Reflections reflections = new Reflections("gralog.gralogfx.piping");
         Set<Class<? extends CommandForGralogToExecute>> gralogCommands = reflections.getSubTypesOf(CommandForGralogToExecute.class);
         for (Class<? extends CommandForGralogToExecute> c : gralogCommands){
-            System.out.println("mee! : " + c);
             String name = c.getSimpleName().substring(0,c.getSimpleName().length()-7).toLowerCase();
-            System.out.println(c.getSimpleName().substring(0,c.getSimpleName().length()-7));
             commandNameToClassMap.put(name,c);
         }
     }
@@ -277,7 +275,10 @@ public class PipingMessageHandler{
         try{
             string = externalCommandSegments[n];
         }catch(Exception e){
-            throw new MessageFormatException("the command " + rejoinExternalCommandSegments(externalCommandSegments) + " did not have a paramater at index: " + n + "! Did you remember that Informatiker count from 0?");
+            throw new MessageFormatException("the command " +
+                    rejoinExternalCommandSegments(externalCommandSegments) +
+                    " did not have a paramater at index: " +
+                    n);
         }
         return string;
     
@@ -313,11 +314,6 @@ public class PipingMessageHandler{
         }
         for (int i = 1 + rankAddition; i < vars.length; i ++){
             String[] terms = vars[i].split("=");
-            for (String x : terms){
-                System.out.println("iter: " + x);
-            }
-            System.out.println("ok done with iterating");
-            System.out.println("ok we have : " + terms[0] + "," + terms[1] + " as terms");
             String varName = terms[0].substring(1,terms[0].length());
             String varValue = terms[1].substring(0,terms[1].length()-1);
             String[] vals = {varName,varValue};
@@ -335,8 +331,6 @@ public class PipingMessageHandler{
 
         if ((colorName = PipingPresets.getHexByColorName(color)) != null){
             return hexToGralogColor(colorName);
-        }else{
-            System.out.println(colorName + " not in database #rip");
         }
         return hexToGralogColor(color);
         
@@ -348,11 +342,9 @@ public class PipingMessageHandler{
     }
 
     public static CommandForGralogToExecute handleCommand(String[] externalCommandSegments,Structure structure,Piping piping){
-        System.out.println("handlincom");
         CommandForGralogToExecute currentCommand;
         Structure currentStructure = structure;
         String commandKeyword = externalCommandSegments[0];
-        System.out.println("command keyword: " + commandKeyword);
 
 
 
@@ -364,7 +356,6 @@ public class PipingMessageHandler{
             try{
                 currentCommand = myClass.getDeclaredConstructor(args3).newInstance(externalCommandSegments,currentStructure,piping);
             }catch(Exception ex){
-                System.out.println("error: not a recognized command dumbfuck did you not read the documentation");
                 currentCommand = new NotRecognizedCommand(externalCommandSegments,null);
             }
 

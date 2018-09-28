@@ -182,7 +182,7 @@ public abstract class AlgorithmExternal extends Algorithm {
         Double x = Double.parseDouble(parts[2]);
         Double y = Double.parseDouble(parts[3]);
 
-        v.coordinates = new Vector2D(x, y);
+        v.setCoordinates(x, y);
     }
 
     private void handleSetVertexColor(String[] parts, Map<String, Vertex> vertexIndex) throws Exception {
@@ -228,7 +228,7 @@ public abstract class AlgorithmExternal extends Algorithm {
         if (vertexIndex.containsKey(parts[1]))
             throw new Exception("External Algorithm tries to create vertex, but handle \"" + parts[1] + "\" already exists");
         Vertex v = structure.createVertex();
-        v.coordinates = new Vector2D(0d, 0d);
+        v.setCoordinates(0d, 0d);
         vertexIndex.put(parts[1], v);
         structure.addVertex(v);
     }

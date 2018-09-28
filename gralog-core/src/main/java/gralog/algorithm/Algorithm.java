@@ -32,7 +32,6 @@ public abstract class Algorithm {
             algoResult = method.invoke(this, new Object[]{structure, params, selection, onprogress});
             break;
         }
-
         return algoResult;
     }
 

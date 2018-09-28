@@ -48,7 +48,7 @@ public class GetAdjacentEdgesCommand extends CommandForGralogToExecute {
 
         String edgeString = "";
         for (Edge e : neighbouringEdges){
-            edgeString = edgeString + Integer.toString(e.getId())+ "#";
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToTuple(e)+ "#";
         }
         if (edgeString.length() > 0 && null != edgeString){
             edgeString = edgeString.substring(0,edgeString.length()-1);

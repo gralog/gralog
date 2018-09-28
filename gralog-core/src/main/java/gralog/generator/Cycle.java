@@ -18,8 +18,6 @@ import gralog.structure.*;
     url = "https://en.wikipedia.org/wiki/Cycle_(graph_theory)"
 )
 public class Cycle extends Generator {
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_RESET = "\u001B[0m";
 
     @Override
     public AlgorithmParameters getParameters() {
@@ -38,7 +36,8 @@ public class Cycle extends Generator {
         DirectedGraph result = new DirectedGraph();
 
         Vertex first = result.addVertex();
-        first.coordinates = new Vector2D(
+
+        first.setCoordinates(
             Math.sin(0 * 2 * Math.PI / n) * 3.5 + 3.5,
             Math.cos(0 * 2 * Math.PI / n) * 3.5 + 3.5
         );
@@ -46,7 +45,7 @@ public class Cycle extends Generator {
         Vertex last = first;
         for (int i = 1; i < n; i++) {
             Vertex next = result.addVertex();
-            next.coordinates = new Vector2D(
+            next.setCoordinates(
                 Math.sin(i * 2 * Math.PI / n) * 3.5 + 3.5,
                 Math.cos(i * 2 * Math.PI / n) * 3.5 + 3.5
             );
@@ -55,6 +54,7 @@ public class Cycle extends Generator {
             last = next;
         }
         result.addEdge(last, first);
+
         return result;
     }
 }

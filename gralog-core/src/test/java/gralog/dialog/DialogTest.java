@@ -19,17 +19,17 @@ public class DialogTest {
 
     private Dialog dialog = new Dialog();
     ArrayList<String> parameters = new ArrayList<String>();
-    Structure c20;
+    Structure c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
     Highlights highlights = new Highlights();
 
     public DialogTest(){
-        c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
-        assertEquals(20,c20.getVertices().size());
-        assertEquals(20,c20.getEdges().size());
         ArrayList<Vertex> initialList = new ArrayList<Vertex>();
         for (int i = 0; i < 10; i++)
             initialList.add(c20.getVertexById(i));
         highlights.selectAll(initialList);
+        assertEquals(20,c20.getVertices().size());
+        assertEquals(20,c20.getEdges().size());
+
         initLists();
         }
 
@@ -149,6 +149,16 @@ public class DialogTest {
         assertEquals(1, dialog.getVertexListS().get("VL1").size());
         parameters.clear();
 
+
+    }
+
+    @Test
+    public void testFilterNoEdges(){
+        highlights.clearSelection();
+        parameters.add("SELECTED");
+        parameters.add("EDGES");
+        parameters.add("LISTEMPTY");
+        dialog.filter(parameters,c20,highlights);
 
     }
 

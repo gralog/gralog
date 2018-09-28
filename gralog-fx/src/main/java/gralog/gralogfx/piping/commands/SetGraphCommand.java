@@ -77,13 +77,13 @@ public class SetGraphCommand extends CommandForGralogToExecute {
         /* let it be known that xml comes without whitespace between elements*/
 
         if (this.format == GraphType.Xml){
-        	System.out.println("Worked until here"+this);
+
             try{
                 InputStream is = new ByteArrayInputStream(this.graphString.getBytes());
                 Structure structureFromXml = Structure.loadFromStream(is);
                 this.piping.pairLocalIdAndStructure(localStructureId,structureFromXml);
                 this.currentStructurePane.setStructure(structureFromXml);
-                System.out.println("setted the structure");
+
 
             }catch(Exception e){
                 this.error =e;
@@ -126,10 +126,10 @@ public class SetGraphCommand extends CommandForGralogToExecute {
                 this.doFail(e);
                 return;
             }
-            this.currentStructurePane.setStructure(structureFromTGF);
-            System.out.println("id: " + localStructureId);
-            System.out.println("structure: " + structureFromTGF);
-            System.out.println("ol structure: " + this.structure);
+            // this.currentStructurePane.setStructure(structureFromTGF);
+            // System.out.println("id: " + localStructureId);
+            // System.out.println("structure: " + structureFromTGF);
+            // System.out.println("ol structure: " + this.structure);
             this.piping.pairLocalIdAndStructure(localStructureId,structureFromTGF);
         }else if (this.format == GraphType.Tikz){
             //parse the tikz, possibly in a multi-line manner
@@ -168,9 +168,9 @@ public class SetGraphCommand extends CommandForGralogToExecute {
                 return;
             }
             this.currentStructurePane.setStructure(structureFromGTGF);
-            System.out.println("id: " + localStructureId);
-            System.out.println("structure: " + structureFromGTGF);
-            System.out.println("ol structure: " + this.structure);
+            // System.out.println("id: " + localStructureId);
+            // System.out.println("structure: " + structureFromGTGF);
+            // System.out.println("ol structure: " + this.structure);
             this.piping.pairLocalIdAndStructure(localStructureId,structureFromGTGF);
 
         }else{

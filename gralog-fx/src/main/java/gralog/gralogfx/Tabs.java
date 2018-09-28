@@ -142,7 +142,6 @@ public class Tabs {
         for (Tab tab : tabPane.getTabs()){
             StructurePane currentStructurePane = (StructurePane) tab.getContent();
             structures.add(currentStructurePane.getStructure());
-            System.out.println("current structure: " + currentStructurePane.getStructure());
         }
         return structures;
     }

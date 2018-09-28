@@ -750,8 +750,12 @@ public class DialogParser {
                     transition(FILTER_WHAT_WHERE);
                     continue;
                 }
-                if (inputWords[i].equals("such")) {
+                if (inputWords[i].equals("SUCH")) {
                     transition(FILTER_WHAT_SUCH);
+                    continue;
+                }
+                if (inputWords[i].equals("TO")){
+                    transition(FILTER_WHAT_WHERE_COND_TO,"NOCONDITION");
                     continue;
                 }
                 errorMsg = "Specify filter conditions. Start with \"where\". Enter \"help\" for help. (accepted: FILTER <OBJECT>) (Quit: Q)\n";

@@ -115,7 +115,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         this.strokeColor = new GralogColor(v.strokeColor);
         this.fillColor = new GralogColor(v.fillColor);
 
-        // this.coordinates = new Vector2D(v.coordinates);
+        // this.setCoordinates(v.coordinates);
         this.setCoordinates(v.coordinates);
         this.listeners = new HashSet<>(v.listeners);
 
@@ -177,7 +177,6 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     void connectEdge(Edge e){
         if (e.isDirected()){
-            System.out.println("we're dealing wiht a direced boi" + e.isDirected);
             if(e.getSource() == this){
                 //deprecated local id Vergabe. 
                 // if(e.getId() == -1 && incidentEdges.isEmpty()){
