@@ -42,19 +42,30 @@ public class TikZExport extends ExportFilter {
         out.writeLine("");
 
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
-        int i = 1;
+        
         for (Vertex v : structure.getVertices()) {
-            nodeIndex.put(v, i);
-            final String label = v.label.isEmpty() ? "" : "$" + v.label + "$";
-            String color = "";
-            if (!v.fillColor.equals(GralogColor.WHITE)) {
-                out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
-                color = "[fill=gralog-fill-color] ";
-            }
-            out.writeLine("\\node " + color + "(n" + i + ") at ("
-                + v.coordinates.getX() + "cm,"
-                + (-v.coordinates.getY()) + "cm) {" + label + "};");
-            ++i;
+        	nodeIndex.put(v, v.id);
+        	final String label = v.label.isEmpty() ? "" : "$" + v.label + "$";
+          
+        	//String properties = "ellipse, minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height;
+        	
+        	String properties = v.shape.getClass().getSimpleName().toLowerCase() + ", minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height + "cm";
+        	out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+    		properties = properties + ", fill=gralog-fill-color";
+/*        	if (!v.fillColor.equals(GralogColor.WHITE)) {
+  //      		out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+    //    		properties = properties + ", fill=gralog-fill-color";
+        	}*/ if (!v.strokeColor.equals(GralogColor.BLACK)) {
+        		out.writeLine("\\definecolor{gralog-stroke-color}{HTML}{" + v.strokeColor.toHtmlString().substring(1) + "}");
+        		properties = properties + ", draw=gralog-stroke-color";
+        	}
+        	properties = properties + ", line width=" + v.strokeWidth + "cm";
+          
+        	out.writeLine("\\node [" + properties + "] " + "(n" + v.id + ") at ("
+        			+ v.coordinates.getX() + "cm,"
+        			+ (-v.coordinates.getY()) + "cm) {" + label + "};");
+                  
+//          ++i;
         }
 
         out.writeLine("");

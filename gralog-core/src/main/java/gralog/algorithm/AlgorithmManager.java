@@ -25,7 +25,6 @@ public final class AlgorithmManager {
         = new HashMap<>();
 
     public static void registerAlgorithmClass(Class<?> aClass, String className) throws Exception {
-        // System.out.println("asuh asuh"+aClass.toString());
         if (Modifier.isAbstract(aClass.getModifiers()))
             return;
         Method[] methods = new Method[0];

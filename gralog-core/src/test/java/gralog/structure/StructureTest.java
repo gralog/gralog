@@ -115,7 +115,7 @@ public class StructureTest {
 
         int i = 0;
         for (Vertex u : structure.getVertices()) {
-            u.coordinates = new Vector2D((double) i, (double) i);
+            u.setCoordinates((double) i, (double) i);
             u.radius = i;
             u.strokeWidth = i;
             u.textHeight = i;

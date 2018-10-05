@@ -2,18 +2,19 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.rendering;
 
+import java.io.Serializable;
+
 /**
  *
  */
-public class GralogColor {
+public class GralogColor implements Serializable {
 
-    public enum Colors{
+    public enum Color {
         WHITE   (0xFFFFFF),
         BLACK   (0x000000),
         BLUE    (0x0000FF),
         GREEN   (0x00FF00),
         RED     (0xFF0000),
-        GREY    (0x808080),
         GRAY    (0x808080),
         YELLOW  (0xFFFF00),
         CYAN    (0x00FFFF),
@@ -25,14 +26,24 @@ public class GralogColor {
         PURPLE	(0x800080),
         TEAL	(0x008080),
         NAVY    (0x000080),
-        ORANGE  (0xFF4500);
+        ORANGE  (0xFF4500),
+        PUCE    (0xCC8899);
 
-        Colors(int c) {}
+        int value;
+
+        Color(int c) {this.value = c;}
+        public int getValue(){
+            return this.value;
+        }
     }
 
-    public static boolean isColor(String s){
-        for (Colors c : Colors.values())
-            if (s.equals(c))
+    public int getValue(Color c){
+        return c.value;
+    }
+
+    public static boolean isColor(String s){ // checks if s is a color from enum Color
+        for (Color c : Color.values())
+            if (c.name().equalsIgnoreCase(s))
                 return true;
         return false;
     }
@@ -40,6 +51,10 @@ public class GralogColor {
     public final short r;
     public final short g;
     public final short b;
+
+    public GralogColor(String hex){
+        this(Integer.parseInt(hex,16));
+    }
 
     public GralogColor(int red, int green, int blue) {
         this.r = (short) (red & 0xFF);
@@ -87,7 +102,8 @@ public class GralogColor {
 
     @Override
     public String toString() {
-        return "GralogColor{" + r + "," + g + "," + b + '}';
+        String s = this.toHtmlString();
+        return s.substring(1,s.length());
     }
 
     public String toHtmlString() {
@@ -138,6 +154,18 @@ public class GralogColor {
         }
 
         return new GralogColor(colorCode);
+    }
+
+    public String name(){
+        for (Color c : Color.values()){
+            if (c.value == (
+                    ((r&0x0FF)<<16)|((g&0x0FF)<<8)|(b&0x0FF)
+                            )
+               ){
+                return c.name();
+            }
+        }
+    return Integer.toHexString(r)+ Integer.toHexString(g) + Integer.toHexString(b);
     }
 
     public GralogColor inverse() {

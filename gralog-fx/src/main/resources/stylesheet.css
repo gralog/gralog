@@ -3,3 +3,46 @@
     -fx-base: rgba(200, 200, 200, 255); // dark
 }
 */
+
+.consoleTextStyle, .consoleTextStyle .viewport, .consoleTextStyle .content{
+	/*-fx-control-inner-background: transparent;*/
+	-fx-background-color:transparent;;
+
+
+	-fx-padding: 1px 0px -0px -0px;
+}
+.text-area .arrow-button  {
+    -fx-opacity: 0.0;
+    -fx-cursor: text;
+}
+.text-area .scroll-bar:vertical:disabled {
+    -fx-opacity: 0;
+}
+.table-view {
+  -fx-table-cell-border-color: transparent;
+  -fx-table-header-border-color: transparent;
+}
+.scroll-pane {
+    -fx-hbar-policy: never;
+    -fx-vbar-policy: never;
+}
+
+.errorStyle{
+	-fx-text-inner-color: red;
+}
+
+.gPrintStyle{
+    -fx-text-inner-color: blue;
+}
+
+.notificationPrintStyle{
+    -fx-text-inner-color: green;
+}
+
+.warningPrintStyle{
+    -fx-text-inner-color: #fc9611;
+}
+
+.consoleScrollViewStyle{
+	-fx-padding: 0px 0px 5px -0px;
+}

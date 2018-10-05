@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<TitledPane animated="false" collapsible="false" maxHeight="130.0" maxWidth="500.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="130.0" prefWidth="500.0" text="Choose the script you'd like to run" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+  <content>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="102.0" prefWidth="493.0">
+         <children>
+            <Button id="chooseFileButton" fx:id="chooseFileButton" layoutX="16.0" layoutY="14.0" mnemonicParsing="false" text="Choose File" />
+            <TextField id="fileUrlTextField" fx:id="fileUrlTextField" layoutX="115.0" layoutY="14.0" prefHeight="27.0" prefWidth="283.0" />
+            <Button id="submitButton" fx:id="submitButton" layoutX="16.0" layoutY="51.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="382.0" text="Ok!">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Button id="cancel" fx:id="cancel" layoutX="415.0" layoutY="14.0" mnemonicParsing="false" prefHeight="68.0" prefWidth="67.0" text="Cancel" textFill="#eb0707" />
+         </children></AnchorPane>
+  </content>
+</TitledPane>

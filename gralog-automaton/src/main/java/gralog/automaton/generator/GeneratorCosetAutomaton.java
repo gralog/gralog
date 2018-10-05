@@ -36,15 +36,15 @@ public class GeneratorCosetAutomaton extends Generator {
         ArrayList<State> states = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
-            State state = result.createVertex();
-            state.coordinates = new Vector2D(
+            State state = result.addVertex();
+            state.setCoordinates(
                 ((Math.cos(2d * Math.PI * i / n + Math.PI / 2d) * diameter) + diameter) / 2d,
                 ((Math.sin(2d * Math.PI * i / n + Math.PI / 2d) * diameter) + diameter) / 2d
             );
             state.label = "" + i;
 
             states.add(state);
-            result.addVertex(state);
+
         }
 
         for (int i = 0; i < n; i++) {

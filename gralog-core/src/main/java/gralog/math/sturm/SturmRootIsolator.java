@@ -1,12 +1,8 @@
 package gralog.math.sturm;
 
-import jdk.jshell.spi.ExecutionControl;
-
-import java.time.Duration;
-import java.time.Instant;
 import java.util.*;
 
-//TODO: Use simple interval pruning to reduce intervals. Maybe implement a different findRoots, or prune roots
+//TODO: Use simple interval pruning to reduce intervals. Maybe implement a different findRootsDN, or prune roots
 //in the bezier class
 
 /**
@@ -34,8 +30,8 @@ public class SturmRootIsolator {
      *
      * @see Interval
      */
-    public static double[] findRoots(Polynomial p){
-        return findRoots(p, findIntervals(p));
+    public static double[] findRootsDN(Polynomial p){
+        return findRootsDN(p, findIntervals(p));
     }
     /**
      * Returns an array of root approximations of a polynomial by applying Newton
@@ -52,11 +48,21 @@ public class SturmRootIsolator {
      *
      * @see ExpInterval Note the semantics of the bounds
      */
-    public static double[] findRoots(Polynomial p, List<Interval> intervals){
+    public static double[] findRootsDN(Polynomial p, List<Interval> intervals){ //only descending roots
         double[] roots = new double[intervals.size()];
         for(int i = 0; i < roots.length; i++){
             Interval interval = intervals.get(i);
-            roots[i] = findRoot(p, interval.lowerBound(), interval.upperBound());
+            roots[i] = findRootDN(p, interval.lowerBound(), interval.upperBound());
+        }
+        return roots;
+    }
+
+
+    public static double[] findRoots(Polynomial p, List<Interval> intervals, int iterations){
+        double[] roots = new double[intervals.size()];
+        for(int i = 0; i < roots.length; i++){
+            Interval interval = intervals.get(i);
+            roots[i] = findRoot(p, interval.lowerBound(), interval.upperBound(), iterations);
         }
         return roots;
     }
@@ -67,10 +73,10 @@ public class SturmRootIsolator {
      *
      *
      */
-    public static double findRoot(Polynomial p, double from, double to){
-        return findRoot(p, from, to, 10);
+    public static double findRootDN(Polynomial p, double from, double to){
+        return findRootDN(p, from, to, 10);
     }
-    public static double findRoot(Polynomial p, double from, double to, int iterations){
+    public static double findRootDN(Polynomial p, double from, double to, int iterations){
         double m;
         double tmp;
         for(int i = 0; i < iterations; i++){
@@ -82,6 +88,37 @@ public class SturmRootIsolator {
                 from = m;
             }else{
                 to = m;
+            }
+        }
+
+        return (to + from)/2;
+    }
+
+    public static double findRoot(Polynomial p, double from, double to, int iterations){
+        double m;
+        double tmp;
+        boolean descending = p.eval(from) > 0;
+        for(int i = 0; i < iterations; i++){
+            m = (to + from)/2;
+            tmp = p.eval(m);
+            if(Math.abs(tmp) < eps){
+                return m;
+            }
+            else{
+                if(descending){
+                    if(tmp > 0){
+                        from = m;
+                    }else{
+                        to = m;
+                    }
+                }else{
+                    if(tmp < 0){
+                        from = m;
+                    }else{
+                        to = m;
+                    }
+                }
+
             }
         }
 

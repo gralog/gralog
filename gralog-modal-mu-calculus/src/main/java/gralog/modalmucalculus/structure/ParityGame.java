@@ -24,10 +24,6 @@ public class ParityGame extends Structure<ParityGamePosition, FiniteGameMove> {
         return new ParityGamePosition(config);
     }
 
-    @Override
-    public FiniteGameMove createEdge() {
-        return new FiniteGameMove();
-    }
 
     @Override
     public FiniteGameMove createEdge(Configuration config) {

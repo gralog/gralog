@@ -9,11 +9,13 @@ import gralog.rendering.Vector2D;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.Serializable;
+
 /**
  *
  */
 @XmlName(name = "intermediatepoint")
-public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable {
+public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable, Serializable {
 
     public Vector2D coordinates;
 

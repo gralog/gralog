@@ -29,14 +29,14 @@ public class TrivialGraphFormatExport extends ExportFilter {
 
         Collection<Vertex> V = structure.getVertices();
         for (Vertex v : V) {
+            i=v.getId();
             nodeIndex.put(v, i);
             stream.write(i + linefeed);
-            i++;
         }
 
         stream.write("#" + linefeed);
 
-        Set<Edge> E = structure.getEdges();
+        Set<Edge> E = (Set<Edge>)structure.getEdges();
         for (Edge e : E)
             stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + linefeed);
 
@@ -52,17 +52,17 @@ public class TrivialGraphFormatExport extends ExportFilter {
 
         Collection<Vertex> V = structure.getVertices();
         for (Vertex v : V) {
+            i=v.getId();
             nodeIndex.put(v, i);
             retString += Integer.toString(i) + separator;
             // stream.write(i + linefeed);
-            i++;
         }
 
         retString += "#" + separator;
 
         // stream.write("#" + linefeed);
 
-        Set<Edge> E = structure.getEdges();
+        Set<Edge> E = (Set<Edge>)structure.getEdges();
         for (Edge e : E){
             retString += nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + separator;
             // stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + linefeed);
@@ -79,7 +79,7 @@ public class TrivialGraphFormatExport extends ExportFilter {
         Integer i = 1;
         Collection<Vertex> V = structure.getVertices();
         for (Vertex v : V)
-            result.put("" + (i++), v);
+            result.put("" + v.getId(), v);
         return result;
     }
 
@@ -92,9 +92,9 @@ public class TrivialGraphFormatExport extends ExportFilter {
         Integer i = 1;
         Collection<Vertex> V = structure.getVertices();
         for (Vertex v : V)
-            nodeIndex.put(v, i++);
+            nodeIndex.put(v, v.getId());
 
-        Set<Edge> E = structure.getEdges();
+        Set<Edge> E = (Set<Edge>)structure.getEdges();
         for (Edge e : E)
             result.put(nodeIndex.get(e.getSource()) + ":" + nodeIndex.get(e.getTarget()), e);
 

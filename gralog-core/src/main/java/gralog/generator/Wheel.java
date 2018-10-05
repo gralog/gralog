@@ -35,21 +35,21 @@ public class Wheel extends Generator {
 
         UndirectedGraph result = new UndirectedGraph();
 
-        Vertex center = result.createVertex();
-        center.coordinates = new Vector2D(3.5, 3.5);
-        result.addVertex(center);
+        Vertex center = result.addVertex();
+        center.setCoordinates(3.5, 3.5);
 
-        Vertex first = result.createVertex();
-        first.coordinates = new Vector2D(
+
+        Vertex first = result.addVertex();
+        first.setCoordinates(
             Math.sin(0 * 2 * Math.PI / n) * 3.5 + 3.5,
             Math.cos(0 * 2 * Math.PI / n) * 3.5 + 3.5
         );
-        result.addVertex(first);
+
 
         Vertex last = first;
         for (int i = 1; i < n; i++) {
-            Vertex next = result.createVertex();
-            next.coordinates = new Vector2D(
+            Vertex next = result.addVertex();
+            next.setCoordinates(
                 Math.sin(i * 2 * Math.PI / n) * 3.5 + 3.5,
                 Math.cos(i * 2 * Math.PI / n) * 3.5 + 3.5
             );
@@ -58,7 +58,7 @@ public class Wheel extends Generator {
             result.addEdge(result.createEdge(last, center));
 
             last = next;
-            result.addVertex(next);
+
         }
         result.addEdge(result.createEdge(last, first));
         result.addEdge(result.createEdge(last, center));

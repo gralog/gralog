@@ -61,7 +61,7 @@ public class ModalMuCalculusBox extends ModalMuCalculusFormula {
         for (Vertex v : s.getVertices()) {
             ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
-            node.coordinates = new Vector2D(
+            node.setCoordinates(
                 index.get((World) v).get(subformula).coordinates.getX(),
                 scale * size.getY() * v.coordinates.getY() + pos.getY()
             );

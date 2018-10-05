@@ -67,7 +67,7 @@ public class CommaSeparatedValuesImport extends ImportFilter {
             }
 
             for (Vertex newnode : nodeIndex.values()) {
-                newnode.coordinates = new Vector2D(
+                newnode.setCoordinates(
                     Math.random() * 3d * nodeIndex.size(),
                     Math.random() * 3d * nodeIndex.size());
                 result.addVertex(newnode);

@@ -48,6 +48,9 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
 
     }
 
+    public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color){
+        arrow(dir, pos, arrowType, scale, color, (2.54 / 96));
+    }
     @Override
     public void polygon(double[] x, double[] y, int count, GralogColor c){
         gc.setFill(Color.rgb(c.r, c.g, c.b));
@@ -59,10 +62,11 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.fillPolygon(x, y, count);
     }
     @Override
-    public void lines(double[] x, double[] y, int count, GralogColor c){
+    public void lines(double[] x, double[] y, int count, GralogColor c, double lineWidth){
         gc.setLineCap(StrokeLineCap.ROUND);
         gc.setStroke(Color.rgb(c.r, c.g, c.b));
-        gc.setLineWidth((2.54 / 96) * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        gc.setLineWidth(lineWidth * pane.zoomFactor * (pane.screenResolutionX / 2.54));
+        //gc.setLineWidth((2.54 / 96) * pane.zoomFactor * pane.screenResolutionX / 2.54);
         for (int i = 0; i < count; i++)
         {
             x[i] = pane.modelToScreenX(x[i]);
@@ -126,7 +130,7 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         if(type == LineType.DOTTED){
             gc.setLineDashes(0.03 * pane.zoomFactor * pane.screenResolutionX / 2.54, 0.15 * pane.zoomFactor * pane.screenResolutionX / 2.54);
         }else if(type == LineType.DASHED){
-            gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
+            gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
         }
         gc.setLineWidth(width * pane.zoomFactor * pane.screenResolutionX / 2.54);
         gc.beginPath();
@@ -159,6 +163,25 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.setStroke(Color.rgb(color.r, color.g, color.b));
         gc.setLineWidth(strokeWidth * pane.zoomFactor * pane.screenResolutionX / 2.54);
         gc.strokeRect(p1.getX(), p1.getY(), p2.getX() - p1.getX(), p2.getY() - p1.getY());
+    }
+
+    @Override
+    public void strokeRectangle(double x1, double y1, double x2, double y2, double strokeWidth, LineType type) {
+
+        Point2D p1 = pane.modelToScreen(new Point2D(x1, y1));
+        Point2D p2 = pane.modelToScreen(new Point2D(x2, y2));
+        GralogColor color = GralogColor.BLACK;
+
+        if(type == LineType.DOTTED){
+            gc.setLineDashes(0.08 * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        }else if(type == LineType.DASHED){
+            gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        }
+
+        gc.setStroke(Color.rgb(color.r, color.g, color.b));
+        gc.setLineWidth(strokeWidth * pane.zoomFactor * pane.screenResolutionX / 2.54);
+        gc.strokeRect(p1.getX(), p1.getY(), p2.getX() - p1.getX(), p2.getY() - p1.getY());
+        gc.setLineDashes(0);
     }
 
     @Override

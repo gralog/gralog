@@ -35,6 +35,7 @@ import java.util.Set;
 // import javafx.scene.layout.HBox;
 import java.util.ArrayList;
 import java.util.List;
+import org.reflections.Reflections;
 
 import java.util.HashMap;
 
@@ -44,6 +45,25 @@ public class PipingMessageHandler{
    
     private Structure structure;
     private StructurePane pane;
+    private static HashMap<String,Class<? extends CommandForGralogToExecute>> commandNameToClassMap;
+    private static Class[] args3;
+    private static Class[] args2;
+    static {
+        args3 = new Class[3]; 
+        args3[0] = String[].class; 
+        args3[1] = Structure.class; 
+        args3[2] = Piping.class; 
+        args2 = new Class[2]; 
+        args2[0] = String[].class; 
+        args2[1] = Structure.class;
+        commandNameToClassMap = new HashMap<String, Class<? extends CommandForGralogToExecute>>();
+        Reflections reflections = new Reflections("gralog.gralogfx.piping");
+        Set<Class<? extends CommandForGralogToExecute>> gralogCommands = reflections.getSubTypesOf(CommandForGralogToExecute.class);
+        for (Class<? extends CommandForGralogToExecute> c : gralogCommands){
+            String name = c.getSimpleName().substring(0,c.getSimpleName().length()-7).toLowerCase();
+            commandNameToClassMap.put(name,c);
+        }
+    }
 
     public static GraphType properGraphFormats(String format){
 
@@ -51,6 +71,8 @@ public class PipingMessageHandler{
         List<String> tikz = Arrays.asList("tikz");
         List<String> trivial = Arrays.asList("trivial","tgf");
         List<String> xml = Arrays.asList("xml");
+        List<String> gtgf = Arrays.asList("gtgf");
+        List<String> incm = Arrays.asList("incm");
      
         GraphType graphType = GraphType.Null;
         for (String piece : format.split(" ")){
@@ -69,6 +91,14 @@ public class PipingMessageHandler{
             if (xml.contains(piece)){
                 graphType = GraphType.Xml;
             }
+
+            if (gtgf.contains(piece)){
+                graphType = GraphType.GTgf;
+            }
+            
+            if (incm.contains(piece)) {
+            	graphType = GraphType.IncM;
+            }
         }
         return graphType;
     }
@@ -81,7 +111,7 @@ public class PipingMessageHandler{
         List<String> undirected = Arrays.asList("undirected");
         List<String> buchi = Arrays.asList("buchi","buechi","b\u00fcchi");
         List<String> kripke = Arrays.asList("kripke");
-        List<String> parity = Arrays.asList("parity","Game");
+        List<String> parity = Arrays.asList("parity","game");
         List<String> automaton = Arrays.asList("automaton");
         for (String piece : name.split(" ")){
 
@@ -113,30 +143,164 @@ public class PipingMessageHandler{
         return (String)null;
     }
 
-    public static GralogColor hexToGralogColor(String color){
+    public static GralogColor hexToGralogColor(String color) throws ColorFormatException{
         GralogColor changeColor;
         //hex notation
         if (color.length() == 7){
             color = color.substring(1);
         }
         try{
-
-            changeColor = new GralogColor(Integer.parseInt(color,16));
+            changeColor = new GralogColor(Integer.parseInt(color));
+            return changeColor;
         }catch(Exception e){
-            changeColor = (GralogColor)null;
+            throw new ColorFormatException("the hex color: " + color + " is not defined!");
         }
-        return changeColor;
+        
+
     }
 
-    public static GralogColor rgbToGralogColor(String[] rgb){
+    public static GralogColor rgbToGralogColor(String rgb) throws ColorFormatException{
+        String[] rgbSplit = rgb.split(",");
         try{
-            int r = Integer.parseInt(rgb[0]);
-            int g = Integer.parseInt(rgb[1]);
-            int b = Integer.parseInt(rgb[2]);
+            int r = Integer.parseInt(rgbSplit[0]);
+            int g = Integer.parseInt(rgbSplit[1]);
+            int b = Integer.parseInt(rgbSplit[2]);
             return new GralogColor(r,g,b);
         }catch(Exception e){
-            return (GralogColor)null;
+            throw new ColorFormatException("the rgb color: " + rgb + " is not defined!");
         }
+
+    }
+
+    public static String rejoinExternalCommandSegments(String[] externalCommandSegments){
+        return String.join(" ",externalCommandSegments);
+    }
+
+    public static Edge extractEdge(String[] externalCommandSegments, Structure structure) throws Exception{
+        String edge;
+        try{
+            edge = externalCommandSegments[2];
+        }catch(Exception e){
+            throw new MessageFormatException("the command " + rejoinExternalCommandSegments(externalCommandSegments) + " did not have an edge as the 3rd paramter!");
+        }
+        String[] sourceTargetOrEdgeId = edge.split(",");
+        if (sourceTargetOrEdgeId.length == 1){
+            //the edge id was passed
+            int id;
+            try{
+                id = Integer.parseInt(edge);
+            }catch(NumberFormatException e){
+                throw new MessageFormatException("the id: " + edge + " you have passed was not an integer!");
+            }
+
+            Edge e = structure.getEdgeById(id);
+            if (e == null){
+                throw new NonExistantEdgeException("the id: " + edge + " is not assigned to an edge!");
+            }
+            return e;
+        }else{
+            int sourceId;
+            int targetId;
+            String sourceString;
+            String targetString;
+            Vertex source;
+            Vertex target;
+            try{
+                sourceString = sourceTargetOrEdgeId[0];
+            }catch(Exception e){
+                throw new MessageFormatException("the source of the source,target tuple: " + edge + " you have passed was not valid!");
+            }
+            try{
+                targetString = sourceTargetOrEdgeId[1];
+            }catch(Exception e){
+                throw new MessageFormatException("the target of the source,target tuple: " + edge + " you have passed was not valid!");
+            }
+            try{
+                sourceId = Integer.parseInt(sourceString);
+            }catch(Exception e){
+                throw new MessageFormatException("source id: " + sourceString + " you have passed was not an integer!");
+            }
+            try{
+                targetId = Integer.parseInt(targetString);
+            }catch(Exception e){
+                throw new MessageFormatException("target id: " + targetString + " you have passed was not an integer!");
+            }
+            try{
+                source = structure.getVertexById(sourceId);
+            }catch(Exception e){
+                throw new NonExistantVertexException("the source vertex of id " + sourceString + " you have passed does not exist!");
+            }
+            try{
+                target = structure.getVertexById(targetId);
+            }catch(Exception e){
+                throw new NonExistantVertexException("the target vertex of id " + targetString + " you have passed does not exist!");
+            }
+            Edge e = structure.getEdgeByEndVertices(source,target);
+            if (e == null){
+                throw new NonExistantEdgeException("there is no edge with endpoints " + edge + " which you have passed!");
+            }
+            return e;
+
+        }
+    }
+
+    
+
+    public static Vertex extractVertex(String[] externalCommandSegments, Structure structure) throws Exception{
+        String vertex;
+        try{
+            vertex = externalCommandSegments[2];
+        }catch(Exception e){
+            throw new MessageFormatException("the command " + rejoinExternalCommandSegments(externalCommandSegments) + " did not have a vertex as the 3rd paramter!");
+        }
+        
+ 
+        int id;
+        try{
+            id = Integer.parseInt(vertex);
+        }catch(NumberFormatException e){
+            throw new MessageFormatException("the id: " + vertex + " you have passed was not an integer!");
+        }
+        Vertex v = structure.getVertexById(id);
+        if (v == null){
+            throw new NonExistantEdgeException("the id: " + vertex + " is not assigned to a vertex!");
+        }
+        return v;
+    
+    }
+
+    public static String extractNthPositionString(String[] externalCommandSegments, int n) throws Exception{
+        String string;
+        try{
+            string = externalCommandSegments[n];
+        }catch(Exception e){
+            throw new MessageFormatException("the command " +
+                    rejoinExternalCommandSegments(externalCommandSegments) +
+                    " did not have a paramater at index: " +
+                    n);
+        }
+        return string;
+    
+    }
+
+    public static Vertex extractSourceFromEdge(String[] externalCommandSegments, Structure structure) throws Exception{
+        Edge e  = extractEdge(externalCommandSegments,structure);
+        return e.getSource();
+    }
+
+    public static Vertex extractTargetFromEdge(String[] externalCommandSegments, Structure structure) throws Exception{
+        Edge e  = extractEdge(externalCommandSegments,structure);
+        return e.getTarget();
+    }
+
+   
+
+    public static String universalEdgeToTuple(Edge e){
+        return "("+Integer.toString(e.getId())+","+Integer.toString(e.getSource().getId())+","+Integer.toString(e.getTarget().getId())+")";
+    }
+
+    public static String universalEdgeToGralogTuple(Edge e){
+        return e.gralogPipify()+"#source="+Integer.toString(e.getSource().getId())+"|vertex"+"#target="+Integer.toString(e.getTarget().getId())+"|vertex";
     }
 
 
@@ -149,11 +313,6 @@ public class PipingMessageHandler{
         }
         for (int i = 1 + rankAddition; i < vars.length; i ++){
             String[] terms = vars[i].split("=");
-            for (String x : terms){
-                System.out.println("iter: " + x);
-            }
-            System.out.println("ok done with iterating");
-            System.out.println("ok we have : " + terms[0] + "," + terms[1] + " as terms");
             String varName = terms[0].substring(1,terms[0].length());
             String varValue = terms[1].substring(0,terms[1].length()-1);
             String[] vals = {varName,varValue};
@@ -163,243 +322,44 @@ public class PipingMessageHandler{
 
     }
 
-    public static GralogColor colorConversion(String[] colors){
-        System.out.println("we're getting: ");
+    public static GralogColor colorConversionHex(String color) throws ColorFormatException{
         
         String colorName;
 
-        if ((colorName = PipingPresets.getHexByColorName(colors[0])) != null){
-            return hexToGralogColor(colorName);
-        }else{
-            System.out.println(colorName + " not in database #rip");
-        }
 
-        GralogColor changeColor;
-        if (colors.length == 1){
-            
-            return hexToGralogColor(colors[0]);
-        }else if (colors.length == 3){
-            return rgbToGralogColor(colors);
+        if ((colorName = PipingPresets.getHexByColorName(color)) != null){
+            return hexToGralogColor(colorName);
         }
-        return (GralogColor)null;
+        return hexToGralogColor(color);
         
     }
 
-    public static CommandForGralogToExecute handleCommand(String[] externalCommandSegments,Structure structure){
+    public static GralogColor colorConversionRGB(String color) throws ColorFormatException{
+        
+        return rgbToGralogColor(color);
+    }
+
+    public static CommandForGralogToExecute handleCommand(String[] externalCommandSegments,Structure structure,Piping piping){
         CommandForGralogToExecute currentCommand;
-        if (externalCommandSegments[0].equals("addVertex")){ //user input simulation
-            
-            currentCommand = new AddVertexCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-
-            System.out.println("structure gotten with id: " + Integer.parseInt(externalCommandSegments[1]) + " is: " + currentStructure);
+        Structure currentStructure = structure;
+        String commandKeyword = externalCommandSegments[0];
 
 
-            // currentCommand.setStructure(currentStructure);
-
-            System.out.println("and the command thinks its structure is: " + currentCommand.structure.toString());
-
-            ///to generalize:::
 
 
-            System.out.println("received message to add vertex to graph #" + externalCommandSegments[1]);
-            // Vertex toAdd = PipingMessageHandler.handleAddVertex(externalCommandSegments,this.structure);
-            // this.out.println(Integer.toString(toAdd.getId()));
-            return currentCommand;
-        }else if (externalCommandSegments[0].equals("getGraph")){ //user input simulation
+        Class<? extends CommandForGralogToExecute> myClass = commandNameToClassMap.get(commandKeyword.toLowerCase());
+        try{
+            currentCommand = myClass.getDeclaredConstructor(args2).newInstance(externalCommandSegments,currentStructure);
+        }catch(Exception e){
+            try{
+                currentCommand = myClass.getDeclaredConstructor(args3).newInstance(externalCommandSegments,currentStructure,piping);
+            }catch(Exception ex){
+                currentCommand = new NotRecognizedCommand(externalCommandSegments,null);
+            }
 
-            currentCommand = new GetGraphCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-
-
-        }else if (externalCommandSegments[0].equals("sendGraph")){ //user input simulation
-
-            currentCommand = new SendGraphCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-
-
-        }else if (externalCommandSegments[0].equals("deleteVertex")){ //user input simulation
-            System.out.println("received message to delete vertex " + externalCommandSegments[2]);
-
-            currentCommand = new DeleteVertexCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-
-
-        }else if (externalCommandSegments[0].equals("setVertexShape")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-            // PipingMessageHandler.handleSetVertexFillColor(externalCommandSegments,this.structure);
-            
-            currentCommand = new SetVertexShapeCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-            // this.out.println("ack");
-        }else if (externalCommandSegments[0].equals("setVertexFillColor")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-            // PipingMessageHandler.handleSetVertexFillColor(externalCommandSegments,this.structure);
-            
-            currentCommand = new SetVertexFillColorCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-            // this.out.println("ack");
-        }else if (externalCommandSegments[0].equals("setVertexStrokeColor")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
-            
-            currentCommand = new SetVertexStrokeColorCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-            // this.out.println("ack");
-        }else if (externalCommandSegments[0].equals("setEdgeContour")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
-            
-            currentCommand = new SetEdgeContourCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-            // this.out.println("ack");
-        }else if (externalCommandSegments[0].equals("setEdgeColor")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
-            
-            currentCommand = new SetEdgeColorCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-            // this.out.println("ack");
-        }else if (externalCommandSegments[0].equals("getEdgeProperty")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
-            
-            currentCommand = new GetEdgePropertyCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-            // this.out.println("ack");
-        }else if (externalCommandSegments[0].equals("setEdgeProperty")){//format: setColor <vertexId> (case1: <hex> case2: <r> <g> <b>)
-            // PipingMessageHandler.handleSetVertexStrokeColor(externalCommandSegments,this.structure);
-            
-            currentCommand = new SetEdgePropertyCommand(externalCommandSegments,structure);
-            Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-            // this.out.println("ack");
-        }else if (externalCommandSegments[0].equals("setVertexRadius")){//format: setColor <vertexId> <newRadius>
-            // PipingMessageHandler.handleSetVertexRadius(externalCommandSegments,this.structure);
-            
-            currentCommand = new SetVertexRadiusCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            // currentCommand.setStructure(currentStructure);
-            return currentCommand;
-            // this.out.println("ack");
-        }else if (externalCommandSegments[0].equals("getAllEdges")){//format: setColor <vertexId>
-            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-            currentCommand = new GetAllEdgesCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("getAllVertices")){//format: setColor <vertexId>
-            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-            currentCommand = new GetAllVerticesCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("getNeighbours")){//format: setColor <vertexId>
-            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-            System.out.println("neibas reqd");
-            currentCommand = new GetNeighboursCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("getOutgoingNeighbours")){//format: setColor <vertexId>
-            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-            System.out.println("neibas reqd");
-            currentCommand = new GetOutgoingNeighboursCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("getIncomingNeighbours")){//format: setColor <vertexId>
-            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-
-            currentCommand = new GetIncomingNeighboursCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("getIncidentEdges")){//format: setColor <vertexId>
-            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-
-            currentCommand = new GetIncidentEdgesCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("getAdjacentEdges")){//format: setColor <vertexId>
-            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-
-            currentCommand = new GetAdjacentEdgesCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("getOutgoingEdges")){//format: setColor <vertexId>
-            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-
-            currentCommand = new GetOutgoingEdgesCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("getIncomingEdges")){//format: setColor <vertexId>
-            // String neighbourString = PipingMessageHandler.handleGetNeighbours(externalCommandSegments,this.structure);///get to know yo neighba
-
-            currentCommand = new GetIncomingEdgesCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.out.println(neighbourString);
-        }else if (externalCommandSegments[0].equals("addEdge")){//format: addEdge <sourceId> <targetId> <directed?>
-            // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
-            
-            currentCommand = new AddEdgeCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-
-            return currentCommand;
-            // this.out.println(handleEdgeResponse);
-        }else if (externalCommandSegments[0].equals("deleteEdge")){//format: addEdge <sourceId> <targetId> <directed?>
-            // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
-            // System.out.println("")
-            currentCommand = new DeleteEdgeCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-
-            return currentCommand;
-            // this.out.println(handleEdgeResponse);
-        }else if (externalCommandSegments[0].equals("setEdgeLabel")){//format: addEdge <sourceId> <targetId> <directed?>
-            // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
-            // System.out.println("")
-            currentCommand = new SetEdgeLabelCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-
-            return currentCommand;
-            // this.out.println(handleEdgeResponse);
-        }else if (externalCommandSegments[0].equals("setVertexLabel")){//format: addEdge <sourceId> <targetId> <directed?>
-            // String handleEdgeResponse = PipingMessageHandler.handleAddEdge(externalCommandSegments,this.structure);///get to know yo neighba
-            // System.out.println("")
-            currentCommand = new SetVertexLabelCommand(externalCommandSegments,structure);
-            // Structure currentStructure = structure;
-            return currentCommand;
-
-            // this.out.println(handleEdgeResponse);
         }
+        return currentCommand;
 
-
-        else{
-            System.out.println("error: not a recognized command dumbfuck did you not read the documentation");
-            // out.println(this.structure.xmlToString());
-            
-            currentCommand = new NotRecognizedCommand(externalCommandSegments,null);
-            // Structure currentStructure = structure;
-            return currentCommand;
-            // this.spacePressed= false;
-        }
     }
 
     

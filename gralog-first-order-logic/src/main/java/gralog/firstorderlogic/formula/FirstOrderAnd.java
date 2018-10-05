@@ -37,6 +37,7 @@ public class FirstOrderAnd extends FirstOrderFormula {
 
     @Override
     public boolean evaluate(Structure s, HashMap<String, Vertex> varassign,
+
         ProgressHandler onprogress) throws Exception {
         if (!subformula1.evaluate(s, varassign, onprogress))
             return false;

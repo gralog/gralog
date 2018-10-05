@@ -1,0 +1,19 @@
+%\documentclass{article}
+%\usepackage{pgf}
+%\usepackage{tikz}
+%\usepackage{amsmath, amssymb}
+%\usetikzlibrary{arrows.meta}
+%\usepackage[utf8]{inputenc}
+%\begin{document}
+    \begin{tikzpicture}[scale=0.6,auto]
+        \tikzset{>=Stealth}
+        \tikzstyle{every path}=[->,thick]
+        \tikzstyle{every node}=[circle,fill=white,draw=black,text=black,thin,minimum size=16pt,inner sep=1.5pt]
+
+        \definecolor{gralog-fill-color}{HTML}{E64D4D}
+        \node [fill=gralog-fill-color] (n1) at (5.072187500000001cm,-1.5929166666666668cm) {};
+        \node (n2) at (9.821458333333334cm,-5.6675cm) {};
+
+        \draw (n2) to (n1);
+    \end{tikzpicture}
+%\end{document}

@@ -38,26 +38,24 @@ public class Grid extends Generator {
 
         ArrayList<Vertex> last = new ArrayList<>();
         for (int j = 0; j < n; j++) {
-            Vertex temp = result.createVertex();
+            Vertex temp = result.addVertex();
             last.add(temp);
-            temp.coordinates = new Vector2D(1d, 2d * j + 1d);
+            temp.setCoordinates(1d, 2d * j + 1d);
             if (j > 0)
                 result.addEdge(result.createEdge(last.get(j - 1), temp));
-            result.addVertex(temp);
         }
 
         for (int i = 1; i < n; i++) {
             ArrayList<Vertex> next = new ArrayList<>();
             Vertex lasttemp = null;
             for (int j = 0; j < n; j++) {
-                Vertex temp = result.createVertex();
+                Vertex temp = result.addVertex();
                 next.add(temp);
-                temp.coordinates = new Vector2D(2d * i + 1d, 2d * j + 1d);
+                temp.setCoordinates(2d * i + 1d, 2d * j + 1d);
                 if (j > 0)
                     result.addEdge(result.createEdge(lasttemp, temp));
                 result.addEdge(result.createEdge(last.get(j), temp));
 
-                result.addVertex(temp);
                 lasttemp = temp;
             }
 

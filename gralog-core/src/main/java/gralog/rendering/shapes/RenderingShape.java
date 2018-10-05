@@ -6,11 +6,32 @@ import gralog.rendering.Vector2D;
 import javafx.util.StringConverter;
 import org.reflections.Reflections;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Set;
 
 
-public abstract class RenderingShape {
+public abstract class RenderingShape implements Serializable {
+
+    /*
+    * PossibleShapes needed to check in the console dialog if a property is a shape.
+    * */
+
+    // if changed, also change enum PossibleShapes in gralog-core.gralog.dialog
+    private static enum PossibleShapes {
+        // TODO SQUARE,
+        // TODO CYCLE,
+        ELLIPSE,
+        RECTANGLE,
+        DIAMOND
+    }
+
+    public static boolean isShape(String s){
+        for (PossibleShapes ps : PossibleShapes.values())
+            if (ps.name().equalsIgnoreCase(s))
+                return true;
+        return false;
+    }
 
     //used to restrict the size box, can cause performance problems otherwise
     private static final double MAX_WIDTH = 300;

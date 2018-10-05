@@ -3,21 +3,25 @@
 package gralog.gralogfx;
 //test
 
+import gralog.dialog.GralogList;
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
+import javafx.event.EventHandler;
 
 import gralog.plugins.*;
-import gralog.rendering.shapes.RenderingShape;
 import gralog.structure.*;
 import gralog.importfilter.*;
 import gralog.exportfilter.*;
 import gralog.generator.*;
 import gralog.algorithm.*;
 import gralog.gralogfx.piping.Piping;
+import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
+// import java.util.concurrent.CountDownLatch;
 
 import gralog.gralogfx.events.RedrawOnProgress;
 import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
+import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 
 import java.io.FileInputStream;
 import java.io.File;
@@ -30,7 +34,7 @@ import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Orientation;
+import javafx.scene.input.KeyCode;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -55,6 +59,11 @@ import org.dockfx.*;
  */
 public class MainWindow extends Application {
 
+    public static MainWindow Main_Application;
+
+    // preference key identifiers
+    private static final String PREF_LAST_USED_STRUCTURE = "lastUsedStructure";
+
     private Stage stage;
     private BorderPane root;
     private MainMenu menu;
@@ -66,21 +75,52 @@ public class MainWindow extends Application {
     private HBox rightBox;
 
     private Console mainConsole;
+    private PluginControlPanel pluginControlPanel;
 
+
+    //panels
+    private DockPane mainDockPane;
+    private DockNode objDock;
+    private DockNode objListDock;
+    private DockNode pluginDock;
+    private DockNode structureNode;
+    private DockNode consoleDock;
+    private DockNode variableDock;
+
+    private boolean pipingUnderway = false;
+
+    private ObjectListDisplay objectListDisplay;
+    private VariablePanel variablePanel;
+
+    //argument configs
+    private boolean dontAskWhenClosing = false; // <==> argument 'dawc'
 
     public MainWindow() {
+
+        Main_Application = this;
+
+
         MainMenu.Handlers handlers = new MainMenu.Handlers();
         handlers.onNew = this::onNew;
         handlers.onGenerate = this::onGenerate;
         handlers.onOpen = this::onOpen;
         handlers.onSave = this::onSave;
+        handlers.onSaveAs = this::onSaveAs;
         handlers.onDirectInput = this::onDirectInput;
-        handlers.onLoadPlugin = this::onLoadPlugin;
-        handlers.onExit = () -> stage.close();
+        handlers.onLoadPluginFromSpecifiedFilepath = this::onLoadPluginFromSpecifiedFilepath;
+        handlers.onLoadPluginWithPromptForFile = this::onLoadPluginWithPromptForFile;
+        handlers.onLoadLastPlugin = this::onLoadLastPlugin;
+        handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
 
+        handlers.onCut = this::onCut;
+        handlers.onCopy = this::onCopy;
+        handlers.onPaste = this::onPaste;
+        handlers.onUndo = this::onUndo;
+        handlers.onRedo = this::onRedo;
+
         // pipeline = new Piping();
-        pipelines = new ArrayList<Piping>();
+        pipelines = new ArrayList<>();
         //controls
         handlers.onAlignHorizontally = () -> {
             if(tabs.getCurrentStructurePane() != null){
@@ -114,74 +154,121 @@ public class MainWindow extends Application {
 
         rightBox = new HBox();
         //inspectorSplit = new SplitPane();
+        tabs = new Tabs(this::onSwitchCurrentStructure);
 
-
-
-        tabs = new Tabs(this::onChangeCurrentStructure);
-        tabs.initializeTab();
-
-        mainConsole = new Console(tabs);
 
         ObjectInspector objectInspector = new ObjectInspector(tabs);
+        objectListDisplay = new ObjectListDisplay();
+        variablePanel = new VariablePanel();
+
+        tabs.objectListDisplay = objectListDisplay;
+
+        String lastOpenedFilePath = Preferences.getString(PREF_LAST_USED_STRUCTURE, "");
+        if(lastOpenedFilePath.isEmpty()){
+            tabs.initializeTab();
+        }else{
+            doOpenFile(new File(lastOpenedFilePath));
+        }
+        mainConsole = new Console(tabs, this::profferTextToMainWindow);
+
         //put lambdas here for controlling stuff
-        
-
-
         Runnable play = new Runnable(){
             public void run(){
-                System.out.println("play pressed");
-                MainWindow.this.tabs.getCurrentStructurePane().getPiping().execWithAck();
+                Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
+                if (!MainWindow.this.tabs.getCurrentStructurePane().handlePlay()){
+                    Platform.runLater(
+                        () -> {
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("No External Process");
+                            alert.setHeaderText(null);
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such you cannot resume piping");
+                            alert.showAndWait();
+                        }
+                    );
+                }
+
             }
         };
         
 
         Runnable skip = new Runnable(){
             public void run(){
-                System.out.println("skip");
-                MainWindow.this.tabs.getCurrentStructurePane().getPiping().skipPressed();
+                Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
+                if (currentPiping != null){
+                    MainWindow.this.tabs.getCurrentStructurePane().handleSkip();
+                }else{
+                    Platform.runLater(
+                        () -> {
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("No External Process");
+                            alert.setHeaderText(null);
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such there is nothing to skip");
+                            alert.showAndWait();
+                        }
+                    );
+                }
+            }
+        };
+
+        Runnable pause = new Runnable(){
+            public void run(){
+                if (!MainWindow.this.tabs.getCurrentStructurePane().handleSpontaneousPause()){
+                }else{
+                    Platform.runLater(
+                        () -> {
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("No External Process");
+                            alert.setHeaderText(null);
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such there is nothing to pause");
+                            alert.showAndWait();
+                        }
+                    );
+                }
+            }
+        };
+
+        Runnable stop = new Runnable(){
+            public void run(){
+                if (!MainWindow.this.tabs.getCurrentStructurePane().handleSpontaneousStop()){
+                    Platform.runLater(
+                        () -> {
+                            Alert alert = new Alert(AlertType.INFORMATION);
+                            alert.setTitle("No External Process");
+                            alert.setHeaderText(null);
+                            alert.setContentText("You have not yet started a piping thread in this window, " +
+                                    "as such there is nothing to pause");
+                            alert.showAndWait();
+                        }
+                    );
+                }
             }
         };
         
 
 
-        DockPane mainDockPane = new DockPane();
-        DockNode structureNode = new DockNode(tabs.getTabPane());
+        mainDockPane = new DockPane();
+        structureNode = new DockNode(tabs.getTabPane());
 
-        //  pluginConrolPanel stuff commented out because
+        //  pluginControlPanel stuff commented out because
         // it is not properly integrated with multiple piping
-        PluginControlPanel pluginControlPanel = new PluginControlPanel();
-        pluginControlPanel.setOnPlay(play);
-        pluginControlPanel.setOnStep(skip);
+        this.pluginControlPanel = new PluginControlPanel();
+        this.pluginControlPanel.setOnPlay(play);
+        this.pluginControlPanel.setOnStep(skip);
+        this.pluginControlPanel.setOnPause(pause);
+        this.pluginControlPanel.setOnStop(stop);
         // END
         
 
-        DockNode objDock = new DockNode(objectInspector, "Object Inspector", null);
-        DockNode pluginDock = new DockNode(pluginControlPanel, "Algorithm Control", null);
-        DockNode consoleDock = new DockNode(mainConsole, "Console", null);
+        objDock = new DockNode(objectInspector, "Object Inspector", null);
+        objListDock = new DockNode(objectListDisplay, "List Overview", null);
+        pluginDock = new DockNode(this.pluginControlPanel, "Algorithm Control", null);
+        consoleDock = new DockNode(mainConsole, "Console", null);
+        variableDock = new DockNode(variablePanel, "Variables List", null);
 
-        structureNode.dock(mainDockPane, DockPos.CENTER);
-        structureNode.setMaxHeight(Double.MAX_VALUE);
-        structureNode.setPrefWidth(Double.MAX_VALUE);
-        structureNode.setPrefHeight(Double.MAX_VALUE);
-        structureNode.setDockTitleBar(null);
-
-
-
-        objDock.dock(mainDockPane, DockPos.RIGHT);
-        objDock.setPrefHeight(250);
-        objDock.setPrefWidth(270);
-        objDock.setMinWidth(270);
-
-
-        pluginDock.dock(mainDockPane, DockPos.BOTTOM, objDock);
-        pluginDock.setPrefHeight(70);
-        pluginDock.setMinHeight(70);
-
-
-        consoleDock.dock(mainDockPane, DockPos.BOTTOM, pluginDock);
-        consoleDock.setPrefWidth(200);
-        consoleDock.setMinHeight(200);
-        consoleDock.setMaxHeight(Double.MAX_VALUE);
+        dockPanels();
 
         Application.setUserAgentStylesheet(Application.STYLESHEET_MODENA);
 
@@ -189,19 +276,89 @@ public class MainWindow extends Application {
         root.setTop(topPane);
         root.setCenter(mainDockPane);
         root.setBottom(statusBar.getStatusBar());
-}
+    }
+    public void dockPanels(){
+        structureNode.dock(mainDockPane, DockPos.CENTER);
+        structureNode.setMaxHeight(Double.MAX_VALUE);
+        structureNode.setPrefWidth(Double.MAX_VALUE);
+        structureNode.setPrefHeight(Double.MAX_VALUE);
+        structureNode.setDockTitleBar(null);
 
-    public void onLoadPlugin() {
+        objDock.dock(mainDockPane, DockPos.RIGHT);
+        objDock.setPrefHeight(250);
+        objDock.setMinWidth(270);
+        objDock.setMaxWidth(270);
+
+
+
+
+        consoleDock.dock(mainDockPane, DockPos.BOTTOM, structureNode);
+        consoleDock.setPrefWidth(Double.MAX_VALUE);
+        consoleDock.setMaxWidth(Double.MAX_VALUE);
+        consoleDock.setMinHeight(200);
+        consoleDock.setMaxHeight(Double.MAX_VALUE);
+    }
+
+    void dockPanels2(){
+
+        //objListDock.setMaxWidth(0);
+        objListDock.dock(mainDockPane, DockPos.LEFT);
+        //objListDock.setMaxWidth(Double.MAX_VALUE);
+        objListDock.setPrefHeight(300);
+        objListDock.setMinHeight(300);
+
+        pluginDock.dock(mainDockPane, DockPos.RIGHT, consoleDock);
+        //pluginDock.setMaxWidth(270);
+        pluginDock.setMinWidth(200);
+        pluginDock.setPrefHeight(70);
+        pluginDock.setMinHeight(70);
+    }
+
+
+
+    public void handlePlannedConsoleInput(){}
+    public void onLoadLastPlugin() {
+        onLoadPlugin(getLastFileName());
+    }
+
+    public void onLoadPluginWithPromptForFile() {
+        
+        ChooseFileForPipingWindow chooseFileForPipingWindow = new ChooseFileForPipingWindow();
+        chooseFileForPipingWindow.setOnHiding(new EventHandler<WindowEvent>() {
+
+             @Override
+             public void handle(WindowEvent event) {
+                 Platform.runLater(new Runnable() {
+
+                     @Override
+                    public void run() {
+                        String fileName = chooseFileForPipingWindow.fileName;
+                        if (fileName != null){
+                            MainWindow.this.onLoadPlugin(fileName);
+                        }
+                    }
+                });
+            }
+        });
+
+    }
+
+    public void onLoadPluginFromSpecifiedFilepath(){
+        this.onLoadPlugin(getSpecifiedFileName());
+    }
+
+    public void onLoadPlugin(String fileName) {
+        Preferences.setFile("MainWindow_lastPipingFile",new File(fileName));
         // FileChooser fileChooser = new FileChooser();
         // fileChooser.setInitialDirectory(new File(getLastDirectory()));
         // fileChooser.setTitle("Load Plugins");
         // fileChooser.getExtensionFilters().add(
         //     new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
         // );
-        // List<File> list = fileChooser.showOpenMultipleDialog(stage);
-        // if (list != null && !list.isEmpty()) {
-        //     setLastDirectory(list.get(0));
-        //     for (File file : list)
+        // List<File> vertexList = fileChooser.showOpenMultipleDialog(stage);
+        // if (vertexList != null && !vertexList.isEmpty()) {
+        //     setLastDirectory(vertexList.get(0));
+        //     for (File file : vertexList)
         //         doLoadPlugin(file.getAbsolutePath());
         // }
 
@@ -215,20 +372,32 @@ public class MainWindow extends Application {
         // }
 
         try{
-            Piping pipeline = new Piping();
-            final String fileName = "/Users/f002nb9/Documents/f002nb9/kroozing/gralog/FelixTest.py";
+//<<<<<<< HEAD
+            // this.waitForPause = new CountDownLatch(1);
 
-            Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");
-            if (!initSuccess){
+
+
+            if (this.tabs.getCurrentStructurePane() == null){
+                Platform.runLater(
+                    () -> {
+                        Alert alert = new Alert(AlertType.INFORMATION);
+                        alert.setTitle("No Structure Pane");
+                        alert.setHeaderText(null);
+                        alert.setContentText("Youmust have an open graph to pipe it bro");
+                        alert.showAndWait();
+                    }
+                );
+
                 return;
             }
 
-            // if (externalCommandSegments[0].equals("error") || (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)){
-            //     System.out.println("error: " + externalProcessInitResponse);
-            //     return;
-            // }
+
+
+            Piping newPiping = this.tabs.getCurrentStructurePane().
+                    makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
+            this.pipelines.add(newPiping);
             
-            pipeline.run(this::initGraph);
+            
 
             // pipeline.run(this::initGraph);
             // if (!externalProcessInitResponse.equals("useCurrentGraph")){
@@ -244,7 +413,7 @@ public class MainWindow extends Application {
             // }else{
             //     pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
 
-            // }
+            // }e
 
 
         } catch(Exception e){
@@ -252,32 +421,52 @@ public class MainWindow extends Application {
         }
     }
 
+
+    public String getSpecifiedFileName(){
+
+
+        String fileName = Preferences.getFile("MainWindow_pipingFile",
+                "/home/michelle/gralog/gralog/gralog-layout/DFS.py").getPath();
+        return fileName;
+    }
+
+    public String getLastFileName(){
+
+        String fileName = Preferences.getFile("MainWindow_lastPipingFile",
+                "/Users/f002nb9/Documents/f002nb9/kroozing/" +
+                        "gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
+    
+        return fileName;
+    }
+
     public StructurePane initGraph(String graphType,Piping pipelineThatCalled){
-        System.out.println("here in initgraph!!!!" + graphType);
         if (!graphType.equals("useCurrentGraph")){
-            System.out.println("trying to make a grpah with type : " + graphType);
-            System.out.println("previosly current structure pane was : " + this.tabs.getCurrentStructurePane());
             Structure temp;
             try{
                 temp = StructureManager.instantiateStructure(graphType);
             }catch(Exception e){
                 e.printStackTrace();
-                System.out.println("well that's an L" + graphType);
                 return null;
             }
-            System.out.println("intsantiaed structuer with id: ");
-            System.out.println(temp.getId());
+         
             tabs.addTab("new " + graphType,temp);
 
             tabs.getCurrentStructurePane().setPiping(pipelineThatCalled);
 
-            System.out.println("postwardly current structure pane is : " + this.tabs.getCurrentStructurePane());
             
             return tabs.getCurrentStructurePane();
         }else{
             return tabs.getCurrentStructurePane();
 
         }
+    }
+
+    public Boolean profferTextToMainWindow(String text){
+        Piping currentPiping = this.tabs.getCurrentStructurePane().getPiping();
+        if (currentPiping != null && currentPiping.getPipingState() == Piping.State.WaitingForConsoleInput){
+            return currentPiping.profferConsoleInput(text);
+        }
+        return false;
     }
 
     public void doLoadPlugin(String filename) {
@@ -294,28 +483,80 @@ public class MainWindow extends Application {
     }
 
     public void onNew(String structureName) throws Exception {
-        System.out.println("instantiating structrure called: " + structureName);
         Structure structure = StructureManager.instantiateStructure(structureName);
         tabs.addTab(structureName, structure);
         setStatus("created a " + structureName + "...");
     }
 
+    public void sendOutsideMessageToConsole(String msg, MessageToConsoleFlag flag){
+        this.mainConsole.outsideMessage(msg,flag);
+    }
+
+
+    // public void 
+
     public void onSave() {
+        onSave(getCurrentStructure(), this);
+    }
+    public static void onSave(Structure structure, Application app){
         try {
-            Structure structure = getCurrentStructure();
+            if(structure == null){
+                ExceptionBox exbox = new ExceptionBox();
+                exbox.showAndWait("You want to save an empty structure");
+                return;
+            }
+
+            if(structure.hasFileReference()){
+                structure.getFileReference();
+                File file = new File(structure.getFileReference());
+                if (file != null) {
+                    setLastDirectory(file);
+                    // has the user selected the native file-type or an export-filter?
+                    String extension = file.getName(); // unclean way of getting file extension
+                    int idx = extension.lastIndexOf('.');
+                    extension = idx > 0 ? extension.substring(idx + 1) : "";
+
+                    ExportFilter exportFilter = ExportFilterManager
+                            .instantiateExportFilterByExtension(structure.getClass(), extension);
+                    if (exportFilter != null) {
+                        // configure export filter
+                        ExportFilterParameters params = exportFilter.getParameters(structure);
+                        if (params != null) {
+                            ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, app);
+                            exportStage.showAndWait();
+                            if (!exportStage.dialogResult)
+                                return;
+                        }
+                        exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
+                    } else {
+                        structure.writeToFile(file.getAbsolutePath());
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            ExceptionBox exbox = new ExceptionBox();
+            exbox.showAndWait(ex);
+        }
+    }
+
+    public void onSaveAs() {
+        onSaveAs(getCurrentStructure(), stage, tabs, this);
+    }
+    public static void onSaveAs(Structure structure, Stage stage, Tabs tabs, Application app) {
+        try {
 
             FileChooser fileChooser = new FileChooser();
             fileChooser.setInitialDirectory(new File(getLastDirectory()));
             fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
+                    new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
 
-            // add export-filters to list of extensions
+            // add export-filters to vertexList of extensions
             for (String format : ExportFilterManager.getExportFilters(structure.getClass())) {
                 ExportFilterDescription descr = ExportFilterManager.getExportFilterDescription(structure.getClass(), format);
                 ExtensionFilter filter = new FileChooser.ExtensionFilter(
-                    descr.name() + " (*." + descr.fileExtension() + ")",
-                    "*." + descr.fileExtension());
+                        descr.name() + " (*." + descr.fileExtension() + ")",
+                        "*." + descr.fileExtension());
                 fileChooser.getExtensionFilters().add(filter);
             }
 
@@ -328,12 +569,13 @@ public class MainWindow extends Application {
                 int idx = extension.lastIndexOf('.');
                 extension = idx > 0 ? extension.substring(idx + 1) : "";
 
-                ExportFilter exportFilter = ExportFilterManager.instantiateExportFilterByExtension(structure.getClass(), extension);
+                ExportFilter exportFilter = ExportFilterManager
+                        .instantiateExportFilterByExtension(structure.getClass(), extension);
                 if (exportFilter != null) {
                     // configure export filter
                     ExportFilterParameters params = exportFilter.getParameters(structure);
                     if (params != null) {
-                        ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, this);
+                        ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, app);
                         exportStage.showAndWait();
                         if (!exportStage.dialogResult)
                             return;
@@ -358,7 +600,7 @@ public class MainWindow extends Application {
             new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
         );
 
-        // add export-filters to list of extensions
+        // add export-filters to vertexList of extensions
         for (String format : ImportFilterManager.getImportFilterClasses()) {
             ImportFilterDescription descr = ImportFilterManager.getImportFilterDescription(format);
             ExtensionFilter filter = new FileChooser.ExtensionFilter(
@@ -410,8 +652,10 @@ public class MainWindow extends Application {
                 structure = Structure.loadFromFile(file.getAbsolutePath());
             }
 
-            if (structure != null)
+            if (structure != null){
+                structure.setFileReference(true, file.getAbsolutePath());
                 tabs.addTab(file.getName(), structure);
+            }
         } catch (Exception ex) {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
@@ -450,6 +694,39 @@ public class MainWindow extends Application {
             this.setStatus("");
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
+        }
+    }
+    private void onCut(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.cutSelectionToClipboard();
+        }
+    }
+    private void onCopy(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.copySelectionToClipboard();
+        }
+    }
+
+    private void onPaste(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.pasteFromClipboard();
+        }
+    }
+
+    private void onUndo(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.undoStructure();
+        }
+    }
+
+    private void onRedo(){
+        StructurePane s = tabs.getCurrentStructurePane();
+        if(s != null){
+            s.redoStructure();
         }
     }
 
@@ -512,6 +789,8 @@ public class MainWindow extends Application {
             Algorithm algo = AlgorithmManager.instantiateAlgorithm(structure.getClass(), algorithmName);
 
             AlgorithmParameters params = algo.getParameters(structure);
+
+
             if (params != null) {
                 AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
                 algostage.showAndWait();
@@ -530,10 +809,12 @@ public class MainWindow extends Application {
             algoThread.start();
         } catch (InvocationTargetException ex) {
             this.setStatus("");
+            ex.printStackTrace();
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait((Exception) ex.getCause());
         } catch (Exception ex) {
             this.setStatus("");
+            ex.printStackTrace();
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -560,7 +841,7 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-width", 1200),
             Preferences.getInteger(getClass(), "main-window-height", 700));
 
-        scene.getStylesheets().add("/stylesheet.css");
+        scene.getStylesheets().add("stylesheet.css");
 
         scene.getStylesheets().add(DockPane.class.getResource("default.css").toExternalForm());
         this.stage = primaryStage;
@@ -571,30 +852,53 @@ public class MainWindow extends Application {
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());
 
         //TODO: implement hot keys here
+
+
         scene.setOnKeyPressed(event -> {
-            switch (event.getCode()){
-                case SPACE:
-                    if (this.tabs.getCurrentStructurePane().getPiping() != null && this.tabs.getCurrentStructurePane().getPiping().isInitialized()){
-                        this.tabs.getCurrentStructurePane().getPiping().execWithAck();
-                    }else{
-                        System.out.println("no piping in this puppy!");
-                    }
-                    
-                    // System.out.println("space pressed and my scrutrue id is; " + this.tabs.getCurrentStructurePane().getStructure().getId());
-                    // pipeline.execWithAck();
-                    break;
-            }
+            
         });
 
         // Remember the size of the window.
         primaryStage.setOnCloseRequest((e) -> {
             Preferences.setInteger(getClass(), "main-window-width", (int) scene.getWidth());
             Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
-            Platform.exit();
+
+
+            if(dontAskWhenClosing){
+                primaryStage.hide();
+                Platform.exit();
+            }else{
+                tabs.requestClose(() -> {
+                    primaryStage.hide();
+                    Platform.exit();
+                });
+            }
+
+            for (Piping p : this.pipelines){
+                if (p != null){
+                    p.killSelf();
+
+                }
+            }
+
+            e.consume();
+
         });
         primaryStage.show();
 
+
+        dockPanels2();
+
         MultipleKeyCombination.setupMultipleKeyCombination(scene);
+
+
+        // Setting up arguments
+        Parameters p = getParameters();
+        for(String arg : p.getRaw()){
+            if(arg.equals("dawc")){
+                dontAskWhenClosing = true;
+            }
+        }
     }
     @Override
     public void stop(){
@@ -607,7 +911,8 @@ public class MainWindow extends Application {
         String configFileDir = null;
         try {
             File jarFile = new File(getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath());
-            File configFile = new File(jarFile.getParentFile().getAbsolutePath() + File.separator + "config.xml");
+            File configFile = new File(jarFile.getParentFile().getAbsolutePath() +
+                    File.separator + "config.xml");
             configFileDir = configFile.getParent();
 
             if (configFile.exists()) {
@@ -665,26 +970,32 @@ public class MainWindow extends Application {
         return pane == null ? null : pane.structure;
     }
 
-    private void onChangeCurrentStructure() {
+
+    /**
+     * Whenever the tab switches structure panes, notify all relevant entities
+     */
+    private void onSwitchCurrentStructure() {
+        StructurePane pane = tabs.getCurrentStructurePane();
         Structure structure = getCurrentStructure();
+
         rightBox.setVisible(structure != null);
-        menu.setCurrentStructure(structure);
+        menu.setCurrentStructurePane(pane);
         statusBar.setCurrentStructure(structure);
     }
 
-    private String getLastDirectory() {
+    private static String getLastDirectory() {
         final String defaultDir = System.getProperty("user.home");
-        String dir = Preferences.getString(this.getClass(), "lastdirectory", defaultDir);
+        String dir = Preferences.getString(MainWindow.class, "lastdirectory", defaultDir);
         if (Files.exists(Paths.get(dir)))
             return dir;
         return defaultDir;
     }
 
-    private void setLastDirectory(File lastFile) {
+    private static void setLastDirectory(File lastFile) {
         setLastDirectory(Paths.get(lastFile.getAbsolutePath()).getParent().toString());
     }
 
-    private void setLastDirectory(String lastDirectory) {
-        Preferences.setString(this.getClass(), "lastdirectory", lastDirectory);
+    private static void setLastDirectory(String lastDirectory) {
+        Preferences.setString(MainWindow.class, "lastdirectory", lastDirectory);
     }
 }

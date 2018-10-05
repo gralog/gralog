@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml>
+  <graph edgedefault="directed" type="digraph">
+    <node fillcolor="#B3E6B3" id="n1" label="0" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="2.2014583333333335" y="4.000625"/>
+    <node fillcolor="#B3B34D" id="n2" label="1" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="8.842500000000001" y="2.4131250000000004"/>
+    <node fillcolor="#669999" id="n3" label="3" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="4.476875000000001" y="9.239375"/>
+    <node fillcolor="#FFB3B3" id="n4" label="3" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="10.615208333333335" y="6.937500000000001"/>
+    <node fillcolor="#8099FF" id="n5" label="4" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="5.4558333333333335" y="6.1172916666666675"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n1" target="n4" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n5" target="n2" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n2" target="n4" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n3" target="n4" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n4" target="n5" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n5" target="n3" weight="1.0" width="0.025"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n1" target="n3" weight="1.0" width="0.025"/>
+  </graph>
+</graphml>

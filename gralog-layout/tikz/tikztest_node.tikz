@@ -1,0 +1,22 @@
+%\documentclass{article}
+%\usepackage{pgf}
+%\usepackage{tikz}
+%\usepackage{amsmath, amssymb}
+%\usetikzlibrary{arrows.meta}
+%\usepackage[utf8]{inputenc}
+%\begin{document}
+    \begin{tikzpicture}[scale=0.6,auto]
+        \tikzset{>=Stealth}
+        \tikzstyle{every path}=[->,thick]
+        \tikzstyle{every node}=[circle,fill=white,draw=black,text=black,thin,minimum size=16pt,inner sep=1.5pt]
+
+        \definecolor{gralog-fill-color}{HTML}{E6E699}
+        \definecolor{gralog-stroke-color}{HTML}{331A80}
+        \node [diamond, minimum width = 1.0cm, minimum height = 1.0cm, fill=gralog-fill-color, draw=gralog-stroke-color, line width=0.026458333333333334cm] (n0) at (5.085416666666667cm,-5.3500000000000005cm) {};
+        \definecolor{gralog-fill-color}{HTML}{6680E6}
+        \definecolor{gralog-stroke-color}{HTML}{1A0068}
+        \node [rectangle, minimum width = 1.0cm, minimum height = 1.0cm, fill=gralog-fill-color, draw=gralog-stroke-color, line width=0.026458333333333334cm] (n1) at (10.615208333333335cm,-2.8364583333333337cm) {};
+
+        \draw (n0) to (n1);
+    \end{tikzpicture}
+%\end{document}

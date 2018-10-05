@@ -16,7 +16,7 @@ import java.util.Properties;
  * this class stores everything in a single file in the user's home directory.
  */
 public final class Preferences {
-    private static final String VERSION = "0.0.2";
+    private static final String VERSION = "0.0.4";
     private static final String FILENAME = "preferences";
     private static final java.util.Properties PROPERTIES = new java.util.Properties();
     private static final String PREFERENCE_PATH = buildPreferencePath();
@@ -49,6 +49,7 @@ public final class Preferences {
             String id =PROPERTIES.getProperty("pref_id");
             if(id == null || !id.equals(VERSION))
             {
+                in.close();
                 createDefaultPrefs(path);
             }
         } catch (FileNotFoundException e) {
@@ -61,10 +62,11 @@ public final class Preferences {
 
     private static void createDefaultPrefs(String path){
         System.out.println("No config was found - add default prefs");
-        InputStream def = Preferences.class.getClassLoader().getResourceAsStream("default_preferences.txt");
-        URL r = Preferences.class.getClassLoader().getResource("default_preferences.txt");
+        InputStream def  = Preferences.class.getClassLoader().getResourceAsStream("default_preferences.txt");
+
         try{
             Files.copy(def, Paths.get(path + "/" + FILENAME), StandardCopyOption.REPLACE_EXISTING);
+            def.close();
             try (FileInputStream in = new FileInputStream(path + "/" + FILENAME)) {
                 PROPERTIES.load(in);
             }
@@ -142,6 +144,26 @@ public final class Preferences {
 
     public static void setBoolean(String key, boolean b){
         PROPERTIES.setProperty(key, Boolean.toString(b));
+        flush();
+    }
+
+
+    /*
+     **********
+     * FYLE *
+     **********
+     * */
+    
+    public static File getFile(String key, String defaultValue){
+        String fileName = PROPERTIES.getProperty(key, defaultValue);
+        File f = new File(PROPERTIES.getProperty(key, defaultValue));
+        return f;
+         
+    }
+
+   
+    public static void setFile(String key, File file){
+        PROPERTIES.setProperty(key, file.getPath());
         flush();
     }
 

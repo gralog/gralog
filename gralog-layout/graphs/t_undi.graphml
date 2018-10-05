@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml>
+  <graph edgedefault="undirected">
+    <node fillcolor="#FFFFFF" id="1" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="10.0" y="3.0"/>
+    <node fillcolor="#FFFFFF" id="2" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="14.0" y="5.0"/>
+    <node fillcolor="#FFFFFF" id="3" label="" radius="0.7" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="5.0" y="11.0"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="1" target="2" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="2" target="3" weight="1.0" width="0.026458333333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="false" label="" source="3" target="1" weight="1.0" width="0.026458333333333334"/>
+  </graph>
+</graphml>

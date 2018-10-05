@@ -52,7 +52,7 @@ public class TrivialGraphFormatImport extends ImportFilter {
                 String to = tokenizer.hasMoreTokens() ? tokenizer.nextToken() : null;
 
                 if (to == null) {
-                    Vertex newnode = result.createVertex();
+                    Vertex newnode = result.addVertex(null,Integer.parseInt(from));
                     newnode.label = from;
                     if (nodeIndex.containsKey(from))
                         throw new Exception("Vertex-identifier \"" + from + "\" multiply defined");
@@ -65,15 +65,14 @@ public class TrivialGraphFormatImport extends ImportFilter {
                         throw new Exception("Edge containing undefined Vertex-identifier \"" + from + "\"");
                     if (nodeB == null)
                         throw new Exception("Edge containing undefined Vertex-identifier \"" + to + "\"");
-
-                    Edge e = result.createEdge(nodeA, nodeB);
-                    result.addEdge(e);
+                    Edge e = result.createEdge(-1,null);
+                    result.addEdge(e,nodeA,nodeB);
                 }
                 s = br.readLine();
             }
 
             for (Vertex newnode : nodeIndex.values()) {
-                newnode.coordinates = new Vector2D(
+                newnode.setCoordinates(
                     Math.random() * 3d * nodeIndex.size(),
                     Math.random() * 3d * nodeIndex.size());
                 result.addVertex(newnode);

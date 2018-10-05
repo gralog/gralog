@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+
 import javafx.scene.Node;
 
 /**
@@ -73,9 +74,7 @@ public final class ViewManager {
         File plugin = new File(pathToPlugin);
 
         // Add the plugin to the classpath
-
-        URLClassLoader sysloader = new URLClassLoader(new URL[] {plugin.toURL()}, ClassLoader.getSystemClassLoader());
-
+        var sysloader = ClassLoader.getSystemClassLoader();
         // Load the classes
         Collection<Class<?>> classes = new ArrayList<>();
         try (JarFile jar = new JarFile(pathToPlugin)) {
@@ -124,7 +123,6 @@ public final class ViewManager {
                 if (!c.isAnnotationPresent(ViewDescription.class))
                     throw new Exception("class " + c.getName() + " has no @ViewDescription annotation");
                 ViewDescription descr = c.getAnnotation(ViewDescription.class);
-
                 // Register it
                 VIEW_REGISTER.put(descr.forClass(), ctor);
             }

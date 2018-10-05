@@ -44,8 +44,6 @@ public final class StructureManager {
     public static Structure instantiateStructure(String identifier) throws Exception {
         String classname = STRUCTURE_NAMES.get(identifier);
         Structure structure = (Structure) instantiateClass(classname);
-        structure.setId(nextId);
-        nextId = nextId + 1;
         return structure;
     }
 

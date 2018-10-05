@@ -39,15 +39,14 @@ public class CylindricalGrid extends Generator {
 
         ArrayList<Vertex> first = new ArrayList<>();
         for (int j = 0; j < n; j++) {
-            Vertex temp = result.createVertex();
+            Vertex temp = result.addVertex();
             first.add(temp);
-            temp.coordinates = new Vector2D(
+            temp.setCoordinates(
                 Math.sin(0 * 2 * Math.PI / n) * 2 * (j + 2),
                 Math.cos(0 * 2 * Math.PI / n) * 2 * (j + 2)
             );
             if (j > 0)
                 result.addEdge(result.createEdge(first.get(j - 1), temp));
-            result.addVertex(temp);
         }
 
         ArrayList<Vertex> last = first;
@@ -55,9 +54,9 @@ public class CylindricalGrid extends Generator {
             ArrayList<Vertex> next = new ArrayList<>();
             Vertex lasttemp = null;
             for (int j = 0; j < n; j++) {
-                Vertex temp = result.createVertex();
+                Vertex temp = result.addVertex();
                 next.add(temp);
-                temp.coordinates = new Vector2D(
+                temp.setCoordinates(
                     Math.sin(i * 2 * Math.PI / n) * 2 * (j + 2),
                     Math.cos(i * 2 * Math.PI / n) * 2 * (j + 2)
                 );
@@ -69,7 +68,6 @@ public class CylindricalGrid extends Generator {
 
                 result.addEdge(result.createEdge(last.get(j), temp));
 
-                result.addVertex(temp);
                 lasttemp = temp;
             }
 

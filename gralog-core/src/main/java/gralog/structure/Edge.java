@@ -8,19 +8,26 @@ import gralog.events.*;
 import gralog.preferences.Configuration;
 import gralog.rendering.*;
 
+import java.io.Serializable;
 import java.util.*;
 
 import gralog.structure.controlpoints.ControlPoint;
+import javafx.application.Application;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.lang.reflect.*;
+import java.lang.annotation.Annotation;
+import gralog.core.annotations.DataField;
+
 /**
  *
  */
 @XmlName(name = "edge")
-public class Edge extends XmlMarshallable implements IMovable {
+public class Edge extends XmlMarshallable implements IMovable, Serializable {
+
 
     public enum EdgeType{
         SHARP,
@@ -28,16 +35,30 @@ public class Edge extends XmlMarshallable implements IMovable {
         BEZIER
     }
 
-    public int id = -1; //if not -1, then don't change the id
 
+    @DataField(display=true,readOnly=true)
+    Integer id = -1; //if not -1, then don't change the id
+
+    public static boolean isEdgeType(String type){
+
+        for (EdgeType et : EdgeType.values())
+            if (et.name().equalsIgnoreCase(type))
+                return true;
+        return false;
+    }
+
+
+    public static double edgeSelectionOffset = 0.02;
     public static double multiEdgeOffset = 0.2;
 
     Set<EdgeListener> listeners = new HashSet<>();
 
     //inspector visible
+    @DataField(display=true)
     public String label = ""; //add this
+    @DataField(display=true)
     public Double weight = 1.0d;
-
+    @DataField(display=true)
     public Boolean isDirected = true;
     public Arrow arrowType = Arrow.TYPE2;
 
@@ -48,11 +69,13 @@ public class Edge extends XmlMarshallable implements IMovable {
 
     public double arrowHeadAngle = 40d; // degrees
     // @InspectorName(name = "thickness")
-
-    public Double width = 2.54 / 96; // cm
+    @DataField(display=true)
+    public Double thickness = 2.54 / 96; // cm
+    @DataField(display=true)
     public GralogColor color = GralogColor.BLACK;
-
+    @DataField(display=true)
     public GralogGraphicsContext.LineType type = GralogGraphicsContext.LineType.PLAIN;
+    @DataField(display=true)
     public EdgeType edgeType = EdgeType.BEZIER; //TODO: switch to private and use annotations to mark insp vars
 
     //end
@@ -81,7 +104,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         color = config.getValue("Edge_color", GralogColor::parseColor, GralogColor.BLACK);
         endPointDistance = config.getValue("Edge_endPointDistance", Double::parseDouble, 0.0);
         startPointDistance = config.getValue("Edge_startPointDistance", Double::parseDouble, 0.0);
-        width = config.getValue("Edge_thickness", Double::parseDouble, 0.025);
+        thickness = config.getValue("Edge_thickness", Double::parseDouble, 0.025);
     }
 
     public void setEdgeType(EdgeType e){
@@ -131,6 +154,17 @@ public class Edge extends XmlMarshallable implements IMovable {
             return addSharpControlPoint(position, clickPosition);
         }
     }
+
+
+    public int getId(){
+        return this.id;
+    }
+
+    public void setId(int id){
+        this.id = id;
+    }
+
+
     private ControlPoint addBezierControlPoint(Vector2D position){
         if(controlPoints.size() >= 2){
             return null;
@@ -184,10 +218,19 @@ public class Edge extends XmlMarshallable implements IMovable {
     public void setSource(Vertex source) {
         if (this.source != null)
             this.source.disconnectEdge(this);
+
         this.source = source;
         if (source != null){
             this.source.connectEdge(this);
         }
+    }
+
+    public boolean isDirected(){
+        return this.isDirected;
+    }
+
+    public void setDirectedness(boolean directedness){
+        this.isDirected = directedness;
     }
 
     public Vertex getTarget() {
@@ -268,6 +311,7 @@ public class Edge extends XmlMarshallable implements IMovable {
     private void renderLoop(GralogGraphicsContext gc, Highlights highlights){
         GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
+        
         double angleStart = source.loopAnchor - source.loopAngle;
         double angleEnd = source.loopAnchor + source.loopAngle;
 
@@ -295,12 +339,10 @@ public class Edge extends XmlMarshallable implements IMovable {
         l.tangentStart = Vector2D.getVectorAtAngle(angleStart, 1).orthogonal();
         l.tangentEnd = Vector2D.getVectorAtAngle(angleEnd, 1).orthogonal();
 
-        gc.loop(l,1.5, correction, edgeColor, width, type);
+        gc.loop(l,1.5, correction, edgeColor, thickness, type);
 
     }
     public void render(GralogGraphicsContext gc, Highlights highlights){
-
-        GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
         if(isLoop()){
             renderLoop(gc, highlights);
@@ -308,9 +350,9 @@ public class Edge extends XmlMarshallable implements IMovable {
         }
 
         if(edgeType == EdgeType.BEZIER){
-            EdgeRenderer.drawBezierEdge(this, gc, edgeColor);
+            EdgeRenderer.drawBezierEdge(this, gc, highlights.isSelected(this));
         }else if(edgeType == EdgeType.SHARP){
-            EdgeRenderer.drawSharpEdge(this, gc, edgeColor);
+            EdgeRenderer.drawSharpEdge(this, gc, highlights.isSelected(this));
         }
 
     }
@@ -451,8 +493,8 @@ public class Edge extends XmlMarshallable implements IMovable {
             corr = 0;
         }
         //TODO: replace with shape.getEdgePoint
-        Vector2D source = this.source.coordinates.plus(sourceToCtrl1.multiply(this.source.radius));
-        Vector2D target = this.target.coordinates.plus(targetToCtrl2.multiply(this.target.radius - corr));
+        Vector2D source = getStartingPointSource();
+        Vector2D target = getStartingPointTarget();
         BezierUtilities.ProjectionResults projection;
 
         if(controlPoints.size() == 1){
@@ -468,6 +510,48 @@ public class Edge extends XmlMarshallable implements IMovable {
             return projection.result.minus(m).length() < multiEdgeOffset * 0.5;
         }else{
             return false;
+        }
+    }
+
+    public Vector2D getStartingPointSource(){
+        if(controlPoints.size() == 0){
+            return source.coordinates;
+        }
+
+        if(edgeType == EdgeType.BEZIER){
+
+            Vector2D ctrl1 = controlPoints.get(0).getPosition();
+            Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
+
+            return source.shape.getEdgePoint(sourceToCtrl1.theta(), source.coordinates);
+        }else if(edgeType == EdgeType.SHARP){
+            return source.coordinates;
+        }else if(edgeType == EdgeType.ROUND){
+            return source.coordinates;
+        }else{
+            return source.coordinates;
+        }
+    }
+
+    public Vector2D getStartingPointTarget(){
+        if(controlPoints.size() == 0){
+            return target.coordinates;
+        }
+        if(edgeType == EdgeType.BEZIER){
+
+            Vector2D ctrl2 = controlPoints.get(controlPoints.size() - 1).getPosition();
+            Vector2D targetToCtrl1 = ctrl2.minus(target.coordinates).normalized();
+            double corr = arrowType.endPoint * arrowHeadLength;
+            if(isDirected){ corr = 0;}
+            var x = target.shape.getEdgePoint(targetToCtrl1.theta(), target.coordinates);
+            x = x.plus(targetToCtrl1.multiply(corr));
+            return x;
+        }else if(edgeType == EdgeType.SHARP){
+            return target.coordinates;
+        }else if(edgeType == EdgeType.ROUND){
+            return target.coordinates;
+        }else{
+            return target.coordinates;
         }
     }
 
@@ -491,7 +575,7 @@ public class Edge extends XmlMarshallable implements IMovable {
         enode.setAttribute("isdirected", isDirected ? "true" : "false");
         enode.setAttribute("label", label);
         enode.setAttribute("weight", Double.toString(weight));
-        enode.setAttribute("width", Double.toString(width));
+        enode.setAttribute("thickness", Double.toString(thickness));
         enode.setAttribute("arrowheadlength", Double.toString(arrowHeadLength));
         enode.setAttribute("color", color.toHtmlString());
 
@@ -511,15 +595,15 @@ public class Edge extends XmlMarshallable implements IMovable {
     public void fromXml(Element enode, HashMap<String, Vertex> ids) throws Exception {
         setSource(ids.get(enode.getAttribute("source")));
         setTarget(ids.get(enode.getAttribute("target")));
-
+        
         if (enode.hasAttribute("isdirected"))
             isDirected = enode.getAttribute("isdirected").equals("true");
         label = enode.getAttribute("label");
         if (enode.hasAttribute("weight"))
             weight = Double.parseDouble(enode.getAttribute("weight"));
 
-        if (enode.hasAttribute("width"))
-            width = Double.parseDouble(enode.getAttribute("width"));
+        if (enode.hasAttribute("thickness"))
+            thickness = Double.parseDouble(enode.getAttribute("thickness"));
 
         if (enode.hasAttribute("arrowheadlength"))
             arrowHeadLength = Double.parseDouble(enode.getAttribute("arrowheadlength"));
@@ -558,5 +642,37 @@ public class Edge extends XmlMarshallable implements IMovable {
     @Override
     public String toString(){
         return String.format("id:%d __ E(%d,%d)", id, this.getSource().getId(), this.getTarget().getId());
+    }
+
+
+    public String gralogPipify(){
+        Class<?> c = this.getClass();
+        String ret = "";
+        for (Field f : c.getDeclaredFields()) {
+            f.setAccessible(true);
+            boolean toBeSent = false;
+            Annotation[] annotations = f.getDeclaredAnnotations();
+            for(Annotation annotation : annotations){
+                if(annotation instanceof DataField){
+                    DataField dataField = (DataField)annotation;
+                    toBeSent = dataField.display() && (!dataField.readOnly());
+                }
+            }
+            if (toBeSent){
+                ret = ret + f.getName() + "=";
+                try{
+                    ret = ret+f.get(this).toString() + "|" + Structure.pythonifyClass(f.getDeclaringClass()) + "#";
+                }catch(Exception e){
+                    //todo: to handle!!!
+                }
+            }
+            
+        }
+        if (ret.length() > 0){
+            ret = ret.substring(0,ret.length()-1);
+        }
+
+        return ret;
+
     }
 }

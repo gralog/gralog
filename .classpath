@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="gralog-automaton/src/main/java"/>
+	<classpathentry kind="src" path="gralog-automaton/src/test/java"/>
+	<classpathentry kind="src" path="gralog-computation-tree-logic/src/main/java"/>
+	<classpathentry kind="src" path="gralog-core/src/main/java"/>
+	<classpathentry kind="src" path="gralog-core/src/test/java"/>
+	<classpathentry kind="src" path="gralog-dockfx/src/main/java"/>
+	<classpathentry kind="src" path="gralog-finite-game/src/main/java"/>
+	<classpathentry kind="src" path="gralog-first-order-logic/src/main/java"/>
+	<classpathentry kind="src" path="gralog-first-order-logic/src/test/java"/>
+	<classpathentry kind="src" path="gralog-fx/src/main/java"/>
+	<classpathentry kind="src" path="gralog-jgrapht-bridge/src/main/java"/>
+	<classpathentry kind="src" path="gralog-modal-logic/src/main/java"/>
+	<classpathentry kind="src" path="gralog-modal-logic/src/test/java"/>
+	<classpathentry kind="src" path="gralog-modal-mu-calculus/src/main/java"/>
+	<classpathentry kind="src" path="gralog-modal-mu-calculus/src/test/java"/>
+	<classpathentry kind="src" path="gralog-np-completeness/src/main/java"/>
+	<classpathentry kind="src" path="gralog-np-completeness/src/test/java"/>
+	<classpathentry kind="lib" path="gradle/wrapper/gradle-wrapper.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
