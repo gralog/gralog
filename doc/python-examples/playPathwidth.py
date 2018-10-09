@@ -27,7 +27,10 @@ def recontaminate(g,v, contaminated,cops):
                 q.put(u)
     gPrint("No recontamination.")
     return False
-    
+
+
+# MAIN
+
 g = Graph(None)
 contaminated_list = g.getAllVertices()
 contaminated = set()
