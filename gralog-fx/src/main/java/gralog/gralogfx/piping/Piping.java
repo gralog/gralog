@@ -620,7 +620,7 @@ public class Piping extends Thread{
         if (!wholeError.equals("")){
             this.sendMessageToConsole.accept("Error in external Program: \n" + wholeError,MessageToConsoleFlag.Error);
         }
-        System.out.println("trying to redrawr");
+        System.out.println("trying to redraw");
         this.redrawMyStructurePanes();
         return;
     }

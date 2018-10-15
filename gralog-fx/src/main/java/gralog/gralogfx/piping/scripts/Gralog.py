@@ -1300,6 +1300,9 @@ class Graph:
 		return "todo: tgf"
 
 def gPrint(message):
+	if not message: # empty
+		print("")
+		sys.stdout.flush()
 	words = message.split(" ");
 	ret = "";
 	for word in words:

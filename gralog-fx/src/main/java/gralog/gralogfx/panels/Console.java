@@ -8,9 +8,7 @@ import gralog.structure.Edge;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.TextFlow;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -19,17 +17,13 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.scene.paint.Color;
 import javafx.application.Platform;
 import javafx.scene.Node;
-import javafx.beans.value.ChangeListener;
-import javafx.scene.control.ScrollBar;
 
 import javafx.beans.value.ObservableValue;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
 
@@ -55,7 +49,7 @@ public class Console extends HBox implements GralogWindow{
     private boolean outputAdded = false;
     public static final int LINEHEIGHT = 20;
 
-    private ArrayList<ConsoleField> nonUpdatedHeights = new ArrayList<ConsoleField>();
+    private ArrayList<ConsoleField> nonUpdatedHeights = new ArrayList<>();
 
 
     private String currentlyEntered = "";
@@ -84,7 +78,7 @@ public class Console extends HBox implements GralogWindow{
         input.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
 
         dialogfx = new Dialogfx();
-        dialog = new Dialog();
+        dialog = new Dialog(ObjectListDisplay.vertexList, ObjectListDisplay.edgeList);
         parser = new DialogParser();
 
 
@@ -138,7 +132,7 @@ public class Console extends HBox implements GralogWindow{
         outputElements = new VBox();
         output.setContent(outputElements);
         outputElements.getStyleClass().add("consoleScrollViewStyle");
-        outputElements.setSpacing(5.0);
+        outputElements.setSpacing(0.0);
 
         output.vvalueProperty().addListener(
             (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
@@ -214,7 +208,8 @@ public class Console extends HBox implements GralogWindow{
             heightNumber += (int)(fText.getLayoutBounds().getWidth()/(this.output.getWidth()-2));
         }
 
-        return (heightNumber * LINEHEIGHT + 20);
+        return (Math.max(0, heightNumber - 1) * LINEHEIGHT + 20);
+
     }
 
     
@@ -293,7 +288,6 @@ public class Console extends HBox implements GralogWindow{
 
 
 
-
         errorOutput(parser.getErrorMsg());
 
         parser.setErrorMsg("");
@@ -369,7 +363,9 @@ public class Console extends HBox implements GralogWindow{
                                                 break;
                 case NONE:                      return;
             }
+
             errorOutput(dialog.getErrorMsg());
+
             dialog.setErrorMsg("");
             parameters.clear();
             parser.clearParameters();
@@ -385,15 +381,18 @@ public class Console extends HBox implements GralogWindow{
     public void finalizeConsoleFieldAdd(ConsoleField t){
 
         int height = estimateHeight(t.getText());
-        t.setMaxHeight(height*0.55);
-        t.setMinHeight(height*0.55);
-        
+
+        t.setMaxHeight(height*0.8);
+        t.setMinHeight(height*0.8);
+
         t.setMaxWidth(output.getWidth()*1.0);
 
         nonUpdatedHeights.add(t);
         
 
-        t.getStyleClass().add("consoleTextStyle");  
+        t.getStyleClass().add("consoleTextStyle");
+
+        System.out.println("styleclass: " + t.getStyleClass());
         // t.setPrefHeight(20);
         // t.setWrapText(true);
         // t.setBackground(Background.EMPTY);
@@ -435,7 +434,11 @@ public class Console extends HBox implements GralogWindow{
     }
 
     public void errorOutput(String text){
-        
+        if(text.isEmpty()){
+            System.out.println("error output is empty");
+            return;
+        }
+        System.out.println("error output" + text);
 
         ConsoleField t = new ConsoleField(text);
         t.getStyleClass().add("errorStyle"); 
@@ -499,13 +502,8 @@ public class Console extends HBox implements GralogWindow{
     }
 
     public void output(ConsoleField t){
-        
-
-        
         t.setFont(Font.font ("Verdana", 12));
-
         finalizeConsoleFieldAdd(t);
-
     }
 
     public void clear(){
@@ -514,7 +512,6 @@ public class Console extends HBox implements GralogWindow{
             historyPointer = -1;
         }
     }
-
     
 
     @Override

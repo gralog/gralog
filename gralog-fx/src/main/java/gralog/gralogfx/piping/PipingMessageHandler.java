@@ -150,8 +150,7 @@ public class PipingMessageHandler{
             color = color.substring(1);
         }
         try{
-
-            changeColor = new GralogColor(Integer.parseInt(color,16));
+            changeColor = new GralogColor(Integer.parseInt(color));
             return changeColor;
         }catch(Exception e){
             throw new ColorFormatException("the hex color: " + color + " is not defined!");
@@ -275,7 +274,10 @@ public class PipingMessageHandler{
         try{
             string = externalCommandSegments[n];
         }catch(Exception e){
-            throw new MessageFormatException("the command " + rejoinExternalCommandSegments(externalCommandSegments) + " did not have a paramater at index: " + n + "! Did you remember that Informatiker count from 0?");
+            throw new MessageFormatException("the command " +
+                    rejoinExternalCommandSegments(externalCommandSegments) +
+                    " did not have a paramater at index: " +
+                    n);
         }
         return string;
     
@@ -323,7 +325,6 @@ public class PipingMessageHandler{
     public static GralogColor colorConversionHex(String color) throws ColorFormatException{
         
         String colorName;
-
 
 
         if ((colorName = PipingPresets.getHexByColorName(color)) != null){

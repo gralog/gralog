@@ -3,7 +3,7 @@ import gralog.structure.*;
 import gralog.rendering.*;
 
 
-public class GPrintCommand extends CommandForGralogToExecute {
+public class GPrintCommand extends gralog.gralogfx.piping.CommandForGralogToExecute {
 	
 
 

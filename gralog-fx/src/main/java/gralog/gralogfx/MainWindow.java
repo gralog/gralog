@@ -355,10 +355,10 @@ public class MainWindow extends Application {
         // fileChooser.getExtensionFilters().add(
         //     new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
         // );
-        // List<File> list = fileChooser.showOpenMultipleDialog(stage);
-        // if (list != null && !list.isEmpty()) {
-        //     setLastDirectory(list.get(0));
-        //     for (File file : list)
+        // List<File> vertexList = fileChooser.showOpenMultipleDialog(stage);
+        // if (vertexList != null && !vertexList.isEmpty()) {
+        //     setLastDirectory(vertexList.get(0));
+        //     for (File file : vertexList)
         //         doLoadPlugin(file.getAbsolutePath());
         // }
 
@@ -551,7 +551,7 @@ public class MainWindow extends Application {
                     new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
 
-            // add export-filters to list of extensions
+            // add export-filters to vertexList of extensions
             for (String format : ExportFilterManager.getExportFilters(structure.getClass())) {
                 ExportFilterDescription descr = ExportFilterManager.getExportFilterDescription(structure.getClass(), format);
                 ExtensionFilter filter = new FileChooser.ExtensionFilter(
@@ -600,7 +600,7 @@ public class MainWindow extends Application {
             new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
         );
 
-        // add export-filters to list of extensions
+        // add export-filters to vertexList of extensions
         for (String format : ImportFilterManager.getImportFilterClasses()) {
             ImportFilterDescription descr = ImportFilterManager.getImportFilterDescription(format);
             ExtensionFilter filter = new FileChooser.ExtensionFilter(

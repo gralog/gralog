@@ -47,13 +47,14 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     public double loopAngle = 20;   // degrees
 
     public double strokeWidth = 2.54 / 96; // cm
-    public double textHeight = 0.4d; // cm
+    public double textHeight = 0.4d; // cm; the height of the label text
 
     @DataField(display=true)
     public GralogColor fillColor = GralogColor.WHITE;
     @DataField(display=true)
     public GralogColor strokeColor = GralogColor.BLACK;
 
+    // size and shape of the vertex
     @DataField(display=true)
     public RenderingShape shape = Ellipse.create(1.4, 1.4);
 

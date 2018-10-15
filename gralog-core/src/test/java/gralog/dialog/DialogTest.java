@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DialogTest {
 
@@ -163,10 +164,11 @@ public class DialogTest {
 
     @Test
     public void testConnect(){
+        initLists();
         parameters.add("P5");
         parameters.add("Q5");
         parameters.add("i+1");
-        dialog.connectFormula(parameters,c20);
+        dialog.connect2ListsFormula(parameters,c20);
     }
 
 }
