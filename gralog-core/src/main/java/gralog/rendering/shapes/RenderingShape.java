@@ -20,7 +20,7 @@ public abstract class RenderingShape implements Serializable {
     // if changed, also change enum PossibleShapes in gralog-core.gralog.dialog
     private static enum PossibleShapes {
         // TODO SQUARE,
-        // TODO CYCLE,
+        CYCLE,
         ELLIPSE,
         RECTANGLE,
         DIAMOND
@@ -34,8 +34,8 @@ public abstract class RenderingShape implements Serializable {
     }
 
     //used to restrict the size box, can cause performance problems otherwise
-    private static final double MAX_WIDTH = 300;
-    private static final double MAX_HEIGHT = 300;
+    protected static final double MAX_WIDTH = 300;
+    protected static final double MAX_HEIGHT = 300;
 
     public static LinkedList<Class<? extends RenderingShape>> renderingShapeClasses;
 

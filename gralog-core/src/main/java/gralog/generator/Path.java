@@ -13,11 +13,12 @@ import gralog.structure.*;
  *
  */
 @GeneratorDescription(
-    name = "Cycle",
-    text = "Generates a Cyclic-Graph",
-    url = "https://en.wikipedia.org/wiki/Cycle_(graph_theory)"
+    name = "Path",
+    text = "Generates a Path-Graph",
+    url = "https://en.wikipedia.org/wiki/Path_graph"
 )
-public class Cycle extends Generator {
+//TODO additional parameter: directed or undirected, edge weights	??
+public class Path extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
@@ -37,23 +38,14 @@ public class Cycle extends Generator {
 
         Vertex first = result.addVertex();
 
-        first.setCoordinates(
-            Math.sin(0 * 2 * Math.PI / n) * 0.5*n + 3.5,
-            Math.cos(0 * 2 * Math.PI / n) * 0.5*n + 3.5
-        );
-
+        first.setCoordinates(0,0);
         Vertex last = first;
-        for (int i = 1; i < n; i++) {
-            Vertex next = result.addVertex();
-            next.setCoordinates(
-                Math.sin(i * 2 * Math.PI / n) * 0.5*n + 3.5,
-                Math.cos(i * 2 * Math.PI / n) * 0.5*n + 3.5
-            );
-            result.addEdge(last, next);
-
-            last = next;
+        for (int i=1; i<n; i++) {
+        	Vertex next = result.addVertex();
+        	next.setCoordinates(3*i,0);
+        	result.addEdge(last,next);
+        	last = next;
         }
-        result.addEdge(last, first);
 
         return result;
     }
