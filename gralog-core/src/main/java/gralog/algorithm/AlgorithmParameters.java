@@ -6,4 +6,5 @@ package gralog.algorithm;
  *
  */
 public class AlgorithmParameters {
+    public boolean directed = false;
 }

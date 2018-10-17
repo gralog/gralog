@@ -24,7 +24,7 @@ public class Path extends Generator {
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
             "Number of vertices",
-            Preferences.getInteger(this.getClass(), "vertices", 5).toString(),
+            Preferences.getInteger(this.getClass(), "vertices", 5).toString(),//this defValue plays no role
             new IntSyntaxChecker(1, Integer.MAX_VALUE),
             "");
     }
@@ -34,7 +34,12 @@ public class Path extends Generator {
         int n = Integer.parseInt(((StringAlgorithmParameter) p).parameter);
         Preferences.setInteger(this.getClass(), "vertices", n);
 
-        DirectedGraph result = new DirectedGraph();
+        Structure result;
+
+        if (p.directed)
+            result = new DirectedGraph();
+        else
+            result = new UndirectedGraph();
 
         Vertex first = result.addVertex();
 
