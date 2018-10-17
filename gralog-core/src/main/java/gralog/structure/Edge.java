@@ -31,7 +31,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
     public enum EdgeType{
         SHARP,
-        ROUND,
+        ROUND, // TODO: choosing this in object inspector makes the edge invisible
         BEZIER
     }
 
