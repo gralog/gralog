@@ -220,4 +220,16 @@ public final class Preferences {
         } catch (IOException e) {
         }
     }
+    /*
+     *********
+     * PRINT PROPS*
+     *********
+     * */
+    public static void printProps(){
+        System.out.println("\u001B[31m PRINTING PROPS \u001B[0m");
+        for (var pn : PROPERTIES.stringPropertyNames()){
+            System.out.println(pn + " " + PROPERTIES.getProperty(pn));
+        }
+
+    }
 }
