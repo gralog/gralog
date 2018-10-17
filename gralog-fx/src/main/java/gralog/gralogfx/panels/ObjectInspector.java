@@ -125,13 +125,15 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
 
     @Override
     public void notifyStructureChange(Structure structure) {
-        //not relevant
+        System.out.println("StructureChange");
+    	//not relevant
     }
 
 
     @Override
     public void notifyHighlightChange(Highlights highlights) {
-        try{
+    	System.out.println("HighlightChange");
+    	try{
             setObject(highlights.getSelection());
         }catch(Exception e){
             ExceptionBox xBox = new ExceptionBox();
