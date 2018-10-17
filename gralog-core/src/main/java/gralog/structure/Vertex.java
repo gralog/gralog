@@ -65,7 +65,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     Set<VertexListener> listeners;
     Set<Edge> outgoingEdges;
     Set<Edge> incomingEdges;
-    Set<Edge> incidentEdges;
+    Set<Edge> incidentEdges; // in directed graphs: outgoing and incoming
 
 
     public Vertex() {

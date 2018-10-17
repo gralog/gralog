@@ -609,7 +609,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public boolean addEdge(E e) {
         //correct siblings first
         e.siblings.clear();
-        int nonLoopEdges = 0;
+        int nonLoopEdges = 0; // # other edges edge with the same ends {edge.target,edge.source} = {e.target,e.source},
+                              // non-loops
 
         for(Edge edge : e.getSource().getIncidentEdges()){
             
