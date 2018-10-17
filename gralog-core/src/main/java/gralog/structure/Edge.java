@@ -31,7 +31,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
     public enum EdgeType{
         SHARP,
-        ROUND,
+        ROUND, // TODO: choosing this in object inspector makes the edge invisible
         BEZIER
     }
 
@@ -249,7 +249,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         return getSource() == getTarget();
     }
 
-    public boolean isSiblingTo(Edge other){
+    public boolean isSiblingTo(Edge other){ // TODO: rename to isAdjacent? Check if directed?
         return getTarget() == other.getTarget()|| getTarget() == other.getSource();
     }
     public double maximumCoordinate(int dimension) {
