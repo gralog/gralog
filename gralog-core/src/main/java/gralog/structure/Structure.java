@@ -630,12 +630,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
         }
 
-        //max amount of edges.
-        //TODO: Maybe make that an option
-        if(nonLoopEdges >= 4 && e.getSource() != e.getTarget()){
-            removeEdge(e);
-            return false;
-        }else if (e.getSource() == e.getTarget()){
+        if (e.getSource() == e.getTarget()){
             edges.put(e.getId(),e);
         }else{
             for(Edge edge : e.getSource().getIncidentEdges()){
@@ -647,7 +642,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             //very special case: if the two outer edges of a 3-edge multi edge connection are
             //oriented the opposite way of the middle one (do that for all sibling lists)
             if(e.siblings.size() == 3){
-                if(!e.siblings.get(0).sameOrientationAs(e.siblings.get(1)) && !e.siblings.get(1).sameOrientationAs(e)){
+                if(!e.siblings.get(0).sameSourceAs(e.siblings.get(1)) && !e.siblings.get(1).sameSourceAs(e)){
                     Collections.swap(e.siblings, 1, 2);
                 }
             }
@@ -665,7 +660,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         }
 
-        
+
         // System.out.println("we are : " + e + " am ende : " + e.getSource() + e.getTarget());
         // System.out.println("we be addin the edge up in this boi");
         return true;
