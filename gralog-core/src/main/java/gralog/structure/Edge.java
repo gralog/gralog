@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.util.*;
 
 import gralog.structure.controlpoints.ControlPoint;
-import javafx.application.Application;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -267,7 +266,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         Edge e = null;
         for(int i = 0; i < siblings.size(); i++){
             e = siblings.get(i);
-            if(e != this && !e.sameOrientationAs(this)){
+            if(e != this && !e.sameSourceAs(this)){
                 break;
             }
             e = null;
@@ -364,7 +363,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         if(siblings.size() == 2){
             offset = 0.5 * multiEdgeOffset;
             if(index == 1){
-                if(siblings.get(0).sameOrientationAs(this)){
+                if(siblings.get(0).sameSourceAs(this)){
                     offset *= -1;
                 }
             }
@@ -376,7 +375,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
             }else if(index == 0){
                 offset = multiEdgeOffset;
             }else if(index == 2){
-                offset = (siblings.get(0).sameOrientationAs(this) ? -1 : 1) * multiEdgeOffset;
+                offset = (siblings.get(0).sameSourceAs(this) ? -1 : 1) * multiEdgeOffset;
             }
         }
         if(siblings.size() == 4){
@@ -394,7 +393,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
                     offset = offsetMultiplier * correctedOffsetCounter * multiEdgeOffset;
                     break;
                 }
-                if(siblings.get(i).sameOrientationAs(this)){
+                if(siblings.get(i).sameSourceAs(this)){
                     sameOrientationCount++;
                 }
 
@@ -402,7 +401,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         }
         return offset;
     }
-    public boolean sameOrientationAs(Edge other){
+    public boolean sameSourceAs(Edge other){
         return getSource() == other.getSource();
     }
     public boolean containsCoordinate(double x, double y) {
