@@ -77,14 +77,14 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DONE,dialogParser.getDialogState());
         assertEquals(NONE,dialogParser.getDialogAction());
-        assertEquals("Parse error. Please, try again. (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("Parse error. Please, try again. (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("Slect");
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DONE,dialogParser.getDialogState());
         assertEquals(NONE,dialogParser.getDialogAction());
-        assertEquals("Parse error. Please, try again. (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("Parse error. Please, try again. (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("Select all vertices");
@@ -98,7 +98,7 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DialogState.SELECT_ALL,dialogParser.getDialogState());
         assertEquals(NONE,dialogParser.getDialogAction());
-        assertEquals("Edges or vertices? (accepted: SELECT ALL) (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("Edges or vertices? (accepted: SELECT ALL) (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("SELECT all vertices");
@@ -119,7 +119,7 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DialogState.SELECT,dialogParser.getDialogState());
         assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
-        assertEquals("What to select?  Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("What to select?  Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("select abc");
@@ -134,7 +134,7 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DialogState.SELECT,dialogParser.getDialogState());
         assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
-        assertEquals("What to select? Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("What to select? Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Quit: Q)",dialogParser.getErrorMsg());
 
 // the same with deselect
         resetParserFields();
@@ -149,14 +149,14 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DONE,dialogParser.getDialogState());
         assertEquals(NONE,dialogParser.getDialogAction());
-        assertEquals("Parse error. Please, try again. (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("Parse error. Please, try again. (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("Slect");
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DONE,dialogParser.getDialogState());
         assertEquals(NONE,dialogParser.getDialogAction());
-        assertEquals("Parse error. Please, try again. (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("Parse error. Please, try again. (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("deselect all vertices");
@@ -170,7 +170,7 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DialogState.DESELECT_ALL,dialogParser.getDialogState());
         assertEquals(NONE,dialogParser.getDialogAction());
-        assertEquals("Edges or vertices? (accepted: DESELECT ALL) (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("Edges or vertices? (accepted: DESELECT ALL) (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("deselect all vertices");
@@ -191,7 +191,7 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DialogState.DESELECT,dialogParser.getDialogState());
         assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
-        assertEquals("What to deselect?  Format: (all [vertices|edges]) | <list id> (accepted: DESELECT) (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("What to deselect?  Format: (all [vertices|edges]) | <list id> (accepted: DESELECT) (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("deselect abc");
@@ -206,7 +206,7 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DialogState.DESELECT,dialogParser.getDialogState());
         assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
-        assertEquals("What to deselect? Format: (all [vertices|edges]) | <list id> (accepted: DESELECT) (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("What to deselect? Format: (all [vertices|edges]) | <list id> (accepted: DESELECT) (Quit: Q)",dialogParser.getErrorMsg());
         dialogParser.setDialogState(DONE);
 
         dialogParser.parse("connect L1 L2 =i+1");
@@ -221,7 +221,7 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DialogState.FILTER,dialogParser.getDialogState());
         assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
-        assertEquals("What to filter? Format: <what> where|st|(such that)  <parameters> to <list> (accepted: FILTER) (Quit: Q)\n",dialogParser.getErrorMsg());
+        assertEquals("What to filter? Format: <what> where|st|(such that)  <parameters> to <list> (accepted: FILTER) (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("filter all");
@@ -229,7 +229,7 @@ public class DialogConsoleParserTest {
         assertEquals("ALL", dialogParser.getParameters().get(0));
         assertEquals(DialogState.FILTER_ALL,dialogParser.getDialogState());
         assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
-        assertEquals("Vertices or edges?\n",dialogParser.getErrorMsg());
+        assertEquals("Vertices or edges? (accepted: FILTER ALL) (Quit: Q)",dialogParser.getErrorMsg());
 
         // TODO: write more filter tests
 

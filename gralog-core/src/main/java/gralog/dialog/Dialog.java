@@ -40,6 +40,8 @@ public class Dialog {
         vertexListS = new HashMap<>();
         edgeListS = new HashMap<>();
 
+        allCollectionVertex = new ArrayList<GralogList<Vertex>>();
+        allCollectionEdge   = new ArrayList<GralogList<Edge>>();
     }
 
     @Deprecated
@@ -599,6 +601,11 @@ public class Dialog {
 
         }
     }// todo check use of exp4j
+
+    // parameters are expected to be:
+    // (0) name of the first list
+    // (1) name of the second list
+    // (2) arithmetic expression depending on i
     public void connect2ListsFormula(ArrayList<String> parameters, Structure structure){
         if (!existsVertexList(parameters.get(0))){
             errorMsg = "No such vertex list: " + parameters.get(0);
@@ -614,7 +621,7 @@ public class Dialog {
 
         for (int i = 0; i < list1.size(); i++) {
             net.objecthunter.exp4j.Expression expression =
-                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(0))
+                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(2))
                             .variable("i")
                             .build()
                             .setVariable("i", i);
