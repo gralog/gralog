@@ -67,9 +67,9 @@ public class GralogTrivialGraphFormatImport extends ImportFilter {
                     if (nodeB == null)
                         throw new Exception("Edge containing undefined Vertex-identifier \"" + to + "\"");
                     int edgeId;
-                    try{
+                    try {
                         edgeId = Integer.parseInt(eid);
-                    }catch(Exception e){
+                    }catch(Exception e) {
                         edgeId = -1;
                     }
                     

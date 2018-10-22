@@ -21,7 +21,7 @@ public class DialogTest {
     Structure c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
     Highlights highlights = new Highlights();
 
-    public DialogTest(){
+    public DialogTest() {
         ArrayList<Vertex> initialList = new ArrayList<Vertex>();
         for (int i = 0; i < 10; i++)
             initialList.add(c20.getVertexById(i));
@@ -33,7 +33,7 @@ public class DialogTest {
         }
 
     @Test
-    public void initLists(){
+    public void initLists() {
         // create lists via filter
         parameters.add("ALL");
         parameters.add("VERTICES");
@@ -53,7 +53,7 @@ public class DialogTest {
     }
 
     @Test
-    public void testSort(){
+    public void testSort() {
 
         initLists();
 
@@ -106,7 +106,7 @@ public class DialogTest {
     }
 
     @Test
-    public void testFilter(){
+    public void testFilter() {
 
         // filter all vertices fill white WHITELIST
         parameters.add("ALL");
@@ -150,7 +150,7 @@ public class DialogTest {
     }
 
     @Test
-    public void testConnect(){
+    public void testConnect() {
         parameters.add("P5");
         parameters.add("Q5");
         parameters.add("i+1");

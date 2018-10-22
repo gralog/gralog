@@ -25,23 +25,23 @@ public class SetGraphCommand extends CommandForGralogToExecute {
     Piping piping;
 
 
-	public SetGraphCommand(String[] externalCommandSegments,Structure structure,Piping piping){
+	public SetGraphCommand(String[] externalCommandSegments,Structure structure,Piping piping) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
         this.piping= piping;
         
 
-        try{
+        try {
             this.format = PipingMessageHandler.properGraphFormats(externalCommandSegments[2]);
             this.graphString = String.join("#",Arrays.copyOfRange(externalCommandSegments, 3, externalCommandSegments.length));
-        }catch(Exception e){
+        }catch(Exception e) {
             this.error = e;
             this.fail();
             return;
         }
 
 
-        if (this.format == GraphType.Null){
+        if (this.format == GraphType.Null) {
             this.fail();
             this.error = new Exception(this.format.toString() + " ain't no proper graph format");
             return;
@@ -55,7 +55,7 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 
 	
 
-	public void handle(){
+	public void handle() {
 
         /* for testing*/
         
@@ -76,53 +76,53 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 
         /* let it be known that xml comes without whitespace between elements*/
 
-        if (this.format == GraphType.Xml){
+        if (this.format == GraphType.Xml) {
         	System.out.println("Worked until here"+this);
-            try{
+            try {
                 InputStream is = new ByteArrayInputStream(this.graphString.getBytes());
                 Structure structureFromXml = Structure.loadFromStream(is);
                 this.piping.pairLocalIdAndStructure(localStructureId,structureFromXml);
                 this.currentStructurePane.setStructure(structureFromXml);
                 System.out.println("setted the structure");
 
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.error =e;
                 this.fail();
                 return;
             }
             //parse the xml, possibly in a multi-line manner
 
-        }else if (this.format == GraphType.Tgf){
+        }else if (this.format == GraphType.Tgf) {
             String totalGraph = "";
             String firstLine;
-            try{
+            try {
                 firstLine = PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
-            }catch(Exception e){
+            }catch(Exception e) {
                 doFail(e);
                 return;
             }
-            if (!firstLine.equals("$$")){
+            if (!firstLine.equals("$$")) {
                 doFail(new MessageFormatException("no multiline syntax!"));
             }
             String line = "";
             
-            try{
+            try {
                 line = this.piping.getNextLine();
-                while (!line.equals("$")){
+                while (!line.equals("$")) {
 
                     totalGraph += line + "\n";
                     line = this.piping.getNextLine();
                 }
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.doFail(e);
                 return;
             }
             InputStream is = new ByteArrayInputStream(totalGraph.getBytes());
             TrivialGraphFormatImport importer = new TrivialGraphFormatImport();
             Structure structureFromTGF;
-            try{
+            try {
                 structureFromTGF = importer.importGraph(is,null);
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.doFail(e);
                 return;
             }
@@ -131,39 +131,39 @@ public class SetGraphCommand extends CommandForGralogToExecute {
             System.out.println("structure: " + structureFromTGF);
             System.out.println("ol structure: " + this.structure);
             this.piping.pairLocalIdAndStructure(localStructureId,structureFromTGF);
-        }else if (this.format == GraphType.Tikz){
+        }else if (this.format == GraphType.Tikz) {
             //parse the tikz, possibly in a multi-line manner
-        }else if (this.format == GraphType.GTgf){
+        }else if (this.format == GraphType.GTgf) {
             String totalGraph = "";
             String firstLine;
-            try{
+            try {
                 firstLine = PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
-            }catch(Exception e){
+            }catch(Exception e) {
                 doFail(e);
                 return;
             }
-            if (!firstLine.equals("$$")){
+            if (!firstLine.equals("$$")) {
                 doFail(new MessageFormatException("no multiline syntax!"));
             }
             String line = "";
             
-            try{
+            try {
                 line = this.piping.getNextLine();
-                while (!line.equals("$")){
+                while (!line.equals("$")) {
 
                     totalGraph += line + "\n";
                     line = this.piping.getNextLine();
                 }
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.doFail(e);
                 return;
             }
             InputStream is = new ByteArrayInputStream(totalGraph.getBytes());
             GralogTrivialGraphFormatImport importer = new GralogTrivialGraphFormatImport();
             Structure structureFromGTGF;
-            try{
+            try {
                 structureFromGTGF = importer.importGraph(is,null);
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.doFail(e);
                 return;
             }
@@ -173,7 +173,7 @@ public class SetGraphCommand extends CommandForGralogToExecute {
             System.out.println("ol structure: " + this.structure);
             this.piping.pairLocalIdAndStructure(localStructureId,structureFromGTGF);
 
-        }else{
+        }else {
             this.error = new MessageFormatException("The format " + this.format.toString() + " ain't no proper graph format!");
         }
         
@@ -190,7 +190,7 @@ public class SetGraphCommand extends CommandForGralogToExecute {
         // return v;
 	}
 
-    public void doFail(Exception e){
+    public void doFail(Exception e) {
         this.error = e;
         this.fail();
         return;

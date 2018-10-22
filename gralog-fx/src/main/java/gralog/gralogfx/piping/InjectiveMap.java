@@ -5,7 +5,7 @@ class InjectiveMap<Integer, Value> {
 	private HashMap<Integer, Value> integerToValueMap;
     private HashMap<Value, Integer> valueToIntegerMap;
 
-	public InjectiveMap(){
+	public InjectiveMap() {
 		this.integerToValueMap = new HashMap<Integer, Value>();
 	    this.valueToIntegerMap = new HashMap<Value, Integer>();
 	}
@@ -16,18 +16,18 @@ class InjectiveMap<Integer, Value> {
     }
 
 
-    public Value get(Integer k){
+    public Value get(Integer k) {
     	return this.integerToValueMap.get(k);
     }
-    public Integer getId(Value v){
+    public Integer getId(Value v) {
     	return this.valueToIntegerMap.get(v);
     }
 
-    public Set<Integer> keySet(){
+    public Set<Integer> keySet() {
     	return this.integerToValueMap.keySet();
     }
 
-    public Set<Value> valueSet(){
+    public Set<Value> valueSet() {
     	return this.valueToIntegerMap.keySet();
     }
 

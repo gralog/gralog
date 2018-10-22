@@ -35,7 +35,7 @@ public class LEDAExport extends ExportFilter {
         stream.write("" + V.size() + linefeed);
         int idx = 0;
         for (Vertex v : V) {
-            stream.write("|{}|" + linefeed);
+            stream.write("| {}|" + linefeed);
             nodeIndex.put(v, ++idx);
         }
         stream.write(linefeed);
@@ -45,7 +45,7 @@ public class LEDAExport extends ExportFilter {
         int m = E.size();
         stream.write("" + m + linefeed);
         for (Edge e : E)
-            stream.write(nodeIndex.get(e.getSource()) + " " + nodeIndex.get(e.getTarget()) + " 0 |{}|" + linefeed);
+            stream.write(nodeIndex.get(e.getSource()) + " " + nodeIndex.get(e.getTarget()) + " 0 | {}|" + linefeed);
         stream.write(linefeed);
     }
 }

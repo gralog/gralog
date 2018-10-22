@@ -10,7 +10,7 @@ public class Ellipse extends RenderingShape {
         super(s);
     }
 
-    public static Ellipse create(double width, double height){
+    public static Ellipse create(double width, double height) {
         return new Ellipse(new SizeBox(width, height));
     }
     @Override
@@ -24,7 +24,7 @@ public class Ellipse extends RenderingShape {
     }
 
     @Override
-    public boolean containsCoordinate(Vector2D point, Vector2D center){
+    public boolean containsCoordinate(Vector2D point, Vector2D center) {
         Vector2D p = point.minus(center); // the point relative to center
         double a2 = sizeBox.width * sizeBox.width / 4;
         double b2 = sizeBox.height * sizeBox.height / 4;
@@ -32,7 +32,7 @@ public class Ellipse extends RenderingShape {
     }
 
     @Override
-    public Vector2D getEdgePoint(double alpha, Vector2D center){
+    public Vector2D getEdgePoint(double alpha, Vector2D center) {
         //TODO: also for ellipse
         alpha = Math.toRadians(alpha);
         return new Vector2D(sizeBox.width/2 * Math.cos(alpha),
@@ -52,9 +52,9 @@ public class Ellipse extends RenderingShape {
         //slope
         double d;
 
-        if(a.getX() != b.getX()){
+        if(a.getX() != b.getX()) {
             d = (a.getY() - b.getY())/(a.getX() - b.getX());
-        }else{
+        }else {
             //special case where a is on top or below b
             double y = Math.signum(a.getY()) * Math.sqrt(h2/4 - a.getX() * a.getX() * h2/w2);
             return new Vector2D(a.getX(), y).plus(center);
@@ -63,9 +63,9 @@ public class Ellipse extends RenderingShape {
         //constant factor for linear function of a + (b-a)t
         double c;
 
-        if(b.getX() != 0){
+        if(b.getX() != 0) {
             c = b.getY() - (d * b.getX());
-        }else{
+        }else {
             c = b.getY();
         }
 
@@ -78,9 +78,9 @@ public class Ellipse extends RenderingShape {
         double x1 = -p/2 + sqrt;
         double x2 = -p/2 - sqrt;
 
-        if(Math.abs(x1 - a.getX()) < Math.abs(x2 - a.getX())){
+        if(Math.abs(x1 - a.getX()) < Math.abs(x2 - a.getX())) {
             return new Vector2D(x1, d * x1 + c).plus(center);
-        }else{
+        }else {
             return new Vector2D(x2, d * x2 + c).plus(center);
         }
     }

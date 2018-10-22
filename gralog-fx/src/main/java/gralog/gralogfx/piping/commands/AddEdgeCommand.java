@@ -16,13 +16,13 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
 
 
-	public AddEdgeCommand(String[] externalCommandSegments,Structure structure){
+	public AddEdgeCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        try{    
+        try {    
             this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -30,9 +30,9 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         this.externalCommandSegments = externalCommandSegments;
 
-        try{    
+        try {    
             this.targetId = Integer.parseInt(externalCommandSegments[3]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -42,7 +42,7 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         
 
-        if (this.sourceVertex == null){
+        if (this.sourceVertex == null) {
             this.fail();
             this.error = new NonExistantVertexException("source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
             return;
@@ -50,7 +50,7 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         this.targetVertex = this.structure.getVertexById(this.targetId);
 
-        if (this.targetVertex == null){
+        if (this.targetVertex == null) {
             this.fail();
             this.error = new NonExistantVertexException("target vertex with id " + Integer.toString(this.targetId) + " does not exist");
             return;
@@ -58,24 +58,24 @@ public class AddEdgeCommand extends CommandForGralogToExecute {
 
         
 
-        try{
+        try {
             this.id = Integer.parseInt(externalCommandSegments[4]);
-        }catch(Exception e){
+        }catch(Exception e) {
             System.out.println("no id given, who gives a fuck");
         }
 	}
 
 
-	public void handle(){
+	public void handle() {
 
         Edge e;
     
         e = structure.createEdge(this.id,null);
-        if (e == null){
+        if (e == null) {
             //either the id exists or there are too many edges.
-            if (this.structure.getEdgeById(this.id) == null){
+            if (this.structure.getEdgeById(this.id) == null) {
                 this.error = new EdgeException("too many edges between vertices " + this.sourceId + " and " + this.targetId + "; only 4 are allowed!");
-            }else{
+            }else {
                 this.error = new EdgeException("an edge between vertices " + this.sourceId + " and " + this.targetId + " with id: " + this.id + " already exists");
             }
             this.fail();

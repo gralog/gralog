@@ -52,8 +52,8 @@ public class ReflectedView extends GridPaneView<Object> {
                     boolean display = false;
                     boolean readOnly = false;
                     Annotation[] annotations = f.getDeclaredAnnotations();
-                    for(Annotation annotation : annotations){
-                        if(annotation instanceof DataField){
+                    for(Annotation annotation : annotations) {
+                        if(annotation instanceof DataField) {
                             DataField dataField = (DataField)annotation;
                             display = dataField.display();
                             readOnly = dataField.readOnly();
@@ -69,7 +69,7 @@ public class ReflectedView extends GridPaneView<Object> {
                     Control valueControl = null;
                     Class<?> type = f.getType();
 
-                    if (display){
+                    if (display) {
                         if (type.equals(Double.class) || type.equals(double.class)) {
                             valueControl = createDoubleValueField((double)value, readOnly, f, displayObject);
                         } else if (type.equals(Integer.class) || type.equals(int.class)) {
@@ -84,7 +84,7 @@ public class ReflectedView extends GridPaneView<Object> {
                             valueControl = createLineTypeValueField(value, readOnly, f, displayObject);
                         } else if (type.isAssignableFrom(Edge.EdgeType.class)) {
                             valueControl = createEdgeTypeValueField(value, readOnly, f, displayObject);
-                        } else if (type.isAssignableFrom(RenderingShape.class)){
+                        } else if (type.isAssignableFrom(RenderingShape.class)) {
                             addRenderingShapeControls(value, readOnly, f, displayObject, i);
                             i+= 5;
                         }
@@ -102,7 +102,7 @@ public class ReflectedView extends GridPaneView<Object> {
         }
     }
 
-    void addSeparator(int i){
+    void addSeparator(int i) {
         Separator s = new Separator();
         setConstraints(s, 0, i);
         getChildren().add(s);
@@ -113,10 +113,10 @@ public class ReflectedView extends GridPaneView<Object> {
 
     }
 
-    private Control createDoubleValueField(double value, boolean readOnly, Field f, Object displayObject){
+    private Control createDoubleValueField(double value, boolean readOnly, Field f, Object displayObject) {
         String valueString = String.format("%.4f", value);
         TextField valueField = new TextField(valueString);
-        if (!readOnly){
+        if (!readOnly) {
             valueField.textProperty().addListener(e -> {
                 try {
                     f.set(displayObject,
@@ -126,16 +126,16 @@ public class ReflectedView extends GridPaneView<Object> {
 
                 }
             });
-        }else{
+        }else {
             valueField.setDisable(true);
         }
         return valueField;
     }
 
-    private Control createIntValueField(Object value, boolean readOnly, Field f, Object displayObject){
+    private Control createIntValueField(Object value, boolean readOnly, Field f, Object displayObject) {
         String valueString = value.toString();
         TextField valueField = new TextField(valueString);
-        if (!readOnly){
+        if (!readOnly) {
             valueField.textProperty().addListener(e -> {
                 try {
                     f.set(displayObject, Integer.parseInt(valueField.getText()));
@@ -143,17 +143,17 @@ public class ReflectedView extends GridPaneView<Object> {
                 } catch (IllegalAccessException | IllegalArgumentException ex) {
                 }
             });
-        }else{
+        }else {
             valueField.setDisable(true);
         }
         return valueField;
     }
 
-    private Control createColorPicker(Object value, boolean readOnly, Field f, Object displayObject){
+    private Control createColorPicker(Object value, boolean readOnly, Field f, Object displayObject) {
         String valueString = ((GralogColor) value).toHtmlString();
 
         ColorPicker colorPicker = new ColorPicker(Color.web(valueString));
-        if (!readOnly){
+        if (!readOnly) {
             colorPicker.setOnAction(e -> {
                 try {
                     f.set(displayObject, GralogColor.parseColorAlpha(colorPicker.getValue().toString()));
@@ -161,18 +161,18 @@ public class ReflectedView extends GridPaneView<Object> {
                 } catch (IllegalAccessException | IllegalArgumentException ex) {
                 }
             });
-        }else{
+        }else {
             colorPicker.setDisable(true);
         }
         return colorPicker;
     }
 
-    private Control createBooleanValueField(Object value, boolean readOnly, Field f, Object displayObject){
+    private Control createBooleanValueField(Object value, boolean readOnly, Field f, Object displayObject) {
         CheckBox valueField = new CheckBox();
-        if ((Boolean) value){
+        if ((Boolean) value) {
             valueField.setSelected(true);
         }
-        if (!readOnly){
+        if (!readOnly) {
 
             valueField.selectedProperty().addListener(e -> {
                 System.out.println("halpppp they're changing meeeeee");
@@ -183,16 +183,16 @@ public class ReflectedView extends GridPaneView<Object> {
                 }
             });
 
-        }else{
+        }else {
             valueField.setDisable(true);
         }
         return valueField;
     }
 
-    private Control createStringValueField(Object value, boolean readOnly, Field f, Object displayObject){
+    private Control createStringValueField(Object value, boolean readOnly, Field f, Object displayObject) {
         String valueString = value.toString();
         TextField valueField = new TextField(valueString);
-        if (!readOnly){
+        if (!readOnly) {
             valueField.textProperty().addListener(e -> {
                 try {
                     f.set(displayObject, valueField.getText());
@@ -200,49 +200,49 @@ public class ReflectedView extends GridPaneView<Object> {
                 } catch (IllegalAccessException | IllegalArgumentException ex) {
                 }
             });
-        }else{
+        }else {
             valueField.setDisable(true);
         }
         return valueField;
     }
 
-    private Control createLineTypeValueField(Object value, boolean readOnly, Field f, Object displayObject){
+    private Control createLineTypeValueField(Object value, boolean readOnly, Field f, Object displayObject) {
         ChoiceBox<GralogGraphicsContext.LineType> choiceBox =
                 new ChoiceBox<>(FXCollections.observableArrayList(GralogGraphicsContext.LineType.values()));
         choiceBox.getSelectionModel().select((GralogGraphicsContext.LineType)value);
-        if (!readOnly){
+        if (!readOnly) {
             choiceBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    try{
+                    try {
                         f.set(displayObject, GralogGraphicsContext.LineType.values()[newValue.intValue()]);
                         requestRedraw();
                     }catch(IllegalAccessException | IllegalArgumentException ex) {
                     }
                 }
             });
-        }else{
+        }else {
             choiceBox.setDisable(true);
         }
         return choiceBox;
     }
 
-    private Control createEdgeTypeValueField(Object value, boolean readOnly, Field f, Object displayObject){
+    private Control createEdgeTypeValueField(Object value, boolean readOnly, Field f, Object displayObject) {
         ChoiceBox<Edge.EdgeType> choiceBox =
                 new ChoiceBox<>(FXCollections.observableArrayList(Edge.EdgeType.values()));
         choiceBox.getSelectionModel().select((Edge.EdgeType) value);
-        if (!readOnly){
-            choiceBox.getSelectionModel().selectedIndexProperty().addListener( (obs, old, d) ->{
+        if (!readOnly) {
+            choiceBox.getSelectionModel().selectedIndexProperty().addListener( (obs, old, d) -> {
                 ((Edge)displayObject).setEdgeType(Edge.EdgeType.values()[d.intValue()]);
                 requestRedraw();
             });
-        }else{
+        }else {
             choiceBox.setDisable(true);
         }
         return choiceBox;
     }
 
-    private void addRenderingShapeControls(Object value, boolean readOnly, Field f, Object displayObject, int i){
+    private void addRenderingShapeControls(Object value, boolean readOnly, Field f, Object displayObject, int i) {
         RenderingShape shape = (RenderingShape)value;
 
         ChoiceBox<Class<? extends RenderingShape>> choiceBox =
@@ -250,19 +250,19 @@ public class ReflectedView extends GridPaneView<Object> {
 
         choiceBox.getSelectionModel().select(RenderingShape.renderingShapeClasses.indexOf(value.getClass()));
         choiceBox.setConverter(new RenderingShape.ShapeConverter());
-        if (!readOnly){
+        if (!readOnly) {
             choiceBox.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
-                try{
+                try {
                     ///here!
                     Constructor cs = RenderingShape.renderingShapeClasses.get(newValue.intValue()).getConstructors()[0];
                     f.set(displayObject, cs.newInstance(shape.sizeBox));
                     requestRedraw();
                 }catch(IllegalAccessException | IllegalArgumentException ex) {
-                }catch(InstantiationException | InvocationTargetException ex){
+                }catch(InstantiationException | InvocationTargetException ex) {
                     ex.printStackTrace();
                 }
             });
-        }else{
+        }else {
             choiceBox.setDisable(true);
         }
 
@@ -270,7 +270,7 @@ public class ReflectedView extends GridPaneView<Object> {
         String heightText = String.format("%.3f", shape.sizeBox.height);
         TextField widthField = new TextField(widthText);
         TextField heightField = new TextField(heightText);
-        if (!readOnly){
+        if (!readOnly) {
             widthField.textProperty().addListener(e -> {
                 try {
                     RenderingShape localShape = (RenderingShape) f.get(displayObject);
@@ -280,10 +280,10 @@ public class ReflectedView extends GridPaneView<Object> {
                 } catch (IllegalAccessException | IllegalArgumentException ex) {
                 }
             });
-        }else{
+        }else {
             widthField.setDisable(true);
         }
-        if (!readOnly){
+        if (!readOnly) {
             heightField.textProperty().addListener(e -> {
                 try {
                     RenderingShape localShape = (RenderingShape) f.get(displayObject);
@@ -293,7 +293,7 @@ public class ReflectedView extends GridPaneView<Object> {
                 } catch (IllegalAccessException | IllegalArgumentException ex) {
                 }
             });
-        }else{
+        }else {
             heightField.setDisable(true);
         }
 
@@ -306,7 +306,7 @@ public class ReflectedView extends GridPaneView<Object> {
         addSeparator(i + 3);
     }
 
-    void addPair(String label, Control b, int i){
+    void addPair(String label, Control b, int i) {
         Label a = new Label(label);
         a.setPrefWidth(LABEL_WIDTH);
         b.setMaxWidth(MAX_FIELD_WIDTH);

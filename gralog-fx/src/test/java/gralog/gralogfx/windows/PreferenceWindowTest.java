@@ -7,16 +7,16 @@ import org.junit.Test;
 public class PreferenceWindowTest {
 
     @Test
-    public void RunPreferenceTest(){
+    public void RunPreferenceTest() {
         Application.launch(DummyStage.class);
     }
 
-    public static class DummyStage extends Application{
+    public static class DummyStage extends Application {
 
         public DummyStage() { } // required
 
         @Override
-        public void start(Stage primaryStage){
+        public void start(Stage primaryStage) {
             PreferenceWindow p = new PreferenceWindow();
         }
     }

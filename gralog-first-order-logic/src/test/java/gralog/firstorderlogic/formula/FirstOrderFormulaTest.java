@@ -38,13 +38,13 @@ public class FirstOrderFormulaTest {
     @Test
     public void testVariableAssignmentToString() {
         TreeMap<String, Vertex> assignment = new TreeMap<>();
-        assertEquals("{ }", FirstOrderFormula.variableAssignmentToString(assignment));
+        assertEquals(" { }", FirstOrderFormula.variableAssignmentToString(assignment));
         assignment.put("x", createVertex("0"));
-        assertEquals("{ x↦0 }", FirstOrderFormula.variableAssignmentToString(assignment));
+        assertEquals(" { x↦0 }", FirstOrderFormula.variableAssignmentToString(assignment));
         assignment.put("y", createVertex("1"));
-        assertEquals("{ x↦0, y↦1 }", FirstOrderFormula.variableAssignmentToString(assignment));
+        assertEquals(" { x↦0, y↦1 }", FirstOrderFormula.variableAssignmentToString(assignment));
         assignment.put("z", createVertex("2"));
-        assertEquals("{ x↦0, y↦1, z↦2 }", FirstOrderFormula.variableAssignmentToString(assignment));
+        assertEquals(" { x↦0, y↦1, z↦2 }", FirstOrderFormula.variableAssignmentToString(assignment));
     }
 
     /**

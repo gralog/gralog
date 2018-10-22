@@ -78,9 +78,9 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
 
 
-    public Vertex(Configuration config){
+    public Vertex(Configuration config) {
         this();
-        if(config != null){
+        if(config != null) {
             initWithConfig(config);
         }
     }
@@ -89,7 +89,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
      * Initializes lots of variables from a given configuration
      * @param config
      */
-    protected void initWithConfig(Configuration config){
+    protected void initWithConfig(Configuration config) {
         //TODO: complete
         strokeColor = config.getValue("Vertex_strokeColor", GralogColor::parseColor, GralogColor.BLACK);
         fillColor = config.getValue("Vertex_fillColor", GralogColor::parseColor, GralogColor.WHITE);
@@ -101,7 +101,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
      * Copies a vertex information from a given vertex object. Not the ID.
      *
      */
-    public <V extends Vertex> void copy(V v){
+    public <V extends Vertex> void copy(V v) {
         //this.id = v.id;
         this.radius = v.radius;
         this.loopAngle = v.loopAngle;
@@ -127,7 +127,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     @Override
     public String toString() {
-        return "Vertex{" + "label=" + label + ", radius=" + radius +
+        return "Vertex {" + "label=" + label + ", radius=" + radius +
                 ", fillColor=" + fillColor +
                 ", strokeWidth=" + strokeWidth +
                 ", textHeight=" + textHeight +
@@ -137,7 +137,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     
 
-    public String gralogPipify(){
+    public String gralogPipify() {
         Class<?> c = this.getClass();
         String ret = "";
         for (Field f : c.getDeclaredFields()) {
@@ -145,25 +145,25 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
             f.setAccessible(true);
             boolean toBeSent = false;
             Annotation[] annotations = f.getDeclaredAnnotations();
-            for(Annotation annotation : annotations){
-                if(annotation instanceof DataField){
+            for(Annotation annotation : annotations) {
+                if(annotation instanceof DataField) {
                     DataField dataField = (DataField)annotation;
                     toBeSent = dataField.display()&&(!dataField.readOnly());
                     break;
                 }
             }
-            if (toBeSent){
+            if (toBeSent) {
 
                 ret = ret + f.getName() + "=";
-                try{
+                try {
                     ret = ret+f.get(this).toString() + "|" + Structure.pythonifyClass(f.getType()) + "#";
-                }catch(Exception e){
+                }catch(Exception e) {
                     //todo: to handle!!!
                 }
             }
             
         }
-        if (ret.length() > 0){
+        if (ret.length() > 0) {
             ret = ret.substring(0,ret.length()-1);
         }
 
@@ -171,50 +171,50 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     }
 
-    public void setLabel(String label){
+    public void setLabel(String label) {
         this.label = label;
     }
 
-    void connectEdge(Edge e){
-        if (e.isDirected()){
+    void connectEdge(Edge e) {
+        if (e.isDirected()) {
             System.out.println("we're dealing wiht a direced boi" + e.isDirected);
-            if(e.getSource() == this){
+            if(e.getSource() == this) {
                 //deprecated local id Vergabe. 
-                // if(e.getId() == -1 && incidentEdges.isEmpty()){
+                // if(e.getId() == -1 && incidentEdges.isEmpty()) {
                 //     e.setId(0);
                 // }
-                // if(e.getId() == -1){
+                // if(e.getId() == -1) {
                 //     int[] allIndices = new int[incidentEdges.size()];
                 //     int k = 0;
                     
-                //     for(Edge edge : incidentEdges){
+                //     for(Edge edge : incidentEdges) {
                 //         allIndices[k] = edge.getId();
                 //         k++;
                 //     }
                 //     System.out.println("i got indicex array: ");
-                //     for (int x : allIndices){
+                //     for (int x : allIndices) {
                 //         System.out.println("bla: " + x);
                 //     }
                 //     Arrays.sort(allIndices);
 
                 //     boolean changedOnce = false;
-                //     for(int i = 0; i < allIndices.length; i++){
-                //         if(i < allIndices[i]){
+                //     for(int i = 0; i < allIndices.length; i++) {
+                //         if(i < allIndices[i]) {
                 //             e.setId(i);
                 //             changedOnce = true;
                 //             break;
                 //         }
                 //     }
-                //     if(!changedOnce){
+                //     if(!changedOnce) {
                 //         e.setId(allIndices.length); //fallback
                 //     }
                 // }
                 outgoingEdges.add(e);
             }
-            if (e.getTarget() == this){
+            if (e.getTarget() == this) {
                 this.incomingEdges.add(e);
             }
-        }else{
+        }else {
             this.incomingEdges.add(e);
             this.outgoingEdges.add(e);
         }
@@ -222,16 +222,16 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     }
 
     void connectEdgeLocal(Edge e) {
-        if(e.getSource() == this){
+        if(e.getSource() == this) {
             //if id has not been set already, set it
-            if(e.getId() == -1 && incidentEdges.isEmpty()){
+            if(e.getId() == -1 && incidentEdges.isEmpty()) {
                 e.setId(0);
             }
-            if(e.getId() == -1){
+            if(e.getId() == -1) {
                 int[] allIndices = new int[incidentEdges.size()];
                 int k = 0;
                 
-                for(Edge edge : incidentEdges){
+                for(Edge edge : incidentEdges) {
                     allIndices[k] = edge.getId();
                     k++;
                 }
@@ -239,30 +239,30 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
                 Arrays.sort(allIndices);
 
                 boolean changedOnce = false;
-                for(int i = 0; i < allIndices.length; i++){
-                    if(i < allIndices[i]){
+                for(int i = 0; i < allIndices.length; i++) {
+                    if(i < allIndices[i]) {
                         e.setId(i);
                         changedOnce = true;
                         break;
                     }
                 }
-                if(!changedOnce){
+                if(!changedOnce) {
                     e.setId(allIndices.length); //fallback
                 }
             }
             outgoingEdges.add(e);
         }
-        if (e.getTarget() == this){
+        if (e.getTarget() == this) {
             this.incomingEdges.add(e);
         }
         this.incidentEdges.add(e);
     }
 
     public void disconnectEdge(Edge e) {
-        if(e.getSource() == this || (!e.isDirected && e.getTarget() == this)){
+        if(e.getSource() == this || (!e.isDirected && e.getTarget() == this)) {
             outgoingEdges.remove(e);
         }
-        if (e.getTarget() == this || (!e.isDirected && e.getSource() == this)){
+        if (e.getTarget() == this || (!e.isDirected && e.getSource() == this)) {
             incomingEdges.remove(e);
         }
         this.incidentEdges.remove(e);
@@ -271,25 +271,25 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     public Set<Edge> getIncidentEdges() {
         return incidentEdges;
     }
-    public int getDegree (){return incidentEdges.size();}
+    public int getDegree () {return incidentEdges.size();}
 
-    public int getId(){
+    public int getId() {
         return this.id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
-    public Set<Edge> getOutgoingEdges(){
+    public Set<Edge> getOutgoingEdges() {
         return outgoingEdges;
     }
-    public int getOutDegree (){return outgoingEdges.size();}
+    public int getOutDegree () {return outgoingEdges.size();}
 
-    public Set<Edge> getIncomingEdges(){
+    public Set<Edge> getIncomingEdges() {
         return this.incomingEdges;
     }
-    public int getInDegree (){return incomingEdges.size();}
+    public int getInDegree () {return incomingEdges.size();}
 //##########START depricated!!!! use getNeighbours instead#########
     /**
      * @return The set of adjacent vertices.
@@ -317,7 +317,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     public Vector2D intersection(Vector2D p1, Vector2D p2) {
         return p1.minus(p2).normalized().multiply(this.radius).plus(p2);
     }
-    public Vector2D intersectionAdjusted(Vector2D p1, Vector2D p2, double adjust){
+    public Vector2D intersectionAdjusted(Vector2D p1, Vector2D p2, double adjust) {
         return p1.minus(p2).normalized().multiply(this.radius - adjust).plus(p2);
     }
     @Override
@@ -326,30 +326,30 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         controls.move(offset);
     }
 
-    public void setCoordinates(Vector2D v){
+    public void setCoordinates(Vector2D v) {
         coordinates = v;
         controls.setCoordinates();
     }
 
-    public void setCoordinates(double x, double y){
+    public void setCoordinates(double x, double y) {
         coordinates = new Vector2D(x, y);
         controls.setCoordinates();
     }
 
-    public Vector2D getCoordinates(){
+    public Vector2D getCoordinates() {
         return this.coordinates;
     }
 
-    public IMovable findObject(double x, double y){
-        if(controls.active){
+    public IMovable findObject(double x, double y) {
+        if(controls.active) {
             IMovable temp = controls.findObject(x, y);
-            if(temp != null){
+            if(temp != null) {
                 return temp;
             }
         }
-        if(shape.containsCoordinate(new Vector2D(x, y), coordinates)){
+        if(shape.containsCoordinate(new Vector2D(x, y), coordinates)) {
             return this;
-        }else{
+        }else {
             return null;
         }
     }
@@ -366,30 +366,30 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     }
 
 
-    public Set<Vertex> getNeighbours(){
+    public Set<Vertex> getNeighbours() {
         Set<Vertex> neighbours = new HashSet<Vertex>();
-        for (Edge e : this.getIncidentEdges()){
-            if (e.getTarget() != this){
+        for (Edge e : this.getIncidentEdges()) {
+            if (e.getTarget() != this) {
                 neighbours.add(e.getTarget());
-            }else{
+            }else {
                 neighbours.add(e.getSource());
             }
         }
         return neighbours;
     }
 
-    public Set<Vertex> getOutgoingNeighbours(){
+    public Set<Vertex> getOutgoingNeighbours() {
         Set<Vertex> outgoingNeighbours = new HashSet<Vertex>();
-        for (Edge e : this.getOutgoingEdges()){
+        for (Edge e : this.getOutgoingEdges()) {
             outgoingNeighbours.add(e.getTarget());
         }
         return outgoingNeighbours;
     }
 
 
-    public Set<Vertex> getIncomingNeighbours(){
+    public Set<Vertex> getIncomingNeighbours() {
         Set<Vertex> incomingNeighbours = new HashSet<Vertex>();
-        for (Edge e : this.getIncomingEdges()){
+        for (Edge e : this.getIncomingEdges()) {
             incomingNeighbours.add(e.getSource());
         }
         return incomingNeighbours;

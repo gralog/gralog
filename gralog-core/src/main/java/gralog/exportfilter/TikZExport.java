@@ -25,20 +25,20 @@ public class TikZExport extends ExportFilter {
         ExportFilterParameters params) throws Exception {
         IndentedWriter out = new IndentedWriter(stream, 4);
 
-        out.writeLine("%\\documentclass{article}");
-        out.writeLine("%\\usepackage{pgf}");
-        out.writeLine("%\\usepackage{tikz}");
-        out.writeLine("%\\usepackage{amsmath, amssymb}");
-        out.writeLine("%\\usetikzlibrary{arrows.meta}");
-        out.writeLine("%\\usepackage[utf8]{inputenc}");
+        out.writeLine("%\\documentclass {article}");
+        out.writeLine("%\\usepackage {pgf}");
+        out.writeLine("%\\usepackage {tikz}");
+        out.writeLine("%\\usepackage {amsmath, amssymb}");
+        out.writeLine("%\\usetikzlibrary {arrows.meta}");
+        out.writeLine("%\\usepackage[utf8] {inputenc}");
 
-        out.writeLine("%\\begin{document}");
+        out.writeLine("%\\begin {document}");
         out.increaseIndent();
-        out.writeLine("\\begin{tikzpicture}[scale=0.6,auto]");
+        out.writeLine("\\begin {tikzpicture}[scale=0.6,auto]");
         out.increaseIndent();
-        out.writeLine("\\tikzset{>=Stealth}");
-        out.writeLine("\\tikzstyle{every path}=[->,thick]");
-        out.writeLine("\\tikzstyle{every node}=[circle,fill=white,draw=black,text=black,thin,minimum size=16pt,inner sep=1.5pt]");
+        out.writeLine("\\tikzset {>=Stealth}");
+        out.writeLine("\\tikzstyle {every path}=[->,thick]");
+        out.writeLine("\\tikzstyle {every node}=[circle,fill=white,draw=black,text=black,thin,minimum size=16pt,inner sep=1.5pt]");
         out.writeLine("");
 
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
@@ -50,13 +50,13 @@ public class TikZExport extends ExportFilter {
         	//String properties = "ellipse, minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height;
         	
         	String properties = v.shape.getClass().getSimpleName().toLowerCase() + ", minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height + "cm";
-        	out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+        	out.writeLine("\\definecolor {gralog-fill-color} {HTML} {" + v.fillColor.toHtmlString().substring(1) + "}");
     		properties = properties + ", fill=gralog-fill-color";
 /*        	if (!v.fillColor.equals(GralogColor.WHITE)) {
-  //      		out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+  //      		out.writeLine("\\definecolor {gralog-fill-color} {HTML} {" + v.fillColor.toHtmlString().substring(1) + "}");
     //    		properties = properties + ", fill=gralog-fill-color";
         	}*/ if (!v.strokeColor.equals(GralogColor.BLACK)) {
-        		out.writeLine("\\definecolor{gralog-stroke-color}{HTML}{" + v.strokeColor.toHtmlString().substring(1) + "}");
+        		out.writeLine("\\definecolor {gralog-stroke-color} {HTML} {" + v.strokeColor.toHtmlString().substring(1) + "}");
         		properties = properties + ", draw=gralog-stroke-color";
         	}
         	properties = properties + ", line width=" + v.strokeWidth + "cm";
@@ -101,8 +101,8 @@ public class TikZExport extends ExportFilter {
         }
 
         out.decreaseIndent();
-        out.writeLine("\\end{tikzpicture}");
+        out.writeLine("\\end {tikzpicture}");
         out.decreaseIndent();
-        out.writeLine("%\\end{document}");
+        out.writeLine("%\\end {document}");
     }
 }

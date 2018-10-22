@@ -15,16 +15,16 @@ public class SetEdgeContourCommand extends CommandForGralogToExecute {
 
 
 
-    public SetEdgeContourCommand(String[] externalCommandSegments,Structure structure){
+    public SetEdgeContourCommand(String[] externalCommandSegments,Structure structure) {
         this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        try{
+        try {
             this.edge = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
-        }catch(NonExistantEdgeException e){
+        }catch(NonExistantEdgeException e) {
             this.setConsoleMessage("(non-fatal) " + e.toString());
             return;
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.setResponse(null);
             this.error = e;
@@ -42,15 +42,15 @@ public class SetEdgeContourCommand extends CommandForGralogToExecute {
    
 
 
-    public void handle(){
+    public void handle() {
 
         
-        if (this.edge != null){
+        if (this.edge != null) {
 
             boolean wasType = false;
-            for (GralogGraphicsContext.LineType lineType : GralogGraphicsContext.LineType.values()){
+            for (GralogGraphicsContext.LineType lineType : GralogGraphicsContext.LineType.values()) {
                 String lineTypeString = lineType.toString().toLowerCase();
-                if (contour.toLowerCase().equals(lineTypeString)){
+                if (contour.toLowerCase().equals(lineTypeString)) {
                     this.edge.type = lineType;
                     wasType = true;
                     break;
@@ -58,7 +58,7 @@ public class SetEdgeContourCommand extends CommandForGralogToExecute {
             }
 
 
-            if (wasType){
+            if (wasType) {
                 this.setResponse(null);
                 return;
             }

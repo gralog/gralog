@@ -17,11 +17,11 @@ public class Transition extends Edge {
 
     public String symbol = "";
 
-    public Transition(){
+    public Transition() {
 
     }
 
-    public Transition(Configuration config){
+    public Transition(Configuration config) {
         super(config);
     }
     @Override

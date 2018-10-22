@@ -32,16 +32,16 @@ public class GralogColor implements Serializable {
         int value;
 
         Color(int c) {this.value = c;}
-        public int getValue(){
+        public int getValue() {
             return this.value;
         }
     }
 
-    public int getValue(Color c){
+    public int getValue(Color c) {
         return c.value;
     }
 
-    public static boolean isColor(String s){ // checks if s is a color from enum Color
+    public static boolean isColor(String s) { // checks if s is a color from enum Color
         for (Color c : Color.values())
             if (c.name().equalsIgnoreCase(s))
                 return true;
@@ -52,7 +52,7 @@ public class GralogColor implements Serializable {
     public final short g;
     public final short b;
 
-    public GralogColor(String hex){
+    public GralogColor(String hex) {
         this(Integer.parseInt(hex,16));
     }
 
@@ -74,7 +74,7 @@ public class GralogColor implements Serializable {
             (short) ((rgb >> 8) & 0xFF),
             (short) (rgb & 0xFF));
     }
-    public GralogColor(GralogColor c){
+    public GralogColor(GralogColor c) {
         this.r = c.r;
         this.g = c.g;
         this.b = c.b;
@@ -156,12 +156,12 @@ public class GralogColor implements Serializable {
         return new GralogColor(colorCode);
     }
 
-    public String name(){
-        for (Color c : Color.values()){
+    public String name() {
+        for (Color c : Color.values()) {
             if (c.value == (
                     ((r&0x0FF)<<16)|((g&0x0FF)<<8)|(b&0x0FF)
                             )
-               ){
+               ) {
                 return c.name();
             }
         }

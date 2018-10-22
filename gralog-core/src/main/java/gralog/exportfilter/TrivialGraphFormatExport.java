@@ -43,7 +43,7 @@ public class TrivialGraphFormatExport extends ExportFilter {
         stream.write("#" + linefeed);
     }
 
-    public static String exportToString(Structure structure){
+    public static String exportToString(Structure structure) {
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
         Integer i = 1;
         String separator = System.getProperty("line.separator");
@@ -63,7 +63,7 @@ public class TrivialGraphFormatExport extends ExportFilter {
         // stream.write("#" + linefeed);
 
         Set<Edge> E = (Set<Edge>)structure.getEdges();
-        for (Edge e : E){
+        for (Edge e : E) {
             retString += nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + separator;
             // stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + linefeed);
         }

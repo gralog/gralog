@@ -11,13 +11,13 @@ public class DeleteVertexCommand extends CommandForGralogToExecute {
 
 
 
-	public DeleteVertexCommand(String[] externalCommandSegments,Structure structure){
+	public DeleteVertexCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         
-		try{    
+		try {    
             this.toDeleteVertexId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -28,13 +28,13 @@ public class DeleteVertexCommand extends CommandForGralogToExecute {
 
 
 
-	public void handle(){
+	public void handle() {
 
         Vertex toDelete = this.structure.getVertexById(this.toDeleteVertexId);
 
 
             
-        if (toDelete == null){
+        if (toDelete == null) {
             this.setConsoleMessage("tried to delete vertex " + this.toDeleteVertexId + ", which does not exist");
         	// this.error = new NonExistantVertexException("vertex " + this.toDeleteVertexId + " does not exist");
         	// this.fail();

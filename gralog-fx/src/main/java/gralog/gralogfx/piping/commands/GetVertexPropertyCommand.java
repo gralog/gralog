@@ -11,14 +11,14 @@ public class GetVertexPropertyCommand extends CommandForGralogToExecute {
 	String propertyString;
   
 
-	public GetVertexPropertyCommand(String[] externalCommandSegments,Structure structure){
+	public GetVertexPropertyCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         
 
-        try{
+        try {
             this.vertex = PipingMessageHandler.extractVertex(externalCommandSegments,structure);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.setResponse(null);
             this.error = e;
@@ -26,10 +26,10 @@ public class GetVertexPropertyCommand extends CommandForGralogToExecute {
         }
 
         //extract the property to be searched for, if it doesn't exist, terminate program
-        try{
+        try {
 
             this.propertyString = PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.error = e;
             return;
@@ -37,16 +37,16 @@ public class GetVertexPropertyCommand extends CommandForGralogToExecute {
 
 	}
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
 
         Class<?> c = this.vertex.getClass();
-        for (Field f : c.getFields()){
-            if (f.getName().equals(this.propertyString)){
-                try{
+        for (Field f : c.getFields()) {
+            if (f.getName().equals(this.propertyString)) {
+                try {
                     this.setResponse(this.vertex.gralogPipify());
-                }catch(Exception e){
+                }catch(Exception e) {
                     this.fail();
                     this.error = e;
 

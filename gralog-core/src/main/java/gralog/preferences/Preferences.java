@@ -21,7 +21,7 @@ public final class Preferences {
     private static final java.util.Properties PROPERTIES = new java.util.Properties();
     private static final String PREFERENCE_PATH = buildPreferencePath();
 
-    public static Properties getProperties(){
+    public static Properties getProperties() {
         return PROPERTIES;
     }
 
@@ -54,23 +54,23 @@ public final class Preferences {
             }
         } catch (FileNotFoundException e) {
             createDefaultPrefs(path);
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return path;
     }
 
-    private static void createDefaultPrefs(String path){
+    private static void createDefaultPrefs(String path) {
         System.out.println("No config was found - add default prefs");
         InputStream def  = Preferences.class.getClassLoader().getResourceAsStream("default_preferences.txt");
 
-        try{
+        try {
             Files.copy(def, Paths.get(path + "/" + FILENAME), StandardCopyOption.REPLACE_EXISTING);
             def.close();
             try (FileInputStream in = new FileInputStream(path + "/" + FILENAME)) {
                 PROPERTIES.load(in);
             }
-        }catch (IOException ex){
+        }catch (IOException ex) {
             ex.printStackTrace();
         }
     }
@@ -130,19 +130,19 @@ public final class Preferences {
      * BOOLEAN *
      ***********
      * */
-    public static Boolean getBoolean(Class c, String key, boolean defaultValue){
+    public static Boolean getBoolean(Class c, String key, boolean defaultValue) {
         return getBoolean(classKey(c, key), defaultValue);
     }
 
-    public static Boolean getBoolean(String key, boolean defaultValue){
+    public static Boolean getBoolean(String key, boolean defaultValue) {
         return Boolean.parseBoolean(PROPERTIES.getProperty(key, Boolean.toString(defaultValue)));
     }
 
-    public static void setBoolean(Class c, String key, boolean b){
+    public static void setBoolean(Class c, String key, boolean b) {
         setBoolean(classKey(c, key), b);
     }
 
-    public static void setBoolean(String key, boolean b){
+    public static void setBoolean(String key, boolean b) {
         PROPERTIES.setProperty(key, Boolean.toString(b));
         flush();
     }
@@ -154,7 +154,7 @@ public final class Preferences {
      **********
      * */
     
-    public static File getFile(String key, String defaultValue){
+    public static File getFile(String key, String defaultValue) {
         System.out.println("key: " + key + " + defaultValue" + defaultValue);
         System.out.println("meanwhile, for key: StructurePane_gridSize the default is : " + PROPERTIES.getProperty("StructurePane_gridSize", "null"));
         String fileName = PROPERTIES.getProperty(key, defaultValue);
@@ -164,7 +164,7 @@ public final class Preferences {
     }
 
    
-    public static void setFile(String key, File file){
+    public static void setFile(String key, File file) {
         System.out.println("we gettin : " + file.getPath());
         PROPERTIES.setProperty(key, file.getPath());
         flush();
@@ -175,17 +175,17 @@ public final class Preferences {
      * DOUBLE *
      **********
      * */
-    public static Double getDouble(Class c, String key, double defaultValue){
+    public static Double getDouble(Class c, String key, double defaultValue) {
         return getDouble(classKey(c, key), defaultValue);
     }
-    public static Double getDouble(String key, double defaultValue){
+    public static Double getDouble(String key, double defaultValue) {
         return Double.parseDouble(PROPERTIES.getProperty(key, Double.toString(defaultValue)));
     }
 
-    public static void setDouble(Class c, String key, double d){
+    public static void setDouble(Class c, String key, double d) {
         setDouble(classKey(c, key), d);
     }
-    public static void setDouble(String key, double d){
+    public static void setDouble(String key, double d) {
         PROPERTIES.setProperty(key, Double.toString(d));
         flush();
     }
@@ -195,17 +195,17 @@ public final class Preferences {
      * COLOR *
      *********
      * */
-    public static GralogColor getColor(Class c, String key, GralogColor defaultValue){
+    public static GralogColor getColor(Class c, String key, GralogColor defaultValue) {
         return getColor(classKey(c, key), defaultValue);
     }
-    public static GralogColor getColor(String key, GralogColor defaultValue){
+    public static GralogColor getColor(String key, GralogColor defaultValue) {
         return GralogColor.parseColor(PROPERTIES.getProperty(key, defaultValue.toHtmlString()));
     }
 
-    public static void setColor(Class c, String key, GralogColor color){
+    public static void setColor(Class c, String key, GralogColor color) {
         setColor(classKey(c, key), color);
     }
-    public static void setColor(String key, GralogColor c){
+    public static void setColor(String key, GralogColor c) {
         PROPERTIES.setProperty(key, c.toHtmlString());
         flush();
     }

@@ -3,19 +3,19 @@ package gralog.math.sturm;
 /**
  * Represents intervals for root isolation. The interval
  */
-public class ExpInterval implements Interval, Comparable<ExpInterval>{
+public class ExpInterval implements Interval, Comparable<ExpInterval> {
 
     int k;
     double c;
 
-    public ExpInterval(int k, double c){
+    public ExpInterval(int k, double c) {
         this.k = k;
         this.c = c;
     }
-    public double upperBound(){
+    public double upperBound() {
         return (c+1)/(1<<k);
     }
-    public double lowerBound(){
+    public double lowerBound() {
         return c/(1<<k);
     }
 
@@ -23,12 +23,12 @@ public class ExpInterval implements Interval, Comparable<ExpInterval>{
      * Tests if a real number is in the interval
      * @return
      */
-    public boolean contains(double t){
+    public boolean contains(double t) {
         return t > lowerBound() && t < upperBound();
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return String.format("(%.2f,%.2f)",c/(1<<k), (c+1)/(1<<k));
     }
     @Override

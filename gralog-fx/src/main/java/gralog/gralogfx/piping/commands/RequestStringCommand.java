@@ -16,7 +16,7 @@ public class RequestStringCommand extends CommandForGralogToExecute {
     private Piping piping;
   
 
-	public RequestStringCommand(String[] externalCommandSegments,Structure structure,Piping piping){
+	public RequestStringCommand(String[] externalCommandSegments,Structure structure,Piping piping) {
 		
 
 
@@ -28,17 +28,17 @@ public class RequestStringCommand extends CommandForGralogToExecute {
 
 	}
 
-	public void handle(){
+	public void handle() {
 
         // this.selectionFunction.get();
         this.piping.state = Piping.State.WaitingForConsoleInput;
         this.piping.sendMessageToConsole.accept("Waiting for string!",Piping.MessageToConsoleFlag.Request);
         
-        try{
+        try {
             this.piping.redrawMyStructurePanes();
             this.piping.setClassSelectionIsWaitingFor(String.class);
             this.waitForSelection.await();
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
         this.piping.state = Piping.State.InProgress;

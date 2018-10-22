@@ -15,7 +15,7 @@ import java.util.Arrays;
  */
 public abstract class GralogGraphicsContext {
 
-    public enum LineType{
+    public enum LineType {
         PLAIN,
         DOTTED,
         DASHED
@@ -30,7 +30,7 @@ public abstract class GralogGraphicsContext {
     }
 
     public abstract void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color);
-    public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color, double lineWidth){
+    public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color, double lineWidth) {
         double theta = Math.toRadians(dir.theta());
 
         double[] xs = Arrays.copyOf(arrowType.xPoints, arrowType.xPoints.length);
@@ -45,9 +45,9 @@ public abstract class GralogGraphicsContext {
             ys[i] = (oldX  * sint + ys[i] * cost) * scale + pos.getY();
         }
 
-        if(arrowType.flag == Arrow.LineFlag.POLY){
+        if(arrowType.flag == Arrow.LineFlag.POLY) {
             polygon(xs, ys, arrowType.count, color);
-        }else{
+        }else {
             lines(xs, ys, arrowType.count, color, lineWidth);
         }
     }
@@ -68,7 +68,7 @@ public abstract class GralogGraphicsContext {
     public abstract void loop(Loop l, double length, double correction, GralogColor color, double width, LineType type);
 
 
-    public static class Loop{
+    public static class Loop {
         public Vector2D start;
         public Vector2D tangentStart;
         public Vector2D end;
@@ -117,7 +117,7 @@ public abstract class GralogGraphicsContext {
     public abstract void drawBezier(Bezier curve, GralogColor color, double width, LineType type);
     public abstract void drawQuadratic(Bezier curve, GralogColor color, double width, LineType type);
 
-    public static class Bezier{
+    public static class Bezier {
         public Vector2D source;
         public Vector2D target;
         public Vector2D ctrl1;

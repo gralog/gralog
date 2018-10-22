@@ -5,39 +5,39 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 
 
-public class ConsoleField extends TextArea{
+public class ConsoleField extends TextArea {
     boolean changed = false;
-    public ConsoleField(String text){
+    public ConsoleField(String text) {
         super(text);
         this.setWrapText(true);
         
         
-        super.textProperty().addListener(new ChangeListener<String>(){
+        super.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 System.out.println("changed: " + changed);
                 System.out.println("oldvalue: " + oldValue + " newValue " + newValue);
-                if (!ConsoleField.this.changed){
+                if (!ConsoleField.this.changed) {
                     ConsoleField.this.changed = true;
                     setText(oldValue);
                     
-                }else{
+                }else {
                     changed = false;
                 }
             }
         });
     }
-    public ConsoleField(){
+    public ConsoleField() {
         super();
-        super.textProperty().addListener(new ChangeListener<String>(){
+        super.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 
-                if (!ConsoleField.this.changed){
+                if (!ConsoleField.this.changed) {
                     ConsoleField.this.changed = true;
                     setText(oldValue);
                     
-                }else{
+                }else {
                     ConsoleField.this.changed = false;
                 }
             }

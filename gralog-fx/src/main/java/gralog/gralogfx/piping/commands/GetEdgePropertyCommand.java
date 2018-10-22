@@ -11,14 +11,14 @@ public class GetEdgePropertyCommand extends CommandForGralogToExecute {
 	String propertyString;
   
 
-	public GetEdgePropertyCommand(String[] externalCommandSegments,Structure structure){
+	public GetEdgePropertyCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         
 
-        try{
+        try {
             this.edge = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.setResponse(null);
             this.error = e;
@@ -26,10 +26,10 @@ public class GetEdgePropertyCommand extends CommandForGralogToExecute {
         }
 
         //extract the property to be searched for, if it doesn't exist, terminate program
-        try{
+        try {
 
             this.propertyString = externalCommandSegments[3];
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.error = e;
             return;
@@ -37,17 +37,17 @@ public class GetEdgePropertyCommand extends CommandForGralogToExecute {
 
 	}
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
 
         boolean found = false;
         Class<?> c = edge.getClass();
-        for (Field f : c.getFields()){
-            if (f.getName().equals(this.propertyString)){
-                try{
+        for (Field f : c.getFields()) {
+            if (f.getName().equals(this.propertyString)) {
+                try {
                     this.setResponse(PipingMessageHandler.universalEdgeToGralogTuple(this.edge));
-                }catch(Exception e){
+                }catch(Exception e) {
                     this.fail();
                     this.error = e;
 

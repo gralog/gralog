@@ -14,13 +14,13 @@ public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
 
 
 
-	public GetOutgoingNeighboursCommand(String[] externalCommandSegments,Structure structure){
+	public GetOutgoingNeighboursCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        try{    
+        try {    
             this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -28,7 +28,7 @@ public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
 
         this.sourceVertex = this.structure.getVertexById(this.sourceId);
 
-        if (this.sourceVertex == null){
+        if (this.sourceVertex == null) {
             this.fail();
             this.error = new NonExistantVertexException("source vertex does not exist");
             return;
@@ -38,7 +38,7 @@ public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
 
 	
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
        
@@ -46,10 +46,10 @@ public class GetOutgoingNeighboursCommand extends CommandForGralogToExecute {
         Set<Vertex> neighbours = this.sourceVertex.getOutgoingNeighbours();
 
         String neighbourString = "";
-        for (Vertex v : neighbours){
+        for (Vertex v : neighbours) {
             neighbourString = neighbourString + Integer.toString(v.getId()) + "#";
         }
-        if (neighbourString.length() > 0 && null != neighbourString){
+        if (neighbourString.length() > 0 && null != neighbourString) {
             neighbourString = neighbourString.substring(0,neighbourString.length()-1);
         }
 

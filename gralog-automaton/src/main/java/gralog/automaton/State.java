@@ -27,11 +27,11 @@ public class State extends Vertex {
     public GralogColor initialMarkColor = GralogColor.BLACK;
 
 
-    public State(){
+    public State() {
         super();
     }
 
-    public State(Configuration config){
+    public State(Configuration config) {
         super(config);
     }
 
@@ -40,7 +40,7 @@ public class State extends Vertex {
      * @param config
      */
     @Override
-    protected void initWithConfig(Configuration config){
+    protected void initWithConfig(Configuration config) {
         super.initWithConfig(config);
 
         //TODO: additional initializations from config have to be made

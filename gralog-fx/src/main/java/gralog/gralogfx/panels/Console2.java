@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 import static gralog.dialog.DialogAction.NONE;
 import static gralog.dialog.DialogState.*;
 
-public class Console2 extends VBox implements GralogWindow{
+public class Console2 extends VBox implements GralogWindow {
 
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_RESET = "\u001B[0m";
@@ -44,7 +44,7 @@ public class Console2 extends VBox implements GralogWindow{
 
     private final Set<Consumer<String>> subscribers = new HashSet<>();
 
-    public Console2(Tabs tabs){
+    public Console2(Tabs tabs) {
 
         this.tabs = tabs;
 
@@ -61,10 +61,10 @@ public class Console2 extends VBox implements GralogWindow{
 
         input.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             String inputText = input.getText();
-            if(e.getCode() == KeyCode.ENTER){
+            if(e.getCode() == KeyCode.ENTER) {
                 output.appendText("./> " + inputText + "\n");
 
-                if(!inputText.isEmpty()){
+                if(!inputText.isEmpty()) {
                     history.add(inputText);
                     onEnter(inputText, tabs.getCurrentStructurePane());
                 }
@@ -87,12 +87,12 @@ public class Console2 extends VBox implements GralogWindow{
     /**
      * Executes Consumer after console input has been submitted
      */
-    public void registerMethod(Consumer<String> c){
+    public void registerMethod(Consumer<String> c) {
         subscribers.add(c);
     }
 
-    public void onEnter(String text, StructurePane currentPane){
-        for(Consumer<String> consumer : subscribers){
+    public void onEnter(String text, StructurePane currentPane) {
+        for(Consumer<String> consumer : subscribers) {
             consumer.accept(text);
         }
 
@@ -108,7 +108,7 @@ public class Console2 extends VBox implements GralogWindow{
         // if only vertices or only edges are selected, guess this, don't let the user write it
         // if nothing, abort
         // if both, ask what to select
-        if (parser.getDialogState() == FILTER_SELECTED){
+        if (parser.getDialogState() == FILTER_SELECTED) {
             boolean existsSelectedVertex = false;
             for (Object v : currentPane.getHighlights().getSelection())
                 if (v instanceof Vertex) {
@@ -121,11 +121,11 @@ public class Console2 extends VBox implements GralogWindow{
                     existsSelectedEdge = true;
                     break;
                 }
-            if (existsSelectedVertex & ! existsSelectedEdge){
+            if (existsSelectedVertex & ! existsSelectedEdge) {
                 parser.setErrorMsg("");
                 parser.setDialogState(FILTER_WHAT);
                 parser.addParameter("VERTICES");
-                if (text.indexOf('d') == text.length() - 1){ // the input was only "filter [all] selected"
+                if (text.indexOf('d') == text.length() - 1) { // the input was only "filter [all] selected"
                     output("Specify conditions, start with \"where\".\n");
                     return;
                 }
@@ -133,11 +133,11 @@ public class Console2 extends VBox implements GralogWindow{
                 System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "], err = " + parser.getErrorMsg() );
                 parser.parse(remainingText);
             }
-            if (existsSelectedEdge & ! existsSelectedVertex){
+            if (existsSelectedEdge & ! existsSelectedVertex) {
                 parser.setErrorMsg("");
                 parser.setDialogState(FILTER_WHAT);
                 parser.addParameter("EDGES");
-                if (text.indexOf('d') == text.length() - 1){
+                if (text.indexOf('d') == text.length() - 1) {
                     output("Specify conditions, start with \"where\".\n");
                     return;
                 }
@@ -145,7 +145,7 @@ public class Console2 extends VBox implements GralogWindow{
                 System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "]");
                 parser.parse(remainingText);
             }
-            if (!existsSelectedEdge & !existsSelectedVertex){
+            if (!existsSelectedEdge & !existsSelectedVertex) {
                 parser.setErrorMsg("Nothing is selected! Aborting.\n");
                 parser.setDialogState(DONE);
                 parser.setDialogAction(NONE);
@@ -157,7 +157,7 @@ public class Console2 extends VBox implements GralogWindow{
         output(parser.getErrorMsg());
         parser.setErrorMsg("");
 
-        if (parser.getDialogState() == DONE){
+        if (parser.getDialogState() == DONE) {
             switch (parser.getDialogAction()) {
                 case SELECT_ALL:                 dialogfx.selectAll(currentPane);
                                                 break;
@@ -184,14 +184,14 @@ public class Console2 extends VBox implements GralogWindow{
         }
     }
 
-    public void output(String text){
+    public void output(String text) {
 
         output.appendText(text);
 
     }
 
-    public void clear(){
-        if(input != null){
+    public void clear() {
+        if(input != null) {
             input.clear();
             historyPointer = -1;
         }

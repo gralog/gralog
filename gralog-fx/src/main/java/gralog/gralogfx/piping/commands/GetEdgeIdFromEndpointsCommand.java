@@ -10,14 +10,14 @@ public class GetEdgeIdFromEndpointsCommand extends CommandForGralogToExecute {
     Edge edge;
   
 
-	public GetEdgeIdFromEndpointsCommand(String[] externalCommandSegments,Structure structure){
+	public GetEdgeIdFromEndpointsCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         
 
-        try{
+        try {
             this.edge = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.setResponse(null);
             this.error = e;
@@ -27,7 +27,7 @@ public class GetEdgeIdFromEndpointsCommand extends CommandForGralogToExecute {
 
 	}
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
 

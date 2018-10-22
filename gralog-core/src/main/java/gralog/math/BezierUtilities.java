@@ -18,12 +18,12 @@ public final class BezierUtilities {
     /**
      * Encapsulates results of a projection operation
      */
-    public static class ProjectionResults{
+    public static class ProjectionResults {
         public boolean successful;
         public Vector2D result;
     }
 
-    public static Vector2D[] yIntersectionQuadraticBezier(double y, BezierQuadratic c){
+    public static Vector2D[] yIntersectionQuadraticBezier(double y, BezierQuadratic c) {
 
         final double p0 = c.c0.getY();
         final double p1 = c.c1.getY();
@@ -39,17 +39,17 @@ public final class BezierUtilities {
 
         double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
         Vector2D[] intersections = new Vector2D[3];
-        if(roots.length == 0){
+        if(roots.length == 0) {
             return intersections;
         }
-        for(int i = 0; i < 3; i++){
-            if(i < roots.length){
+        for(int i = 0; i < 3; i++) {
+            if(i < roots.length) {
                 intersections[i] = c.eval(roots[i]);
             }
         }
         return intersections;
     }
-    public static Vector2D[] xIntersectionQuadraticBezier(double x, BezierQuadratic c){
+    public static Vector2D[] xIntersectionQuadraticBezier(double x, BezierQuadratic c) {
 
         final double p0 = c.c0.getX();
         final double p1 = c.c1.getX();
@@ -65,17 +65,17 @@ public final class BezierUtilities {
 
         double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
         Vector2D[] intersections = new Vector2D[3];
-        if(roots.length == 0){
+        if(roots.length == 0) {
             return intersections;
         }
-        for(int i = 0; i < 3; i++){
-            if(i < roots.length){
+        for(int i = 0; i < 3; i++) {
+            if(i < roots.length) {
                 intersections[i] = c.eval(roots[i]);
             }
         }
         return intersections;
     }
-    public static Vector2D[] yIntersectionCubicBezier(double y, BezierCubic c){
+    public static Vector2D[] yIntersectionCubicBezier(double y, BezierCubic c) {
 
         final double p0 = c.c0.getY();
         final double p1 = c.c1.getY();
@@ -93,17 +93,17 @@ public final class BezierUtilities {
 
         double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
         Vector2D[] intersections = new Vector2D[3];
-        if(roots.length == 0){
+        if(roots.length == 0) {
             return intersections;
         }
-        for(int i = 0; i < 3; i++){
-            if(i < roots.length){
+        for(int i = 0; i < 3; i++) {
+            if(i < roots.length) {
                 intersections[i] = c.eval(roots[i]);
             }
         }
         return intersections;
     }
-    public static Vector2D[] xIntersectionCubicBezier(double x, BezierCubic c){
+    public static Vector2D[] xIntersectionCubicBezier(double x, BezierCubic c) {
 
         final double p0 = c.c0.getX();
         final double p1 = c.c1.getX();
@@ -121,17 +121,17 @@ public final class BezierUtilities {
 
         double[] roots = SturmRootIsolator.findRoots(polynomial, intervals, 10);
         Vector2D[] intersections = new Vector2D[3];
-        if(roots.length == 0){
+        if(roots.length == 0) {
             return intersections;
         }
-        for(int i = 0; i < 3; i++){
-            if(i < roots.length){
+        for(int i = 0; i < 3; i++) {
+            if(i < roots.length) {
                 intersections[i] = c.eval(roots[i]);
             }
         }
         return intersections;
     }
-    static String fmt(double x){
+    static String fmt(double x) {
         return new DecimalFormat("#.###").format(x);
     }
 
@@ -155,7 +155,7 @@ public final class BezierUtilities {
      * https://hal.inria.fr/inria-00518379/PDF/Xiao-DiaoChen2007c.pdf</a>
      * @see <a href=https://ieeexplore.ieee.org/document/4392595/>alternative IEEE link</a>
      */
-    public static ProjectionResults pointProjectionCubicAlgebraic(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3){
+    public static ProjectionResults pointProjectionCubicAlgebraic(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3) {
         double aa = p0.multiply(p0);
         double ab = p0.multiply(p1);
         double ac = p0.multiply(p2);
@@ -195,21 +195,21 @@ public final class BezierUtilities {
         double min = Double.MAX_VALUE;
         double finX = Double.MAX_VALUE, finY = Double.MAX_VALUE;
 
-        for(int i = 0; i < roots.length; i++){
+        for(int i = 0; i < roots.length; i++) {
             t = roots[i];
             x = ((t * p3.getX() + 3 *(1 - t) * p2.getX())*t+3*Math.pow(1-t, 2) * p1.getX()) *t + Math.pow(1-t, 3) * p0.getX();
             y = ((t * p3.getY() + 3 *(1 - t) * p2.getY())*t+3*Math.pow(1-t, 2) * p1.getY()) *t + Math.pow(1-t, 3) * p0.getY();
             double dist = Math.pow(m.getX() - x,2) + Math.pow(m.getY() - y, 2);
-            if(dist < min){
+            if(dist < min) {
                 min = dist;
                 finX = x;
                 finY = y;
             }
         }
         ProjectionResults result = new ProjectionResults();
-        if(roots.length == 0){
+        if(roots.length == 0) {
             result.successful = false;
-        }else{
+        }else {
             result.result = new Vector2D(finX, finY);
             result.successful = true;
         }
@@ -217,7 +217,7 @@ public final class BezierUtilities {
         return result;
     }
 
-    public static ProjectionResults pointProjectionQuadraticAlgebraic(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2){
+    public static ProjectionResults pointProjectionQuadraticAlgebraic(Vector2D m, Vector2D p0, Vector2D p1, Vector2D p2) {
         double aa = p0.multiply(p0);
         double ab = p0.multiply(p1);
         double ac = p0.multiply(p2);
@@ -250,12 +250,12 @@ public final class BezierUtilities {
         double min = Double.MAX_VALUE;
         double finX = Double.MAX_VALUE, finY = Double.MAX_VALUE;
 
-        for(int i = 0; i < roots.length; i++){
+        for(int i = 0; i < roots.length; i++) {
             t = roots[i];
             x = (1-t)*(1-t)*p0.getX() + 2*(1-t)*t*p1.getX() + t*t*p2.getX();
             y = (1-t)*(1-t)*p0.getY() + 2*(1-t)*t*p1.getY() + t*t*p2.getY();
             double dist = Math.pow(m.getX() - x,2) + Math.pow(m.getY() - y, 2);
-            if(dist < min){
+            if(dist < min) {
                 min = dist;
                 finX = x;
                 finY = y;
@@ -265,9 +265,9 @@ public final class BezierUtilities {
         ProjectionResults result = new ProjectionResults();
         result.result = new Vector2D(finX, finY);
 
-        if(roots.length == 0){
+        if(roots.length == 0) {
             result.successful = false;
-        }else{
+        }else {
             result.result = new Vector2D(finX, finY);
             result.successful = true;
         }
@@ -278,11 +278,11 @@ public final class BezierUtilities {
     /**
      * Prunes intervals so that only local minima of the difference function get selected
      */
-    private static List<Interval> pruneIntervals(Polynomial p, List<Interval> intervals){
+    private static List<Interval> pruneIntervals(Polynomial p, List<Interval> intervals) {
         List<Interval> res = new ArrayList<>();
 
-        for(Interval v : intervals){
-            if(p.eval(v.lowerBound()) > p.eval(v.upperBound())){
+        for(Interval v : intervals) {
+            if(p.eval(v.lowerBound()) > p.eval(v.upperBound())) {
                 res.add(v);
             }
         }
@@ -300,20 +300,20 @@ public final class BezierUtilities {
      * @param p3 BezierCubic-curve ending point.
      * @return Returns the vector on the given linear approximation with minimal distance to m.
      */
-    public static Vector2D pointProjectionLinear(Vector2D m, int subdivisions, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3){
+    public static Vector2D pointProjectionLinear(Vector2D m, int subdivisions, Vector2D p0, Vector2D p1, Vector2D p2, Vector2D p3) {
         double t;
         double x,y;
         double minx = 0, miny = 0;
         double currentDistance;
         double minimalDistance = Double.POSITIVE_INFINITY;
 
-        for(int i = 0; i < subdivisions; i++){
+        for(int i = 0; i < subdivisions; i++) {
             t = ((double)i)/subdivisions;
             x = Math.pow(t, 3) * p3.getX() + 3 * Math.pow(t, 2) * (1 - t) * p2.getX() + 3 * Math.pow(1-t, 2) * t *p1.getX() + Math.pow(1-t, 3) * p0.getX();
             y = Math.pow(t, 3) * p3.getY() + 3 * Math.pow(t, 2) * (1 - t) * p2.getY() + 3 * Math.pow(1-t, 2) * t *p1.getY() + Math.pow(1-t, 3) * p0.getY();
             currentDistance = Math.pow(x - m.getX(), 2) + Math.pow(y - m.getY(), 2);
 
-            if(currentDistance < minimalDistance){
+            if(currentDistance < minimalDistance) {
                 minimalDistance = currentDistance;
                 minx = x;
                 miny = y;

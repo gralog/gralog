@@ -18,7 +18,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Control;
 import javafx.scene.control.Separator;
 
-public class PluginControlPanel extends ScrollPane implements PipingWindow{
+public class PluginControlPanel extends ScrollPane implements PipingWindow {
 
     private static ProgressBar pb;
     private static Button pause,play,step,stop;
@@ -33,7 +33,7 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
     private static List<Control> labelsAndSeparators;
 
         
-    public PluginControlPanel(){
+    public PluginControlPanel() {
         setMinWidth(100);
         setMinHeight(200);
 
@@ -54,29 +54,29 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
         this.wrapped = new CheckBox("Wrap text");
         
-        Runnable checkBoxClickHandler = new Runnable(){
-            public void run(){
-                if (!wrapped.isSelected()){
+        Runnable checkBoxClickHandler = new Runnable() {
+            public void run() {
+                if (!wrapped.isSelected()) {
                     System.out.println("is now unchecked");
                     // System.out.println("before he was " + vbox.getChildren().get(3).getWrapText());
                     varBox.getChildren().clear();
 
 
-                    for (Label x : PluginControlPanel.this.labels){
+                    for (Label x : PluginControlPanel.this.labels) {
                         x.setMinWidth(Region.USE_PREF_SIZE);
                         x.setWrapText(false);
                         
                     }
                     sourceVarBox();
                     // System.out.println("after readding I've got: " + vbox.getChildren().get(3));
-                }else{
+                }else {
                     System.out.println("is now checked");
                     
                     varBox.getChildren().clear();
                     System.out.println("after removal I've got: " + varBox.getChildren());
 
 
-                    for (Label x : PluginControlPanel.this.labels){
+                    for (Label x : PluginControlPanel.this.labels) {
 
                         x.setMinWidth(100);
                         x.setWrapText(true);
@@ -137,21 +137,21 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
         this.setContent(boilerPlateVbox);
     }
-    public void setOnPlay(Runnable onPlay){
+    public void setOnPlay(Runnable onPlay) {
         play.setOnMouseClicked(event -> onPlay.run());
     }
-    public void setOnPause(Runnable onPause){
+    public void setOnPause(Runnable onPause) {
         pause.setOnMouseClicked(event -> onPause.run());
     }
-    public void setOnStep(Runnable onStep){
+    public void setOnStep(Runnable onStep) {
         step.setOnMouseClicked(event -> onStep.run());
     }
 
-    public void setOnStop(Runnable onStop){
+    public void setOnStop(Runnable onStop) {
         stop.setOnMouseClicked(event -> onStop.run());
     }
 
-    public void setOnWrappedClicked(Runnable onWrappedClicked){
+    public void setOnWrappedClicked(Runnable onWrappedClicked) {
         wrapped.setOnMouseClicked(event -> onWrappedClicked.run());
     }
 
@@ -159,7 +159,7 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
    
 
-    public static void sourceVarBox(){
+    public static void sourceVarBox() {
         interpolateSeparators();
         varBox.getChildren().addAll(labelsAndSeparators);
     }
@@ -168,19 +168,19 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
 
 
 
-    // public void foo(){
+    // public void foo() {
     //     this.tabs.subscribe(this::notifyPauseRequested);
 
     // }
 
 
-    public void setProgress(double progress){
-        if(pb != null){
+    public void setProgress(double progress) {
+        if(pb != null) {
             pb.setProgress(progress);
         }
     }
 
-    private Button createButton(String label){
+    private Button createButton(String label) {
         Button b = new Button(label);
 
         b.prefWidthProperty().bind(widthProperty().divide(3));
@@ -188,26 +188,26 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         return b;
     }
 
-    public static void interpolateSeparators(){
-        if (labelsAndSeparators == null){
+    public static void interpolateSeparators() {
+        if (labelsAndSeparators == null) {
             labelsAndSeparators = new ArrayList<Control>();
         }
         labelsAndSeparators.clear();
         int i;
-        for (i = 0; i < labels.size()-1; i ++){
+        for (i = 0; i < labels.size()-1; i ++) {
             labelsAndSeparators.add(labels.get(i));
             labelsAndSeparators.add(new Separator());
         }
 
-        try{
+        try {
             labelsAndSeparators.add(labels.get(i));
-        }catch(Exception e){
+        }catch(Exception e) {
             System.out.println("buppo");
         }
 
     }
 
-    public static void notifyPlannedPauseRequested(List<String[]> args){
+    public static void notifyPlannedPauseRequested(List<String[]> args) {
         varBox.getChildren().clear();
         System.out.println("yooooooooooo a pause br000");
 
@@ -216,7 +216,7 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
     
 
         labels.clear();
-        for (int i = 0; i < args.size(); i ++){
+        for (int i = 0; i < args.size(); i ++) {
             String[] arg = args.get(i);
             String labelString = arg[0] + ": " + arg[1];
             Label inter = new Label(labelString);
@@ -229,14 +229,14 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow{
         
     }
 
-    public static void notifySpontaneousPauseRequested(){
+    public static void notifySpontaneousPauseRequested() {
         
         pauseOrPlay.getChildren().clear();
         pauseOrPlay.getChildren().add(play);
         
     }
 
-    public static void notifyPlayRequested(){
+    public static void notifyPlayRequested() {
         pauseOrPlay.getChildren().clear();
         pauseOrPlay.getChildren().add(pause);
     }

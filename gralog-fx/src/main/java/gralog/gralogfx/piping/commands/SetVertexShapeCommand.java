@@ -16,13 +16,13 @@ public class SetVertexShapeCommand extends CommandForGralogToExecute {
 
 
 
-    public SetVertexShapeCommand(String[] externalCommandSegments,Structure structure){
+    public SetVertexShapeCommand(String[] externalCommandSegments,Structure structure) {
         this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        try{    
+        try {    
             this.vertexId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -33,7 +33,7 @@ public class SetVertexShapeCommand extends CommandForGralogToExecute {
 
         this.vertex = this.structure.getVertexById(this.vertexId);
 
-        if (this.vertex == null){
+        if (this.vertex == null) {
             this.fail();
             this.error = new NonExistantVertexException("vertex with id " + Integer.toString(this.vertexId) + " does not exist");
             return;
@@ -49,7 +49,7 @@ public class SetVertexShapeCommand extends CommandForGralogToExecute {
     
 
 
-    public void handle(){
+    public void handle() {
 
         
 
@@ -67,13 +67,13 @@ public class SetVertexShapeCommand extends CommandForGralogToExecute {
         System.out.println("truthsong: "  + curr.getSimpleName());
         boolean wasInstance = false;
 
-        for (int i = 0; i < RenderingShape.renderingShapeClasses.size(); i ++){
-            if (this.shape.equals(RenderingShape.renderingShapeClasses.get(i).getSimpleName().toLowerCase())){
+        for (int i = 0; i < RenderingShape.renderingShapeClasses.size(); i ++) {
+            if (this.shape.equals(RenderingShape.renderingShapeClasses.get(i).getSimpleName().toLowerCase())) {
                 wasInstance = true;
                 System.out.println("i have found the enemy and he is: " + RenderingShape.renderingShapeClasses.get(i).getSimpleName().toLowerCase());
                 SizeBox currentSizebox = this.vertex.shape.sizeBox;
                 System.out.println("constructors: " + RenderingShape.renderingShapeClasses.get(i).getConstructors()[0]);
-                try{
+                try {
                     ///here!
                     Constructor cs = RenderingShape.renderingShapeClasses.get(i).getConstructors()[0];
                     this.vertex.shape = (RenderingShape)cs.newInstance(this.vertex.shape.sizeBox);
@@ -85,7 +85,7 @@ public class SetVertexShapeCommand extends CommandForGralogToExecute {
             }
         }
 
-        if (wasInstance){
+        if (wasInstance) {
             this.setResponse(null);
             return;
         }

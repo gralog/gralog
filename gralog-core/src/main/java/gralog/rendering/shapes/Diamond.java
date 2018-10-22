@@ -24,32 +24,32 @@ public class Diamond extends RenderingShape {
     }
 
     @Override
-    public boolean containsCoordinate(Vector2D point, Vector2D center){
+    public boolean containsCoordinate(Vector2D point, Vector2D center) {
         Vector2D p = point.minus(center); // the point relative to center
         double quo = sizeBox.width / sizeBox.height;
         return Math.abs(p.getX()) + Math.abs(quo * p.getY()) < sizeBox.width/2;
     }
 
     @Override
-    public Vector2D getEdgePoint(double alpha, Vector2D center){
+    public Vector2D getEdgePoint(double alpha, Vector2D center) {
         double x;
         double y;
         alpha = alpha % 360;
-        if(alpha < 0){
+        if(alpha < 0) {
             alpha += 360;
         }
-        if(alpha < 90){
+        if(alpha < 90) {
             x = (1-alpha/90)*sizeBox.width/2;
             y = (alpha/90)*sizeBox.height/2;
-        }else if(alpha < 180){
+        }else if(alpha < 180) {
             alpha %= 90;
             x = -(alpha/90)*sizeBox.width/2;
             y = (1-alpha/90)*sizeBox.height/2;
-        }else if(alpha < 270){
+        }else if(alpha < 270) {
             alpha %= 90;
             x = -(1-alpha/90)*sizeBox.width/2;
             y = -(alpha/90)*sizeBox.height/2;
-        }else{
+        }else {
             alpha %= 90;
             x = (alpha/90)*sizeBox.width/2;
             y = -(1-alpha/90)*sizeBox.height/2;
@@ -93,50 +93,50 @@ public class Diamond extends RenderingShape {
 
         int lineNumber;
 
-        if(alpha < 90){
+        if(alpha < 90) {
             double newC1 = (new Vector2D(w,0)).rotate(b, -counterRotation).getY();
             double newC2 = (new Vector2D(0, h)).rotate(b, -counterRotation).getY();
 
-            if(newC1 > b.getY()){
+            if(newC1 > b.getY()) {
                 lineNumber = 3;
-            }else if(newC2 < b.getY()){
+            }else if(newC2 < b.getY()) {
                 lineNumber = 1;
-            }else{
+            }else {
                 lineNumber = 0;
             }
-        }else if(alpha < 180){
+        }else if(alpha < 180) {
             double newC1 = (new Vector2D(0, h)).rotate(b, -counterRotation).getY();
             double newC2 = (new Vector2D(-w, 0)).rotate(b, -counterRotation).getY();
 
-            if(newC1 > b.getY()){
+            if(newC1 > b.getY()) {
                 lineNumber = 0;
-            }else if(newC2 < b.getY()){
+            }else if(newC2 < b.getY()) {
                 lineNumber = 2;
-            }else{
+            }else {
                 lineNumber = 1;
             }
 
-        }else if(alpha < 270){
+        }else if(alpha < 270) {
             double newC1 = (new Vector2D(-w,0)).rotate(b, -counterRotation).getY();
             double newC2 = (new Vector2D(0, -h)).rotate(b, -counterRotation).getY();
 
-            if(newC1 > b.getY()){
+            if(newC1 > b.getY()) {
                 lineNumber = 1;
-            }else if(newC2 < b.getY()){
+            }else if(newC2 < b.getY()) {
                 lineNumber = 3;
-            }else{
+            }else {
                 lineNumber = 2;
             }
 
-        }else{
+        }else {
             double newC1 = (new Vector2D(0,-h)).rotate(b, -counterRotation).getY();
             double newC2 = (new Vector2D(w, 0)).rotate(b, -counterRotation).getY();
 
-            if(newC1 > b.getY()){
+            if(newC1 > b.getY()) {
                 lineNumber = 2;
-            }else if(newC2 < b.getY()){
+            }else if(newC2 < b.getY()) {
                 lineNumber = 0;
-            }else{
+            }else {
                 lineNumber = 3;
             }
 
@@ -152,25 +152,25 @@ public class Diamond extends RenderingShape {
         return a.plus(b.minus(a).multiply(t)).plus(center); //line defined as a + (b-a)t
     }
 
-    private LineParameters getParamsFromNumber(int lineNumber, double w, double h){
+    private LineParameters getParamsFromNumber(int lineNumber, double w, double h) {
         LineParameters l = new LineParameters();
-        if(lineNumber == 0){
+        if(lineNumber == 0) {
             l.r = new Vector2D(w, 0);
             l.dir = new Vector2D(w, -h);
-        }else if(lineNumber == 1){
+        }else if(lineNumber == 1) {
             l.r = new Vector2D(-w, 0);
             l.dir = new Vector2D(w, h);
-        }else if(lineNumber == 2){
+        }else if(lineNumber == 2) {
             l.r = new Vector2D(-w, 0);
             l.dir = new Vector2D(w, -h);
-        }else{
+        }else {
             l.r = new Vector2D(+w, 0);
             l.dir = new Vector2D(w, h);
         }
 
         return l;
     }
-    private static class LineParameters{
+    private static class LineParameters {
         private Vector2D r;
         private Vector2D dir;
     }

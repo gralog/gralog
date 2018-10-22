@@ -11,7 +11,7 @@ public class SizeBox {
 
     public Double angle;
 
-    public SizeBox(Double width, Double height){
+    public SizeBox(Double width, Double height) {
         this.width = width;
         this.height = height;
     }

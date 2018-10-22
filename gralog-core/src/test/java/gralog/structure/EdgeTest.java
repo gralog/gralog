@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 public class EdgeTest {
 
     @Test
-    public void controlPointCreation(){
+    public void controlPointCreation() {
 
         Structure s = new DirectedGraph();
 
@@ -68,7 +68,7 @@ public class EdgeTest {
     }
 
     @Test
-    public void edgeTypeSwitchDeletion(){
+    public void edgeTypeSwitchDeletion() {
         Structure s = new DirectedGraph();
 
         Vertex first = s.createVertex();
@@ -99,7 +99,7 @@ public class EdgeTest {
     }
 
     @Test
-    public void edgeIdTest(){
+    public void edgeIdTest() {
         Structure s = new DirectedGraph();
 
     }

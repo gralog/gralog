@@ -7,13 +7,13 @@ import static org.junit.Assert.assertEquals;
 
 public class GralogColorTest {
 
-    public GralogColorTest(){
+    public GralogColorTest() {
 
     }
 
     @Test
-    public void ColorNameTest(){
-        for (GralogColor.Color c : GralogColor.Color.values()){
+    public void ColorNameTest() {
+        for (GralogColor.Color c : GralogColor.Color.values()) {
             String expectedResult = c.name();
             GralogColor color = new GralogColor(c.value);
             assertEquals(expectedResult,color.name());

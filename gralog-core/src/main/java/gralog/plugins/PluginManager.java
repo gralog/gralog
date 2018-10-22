@@ -98,7 +98,7 @@ public final class PluginManager {
                 throw new Exception("class name \"" + xmlAlias + "\" already exists!");
 
         try {
-            Constructor ctor = aClass.getConstructor(new Class[]{});
+            Constructor ctor = aClass.getConstructor(new Class[] {});
             // Register the Class
             CLASS_REGISTER.put(classname, ctor);
             if (xmlAlias != null)
@@ -150,9 +150,9 @@ public final class PluginManager {
                     try {
                         Class<?> c = Class.forName(classname, false, sysloader);
                         classes.add(c);
-                    }catch (NoClassDefFoundError e){
+                    }catch (NoClassDefFoundError e) {
                         System.out.println("ncdf " +classname);
-                    }catch (ClassNotFoundException e){
+                    }catch (ClassNotFoundException e) {
                         System.out.println("cnf " + classname);
                     }
                 }

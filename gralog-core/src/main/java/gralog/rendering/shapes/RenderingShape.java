@@ -26,7 +26,7 @@ public abstract class RenderingShape implements Serializable {
         DIAMOND
     }
 
-    public static boolean isShape(String s){
+    public static boolean isShape(String s) {
         for (PossibleShapes ps : PossibleShapes.values())
             if (ps.name().equalsIgnoreCase(s))
                 return true;
@@ -42,7 +42,7 @@ public abstract class RenderingShape implements Serializable {
     /*
      * Initializes a list of rendering shapes
      */
-    static{
+    static {
         Reflections reflections = new Reflections("gralog.rendering.shapes");
         Set<Class<? extends RenderingShape>> classes = reflections.getSubTypesOf(RenderingShape.class);
         renderingShapeClasses = new LinkedList<>(classes);
@@ -56,7 +56,7 @@ public abstract class RenderingShape implements Serializable {
      *
      * @see javafx.scene.control.ChoiceBox e.g. setConverter()
      */
-    public static final class ShapeConverter extends StringConverter<Class<? extends RenderingShape>>{
+    public static final class ShapeConverter extends StringConverter<Class<? extends RenderingShape>> {
 
         @Override
         public String toString(Class<? extends RenderingShape> object) {
@@ -83,14 +83,14 @@ public abstract class RenderingShape implements Serializable {
      * the rendered shape has similar dimensions as the rectangle of the given
      * SizeBox
      */
-    public RenderingShape(SizeBox s){
+    public RenderingShape(SizeBox s) {
         this.sizeBox = s;
     }
 
-    public void setWidth(double width){
+    public void setWidth(double width) {
         sizeBox.width = Math.min(width, MAX_WIDTH);
     }
-    public void setHeight(double height){
+    public void setHeight(double height) {
         sizeBox.height = Math.min(height, MAX_HEIGHT);
     }
     /**
@@ -102,12 +102,12 @@ public abstract class RenderingShape implements Serializable {
      * @param s Stroke color
      * @param f Filling color
      */
-    public void render(GralogGraphicsContext gc, Vector2D center, String label, GralogColor s, GralogColor f){
+    public void render(GralogGraphicsContext gc, Vector2D center, String label, GralogColor s, GralogColor f) {
         double avg = (sizeBox.width + sizeBox.height)/2;
         gc.putText(center, label, avg/4, f.inverse());
     }
 
-    public void render(GralogGraphicsContext gc, Vector2D center, GralogColor s, GralogColor f){
+    public void render(GralogGraphicsContext gc, Vector2D center, GralogColor s, GralogColor f) {
         render(gc, center, "", s, f);
     }
 

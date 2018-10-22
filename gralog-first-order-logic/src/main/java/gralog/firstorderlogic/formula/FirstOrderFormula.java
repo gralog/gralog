@@ -45,8 +45,8 @@ public abstract class FirstOrderFormula {
     public static String variableAssignmentToString(
         Map<String, Vertex> assignment) {
         if (assignment.isEmpty())
-            return "{ }";
-        return "{ " + assignment.entrySet().stream()
+            return " { }";
+        return " { " + assignment.entrySet().stream()
             .map((e) -> e.getKey() + "↦" + e.getValue().label)
             .collect(Collectors.joining(", "))
             + " }";

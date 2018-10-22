@@ -25,30 +25,30 @@ public class ControlPoint extends XmlMarshallable implements IMovable, Serializa
 
     public ControlPoint() { }
 
-    public ControlPoint(Vector2D position, Edge parent){
+    public ControlPoint(Vector2D position, Edge parent) {
         this.position = position;
         this.parent = parent;
     }
 
     @Override
-    public void move(Vector2D vec){
+    public void move(Vector2D vec) {
         position = position.plus(vec);
     }
 
-    public Vector2D getPosition(){
+    public Vector2D getPosition() {
         return position;
     }
 
-    public void render(GralogGraphicsContext gc, Highlights highlights){
+    public void render(GralogGraphicsContext gc, Highlights highlights) {
         double radius = highlights.isSelected(this) ? drawRadiusSelected : drawRadius;
         gc.circle(getPosition(), radius, GralogColor.RED);
     }
-    public void renderBezierHelpers(GralogGraphicsContext gc, Highlights highlights){
+    public void renderBezierHelpers(GralogGraphicsContext gc, Highlights highlights) {
         gc.line(parent.getSource().coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
         gc.line(parent.getTarget().coordinates, getPosition(), GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
     }
 
-    public boolean containsCoordinate(double x, double y){
+    public boolean containsCoordinate(double x, double y) {
         Vector2D pos = getPosition();
         return Math.pow(x - pos.getX(), 2) + Math.pow(y - pos.getY(), 2) < clickRadius * clickRadius; //squared
     }

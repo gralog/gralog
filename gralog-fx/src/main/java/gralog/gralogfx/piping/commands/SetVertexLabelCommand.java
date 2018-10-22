@@ -13,13 +13,13 @@ public class SetVertexLabelCommand extends CommandForGralogToExecute {
 
 
 
-    public SetVertexLabelCommand(String[] externalCommandSegments,Structure structure){
+    public SetVertexLabelCommand(String[] externalCommandSegments,Structure structure) {
         this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        try{    
+        try {    
             this.vertexId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -30,7 +30,7 @@ public class SetVertexLabelCommand extends CommandForGralogToExecute {
 
         this.vertex = this.structure.getVertexById(this.vertexId);
 
-        if (this.vertex == null){
+        if (this.vertex == null) {
             this.fail();
             this.error = new NonExistantVertexException("vertex with id " + Integer.toString(this.vertexId) + " does not exist");
             return;
@@ -39,9 +39,9 @@ public class SetVertexLabelCommand extends CommandForGralogToExecute {
         
 
         // this.generateLabel(externalCommandSegments);
-        try{    
+        try {    
             this.label = PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.error = e;
             this.fail();
             return;
@@ -49,17 +49,17 @@ public class SetVertexLabelCommand extends CommandForGralogToExecute {
 
     }
 
-    public void generateLabel(String[] externalCommandSegments){
+    public void generateLabel(String[] externalCommandSegments) {
         String label = "";
         String[] labelPieces = externalCommandSegments[3].split(" ");
-        for (int i = 0; i < labelPieces.length; i += 1){
+        for (int i = 0; i < labelPieces.length; i += 1) {
             label = label + labelPieces[i]+ " ";
         }
         this.label = label;
     }
 
 
-    public void handle(){
+    public void handle() {
 
         
 

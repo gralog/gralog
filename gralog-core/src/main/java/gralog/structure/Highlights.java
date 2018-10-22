@@ -18,7 +18,7 @@ public class Highlights {
         lastAdded = o;
         selection.add(o);
     }
-    public Object lastAdded(){
+    public Object lastAdded() {
         return lastAdded;
     }
     public void selectAll(Collection<?> elems)   { selection.addAll(elems); }
@@ -28,16 +28,16 @@ public class Highlights {
         selection.clear();
         lastAdded = null;
     }
-    public void remove(Object o){
+    public void remove(Object o) {
         selection.remove(o);
     }
-    public void removeAll(List o){
+    public void removeAll(List o) {
         selection.removeAll(o);
     }
-    public void filterType(Class<?> t){
+    public void filterType(Class<?> t) {
         List<Object> l = new LinkedList<>();
-        for(Object o : selection){
-            if(!(t.isInstance(o))){
+        for(Object o : selection) {
+            if(!(t.isInstance(o))) {
                 l.add(o);
             }
         }

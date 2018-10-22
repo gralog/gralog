@@ -14,12 +14,12 @@ public class GetIncomingEdgesCommand extends CommandForGralogToExecute {
 
 
 
-	public GetIncomingEdgesCommand(String[] externalCommandSegments,Structure structure){
+	public GetIncomingEdgesCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-        try{
+        try {
             this.sourceVertex = PipingMessageHandler.extractVertex(externalCommandSegments,structure);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.error = e;
             this.fail();
             return;
@@ -29,7 +29,7 @@ public class GetIncomingEdgesCommand extends CommandForGralogToExecute {
 
 	
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
        
@@ -42,10 +42,10 @@ public class GetIncomingEdgesCommand extends CommandForGralogToExecute {
 
         String edgeString = "";
 
-        for (Edge e : conncetedEdges){
+        for (Edge e : conncetedEdges) {
             edgeString = edgeString + Integer.toString(e.getId())+ "#";
         }
-        if (edgeString.length() > 0 && null != edgeString){
+        if (edgeString.length() > 0 && null != edgeString) {
             edgeString = edgeString.substring(0,edgeString.length()-1);
         }
 

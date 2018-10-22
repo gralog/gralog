@@ -17,7 +17,7 @@ public class Vector2D implements Serializable {
         this.x = x;
         this.y = y;
     }
-    public Vector2D(Vector2D v){
+    public Vector2D(Vector2D v) {
         this.x = v.getX();
         this.y = v.getY();
     }
@@ -44,7 +44,7 @@ public class Vector2D implements Serializable {
 
     @Override
     public String toString() {
-        return "Vector2D{" + x + "," + y + '}';
+        return "Vector2D {" + x + "," + y + '}';
     }
 
     public double getX() {
@@ -73,7 +73,7 @@ public class Vector2D implements Serializable {
     public Vector2D orthogonal() {
         return new Vector2D(-this.y, this.x);
     }
-    public Vector2D orthogonal(int sign){
+    public Vector2D orthogonal(int sign) {
         return new Vector2D(sign * this.y, -sign * this.x);
     }
     public Vector2D plus(Vector2D other) {
@@ -101,13 +101,13 @@ public class Vector2D implements Serializable {
         return new Vector2D(this.x * c, this.y * c);
     }
 
-    public Vector2D rotate(double alpha){
+    public Vector2D rotate(double alpha) {
         double cosa = Math.cos(alpha);
         double sina = Math.sin(alpha);
         return new Vector2D(x * cosa - y * sina, x * sina + y * cosa);
     }
 
-    public Vector2D rotate(Vector2D reference, double alpha){
+    public Vector2D rotate(Vector2D reference, double alpha) {
         double cosa = Math.cos(alpha);
         double sina = Math.sin(alpha);
         double xt = x - reference.x;
@@ -139,7 +139,7 @@ public class Vector2D implements Serializable {
     /**
      * Returns a vector for a given angle and length. Angle in degrees
      */
-    public static Vector2D getVectorAtAngle(double angle, double length){
+    public static Vector2D getVectorAtAngle(double angle, double length) {
         return new Vector2D(Math.cos(Math.toRadians(angle)), Math.sin(Math.toRadians(angle))).multiply(length);
     }
     public static Vector2D closestPointOnLine(double px, double py, double l1x,
@@ -182,7 +182,7 @@ public class Vector2D implements Serializable {
             return l2.minus(p).length();
         return perpendicular.minus(p).length();
     }
-    public static double distancePointToLine(double px, double py, Vector2D a, Vector2D b){
+    public static double distancePointToLine(double px, double py, Vector2D a, Vector2D b) {
         return distancePointToLine(px, py, a.getX(), a.getY(), b.getX(), b.getY());
     }
 
@@ -201,18 +201,18 @@ public class Vector2D implements Serializable {
     /**
      * @return X Angle in degrees
      */
-    public double measureAngleX(){
+    public double measureAngleX() {
         return Math.toDegrees(Math.atan2(y, x));
     }
 
-    public static Vector2D point2DToVector(Point2D point){
+    public static Vector2D point2DToVector(Point2D point) {
         return new Vector2D(point.getX(), point.getY());
     }
 
-    public static Vector2D zero(){
+    public static Vector2D zero() {
         return new Vector2D(0,0);
     }
-    public static Vector2D one(){
+    public static Vector2D one() {
         return new Vector2D(1,1);
     }
 }

@@ -9,11 +9,11 @@ import gralog.structure.*;
 @XmlName(name = "finitegamemove")
 public class FiniteGameMove extends Edge {
 
-    public FiniteGameMove(){
+    public FiniteGameMove() {
 
     }
 
-    public FiniteGameMove(Configuration config){
+    public FiniteGameMove(Configuration config) {
         super(config);
     }
 

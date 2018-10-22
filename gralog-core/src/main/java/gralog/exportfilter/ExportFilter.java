@@ -37,7 +37,7 @@ public abstract class ExportFilter {
             if (paramTypes.length != 3)
                 continue;
 
-            method.invoke(this, new Object[]{structure, stream, params});
+            method.invoke(this, new Object[] {structure, stream, params});
             break;
         }
     }

@@ -30,9 +30,9 @@ public final class AlgorithmManager {
             return;
         Method[] methods = new Method[0];
 
-        try{
+        try {
             methods = aClass.getMethods();
-        }catch(NoClassDefFoundError e){
+        }catch(NoClassDefFoundError e) {
             System.out.println("WARNING: algorithm class def not found..."+className);
 
             return;

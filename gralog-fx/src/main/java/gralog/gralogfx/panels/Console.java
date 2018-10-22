@@ -36,7 +36,7 @@ import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
 import static gralog.dialog.DialogAction.NONE;
 import static gralog.dialog.DialogState.*;
 
-public class Console extends HBox implements GralogWindow{
+public class Console extends HBox implements GralogWindow {
 
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_RESET = "\u001B[0m";
@@ -70,7 +70,7 @@ public class Console extends HBox implements GralogWindow{
 
     private final Set<Consumer<String>> subscribers = new HashSet<>();
 
-    public Console(Tabs tabs,Function<String,Boolean> profferTextToMainWindow){
+    public Console(Tabs tabs,Function<String,Boolean> profferTextToMainWindow) {
 
         this.tabs = tabs;
         this.profferTextToMainWindow = profferTextToMainWindow;
@@ -90,39 +90,39 @@ public class Console extends HBox implements GralogWindow{
 
         input.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             String inputText = input.getText();
-            if(e.getCode() == KeyCode.ENTER){
+            if(e.getCode() == KeyCode.ENTER) {
 
                 this.output("./> " + inputText + "");
 
-                if(!inputText.isEmpty()){
+                if(!inputText.isEmpty()) {
                     history.add(inputText);
                     boolean accepted = this.profferTextToMainWindow.apply(inputText);
-                    if (!accepted){
+                    if (!accepted) {
                         onEnter(inputText, tabs.getCurrentStructurePane());
                     }
                     
                 }
                 input.clear();
-            }else if(e.getCode() == KeyCode.UP){
+            }else if(e.getCode() == KeyCode.UP) {
                 
 
-                if (historyPointer == -1){
+                if (historyPointer == -1) {
                     currentlyEntered = inputText;
                 }
                 historyPointer = historyPointer + 1;
-                try{
+                try {
                     input.setText(history.get(history.size()-1-historyPointer));
-                }catch(IndexOutOfBoundsException ex){
+                }catch(IndexOutOfBoundsException ex) {
                     historyPointer = historyPointer - 1;
                 }
-            }else if(e.getCode() == KeyCode.DOWN){
+            }else if(e.getCode() == KeyCode.DOWN) {
 
-                if (historyPointer < 0){
+                if (historyPointer < 0) {
                     //shimmy shake
-                }else if (historyPointer == 0){
+                }else if (historyPointer == 0) {
                     input.setText(currentlyEntered);
                     historyPointer = historyPointer - 1;
-                }else{
+                }else {
                     historyPointer = historyPointer - 1;
                     input.setText(history.get(history.size()-1-historyPointer));
                 }
@@ -142,7 +142,7 @@ public class Console extends HBox implements GralogWindow{
 
         output.vvalueProperty().addListener(
             (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            if (outputAdded){
+            if (outputAdded) {
                 outputAdded = false;
                 output.setVvalue(1.0);
             }
@@ -178,12 +178,12 @@ public class Console extends HBox implements GralogWindow{
         this.widthProperty().addListener((obs, oldVal, newVal) -> {
             List<Text> texts = new ArrayList<Text>();
 
-            for (Node n : this.outputElements.getChildren()){
-                if (n instanceof Text){
+            for (Node n : this.outputElements.getChildren()) {
+                if (n instanceof Text) {
                     texts.add((Text)n);
                 }
             }
-            for (Text t : texts){
+            for (Text t : texts) {
                 System.out.println("t: " + t);;
                 t.setWrappingWidth((Double)newVal);
             }
@@ -201,14 +201,14 @@ public class Console extends HBox implements GralogWindow{
 
     }
 
-    public int estimateHeight(String text){
+    public int estimateHeight(String text) {
         int runningTotal = 0;
 
         String[] chunks = text.split("\n");
         int heightNumber = chunks.length;
 
 
-        for (String chunk : chunks){
+        for (String chunk : chunks) {
             Text fText = new Text(chunk);
             fText.setFont(Font.font ("Verdana", 12));
 
@@ -225,18 +225,18 @@ public class Console extends HBox implements GralogWindow{
     /**
      * Executes Consumer after console input has been submitted
      */
-    public void registerMethod(Consumer<String> c){
+    public void registerMethod(Consumer<String> c) {
         subscribers.add(c);
     }
 
-    public void onSpace(String text, StructurePane currentPane){
+    public void onSpace(String text, StructurePane currentPane) {
         System.out.println("space!");
     }
 
-    public void onEnter(String text, StructurePane currentPane){
+    public void onEnter(String text, StructurePane currentPane) {
 
         
-        for(Consumer<String> consumer : subscribers){
+        for(Consumer<String> consumer : subscribers) {
             consumer.accept(text);
         }
 
@@ -251,7 +251,7 @@ public class Console extends HBox implements GralogWindow{
         // if only vertices or only edges are selected, guess this, don't let the user write it
         // if nothing, abort
         // if both, ask what to select
-        if (parser.getDialogState() == FILTER_SELECTED){
+        if (parser.getDialogState() == FILTER_SELECTED) {
             boolean existsSelectedVertex = false;
             for (Object v : currentPane.getHighlights().getSelection())
                 if (v instanceof Vertex) {
@@ -264,11 +264,11 @@ public class Console extends HBox implements GralogWindow{
                     existsSelectedEdge = true;
                     break;
                 }
-            if (existsSelectedVertex & ! existsSelectedEdge){
+            if (existsSelectedVertex & ! existsSelectedEdge) {
                 parser.setErrorMsg("");
                 parser.setDialogState(FILTER_WHAT);
                 parser.addParameter("VERTICES");
-                if (text.indexOf('d') == text.length() - 1){ // the input was only "filter [all] selected"
+                if (text.indexOf('d') == text.length() - 1) { // the input was only "filter [all] selected"
                     output("Specify conditions, start with \"where\".");
                     return;
                 }
@@ -276,11 +276,11 @@ public class Console extends HBox implements GralogWindow{
                 System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "], err = " + parser.getErrorMsg() );
                 parser.parse(remainingText);
             }
-            if (existsSelectedEdge & ! existsSelectedVertex){
+            if (existsSelectedEdge & ! existsSelectedVertex) {
                 parser.setErrorMsg("");
                 parser.setDialogState(FILTER_WHAT);
                 parser.addParameter("EDGES");
-                if (text.indexOf('d') == text.length() - 1){
+                if (text.indexOf('d') == text.length() - 1) {
                     output("Specify conditions, start with \"where\".");
                     return;
                 }
@@ -288,7 +288,7 @@ public class Console extends HBox implements GralogWindow{
                 System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "]");
                 parser.parse(remainingText);
             }
-            if (!existsSelectedEdge & !existsSelectedVertex){
+            if (!existsSelectedEdge & !existsSelectedVertex) {
                 parser.setErrorMsg("Nothing is selected! Aborting.");
                 parser.setDialogState(DONE);
                 parser.setDialogAction(NONE);
@@ -302,7 +302,7 @@ public class Console extends HBox implements GralogWindow{
 
         parser.setErrorMsg("");
 
-        if (parser.getDialogState() == DONE){
+        if (parser.getDialogState() == DONE) {
             switch (parser.getDialogAction()) {
                 case SELECT_ALL:                 dialogfx.selectAll(currentPane);
                                                 break;
@@ -386,7 +386,7 @@ public class Console extends HBox implements GralogWindow{
 
    
 
-    public void finalizeConsoleFieldAdd(ConsoleField t){
+    public void finalizeConsoleFieldAdd(ConsoleField t) {
 
         int height = estimateHeight(t.getText());
         System.out.println("estimated: " + height);
@@ -409,7 +409,7 @@ public class Console extends HBox implements GralogWindow{
         
 
         Platform.runLater(
-            () ->{
+            () -> {
 
                 outputElements.getChildren().add(t);
 
@@ -421,7 +421,7 @@ public class Console extends HBox implements GralogWindow{
        
     }
 
-    public void output(String text){
+    public void output(String text) {
 
 
         text = text.trim();
@@ -441,7 +441,7 @@ public class Console extends HBox implements GralogWindow{
 
     }
 
-    public void errorOutput(String text){
+    public void errorOutput(String text) {
         
         System.out.println("error output" + text);
 
@@ -452,7 +452,7 @@ public class Console extends HBox implements GralogWindow{
 
     }
 
-    public void gPrint(String text){
+    public void gPrint(String text) {
 
         ConsoleField t = new ConsoleField(text);
         t.getStyleClass().add("gPrintStyle"); 
@@ -461,7 +461,7 @@ public class Console extends HBox implements GralogWindow{
 
     }
 
-    public void notificationPrint(String text){
+    public void notificationPrint(String text) {
 
         ConsoleField t = new ConsoleField(text);
         t.getStyleClass().add("notificationPrintStyle"); 
@@ -470,7 +470,7 @@ public class Console extends HBox implements GralogWindow{
 
     }
 
-    public void warningPrint(String text){
+    public void warningPrint(String text) {
 
         ConsoleField t = new ConsoleField("non-fatal error:\n"+text);
         t.getStyleClass().add("warningPrintStyle"); 
@@ -479,7 +479,7 @@ public class Console extends HBox implements GralogWindow{
 
     }
 
-    public void outsideMessage(String text){
+    public void outsideMessage(String text) {
         
 
         ConsoleField t = new ConsoleField(text);
@@ -488,25 +488,25 @@ public class Console extends HBox implements GralogWindow{
     }
 
 
-    public void outsideMessage(String msg,MessageToConsoleFlag flag){
+    public void outsideMessage(String msg,MessageToConsoleFlag flag) {
         msg = msg.trim();
-        if (flag == MessageToConsoleFlag.Error){
+        if (flag == MessageToConsoleFlag.Error) {
             this.errorOutput(msg);
-        }else if(flag == MessageToConsoleFlag.GPrint){
+        }else if(flag == MessageToConsoleFlag.GPrint) {
             this.gPrint(msg);
-        }else if(flag == MessageToConsoleFlag.Normal || flag == MessageToConsoleFlag.Request){
+        }else if(flag == MessageToConsoleFlag.Normal || flag == MessageToConsoleFlag.Request) {
             this.outsideMessage(msg);
-        }else if(flag == MessageToConsoleFlag.Notification){
+        }else if(flag == MessageToConsoleFlag.Notification) {
             this.notificationPrint(msg);
-        }else if(flag == MessageToConsoleFlag.Warning){
+        }else if(flag == MessageToConsoleFlag.Warning) {
             this.warningPrint(msg);
-        }else{
+        }else {
             System.out.println("Unknown flag?");
             this.outsideMessage(msg);
         }
     }
 
-    public void output(ConsoleField t){
+    public void output(ConsoleField t) {
         
 
         
@@ -516,8 +516,8 @@ public class Console extends HBox implements GralogWindow{
 
     }
 
-    public void clear(){
-        if(input != null){
+    public void clear() {
+        if(input != null) {
             input.clear();
             historyPointer = -1;
         }

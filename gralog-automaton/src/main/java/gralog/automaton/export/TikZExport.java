@@ -25,20 +25,20 @@ public class TikZExport extends ExportFilter {
         ExportFilterParameters params) throws Exception {
         IndentedWriter out = new IndentedWriter(stream, 4);
 
-        out.writeLine("%\\documentclass{article}");
-        out.writeLine("%\\usepackage{pgf}");
-        out.writeLine("%\\usepackage{tikz}");
-        out.writeLine("%\\usepackage{amsmath, amssymb}");
-        out.writeLine("%\\usetikzlibrary{arrows.meta,automata}");
-        out.writeLine("%\\usepackage[utf8]{inputenc}");
+        out.writeLine("%\\documentclass {article}");
+        out.writeLine("%\\usepackage {pgf}");
+        out.writeLine("%\\usepackage {tikz}");
+        out.writeLine("%\\usepackage {amsmath, amssymb}");
+        out.writeLine("%\\usetikzlibrary {arrows.meta,automata}");
+        out.writeLine("%\\usepackage[utf8] {inputenc}");
 
-        out.writeLine("%\\begin{document}");
+        out.writeLine("%\\begin {document}");
         out.increaseIndent();
-        out.writeLine("\\begin{tikzpicture}[scale=0.8,auto]");
+        out.writeLine("\\begin {tikzpicture}[scale=0.8,auto]");
         out.increaseIndent();
-        out.writeLine("\\tikzset{>=Stealth}");
-        out.writeLine("\\tikzstyle{every path}=[->,thick]");
-        out.writeLine("\\tikzstyle{every state}=[circle,fill=white,draw=black,text=black,thin]");
+        out.writeLine("\\tikzset {>=Stealth}");
+        out.writeLine("\\tikzstyle {every path}=[->,thick]");
+        out.writeLine("\\tikzstyle {every state}=[circle,fill=white,draw=black,text=black,thin]");
 
         HashMap<State, Integer> nodeIndex = new HashMap<>();
         int i = 1;
@@ -84,8 +84,8 @@ public class TikZExport extends ExportFilter {
         }
 
         out.decreaseIndent();
-        out.writeLine("\\end{tikzpicture}");
+        out.writeLine("\\end {tikzpicture}");
         out.decreaseIndent();
-        out.writeLine("%\\end{document}");
+        out.writeLine("%\\end {document}");
     }
 }

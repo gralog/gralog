@@ -18,11 +18,11 @@ public class Action extends Edge {
 
     public String name = null;
 
-    public Action(){
+    public Action() {
 
     }
 
-    public Action(Configuration config){
+    public Action(Configuration config) {
         super(config);
     }
 

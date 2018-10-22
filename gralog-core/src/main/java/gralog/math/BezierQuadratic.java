@@ -7,7 +7,7 @@ public class BezierQuadratic {
 
     public Vector2D c0, c1, c2;
 
-    public static BezierQuadratic createFromEdge(Edge e){
+    public static BezierQuadratic createFromEdge(Edge e) {
         BezierQuadratic b = new BezierQuadratic();
         b.c0 = e.getStartingPointSource();
         b.c1 = e.controlPoints.get(0).getPosition();
@@ -15,7 +15,7 @@ public class BezierQuadratic {
         return b;
     }
 
-    public Vector2D eval(double t){
+    public Vector2D eval(double t) {
         return  c0.multiply((1-t)*(1-t)).plus(
                 c1.multiply(2*t*(1-t))).plus(
                 c2.multiply(t*t));

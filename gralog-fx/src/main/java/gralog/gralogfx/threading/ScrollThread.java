@@ -11,24 +11,24 @@ public class ScrollThread extends Thread {
 
     private static double baselineSpeed = 8;
 
-    public ScrollThread(StructurePane pane, double verticalSpeed, double horizontalSpeed){
+    public ScrollThread(StructurePane pane, double verticalSpeed, double horizontalSpeed) {
         this.pane = pane;
         this.verticalSpeed = verticalSpeed;
         this.horizontalSpeed = horizontalSpeed;
     }
 
     @Override
-    public void run(){
+    public void run() {
         double time = System.nanoTime();
         double delta = 0;
-        while(!Thread.currentThread().isInterrupted()){
+        while(!Thread.currentThread().isInterrupted()) {
             delta = (System.nanoTime() - time)/1000000000;
             pane.move(delta * horizontalSpeed,delta * verticalSpeed);
             pane.requestRedraw();
             time = System.nanoTime();
-            try{
+            try {
                 Thread.sleep(16);
-            }catch(InterruptedException e){
+            }catch(InterruptedException e) {
                 //Interrupted the thread
                 return;
             }
@@ -38,14 +38,14 @@ public class ScrollThread extends Thread {
     /**
      * Creates a vertically scrolling scroll trhead
      */
-    public static ScrollThread vertical(StructurePane pane, boolean forward){
+    public static ScrollThread vertical(StructurePane pane, boolean forward) {
         return new ScrollThread(pane, (forward ? 1 : -1) * baselineSpeed, 0);
     }
 
     /**
      * Creates a horizontal scrolling scroll trhead
      */
-    public static ScrollThread horizontal(StructurePane pane, boolean forward){
+    public static ScrollThread horizontal(StructurePane pane, boolean forward) {
         return new ScrollThread(pane, 0, (forward ? 1 : -1) * baselineSpeed);
     }
 }

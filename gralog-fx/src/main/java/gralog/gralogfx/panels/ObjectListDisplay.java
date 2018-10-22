@@ -22,7 +22,7 @@ public class ObjectListDisplay extends AnchorPane
 {
     public ObservableList<GralogList> list = FXCollections.observableList(new ArrayList<>());
 
-    public ObjectListDisplay(){
+    public ObjectListDisplay() {
 
         var table = new TableView<GralogList>();
 
@@ -90,10 +90,10 @@ public class ObjectListDisplay extends AnchorPane
 
         //list.add(new GralogList<String>("list1"));
     }
-    public String getUniqueDefaultName(){
-        outer : for(int i = 0; true; i++){
-            for(GralogList l : list){
-                if(l.name.getValue().equals("List (" + i + ")")){
+    public String getUniqueDefaultName() {
+        outer : for(int i = 0; true; i++) {
+            for(GralogList l : list) {
+                if(l.name.getValue().equals("List (" + i + ")")) {
                     continue outer;
                 }
             }

@@ -14,11 +14,11 @@ public class ParityGamePosition extends FiniteGamePosition {
 
     public Integer priority = Integer.MAX_VALUE;
 
-    public ParityGamePosition(){
+    public ParityGamePosition() {
         super();
     }
 
-    public ParityGamePosition(Configuration config){
+    public ParityGamePosition(Configuration config) {
         super(config);
     }
 

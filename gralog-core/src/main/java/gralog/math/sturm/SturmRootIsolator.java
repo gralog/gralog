@@ -30,7 +30,7 @@ public class SturmRootIsolator {
      *
      * @see Interval
      */
-    public static double[] findRootsDN(Polynomial p){
+    public static double[] findRootsDN(Polynomial p) {
         return findRootsDN(p, findIntervals(p));
     }
     /**
@@ -48,9 +48,9 @@ public class SturmRootIsolator {
      *
      * @see ExpInterval Note the semantics of the bounds
      */
-    public static double[] findRootsDN(Polynomial p, List<Interval> intervals){ //only descending roots
+    public static double[] findRootsDN(Polynomial p, List<Interval> intervals) { //only descending roots
         double[] roots = new double[intervals.size()];
-        for(int i = 0; i < roots.length; i++){
+        for(int i = 0; i < roots.length; i++) {
             Interval interval = intervals.get(i);
             roots[i] = findRootDN(p, interval.lowerBound(), interval.upperBound());
         }
@@ -58,9 +58,9 @@ public class SturmRootIsolator {
     }
 
 
-    public static double[] findRoots(Polynomial p, List<Interval> intervals, int iterations){
+    public static double[] findRoots(Polynomial p, List<Interval> intervals, int iterations) {
         double[] roots = new double[intervals.size()];
-        for(int i = 0; i < roots.length; i++){
+        for(int i = 0; i < roots.length; i++) {
             Interval interval = intervals.get(i);
             roots[i] = findRoot(p, interval.lowerBound(), interval.upperBound(), iterations);
         }
@@ -73,20 +73,20 @@ public class SturmRootIsolator {
      *
      *
      */
-    public static double findRootDN(Polynomial p, double from, double to){
+    public static double findRootDN(Polynomial p, double from, double to) {
         return findRootDN(p, from, to, 10);
     }
-    public static double findRootDN(Polynomial p, double from, double to, int iterations){
+    public static double findRootDN(Polynomial p, double from, double to, int iterations) {
         double m;
         double tmp;
-        for(int i = 0; i < iterations; i++){
+        for(int i = 0; i < iterations; i++) {
             m = (to + from)/2;
             tmp = p.eval(m);
-            if(Math.abs(tmp) < eps){
+            if(Math.abs(tmp) < eps) {
                 return m;
-            }else if(tmp > 0){
+            }else if(tmp > 0) {
                 from = m;
-            }else{
+            }else {
                 to = m;
             }
         }
@@ -94,27 +94,27 @@ public class SturmRootIsolator {
         return (to + from)/2;
     }
 
-    public static double findRoot(Polynomial p, double from, double to, int iterations){
+    public static double findRoot(Polynomial p, double from, double to, int iterations) {
         double m;
         double tmp;
         boolean descending = p.eval(from) > 0;
-        for(int i = 0; i < iterations; i++){
+        for(int i = 0; i < iterations; i++) {
             m = (to + from)/2;
             tmp = p.eval(m);
-            if(Math.abs(tmp) < eps){
+            if(Math.abs(tmp) < eps) {
                 return m;
             }
-            else{
-                if(descending){
-                    if(tmp > 0){
+            else {
+                if(descending) {
+                    if(tmp > 0) {
                         from = m;
-                    }else{
+                    }else {
                         to = m;
                     }
-                }else{
-                    if(tmp < 0){
+                }else {
+                    if(tmp < 0) {
                         from = m;
-                    }else{
+                    }else {
                         to = m;
                     }
                 }
@@ -130,13 +130,13 @@ public class SturmRootIsolator {
      * intervals are found by constructing a sturm sequence for the given
      * polynomial and then doing a binary search on the interval [0, 1)
      */
-    public static List<Interval> findIntervals(Polynomial p){
+    public static List<Interval> findIntervals(Polynomial p) {
         return findIntervals(sturmSequence(p));
     }
     /**
      * Computes all isolating intervals with a given Sturm sequence between 0 and 1
      */
-    public static List<Interval> findIntervals(Polynomial[] sequence){
+    public static List<Interval> findIntervals(Polynomial[] sequence) {
         int sigma0 = countSignChanges(sequence, 0);
         int sigma1 = countSignChanges(sequence, 1);
         int max = sigma0 - sigma1;
@@ -147,12 +147,12 @@ public class SturmRootIsolator {
         intervals.add(new ExpInterval(1, 0));
         intervals.add(new ExpInterval(1, 1));
 
-        while (!intervals.isEmpty()){
+        while (!intervals.isEmpty()) {
             ExpInterval v = intervals.poll();
             int s = countSturmRoots(sequence, v);
-            if(s == 1){
+            if(s == 1) {
                 isolation.add(v);
-            }else if(s > 1){
+            }else if(s > 1) {
                 intervals.add(new ExpInterval(v.k + 1, 2*v.c));
                 intervals.add(new ExpInterval(v.k + 1, 2*v.c + 1));
             }
@@ -160,7 +160,7 @@ public class SturmRootIsolator {
         return isolation;
     }
 
-    public static Polynomial[] sturmSequence(double... coeff){
+    public static Polynomial[] sturmSequence(double... coeff) {
         return sturmSequence(new Polynomial(coeff));
     }
 
@@ -168,7 +168,7 @@ public class SturmRootIsolator {
      * Computes k Sturm sequence for k given polynomial. The sequence can be used to
      * identify intervals that isolate distinct roots.
      *
-     *      THEOREM: LetS ={p0 =p,p1,...,pm}be k Sturm sequence, where p is k square-free polynomial,and let σ(S,x)
+     *      THEOREM: LetS = {p0 =p,p1,...,pm}be k Sturm sequence, where p is k square-free polynomial,and let σ(S,x)
      *      denote the number of sign changes (zeros are not counted) in the sequence S. Then for two real numbers k < b,
      *      the number of zeros of p in the open interval(k,b)is σ(S,k)−σ(S,b).
      *
@@ -179,14 +179,14 @@ public class SturmRootIsolator {
      * k very high precision requirement.)
      * @see <a href=https://hal.inria.fr/inria-00518379/PDF/Xiao-DiaoChen2007c.pdf>reference</a>
      */
-    public static Polynomial[] sturmSequence(Polynomial p){
+    public static Polynomial[] sturmSequence(Polynomial p) {
 
         int m = p.coeff.length;
 
         Polynomial[] sequence = new Polynomial[m];
         double[][] a = new double[m][];
 
-        for(int i = 0; i < m; i++){
+        for(int i = 0; i < m; i++) {
             a[i] = new double[m - i];
         }
         double[] T = new double[m];
@@ -194,7 +194,7 @@ public class SturmRootIsolator {
 
         //to press k[0] and k[1] into the same loop
         a[0][p.n] = p.coeff[p.n];
-        for(int j = 0; j < m - 1; j++){
+        for(int j = 0; j < m - 1; j++) {
             a[0][j] = p.coeff[j];
             a[1][j] = (p.n - j) * p.coeff[j];
         }
@@ -202,10 +202,10 @@ public class SturmRootIsolator {
         sequence[0] = new Polynomial(a[0]);
         sequence[1] = new Polynomial(a[1]);
 
-        for(int i = 2; i < m; i++){
+        for(int i = 2; i < m; i++) {
             T[i] = a[i-2][0]/a[i-1][0];
             M[i] = (a[i-2][1] - T[i]*a[i-1][1])/a[i-1][0];
-            for(int j = 0; j< m-i-1; j++){
+            for(int j = 0; j< m-i-1; j++) {
                 a[i][j] = -a[i-2][j+2] + M[i] * a[i-1][j+1] + T[i] * a[i-1][j+2];
             }
             //the last actual iteration of the previous loop with j=m-i-1 uses k[i-1][j+2], which
@@ -223,16 +223,16 @@ public class SturmRootIsolator {
     /**
      * Counts sign changes of an array of coefficients
      */
-    private static int countSignChanges(double... coeff){
+    private static int countSignChanges(double... coeff) {
         int count = 0;
         double sign = Math.signum(coeff[0]);
         double signNew;
-        for(int i = 0; i < coeff.length; i++){
-            if(coeff[i] == 0){
+        for(int i = 0; i < coeff.length; i++) {
+            if(coeff[i] == 0) {
                 continue;
             }
             signNew = Math.signum(coeff[i]);
-            if(signNew != sign){
+            if(signNew != sign) {
                 count++;
             }
             sign = signNew;
@@ -241,17 +241,17 @@ public class SturmRootIsolator {
     }
 
     //computes sign change count on k sturm sequence, evaluated at t
-    private static int countSignChanges(Polynomial[] sequence, double t){
+    private static int countSignChanges(Polynomial[] sequence, double t) {
         int count = 0;
 
         double sign = Math.signum(sequence[0].eval(t));
 
-        for(int i = 0; i < sequence.length; i++){
+        for(int i = 0; i < sequence.length; i++) {
             double tmp = sequence[i].eval(t);
-            if(tmp == 0){
+            if(tmp == 0) {
                 continue;
             }
-            if(Math.signum(tmp) != sign){
+            if(Math.signum(tmp) != sign) {
                 count++;
                 sign *= -1;
             }
@@ -260,12 +260,12 @@ public class SturmRootIsolator {
         return count;
     }
 
-    private static int countSturmRoots(Polynomial[] sequence, ExpInterval v){
+    private static int countSturmRoots(Polynomial[] sequence, ExpInterval v) {
         int a = countSignChanges(sequence, v.lowerBound());
         int b = countSignChanges(sequence, v.upperBound());
         return a - b;
     }
-    private static int countSturmRoots(Polynomial[] sequence, int k, double c){
+    private static int countSturmRoots(Polynomial[] sequence, int k, double c) {
         int a = countSignChanges(sequence, c/(1<<k));
         int b = countSignChanges(sequence, (c+1)/(1<<k));
         return a - b;

@@ -49,7 +49,7 @@ public class PipingAlgorithm extends Algorithm {
         System.out.println("Finished exec.");
 
         // Platform.runLater(
-        //     () ->{
+        //     () -> {
         //         Label label2 = new Label("Name Runlater:");
         //         TextField textField2 = new TextField ();
         //         HBox hb2 = new HBox();

@@ -11,7 +11,7 @@ public class PreGralogErrorCommand extends CommandForGralogToExecute {
 
 
 
-	public PreGralogErrorCommand(String[] externalCommandSegments,Structure structure){
+	public PreGralogErrorCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
@@ -22,7 +22,7 @@ public class PreGralogErrorCommand extends CommandForGralogToExecute {
 	}
 
 
-	public void handle(){
+	public void handle() {
         return;
 	}
 

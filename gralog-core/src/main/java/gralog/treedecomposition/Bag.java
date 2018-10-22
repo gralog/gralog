@@ -19,7 +19,7 @@ public class Bag {
 
     @Override
     public String toString() {
-        return "{"
+        return " {"
             + nodes.stream().map((v) -> v.label).collect(Collectors.joining(","))
             + "}";
     }

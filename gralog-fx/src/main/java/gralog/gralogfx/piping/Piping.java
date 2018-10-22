@@ -47,9 +47,9 @@ import javafx.scene.control.Button;
 
 
 
-public class Piping extends Thread{
+public class Piping extends Thread {
 
-    public enum MessageToConsoleFlag{
+    public enum MessageToConsoleFlag {
         Normal,
         Error,
         GPrint,
@@ -94,7 +94,7 @@ public class Piping extends Thread{
     int nextStructurePaneId = 0;
 
 
-    public enum State{
+    public enum State {
         Null,
         Inintialized,
         InProgress,
@@ -108,16 +108,16 @@ public class Piping extends Thread{
     private InjectiveMap<Integer,Structure> idGraphMap =  new InjectiveMap<Integer,Structure>();
     private InjectiveMap<Integer,StructurePane> idStructurePaneMap =  new InjectiveMap<Integer,StructurePane>();
 
-    public void setClassSelectionIsWaitingFor(Class c){
+    public void setClassSelectionIsWaitingFor(Class c) {
         this.classSelectionIsWaitingFor = c;
     }
 
 
-    public void subscribe(PipingWindow sub){
+    public void subscribe(PipingWindow sub) {
         this.subscribers.add(sub);
     }
 
-    private void plannedPauseRequested(String[] externalCommandSegments, boolean rankGiven){
+    private void plannedPauseRequested(String[] externalCommandSegments, boolean rankGiven) {
         this.sendMessageToConsole.accept("Pause requested!",MessageToConsoleFlag.Notification);
         List<String[]> args = PipingMessageHandler.parsePauseVars(externalCommandSegments,rankGiven);
         trackedVarArgs = args;
@@ -125,11 +125,11 @@ public class Piping extends Thread{
         // subscribers.forEach(sub -> sub.notifyPauseRequested(this.structure,args));
     }
 
-    public boolean isInitialized(){
+    public boolean isInitialized() {
         return (this.state != State.Null);
     }
 
-    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Supplier<Boolean> pauseFunction,CountDownLatch waitForSelection,Supplier<Boolean> graphObjectSelectionFunction,BiConsumer<String,MessageToConsoleFlag> sendMessageToConsole){
+    public Piping(BiFunction<String,Piping,StructurePane> newGraphMethod,StructurePane structurePane,CountDownLatch waitForPauseToBeHandled,Supplier<Boolean> pauseFunction,CountDownLatch waitForSelection,Supplier<Boolean> graphObjectSelectionFunction,BiConsumer<String,MessageToConsoleFlag> sendMessageToConsole) {
         this.newGraphMethod = newGraphMethod;
         this.resetInitialPipingSkipVals();
         this.waitForPauseToBeHandled = waitForPauseToBeHandled;
@@ -142,13 +142,13 @@ public class Piping extends Thread{
     }
 
     
-    public String getNextLine() throws Exception{
+    public String getNextLine() throws Exception {
         return this.in.readLine();
     }
     // private PipingMessageHandler eventHandler = 
 
    
-    public boolean externalProcessInit(String fileName,String initMessage){
+    public boolean externalProcessInit(String fileName,String initMessage) {
 
          System.out.println("creating new pipeline, it has pane: " + this.structurePane);
 
@@ -159,23 +159,23 @@ public class Piping extends Thread{
         String[] execStr = {fileName,initMessage};
         CountDownLatch execd = new CountDownLatch(1);
         
-        try{
-            Process p = Runtime.getRuntime().exec(new String[]{"bash","-c","chmod u+x " + fileName});
+        try {
+            Process p = Runtime.getRuntime().exec(new String[] {"bash","-c","chmod u+x " + fileName});
             execd.countDown();
-        }catch(Exception e){
+        }catch(Exception e) {
             this.sendMessageToConsole.accept("The file was unable to be granted permission to be run",MessageToConsoleFlag.Error);
             execd.countDown();
         }
-        try{
+        try {
             execd.await();            
-        }catch(Exception e){}
+        }catch(Exception e) {}
 
-        try{
+        try {
             this.external = Runtime.getRuntime().exec(execStr); //e.g. formatRequest
             this.in = new BufferedReader(new InputStreamReader(external.getInputStream()));
             this.processErrors = new BufferedReader(new InputStreamReader(this.external.getErrorStream()));
             this.out = new PrintStream(external.getOutputStream(),true);
-        }catch(IOException e){
+        }catch(IOException e) {
             // e.printStackTrace();
 
             this.sendMessageToConsole.accept("The file was unable to be run. Perhaps it needs to be given permission?",MessageToConsoleFlag.Error);
@@ -189,95 +189,95 @@ public class Piping extends Thread{
     
     }
 
-    public IMovable getSelectedObject(){
+    public IMovable getSelectedObject() {
         return this.selectedObject;
     }
 
-    public Class getClassSelectionIsWaitingFor(){
+    public Class getClassSelectionIsWaitingFor() {
         return this.classSelectionIsWaitingFor;
     }
 
-    public void profferSelectedObject(IMovable obj){
+    public void profferSelectedObject(IMovable obj) {
         
         System.out.println("profferin");
         this.selectedObject = obj;
-        if (this.classSelectionIsWaitingFor != null && this.selectedObject.getClass() == this.classSelectionIsWaitingFor){
+        if (this.classSelectionIsWaitingFor != null && this.selectedObject.getClass() == this.classSelectionIsWaitingFor) {
             this.waitForSelection.countDown();
             CountDownLatch newLatch = new CountDownLatch(1);
             this.setSelectionCountDownLatch(newLatch);
 
-        }else{
+        }else {
             System.out.println("sorry hoss try againe");
         }
 
         
     }
 
-    public Boolean profferConsoleInput(String text){
+    public Boolean profferConsoleInput(String text) {
         this.consoleInputText = text;
         Class c = this.classSelectionIsWaitingFor;
-        if (c == String.class){
+        if (c == String.class) {
             this.waitForSelection.countDown();
             CountDownLatch newLatch = new CountDownLatch(1);
             this.setSelectionCountDownLatch(newLatch);
             return true;
-        }else if (c == Double.class){
-            try{
+        }else if (c == Double.class) {
+            try {
                 Double.parseDouble(text); //if this doesn't fail the user has entered
                 //a valid double, and the gralog command should proceed
                 this.waitForSelection.countDown();
                 CountDownLatch newLatch = new CountDownLatch(1);
                 this.setSelectionCountDownLatch(newLatch);
                 return true;
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.sendMessageToConsole.accept("Wrong class type - not a valid double!",MessageToConsoleFlag.Error);
             }
-        }else if (c == Integer.class){
-            try{
+        }else if (c == Integer.class) {
+            try {
                 Integer.parseInt(text); //if this doesn't fail the user has entered
                 //a valid double, and the gralog command should proceed
                 this.waitForSelection.countDown();
                 CountDownLatch newLatch = new CountDownLatch(1);
                 this.setSelectionCountDownLatch(newLatch);
                 return true;
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.sendMessageToConsole.accept("Wrong class type - not a valid integer!",MessageToConsoleFlag.Error);
             }
-        }else{
+        }else {
             System.out.println("soarry apl;");
             return false;
         }
         return false;
     }
 
-    public String getConsoleInput(){
+    public String getConsoleInput() {
         return this.consoleInputText;
     }
 
-    public Structure getStructureWithId(int id){
+    public Structure getStructureWithId(int id) {
         return this.idGraphMap.get(id);
     }
-    public StructurePane getStructurePaneWithId(int id){
+    public StructurePane getStructurePaneWithId(int id) {
         return this.idStructurePaneMap.get(id);
     }
 
-    public void pairLocalIdAndStructure(int id,Structure structure){
+    public void pairLocalIdAndStructure(int id,Structure structure) {
         this.idGraphMap.set(id,structure);
     }
-    public void pairLocalIdAndStructurePane(int id,StructurePane structurePane){
+    public void pairLocalIdAndStructurePane(int id,StructurePane structurePane) {
         this.idStructurePaneMap.set(id,structurePane);
     }
 
-    public int getIdWithStructure(Structure structure){
+    public int getIdWithStructure(Structure structure) {
         return this.idGraphMap.getId(structure);
     }
 
-    public int getIdWithStructurePane(StructurePane structurePane){
+    public int getIdWithStructurePane(StructurePane structurePane) {
         return this.idStructurePaneMap.getId(structurePane);
     }
 
     
-    private void resetInitialPipingSkipVals(){
+    private void resetInitialPipingSkipVals() {
         this.skipPausesWithRankGreaterThanOrEqualTo = Integer.MAX_VALUE;
         this.currentSkipValue = Integer.MAX_VALUE;
     }
@@ -302,55 +302,55 @@ public class Piping extends Thread{
         
     // }
 
-    public void killSelf(){
+    public void killSelf() {
         this.windowDoesCloseNow = true;
         this.waitForPauseToBeHandled.countDown();
     }
    
-    public Integer extractRankFromPause(String[] externalCommandSegments){
+    public Integer extractRankFromPause(String[] externalCommandSegments) {
         // System.out.println("where the rank would be : " + externalCommandSegments[1]);
-        try{
+        try {
             Integer rank = Integer.parseInt(externalCommandSegments[1]);
             System.out.println("parsd!: " + rank);
             return rank;
-        }catch(Exception e){
+        }catch(Exception e) {
             return (Integer)null;
         }
     }
 
-    public void pausePressed(){
-        if (!(this.state == State.Paused)){
+    public void pausePressed() {
+        if (!(this.state == State.Paused)) {
             this.pauseWasPressed = true;
         }
     }
 
-    public void spontaneousStop(){
+    public void spontaneousStop() {
         this.windowDoesCloseNow = true;
         this.waitForPauseToBeHandled.countDown();
         this.makeNull();
     }
 
-    public void skipPressed(){
+    public void skipPressed() {
         this.skipPausesWithRankGreaterThanOrEqualTo = this.currentSkipValue;
     }
   
 
-    // public String execWithAck(){
+    // public String execWithAck() {
         
-    //     if (this.state != State.Paused){
+    //     if (this.state != State.Paused) {
     //         return "error: not paused, therefore ack in jest";
     //     }
     //     return this.exec("ack");
     // }
 
-    protected void redrawMyStructurePanes(){
-        for (StructurePane sp : this.idStructurePaneMap.valueSet()){
+    protected void redrawMyStructurePanes() {
+        for (StructurePane sp : this.idStructurePaneMap.valueSet()) {
             sp.requestRedraw();
         }
     }
 
-    public void start(){
-        if (this.t == null){
+    public void start() {
+        if (this.t == null) {
             this.t =new Thread(this,this.toString());
             this.firstMessage = null;
             t.start();
@@ -359,23 +359,23 @@ public class Piping extends Thread{
 
     
 
-    public void setFirstMessage(String firstMessage){
+    public void setFirstMessage(String firstMessage) {
         this.firstMessage = firstMessage;
     }
-    public String getFirstMessage(){
+    public String getFirstMessage() {
         return this.firstMessage;
     }
 
     
 
-    public void setPauseCountDownLatch(CountDownLatch latch){
+    public void setPauseCountDownLatch(CountDownLatch latch) {
         this.waitForPauseToBeHandled = latch;
     }
-    public void setSelectionCountDownLatch(CountDownLatch latch){
+    public void setSelectionCountDownLatch(CountDownLatch latch) {
         this.waitForSelection = latch;
     }
 
-    public State getPipingState(){
+    public State getPipingState() {
         return this.state;
     }
 
@@ -386,7 +386,7 @@ public class Piping extends Thread{
         System.out.println("run exeqing, it has pane: " + this.structurePane);
 
         System.out.println("run exec and state is: " + this.state);
-        if (this.state == State.Null){
+        if (this.state == State.Null) {
             return;// "error: should not being execing as process has not been inintialized";
         }
         
@@ -395,18 +395,18 @@ public class Piping extends Thread{
 
 
 
-        try{
+        try {
             String firstMessage = this.getFirstMessage();
             System.out.println("execing " + firstMessage);
             this.sendMessageToConsole.accept("Running external program",MessageToConsoleFlag.Notification);
 
             String line;
 
-            if (!(firstMessage == null || firstMessage.length() == 0)){
+            if (!(firstMessage == null || firstMessage.length() == 0)) {
                 //send ack
                 out.println(firstMessage);
 
-            }else{
+            }else {
                 System.out.println("null first message");
             }
             // return "bla";
@@ -416,14 +416,14 @@ public class Piping extends Thread{
 
             
             System.out.println("191");
-            while ((line = this.getNextLine()) != null){//while python has not yet terminated
+            while ((line = this.getNextLine()) != null) {//while python has not yet terminated
                 System.out.println("in while");
                 // System.out.println("current count: " + this.waitForPauseToBeHandled.getCount());
-                if (this.windowDoesCloseNow){
+                if (this.windowDoesCloseNow) {
                     return;
                 }
                 
-                if (line.length() > 0){ // if not a bogus line
+                if (line.length() > 0) { // if not a bogus line
                     //handleLine()
                     this.state = State.InProgress;
                     String[] externalCommandSegments = line.split("#");
@@ -431,11 +431,11 @@ public class Piping extends Thread{
 
                     System.out.println("current line: " + line);
 
-                    if (this.pauseWasPressed){ //user input simulation
+                    if (this.pauseWasPressed) { //user input simulation
                         this.redrawMyStructurePanes();
                         this.state = State.Paused;
                         this.waitForPauseToBeHandled.await();
-                        if (this.windowDoesCloseNow){
+                        if (this.windowDoesCloseNow) {
                             return;
                         }
                         this.pauseWasPressed = false;
@@ -445,7 +445,7 @@ public class Piping extends Thread{
 
                     
 
-                    if (externalCommandSegments[0].equals("pauseUntilSpacePressed")){
+                    if (externalCommandSegments[0].equals("pauseUntilSpacePressed")) {
                         
 
 
@@ -454,12 +454,12 @@ public class Piping extends Thread{
 
                         Integer rank = this.extractRankFromPause(externalCommandSegments);
                         withRank = (rank != null);
-                        if (!withRank){
+                        if (!withRank) {
                             rank = 0;
                         }
                         System.out.println("withrank: " + withRank + " rank: " + rank);
                         
-                        if (rank < this.skipPausesWithRankGreaterThanOrEqualTo){
+                        if (rank < this.skipPausesWithRankGreaterThanOrEqualTo) {
                             this.currentSkipValue = rank;
 
                             this.plannedPauseRequested(externalCommandSegments,withRank);
@@ -472,7 +472,7 @@ public class Piping extends Thread{
                             System.out.println("ok it's been a paused");
 
                             this.waitForPauseToBeHandled.await();
-                            if (this.windowDoesCloseNow){
+                            if (this.windowDoesCloseNow) {
                                 return;
                             }
                             out.println("");
@@ -480,19 +480,19 @@ public class Piping extends Thread{
                             continue;
 
                             // break;
-                        }else{
+                        }else {
                             out.println("skipped");
                             continue;
                         }
                     } else if (externalCommandSegments[0].equals("message")) {
                     	this.sendMessageToConsole.accept(externalCommandSegments[2],MessageToConsoleFlag.Notification);
                     	continue;
-                	}else if (externalCommandSegments[0].equals("useCurrentGraph")){ //user input simulation
+                	}else if (externalCommandSegments[0].equals("useCurrentGraph")) { //user input simulation
                         
                         final String lineFinal = externalCommandSegments[0];
                         CountDownLatch graphWasInstantiated = new CountDownLatch(1);
                         Platform.runLater(
-                            ()->{
+                            ()-> {
                                 StructurePane thisPane = this.newGraphMethod.apply(lineFinal,this);
                                 this.pairLocalIdAndStructure(this.nextStructurePaneId,thisPane.getStructure());
                                 this.pairLocalIdAndStructurePane(this.nextStructurePaneId,thisPane);
@@ -510,12 +510,12 @@ public class Piping extends Thread{
 
                         continue;
 
-                    }else if ((line = PipingMessageHandler.properGraphNames(line)) != null){
+                    }else if ((line = PipingMessageHandler.properGraphNames(line)) != null) {
                         System.out.println("properGraphNames");
                         final String lineFinal = line;
                         CountDownLatch graphWasInstantiated = new CountDownLatch(1);
                         Platform.runLater(
-                            ()->{
+                            ()-> {
                                 StructurePane thisPane = this.newGraphMethod.apply(lineFinal,this);
                                 this.pairLocalIdAndStructure(this.nextStructurePaneId,thisPane.getStructure());
                                 this.pairLocalIdAndStructurePane(this.nextStructurePaneId,thisPane);
@@ -534,36 +534,36 @@ public class Piping extends Thread{
                     }
 
                     CommandForGralogToExecute currentCommand;
-                    try{
+                    try {
                         // currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])),this);
                         int localStructureIndex = Integer.parseInt(PipingMessageHandler.extractNthPositionString(externalCommandSegments,1));
                         Structure structureOfCurrentCommand = this.getStructureWithId(localStructureIndex);
                         currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,structureOfCurrentCommand,this);
                         // mostRecentlyUsedStructurePane = currentCommand.getStructurePane();
-                    }catch(Exception e){
+                    }catch(Exception e) {
                         e.printStackTrace();
                         currentCommand = new NotRecognizedCommand(externalCommandSegments,(Structure)null);
                     }
                     
-                    if (!currentCommand.didFail()){
+                    if (!currentCommand.didFail()) {
                         System.out.println("handling");
                         System.out.println("we're looking at " + currentCommand);
                         currentCommand.handle();
                         System.out.println("handled");
                         String response;
-                        if (! currentCommand.didFail() && (response = currentCommand.getResponse()) != null){
+                        if (! currentCommand.didFail() && (response = currentCommand.getResponse()) != null) {
                             System.out.println("no error, response is: \"" + response + "\"");
                             this.out.println(response);
                         }
                     }
                     String msg;
-                    if (!((msg = currentCommand.getConsoleMessage()) == null)){
+                    if (!((msg = currentCommand.getConsoleMessage()) == null)) {
                         this.sendMessageToConsole.accept(msg,MessageToConsoleFlag.Warning);
                     }
 
 
 
-                    if (currentCommand.didFail()){
+                    if (currentCommand.didFail()) {
                         final String lineFinal = PipingMessageHandler.rejoinExternalCommandSegments(externalCommandSegments);
                         Exception e = currentCommand.getError();
                         this.sendMessageToConsole.accept(e.toString(),MessageToConsoleFlag.Error);
@@ -578,7 +578,7 @@ public class Piping extends Thread{
                             }
                         ); 
 
-                        if (currentCommand.getResponse() != null){
+                        if (currentCommand.getResponse() != null) {
                             System.out.println("given them tha ol response anyhoo");
                             this.out.println(currentCommand.getResponse());
                         }
@@ -596,10 +596,10 @@ public class Piping extends Thread{
 
             }
 
-            if (line == null){
+            if (line == null) {
             	System.out.println("line is null");
                 this.makeNull();
-            }else{
+            }else {
                 System.out.println("line is not null rather: " + line);
             }
 
@@ -612,7 +612,7 @@ public class Piping extends Thread{
             
 
 
-        }catch (Exception e){
+        }catch (Exception e) {
             e.printStackTrace();
             return;// "error: there was an error";
         }
@@ -622,32 +622,32 @@ public class Piping extends Thread{
    
     }
 
-    public void makeNull(){
+    public void makeNull() {
         this.state = State.Null;
         System.out.println("makingue null");
-        for (int i: idStructurePaneMap.keySet()){
+        for (int i: idStructurePaneMap.keySet()) {
             this.getStructurePaneWithId(i).setPiping(null);
         }
         String line;
         String wholeError = "";
-        try{
-            while (this.processErrors.ready() && ((line = this.processErrors.readLine())!= null)){
+        try {
+            while (this.processErrors.ready() && ((line = this.processErrors.readLine())!= null)) {
                 System.out.println("we gone done read a line: " + line);
                 wholeError += line + "\n";
             }
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
-        try{
+        try {
             this.processErrors.close();
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
-        if (wholeError.length() > 0){
+        if (wholeError.length() > 0) {
             wholeError = wholeError.substring(0,wholeError.length()-1);
         }
 
-        if (!wholeError.equals("")){
+        if (!wholeError.equals("")) {
             this.sendMessageToConsole.accept("Error in external Program: \n" + wholeError,MessageToConsoleFlag.Error);
         }
         this.redrawMyStructurePanes();
@@ -682,10 +682,10 @@ public class Piping extends Thread{
 
 
 
-  // private String init(String[] execStr){
+  // private String init(String[] execStr) {
 
     //     // String result;
-    //     try{
+    //     try {
 
     //         Platform.runLater(
     //             () -> {
@@ -702,7 +702,7 @@ public class Piping extends Thread{
     //         exec(this.external,this.in,this.out,false);
 
 
-    //     }catch(Exception e){
+    //     }catch(Exception e) {
     //         e.printStackTrace();
     //     }
 
@@ -718,7 +718,7 @@ public class Piping extends Thread{
 
 
     // Platform.runLater(
-    //     () ->{
+    //     () -> {
     //         Label label2 = new Label("Name Runlater:");
     //         TextField textField2 = new TextField ();
     //         HBox hb2 = new HBox();

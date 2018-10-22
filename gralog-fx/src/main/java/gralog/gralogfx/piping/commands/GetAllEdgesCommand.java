@@ -10,7 +10,7 @@ public class GetAllEdgesCommand extends CommandForGralogToExecute {
 	
 
 
-	public GetAllEdgesCommand(String[] externalCommandSegments,Structure structure){
+	public GetAllEdgesCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
@@ -19,17 +19,17 @@ public class GetAllEdgesCommand extends CommandForGralogToExecute {
 
 	
 
-	public void handle(){
+	public void handle() {
 
        
 
         Set<Edge> allEdges = this.structure.getEdges();
 
         String edgeString = "";
-        for (Edge e : allEdges){
+        for (Edge e : allEdges) {
             edgeString = edgeString + PipingMessageHandler.universalEdgeToGralogTuple(e)+ "#";
         }
-        if (edgeString.length() > 0 && null != edgeString){
+        if (edgeString.length() > 0 && null != edgeString) {
             edgeString = edgeString.substring(0,edgeString.length()-1);
         }
 

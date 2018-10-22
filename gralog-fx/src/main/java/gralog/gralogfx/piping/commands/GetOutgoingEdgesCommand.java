@@ -14,13 +14,13 @@ public class GetOutgoingEdgesCommand extends CommandForGralogToExecute {
 
 
 
-	public GetOutgoingEdgesCommand(String[] externalCommandSegments,Structure structure){
+	public GetOutgoingEdgesCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        try{    
+        try {    
             this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -28,7 +28,7 @@ public class GetOutgoingEdgesCommand extends CommandForGralogToExecute {
 
         this.sourceVertex = this.structure.getVertexById(this.sourceId);
 
-        if (this.sourceVertex == null){
+        if (this.sourceVertex == null) {
             this.fail();
             this.error = new NonExistantVertexException("error: source vertex does not exist");
             return;
@@ -38,7 +38,7 @@ public class GetOutgoingEdgesCommand extends CommandForGralogToExecute {
 
 	
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
        
@@ -48,10 +48,10 @@ public class GetOutgoingEdgesCommand extends CommandForGralogToExecute {
         Set<Edge> conncetedEdges = this.sourceVertex.getOutgoingEdges();
 
         String edgeString = "";
-        for (Edge e : conncetedEdges){
+        for (Edge e : conncetedEdges) {
             edgeString = edgeString + Integer.toString(e.getId())+ "#";
         }
-        if (edgeString.length() > 0 && null != edgeString){
+        if (edgeString.length() > 0 && null != edgeString) {
             edgeString = edgeString.substring(0,edgeString.length()-1);
         }
 

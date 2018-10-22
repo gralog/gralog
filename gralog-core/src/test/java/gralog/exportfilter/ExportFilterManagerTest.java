@@ -96,7 +96,7 @@ public class ExportFilterManagerTest {
         out.flush();
 
         // A very simple check to see if we got something resembling a tikzpicture.
-        assertThat(result.toString(), containsString("\\begin{tikzpicture}"));
+        assertThat(result.toString(), containsString("\\begin {tikzpicture}"));
     }
 
     @Test

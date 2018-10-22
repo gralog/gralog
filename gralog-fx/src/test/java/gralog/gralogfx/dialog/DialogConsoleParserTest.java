@@ -34,13 +34,13 @@ public class DialogConsoleParserTest {
     private StructurePane currentStructure;
 
 
-    public DialogConsoleParserTest(){
+    public DialogConsoleParserTest() {
         dialogParser = new DialogParser();
 
 //        try {
 //            PluginManager.initialize();
 //        }
-//        catch (Exception e){
+//        catch (Exception e) {
 //            e.printStackTrace();
 //        }
         //anEdge = getGraph("anEdge.graphml");
@@ -53,7 +53,7 @@ public class DialogConsoleParserTest {
         wheel5 = (new Wheel()).generate(new StringAlgorithmParameter("", "5"));
     }
 
-    private void resetParserFields(){
+    private void resetParserFields() {
         dialogParser.clearParameters();
         dialogParser.setDialogState(DONE);
         dialogParser.setDialogAction(NONE);
@@ -63,7 +63,7 @@ public class DialogConsoleParserTest {
 
 
     @Test
-    public void testParser(){
+    public void testParser() {
 
         resetParserFields();
         dialogParser.parse("Select all");
@@ -215,7 +215,7 @@ public class DialogConsoleParserTest {
     }
 
     @Test
-    public void testFilter(){
+    public void testFilter() {
         resetParserFields();
         dialogParser.parse("filter");
         assertTrue(dialogParser.getParameters().isEmpty());
@@ -236,11 +236,11 @@ public class DialogConsoleParserTest {
 
     }
 
-    private Structure getGraph(String fileName){
+    private Structure getGraph(String fileName) {
         try {
             return Structure.loadFromStream(getClass().getClassLoader().getResourceAsStream(fileName));
         }
-        catch (Exception e){
+        catch (Exception e) {
             e.printStackTrace();
             return null;
         }

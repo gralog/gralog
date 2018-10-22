@@ -13,16 +13,16 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 
 
 
-	public SetVertexStrokeColorCommand(String[] externalCommandSegments,Structure structure){
+	public SetVertexStrokeColorCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-		try{    
+		try {    
             this.changeId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
-        }catch(ArrayIndexOutOfBoundsException e){
+        }catch(ArrayIndexOutOfBoundsException e) {
             this.error = e;
             this.fail();
             return;
@@ -30,21 +30,21 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 
         this.vertex = this.structure.getVertexById(this.changeId);
 
-        if (this.vertex == null){
+        if (this.vertex == null) {
 
             this.fail();
             this.error = new NonExistantVertexException("vertex with id: " + this.changeId + " does not exist");
             return;
         }
 
-        try{
+        try {
             String color = this.externalCommandSegments[3];
-            if (color.substring(0,3).equals("hex")){
+            if (color.substring(0,3).equals("hex")) {
                 this.changeColor = PipingMessageHandler.colorConversionHex(color.substring(4,color.length()-1));
-            }else if(color.substring(0,3).equals("rgb")){
+            }else if(color.substring(0,3).equals("rgb")) {
                 this.changeColor = PipingMessageHandler.colorConversionRGB(color.substring(4,color.length()-1));
             }
-        }catch(Exception e){
+        }catch(Exception e) {
             this.error = e;
             this.fail();
             return;
@@ -54,7 +54,7 @@ public class SetVertexStrokeColorCommand extends CommandForGralogToExecute {
 	// public void 
 
 
-	public void handle(){
+	public void handle() {
 
         
         this.vertex.strokeColor = changeColor;

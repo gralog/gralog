@@ -16,43 +16,43 @@ public class GralogList<T> {
 
     private Function<T, String> toString;
 
-    public GralogList(String name){
+    public GralogList(String name) {
         this.name = new SimpleStringProperty(name);
         this.stringData = new SimpleStringProperty("");
     }
 
-    public void overrideToString(Function<T, String> toString){
+    public void overrideToString(Function<T, String> toString) {
         this.toString = toString;
     }
 
-    public void updateStringData(){
+    public void updateStringData() {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < list.size(); i++) {
             T elem = list.get(i);
-            if(toString == null){
+            if(toString == null) {
                 sb.append(elem.toString());
             }
-            else{
+            else {
                 sb.append(toString.apply(elem));
             }
 
-            if(i < list.size() - 1){
+            if(i < list.size() - 1) {
                 sb.append(", ");
             }
         }
         stringData.set(sb.toString());
     }
 
-    public void add(T element){
+    public void add(T element) {
         list.add(element);
         updateStringData();
     }
 
-    public void remove(int index){
+    public void remove(int index) {
         list.remove(index);
     }
 
-    public void remove(T element){
+    public void remove(T element) {
         list.remove(element);
         updateStringData();
     }
