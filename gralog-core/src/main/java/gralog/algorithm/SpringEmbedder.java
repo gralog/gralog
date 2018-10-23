@@ -1,12 +1,14 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
-import gralog.structure.*;
-import gralog.rendering.*;
-import gralog.progresshandler.*;
-import java.util.ArrayList;
+import gralog.progresshandler.ProgressHandler;
+import gralog.rendering.Vector2D;
+import gralog.structure.Edge;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
@@ -14,21 +16,21 @@ import java.util.Set;
  *
  */
 @AlgorithmDescription(
-    name = "Spring Embedder",
-    text = "Assigns coordinates to the vertices using the spring-embedding techinque",
-    url = "https://en.wikipedia.org/wiki/Force-directed_graph_drawing"
+        name = "Spring Embedder",
+        text = "Assigns coordinates to the vertices using the spring-embedding techinque",
+        url = "https://en.wikipedia.org/wiki/Force-directed_graph_drawing"
 )
 public class SpringEmbedder extends Algorithm {
-
-    @Override
-    public AlgorithmParameters getParameters(Structure s) {
-        return new SpringEmbedderParameters();
-    }
 
     protected Vector2D dimensionLimits;
 
     public SpringEmbedder() {
         dimensionLimits = new Vector2D(30d, 20d);
+    }
+
+    @Override
+    public AlgorithmParameters getParameters(Structure s) {
+        return new SpringEmbedderParameters();
     }
 
     public Vector2D coulomb(Vector2D u, Vector2D v, SpringEmbedderParameters p) {
@@ -62,7 +64,7 @@ public class SpringEmbedder extends Algorithm {
     }
 
     public Object run(Structure s, AlgorithmParameters ap, Set<Object> selection,
-        ProgressHandler onprogress) throws Exception {
+                      ProgressHandler onprogress) throws Exception {
         SpringEmbedderParameters p = (SpringEmbedderParameters) ap;
         ArrayList<Vector2D> tractions = new ArrayList<>();
 
@@ -80,8 +82,8 @@ public class SpringEmbedder extends Algorithm {
         Collection<Vertex> vertices = s.getVertices();
         for (Vertex a : vertices) {
             Vector2D coordinates = new Vector2D(
-                Math.random() * dimensionLimits.getX(),
-                Math.random() * dimensionLimits.getY()
+                    Math.random() * dimensionLimits.getX(),
+                    Math.random() * dimensionLimits.getY()
             );
             a.coordinates = coordinates;
             // should make sure that no two vertices have the same position
@@ -124,19 +126,19 @@ public class SpringEmbedder extends Algorithm {
             for (Vertex a : vertices) {
                 Vector2D oldCoordinates = a.coordinates;
                 Vector2D newCoordinates = new Vector2D(
-                    Math.max(0.0d,
-                        Math.min(dimensionLimits.getX(), oldCoordinates.getX()) + p.delta * tractions.get(i).getX()),
-                    Math.max(0.0d,
-                        Math.min(dimensionLimits.getY(), oldCoordinates.getY()) + p.delta * tractions.get(i).getY())
+                        Math.max(0.0d,
+                                Math.min(dimensionLimits.getX(), oldCoordinates.getX()) + p.delta * tractions.get(i).getX()),
+                        Math.max(0.0d,
+                                Math.min(dimensionLimits.getY(), oldCoordinates.getY()) + p.delta * tractions.get(i).getY())
                 );
                 a.coordinates = newCoordinates;
 
                 // for the loop condition
-                double current_movement
-                    = (oldCoordinates.getX() - newCoordinates.getX()) * (oldCoordinates.getX() - newCoordinates.getX())
-                    + (oldCoordinates.getY() - newCoordinates.getY()) * (oldCoordinates.getY() - newCoordinates.getY());
-                if (Math.sqrt(current_movement) > maxMovement)
-                    maxMovement = Math.sqrt(current_movement);
+                double currentMovement
+                        = (oldCoordinates.getX() - newCoordinates.getX()) * (oldCoordinates.getX() - newCoordinates.getX())
+                        + (oldCoordinates.getY() - newCoordinates.getY()) * (oldCoordinates.getY() - newCoordinates.getY());
+                if (Math.sqrt(currentMovement) > maxMovement)
+                    maxMovement = Math.sqrt(currentMovement);
 
                 ++i;
             }

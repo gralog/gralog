@@ -1,11 +1,10 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
 import gralog.plugins.XmlMarshallable;
 import gralog.plugins.XmlName;
 import gralog.rendering.Vector2D;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -33,7 +32,7 @@ public class EdgeIntermediatePoint extends XmlMarshallable implements IMovable, 
 
     public boolean containsCoordinate(double x, double y) {
         return (getX() - x) * (getX() - x)
-            + (getY() - y) * (getY() - y) < 0.15 * 0.15;
+                + (getY() - y) * (getY() - y) < 0.15 * 0.15;
     }
 
     @Override

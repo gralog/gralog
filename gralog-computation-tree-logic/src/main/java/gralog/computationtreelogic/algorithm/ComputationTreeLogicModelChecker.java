@@ -1,15 +1,20 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.computationtreelogic.algorithm;
 
-import gralog.modallogic.*;
-import gralog.computationtreelogic.formula.*;
-import gralog.computationtreelogic.parser.*;
 
-import gralog.algorithm.*;
+import gralog.algorithm.Algorithm;
+import gralog.algorithm.AlgorithmDescription;
+import gralog.algorithm.StringAlgorithmParameter;
+import gralog.computationtreelogic.formula.ComputationTreeLogicFormula;
+
+import gralog.computationtreelogic.parser.ComputationTreeLogicParser;
+import gralog.computationtreelogic.parser.ComputationTreeLogicSyntaxChecker;
+import gralog.modallogic.KripkeStructure;
+import gralog.modallogic.World;
 import gralog.preferences.Preferences;
-import gralog.structure.*;
-import gralog.progresshandler.*;
+import gralog.progresshandler.ProgressHandler;
+import gralog.structure.Structure;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +30,7 @@ import java.util.Set;
 public class ComputationTreeLogicModelChecker extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public gralog.algorithm.AlgorithmParameters getParameters(Structure s) {
         return new StringAlgorithmParameter(
             "Formula",
             Preferences.getString(this.getClass(), "formula", "A X (P \\wedge Q)"),
@@ -33,8 +38,8 @@ public class ComputationTreeLogicModelChecker extends Algorithm {
             ComputationTreeLogicSyntaxChecker.explanation());
     }
 
-    public Object run(KripkeStructure s, AlgorithmParameters p,
-        Set<Object> selection, ProgressHandler onprogress) throws Exception {
+    public Object run(KripkeStructure s, gralog.algorithm.AlgorithmParameters p,
+                      Set<Object> selection, ProgressHandler onprogress) throws Exception {
         StringAlgorithmParameter sp = (StringAlgorithmParameter) (p);
         Preferences.setString(this.getClass(), "formula", sp.parameter);
 

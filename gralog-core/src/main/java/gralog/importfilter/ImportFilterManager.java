@@ -1,11 +1,12 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.importfilter;
 
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
 import static gralog.plugins.PluginManager.instantiateClass;
 
 /**
@@ -13,15 +14,14 @@ import static gralog.plugins.PluginManager.instantiateClass;
  */
 public final class ImportFilterManager {
 
-    private ImportFilterManager() {
-    }
-
     private static final HashMap<String, String> IMPORT_FILTER_NAMES = new HashMap<>();
     private static final HashMap<String, String> IMPORT_FILTER_EXTENSIONS = new HashMap<>();
     private static final HashMap<String, ImportFilterDescription> IMPORT_FILTER_DESCRIPTIONS = new HashMap<>();
+    private ImportFilterManager() {
+    }
 
     public static void registerImportFilterClass(Class<?> aClass,
-        String classname) throws Exception {
+                                                 String classname) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
             return;
 
@@ -45,7 +45,7 @@ public final class ImportFilterManager {
     }
 
     public static ImportFilter instantiateImportFilterByExtension(
-        String identifier) throws Exception {
+            String identifier) throws Exception {
         if (!IMPORT_FILTER_EXTENSIONS.containsKey(identifier))
             return null;
         String classname = IMPORT_FILTER_EXTENSIONS.get(identifier);
@@ -53,7 +53,7 @@ public final class ImportFilterManager {
     }
 
     public static ImportFilterDescription getImportFilterDescription(
-        String identifier) {
+            String identifier) {
         return IMPORT_FILTER_DESCRIPTIONS.get(identifier);
     }
 

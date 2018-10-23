@@ -16,7 +16,7 @@ subprojects {
   checkstyle {
     configFile = rootProject.file('config/checkstyle.xml')
     configProperties = [samedir: rootProject.file('config')]
-    toolVersion = '7.2'
+    toolVersion = '7.8.1'
   }
   // Do not check generated files for programming style.
   checkstyleMain {
