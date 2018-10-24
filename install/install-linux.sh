@@ -1,116 +1,72 @@
 #!/bin/bash
 
-DEST_DIR='~/gralog/' # where to install Gralog
-PYTHON_LIB_DIR='~/python' # where to install python modules
+
+# DEST_DIR: where to install Gralog
+# DO_INSTALL_PYTHON: default is 1
+# PYTHON_LIB_DIR: where to install Gralog.py
+# PYTHON_TO_SYSTEM: deafult 1 (install python packages to system directories)
+#                           0 (install python packages to user directories)
+
+# If no arguments: DEST_DIR is $HOME/.gralog, DO_INSTALL_PYTHON is 1, PYTHON_TO_SYSTEM is 1.
+# One argument should be -u (install python packages to user directories)
+# or -n (don't install the python parth of Gralog).
+
+# E.g.
+# ./install-linux.sh $HOME/my/path/gralog -u
+# means that Gralog will be installed to $HOME/my/path/gralog and the python packages to user directories.
+#
+# ./install-linux.sh  -u
+# means that Gralog will be installed to $HOME/gralog (default) and the python packages
+# to user directories.
+#
+# ./install-linux.sh  -n
+# means that Gralog will be installed to $HOME/gralog (default) and no the python packages
+# will be installed.
+#
+# ./install-linux.sh  $HOME/my/path/gralog 
+# means that Gralog will be installed to $HOME/my/path/gralog  and the python packages
+# to system directories (default).
 
 
-# colourful output in bash
 
-RESET_COLOR=
-COLOR_RED=
+source fncts.sh
 
-if [ test_colored_terminal ]; then
-   RESET_COLOR='\e[0m' # reset
-   COLOR_RED='\e[0;31m' # red
-fi
 
-# test_java #
+read_arguments "$@"
 
-if [ type -p java ]; then
+# Creating and setting DEST_DIR if necessary
+
+if  [ -d "$DEST_DIR" ]; then
+    echo Installing Gralog to "$DEST_DIR"
+    if [ -w "$DEST_DIR" ]; then
+	DEST_DIR_WRITABLE=1
+    else
+	DEST_DIR_WRITABLE=0
+    fi
 else
-    print_error("No java in PATH.")
-    exit()
-fi
-
-version=$(java -version 2>&1 | awk -F '"' '/version/ {print("%03d",$2);}')
-if [ "$version" < "010" ]; then
-    print_error("Java version at least 10 is needed for Gralog.")
-    exit()
-fi
-
-# building Gralog
-
-echo "Building Gralog..."
-cd ..
-./gradlew build
-cd build/dist
-echo "Built Gralog."
-
-# wrapping jar and libraries
-
-echo "#!/bin/bash\n\njava -jar gralog-fx.jar" > gralog
-chmod +x gralog
-
-# copying Gralog to DEST_DIR
-
-if [ w_rights in $DEST_DIR ]; then
-    cp -r config.xml libs gralog-fx.jar gralog DEST_DIR
-else
-    sudo cp -r config.xml libs gralog-fx.jar gralog DEST_DIR
-fi
-
-# symbolic link to wrapper script
-
-sudo ln -s /usr/bin/gralog DEST_DIR/gralog
-
-# installing python-igraph, networkx and Gralog.py
-
-if [ do_install_python ]; then
-    install_python_part()
-fi
-
-
-echo "Installation complete"
-
-print_error(text){
-    echo "$COLOR_RED"Error:"$RESET_COLOR" $text
-}
-
-
-install_python_part()
-{
-    if [ !type -p python ]; then
-	print_error("No python in PATH.")
-	exit()
+    if [ -f "$DEST_DIR" ]; then
+	echo "Deleting file (which is not a directory) $DEST_DIR"
+	if [ "$(rm $DEST_DIR)" > 0 ]; then # try to delete file (not directory) DEST_DIR; if didnt work
+	    sudo rm "$DEST_DIR"
+	fi
     fi
-
-    if [ !type -p pip ]; then
-	echo "Installing pip..."
-	curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-	python get-pip.py
-    fi
-
-    if [ !type -p pip ]; then
-	print_error("Could not install pip. Please, install pip and repeat.")
-	exit()
+    echo Directory $DEST_DIR does not exist, creating it.
+    if [ "$(mkdir -p $DEST_DIR)" > 0 ]; then # try to create DEST_DIR; if didnt work
+       sudo mkdir -p "$DEST_DIR"
+       DEST_DIR_WRITABLE=0
     else
-	echo "Installed pip."
+       DEST_DIR_WRITABLE=1
     fi
-    
-    if [ install_py_libs_with_sudo ]; then
-	echo "Installing python module \"python-igraph\"..."
-	sudo pip install python-igraph
-	echo "Installed \"python-igraph\"."
-	echo "Installing python module \"networkx\"..."
-	sudo pip install networkx
-	echo "Installed \"networkx\"."
+fi
 
-    else
-	echo "Installing python module \"python-igraph\"..."
-	pip install --user python-igraph
-	echo "Installed \"python-igraph\"."
-	echo "Installing python module \"networkx\"..."
-	pip install --user networkx
-	echo "Installed \"networkx\"."
-    fi
 
-    # install Gralog.py #
 
-    cd ../..
-    
-    if [ w_rights in $PYTHON_LIB_DIR ]; then
-	ln -s gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py $PYTHON_LIB_DIR/Gralog.py
-    else
-	sudo ln -s gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py $PYTHON_LIB_DIR/Gralog.py
-    fi
-}
+install_gralog
+
+if [ $DO_INSTALL_PYTHON ]; then
+    install_python_part        # python-igraph, networkx and Gralog.py
+fi
+
+
+echo "Installation complete."
+
