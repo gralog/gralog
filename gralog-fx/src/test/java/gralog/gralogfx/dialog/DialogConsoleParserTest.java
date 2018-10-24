@@ -119,7 +119,7 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DialogState.SELECT,dialogParser.getDialogState());
         assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
-        assertEquals("What to select?  Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Quit: Q)",dialogParser.getErrorMsg());
+        assertEquals("What to select? Format: (all [vertices|edges]) | <list id> (accepted: SELECT) (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("select abc");
@@ -221,7 +221,7 @@ public class DialogConsoleParserTest {
         assertTrue(dialogParser.getParameters().isEmpty());
         assertEquals(DialogState.FILTER,dialogParser.getDialogState());
         assertEquals(DialogAction.NONE,dialogParser.getDialogAction());
-        assertEquals("What to filter? Format: <what> where|st|(such that)  <parameters> to <list> (accepted: FILTER) (Quit: Q)",dialogParser.getErrorMsg());
+        assertEquals("What to filter? Format: <what> where|st|(such that) <parameters> to <list> (accepted: FILTER) (Quit: Q)",dialogParser.getErrorMsg());
 
         resetParserFields();
         dialogParser.parse("filter all");
