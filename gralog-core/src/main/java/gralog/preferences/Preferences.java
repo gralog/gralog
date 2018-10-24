@@ -156,7 +156,9 @@ public final class Preferences {
     
     public static File getFile(String key, String defaultValue){
         String fileName = PROPERTIES.getProperty(key, defaultValue);
-        File f = new File(PROPERTIES.getProperty(key, defaultValue));
+        File f = new File(PROPERTIES.getProperty(key, defaultValue)); // todo:
+        // in tests (PreferenceWindowtest), the key "MainWindow_pipingFile" does not exist
+        // and an error occurs for new File(null)
         return f;
          
     }
