@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx.views;
 
@@ -24,7 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import java.lang.annotation.Annotation;
-import gralog.core.annotations.DataField;
+import gralog.annotations.DataField;
 
 
 import javax.sound.sampled.Line;

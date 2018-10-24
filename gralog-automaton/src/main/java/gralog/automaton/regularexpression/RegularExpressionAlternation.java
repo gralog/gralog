@@ -1,8 +1,11 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.regularexpression;
 
-import gralog.automaton.*;
+
+import gralog.automaton.Automaton;
+import gralog.automaton.State;
+import gralog.automaton.Transition;
 import gralog.rendering.Vector2D;
 import gralog.structure.Vertex;
 
@@ -23,8 +26,9 @@ public class RegularExpressionAlternation extends RegularExpression {
     @Override
     public String toString() {
         String r = right.toString();
-        if (right instanceof RegularExpressionAlternation)
+        if (right instanceof RegularExpressionAlternation) {
             r = "(" + r + ")";
+        }
         return left.toString() + " | " + r;
     }
 

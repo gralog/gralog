@@ -1,18 +1,16 @@
 package gralog.math;
 
-import static org.junit.Assert.*;
-
 import gralog.rendering.Vector2D;
 import org.junit.Test;
 
 public class BezierUtilitiesTest {
 
     @Test
-    public void LineIntersectionCubicBezier(){
+    public void LineIntersectionCubicBezier() {
 
         Vector2D source = new Vector2D(0, 0).plus(1, 1);
-        Vector2D ctrl1  = new Vector2D(0, 1).plus(1, 1);
-        Vector2D ctrl2  = new Vector2D(1, -1).plus(1, 1);
+        Vector2D ctrl1 = new Vector2D(0, 1).plus(1, 1);
+        Vector2D ctrl2 = new Vector2D(1, -1).plus(1, 1);
         Vector2D target = new Vector2D(1, 0).plus(1, 1);
 
         BezierCubic b = new BezierCubic();
@@ -28,7 +26,7 @@ public class BezierUtilitiesTest {
         System.out.println(ctrl2);
         BezierUtilities.yIntersectionCubicBezier(0.9, b);
 
-        for(Vector2D v : intersections){
+        for (Vector2D v : intersections) {
             System.out.println(v);
         }
 

@@ -3,12 +3,13 @@ package gralog.structure;
 import gralog.rendering.Vector2D;
 import gralog.structure.controlpoints.ControlPoint;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class EdgeTest {
 
     @Test
-    public void controlPointCreation(){
+    public void controlPointCreation() {
 
         Structure s = new DirectedGraph();
 
@@ -26,8 +27,8 @@ public class EdgeTest {
         Edge e = s.addEdge(first, secnd, 0, null);
         e.edgeType = Edge.EdgeType.SHARP;
 
-        ctrl1 = e.addControlPoint(new Vector2D(0,1), new Vector2D(0.5, 0));
-        ctrl2 = e.addControlPoint(new Vector2D(1,1), new Vector2D(0.5, 0.5));
+        ctrl1 = e.addControlPoint(new Vector2D(0, 1), new Vector2D(0.5, 0));
+        ctrl2 = e.addControlPoint(new Vector2D(1, 1), new Vector2D(0.5, 0.5));
 
         /*
         current state
@@ -38,7 +39,7 @@ public class EdgeTest {
         c - - - c
         */
 
-        ctrl3 = e.addControlPoint(new Vector2D(2,0), new Vector2D(1, 0.5));
+        ctrl3 = e.addControlPoint(new Vector2D(2, 0), new Vector2D(1, 0.5));
         assertEquals(2, e.controlPoints.indexOf(ctrl3));
 
         /*
@@ -68,7 +69,7 @@ public class EdgeTest {
     }
 
     @Test
-    public void edgeTypeSwitchDeletion(){
+    public void edgeTypeSwitchDeletion() {
         Structure s = new DirectedGraph();
 
         Vertex first = s.createVertex();
@@ -83,9 +84,9 @@ public class EdgeTest {
         Edge e = s.addEdge(first, secnd, 0, null);
         e.edgeType = Edge.EdgeType.SHARP;
 
-        e.addControlPoint(new Vector2D(0,1), new Vector2D(0.5, 0));
-        e.addControlPoint(new Vector2D(1,1), new Vector2D(0.5, 0.5));
-        e.addControlPoint(new Vector2D(0.5,1), new Vector2D(0.5, 1));
+        e.addControlPoint(new Vector2D(0, 1), new Vector2D(0.5, 0));
+        e.addControlPoint(new Vector2D(1, 1), new Vector2D(0.5, 0.5));
+        e.addControlPoint(new Vector2D(0.5, 1), new Vector2D(0.5, 1));
 
         e.setEdgeType(Edge.EdgeType.BEZIER);
 
@@ -99,7 +100,7 @@ public class EdgeTest {
     }
 
     @Test
-    public void edgeIdTest(){
+    public void edgeIdTest() {
         Structure s = new DirectedGraph();
 
     }

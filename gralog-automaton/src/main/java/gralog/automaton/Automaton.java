@@ -1,13 +1,15 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton;
 
+import gralog.plugins.XmlName;
 import gralog.preferences.Configuration;
-import gralog.structure.*;
-import gralog.plugins.*;
+import gralog.structure.Edge;
+import gralog.structure.Structure;
+import gralog.structure.StructureDescription;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -44,14 +46,17 @@ public class Automaton extends Structure<State, Transition> {
         lastiteration.addAll(start);
 
         while (!lastiteration.isEmpty()) {
-
-            for (State s : lastiteration)
-                for (Edge e : s.getIncidentEdges())
-                    if (e instanceof Transition)
-                        if (((Transition) e).symbol.equals("")) // epsilon transition
-                            if (!result.contains((State) e.getTarget()))
+            for (State s : lastiteration) {
+                for (Edge e : s.getIncidentEdges()) {
+                    if (e instanceof Transition) {
+                        if (((Transition) e).symbol.equals("")) { // epsilon transition
+                            if (!result.contains((State) e.getTarget())) {
                                 currentiteration.add((State) e.getTarget());
-
+                            }
+                        }
+                    }
+                }
+            }
             result.addAll(currentiteration);
             HashSet<State> temp = lastiteration;
             lastiteration = currentiteration;

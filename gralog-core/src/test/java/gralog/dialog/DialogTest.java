@@ -3,38 +3,36 @@ package gralog.dialog;
 import gralog.algorithm.StringAlgorithmParameter;
 import gralog.generator.Cycle;
 import gralog.rendering.GralogColor;
-import gralog.structure.Edge;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class DialogTest {
 
-    private Dialog dialog = new Dialog();
     ArrayList<String> parameters = new ArrayList<String>();
     Structure c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
     Highlights highlights = new Highlights();
+    private Dialog dialog = new Dialog();
 
-    public DialogTest(){
+    public DialogTest() {
         ArrayList<Vertex> initialList = new ArrayList<Vertex>();
         for (int i = 0; i < 10; i++)
             initialList.add(c20.getVertexById(i));
         highlights.selectAll(initialList);
-        assertEquals(20,c20.getVertices().size());
-        assertEquals(20,c20.getEdges().size());
+        assertEquals(20, c20.getVertices().size());
+        assertEquals(20, c20.getEdges().size());
 
         initLists();
-        }
+    }
 
     @Test
-    public void initLists(){
+    public void initLists() {
         // create lists via filter
         parameters.add("ALL");
         parameters.add("VERTICES");
@@ -42,7 +40,7 @@ public class DialogTest {
         parameters.add("<");
         parameters.add("5");
         parameters.add("P5");
-        dialog.filter(parameters,c20,highlights);
+        dialog.filter(parameters, c20, highlights);
         parameters.clear();
 
         parameters.add("ALL");
@@ -51,12 +49,12 @@ public class DialogTest {
         parameters.add(">");
         parameters.add("4");
         parameters.add("Q5");
-        dialog.filter(parameters,c20,highlights);
+        dialog.filter(parameters, c20, highlights);
         parameters.clear();
     }
 
     @Test
-    public void testSort(){
+    public void testSort() {
 
         initLists();
 
@@ -109,7 +107,7 @@ public class DialogTest {
     }
 
     @Test
-    public void testFilter(){
+    public void testFilter() {
 
         // filter all vertices fill white WHITELIST
         parameters.add("ALL");
@@ -153,32 +151,32 @@ public class DialogTest {
     }
 
     @Test
-    public void testFilterNoEdges(){
+    public void testFilterNoEdges() {
         highlights.clearSelection();
         parameters.add("SELECTED");
         parameters.add("EDGES");
         parameters.add("LISTEMPTY");
-        dialog.filter(parameters,c20,highlights);
+        dialog.filter(parameters, c20, highlights);
 
     }
 
     @Test
-    public void testConnect(){
+    public void testConnect() {
         initLists();
         parameters.add("P5"); // p5 : 0, 1, 2, 3, 4
         parameters.add("Q5"); // q5 : 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
         parameters.add("i+2");
-        dialog.connect2ListsFormula(parameters,c20);
-        for (int i = 0;i<=0;i++)
-            assertTrue(c20.getVertexById(i).getOutgoingNeighbours().contains(c20.getVertexById(i+5+2)));
+        dialog.connect2ListsFormula(parameters, c20);
+        for (int i = 0; i <= 0; i++)
+            assertTrue(c20.getVertexById(i).getOutgoingNeighbours().contains(c20.getVertexById(i + 5 + 2)));
         parameters.clear();
 
         parameters.add("P5");
         parameters.add("Q5");
         parameters.add("i^2");
-        dialog.connect2ListsFormula(parameters,c20);
-        for (int i = 0;i<=0;i++)
-            assertTrue(c20.getVertexById(i).getOutgoingNeighbours().contains(c20.getVertexById(i*i+5)));
+        dialog.connect2ListsFormula(parameters, c20);
+        for (int i = 0; i <= 0; i++)
+            assertTrue(c20.getVertexById(i).getOutgoingNeighbours().contains(c20.getVertexById(i * i + 5)));
         parameters.clear();
 
     }

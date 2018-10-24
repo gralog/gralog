@@ -1,15 +1,29 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.algorithm;
 
-import gralog.structure.*;
-import gralog.algorithm.*;
-import gralog.automaton.*;
+
+import gralog.algorithm.Algorithm;
+import gralog.algorithm.AlgorithmDescription;
+import gralog.algorithm.BreadthFirstSearchTree;
+import gralog.algorithm.StronglyConnectedComponents;
+import gralog.automaton.BuechiAutomaton;
+import gralog.automaton.State;
+import gralog.automaton.Transition;
 import gralog.progresshandler.ProgressHandler;
+import gralog.structure.Edge;
+import gralog.structure.Vertex;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+
+/**
+ *
+ *
+ *
+ */
 
 @AlgorithmDescription(
     name = "Language-Emptiness",
@@ -27,8 +41,8 @@ public class BuechiLanguageEmptiness extends Algorithm {
 
         HashMap<State, HashMap<Vertex, Vertex>> startStateReach = new HashMap();
         HashMap<State, HashMap<Vertex, Edge>> startStateReachEdges = new HashMap();
-        for (Vertex v : s.getVertices())
-            if (v instanceof State)
+        for (Vertex v : s.getVertices()) {
+            if (v instanceof State) {
                 if (((State) v).startState) {
                     HashMap<Vertex, Vertex> reach = new HashMap<>();
                     HashMap<Vertex, Edge> reachEdges = new HashMap<>();
@@ -36,37 +50,49 @@ public class BuechiLanguageEmptiness extends Algorithm {
                     startStateReach.put((State) v, reach);
                     startStateReachEdges.put((State) v, reachEdges);
                 }
+            }
+        }
 
         for (ArrayList<Vertex> component : verticesInComponent) {
             // only proceed with components that contain a final state
             State componentFinalState = null;
-            for (Vertex v : component)
-                if (v instanceof State)
-                    if (((State) v).finalState)
+            for (Vertex v : component) {
+                if (v instanceof State) {
+                    if (((State) v).finalState) {
                         componentFinalState = (State) v;
-            if (componentFinalState == null)
+                    }
+                }
+            }
+            if (componentFinalState == null) {
                 continue;
+            }
 
             // only proceed with components that contain a cycle
             boolean componentHasCycle = false;
-            if (component.size() > 1)
+            if (component.size() > 1) {
                 componentHasCycle = true;
-            else {
+            } else {
                 Vertex v = component.get(0);
-                for (Edge e : v.getIncidentEdges())
-                    if (e.getSource() == v && e.getTarget() == v)
+                for (Edge e : v.getIncidentEdges()) {
+                    if (e.getSource() == v && e.getTarget() == v) {
                         componentHasCycle = true;
+                    }
+                }
             }
-            if (!componentHasCycle)
+            if (!componentHasCycle) {
                 continue;
+            }
 
             // only proceed with components that are reachable from a start state
             State componentStartState = null;
-            for (Entry<State, HashMap<Vertex, Vertex>> start : startStateReach.entrySet())
-                if (start.getValue().containsKey(componentFinalState))
+            for (Entry<State, HashMap<Vertex, Vertex>> start : startStateReach.entrySet()) {
+                if (start.getValue().containsKey(componentFinalState)) {
                     componentStartState = start.getKey();
-            if (componentStartState == null)
+                }
+            }
+            if (componentStartState == null) {
                 continue;
+            }
 
             // select a path from the start state to the final state
             String path = "";
@@ -74,8 +100,9 @@ public class BuechiLanguageEmptiness extends Algorithm {
             HashMap<Vertex, Edge> componentStartStateReachEdges = startStateReachEdges.get(componentStartState);
             for (Vertex it = componentFinalState; it != null; it = componentStartStateReach.get(it)) {
                 Transition e = (Transition) componentStartStateReachEdges.get(it);
-                if (e != null)
+                if (e != null) {
                     path = e.symbol + path;
+                }
             }
 
             // find a cycle that contains the final state
@@ -88,24 +115,27 @@ public class BuechiLanguageEmptiness extends Algorithm {
 
             for (Edge e : componentFinalState.getIncidentEdges()) {
                 Vertex other = e.getSource();
-                if (other == componentFinalState)
+                if (other == componentFinalState) {
                     other = e.getTarget();
+                }
 
                 if ((e.getSource() == other && e.getTarget() == componentFinalState)
-                    || (e.getSource() == componentFinalState && e.getTarget() == other && !e.isDirected))
+                    || (e.getSource() == componentFinalState && e.getTarget() == other && !e.isDirected)) {
                     if (finalStateReach.containsKey(other)) {
                         lastCycleMember = other;
                         lastCycleEdge = (Transition) e;
                         break;
                     }
+                }
             }
 
             // TODO: Check if lastCycleEdge can be null.
             String cycle = lastCycleEdge.symbol;
             for (Vertex it = lastCycleMember; it != null; it = finalStateReach.get(it)) {
                 Transition e = (Transition) finalStateReachEdges.get(it);
-                if (e != null)
+                if (e != null) {
                     cycle = e.symbol + cycle;
+                }
             }
 
             return path + "(" + cycle + ")ω";
@@ -114,12 +144,13 @@ public class BuechiLanguageEmptiness extends Algorithm {
         return null;
     }
 
-    public Object run(BuechiAutomaton s, AlgorithmParameters p,
+    public Object run(BuechiAutomaton s, gralog.algorithm.AlgorithmParameters p,
         Set<Object> selection, ProgressHandler onprogress) {
         String result = languageEmptiness(s);
-        if (result == null)
+        if (result == null) {
             return "Language is empty";
-        else
+        } else {
             return result;
+        }
     }
 }
