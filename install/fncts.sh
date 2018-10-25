@@ -216,11 +216,13 @@ install_python_part()
 	if [ -L "$PYTHON_LIB_DIR/Gralog.py" ]; then
 	    unlink $PYTHON_LIB_DIR/Gralog.py
 	fi
-	ln -s gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py $PYTHON_LIB_DIR/Gralog.py
+	echo Installing Gralog.py to $PYTHON_LIB_DIR
+	cp -f gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py "$PYTHON_LIB_DIR"/Gralog.py
     else
 	if [ -L "$PYTHON_LIB_DIR/Gralog.py" ]; then
 	    sudo unlink $PYTHON_LIB_DIR/Gralog.py
 	fi
-	sudo ln -s gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py $PYTHON_LIB_DIR/Gralog.py
+	echo Installing Gralog.py to $PYTHON_LIB_DIR
+	sudo cp -f gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py "$PYTHON_LIB_DIR"/Gralog.py
     fi
 }
