@@ -302,7 +302,7 @@ def edgeId(edge):
 
 
 def extractIdFromProperties(stringFromGralog):
-	gPrint("stringFromGralog: " + stringFromGralog);
+#	gPrint("stringFromGralog: " + stringFromGralog);
 	strings = stringFromGralog.split(",");
 	for string in strings:
 
@@ -387,7 +387,8 @@ class Graph:
 			except:
 				e=Edge(self,currId);
 		else:
-			gPrint(" i'm dealing with an edge");
+			gPrint("Error (getEdgeOrNew()): the argument \
+                        is neither an edge id nor a pair of vertices.");
 		return e;
 
 	def termToEdge(self,term):
@@ -395,7 +396,6 @@ class Graph:
 		eid = int(endpoints[0]);
 
 		e = self.edges[eid];
-		gPrint("e: " + str(e));
 		e.sourceProperties(endpoints[0]);
 		sourceId = int(endpoints[1]);
 		source = self.getVertexOrNew(sourceId);
@@ -614,13 +614,14 @@ class Graph:
 			# endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
 		return edges;
 
-	def generateRandomGraph(self,vertexCount):
+        # creates a random Erdos-Reny graph with n vertices and edge probability p
+	def generateRandomGraph(self,vertexCount,p):
 		height = int(math.log(vertexCount,2)) + 1;
 		parts = 2;
 		adder = 1;
 		vertices = [];
 		coordinates = [];
-		gPrint("height: " + str(height) + " parts: " + str(parts));
+#		gPrint("height: " + str(height) + " parts: " + str(parts));
 		for x in range(height*2-1):
 			for y in range(parts-1):
 				coordinates.append((3*y*height/parts,3*x));
@@ -628,15 +629,15 @@ class Graph:
 				adder = -1;
 			parts += adder;
 
-
+                nxgraph = nx.fast_gnp_random_graph(vertexCount,p)
+                nxEdges = nxgraph.edges()
 		for x in range(vertexCount):
 			vertices.append(self.addVertex(coordinates[x]));
 		for x in vertices:
 			for y in vertices:
 				if x < y:
-					r = randint(0,3);
-					if r == 3:
-						x.connect(y);
+                                        if (x,y) in nxEdges:
+                                                x.connect(y);
 
 
 
@@ -900,7 +901,6 @@ class Graph:
 			return line;
 
 
-
 	def getAllVertices(self):
 		#return: list of Vertex objects with id
 
@@ -917,6 +917,8 @@ class Graph:
 				vertexList.append(v);
 		return vertexList;
 
+        def getVertices(self):
+                return(self.getAllVertices())
 
 	def getAllEdges(self):
 		#return: list of fully sourced Edge objects with fully sourced endpoint Vertices
@@ -933,7 +935,6 @@ class Graph:
 		for i in range(len(endpointList)):
 			term = endpointList[i].rstrip();
 			term = term[1:-1];
-			gPrint("term: " + term);
 			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
@@ -941,6 +942,9 @@ class Graph:
 			# endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
 		return edges;
 
+        def getEdges(self):
+                return(self.getAllEdges())
+        
 	###start: best for private use!
 
 	def getNeighbours(self,vertex):
@@ -1013,7 +1017,6 @@ class Graph:
 		for i in range(len(endpointList)):
 			term = endpointList[i].rstrip();
 			term = term[1:-1];
-			gPrint("term: " + term);
 			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
@@ -1036,7 +1039,6 @@ class Graph:
 		for i in range(len(endpointList)):
 			term = endpointList[i].rstrip();
 			term = term[1:-1];
-			gPrint("term: " + term);
 			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
@@ -1058,7 +1060,6 @@ class Graph:
 		for i in range(len(endpointList)):
 			term = endpointList[i].rstrip();
 			term = term[1:-1];
-			gPrint("term: " + term);
 			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
@@ -1081,7 +1082,6 @@ class Graph:
 		for i in range(len(endpointList)):
 			term = endpointList[i].rstrip();
 			term = term[1:-1];
-			gPrint("term: " + term);
 			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);

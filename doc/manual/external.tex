@@ -578,14 +578,24 @@ Returns a string representation of the graph. Several formats are supported: Gra
 This is useful in at least the following two scenarios: 1: to take the graph Gralog has given, and import it into an external library for processing there (such as NetworkX, or TODO: another popular library). 2: to copy the contents of one graph into another Gralog graph. \hyperref[getGraphExample]{See an example here}.
 
 
-\item[getAllVertices()]\emph{returns}
+\item[getVertices()]\emph{returns}
   \texttt{list of Vertex objects}
 
 Returns a list of all the vertices in the graph.
 
-\item[getAllEdges()]\emph{returns}
+\item[getAllVertices()]
+
+  The same as \texttt{getVertices()}.
+
+
+\item[getEdges()]\emph{returns}
   \texttt{list of Edge objects}
 
+\item[getAllEdges()]
+
+  The same as \texttt{getEdges()}.
+
+  
 Returns a list of all the edges graph.
 
 \item[\textbf{*}getNeighbours(Vertex: vertex)]\emph{returns} \texttt{list of Vertex objects}\quad \hyperref[getNeighboursClass]{\textit{See proper method}}
