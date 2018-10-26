@@ -18,14 +18,15 @@ read_arguments()
 	PYTHON_LIB_DIR="$(python -c 'import site; print(site.getsitepackages()[0])')"    
 	PYTHON_TO_SYSTEM=1
     elif [ $# == 1 ]; then
-	if [ ${"$1":0:2} == '-u' ]; then
+	par1 = $1
+	if [ ${par1:0:2} == '-u' ]; then
 	    # DEST_DIR remains default, install python packages to the user directory
 	    PYTHON_LIB_DIR="$(python -m site --user-site)"
 	    PYTHON_TO_SYSTEM=0
-	elif [ ${"$1":0:2} == '-n' ]; then
+	elif [ ${par1:0:2} == '-n' ]; then
 	    # DEST_DIR remains default, do not install python packages
 	    DO_INSTALL_PYTHON=0
-	elif [ ${"$1":0:1} == '-' ]; then
+	elif [ ${par1:0:1} == '-' ]; then
 	    echo "Wrong parameters."
 	    print_usage
 	    exit 1
