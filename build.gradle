@@ -10,20 +10,20 @@ subprojects {
 
   apply plugin: 'java'
 
-  // Set up the style checker that checks indentation, naming
-  // conventions, etc.
-  apply plugin: 'checkstyle'
-  checkstyle {
-    configFile = rootProject.file('config/checkstyle.xml')
-    configProperties = [samedir: rootProject.file('config')]
-    toolVersion = '7.2'
-  }
-  // Do not check generated files for programming style.
-  checkstyleMain {
-    exclude '**/parser/*Scanner.java'
-    exclude '**/parser/*ScannerToken.java'
-    exclude '**/parser/*Parser.java'
-  }
+  // // Set up the style checker that checks indentation, naming
+  // // conventions, etc.
+  // apply plugin: 'checkstyle'
+  // checkstyle {
+  //   configFile = rootProject.file('config/checkstyle.xml')
+  //   configProperties = [samedir: rootProject.file('config')]
+  //   toolVersion = '7.8.1'
+  // }
+  // // Do not check generated files for programming style.
+  // checkstyleMain {
+  //   exclude '**/parser/*Scanner.java'
+  //   exclude '**/parser/*ScannerToken.java'
+  //   exclude '**/parser/*Parser.java'
+  // }
 }
 
 check.dependsOn(subprojects.check)

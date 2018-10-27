@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.modallogic.formula;
 
@@ -19,33 +19,28 @@ public class ModalLogicFormulaTest {
     private static KripkeStructure structure;
     private static World a, b, c, d;
 
+    // d(P,R) ->  a(P)  ->  b(P)
+    //             |__> c(Q)
     @BeforeClass
     public static void setUpClass() {
         structure = new KripkeStructure();
 
-        a = addVertex("P");
-        b = addVertex("P");
-        c = addVertex("Q");
-        d = addVertex("P,R");
+        a = addVertex("P","a");
+        b = addVertex("P","b");
+        c = addVertex("Q", "c");
+        d = addVertex("P,R", "d");
 
-        addEdge(a, b);
-        addEdge(a, c);
-        addEdge(d, a);
+
+        structure.addEdge(a, b);
+        structure.addEdge(a, c);
+        structure.addEdge(d, a);
     }
 
-    private static World addVertex(String propositions) {
-        World v = structure.createVertex();
+    private static World addVertex(String propositions, String label) {
+        World v = structure.addVertex();
         v.propositions = propositions;
-        structure.addVertex(v);
+        v.setLabel(label);
         return v;
-    }
-
-    private static Action addEdge(World source, World target) {
-        Action e = structure.createEdge(null);
-        e.setSource(source);
-        e.setTarget(target);
-        structure.addEdge(e);
-        return e;
     }
 
     @Test
@@ -97,7 +92,13 @@ public class ModalLogicFormulaTest {
         ModalLogicFormula formula = new ModalLogicDiamond(new ModalLogicProposition("P"));
         // All nodes where P is true on at least one successor.
         HashSet<World> expResult = new HashSet<>(Arrays.asList(a, d));
-        assertEquals(expResult, formula.interpretation(structure));
+        HashSet<Integer> expResultId = new HashSet<>();
+        for (var w : expResult)
+            expResultId.add(w.id);
+        HashSet<Integer> resultId = new HashSet<>();
+        for (var w : formula.interpretation(structure))
+            resultId.add(w.id);
+        assertEquals(expResultId, resultId);
     }
 
     @Test

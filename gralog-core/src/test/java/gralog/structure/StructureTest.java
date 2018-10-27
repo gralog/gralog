@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
@@ -7,16 +7,17 @@ import gralog.generator.Cycle;
 import gralog.generator.CylindricalGrid;
 import gralog.plugins.PluginManager;
 import gralog.rendering.GralogColor;
-import gralog.rendering.Vector2D;
-import static gralog.structure.StructureMatchers.equalsStructure;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.transform.stream.StreamResult;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.BeforeClass;
+
+import static gralog.structure.StructureMatchers.equalsStructure;
+import static org.junit.Assert.assertThat;
 
 public class StructureTest {
 
@@ -45,7 +46,7 @@ public class StructureTest {
             StringWriter writer = new StringWriter();
             structure.writeToStream(new StreamResult(writer));
             Structure structureRead = Structure.loadFromStream(
-                new ByteArrayInputStream(writer.toString().getBytes("UTF-8")));
+                    new ByteArrayInputStream(writer.toString().getBytes("UTF-8")));
             assertThat(structureRead, equalsStructure(structure));
         } catch (Exception ex) {
             throw new AssertionError(ex);

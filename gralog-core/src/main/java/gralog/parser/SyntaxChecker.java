@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.parser;
 
@@ -9,12 +9,6 @@ import gralog.algorithm.ParseError;
  */
 public abstract class SyntaxChecker {
 
-    public static class Result {
-
-        public String hint;
-        public boolean syntaxCorrect;
-    };
-
     /**
      * Performs a syntax check on the given string.
      *
@@ -23,21 +17,9 @@ public abstract class SyntaxChecker {
      */
     public abstract SyntaxChecker.Result check(String toCheck);
 
-    /**
-     * This function should parse the given formula and in case of an error it
-     * should throw an exception or return null. Returning a non-null value is
-     * interpreted as success.
-     *
-     * @param <T> The type produced by the parser.
-     */
-    @FunctionalInterface
-    public interface Parser<T> {
-
-        T test(String formula) throws Exception;
-    }
 
     protected SyntaxChecker.Result checkWith(String toCheck,
-        Parser parser) {
+                                             Parser parser) {
         SyntaxChecker.Result result = new SyntaxChecker.Result();
         result.hint = "";
         result.syntaxCorrect = false;
@@ -53,5 +35,24 @@ public abstract class SyntaxChecker {
             }
         }
         return result;
+    }
+
+    /**
+     * This function should parse the given formula and in case of an error it
+     * should throw an exception or return null. Returning a non-null value is
+     * interpreted as success.
+     *
+     * @param <T> The type produced by the parser.
+     */
+    @FunctionalInterface
+    public interface Parser<T> {
+
+        T test(String formula) throws Exception;
+    }
+
+    public static class Result {
+
+        public String hint;
+        public boolean syntaxCorrect;
     }
 }

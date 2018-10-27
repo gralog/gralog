@@ -1,11 +1,15 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.preferences;
 
 import gralog.rendering.GralogColor;
 
-import java.io.*;
-import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -21,11 +25,11 @@ public final class Preferences {
     private static final java.util.Properties PROPERTIES = new java.util.Properties();
     private static final String PREFERENCE_PATH = buildPreferencePath();
 
-    public static Properties getProperties(){
-        return PROPERTIES;
+    private Preferences() {
     }
 
-    private Preferences() {
+    public static Properties getProperties() {
+        return PROPERTIES;
     }
 
     private static String buildPreferencePath() {
@@ -46,31 +50,30 @@ public final class Preferences {
 
         try (FileInputStream in = new FileInputStream(path + "/" + FILENAME)) {
             PROPERTIES.load(in);
-            String id =PROPERTIES.getProperty("pref_id");
-            if(id == null || !id.equals(VERSION))
-            {
+            String id = PROPERTIES.getProperty("pref_id");
+            if (id == null || !id.equals(VERSION)) {
                 in.close();
                 createDefaultPrefs(path);
             }
         } catch (FileNotFoundException e) {
             createDefaultPrefs(path);
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return path;
     }
 
-    private static void createDefaultPrefs(String path){
+    private static void createDefaultPrefs(String path) {
         System.out.println("No config was found - add default prefs");
-        InputStream def  = Preferences.class.getClassLoader().getResourceAsStream("default_preferences.txt");
+        InputStream def = Preferences.class.getClassLoader().getResourceAsStream("default_preferences.txt");
 
-        try{
+        try {
             Files.copy(def, Paths.get(path + "/" + FILENAME), StandardCopyOption.REPLACE_EXISTING);
             def.close();
             try (FileInputStream in = new FileInputStream(path + "/" + FILENAME)) {
                 PROPERTIES.load(in);
             }
-        }catch (IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
@@ -110,7 +113,7 @@ public final class Preferences {
     public static Integer getInteger(String key, int defaultValue) {
         try {
             return Integer.parseInt(
-                PROPERTIES.getProperty(key, Integer.toString(defaultValue)));
+                    PROPERTIES.getProperty(key, Integer.toString(defaultValue)));
         } catch (NumberFormatException e) {
             return defaultValue;
         }
@@ -130,19 +133,19 @@ public final class Preferences {
      * BOOLEAN *
      ***********
      * */
-    public static Boolean getBoolean(Class c, String key, boolean defaultValue){
+    public static Boolean getBoolean(Class c, String key, boolean defaultValue) {
         return getBoolean(classKey(c, key), defaultValue);
     }
 
-    public static Boolean getBoolean(String key, boolean defaultValue){
+    public static Boolean getBoolean(String key, boolean defaultValue) {
         return Boolean.parseBoolean(PROPERTIES.getProperty(key, Boolean.toString(defaultValue)));
     }
 
-    public static void setBoolean(Class c, String key, boolean b){
+    public static void setBoolean(Class c, String key, boolean b) {
         setBoolean(classKey(c, key), b);
     }
 
-    public static void setBoolean(String key, boolean b){
+    public static void setBoolean(String key, boolean b) {
         PROPERTIES.setProperty(key, Boolean.toString(b));
         flush();
     }
@@ -153,16 +156,18 @@ public final class Preferences {
      * FYLE *
      **********
      * */
-    
-    public static File getFile(String key, String defaultValue){
+
+    public static File getFile(String key, String defaultValue) {
         String fileName = PROPERTIES.getProperty(key, defaultValue);
-        File f = new File(PROPERTIES.getProperty(key, defaultValue));
+        File f = new File(PROPERTIES.getProperty(key, defaultValue)); // todo:
+        // in tests (PreferenceWindowtest), the key "MainWindow_pipingFile" does not exist
+        // and an error occurs for new File(null)
         return f;
-         
+
     }
 
-   
-    public static void setFile(String key, File file){
+
+    public static void setFile(String key, File file) {
         PROPERTIES.setProperty(key, file.getPath());
         flush();
     }
@@ -172,17 +177,19 @@ public final class Preferences {
      * DOUBLE *
      **********
      * */
-    public static Double getDouble(Class c, String key, double defaultValue){
+    public static Double getDouble(Class c, String key, double defaultValue) {
         return getDouble(classKey(c, key), defaultValue);
     }
-    public static Double getDouble(String key, double defaultValue){
+
+    public static Double getDouble(String key, double defaultValue) {
         return Double.parseDouble(PROPERTIES.getProperty(key, Double.toString(defaultValue)));
     }
 
-    public static void setDouble(Class c, String key, double d){
+    public static void setDouble(Class c, String key, double d) {
         setDouble(classKey(c, key), d);
     }
-    public static void setDouble(String key, double d){
+
+    public static void setDouble(String key, double d) {
         PROPERTIES.setProperty(key, Double.toString(d));
         flush();
     }
@@ -192,17 +199,19 @@ public final class Preferences {
      * COLOR *
      *********
      * */
-    public static GralogColor getColor(Class c, String key, GralogColor defaultValue){
+    public static GralogColor getColor(Class c, String key, GralogColor defaultValue) {
         return getColor(classKey(c, key), defaultValue);
     }
-    public static GralogColor getColor(String key, GralogColor defaultValue){
+
+    public static GralogColor getColor(String key, GralogColor defaultValue) {
         return GralogColor.parseColor(PROPERTIES.getProperty(key, defaultValue.toHtmlString()));
     }
 
-    public static void setColor(Class c, String key, GralogColor color){
+    public static void setColor(Class c, String key, GralogColor color) {
         setColor(classKey(c, key), color);
     }
-    public static void setColor(String key, GralogColor c){
+
+    public static void setColor(String key, GralogColor c) {
         PROPERTIES.setProperty(key, c.toHtmlString());
         flush();
     }
@@ -219,5 +228,18 @@ public final class Preferences {
             }
         } catch (IOException e) {
         }
+    }
+
+    /*
+     *********
+     * PRINT PROPS*
+     *********
+     * */
+    public static void printProps() {
+        System.out.println("\u001B[31m PRINTING PROPS \u001B[0m");
+        for (var pn : PROPERTIES.stringPropertyNames()) {
+            System.out.println(pn + " " + PROPERTIES.getProperty(pn));
+        }
+
     }
 }

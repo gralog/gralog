@@ -1,36 +1,38 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.generator;
 
 import gralog.algorithm.AlgorithmParameters;
-import gralog.parser.IntSyntaxChecker;
 import gralog.algorithm.StringAlgorithmParameter;
+import gralog.parser.IntSyntaxChecker;
 import gralog.preferences.Preferences;
-import gralog.rendering.Vector2D;
-import gralog.structure.*;
+import gralog.structure.Structure;
+import gralog.structure.UndirectedGraph;
+import gralog.structure.Vertex;
+
 import java.util.ArrayList;
 
 /**
  *
  */
 @GeneratorDescription(
-    name = "Grid",
-    text = "Generates a Grid-Graph",
-    url = "https://en.wikipedia.org/wiki/Lattice_graph"
+        name = "Grid",
+        text = "Generates a Grid-Graph",
+        url = "https://en.wikipedia.org/wiki/Lattice_graph"
 )
 public class Grid extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-            "Size",
-            Preferences.getInteger(this.getClass(), "size", 5).toString(),
-            new IntSyntaxChecker(1, Integer.MAX_VALUE),
-            "");
+                "Size",
+                Preferences.getInteger(this.getClass(), "size", 5).toString(),
+                new IntSyntaxChecker(1, Integer.MAX_VALUE),
+                "");
     }
 
     @Override
-    public Structure generate(AlgorithmParameters p)  {
+    public Structure generate(AlgorithmParameters p) {
         int n = Integer.parseInt(((StringAlgorithmParameter) p).parameter);
         Preferences.setInteger(this.getClass(), "size", n);
 

@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
@@ -12,8 +12,8 @@ public class ParseError extends Exception {
 
     public ParseError(String message, String inputString, int errorIndex) {
         super("Parse error: " + message + " at: "
-            + inputString.substring(0, errorIndex) + " <HERE> "
-            + inputString.substring(errorIndex));
+                + inputString.substring(0, errorIndex) + " <HERE> "
+                + inputString.substring(errorIndex));
         this.inputString = inputString;
         this.errorIndex = errorIndex;
     }

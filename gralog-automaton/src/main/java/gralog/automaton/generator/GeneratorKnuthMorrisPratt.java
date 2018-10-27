@@ -1,16 +1,17 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.generator;
 
 import gralog.algorithm.AlgorithmParameters;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import gralog.automaton.*;
+import gralog.automaton.Automaton;
+import gralog.automaton.State;
+import gralog.automaton.Transition;
 import gralog.generator.Generator;
 import gralog.generator.GeneratorDescription;
-import gralog.rendering.Vector2D;
 import gralog.structure.Structure;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -59,18 +60,21 @@ public class GeneratorKnuthMorrisPratt extends Generator {
         for (int i = 0; i < str.length(); i++) {
             // make transitions for state i (depending on which states the NFA would
             // be in after reading w := str[0]..str[i-1]
-            for (int j = 0; j < current.size(); j++)
+            for (int j = 0; j < current.size(); j++) {
                 if (current.get(j)) {
                     // current[j] == true  iff  the NFA can be in j after reading w
                     delta.get(i).put(str.charAt(j), j + 1);
-                    if (str.charAt(j) == str.charAt(i))
+                    if (str.charAt(j) == str.charAt(i)) {
                         next.set(j + 1, true);
+                    }
                 }
+            }
 
             current = next;
             next = new ArrayList<>();
-            for (int f = 0; f < n + 1; f++)
+            for (int f = 0; f < n + 1; f++) {
                 next.add(false);
+            }
             next.set(0, true);
         }
 
@@ -85,10 +89,11 @@ public class GeneratorKnuthMorrisPratt extends Generator {
             State statei = states.get(i);
             for (int a = 0; a < alphabet.length(); a++) {
                 int j;
-                if (delta.get(i).containsKey(alphabet.charAt(a)))
+                if (delta.get(i).containsKey(alphabet.charAt(a))) {
                     j = delta.get(i).get(alphabet.charAt(a));
-                else
+                } else {
                     j = 0; // no transition for a => back to start
+                }
 
                 State statej = states.get(j);
                 Transition trans = result.createEdge(statei, statej);

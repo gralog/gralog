@@ -6,10 +6,10 @@
 
 .consoleTextStyle, .consoleTextStyle .viewport, .consoleTextStyle .content{
 	/*-fx-control-inner-background: transparent;*/
-	-fx-background-color:transparent;;
-
-
-	-fx-padding: 1px 0px -0px -0px;
+	-fx-background-color:transparent;
+}
+.consoleTextStyle{
+    -fx-padding: -5px 0px -15px -0px;
 }
 .text-area .arrow-button  {
     -fx-opacity: 0.0;

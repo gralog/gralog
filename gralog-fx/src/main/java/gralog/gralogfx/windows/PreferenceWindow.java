@@ -127,12 +127,14 @@ public class PreferenceWindow extends Stage {
 
                     Button button = (Button)node;
                     this.pipingFile = Preferences.getFile(node.getId(),null);
-                    String simpleName = this.pipingFile.getName();
-                    button.setText(simpleName);
-                    button.setOnAction(e -> {
-                        this.newPipingFile = this.pipingSourceFileChooser.showOpenDialog(this);
-                        button.setText(newPipingFile.getName());
-                    });
+                    if (pipingFile != null) {
+                        String simpleName = this.pipingFile.getName();
+                        button.setText(simpleName);
+                        button.setOnAction(e -> {
+                            this.newPipingFile = this.pipingSourceFileChooser.showOpenDialog(this);
+                            button.setText(newPipingFile.getName());
+                        });
+                    }
                 }
 
             }
