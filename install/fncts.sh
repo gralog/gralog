@@ -18,15 +18,15 @@ read_arguments()
 	PYTHON_LIB_DIR="$(python -c 'import site; print(site.getsitepackages()[0])')"    
 	PYTHON_TO_SYSTEM=1
     elif [ $# == 1 ]; then
-	par1 = $1
-	if [ ${par1:0:2} == '-u' ]; then
+	parameter=$1
+	if [ ${parameter:0:2} == '-u' ]; then
 	    # DEST_DIR remains default, install python packages to the user directory
 	    PYTHON_LIB_DIR="$(python -m site --user-site)"
 	    PYTHON_TO_SYSTEM=0
-	elif [ ${par1:0:2} == '-n' ]; then
+	elif [ ${parameter:0:2} == '-n' ]; then
 	    # DEST_DIR remains default, do not install python packages
 	    DO_INSTALL_PYTHON=0
-	elif [ ${par1:0:1} == '-' ]; then
+	elif [ ${parameter:0:1} == '-' ]; then
 	    echo "Wrong parameters."
 	    print_usage
 	    exit 1
@@ -213,17 +213,17 @@ install_python_part()
 
     cd ../..
     
-    if [ PYTHON_TO_SYSTEM ]; then
-	if [ -L "$PYTHON_LIB_DIR/Gralog.py" ]; then
-	    unlink $PYTHON_LIB_DIR/Gralog.py
-	fi
-	echo Installing Gralog.py to $PYTHON_LIB_DIR
-	cp -f gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py "$PYTHON_LIB_DIR"/Gralog.py
-    else
+    if [ "$PYTHON_TO_SYSTEM" ]; then
 	if [ -L "$PYTHON_LIB_DIR/Gralog.py" ]; then
 	    sudo unlink $PYTHON_LIB_DIR/Gralog.py
 	fi
 	echo Installing Gralog.py to $PYTHON_LIB_DIR
 	sudo cp -f gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py "$PYTHON_LIB_DIR"/Gralog.py
+    else
+	if [ -L "$PYTHON_LIB_DIR/Gralog.py" ]; then
+	    unlink $PYTHON_LIB_DIR/Gralog.py
+	fi
+	echo Installing Gralog.py to $PYTHON_LIB_DIR
+	cp -f gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py "$PYTHON_LIB_DIR"/Gralog.py
     fi
 }
