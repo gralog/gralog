@@ -133,6 +133,11 @@ install_gralog()
 	exit 1
     fi    
     echo "Built Gralog."
+    
+    if ! [ -d build/dist ]; then
+	echo "Compiling Gralog failed, terminating."
+	exit 1
+    fi
     cd build/dist
 
 
