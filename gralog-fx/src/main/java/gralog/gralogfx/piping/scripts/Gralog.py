@@ -931,10 +931,8 @@ class Graph:
 
 		endpointList = endpointList.split("#");
 		edges = [];
-                gPrint("endpointList: " + str(endpointList))
                 if len(endpointList) == 1 and endpointList[-1] == "\n":
                         endpointList=[]
-                gPrint("endpointList: " + str(endpointList))
 		for i in range(len(endpointList)):
 			term = endpointList[i].rstrip();
 			term = term[1:-1];
