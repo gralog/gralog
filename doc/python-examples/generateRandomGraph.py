@@ -6,6 +6,6 @@ from Gralog import *
 
 g = Graph()
 
-g.generateRandomGraph(10,0.5)
+g.generateRandomGraph(50,0.09)
 
 gPrint(str(len(g.getVertices())))

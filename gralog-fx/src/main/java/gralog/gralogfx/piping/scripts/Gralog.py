@@ -616,27 +616,43 @@ class Graph:
 
         # creates a random Erdos-Reny graph with n vertices and edge probability p
 	def generateRandomGraph(self,vertexCount,p):
-		height = int(math.log(vertexCount,2)) + 1;
-		parts = 2;
-		adder = 1;
+                if not isinstance(vertexCount,int):
+                        gPrint("Cannot generate a random graph, wrong parameter: \
+                                               vertex number must be an int.")
+                if vertexCount < 0:
+                        gPrint("Cannot generate a random graph, wrong parameter: \
+                                               vertex number cannot be less than 0.")
+                if not isinstance(p,float) or p < 0 or p > 1.0:
+                        gPrint("Cannot generate a random graph, wrong parameter: \
+                                               probability of an edge must be a float in [0,1].")
+                if vertexCount == 0:
+                        return
 		vertices = [];
-		coordinates = [];
-#		gPrint("height: " + str(height) + " parts: " + str(parts));
-		for x in range(height*2-1):
-			for y in range(parts-1):
-				coordinates.append((3*y*height/parts,3*x));
-			if parts > height:
-				adder = -1;
-			parts += adder;
+		coordinates = dict();
+
+                for id in range(vertexCount):
+                       # gPrint("x: " + str(10*math.cos(2*id*math.pi/vertexCount)))
+                        gPrint("y: " + str(10*math.sin(2*id*math.pi/vertexCount)))
+                        coordinates[id] = (10*math.cos(2*id*math.pi/vertexCount),
+                                           10*math.sin(2*id*math.pi/vertexCount))
 
                 nxgraph = nx.fast_gnp_random_graph(vertexCount,p)
+                d = dict()
+                id = 0
+                for nxV in nxgraph.nodes():
+                      d[id] =  nxV
+                      id += 1
+		                
                 nxEdges = nxgraph.edges()
+                gPrint("nxEdges: " + str(len(nxEdges)))
+                id = 0
 		for x in range(vertexCount):
-			vertices.append(self.addVertex(coordinates[x]));
+			vertices.append(self.addVertex(id,coordinates[id]));
+                        id += 1
 		for x in vertices:
 			for y in vertices:
-				if x < y:
-                                        if (x,y) in nxEdges:
+				if x.getId() < y.getId():
+                                        if (d[x.getId()],d[y.getId()]) in nxEdges:
                                                 x.connect(y);
 
 
