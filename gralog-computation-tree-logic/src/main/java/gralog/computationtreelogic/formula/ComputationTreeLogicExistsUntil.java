@@ -1,11 +1,16 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.computationtreelogic.formula;
 
 import gralog.modallogic.KripkeStructure;
 import gralog.modallogic.World;
-import gralog.structure.*;
+import gralog.structure.Edge;
+
 import java.util.HashSet;
+
+/**
+ *
+ */
 
 public class ComputationTreeLogicExistsUntil extends ComputationTreeLogicFormula {
 
@@ -31,12 +36,16 @@ public class ComputationTreeLogicExistsUntil extends ComputationTreeLogicFormula
         // a) satisfy <before> AND
         // b) have sucessors inside the current <result> set
         while (!lastIteration.isEmpty()) {
-            for (World l : lastIteration)
-                for (Edge e : l.getIncidentEdges())
-                    if (e.getTarget() == l)
+            for (World l : lastIteration) {
+                for (Edge e : l.getIncidentEdges()) {
+                    if (e.getTarget() == l) {
                         if (beforeresult.contains((World) e.getSource())
-                            && !result.contains((World) e.getSource()))
+                                && !result.contains((World) e.getSource())) {
                             nextIteration.add((World) e.getSource());
+                        }
+                    }
+                }
+            }
 
             result.addAll(nextIteration);
             HashSet<World> temp = lastIteration;

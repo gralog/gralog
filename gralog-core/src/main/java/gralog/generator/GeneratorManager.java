@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.generator;
 
@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 import static gralog.plugins.PluginManager.instantiateClass;
 
 /**
@@ -13,11 +14,10 @@ import static gralog.plugins.PluginManager.instantiateClass;
  */
 public final class GeneratorManager {
 
-    private GeneratorManager() {
-    }
-
     private static final HashMap<String, String> GENERATOR_NAMES = new HashMap<>();
     private static final HashMap<String, GeneratorDescription> GENERATOR_DESCRIPTIONS = new HashMap<>();
+    private GeneratorManager() {
+    }
 
     public static void registerGeneratorClass(Class<?> aClass, String classname) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))

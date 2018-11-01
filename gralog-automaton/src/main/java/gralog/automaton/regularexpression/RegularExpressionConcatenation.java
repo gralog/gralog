@@ -1,10 +1,12 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.regularexpression;
 
-import gralog.structure.*;
-import gralog.automaton.*;
+import gralog.automaton.Automaton;
+import gralog.automaton.State;
+import gralog.automaton.Transition;
 import gralog.rendering.Vector2D;
+import gralog.structure.Vertex;
 
 /**
  *
@@ -49,21 +51,25 @@ public class RegularExpressionConcatenation extends RegularExpression {
         b.move(bOffset);
 
         // Connect the final states of A to initial states of B
-        for (Vertex v : a.getVertices())
+        for (Vertex v : a.getVertices()) {
             if (((State) v).finalState) {
-                for (Vertex w : b.getVertices())
+                for (Vertex w : b.getVertices()) {
                     if (((State) w).startState) {
                         Transition t = a.createEdge((State) v, (State) w);
                         t.symbol = ""; // epsilon transition
                         a.addEdge(t);
                     }
+                }
             }
+        }
 
         // disable final states of A and initial states of B
-        for (Vertex v : a.getVertices())
+        for (Vertex v : a.getVertices()) {
             ((State) v).finalState = false;
-        for (Vertex w : b.getVertices())
+        }
+        for (Vertex w : b.getVertices()) {
             ((State) w).startState = false;
+        }
 
         // make a the union of a and b
         a.addVertices(b.getVertices());

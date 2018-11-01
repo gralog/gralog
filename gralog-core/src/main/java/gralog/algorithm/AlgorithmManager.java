@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
@@ -15,24 +15,23 @@ import static gralog.plugins.PluginManager.instantiateClass;
  */
 public final class AlgorithmManager {
 
-    private AlgorithmManager() {
-    }
-
     // for algorithms and export, have different maps for each class they are applicable to
     private static final HashMap<Class, HashMap<String, String>> ALGORITHM_NAMES
-        = new HashMap<>();
+            = new HashMap<>();
     private static final HashMap<Class, HashMap<String, AlgorithmDescription>> ALGORITHM_DESCRIPTIONS
-        = new HashMap<>();
+            = new HashMap<>();
+    private AlgorithmManager() {
+    }
 
     public static void registerAlgorithmClass(Class<?> aClass, String className) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
             return;
         Method[] methods = new Method[0];
 
-        try{
+        try {
             methods = aClass.getMethods();
-        }catch(NoClassDefFoundError e){
-            System.out.println("WARNING: algorithm class def not found..."+className);
+        } catch (NoClassDefFoundError e) {
+            System.out.println("WARNING: algorithm class def not found..." + className);
 
             return;
         }
@@ -72,7 +71,7 @@ public final class AlgorithmManager {
     }
 
     public static Algorithm instantiateAlgorithm(Class<?> forClass,
-        String identifier) throws Exception {
+                                                 String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
             if (ALGORITHM_NAMES.containsKey(c)) {
                 HashMap<String, String> algos = ALGORITHM_NAMES.get(c);
@@ -83,7 +82,7 @@ public final class AlgorithmManager {
     }
 
     public static AlgorithmDescription getAlgorithmDescription(Class<?> forClass,
-        String identifier) throws Exception {
+                                                               String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
             if (ALGORITHM_DESCRIPTIONS.containsKey(c)) {
                 HashMap<String, AlgorithmDescription> algos = ALGORITHM_DESCRIPTIONS.get(c);

@@ -1,22 +1,24 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.generator;
 
 import gralog.algorithm.AlgorithmParameters;
-import gralog.parser.IntSyntaxChecker;
 import gralog.algorithm.StringAlgorithmParameter;
+import gralog.parser.IntSyntaxChecker;
 import gralog.preferences.Preferences;
-import gralog.rendering.Vector2D;
-import gralog.structure.*;
+import gralog.structure.DirectedGraph;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
+
 import java.util.ArrayList;
 
 /**
  *
  */
 @GeneratorDescription(
-    name = "Cylindrical Grid",
-    text = "Generates a Cylindrical Grid (the directed equivalent of an undirected grid)",
-    url = ""
+        name = "Cylindrical Grid",
+        text = "Generates a Cylindrical Grid (the directed equivalent of an undirected grid)",
+        url = ""
 )
 public class CylindricalGrid extends Generator {
 
@@ -24,10 +26,10 @@ public class CylindricalGrid extends Generator {
     @Override
     public AlgorithmParameters getParameters() {
         return new StringAlgorithmParameter(
-            "Size",
-            Preferences.getInteger(this.getClass(), "size", 5).toString(),
-            new IntSyntaxChecker(1, Integer.MAX_VALUE),
-            "");
+                "Size",
+                Preferences.getInteger(this.getClass(), "size", 5).toString(),
+                new IntSyntaxChecker(1, Integer.MAX_VALUE),
+                "");
     }
 
     @Override
@@ -42,8 +44,8 @@ public class CylindricalGrid extends Generator {
             Vertex temp = result.addVertex();
             first.add(temp);
             temp.setCoordinates(
-                Math.sin(0 * 2 * Math.PI / n) * 2 * (j + 2),
-                Math.cos(0 * 2 * Math.PI / n) * 2 * (j + 2)
+                    Math.sin(0 * 2 * Math.PI / n) * 2 * (j + 2),
+                    Math.cos(0 * 2 * Math.PI / n) * 2 * (j + 2)
             );
             if (j > 0)
                 result.addEdge(result.createEdge(first.get(j - 1), temp));
@@ -57,8 +59,8 @@ public class CylindricalGrid extends Generator {
                 Vertex temp = result.addVertex();
                 next.add(temp);
                 temp.setCoordinates(
-                    Math.sin(i * 2 * Math.PI / n) * 2 * (j + 2),
-                    Math.cos(i * 2 * Math.PI / n) * 2 * (j + 2)
+                        Math.sin(i * 2 * Math.PI / n) * 2 * (j + 2),
+                        Math.cos(i * 2 * Math.PI / n) * 2 * (j + 2)
                 );
                 if (lasttemp != null)
                     if (i % 2 == 0)

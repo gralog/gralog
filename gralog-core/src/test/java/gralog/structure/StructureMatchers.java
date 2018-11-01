@@ -1,17 +1,14 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.hamcrest.Description;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+
+import java.util.*;
+
 import static org.junit.Assert.*;
 
 public final class StructureMatchers {
@@ -30,12 +27,12 @@ public final class StructureMatchers {
             @Override
             protected boolean matchesSafely(Vertex w) {
                 return v.label.equals(w.label)
-                    && Double.doubleToLongBits(v.radius) == Double.doubleToLongBits(w.radius)
-                    && v.fillColor.equals(w.fillColor)
-                    && v.strokeWidth == w.strokeWidth
-                    && v.textHeight == w.textHeight
-                    && v.strokeColor.equals(w.strokeColor)
-                    && v.coordinates.equals(w.coordinates);
+                        && Double.doubleToLongBits(v.radius) == Double.doubleToLongBits(w.radius)
+                        && v.fillColor.equals(w.fillColor)
+                        && v.strokeWidth == w.strokeWidth
+                        && v.textHeight == w.textHeight
+                        && v.strokeColor.equals(w.strokeColor)
+                        && v.coordinates.equals(w.coordinates);
             }
 
             @Override
@@ -118,8 +115,8 @@ public final class StructureMatchers {
                 for (Vertex v : sV) {
                     final Vertex w = tVertexMap.get(v.label);
                     assertThat("Adjacency sets",
-                        v.getNeighbours(),
-                        equalsVertexSet(w.getNeighbours()));
+                            v.getNeighbours(),
+                            equalsVertexSet(w.getNeighbours()));
                 }
 
                 return true;

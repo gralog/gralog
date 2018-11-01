@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.exportfilter;
 
@@ -13,13 +13,13 @@ import java.util.Arrays;
  */
 public class IndentedWriter {
 
-    private int indent = 0;
     private final int spacesPerIndent;
     private final String lineFeed;
     private final Writer out;
+    private int indent = 0;
 
     /**
-     * @param out The stream in which to write
+     * @param out             The stream in which to write
      * @param spacesPerIndent The number of spaces per indentation step
      */
     public IndentedWriter(Writer out, int spacesPerIndent) {
