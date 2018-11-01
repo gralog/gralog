@@ -3,7 +3,9 @@
 package gralog.generator;
 
 import gralog.algorithm.AlgorithmParameters;
+import gralog.algorithm.PathParameters;
 import gralog.algorithm.StringAlgorithmParameter;
+import gralog.algorithm.RandomGraphParameters;
 import gralog.parser.IntSyntaxChecker;
 import gralog.preferences.Preferences;
 import gralog.structure.DirectedGraph;
@@ -32,13 +34,15 @@ public class Path extends Generator {
     }
 
     @Override
-    public Structure generate(AlgorithmParameters p) {
-        int n = Integer.parseInt(((StringAlgorithmParameter) p).parameter);
-        Preferences.setInteger(this.getClass(), "vertices", n);
+    public Structure generate(AlgorithmParameters param) {
+        int n = Integer.parseInt(((PathParameters)param).parameters.get(0));
+        Preferences.setInteger(this.getClass(), "pathVertexNumber", n);
+        boolean directed = Boolean.parseBoolean(((PathParameters)param).parameters.get(1));
+        Preferences.setBoolean(this.getClass(), "directed", directed);
 
         Structure result;
 
-        if (p.directed)
+        if (directed)
             result = new DirectedGraph();
         else
             result = new UndirectedGraph();

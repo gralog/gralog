@@ -3,12 +3,16 @@
 package gralog.generator;
 
 import gralog.algorithm.AlgorithmParameters;
+import gralog.algorithm.GridParameters;
 import gralog.algorithm.StringAlgorithmParameter;
+import gralog.algorithm.StringAlgorithmParametersList;
+import gralog.parser.SyntaxChecker;
 import gralog.parser.IntSyntaxChecker;
 import gralog.preferences.Preferences;
 import gralog.structure.DirectedGraph;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
+
 
 import java.util.ArrayList;
 
@@ -25,50 +29,56 @@ public class CylindricalGrid extends Generator {
     // null means it has no parameters
     @Override
     public AlgorithmParameters getParameters() {
-        return new StringAlgorithmParameter(
-                "Size",
-                Preferences.getInteger(this.getClass(), "size", 5).toString(),
-                new IntSyntaxChecker(1, Integer.MAX_VALUE),
-                "");
+
+        ArrayList<String> initialValues = new ArrayList<>(2);
+        String length = Preferences.getInteger(this.getClass(), "gridlength", 5).toString();
+        String width= Preferences.getInteger(this.getClass(), "gridwidth", 6).toString();
+        initialValues.set(0,length);
+        initialValues.set(1,width);
+
+        return new GridParameters(initialValues);
     }
+
 
     @Override
     public Structure generate(AlgorithmParameters p) {
-        int n = Integer.parseInt(((StringAlgorithmParameter) p).parameter);
-        Preferences.setInteger(this.getClass(), "size", n);
+        int length = Integer.parseInt(((GridParameters)p).parameters.get(0));
+        Preferences.setInteger(this.getClass(), "gridlength", length);
+        int width= Integer.parseInt(((GridParameters)p).parameters.get(1));
+        Preferences.setInteger(this.getClass(), "gridwidth", width);
 
         DirectedGraph result = new DirectedGraph();
 
         ArrayList<Vertex> first = new ArrayList<>();
-        for (int j = 0; j < n; j++) {
+        for (int j = 0; j < length; j++) {
             Vertex temp = result.addVertex();
             first.add(temp);
             temp.setCoordinates(
-                    Math.sin(0 * 2 * Math.PI / n) * 2 * (j + 2),
-                    Math.cos(0 * 2 * Math.PI / n) * 2 * (j + 2)
+                    Math.sin(0 * 2 * Math.PI / length) * 2 * (j + 2),
+                    Math.cos(0 * 2 * Math.PI / length) * 2 * (j + 2)
             );
             if (j > 0)
-                result.addEdge(result.createEdge(first.get(j - 1), temp));
+                result.addEdge(first.get(j - 1), temp);
         }
 
         ArrayList<Vertex> last = first;
-        for (int i = 1; i < n; i++) {
+        for (int i = 1; i < width; i++) {
             ArrayList<Vertex> next = new ArrayList<>();
             Vertex lasttemp = null;
-            for (int j = 0; j < n; j++) {
+            for (int j = 0; j < length; j++) {
                 Vertex temp = result.addVertex();
                 next.add(temp);
                 temp.setCoordinates(
-                        Math.sin(i * 2 * Math.PI / n) * 2 * (j + 2),
-                        Math.cos(i * 2 * Math.PI / n) * 2 * (j + 2)
+                        Math.sin(i * 2 * Math.PI / length) * 2 * (j + 2),
+                        Math.cos(i * 2 * Math.PI / length) * 2 * (j + 2)
                 );
                 if (lasttemp != null)
                     if (i % 2 == 0)
-                        result.addEdge(result.createEdge(lasttemp, temp));
+                        result.addEdge(lasttemp, temp);
                     else
-                        result.addEdge(result.createEdge(temp, lasttemp));
+                        result.addEdge(temp, lasttemp);
 
-                result.addEdge(result.createEdge(last.get(j), temp));
+                result.addEdge(last.get(j), temp);
 
                 lasttemp = temp;
             }
@@ -76,8 +86,8 @@ public class CylindricalGrid extends Generator {
             last = next;
         }
 
-        for (int i = 0; i < n; i++)
-            result.addEdge(result.createEdge(last.get(i), first.get(i)));
+        for (int i = 0; i < length; i++)
+            result.addEdge(last.get(i), first.get(i));
 
         return result;
     }
