@@ -12,6 +12,8 @@ import gralog.structure.UndirectedGraph;
 import gralog.structure.Vertex;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -25,11 +27,9 @@ public class Grid extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
-        ArrayList<String> initialValues = new ArrayList<>(2);
         String length = Preferences.getInteger(this.getClass(), "gridlength", 5).toString();
         String width= Preferences.getInteger(this.getClass(), "gridwidth", 6).toString();
-        initialValues.set(0,length);
-        initialValues.set(1,width);
+        List<String> initialValues = Arrays.asList(length,width);
 
         return new GridParameters(initialValues);
 

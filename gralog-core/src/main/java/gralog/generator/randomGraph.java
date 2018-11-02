@@ -11,29 +11,25 @@ import gralog.structure.Structure;
 import gralog.structure.UndirectedGraph;
 import gralog.structure.Vertex;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 
 /**
  *
  */
 @GeneratorDescription(
-        name = "Grid",
-        text = "Generates a Grid-Graph",
-        url = "https://en.wikipedia.org/wiki/Lattice_graph"
+        name = "Random graph",
+        text = "Generates a random graph according to the Erdős–Rényi model",
+        url = "https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model"
 )
 public class randomGraph extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
-        ArrayList<String> initialValues = new ArrayList<>(3);
+
         String n = Preferences.getInteger(this.getClass(), "randomGraphVertexNumber", 15).toString();
         String p = Preferences.getDouble(this.getClass(), "edgeProbability", 0.5).toString();
         String directed = Preferences.getBoolean(this.getClass(), "directed", false).toString();
-        initialValues.set(0, n);
-        initialValues.set(1, p);
-        initialValues.set(2, directed);
+        List<String> initialValues = Arrays.asList(n,p,directed);
 
         return new RandomGraphParameters(initialValues);
 
