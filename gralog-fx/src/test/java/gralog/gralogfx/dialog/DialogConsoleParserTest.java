@@ -1,5 +1,6 @@
 package gralog.gralogfx.dialog;
 
+import gralog.algorithm.GridParameters;
 import gralog.algorithm.StringAlgorithmParameter;
 import gralog.dialog.Dialog;
 import gralog.dialog.DialogAction;
@@ -16,6 +17,8 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import static gralog.dialog.DialogAction.*;
 import static gralog.dialog.DialogState.DONE;
@@ -48,8 +51,9 @@ public class DialogConsoleParserTest {
         // generate some graphs
 
         c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
-        cylGrid = (new CylindricalGrid()).generate(new StringAlgorithmParameter("", "5"));
-        grid5x5 = (new Grid()).generate(new StringAlgorithmParameter("", "5"));
+        List<String> parameters = Arrays.asList("6","5");
+        cylGrid = (new CylindricalGrid()).generate(new GridParameters(parameters));
+        grid5x5 = (new Grid()).generate(new GridParameters(parameters));
         wheel5 = (new Wheel()).generate(new StringAlgorithmParameter("", "5"));
     }
 
