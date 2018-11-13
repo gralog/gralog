@@ -1,9 +1,5 @@
 // Avoid cryptic errors by checking the Java version early. We need Java >= 10.
-if (JavaVersion.current().isJava11())
-  throw new GradleException(
-    'ERROR: To compile gralog, please install or switch to the Java Development Kit (JDK) 10. JDK 11 is not supported yet.')
-
-if(!JavaVersion.current().isJava10())
+if(!JavaVersion.current().isJava10Compatible())
   throw new GradleException(
     'ERROR: To compile gralog, please install or switch to the Java Development Kit (JDK) 10 or later.')
 

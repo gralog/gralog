@@ -2,7 +2,6 @@ defaultTasks 'run'
 
 apply plugin: 'java'
 
-
 subprojects {
   repositories {
     mavenCentral()
@@ -32,6 +31,7 @@ test.dependsOn(subprojects.test)
 
 task run
 
+
 // gralog-core provides some helper classes for the unit tests,
 // so every other subproject depends on this.
 configure(subprojects.findAll {it.name != 'gralog-core'}) {
@@ -40,8 +40,18 @@ configure(subprojects.findAll {it.name != 'gralog-core'}) {
   }
 }
 
+def currentOS = org.gradle.internal.os.OperatingSystem.current()
+def platform
+if (currentOS.isWindows()) {
+  platform = 'win'
+} else if (currentOS.isLinux()) {
+  platform = 'linux'
+} else if (currentOS.isMacOsX()) {
+  platform = 'mac'
+}
 //If you want to include libraries for every module, do it here
 subprojects {
+
   // All subprojects use junit and hamcrest for their tests.
   dependencies {
     //includes all libraries found in the lib folder
@@ -49,6 +59,11 @@ subprojects {
     compile 'org.reflections:reflections:0.9.11'
     compile 'uk.com.robust-it:cloning:1.9.10'
     compile group: 'net.objecthunter', name: 'exp4j', version: '0.4.8'
+    compile "org.openjfx:javafx-base:11:${platform}"
+    compile "org.openjfx:javafx-graphics:11:${platform}"
+    compile "org.openjfx:javafx-controls:11:${platform}"
+    compile "org.openjfx:javafx-fxml:11:${platform}"
+    compile "org.openjfx:javafx-web:11:${platform}"
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'junit:junit:4.12'
   }
@@ -104,7 +119,7 @@ project(':gralog-fx') {
   // This subproject contains the main class.
   jar {
     manifest {
-      attributes 'Main-Class': 'gralog.gralogfx.MainWindow'
+      attributes 'Main-Class': 'gralog.gralogfx.RunGralog'
     }
   }
 }
