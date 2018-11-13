@@ -3,6 +3,8 @@ if(!JavaVersion.current().isJava10Compatible())
   throw new GradleException(
     'ERROR: To compile gralog, please install or switch to the Java Development Kit (JDK) 10 or later.')
 
+print "Java version: "
+println JavaVersion.current()
 
 include 'gralog-automaton'
 include 'gralog-computation-tree-logic'
