@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
@@ -9,9 +9,9 @@ import gralog.parser.SyntaxChecker;
  */
 public class StringAlgorithmParameter extends AlgorithmParameters {
 
+    public final String label, explanation;
     public String parameter = "";
     private SyntaxChecker syntaxChecker = null;
-    private final String label, explanation;
 
     public StringAlgorithmParameter(String label, String initialValue) {
         this.label = label;
@@ -26,7 +26,7 @@ public class StringAlgorithmParameter extends AlgorithmParameters {
     }
 
     public StringAlgorithmParameter(String label, String initialValue,
-        SyntaxChecker syntaxChecker, String explanation) {
+                                    SyntaxChecker syntaxChecker, String explanation) {
         this.label = label;
         this.explanation = explanation;
         this.parameter = initialValue;

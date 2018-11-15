@@ -6,6 +6,7 @@ import os
 import networkx as nx
 import igraph as ig
 import xml.etree.cElementTree as ET
+import math
 
 # debugging = False;
 
@@ -36,7 +37,6 @@ class Vertex:
 				valueType = propVal[1];
 
 			except:
-				print("fuck")
 				pass;
 			try:
 
@@ -46,7 +46,7 @@ class Vertex:
 				castedValue = self.graph.castValueToType(val,typ);
 				self.properties[prop] = castedValue;
 			except:
-				print("fuckfuck");
+				pass;
 
 	def getId(self):
 		return self.id;
@@ -121,6 +121,10 @@ class Vertex:
 	def setProperty(self,otherProperty,value):
 		self.properties[otherProperty] = value;
 		self.graph.setVertexProperty(self.id,otherProperty,value);
+	def getProperty(self,otherProperty):
+		if not self.sourced:
+			self.source();
+		return self.properties[otherProperty];
 	def get(self,prop):
 		if not self.sourced:
 			self.source();
@@ -141,8 +145,8 @@ class Vertex:
 		return self.graph.deleteVertex(self);
 	def connect(self,v1,edgeId=-1):
 		return self.graph.addEdge(self,v1,edgeId);
-	def deleteAllEdgesBetween(self,vertex2):
-		self.graph.deleteAllEdgesBetween((v.id,vertex2));
+	def getAllEdgesBetween(self,vertex2):
+		return self.graph.getAllEdgesBetween((self.id,vertex2));
 	def source(self):
 		return self.graph.getVertex(self);
 	def __str__(self):
@@ -250,6 +254,10 @@ class Edge:
 	def setProperty(self,otherProperty,value):
 		self.properties[otherProperty] = value;
 		self.graph.setEdgeProperty(otherProperty,value);
+	def getProperty(self,otherProperty):
+		if not self.sourced:
+			self.source();
+		return self.properties[otherProperty];
 	def get(self,prop):
 		self.source();
 		return self.properties[prop];
@@ -294,7 +302,8 @@ def edgeId(edge):
 
 
 def extractIdFromProperties(stringFromGralog):
-	strings = stringFromGralog.split("|");
+#	gPrint("stringFromGralog: " + stringFromGralog);
+	strings = stringFromGralog.split(",");
 	for string in strings:
 
 		propVal = string.split("=");
@@ -356,9 +365,8 @@ class Graph:
 		if (isinstance(currId,int)):
 			try:
 				v=self.vertices[currId];
-				gPrint("i got my v: " + str(v));
 			except:
-				gPrint("kriminiy!" + str(currId));
+
 				v=Vertex(self,currId);
 
 			return v;
@@ -379,23 +387,25 @@ class Graph:
 			except:
 				e=Edge(self,currId);
 		else:
-			gPrint(" i'm dealing with an edge");
+			gPrint("Error (getEdgeOrNew()): the argument \
+                        is neither an edge id nor a pair of vertices.");
 		return e;
 
 	def termToEdge(self,term):
 		endpoints = term.split(",");
-		eid = self.extractIdFromProperties(endpoints[0]);
+		eid = int(endpoints[0]);
+
 		e = self.edges[eid];
 		e.sourceProperties(endpoints[0]);
-		sourceId = self.extractIdFromProperties(endpoints[1]);
+		sourceId = int(endpoints[1]);
 		source = self.getVertexOrNew(sourceId);
-		targetId = self.extractIdFromProperties(endpoints[2]);
+		targetId = int(endpoints[2]);
 		target = self.getVertexOrNew(targetId);
 
-		####possibly to remove
-		source.sourceProperties(endpoints[1]);
-		target.sourceProperties(endpoints[2]);
-		####fin
+		# ####possibly to remove
+		# source.sourceProperties(endpoints[1]);
+		# target.sourceProperties(endpoints[2]);
+		# ####fin
 
 		e.setSource(source);
 		e.setTarget(target);
@@ -581,15 +591,70 @@ class Graph:
 		# sys.stdin.readline();
 
 
-	def deleteAllEdgesBetween(self,vertexPair):
+	def getAllEdgesBetween(self,vertexPair):
 
-		line = "deleteAllEdgesBetween#"+str(self.id).rstrip() + "#";
+		line = "getAllEdgesBetween#"+str(self.id).rstrip() + "#";
 		line = line +edgeSplitter(vertexPair);
 
 		print line.rstrip();
 
 		sys.stdout.flush();
-		# sys.stdin.readline();
+		endpointList = sys.stdin.readline();
+
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			e = self.termToEdge(term);
+			if e != None:
+				edges.append(e);
+
+			# endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
+		return edges;
+
+        # creates a random Erdos-Reny graph with n vertices and edge probability p
+	def generateRandomGraph(self,vertexCount,p):
+                if not isinstance(vertexCount,int):
+                        gPrint("Cannot generate a random graph, wrong parameter: \
+                                               vertex number must be an int.")
+                if vertexCount < 0:
+                        gPrint("Cannot generate a random graph, wrong parameter: \
+                                               vertex number cannot be less than 0.")
+                if not isinstance(p,float) or p < 0 or p > 1.0:
+                        gPrint("Cannot generate a random graph, wrong parameter: \
+                                               probability of an edge must be a float in [0,1].")
+                if vertexCount == 0:
+                        return
+		vertices = [];
+		coordinates = dict();
+
+                for id in range(vertexCount):
+                       # gPrint("x: " + str(10*math.cos(2*id*math.pi/vertexCount)))
+                        gPrint("y: " + str(10*math.sin(2*id*math.pi/vertexCount)))
+                        coordinates[id] = (10*math.cos(2*id*math.pi/vertexCount),
+                                           10*math.sin(2*id*math.pi/vertexCount))
+
+                nxgraph = nx.fast_gnp_random_graph(vertexCount,p)
+                d = dict()
+                id = 0
+                for nxV in nxgraph.nodes():
+                      d[id] =  nxV
+                      id += 1
+		                
+                nxEdges = nxgraph.edges()
+                gPrint("nxEdges: " + str(len(nxEdges)))
+                id = 0
+		for x in range(vertexCount):
+			vertices.append(self.addVertex(id,coordinates[id]));
+                        id += 1
+		for x in vertices:
+			for y in vertices:
+				if x.getId() < y.getId():
+                                        if (d[x.getId()],d[y.getId()]) in nxEdges:
+                                                x.connect(y);
+
 
 
 	####end manilupative functions
@@ -657,8 +722,7 @@ class Graph:
 
 
 	def setEdgeColor(self,edge,colorHex=-1,colorRGB=-1):
-		e = self.getEdgeOrNew(edge);
-		e.properties["contour"] = contour;
+		
 
 		line = "setEdgeColor#"+str(self.id).rstrip() + "#";
 		line = line + edgeSplitter(edge);
@@ -853,7 +917,6 @@ class Graph:
 			return line;
 
 
-
 	def getAllVertices(self):
 		#return: list of Vertex objects with id
 
@@ -870,6 +933,8 @@ class Graph:
 				vertexList.append(v);
 		return vertexList;
 
+        def getVertices(self):
+                return(self.getAllVertices())
 
 	def getAllEdges(self):
 		#return: list of fully sourced Edge objects with fully sourced endpoint Vertices
@@ -882,7 +947,8 @@ class Graph:
 
 		endpointList = endpointList.split("#");
 		edges = [];
-
+                if len(endpointList) == 1 and endpointList[-1] == "\n":
+                        endpointList=[]
 		for i in range(len(endpointList)):
 			term = endpointList[i].rstrip();
 			term = term[1:-1];
@@ -893,6 +959,9 @@ class Graph:
 			# endpointList[i] = (int(endpoints[0]),int(endpoints[1]),int(endpoints[2]));
 		return edges;
 
+        def getEdges(self):
+                return(self.getAllEdges())
+        
 	###start: best for private use!
 
 	def getNeighbours(self,vertex):
@@ -957,13 +1026,15 @@ class Graph:
 		print line.rstrip();
 
 		sys.stdout.flush();
-		edgeIdList = (sys.stdin.readline()).split("#");
-		# print("endpointList: " , endpointList);
-		edges = [];
-		for i in range(len(edgeIdList)):
-			id = edgeIdList[i].rstrip();
+		endpointList = sys.stdin.readline();
 
-			e = self.getEdgeOrNew(id);
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
 
@@ -977,13 +1048,15 @@ class Graph:
 		print line.rstrip();
 
 		sys.stdout.flush();
-		edgeIdList = (sys.stdin.readline()).split("#");
-		# print("endpointList: " , endpointList);
-		edges = [];
-		for i in range(len(edgeIdList)):
-			id = edgeIdList[i].rstrip();
+		endpointList = sys.stdin.readline();
 
-			e = self.getEdgeOrNew(id);
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
 
@@ -996,15 +1069,18 @@ class Graph:
 		print line.rstrip();
 
 		sys.stdout.flush();
-		edgeIdList = (sys.stdin.readline()).split("#");
-		# print("endpointList: " , endpointList);
-		edges = [];
-		for i in range(len(edgeIdList)):
-			id = edgeIdList[i].rstrip();
+		endpointList = sys.stdin.readline();
 
-			e = self.getEdgeOrNew(id);
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
+
 		return edges;
 
 
@@ -1015,15 +1091,18 @@ class Graph:
 		print line.rstrip();
 
 		sys.stdout.flush();
-		edgeIdList = (sys.stdin.readline()).split("#");
-		# print("endpointList: " , endpointList);
-		edges = [];
-		for i in range(len(edgeIdList)):
-			id = edgeIdList[i].rstrip();
+		endpointList = sys.stdin.readline();
 
-			e = self.getEdgeOrNew(id);
+		endpointList = endpointList.split("#");
+		edges = [];
+
+		for i in range(len(endpointList)):
+			term = endpointList[i].rstrip();
+			term = term[1:-1];
+			e = self.termToEdge(term);
 			if e != None:
 				edges.append(e);
+
 		return edges;
 
 
@@ -1238,6 +1317,9 @@ class Graph:
 		return "todo: tgf"
 
 def gPrint(message):
+	if not message: # empty
+		print("")
+		sys.stdout.flush()
 	words = message.split(" ");
 	ret = "";
 	for word in words:

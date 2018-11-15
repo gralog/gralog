@@ -1,5 +1,4 @@
-
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 /**
  *
@@ -142,19 +141,21 @@ public class Piping extends Thread {
     }
 
     
-    public String getNextLine() throws Exception {
-        return this.in.readLine();
+    public String getNextLine() throws Exception{
+        try{
+            return this.in.readLine();
+        }catch(Exception e){
+            return null;
+        }
     }
     // private PipingMessageHandler eventHandler = 
 
    
     public boolean externalProcessInit(String fileName,String initMessage) {
 
-         System.out.println("creating new pipeline, it has pane: " + this.structurePane);
 
         
             
-        System.out.println("external yo");
         String line;
         String[] execStr = {fileName,initMessage};
         CountDownLatch execd = new CountDownLatch(1);
@@ -181,7 +182,6 @@ public class Piping extends Thread {
             this.sendMessageToConsole.accept("The file was unable to be run. Perhaps it needs to be given permission?",MessageToConsoleFlag.Error);
             return false;
         }
-        System.out.println("execd and shit");
         this.state=State.Inintialized;
 
         return true;
@@ -199,15 +199,12 @@ public class Piping extends Thread {
 
     public void profferSelectedObject(IMovable obj) {
         
-        System.out.println("profferin");
         this.selectedObject = obj;
         if (this.classSelectionIsWaitingFor != null && this.selectedObject.getClass() == this.classSelectionIsWaitingFor) {
             this.waitForSelection.countDown();
             CountDownLatch newLatch = new CountDownLatch(1);
             this.setSelectionCountDownLatch(newLatch);
 
-        }else {
-            System.out.println("sorry hoss try againe");
         }
 
         
@@ -244,7 +241,6 @@ public class Piping extends Thread {
                 this.sendMessageToConsole.accept("Wrong class type - not a valid integer!",MessageToConsoleFlag.Error);
             }
         }else {
-            System.out.println("soarry apl;");
             return false;
         }
         return false;
@@ -311,7 +307,6 @@ public class Piping extends Thread {
         // System.out.println("where the rank would be : " + externalCommandSegments[1]);
         try {
             Integer rank = Integer.parseInt(externalCommandSegments[1]);
-            System.out.println("parsd!: " + rank);
             return rank;
         }catch(Exception e) {
             return (Integer)null;
@@ -383,21 +378,16 @@ public class Piping extends Thread {
 
     public void run() {
 
-        System.out.println("run exeqing, it has pane: " + this.structurePane);
-
-        System.out.println("run exec and state is: " + this.state);
-        if (this.state == State.Null) {
+        if (this.state == State.Null){
             return;// "error: should not being execing as process has not been inintialized";
         }
         
-        System.out.println("140");
         String result = "";
 
 
 
         try {
             String firstMessage = this.getFirstMessage();
-            System.out.println("execing " + firstMessage);
             this.sendMessageToConsole.accept("Running external program",MessageToConsoleFlag.Notification);
 
             String line;
@@ -406,8 +396,6 @@ public class Piping extends Thread {
                 //send ack
                 out.println(firstMessage);
 
-            }else {
-                System.out.println("null first message");
             }
             // return "bla";
             this.setFirstMessage(null);
@@ -415,9 +403,7 @@ public class Piping extends Thread {
 
 
             
-            System.out.println("191");
-            while ((line = this.getNextLine()) != null) {//while python has not yet terminated
-                System.out.println("in while");
+            while ((line = this.getNextLine()) != null){//while python has not yet terminated
                 // System.out.println("current count: " + this.waitForPauseToBeHandled.getCount());
                 if (this.windowDoesCloseNow) {
                     return;
@@ -429,7 +415,6 @@ public class Piping extends Thread {
                     String[] externalCommandSegments = line.split("#");
                     
 
-                    System.out.println("current line: " + line);
 
                     if (this.pauseWasPressed) { //user input simulation
                         this.redrawMyStructurePanes();
@@ -449,7 +434,6 @@ public class Piping extends Thread {
                         
 
 
-                        System.out.println("paused");
                         boolean withRank;
 
                         Integer rank = this.extractRankFromPause(externalCommandSegments);
@@ -457,7 +441,6 @@ public class Piping extends Thread {
                         if (!withRank) {
                             rank = 0;
                         }
-                        System.out.println("withrank: " + withRank + " rank: " + rank);
                         
                         if (rank < this.skipPausesWithRankGreaterThanOrEqualTo) {
                             this.currentSkipValue = rank;
@@ -469,7 +452,6 @@ public class Piping extends Thread {
 
                             this.state = State.Paused;
                             
-                            System.out.println("ok it's been a paused");
 
                             this.waitForPauseToBeHandled.await();
                             if (this.windowDoesCloseNow) {
@@ -510,8 +492,7 @@ public class Piping extends Thread {
 
                         continue;
 
-                    }else if ((line = PipingMessageHandler.properGraphNames(line)) != null) {
-                        System.out.println("properGraphNames");
+                    }else if ((line = PipingMessageHandler.properGraphNames(line)) != null){
                         final String lineFinal = line;
                         CountDownLatch graphWasInstantiated = new CountDownLatch(1);
                         Platform.runLater(
@@ -520,7 +501,6 @@ public class Piping extends Thread {
                                 this.pairLocalIdAndStructure(this.nextStructurePaneId,thisPane.getStructure());
                                 this.pairLocalIdAndStructurePane(this.nextStructurePaneId,thisPane);
                                 this.state = State.InProgress;
-                                // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
                                 out.println(this.nextStructurePaneId);
                                 this.nextStructurePaneId += 1;
                                 graphWasInstantiated.countDown();
@@ -546,13 +526,9 @@ public class Piping extends Thread {
                     }
                     
                     if (!currentCommand.didFail()) {
-                        System.out.println("handling");
-                        System.out.println("we're looking at " + currentCommand);
                         currentCommand.handle();
-                        System.out.println("handled");
                         String response;
                         if (! currentCommand.didFail() && (response = currentCommand.getResponse()) != null) {
-                            System.out.println("no error, response is: \"" + response + "\"");
                             this.out.println(response);
                         }
                     }
@@ -579,12 +555,10 @@ public class Piping extends Thread {
                         ); 
 
                         if (currentCommand.getResponse() != null) {
-                            System.out.println("given them tha ol response anyhoo");
                             this.out.println(currentCommand.getResponse());
                         }
                     
                         // this.out.println(currentCommand.getError().toString());
-                        System.out.println("we have no work left to do here");
                         this.state = State.Null;
                         this.redrawMyStructurePanes();
                         return;
@@ -597,17 +571,12 @@ public class Piping extends Thread {
             }
 
             if (line == null) {
-            	System.out.println("line is null");
                 this.makeNull();
-            }else {
-                System.out.println("line is not null rather: " + line);
             }
 
 
-            System.out.println("reqing redraw");
 
             this.redrawMyStructurePanes();
-            System.out.println("redr000");
             this.sendMessageToConsole.accept("External program terminated",MessageToConsoleFlag.Notification);
             
 
@@ -617,7 +586,6 @@ public class Piping extends Thread {
             return;// "error: there was an error";
         }
 
-        System.out.println("returning");
         
    
     }
@@ -632,7 +600,6 @@ public class Piping extends Thread {
         String wholeError = "";
         try {
             while (this.processErrors.ready() && ((line = this.processErrors.readLine())!= null)) {
-                System.out.println("we gone done read a line: " + line);
                 wholeError += line + "\n";
             }
         }catch(Exception e) {

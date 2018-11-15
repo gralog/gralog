@@ -54,7 +54,6 @@ public class ChooseFileForPipingWindow extends Stage {
             if(fileChooserWindow == null) {
                 System.err.println("The preference-fxml URL is null. Does the file exist?");
             }else {
-                System.out.println("naught null");
                 root = FXMLLoader.load(fileChooserWindow);
 
             }
@@ -99,9 +98,7 @@ public class ChooseFileForPipingWindow extends Stage {
     }
 
     private Button findButton(Parent root, String name) {
-        System.out.println("gettin the childrens" + getChildrenRecursively(root).size());
         for(Parent p : getChildrenRecursively(root)) {
-            System.out.println("Parent: " + p);
             if(p instanceof Button && p.getId().equals(name)) {
                 return (Button)p;
             }
@@ -144,12 +141,10 @@ public class ChooseFileForPipingWindow extends Stage {
                     ((ColorPicker)node).setValue(Color.rgb(c.r, c.g, c.b));
                 }
                 if(node instanceof Button) {
-                    System.out.println("lehishtamesh");
                     Button button = (Button)node;
                     this.pipingFile = Preferences.getFile(node.getId(),null);
                     String simpleName = this.pipingFile.getName();
                     button.setText(simpleName);
-                    System.out.println("we got from tha config: " + this.pipingFile.getName());
                     button.setOnAction(e -> {
                         this.newPipingFile = this.pipingSourceFileChooser.showOpenDialog(this);
                         button.setText(newPipingFile.getName());

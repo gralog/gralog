@@ -1,9 +1,10 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.regularexpression;
 
-import gralog.automaton.*;
-import gralog.rendering.Vector2D;
+import gralog.automaton.Automaton;
+import gralog.automaton.State;
+import gralog.automaton.Transition;
 
 /**
  *
@@ -25,18 +26,16 @@ public class RegularExpressionLetter extends RegularExpression {
     public Automaton thompsonConstruction(double scale) {
         Automaton a = new Automaton();
 
-        State s = a.createVertex();
+        State s = a.addVertex();
         s.startState = true;
-        s.coordinates = new Vector2D(0d, 0d);
-        a.addVertex(s);
+        s.setCoordinates(0d, 0d);
 
         State t = s;
         for (int i = 0; i < string.length(); i++) {
             s = t;
 
-            t = a.createVertex();
-            t.coordinates = new Vector2D(scale * i + scale, 0d);
-            a.addVertex(t);
+            t = a.addVertex();
+            t.setCoordinates(scale * i + scale, 0d);
 
             Transition e = a.createEdge(null);
             e.setSource(s);

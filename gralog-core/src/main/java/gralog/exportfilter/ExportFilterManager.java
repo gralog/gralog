@@ -1,6 +1,8 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.exportfilter;
+
+import gralog.structure.Structure;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -8,26 +10,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
 import static gralog.plugins.PluginManager.instantiateClass;
-import gralog.structure.Structure;
 
 /**
  *
  */
 public final class ExportFilterManager {
 
+    private static final HashMap<Class, HashMap<String, String>> EXPORT_FILTER_NAMES
+            = new HashMap<>();
+    private static final HashMap<Class, HashMap<String, String>> EXPORT_FILTER_EXTENSIONS
+            = new HashMap<>();
+    private static final HashMap<Class, HashMap<String, ExportFilterDescription>> EXPORT_FILTER_DESCRIPTIONS
+            = new HashMap<>();
     private ExportFilterManager() {
     }
 
-    private static final HashMap<Class, HashMap<String, String>> EXPORT_FILTER_NAMES
-        = new HashMap<>();
-    private static final HashMap<Class, HashMap<String, String>> EXPORT_FILTER_EXTENSIONS
-        = new HashMap<>();
-    private static final HashMap<Class, HashMap<String, ExportFilterDescription>> EXPORT_FILTER_DESCRIPTIONS
-        = new HashMap<>();
-
     public static void registerExportFilterClass(Class<?> aClass,
-        String className) throws Exception {
+                                                 String className) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
             return;
 
@@ -81,7 +82,7 @@ public final class ExportFilterManager {
     }
 
     public static ExportFilter instantiateExportFilter(Class<?> forClass,
-        String identifier) throws Exception {
+                                                       String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
             if (EXPORT_FILTER_NAMES.containsKey(c)) {
                 HashMap<String, String> filters = EXPORT_FILTER_NAMES.get(c);
@@ -92,7 +93,7 @@ public final class ExportFilterManager {
     }
 
     public static ExportFilter instantiateExportFilterByExtension(
-        Class<?> forClass, String identifier) throws Exception {
+            Class<?> forClass, String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
             if (EXPORT_FILTER_EXTENSIONS.containsKey(c)) {
                 HashMap<String, String> filters = EXPORT_FILTER_EXTENSIONS.get(c);
@@ -103,7 +104,7 @@ public final class ExportFilterManager {
     }
 
     public static ExportFilterDescription getExportFilterDescription(
-        Class<?> forClass, String identifier) throws Exception {
+            Class<?> forClass, String identifier) throws Exception {
         for (Class c = forClass; c != null; c = c.getSuperclass())
             if (EXPORT_FILTER_DESCRIPTIONS.containsKey(c)) {
                 HashMap<String, ExportFilterDescription> filters = EXPORT_FILTER_DESCRIPTIONS.get(c);

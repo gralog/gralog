@@ -1,20 +1,24 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
-import java.util.Scanner;
-import java.io.FileOutputStream;
-import java.io.File;
-import java.io.OutputStreamWriter;
-import java.util.Map;
-import java.util.List;
-import java.util.LinkedList;
-
-import gralog.structure.*;
-import gralog.rendering.*;
-import gralog.progresshandler.*;
 import gralog.exportfilter.ExportFilter;
+import gralog.progresshandler.ProgressHandler;
+import gralog.rendering.GralogColor;
+import gralog.structure.Edge;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+
+
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -31,7 +35,7 @@ public abstract class AlgorithmExternal extends Algorithm {
     boolean passStructureViaFile;
 
     protected AlgorithmExternal(ExportFilter exportFilter,
-        boolean passStructureViaFile, String... command) {
+                                boolean passStructureViaFile, String... command) {
         this.command = new LinkedList<>(Arrays.asList(command));
         this.exportFilter = exportFilter;
         this.passStructureViaFile = passStructureViaFile;
@@ -42,7 +46,8 @@ public abstract class AlgorithmExternal extends Algorithm {
             return command;
 
         File temp = File.createTempFile("gralog", "." + exportFilter.getDescription().fileExtension());
-        exportFilter.exportGraph(structure, new OutputStreamWriter(new FileOutputStream(temp), "UTF-8"), null);
+        exportFilter.exportGraph(structure,
+                new OutputStreamWriter(new FileOutputStream(temp), "UTF-8"), null);
         List<String> effectiveCommand = new LinkedList<>();
         for (String s : command)
             effectiveCommand.add(s.replaceAll("%u", "\"" + temp.getAbsolutePath() + "\""));
@@ -50,7 +55,7 @@ public abstract class AlgorithmExternal extends Algorithm {
     }
 
     public Object run(Structure structure, AlgorithmParameters params,
-        Set<Object> selection, ProgressHandler onProgress) throws Exception {
+                      Set<Object> selection, ProgressHandler onProgress) throws Exception {
         List<String> effectiveCommand = getEffectiveCommand(structure);
 
         ProcessBuilder pb = new ProcessBuilder(effectiveCommand);
@@ -154,15 +159,20 @@ public abstract class AlgorithmExternal extends Algorithm {
         edgeIndex.remove(parts[1]);
     }
 
-    private void handleCreateEdge(String[] parts, Map<String, Edge> edgeIndex, Map<String, Vertex> vertexIndex, Structure structure) throws Exception {
+    private void handleCreateEdge(String[] parts, Map<String, Edge> edgeIndex,
+                                  Map<String, Vertex> vertexIndex, Structure structure) throws Exception {
         if (parts.length < 4)
-            throw new Exception("External Algorithm tries to create edge, but did not supply 1 edge-handle and 2 vertex-handles");
+            throw new Exception("External Algorithm tries to create edge, "
+                    + "but did not supply 1 edge-handle and 2 vertex-handles");
         if (edgeIndex.containsKey(parts[1]))
-            throw new Exception("External Algorithm tries to create edge, but edge-handle \"" + parts[1] + "\" already exists");
+            throw new Exception("External Algorithm tries to create edge, but edge-handle \""
+                    + parts[1] + "\" already exists");
         if (!vertexIndex.containsKey(parts[2]))
-            throw new Exception("External Algorithm tries to create edge for nonexistent vertex \"" + parts[2] + "\"");
+            throw new Exception("External Algorithm tries to create edge for nonexistent vertex \""
+                    + parts[2] + "\"");
         if (!vertexIndex.containsKey(parts[3]))
-            throw new Exception("External Algorithm tries to create edge for nonexistent vertex \"" + parts[3] + "\"");
+            throw new Exception("External Algorithm tries to create edge for nonexistent vertex \""
+                    + parts[3] + "\"");
         Vertex v1 = vertexIndex.get(parts[2]);
         Vertex v2 = vertexIndex.get(parts[3]);
         Edge e = structure.createEdge(v1, v2);
@@ -182,7 +192,7 @@ public abstract class AlgorithmExternal extends Algorithm {
         Double x = Double.parseDouble(parts[2]);
         Double y = Double.parseDouble(parts[3]);
 
-        v.coordinates = new Vector2D(x, y);
+        v.setCoordinates(x, y);
     }
 
     private void handleSetVertexColor(String[] parts, Map<String, Vertex> vertexIndex) throws Exception {
@@ -212,7 +222,8 @@ public abstract class AlgorithmExternal extends Algorithm {
         v.label = label;
     }
 
-    private void handleDeleteVertex(String[] parts, Map<String, Vertex> vertexIndex, Structure structure) throws Exception {
+    private void handleDeleteVertex(String[] parts,
+                                    Map<String, Vertex> vertexIndex, Structure structure) throws Exception {
         if (parts.length < 2)
             throw new Exception("External Algorithm tries to delete vertex, but supplied no vertex-handle");
         if (!vertexIndex.containsKey(parts[1]))
@@ -222,13 +233,15 @@ public abstract class AlgorithmExternal extends Algorithm {
         vertexIndex.remove(parts[1]);
     }
 
-    private void handleCreateVertex(String[] parts, Map<String, Vertex> vertexIndex, Structure structure) throws Exception {
+    private void handleCreateVertex(String[] parts,
+                                    Map<String, Vertex> vertexIndex, Structure structure) throws Exception {
         if (parts.length < 2)
             throw new Exception("External Algorithm tries to create vertex, but supplied no vertex-handle");
         if (vertexIndex.containsKey(parts[1]))
-            throw new Exception("External Algorithm tries to create vertex, but handle \"" + parts[1] + "\" already exists");
+            throw new Exception("External Algorithm tries to create vertex, but handle \""
+                    + parts[1] + "\" already exists");
         Vertex v = structure.createVertex();
-        v.coordinates = new Vector2D(0d, 0d);
+        v.setCoordinates(0d, 0d);
         vertexIndex.put(parts[1], v);
         structure.addVertex(v);
     }

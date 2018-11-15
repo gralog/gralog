@@ -50,13 +50,13 @@ public class AddVertexCommand extends CommandForGralogToExecute {
 		// if (!this.stringId.equals(-1)) {
 		// 	this.vertex = this.structure.createVertex(Integer.parseInt(this.stringId));
 		// }
-		System.out.println("current vertices: " + this.structure.getVertices());
-		if (this.newVertexId == -1 || false) {
+
+		if (this.newVertexId == -1 || false){
 			this.vertex = this.structure.addVertex();
 		}else {
 			this.vertex = this.structure.addVertex(null,this.newVertexId);
 		}
-		System.out.println("and his id is: " + this.vertex.getId());
+
         this.vertex.setCoordinates(
             this.x,
             this.y
@@ -64,7 +64,7 @@ public class AddVertexCommand extends CommandForGralogToExecute {
 
 
         this.newVertexId = this.vertex.getId();
-        System.out.println("about to set response");
+
         this.setResponse(Integer.toString(this.vertex.getId()));
 
         // return v;

@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.npcompleteness.generator;
 
@@ -59,36 +59,31 @@ public class SatToColor3 extends Generator {
         cnf.getVariables(vars);
 
         // create the bottom gadget (triangle true-false-dummy)
-        Vertex trueVert = result.createVertex();
-        trueVert.coordinates = new Vector2D(8d, 14d);
+        Vertex trueVert = result.addVertex();
+        trueVert.setCoordinates(8d, 14d);
         trueVert.label = "true";
-        result.addVertex(trueVert);
 
-        Vertex falseVert = result.createVertex();
-        falseVert.coordinates = new Vector2D(12d, 14d);
+        Vertex falseVert = result.addVertex();
+        falseVert.setCoordinates(12d, 14d);
         falseVert.label = "false";
-        result.addVertex(falseVert);
         result.addEdge(result.createEdge(trueVert, falseVert));
 
-        Vertex dummyVert = result.createVertex();
-        dummyVert.coordinates = new Vector2D(10d, 12d);
-        result.addVertex(dummyVert);
+        Vertex dummyVert = result.addVertex();
+        dummyVert.setCoordinates(10d, 12d);
         result.addEdge(result.createEdge(trueVert, dummyVert));
         result.addEdge(result.createEdge(falseVert, dummyVert));
 
         // create gadgets for the literals
         int i = 0;
         for (String var : vars) {
-            Vertex pos = result.createVertex(); // the positive literal
-            pos.coordinates = new Vector2D(6d * i, 8d);
+            Vertex pos = result.addVertex(); // the positive literal
+            pos.setCoordinates(6d * i, 8d);
             pos.label = var;
-            result.addVertex(pos);
             posNode.put(var, pos);
 
-            Vertex neg = result.createVertex(); // the negative literal
-            neg.coordinates = new Vector2D(6d * i + 2, 8d);
+            Vertex neg = result.addVertex(); // the negative literal
+            neg.setCoordinates(6d * i + 2, 8d);
             neg.label = "¬" + var;
-            result.addVertex(neg);
             negNode.put(var, neg);
 
             result.addEdge(result.createEdge(pos, neg));
@@ -109,30 +104,24 @@ public class SatToColor3 extends Generator {
             clause.getLiterals(literals);
 
             // create gadget for clause (6 nodes)
-            Vertex leftBottomVert = result.createVertex();
-            leftBottomVert.coordinates = new Vector2D(8d * i, 4d);
-            result.addVertex(leftBottomVert);
+            Vertex leftBottomVert = result.addVertex();
+            leftBottomVert.setCoordinates(8d * i, 4d);
 
-            Vertex leftTopVert = result.createVertex();
-            leftTopVert.coordinates = new Vector2D(8d * i, 2d);
-            result.addVertex(leftTopVert);
+            Vertex leftTopVert = result.addVertex();
+            leftTopVert.setCoordinates(8d * i, 2d);
 
-            Vertex centerBottomVert = result.createVertex();
-            centerBottomVert.coordinates = new Vector2D(8d * i + 2, 3d);
-            result.addVertex(centerBottomVert);
+            Vertex centerBottomVert = result.addVertex();
+            centerBottomVert.setCoordinates(8d * i + 2, 3d);
 
-            Vertex centerTopVert = result.createVertex();
-            centerTopVert.coordinates = new Vector2D(8d * i + 2, 1d);
+            Vertex centerTopVert = result.addVertex();
+            centerTopVert.setCoordinates(8d * i + 2, 1d);
             centerTopVert.label = clause.toString();
-            result.addVertex(centerTopVert);
 
-            Vertex rightBottomVert = result.createVertex();
-            rightBottomVert.coordinates = new Vector2D(8d * i + 4, 4d);
-            result.addVertex(rightBottomVert);
+            Vertex rightBottomVert = result.addVertex();
+            rightBottomVert.setCoordinates(8d * i + 4, 4d);
 
-            Vertex rightTopVert = result.createVertex();
-            rightTopVert.coordinates = new Vector2D(8d * i + 4, 2d);
-            result.addVertex(rightTopVert);
+            Vertex rightTopVert = result.addVertex();
+            rightTopVert.setCoordinates(8d * i + 4, 2d);
 
             // create edges in gadget
             result.addEdge(result.createEdge(centerTopVert, leftTopVert));

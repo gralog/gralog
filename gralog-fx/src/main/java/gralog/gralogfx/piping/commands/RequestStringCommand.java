@@ -44,7 +44,7 @@ public class RequestStringCommand extends CommandForGralogToExecute {
         this.piping.state = Piping.State.InProgress;
         String consoleInputString= this.piping.getConsoleInput();
         this.setResponse(consoleInputString);
-        System.out.println("all done!");
+
 
         
         

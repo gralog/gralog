@@ -1,11 +1,17 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.export;
 
-import gralog.structure.*;
-import gralog.automaton.*;
-import gralog.exportfilter.*;
+
+import gralog.automaton.Automaton;
+import gralog.automaton.State;
+import gralog.automaton.Transition;
+import gralog.exportfilter.ExportFilter;
+import gralog.exportfilter.ExportFilterDescription;
+import gralog.exportfilter.ExportFilterParameters;
+import gralog.exportfilter.IndentedWriter;
 import gralog.rendering.Vector2D;
+import gralog.structure.EdgeIntermediatePoint;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -45,10 +51,12 @@ public class TikZExport extends ExportFilter {
         for (State s : structure.getVertices()) {
             nodeIndex.put(s, i);
             out.write("\\node[state");
-            if (s.finalState)
+            if (s.finalState) {
                 out.writeNoIndent(",accepting");
-            if (s.startState)
+            }
+            if (s.startState) {
                 out.writeNoIndent(",initial");
+            }
             final String label = s.label.isEmpty() ? "" : "$" + s.label + "$";
             out.writeLineNoIndent("] (q" + i + ") at ("
                 + s.coordinates.getX() + "cm,"
@@ -69,8 +77,9 @@ public class TikZExport extends ExportFilter {
                 Double segmentlength = betw.minus(from).length();
 
                 out.writeNoIndent(" --");
-                if (distance < halfLength && halfLength <= distance + segmentlength)
+                if (distance < halfLength && halfLength <= distance + segmentlength) {
                     out.writeNoIndent(" node {$" + (t.symbol.isEmpty() ? "\\varepsilon" : t.symbol) + "$}");
+                }
                 out.writeNoIndent(" (" + c.getX() + "cm," + (-c.getY()) + "cm)");
 
                 distance += segmentlength;
@@ -78,8 +87,9 @@ public class TikZExport extends ExportFilter {
             }
 
             out.writeNoIndent(" --");
-            if (distance < halfLength)
+            if (distance < halfLength) {
                 out.writeNoIndent(" node {$" + (t.symbol.isEmpty() ? "\\varepsilon" : t.symbol) + "$}");
+            }
             out.writeLineNoIndent(" (q" + nodeIndex.get(t.getTarget()) + ");");
         }
 

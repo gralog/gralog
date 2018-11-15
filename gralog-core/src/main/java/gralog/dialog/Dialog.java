@@ -1,13 +1,27 @@
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
+ * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
+
 package gralog.dialog;
 
 
-import gralog.structure.*;
 
-import java.util.*;
+import gralog.structure.Edge;
+import gralog.structure.GraphOperations;
+import gralog.structure.Highlights;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
+import gralog.utility.StringConverterCollection;
+
+import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Collection;
+import java.util.Comparator;
 
 import static gralog.dialog.DialogParser.ANSI_GREEN;
 import static gralog.dialog.DialogParser.ANSI_RESET;
-
 
 
 public class Dialog {
@@ -15,119 +29,103 @@ public class Dialog {
     private ArrayList<Vertex> vertices;
     private ArrayList<Edge> edges;
 
+    @Deprecated
     private Map<String, ArrayList<Vertex>> vertexListS;
+    @Deprecated
     private Map<String, ArrayList<Edge>> edgeListS;
+
+    private List<GralogList<Vertex>> allCollectionVertex;
+    private List<GralogList<Edge>> allCollectionEdge;
 
     private String errorMsg = "";
 
-    public Dialog() {
-        vertices = new ArrayList<Vertex>();
-        edges = new ArrayList<Edge>();
-        vertexListS = new HashMap();
-        edgeListS = new HashMap();
+    public Dialog(List<GralogList<Vertex>> allCollectionVertex, List<GralogList<Edge>> allCollectionEdge) {
+        this();
+        this.allCollectionVertex = allCollectionVertex;
+        this.allCollectionEdge = allCollectionEdge;
+
     }
 
+    public Dialog() {
+        vertices = new ArrayList<>();
+        edges = new ArrayList<>();
+
+        vertexListS = new HashMap<>();
+        edgeListS = new HashMap<>();
+
+        allCollectionVertex = new ArrayList<GralogList<Vertex>>();
+        allCollectionEdge = new ArrayList<GralogList<Edge>>();
+    }
+
+    @Deprecated
     public Map<String, ArrayList<Vertex>> getVertexListS() {
         return this.vertexListS;
     }
+
+    @Deprecated
     public Map<String, ArrayList<Edge>> getEdgeListS() {
         return this.edgeListS;
     }
 
-
-    public boolean isID(String s) {
-        return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
-    }
-
-    public boolean isListID(String s) {
-        return (vertexListS.containsKey(s) || edgeListS.containsKey(s));
-    }
-
     public void printLists(ArrayList<String> parameters) {
         if (parameters.get(0).equals("PRINTALL")) {
-            printVertexListS();
-            printEdgeListS();
+            printAllVertexList();
+            printAllEdgeList();
             return;
         }
-        if (vertexListS.containsKey(parameters.get(0))) {
+        if (existsVertexList(parameters.get(0))) {
             printVertexList(parameters.get(0));
             return;
         }
-        if (edgeListS.containsKey(parameters.get(0))) {
+        if (existsEdgeList(parameters.get(0))) {
             printEdgeList(parameters.get(0));
             return;
         }
         errorMsg = "No such list: " + parameters.get(0);
-        return;
-    }
-
-    public void unionLists (ArrayList source1, ArrayList source2, ArrayList target) {
-        HashSet<Object> tmp = new HashSet<Object> (source1);
-        for (Object x : source2)
-            tmp.add(x);
-        target.addAll(tmp);
-    }
-
-    // note: source1 and source2 are guaranteed to have every element only once
-    public void intersectionLists(ArrayList source1, ArrayList source2, ArrayList target) {
-        HashSet tmp = new HashSet(source1);
-        for (Object x : source2)
-            if (tmp.contains(x))
-                target.add(x);
-    }
-
-    public void symmetricDifferenceLists(ArrayList source1, ArrayList source2, ArrayList target) {
-        HashSet tmp1 = new HashSet(source1);
-        HashSet tmp2 = new HashSet(source2);
-        for (Object x : source1)
-            if (! tmp2.contains(x))
-                target.add(x);
-        for (Object x : source2)
-            if (! tmp1.contains(x))
-                target.add(x);
-    }
-
-    public void differenceLists(ArrayList source1, ArrayList source2, ArrayList target) {
-        HashSet tmp = new HashSet(source2);
-        for (Object x : source1)
-            if (! tmp.contains(x))
-                target.add(x);
     }
 
     public void twoListsOp(ArrayList<String> parameters) {
-        if (! vertexListS.containsKey(parameters.get(1))) {
+        if (!existsVertexList(parameters.get(1))) {
             errorMsg = parameters.get(1) + " is not a name of a vertex list.\n";
             return;
         }
-        if (! vertexListS.containsKey(parameters.get(2))) {
+        if (!existsVertexList(parameters.get(2))) {
             errorMsg = parameters.get(2) + " is not a name of a vertex list.\n";
             return;
         }
-        ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(3));
+        var gralogList = getTargetVertexList(parameters.get(3));
+        ArrayList<Vertex> targetList = gralogList;
+
+        var first = findVertexList(parameters.get(1));
+        var second = findVertexList(parameters.get(2));
+
         switch (parameters.get(0)) { // union, intersection, difference, symmetric
             case "UNION":
-                unionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.unionLists(first, second, targetList);
+                printVertexIdList(first);
+
+                printVertexIdList(targetList);
                 break;
             case "INTERSECTION":
-                intersectionLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.intersectionLists(first, second, targetList);
                 break;
             case "DIFFERENCE":
-                differenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.differenceLists(first, second, targetList);
                 break;
             case "SYMMETRIC":
-                symmetricDifferenceLists(vertexListS.get(parameters.get(1)),vertexListS.get(parameters.get(2)),targetList);
+                GraphOperations.symmetricDifferenceLists(first, second, targetList);
                 break;
         }
 
     }
 
     public void delete(ArrayList<String> parameters) {
-        if (vertexListS.containsKey(parameters.get(0))) {
-            vertexListS.remove(parameters.get(0));
+        if (existsVertexList(parameters.get(0))) {
+            allCollectionVertex.remove(findVertexList(parameters.get(0)));
             return;
         }
-        if (edgeListS.containsKey(parameters.get(0))) {
-            edgeListS.remove(parameters.get(0));
+        if (existsEdgeList(parameters.get(0))) {
+            allCollectionEdge.remove(findEdgeList(parameters.get(0)));
             return;
         }
         errorMsg = "No such list exists: " + parameters.get(0) + ".\n";
@@ -135,77 +133,78 @@ public class Dialog {
 
     private void addComplementVertexList(ArrayList<Vertex> sourceList, ArrayList<Vertex> allVertices, ArrayList<Vertex> targetList) {
         for (Vertex v : allVertices)
-            if (! sourceList.contains(v))
+            if (!sourceList.contains(v))
                 targetList.add(v);
     }
 
     private void addComplementEdgeList(ArrayList<Edge> sourceList, ArrayList<Edge> allVertices, ArrayList<Edge> targetList) {
         for (Edge v : allVertices)
-            if (! sourceList.contains(v))
+            if (!sourceList.contains(v))
                 targetList.add(v);
     }
 
 
     public void complement(ArrayList<String> parameters, Structure structure) {
-        if (vertexListS.containsKey(parameters.get(0))) {
-            ArrayList<Vertex> allVertices = new ArrayList<Vertex>(structure.getVertices());
-            ArrayList<Vertex> sourceList = vertexListS.get(parameters.get(0));
+        if (existsVertexList(parameters.get(0))) {
+            ArrayList<Vertex> allVertices = new ArrayList<>(structure.getVertices());
+            ArrayList<Vertex> sourceList = findVertexList(parameters.get(0));
             ArrayList<Vertex> targetList = getTargetVertexList(parameters.get(1));
-            if (! targetList.isEmpty())
-                errorMsg = "Note: target list " + parameters.get(1)  + " is not empty!\n";
+            if (!targetList.isEmpty())
+                errorMsg = "Note: target list " + parameters.get(1) + " is not empty!\n";
             addComplementVertexList(sourceList, allVertices, targetList);
             return;
         }
-        if (edgeListS.containsKey(parameters.get(0))) {
+        if (existsEdgeList(parameters.get(0))) {
             ArrayList<Edge> allVertices = new ArrayList<Edge>(structure.getEdges());
-            ArrayList<Edge> sourceList = edgeListS.get(parameters.get(0));
+            ArrayList<Edge> sourceList = findEdgeList(parameters.get(0));
             ArrayList<Edge> targetList = getTargetEdgeList(parameters.get(1));
-            if (! targetList.isEmpty())
-                errorMsg = "Note: target list " + parameters.get(1)  + " is not empty!\n";
+            if (!targetList.isEmpty())
+                errorMsg = "Note: target list " + parameters.get(1) + " is not empty!\n";
             addComplementEdgeList(sourceList, allVertices, targetList);
         }
     }
-    
+
     public void sort(ArrayList<String> parameters) {
         System.out.println("Entring sort: parameters = [" + parameters + "]");
         String listname = parameters.get(0);
-        if (! vertexListS.containsKey(listname)) {
+        if (!existsVertexList(listname)) {
             errorMsg = "No such list, cannot sort.\n";
             return;
         }
+        var list = findVertexList(listname);
         switch (parameters.get(1)) {
             case "LEFTRIGHT":
-                Collections.sort(vertexListS.get(listname),new ComparatorLEFTRIGHT());
+                list.sort(new ComparatorLEFTRIGHT());
                 break;
             case "RIGHTLEFT":
-                Collections.sort(vertexListS.get(listname),new ComparatorRIGHTLEFT());
+                list.sort(new ComparatorRIGHTLEFT());
                 break;
             case "TOPDOWN":
-                Collections.sort(vertexListS.get(listname),new ComparatorTOPDOWN());
+                list.sort(new ComparatorTOPDOWN());
                 break;
             case "BOTTOMUP":
-                Collections.sort(vertexListS.get(listname),new ComparatorBOTTOMUP());
+                list.sort(new ComparatorBOTTOMUP());
                 break;
             case "ID":
                 if (parameters.get(2).equals("ASC"))
-                    Collections.sort(vertexListS.get(listname),new ComparatorIDasc());
+                    list.sort(new ComparatorIDasc());
                 else
-                    Collections.sort(vertexListS.get(listname),new ComparatorIDdesc());
+                    list.sort(new ComparatorIDdesc());
                 break;
             case "LABEL":
                 if (parameters.get(2).equals("ASC"))
-                    Collections.sort(vertexListS.get(listname), new ComparatorLabelAsc());
+                    list.sort(new ComparatorLabelAsc());
                 else
-                    Collections.sort(vertexListS.get(listname),new ComparatorLabelDesc());
+                    list.sort(new ComparatorLabelDesc());
                 break;
-                default:
-                    errorMsg = parameters.get(1) + " is not a sort order.\n";
-                    break;
+            default:
+                errorMsg = parameters.get(1) + " is not a sort order.\n";
+                break;
         }
     }
 
     private void filterEdges(ArrayList<Edge> sourceList, ArrayList<Edge> targetList, ArrayList<String> parameters) {
-        LinkedHashMap<String,String> propertyValue = getConditions(parameters);
+        LinkedHashMap<String, String> propertyValue = getConditions(parameters);
         if (propertyValue.isEmpty()) {
             targetList.addAll(sourceList);
             return;
@@ -221,12 +220,13 @@ public class Dialog {
                             filteredOut = true;
                         break;
                     case "WEIGHT":
-                        if (!(e.weight == parseReal(propertyValue.get(property), "WEIGHT"))) {
+                        if (!(e.weight == parseReal(propertyValue.get(property), "WEIGHT")))
                             filteredOut = true;
                             break;
-                        }
+
                     case "EDGETYPE":
-                        if (!(e.edgeType.name().equals(parseReal(propertyValue.get(property), "EDGETYPE"))))
+                        if (!(e.edgeType.name().equals(parseReal(propertyValue.get(property),
+                            "EDGETYPE"))))
                             filteredOut = true;
                         break;
                 }
@@ -240,56 +240,64 @@ public class Dialog {
     // checks if condiitons are correct: colours are colours, number are numbers and so on
     // returns a HashMap<property,value>
     // empty if "NOCONDITION" is a condition
-    private LinkedHashMap<String,String> getConditions(ArrayList<String> parameters) {
+    private LinkedHashMap<String, String> getConditions(ArrayList<String> parameters) {
         LinkedHashMap<String, String> propertyValue = new LinkedHashMap<>();
         int i = 0;
         while (i < parameters.size()) {
             switch (parameters.get(i)) {
-                case "STROKE": case "COLOR": case "FILL":
-                    propertyValue.put(parameters.get(i),parameters.get(i+1));
+                case "STROKE":
+                case "COLOR":
+                case "FILL":
+                    propertyValue.put(parameters.get(i), parameters.get(i + 1));
                     i += 2;
                     break;
-                case "WIDTH": case "THICKNESS": case "HEIGHT": case "SIZE": case "WEIGHT":// double
-                    if (parameters.get(i+1).equals("<")) {
+                case "WIDTH":
+                case "THICKNESS":
+                case "HEIGHT":
+                case "SIZE":
+                case "WEIGHT":// double
+                    if (parameters.get(i + 1).equals("<")) {
                         propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 2));
                         i += 3;
-                    }
-                    else {
-                        if (parameters.get(i+1).equals("<")) {
+                    } else {
+                        if (parameters.get(i + 1).equals("<")) {
                             propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 2));
                             i += 3;
-                        }
-                        else {
+                        } else {
                             propertyValue.putIfAbsent(parameters.get(i), parameters.get(i + 1));
                             i += 2;
                         }
                     }
                     break;
-                case "ID": case "DEGREE": case "INDEGREE": case "OUTDEGREE":
-                    if (parameters.get(i+1).equals("<")) {
+                case "ID":
+                case "DEGREE":
+                case "INDEGREE":
+                case "OUTDEGREE":
+                    if (parameters.get(i + 1).equals("<")) {
                         propertyValue.putIfAbsent(parameters.get(i) + "<", parameters.get(i + 2));
                         i += 3;
-                    }
-                    else {
-                        if (parameters.get(i+1).equals(">")) {
+                    } else {
+                        if (parameters.get(i + 1).equals(">")) {
                             propertyValue.putIfAbsent(parameters.get(i) + ">", parameters.get(i + 2));
                             i += 3;
-                        }
-                        else {
+                        } else {
                             propertyValue.putIfAbsent(parameters.get(i), parameters.get(i + 1));
                             i += 2;
                         }
                     }
                     break;
                 case "SHAPE":
-                    propertyValue.putIfAbsent(parameters.get(i),parameters.get(i+1));
+                    propertyValue.putIfAbsent(parameters.get(i), parameters.get(i + 1));
                     break;
-                case "SELFLOOP": case "NOSELFLOOP": case "LABEL": case "NOLABEL":
-                    i += 2;
-                    propertyValue.put(parameters.get(i),"");
+                case "SELFLOOP":
+                case "NOSELFLOOP":
+                case "LABEL":
+                case "NOLABEL":
+                    propertyValue.put(parameters.get(i), "");
+                    i += 1;
                     break;
                 case "EDGETYPE":
-                    propertyValue.put(parameters.get(i),parameters.get(i+1));
+                    propertyValue.put(parameters.get(i), parameters.get(i + 1));
                     i += 2;
                     break;
                 case "NOCONDITION":
@@ -305,8 +313,9 @@ public class Dialog {
     // try to convert a string parameter s with key paramKey to Double
     private Double parseReal(String s, String paramKey) {
         Double result = -1.0;
-        try {result = Double.valueOf(s);}
-        catch (NumberFormatException e) {
+        try {
+            result = Double.valueOf(s);
+        } catch (NumberFormatException e) {
             errorMsg = "Could not recognise the value for " + paramKey + "; skipping this parameter.\n"; // this shouldn't happen
             return result;
         }
@@ -317,8 +326,9 @@ public class Dialog {
     private Integer parseInt(String s, String paramKey) {
         Integer result = -1;
         System.out.println("parseInt: s = [" + s + "], paramKey = [" + paramKey + "]");
-        try {result = Integer.valueOf(s);}
-        catch (NumberFormatException e) {
+        try {
+            result = Integer.valueOf(s);
+        } catch (NumberFormatException e) {
             errorMsg = "Could not recognise the value for " + paramKey + "; skipping this parameter.\n"; // this shouldn't happen
             return result;
         }
@@ -328,7 +338,7 @@ public class Dialog {
     // what: list to filter from, to: list to add items to (no copies)
     // the function iterates over parameters, in an iteration extracts the next parameter and filers according to it
     private void filterVertices(ArrayList<Vertex> sourceList, ArrayList<Vertex> targetList, ArrayList<String> parameters) {
-        LinkedHashMap<String,String> propertyValue = getConditions(parameters);
+        LinkedHashMap<String, String> propertyValue = getConditions(parameters);
         if (propertyValue.isEmpty()) {
             targetList.addAll(sourceList);
             return;
@@ -340,7 +350,6 @@ public class Dialog {
             for (String property : propertyValue.keySet()) {
                 switch (property) {
                     case "STROKE":
-                    case "COLOR":
                         if (!v.strokeColor.name().equals(propertyValue.get(property)))
                             filteredOut = true;
                         break;
@@ -460,11 +469,11 @@ public class Dialog {
                             filteredOut = true;
                         break;
                     case "LABELEMPTY":
-                        if (! v.label.isEmpty())
+                        if (!v.label.isEmpty())
                             filteredOut = true;
                         break;
                     case "LABELCONTAINS":
-                        if (! v.label.contains(propertyValue.get("LABELCONTAINS")))
+                        if (!v.label.contains(propertyValue.get("LABELCONTAINS")))
                             filteredOut = true;
                     case "NOLABEL":
                         if (!v.label.isEmpty())
@@ -479,31 +488,43 @@ public class Dialog {
     }
 
     public void connectClique(ArrayList<String> parameters, Structure structure) {
-        if (!vertexListS.containsKey(parameters.get(0))) {
+        boolean undirected = true;
+        try {
+            undirected = structure.getDescription().name().equals("Undirected Graph");
+        } catch (Exception e) {
+            System.err.println("Could not determine the type of graph (undirected or not). Error: "
+                    + e.toString());
+        }
+
+        if (!existsVertexList(parameters.get(0))) {
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
         }
-        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        ArrayList<Vertex> list = findVertexList(parameters.get(0));
         for (Vertex v : list) {
             for (Vertex w : list) {
                 if (v.id < w.id) {
-                    structure.addEdge(v,w);
-                    structure.addEdge(w,v);
+                    if (undirected)
+                        structure.addEdge(v, w);
+                    else {
+                        structure.addEdge(v, w);
+                        structure.addEdge(w, v);
+                    }
                 }
             }
         }
     }
 
     public void connectTClosure(ArrayList<String> parameters, Structure structure) {
-        if (!vertexListS.containsKey(parameters.get(0))) {
+        if (!existsVertexList(parameters.get(0))) {
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
         }
-        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        ArrayList<Vertex> list = findVertexList(parameters.get(0));
         for (Vertex v : list) {
             for (Vertex w : list) {
                 if (v.id < w.id) {
-                    structure.addEdge(v,w);
+                    structure.addEdge(v, w);
                 }
             }
         }
@@ -511,86 +532,81 @@ public class Dialog {
 
 
     public void connectSelfloop(ArrayList<String> parameters, Structure structure) {
-        if (!vertexListS.containsKey(parameters.get(0))) {
+        if (!existsVertexList(parameters.get(0))) {
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
         }
-        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        ArrayList<Vertex> list = findVertexList(parameters.get(0));
         for (Vertex v : list)
-            structure.addEdge(v,v);
+            structure.addEdge(v, v);
     }
 
     public void connectPath(ArrayList<String> parameters, Structure structure) {
-        if (!vertexListS.containsKey(parameters.get(0))) {
+        if (!existsVertexList(parameters.get(0))) {
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
         }
-        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
-        for (int i = 0; i < list.size()-1; i++) {
-            structure.addEdge(list.get(i),list.get(i+1));
+        ArrayList<Vertex> list = findVertexList(parameters.get(0));
+        for (int i = 0; i < list.size() - 1; i++) {
+            structure.addEdge(list.get(i), list.get(i + 1));
         }
     }
 
     public void connectCycle(ArrayList<String> parameters, Structure structure) {
-        if (!vertexListS.containsKey(parameters.get(0))) {
+        if (!existsVertexList(parameters.get(0))) {
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
         }
-        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
-        for (int i = 0; i < list.size()-1; i++) {
-            structure.addEdge(list.get(i),list.get(i+1));
+        ArrayList<Vertex> list = findVertexList(parameters.get(0));
+        for (int i = 0; i < list.size() - 1; i++) {
+            structure.addEdge(list.get(i), list.get(i + 1));
         }
-        structure.addEdge(list.get(list.size()-1),list.get(0));
+        structure.addEdge(list.get(list.size() - 1), list.get(0));
     }
+
     public void connectBiclique(ArrayList<String> parameters, Structure structure) {
-        if (!vertexListS.containsKey(parameters.get(0))) {
+        if (!existsVertexList(parameters.get(0))) {
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
         }
-        ArrayList<Vertex> list1 = vertexListS.get(parameters.get(0));
+        ArrayList<Vertex> list1 = findVertexList(parameters.get(0));
 
-        if (!vertexListS.containsKey(parameters.get(1))) {
+        if (!existsVertexList(parameters.get(1))) {
             errorMsg = "No such vertex list: " + parameters.get(1);
             return;
         }
-        ArrayList<Vertex> list2 = vertexListS.get(parameters.get(1));
+        ArrayList<Vertex> list2 = findVertexList(parameters.get(1));
 
         for (Vertex v : list1)
             for (Vertex w : list2)
-              structure.addEdge(v,w);
+                structure.addEdge(v, w);
     }
+
     public void connectMatching(ArrayList<String> parameters, Structure structure) {
-        if (!vertexListS.containsKey(parameters.get(0))) {
+        if (!existsVertexList(parameters.get(0))) {
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
         }
-        if (!vertexListS.containsKey(parameters.get(1))) {
+        if (!existsVertexList(parameters.get(1))) {
             errorMsg = "No such vertex list: " + parameters.get(1);
             return;
         }
         ArrayList<Vertex> list1;
         ArrayList<Vertex> list2;
-        // choose s.t. list1 is shorter than list2
-        if (vertexListS.get(parameters.get(0)).size() <= vertexListS.get(parameters.get(1)).size()) {
-            list1 = vertexListS.get(parameters.get(0));
-            list2 = vertexListS.get(parameters.get(1));
-        }
-        else {
-            list1 = vertexListS.get(parameters.get(1));
-            list2 = vertexListS.get(parameters.get(0));
-        }
-
-        for (int i = 0; i < list1.size(); i++) {
-            structure.addEdge(list1.get(i),list2.get(i));
+        list1 = findVertexList(parameters.get(0));
+        list2 = findVertexList(parameters.get(1));
+        int len = Math.min(list1.size(), list2.size());
+        for (int i = 0; i < len; i++) {
+            structure.addEdge(list1.get(i), list2.get(i));
         }
     }
 
     public void connectFormula(ArrayList<String> parameters, Structure structure) {
-        if (!vertexListS.containsKey(parameters.get(0))) {
+        if (!existsVertexList(parameters.get(0))) {
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
         }
-        ArrayList<Vertex> list = vertexListS.get(parameters.get(0));
+        ArrayList<Vertex> list = findVertexList(parameters.get(0));
 
         for (int i = 0; i < list.size(); i++) {
             net.objecthunter.exp4j.Expression expression =
@@ -598,110 +614,140 @@ public class Dialog {
                             .variable("i")
                             .build()
                             .setVariable("i", i);
-            double j_double = expression.evaluate();
-            int j = (int) Math.floor(j_double);
+            double jDouble = expression.evaluate();
+            int j = (int) Math.floor(jDouble);
             if (0 <= j && j < list.size())
-                structure.addEdge(list.get(i),list.get(j));
+                structure.addEdge(list.get(i), list.get(j));
             else {
                 errorMsg = errorMsg + "Result of applying formula to "
                         + i + " out of list "
-                        + parameters.get(0) +
-                        ". Skipping " + i + ".\n";
+                        + parameters.get(0)
+                        + ". Skipping " + i + ".\n";
             }
 
         }
-    }// todo check use of exp4j
+    }
+
+    // parameters are expected to be:
+    // (0) name of the first list
+    // (1) name of the second list
+    // (2) arithmetic expression depending on i
     public void connect2ListsFormula(ArrayList<String> parameters, Structure structure) {
-        if (!vertexListS.containsKey(parameters.get(0))) {
+        if (!existsVertexList(parameters.get(0))) {
             errorMsg = "No such vertex list: " + parameters.get(0);
             return;
         }
-        if (!vertexListS.containsKey(parameters.get(1))) {
+        if (!existsVertexList(parameters.get(1))) {
             errorMsg = "No such vertex list: " + parameters.get(1);
             return;
         }
-        ArrayList<Vertex> list1 = vertexListS.get(parameters.get(0));
-        ArrayList<Vertex> list2 = vertexListS.get(parameters.get(1));
+        ArrayList<Vertex> list1 = findVertexList(parameters.get(0));
+        ArrayList<Vertex> list2 = findVertexList(parameters.get(1));
         // choose s.t. list1 is shorter than list2
 
         for (int i = 0; i < list1.size(); i++) {
             net.objecthunter.exp4j.Expression expression =
-                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(0))
+                    new net.objecthunter.exp4j.ExpressionBuilder(parameters.get(2))
                             .variable("i")
                             .build()
                             .setVariable("i", i);
-            double j_double = expression.evaluate();
-            int j = (int) Math.floor(j_double);
+            double jDouble = expression.evaluate();
+            int j = (int) Math.floor(jDouble);
             if (0 <= j && j < list2.size())
-                structure.addEdge(list1.get(i),list2.get(j));
+                structure.addEdge(list1.get(i), list2.get(j));
             else {
                 errorMsg = errorMsg + "Result of applying formula to "
                         + i + " out of list "
-                        + parameters.get(1) +
-                        ". Skipping " + i + ".\n";
+                        + parameters.get(1)
+                        + ". Skipping " + i + ".\n";
             }
 
         }
-    }// todo check use of exp4j
+    }
 
+
+    public boolean existsVertexList(String s) {
+        return findVertexList(s) != null;
+    }
+
+    public boolean existsEdgeList(String s) {
+        return findEdgeList(s) != null;
+    }
+
+    public GralogList<Vertex> findVertexList(String s) {
+        for (GralogList<Vertex> g : allCollectionVertex) {
+            if (g.name.getValue().equalsIgnoreCase(s))
+                return g;
+        }
+        return null;
+    }
+
+    public GralogList<Edge> findEdgeList(String s) {
+        for (GralogList<Edge> g : allCollectionEdge) {
+            if (g.name.getValue().equalsIgnoreCase(s))
+                return g;
+        }
+        return null;
+    }
 
     // returns list of vertices to save the result of filtering to
     // if the list with key s already exists, vertices are added to it (if not already there)
-    private ArrayList<Vertex> getTargetVertexList(String s) {
-        if (vertexListS.containsKey(s)) {
-            return vertexListS.get(s);
-        }
-        else {
-            vertexListS.put(s,new ArrayList<Vertex>());
-            return (vertexListS.get(s));
-        }
-    }
-
-    private void printVertexList(String listName) {
-        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
-        for (Vertex v : vertexListS.get(listName)) {
-            System.out.print(v.id + " ");
-        }
-        System.out.println();
-    }
-
-    private void printEdgeList(String listName) {
-        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
-        for (Edge v : edgeListS.get(listName)) {
-            System.out.print(v.getId() + " ");
-        }
-        System.out.println();
-    }
-
-
-    private void printVertexListS() {
-        for (Map.Entry<String, ArrayList<Vertex>> pair : vertexListS.entrySet()) {
-            System.out.print(pair.getKey() + ": " + ANSI_GREEN);
-            for (Vertex v :  pair.getValue()) {
-                System.out.print(v.id + " ");
-            }
-            System.out.println(ANSI_RESET);
-        }
-    }
-
-    private void printEdgeListS() {
-        for (Map.Entry<String, ArrayList<Edge>> pair : edgeListS.entrySet()) {
-            System.out.print(pair.getKey() + " " + ANSI_GREEN);
-            for (Edge v :  pair.getValue()) {
-                System.out.print(v.getId() + " ");
-            }
-            System.out.println(ANSI_RESET);
+    private GralogList<Vertex> getTargetVertexList(String s) {
+        var found = findVertexList(s);
+        if (found != null) {
+            return found;
+        } else {
+            GralogList<Vertex> v = new GralogList<>(s.toLowerCase(), StringConverterCollection.VERTEX_ID);
+            allCollectionVertex.add(v);
+            return v;
         }
     }
 
     // returns list of edges to save the result of filtering to
     // if the list with key s already exists, edges are added to it
-    private ArrayList<Edge> getTargetEdgeList(String s) {
-        if (edgeListS.containsKey(s))
-            return edgeListS.get(s);
-        else {
-            edgeListS.put(s,new ArrayList<Edge>());
-            return (edgeListS.get(s));
+    private GralogList<Edge> getTargetEdgeList(String s) {
+        var found = findEdgeList(s);
+        if (found != null) {
+            return found;
+        } else {
+            GralogList<Edge> e = new GralogList<>(s.toLowerCase(), StringConverterCollection.EDGE_ID);
+            allCollectionEdge.add(e);
+            return e;
+        }
+    }
+
+    private void printVertexList(String listName) {
+        GralogList vertexList = findVertexList(listName);
+        if (vertexList == null) {
+            System.out.println("List " + listName + " doesn't exist.");
+            return;
+        }
+        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
+        System.out.println(vertexList.toString());
+        System.out.println();
+    }
+
+    private void printEdgeList(String listName) {
+        GralogList edgeList = findEdgeList(listName);
+        if (edgeList == null) {
+            System.out.println("List " + listName + " doesn't exist.");
+            return;
+        }
+        System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
+        System.out.println(edgeList.toString());
+        System.out.println();
+    }
+
+
+    private void printAllVertexList() {
+        for (GralogList g : allCollectionVertex) {
+            System.out.println(g.name.getValue() + " : " + g.toString());
+        }
+    }
+
+    private void printAllEdgeList() {
+        for (GralogList g : allCollectionEdge) {
+            System.out.println(g.name.getValue() + " : " + g.toString());
         }
     }
 
@@ -712,6 +758,7 @@ public class Dialog {
         }
         System.out.println();
     }
+
     // for debugging only
     private void printEdgeIdList(ArrayList<Edge> list) {
         for (Edge v : list) {
@@ -719,7 +766,6 @@ public class Dialog {
         }
         System.out.println();
     }
-
 
 
     // the main filtering funciton
@@ -732,17 +778,18 @@ public class Dialog {
     public void filter(ArrayList<String> parameters, Structure structure, Highlights highlights) {
         System.out.println(ANSI_GREEN + "Entering filter. parameters = [" + parameters + "]" + ANSI_RESET);
 
-        if (parameters.get(1).equals("VERTICES") || vertexListS.containsKey(parameters.get(0))) { // vertex list
+        if (parameters.get(1).equals("VERTICES") || existsVertexList(parameters.get(0))) { // vertex list
 
             // check error
-            if (parameters.get(1).equals("VERTICES") && edgeListS.containsKey(parameters.get(0))) {
-                errorMsg = "List " + parameters.get(parameters.size()-1) + " already exists as an edge list. Choose another name.\n";
+            if (parameters.get(1).equals("VERTICES") && existsEdgeList(parameters.get(0))) {
+                errorMsg = "List " + parameters.get(parameters.size() - 1) + " already exists as an edge list. Choose another name.\n";
                 return;
             }
 
             // compute targetVertexList: if it doesn't exist, create a new one
-            ArrayList<Vertex> targetVertexList = getTargetVertexList(parameters.get(parameters.size()-1)); // where to filter to
-            parameters.remove(parameters.size()-1); // remove name of targetVertexList
+            var targetVertexList = getTargetVertexList(parameters.get(parameters.size() - 1)); // where to filter to
+
+            parameters.remove(parameters.size() - 1); // remove name of targetVertexList
 
             //compute sourceVertexList
             ArrayList<Vertex> sourceVertexList = new ArrayList<>(); // where to filter from
@@ -751,20 +798,19 @@ public class Dialog {
                     if (v instanceof Vertex)
                         sourceVertexList.add((Vertex) v);
             if (parameters.get(0).equals("ALL"))
-                sourceVertexList = new ArrayList<Vertex>( (Collection<? extends Vertex>) structure.getVertices());
-            if (vertexListS.containsKey(parameters.get(0))) { // list already exists
-                sourceVertexList = vertexListS.get(parameters.get(0));
+                sourceVertexList = new ArrayList<>((Collection<? extends Vertex>) structure.getVertices());
+            if (existsVertexList(parameters.get(0))) { // list already exists
+                sourceVertexList = findVertexList(parameters.get(0));
             }
 
             // remove now unnecessary parameters
             if (parameters.get(1).equals("VERTICES")) {
                 parameters.remove(1); // delete "vertices"
                 parameters.remove(0); // delete "all" / "selected"
-            }
-            else
+            } else
                 parameters.remove(0); // delete the identifier of sourceList
             // filter
-            filterVertices(sourceVertexList,targetVertexList,parameters);
+            filterVertices(sourceVertexList, targetVertexList, parameters);
 
             // clean parameters
             parameters.clear();
@@ -775,22 +821,21 @@ public class Dialog {
             printVertexIdList(sourceVertexList);
             System.out.println("\nto: ");
             printVertexIdList(targetVertexList);
-            System.out.println("\n");
-            System.out.println("vertexListS: ");
-            printVertexListS();
+            System.out.println("\nvertexListS: ");
+            printAllVertexList();
             return;
         }
-        if (parameters.get(1).equals("EDGES") || edgeListS.containsKey(parameters.get(0))) { // edge list
+        if (parameters.get(1).equals("EDGES") || existsEdgeList(parameters.get(0))) { // edge list
 
             // check error
-            if (parameters.get(1).equals("EDGES") && vertexListS.containsKey(parameters.get(0))) {
-                errorMsg = "List " + parameters.get(parameters.size()-1) + " already exists as a vertex list. Choose another name.\n";
+            if (parameters.get(1).equals("EDGES") && existsVertexList(parameters.get(0))) {
+                errorMsg = "List " + parameters.get(parameters.size() - 1) + " already exists as a vertex list. Choose another name.\n";
                 return;
             }
 
             // compute targetEdgeList: if it doesn't exist, create a new one
-            ArrayList<Edge> targetEdgeList = getTargetEdgeList(parameters.get(parameters.size()-1));
-            parameters.remove(parameters.size()-1);
+            ArrayList<Edge> targetEdgeList = getTargetEdgeList(parameters.get(parameters.size() - 1));
+            parameters.remove(parameters.size() - 1);
 
             // compute sourceEdgeList
             ArrayList<Edge> sourceEdgeList = new ArrayList<Edge>();
@@ -800,19 +845,18 @@ public class Dialog {
                         sourceEdgeList.add((Edge) v);
             if (parameters.get(0).equals("ALL"))
                 sourceEdgeList = new ArrayList<Edge>(structure.getEdges());
-            if (edgeListS.containsKey(parameters.get(0)))
-                sourceEdgeList = edgeListS.get(parameters.get(0));
+            if (existsEdgeList(parameters.get(0)))
+                sourceEdgeList = findEdgeList(parameters.get(0));
 
             // remove now unnecessary parameters
-            if (parameters.get(1).equals("EGDES")) {
+            if (parameters.get(1).equals("EDGES")) {
                 parameters.remove(1);
                 parameters.remove(0);
-            }
-            else
+            } else
                 parameters.remove(0);
 
             // filter
-            filterEdges(sourceEdgeList,targetEdgeList,parameters);
+            filterEdges(sourceEdgeList, targetEdgeList, parameters);
 
             // clean parameters
             parameters.clear();
@@ -832,6 +876,7 @@ public class Dialog {
     public String getErrorMsg() {
         return errorMsg;
     }
+
     public void setErrorMsg(String s) {
         this.errorMsg = s;
     }
@@ -863,24 +908,40 @@ class ComparatorLEFTRIGHT implements Comparator<Vertex> {
             return -1;
         return 0;
     }
+
     @Override
     public boolean equals(Object v) {
+        if (v == this) {
+            return true;
+        }
         return false;
+    }
+    public int hashCode() {
+        return 0;
     }
 }
 
 class ComparatorRIGHTLEFT implements Comparator<Vertex> {
     @Override
     public int compare(Vertex v, Vertex w) {
-        if (v.coordinates.getX() < w.coordinates.getX())
+        if (v.coordinates.getX() < w.coordinates.getX()) {
             return 1;
-        if (v.coordinates.getX() > w.coordinates.getX())
-                return -1;
+        }
+        if (v.coordinates.getX() > w.coordinates.getX()) {
+            return -1;
+        }
         return 0;
     }
+
     @Override
     public boolean equals(Object v) {
+
+        if (v == this)
+            return true;
         return false;
+    }
+    public int hashCode() {
+        return 0;
     }
 }
 
@@ -893,11 +954,19 @@ class ComparatorTOPDOWN implements Comparator<Vertex> {
             return -1;
         return 0;
     }
+
     @Override
     public boolean equals(Object v) {
+        if (v == this)
+            return true;
         return false;
     }
+    public int hashCode() {
+        return 0;
+    }
+
 }
+
 
 class ComparatorBOTTOMUP implements Comparator<Vertex> {
     @Override
@@ -908,10 +977,18 @@ class ComparatorBOTTOMUP implements Comparator<Vertex> {
             return -1;
         return 0;
     }
+
     @Override
     public boolean equals(Object v) {
+
+        if (v == this)
+            return true;
         return false;
     }
+    public int hashCode() {
+        return 0;
+    }
+
 }
 
 class ComparatorIDasc implements Comparator<Vertex> {
@@ -919,10 +996,18 @@ class ComparatorIDasc implements Comparator<Vertex> {
     public int compare(Vertex v, Vertex w) {
         return v.id - w.id;
     }
+
     @Override
     public boolean equals(Object v) {
+
+        if (v == this)
+            return true;
         return false;
     }
+    public int hashCode() {
+        return 0;
+    }
+
 }
 
 class ComparatorIDdesc implements Comparator<Vertex> {
@@ -930,10 +1015,17 @@ class ComparatorIDdesc implements Comparator<Vertex> {
     public int compare(Vertex v, Vertex w) {
         return w.id - v.id;
     }
+
     @Override
     public boolean equals(Object v) {
+        if (v == this)
+            return true;
         return false;
     }
+    public int hashCode() {
+        return 0;
+    }
+
 }
 
 class ComparatorLabelAsc implements Comparator<Vertex> {
@@ -941,10 +1033,17 @@ class ComparatorLabelAsc implements Comparator<Vertex> {
     public int compare(Vertex v, Vertex w) {
         return v.label.compareTo(w.label);
     }
+
     @Override
     public boolean equals(Object v) {
+        if (v == this)
+            return true;
         return false;
     }
+    public int hashCode() {
+        return 0;
+    }
+
 }
 
 class ComparatorLabelDesc implements Comparator<Vertex> {
@@ -952,8 +1051,15 @@ class ComparatorLabelDesc implements Comparator<Vertex> {
     public int compare(Vertex v, Vertex w) {
         return w.label.compareTo(v.label);
     }
+
     @Override
     public boolean equals(Object v) {
+        if (v == this)
+            return true;
         return false;
     }
+    public int hashCode() {
+        return 0;
+    }
+
 }

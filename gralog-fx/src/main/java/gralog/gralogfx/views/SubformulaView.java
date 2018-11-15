@@ -1,6 +1,6 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
-package gralog.firstorderlogic.view;
+package gralog.gralogfx.views;
 
 import gralog.firstorderlogic.formula.FirstOrderFormula;
 import gralog.firstorderlogic.formula.Subformula;
@@ -114,7 +114,9 @@ public class SubformulaView extends GridPaneView<Subformula> {
 
     @Override
     public void onClose() {
-        structurePane.clearAnnotations();
-        structurePane.clearSelection();
+        if(structurePane != null){
+            structurePane.clearAnnotations();
+            structurePane.clearSelection();
+        }
     }
 }

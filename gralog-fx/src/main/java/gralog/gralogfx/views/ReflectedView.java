@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx.views;
 
@@ -23,7 +23,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import java.lang.annotation.Annotation;
-import gralog.core.annotations.DataField;
+import gralog.annotations.DataField;
 
 
 import javax.sound.sampled.Line;
@@ -46,8 +46,9 @@ public class ReflectedView extends GridPaneView<Object> {
         try {
             if (displayObject != null) {
                 Class<?> c = displayObject.getClass();
-                
-                for (Field f : c.getDeclaredFields()) {
+
+                for (Field f : c.getFields()) {
+
                     f.setAccessible(true);
                     boolean display = false;
                     boolean readOnly = false;
@@ -175,7 +176,6 @@ public class ReflectedView extends GridPaneView<Object> {
         if (!readOnly) {
 
             valueField.selectedProperty().addListener(e -> {
-                System.out.println("halpppp they're changing meeeeee");
                 try {
                     f.set(displayObject, valueField.isSelected());
                     requestRedraw();

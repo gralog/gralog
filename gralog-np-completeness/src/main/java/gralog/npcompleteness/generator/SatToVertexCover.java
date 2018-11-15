@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.npcompleteness.generator;
 
@@ -59,16 +59,16 @@ public class SatToVertexCover extends Generator {
         // create gadgets for the literals
         int i = 0;
         for (String var : vars) {
-            Vertex pos = result.createVertex(); // the positive literal
-            pos.coordinates = new Vector2D(6d * i, 10d);
+            Vertex pos = result.addVertex(); // the positive literal
+            pos.setCoordinates(6d * i, 10d);
             pos.label = var;
-            result.addVertex(pos);
+
             posNode.put(var, pos);
 
-            Vertex neg = result.createVertex(); // the negative literal
-            neg.coordinates = new Vector2D(6d * i + 2, 10d);
+            Vertex neg = result.addVertex(); // the negative literal
+            neg.setCoordinates(6d * i + 2, 10d);
             neg.label = "¬" + var;
-            result.addVertex(neg);
+
             negNode.put(var, neg);
 
             result.addEdge(result.createEdge(pos, neg));
@@ -86,17 +86,17 @@ public class SatToVertexCover extends Generator {
             literals.clear();
             clause.getLiterals(literals);
 
-            Vertex clauseVert1 = result.createVertex();
-            clauseVert1.coordinates = new Vector2D(5d * i, 3d);
-            result.addVertex(clauseVert1);
+            Vertex clauseVert1 = result.addVertex();
+            clauseVert1.setCoordinates(5d * i, 3d);
 
-            Vertex clauseVert2 = result.createVertex();
-            clauseVert2.coordinates = new Vector2D(5d * i + 2, 3d);
-            result.addVertex(clauseVert2);
 
-            Vertex clauseVert3 = result.createVertex();
-            clauseVert3.coordinates = new Vector2D(5d * i + 1, 2d);
-            result.addVertex(clauseVert3);
+            Vertex clauseVert2 = result.addVertex();
+            clauseVert2.setCoordinates(5d * i + 2, 3d);
+
+
+            Vertex clauseVert3 = result.addVertex();
+            clauseVert3.setCoordinates(5d * i + 1, 2d);
+
 
             result.addEdge(result.createEdge(clauseVert1, clauseVert2));
             result.addEdge(result.createEdge(clauseVert2, clauseVert3));

@@ -42,7 +42,7 @@ public class RequestVertexCommand extends CommandForGralogToExecute {
         this.piping.state = Piping.State.InProgress;
         Vertex v = (Vertex)this.piping.getSelectedObject();
         this.setResponse(Integer.toString(v.getId()));
-        System.out.println("all done!");
+
 
         
         

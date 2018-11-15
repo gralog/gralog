@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.npcompleteness.generator;
 
@@ -57,16 +57,16 @@ public class SatToClique extends Generator {
         // create gadgets for the literals
         int i = 0;
         for (String var : vars) {
-            Vertex pos = result.createVertex(); // the positive literal
-            pos.coordinates = new Vector2D(
+            Vertex pos = result.addVertex(); // the positive literal
+            pos.setCoordinates(
                 6d * i,
                 10d - 2 * Math.sin(2 * i * Math.PI / (2 * vars.size() - 1))
             );
             pos.label = var;
             posNode.put(var, pos);
 
-            Vertex neg = result.createVertex(); // the negative literal
-            neg.coordinates = new Vector2D(
+            Vertex neg = result.addVertex(); // the negative literal
+            neg.setCoordinates(
                 6d * i + 2,
                 10d - 2 * Math.sin((2 * i + 1) * Math.PI / (2 * vars.size() - 1))
             );
@@ -80,8 +80,6 @@ public class SatToClique extends Generator {
                 result.addEdge(result.createEdge(pos, v));
                 result.addEdge(result.createEdge(neg, v));
             }
-            result.addVertex(pos);
-            result.addVertex(neg);
 
             i++;
         }
@@ -98,13 +96,12 @@ public class SatToClique extends Generator {
             int j = 0;
             Set<Vertex> vertsOfClause = new HashSet<>();
             for (PropositionalLogicFormula literal : literals) {
-                Vertex clauseVert = result.createVertex();
-                clauseVert.coordinates = new Vector2D(
+                Vertex clauseVert = result.addVertex();
+                clauseVert.setCoordinates(
                     8d * i + 2 * Math.cos(j * Math.PI / (literals.size() - 1)),
                     3d - Math.sin(j * Math.PI / (literals.size() - 1))
                 );
                 clauseVert.label = literal.toString();
-                result.addVertex(clauseVert);
                 j++;
 
                 // positive literal of clause connected to negative literal in variables

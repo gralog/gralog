@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.modalmucalculus.formula;
 
@@ -59,7 +59,7 @@ public class ModalMuCalculusOr extends ModalMuCalculusFormula {
         for (Vertex v : s.getVertices()) {
             ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x + scale*(lw + 0.5d));
-            node.coordinates = new Vector2D(
+            node.setCoordinates(
                 (index.get((World) v).get(left).coordinates.getX()
                 + index.get((World) v).get(right).coordinates.getX()) / 2d,
                 scale * size.getY() * v.coordinates.getY() + pos.getY()

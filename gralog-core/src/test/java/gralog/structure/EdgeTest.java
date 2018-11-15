@@ -3,7 +3,8 @@ package gralog.structure;
 import gralog.rendering.Vector2D;
 import gralog.structure.controlpoints.ControlPoint;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class EdgeTest {
 
@@ -17,8 +18,8 @@ public class EdgeTest {
 
         ControlPoint ctrl1, ctrl2, ctrl3;
 
-        first.coordinates = new Vector2D(0, 0);
-        secnd.coordinates = new Vector2D(1, 0);
+        first.setCoordinates(0, 0);
+        secnd.setCoordinates(1, 0);
 
         s.addVertex(first);
         s.addVertex(secnd);
@@ -26,8 +27,8 @@ public class EdgeTest {
         Edge e = s.addEdge(first, secnd, 0, null);
         e.edgeType = Edge.EdgeType.SHARP;
 
-        ctrl1 = e.addControlPoint(new Vector2D(0,1), new Vector2D(0.5, 0));
-        ctrl2 = e.addControlPoint(new Vector2D(1,1), new Vector2D(0.5, 0.5));
+        ctrl1 = e.addControlPoint(new Vector2D(0, 1), new Vector2D(0.5, 0));
+        ctrl2 = e.addControlPoint(new Vector2D(1, 1), new Vector2D(0.5, 0.5));
 
         /*
         current state
@@ -38,7 +39,7 @@ public class EdgeTest {
         c - - - c
         */
 
-        ctrl3 = e.addControlPoint(new Vector2D(2,0), new Vector2D(1, 0.5));
+        ctrl3 = e.addControlPoint(new Vector2D(2, 0), new Vector2D(1, 0.5));
         assertEquals(2, e.controlPoints.indexOf(ctrl3));
 
         /*
@@ -74,8 +75,8 @@ public class EdgeTest {
         Vertex first = s.createVertex();
         Vertex secnd = s.createVertex();
 
-        first.coordinates = new Vector2D(0, 0);
-        secnd.coordinates = new Vector2D(1, 0);
+        first.setCoordinates(0, 0);
+        secnd.setCoordinates(1, 0);
 
         s.addVertex(first);
         s.addVertex(secnd);
@@ -83,9 +84,9 @@ public class EdgeTest {
         Edge e = s.addEdge(first, secnd, 0, null);
         e.edgeType = Edge.EdgeType.SHARP;
 
-        e.addControlPoint(new Vector2D(0,1), new Vector2D(0.5, 0));
-        e.addControlPoint(new Vector2D(1,1), new Vector2D(0.5, 0.5));
-        e.addControlPoint(new Vector2D(0.5,1), new Vector2D(0.5, 1));
+        e.addControlPoint(new Vector2D(0, 1), new Vector2D(0.5, 0));
+        e.addControlPoint(new Vector2D(1, 1), new Vector2D(0.5, 0.5));
+        e.addControlPoint(new Vector2D(0.5, 1), new Vector2D(0.5, 1));
 
         e.setEdgeType(Edge.EdgeType.BEZIER);
 

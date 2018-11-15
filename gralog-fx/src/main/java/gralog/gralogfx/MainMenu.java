@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
@@ -125,29 +125,39 @@ public class MainMenu {
 
     private Menu createFileMenu() {
         Menu menuFile = new Menu("File");
-        menuFileNew = new Menu("New");
+        final KeyCodeCombination newStructure, generate, save, saveAs, open, loadLast, load, quitGralog;
+        newStructure = new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN);
+        generate     = new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN);
+        save         = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
+        saveAs       = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN);
+        open         = new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN);
+        loadLast     = new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN);
+        load         = new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN);
+        quitGralog   = new KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN);
+
+        menuFileNew = new Menu("New" );
         menuFileGenerators = new Menu("Generators");
 
-        menuFileSave = createMenuItem("Save graph", handlers.onSave);
+        menuFileSave = createMenuItem("Save graph", handlers.onSave,save);
         menuFileSave.setDisable(true);
 
         // "Save" is initially disabled because we do not have a structure.
-        menuFileSaveAs = createMenuItem("Save graph as...", handlers.onSaveAs);
+        menuFileSaveAs = createMenuItem("Save graph as...", handlers.onSaveAs,saveAs);
         menuFileSaveAs.setDisable(true);
         menuFile.getItems().addAll(
             menuFileNew, menuFileGenerators, new SeparatorMenuItem(),
-            createMenuItem("Open graph...", handlers.onOpen),
+            createMenuItem("Open graph...", handlers.onOpen,open),
             createMenuItem("Direct input...", handlers.onDirectInput),
                 menuFileSave,
                 menuFileSaveAs,
             new SeparatorMenuItem(),
-            createMenuItem("Load spec'd plugin", handlers.onLoadPluginFromSpecifiedFilepath),
-            createMenuItem("Load plugin...", handlers.onLoadPluginWithPromptForFile),
-            createMenuItem("Load last plugin", handlers.onLoadLastPlugin),
+            createMenuItem("Load spec'd program", handlers.onLoadPluginFromSpecifiedFilepath),
+            createMenuItem("Load external program...", handlers.onLoadPluginWithPromptForFile,load),
+            createMenuItem("Load last program", handlers.onLoadLastPlugin,loadLast),
             new SeparatorMenuItem(),
             createMenuItem("Preferences", PreferenceWindow::new),
             new SeparatorMenuItem(),
-            createMenuItem("Exit", handlers.onExit));
+            createMenuItem("Exit", handlers.onExit,quitGralog));
 
         return menuFile;
     }

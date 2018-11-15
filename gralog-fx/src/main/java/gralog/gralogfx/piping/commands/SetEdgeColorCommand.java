@@ -13,32 +13,32 @@ public class SetEdgeColorCommand extends CommandForGralogToExecute {
 
 
 
-	public SetEdgeColorCommand(String[] externalCommandSegments,Structure structure) {
+	public SetEdgeColorCommand(String[] externalCommandSegments,Structure structure){
 		this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         //get source, target vertex id's, terminate program if the number is not a number
     
 
-        try {
+        try{
             this.edge = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
-        }catch(NonExistantEdgeException e) {
+        }catch(NonExistantEdgeException e){
             this.setConsoleMessage("(non-fatal) " + e.toString());
-        }catch(Exception e) {
+        }catch(Exception e){
             this.fail();
             this.setResponse(null);
             this.error = e;
             return;
         }
 
-        try {
+        try{
             String color = this.externalCommandSegments[3];
-            if (color.substring(0,3).equals("hex")) {
+            if (color.substring(0,3).equals("hex")){
                 this.changeColor = PipingMessageHandler.colorConversionHex(color.substring(4,color.length()-1));
-            }else if(color.substring(0,3).equals("rgb")) {
-                System.out.println("dubidubidu rgb");
+            }else if(color.substring(0,3).equals("rgb")){
+
                 this.changeColor = PipingMessageHandler.colorConversionRGB(color.substring(4,color.length()-1));
             }
-        }catch(Exception e) {
+        }catch(Exception e){
             this.error = e;
             this.fail();
             return;
@@ -50,10 +50,10 @@ public class SetEdgeColorCommand extends CommandForGralogToExecute {
 
 	}
 
-	public void handle() {
+	public void handle(){
 
         // int changeId;
-        if (this.edge != null) {
+        if (this.edge != null){
             this.edge.color = changeColor;
         }
         

@@ -1,15 +1,20 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.generator;
 
 import gralog.algorithm.AlgorithmParameters;
-import java.util.ArrayList;
-
-import gralog.automaton.*;
+import gralog.automaton.Automaton;
+import gralog.automaton.State;
+import gralog.automaton.Transition;
 import gralog.generator.Generator;
 import gralog.generator.GeneratorDescription;
-import gralog.rendering.Vector2D;
 import gralog.structure.Structure;
+
+import java.util.ArrayList;
+
+/**
+ *
+ */
 
 @GeneratorDescription(
     name = "Coset Automaton",
@@ -36,15 +41,15 @@ public class GeneratorCosetAutomaton extends Generator {
         ArrayList<State> states = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
-            State state = result.createVertex();
-            state.coordinates = new Vector2D(
+            State state = result.addVertex();
+            state.setCoordinates(
                 ((Math.cos(2d * Math.PI * i / n + Math.PI / 2d) * diameter) + diameter) / 2d,
                 ((Math.sin(2d * Math.PI * i / n + Math.PI / 2d) * diameter) + diameter) / 2d
             );
             state.label = "" + i;
 
             states.add(state);
-            result.addVertex(state);
+
         }
 
         for (int i = 0; i < n; i++) {

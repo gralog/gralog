@@ -42,7 +42,7 @@ public class DeleteVertexCommand extends CommandForGralogToExecute {
             return;
         }
 
-        System.out.println("toDelete: " + toDelete);
+
         this.structure.removeVertex(toDelete);
 
         // return "ack";

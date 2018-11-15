@@ -1,3 +1,6 @@
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
+ * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
+
 package gralog.math;
 
 import gralog.rendering.Vector2D;
@@ -16,8 +19,8 @@ public class BezierQuadratic {
     }
 
     public Vector2D eval(double t) {
-        return  c0.multiply((1-t)*(1-t)).plus(
-                c1.multiply(2*t*(1-t))).plus(
-                c2.multiply(t*t));
+        return c0.multiply((1 - t) * (1 - t)).plus(
+                c1.multiply(2 * t * (1 - t))).plus(
+                c2.multiply(t * t));
     }
 }

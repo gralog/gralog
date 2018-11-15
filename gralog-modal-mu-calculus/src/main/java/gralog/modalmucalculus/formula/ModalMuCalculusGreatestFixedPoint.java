@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.modalmucalculus.formula;
 
@@ -61,7 +61,7 @@ public class ModalMuCalculusGreatestFixedPoint extends ModalMuCalculusFormula {
         for (Vertex v : s.getVertices()) {
             ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
-            node.coordinates = new Vector2D(
+            node.setCoordinates(
                 index.get((World) v).get(formula).coordinates.getX(),
                 scale * size.getY() * v.coordinates.getY() + pos.getY()
             );

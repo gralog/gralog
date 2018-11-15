@@ -5,7 +5,6 @@ public class GralogException extends Exception {
     }
     @Override
     public String toString() {
-    	System.out.println("schuwupps! canonlical mname is; " + this.getClass().getCanonicalName());
     	return this.getClass().getSimpleName() + ":\n" + this.getMessage();
     }
 }

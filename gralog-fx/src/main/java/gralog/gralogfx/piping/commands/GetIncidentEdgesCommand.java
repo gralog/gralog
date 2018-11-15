@@ -48,8 +48,8 @@ public class GetIncidentEdgesCommand extends CommandForGralogToExecute {
         Set<Edge> incidentEdges = this.sourceVertex.getIncidentEdges();
 
         String edgeString = "";
-        for (Edge e : incidentEdges) {
-            edgeString = edgeString + Integer.toString(e.getId())+ "#";
+        for (Edge e : incidentEdges){
+            edgeString = edgeString + PipingMessageHandler.universalEdgeToTuple(e)+ "#";
         }
         if (edgeString.length() > 0 && null != edgeString) {
             edgeString = edgeString.substring(0,edgeString.length()-1);

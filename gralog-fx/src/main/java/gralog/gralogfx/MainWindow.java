@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 //test
@@ -123,13 +123,13 @@ public class MainWindow extends Application {
         pipelines = new ArrayList<>();
         //controls
         handlers.onAlignHorizontally = () -> {
-            if(tabs.getCurrentStructurePane() != null) {
+            if(tabs.getCurrentStructurePane() != null){
                 tabs.getCurrentStructurePane().alignHorizontallyMean();
             }
         };
 
         handlers.onAlignVertically = () -> {
-            if(tabs.getCurrentStructurePane() != null) {
+            if(tabs.getCurrentStructurePane() != null){
                 tabs.getCurrentStructurePane().alignVerticallyMean();
             }
         };
@@ -164,18 +164,18 @@ public class MainWindow extends Application {
         tabs.objectListDisplay = objectListDisplay;
 
         String lastOpenedFilePath = Preferences.getString(PREF_LAST_USED_STRUCTURE, "");
-        if(lastOpenedFilePath.isEmpty()) {
+        if(lastOpenedFilePath.isEmpty()){
             tabs.initializeTab();
-        }else {
+        }else{
             doOpenFile(new File(lastOpenedFilePath));
         }
         mainConsole = new Console(tabs, this::profferTextToMainWindow);
 
         //put lambdas here for controlling stuff
-        Runnable play = new Runnable() {
-            public void run() {
+        Runnable play = new Runnable(){
+            public void run(){
                 Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
-                if (!MainWindow.this.tabs.getCurrentStructurePane().handlePlay()) {
+                if (!MainWindow.this.tabs.getCurrentStructurePane().handlePlay()){
                     Platform.runLater(
                         () -> {
                             Alert alert = new Alert(AlertType.INFORMATION);
@@ -192,13 +192,12 @@ public class MainWindow extends Application {
         };
         
 
-        Runnable skip = new Runnable() {
-            public void run() {
-                System.out.println("skip");
+        Runnable skip = new Runnable(){
+            public void run(){
                 Piping currentPiping = MainWindow.this.tabs.getCurrentStructurePane().getPiping();
-                if (currentPiping != null) {
+                if (currentPiping != null){
                     MainWindow.this.tabs.getCurrentStructurePane().handleSkip();
-                }else {
+                }else{
                     Platform.runLater(
                         () -> {
                             Alert alert = new Alert(AlertType.INFORMATION);
@@ -213,10 +212,10 @@ public class MainWindow extends Application {
             }
         };
 
-        Runnable pause = new Runnable() {
-            public void run() {
-                if (!MainWindow.this.tabs.getCurrentStructurePane().handleSpontaneousPause()) {
-                }else {
+        Runnable pause = new Runnable(){
+            public void run(){
+                if (!MainWindow.this.tabs.getCurrentStructurePane().handleSpontaneousPause()){
+                }else{
                     Platform.runLater(
                         () -> {
                             Alert alert = new Alert(AlertType.INFORMATION);
@@ -231,9 +230,9 @@ public class MainWindow extends Application {
             }
         };
 
-        Runnable stop = new Runnable() {
-            public void run() {
-                if (!MainWindow.this.tabs.getCurrentStructurePane().handleSpontaneousStop()) {
+        Runnable stop = new Runnable(){
+            public void run(){
+                if (!MainWindow.this.tabs.getCurrentStructurePane().handleSpontaneousStop()){
                     Platform.runLater(
                         () -> {
                             Alert alert = new Alert(AlertType.INFORMATION);
@@ -278,7 +277,7 @@ public class MainWindow extends Application {
         root.setCenter(mainDockPane);
         root.setBottom(statusBar.getStatusBar());
     }
-    public void dockPanels() {
+    public void dockPanels(){
         structureNode.dock(mainDockPane, DockPos.CENTER);
         structureNode.setMaxHeight(Double.MAX_VALUE);
         structureNode.setPrefWidth(Double.MAX_VALUE);
@@ -300,7 +299,7 @@ public class MainWindow extends Application {
         consoleDock.setMaxHeight(Double.MAX_VALUE);
     }
 
-    void dockPanels2() {
+    void dockPanels2(){
 
         //objListDock.setMaxWidth(0);
         objListDock.dock(mainDockPane, DockPos.LEFT);
@@ -316,11 +315,8 @@ public class MainWindow extends Application {
     }
 
 
-    public void foo() {
-        System.out.println("foo");
-    }
 
-    public void handlePlannedConsoleInput() {}
+    public void handlePlannedConsoleInput(){}
     public void onLoadLastPlugin() {
         onLoadPlugin(getLastFileName());
     }
@@ -337,10 +333,8 @@ public class MainWindow extends Application {
                      @Override
                     public void run() {
                         String fileName = chooseFileForPipingWindow.fileName;
-                        if (fileName != null) {
+                        if (fileName != null){
                             MainWindow.this.onLoadPlugin(fileName);
-                        }else {
-                            System.out.println("twas the nullteenth of april");
                         }
                     }
                 });
@@ -349,7 +343,7 @@ public class MainWindow extends Application {
 
     }
 
-    public void onLoadPluginFromSpecifiedFilepath() {
+    public void onLoadPluginFromSpecifiedFilepath(){
         this.onLoadPlugin(getSpecifiedFileName());
     }
 
@@ -361,10 +355,10 @@ public class MainWindow extends Application {
         // fileChooser.getExtensionFilters().add(
         //     new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
         // );
-        // List<File> list = fileChooser.showOpenMultipleDialog(stage);
-        // if (list != null && !list.isEmpty()) {
-        //     setLastDirectory(list.get(0));
-        //     for (File file : list)
+        // List<File> vertexList = fileChooser.showOpenMultipleDialog(stage);
+        // if (vertexList != null && !vertexList.isEmpty()) {
+        //     setLastDirectory(vertexList.get(0));
+        //     for (File file : vertexList)
         //         doLoadPlugin(file.getAbsolutePath());
         // }
 
@@ -377,13 +371,13 @@ public class MainWindow extends Application {
         //     exbox.showAndWait(hello);
         // }
 
-        try {
+        try{
 //<<<<<<< HEAD
             // this.waitForPause = new CountDownLatch(1);
 
 
 
-            if (this.tabs.getCurrentStructurePane() == null) {
+            if (this.tabs.getCurrentStructurePane() == null){
                 Platform.runLater(
                     () -> {
                         Alert alert = new Alert(AlertType.INFORMATION);
@@ -398,7 +392,6 @@ public class MainWindow extends Application {
             }
 
 
-            System.out.println("with filename: " + fileName);
 
             Piping newPiping = this.tabs.getCurrentStructurePane().
                     makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
@@ -407,7 +400,7 @@ public class MainWindow extends Application {
             
 
             // pipeline.run(this::initGraph);
-            // if (!externalProcessInitResponse.equals("useCurrentGraph")) {
+            // if (!externalProcessInitResponse.equals("useCurrentGraph")){
             //     System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
             //     Structure temp = StructureManager.instantiateStructure(externalProcessInitResponse);
             //     System.out.println("intsantiaed structuer with id: ");
@@ -417,19 +410,19 @@ public class MainWindow extends Application {
             //     tabs.getAllStructures();
                 
             //     pipeline.run(temp,tabs.getCurrentStructurePane());
-            // }else {
+            // }else{
             //     pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
 
             // }
 
 
-        } catch(Exception e) {
+        } catch(Exception e){
             e.printStackTrace();
         }
     }
 
 
-    public String getSpecifiedFileName() {
+    public String getSpecifiedFileName(){
 
 
         String fileName = Preferences.getFile("MainWindow_pipingFile",
@@ -437,25 +430,22 @@ public class MainWindow extends Application {
         return fileName;
     }
 
-    public String getLastFileName() {
-
-        String fileName = Preferences.getFile("MainWindow_pipingFile",
+    public String getLastFileName(){
+// todo: should be: if it exists in Preferences, return it, otherwise return the empty string
+        String fileName = Preferences.getFile("MainWindow_lastPipingFile",
                 "/Users/f002nb9/Documents/f002nb9/kroozing/" +
                         "gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
+    
         return fileName;
     }
 
-    public StructurePane initGraph(String graphType,Piping pipelineThatCalled) {
-        System.out.println("here in initgraph!!!!" + graphType);
-        if (!graphType.equals("useCurrentGraph")) {
-            System.out.println("trying to make a grpah with type : " + graphType);
-            System.out.println("previosly current structure pane was : " + this.tabs.getCurrentStructurePane());
+    public StructurePane initGraph(String graphType,Piping pipelineThatCalled){
+        if (!graphType.equals("useCurrentGraph")){
             Structure temp;
-            try {
+            try{
                 temp = StructureManager.instantiateStructure(graphType);
-            }catch(Exception e) {
+            }catch(Exception e){
                 e.printStackTrace();
-                System.out.println("well that's an L" + graphType);
                 return null;
             }
          
@@ -463,18 +453,17 @@ public class MainWindow extends Application {
 
             tabs.getCurrentStructurePane().setPiping(pipelineThatCalled);
 
-            System.out.println("postwardly current structure pane is : " + this.tabs.getCurrentStructurePane());
             
             return tabs.getCurrentStructurePane();
-        }else {
+        }else{
             return tabs.getCurrentStructurePane();
 
         }
     }
 
-    public Boolean profferTextToMainWindow(String text) {
+    public Boolean profferTextToMainWindow(String text){
         Piping currentPiping = this.tabs.getCurrentStructurePane().getPiping();
-        if (currentPiping != null && currentPiping.getPipingState() == Piping.State.WaitingForConsoleInput) {
+        if (currentPiping != null && currentPiping.getPipingState() == Piping.State.WaitingForConsoleInput){
             return currentPiping.profferConsoleInput(text);
         }
         return false;
@@ -494,13 +483,12 @@ public class MainWindow extends Application {
     }
 
     public void onNew(String structureName) throws Exception {
-        System.out.println("instantiating structrure called: " + structureName);
         Structure structure = StructureManager.instantiateStructure(structureName);
         tabs.addTab(structureName, structure);
         setStatus("created a " + structureName + "...");
     }
 
-    public void sendOutsideMessageToConsole(String msg, MessageToConsoleFlag flag) {
+    public void sendOutsideMessageToConsole(String msg, MessageToConsoleFlag flag){
         this.mainConsole.outsideMessage(msg,flag);
     }
 
@@ -510,15 +498,15 @@ public class MainWindow extends Application {
     public void onSave() {
         onSave(getCurrentStructure(), this);
     }
-    public static void onSave(Structure structure, Application app) {
+    public static void onSave(Structure structure, Application app){
         try {
-            if(structure == null) {
+            if(structure == null){
                 ExceptionBox exbox = new ExceptionBox();
                 exbox.showAndWait("You want to save an empty structure");
                 return;
             }
 
-            if(structure.hasFileReference()) {
+            if(structure.hasFileReference()){
                 structure.getFileReference();
                 File file = new File(structure.getFileReference());
                 if (file != null) {
@@ -543,7 +531,6 @@ public class MainWindow extends Application {
                     } else {
                         structure.writeToFile(file.getAbsolutePath());
                     }
-                    System.out.println("Saving " + file.getName() + " to: \t" + file.getPath());
                 }
             }
         } catch (Exception ex) {
@@ -564,7 +551,7 @@ public class MainWindow extends Application {
                     new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
 
-            // add export-filters to list of extensions
+            // add export-filters to vertexList of extensions
             for (String format : ExportFilterManager.getExportFilters(structure.getClass())) {
                 ExportFilterDescription descr = ExportFilterManager.getExportFilterDescription(structure.getClass(), format);
                 ExtensionFilter filter = new FileChooser.ExtensionFilter(
@@ -613,7 +600,7 @@ public class MainWindow extends Application {
             new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
         );
 
-        // add export-filters to list of extensions
+        // add export-filters to vertexList of extensions
         for (String format : ImportFilterManager.getImportFilterClasses()) {
             ImportFilterDescription descr = ImportFilterManager.getImportFilterDescription(format);
             ExtensionFilter filter = new FileChooser.ExtensionFilter(
@@ -665,7 +652,7 @@ public class MainWindow extends Application {
                 structure = Structure.loadFromFile(file.getAbsolutePath());
             }
 
-            if (structure != null) {
+            if (structure != null){
                 structure.setFileReference(true, file.getAbsolutePath());
                 tabs.addTab(file.getName(), structure);
             }
@@ -709,36 +696,36 @@ public class MainWindow extends Application {
             exbox.showAndWait(ex);
         }
     }
-    private void onCut() {
+    private void onCut(){
         StructurePane s = tabs.getCurrentStructurePane();
-        if(s != null) {
+        if(s != null){
             s.cutSelectionToClipboard();
         }
     }
-    private void onCopy() {
+    private void onCopy(){
         StructurePane s = tabs.getCurrentStructurePane();
-        if(s != null) {
+        if(s != null){
             s.copySelectionToClipboard();
         }
     }
 
-    private void onPaste() {
+    private void onPaste(){
         StructurePane s = tabs.getCurrentStructurePane();
-        if(s != null) {
+        if(s != null){
             s.pasteFromClipboard();
         }
     }
 
-    private void onUndo() {
+    private void onUndo(){
         StructurePane s = tabs.getCurrentStructurePane();
-        if(s != null) {
+        if(s != null){
             s.undoStructure();
         }
     }
 
-    private void onRedo() {
+    private void onRedo(){
         StructurePane s = tabs.getCurrentStructurePane();
-        if(s != null) {
+        if(s != null){
             s.redoStructure();
         }
     }
@@ -802,6 +789,8 @@ public class MainWindow extends Application {
             Algorithm algo = AlgorithmManager.instantiateAlgorithm(structure.getClass(), algorithmName);
 
             AlgorithmParameters params = algo.getParameters(structure);
+
+
             if (params != null) {
                 AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
                 algostage.showAndWait();
@@ -820,10 +809,12 @@ public class MainWindow extends Application {
             algoThread.start();
         } catch (InvocationTargetException ex) {
             this.setStatus("");
+            ex.printStackTrace();
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait((Exception) ex.getCause());
         } catch (Exception ex) {
             this.setStatus("");
+            ex.printStackTrace();
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
@@ -851,7 +842,6 @@ public class MainWindow extends Application {
             Preferences.getInteger(getClass(), "main-window-height", 700));
 
         scene.getStylesheets().add("stylesheet.css");
-        System.out.println("sheets: " + scene.getStylesheets());
 
         scene.getStylesheets().add(DockPane.class.getResource("default.css").toExternalForm());
         this.stage = primaryStage;
@@ -874,18 +864,18 @@ public class MainWindow extends Application {
             Preferences.setInteger(getClass(), "main-window-height", (int) scene.getHeight());
 
 
-            if(dontAskWhenClosing) {
+            if(dontAskWhenClosing){
                 primaryStage.hide();
                 Platform.exit();
-            }else {
+            }else{
                 tabs.requestClose(() -> {
                     primaryStage.hide();
                     Platform.exit();
                 });
             }
 
-            for (Piping p : this.pipelines) {
-                if (p != null) {
+            for (Piping p : this.pipelines){
+                if (p != null){
                     p.killSelf();
 
                 }
@@ -904,14 +894,14 @@ public class MainWindow extends Application {
 
         // Setting up arguments
         Parameters p = getParameters();
-        for(String arg : p.getRaw()) {
-            if(arg.equals("dawc")) {
+        for(String arg : p.getRaw()){
+            if(arg.equals("dawc")){
                 dontAskWhenClosing = true;
             }
         }
     }
     @Override
-    public void stop() {
+    public void stop(){
         System.exit(0);
     }
 

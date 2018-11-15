@@ -2,7 +2,6 @@ defaultTasks 'run'
 
 apply plugin: 'java'
 
-
 subprojects {
   repositories {
     mavenCentral()
@@ -10,20 +9,20 @@ subprojects {
 
   apply plugin: 'java'
 
-  // Set up the style checker that checks indentation, naming
-  // conventions, etc.
-  apply plugin: 'checkstyle'
-  checkstyle {
-    configFile = rootProject.file('config/checkstyle.xml')
-    configProperties = [samedir: rootProject.file('config')]
-    toolVersion = '7.2'
-  }
-  // Do not check generated files for programming style.
-  checkstyleMain {
-    exclude '**/parser/*Scanner.java'
-    exclude '**/parser/*ScannerToken.java'
-    exclude '**/parser/*Parser.java'
-  }
+  // // Set up the style checker that checks indentation, naming
+  // // conventions, etc.
+  // apply plugin: 'checkstyle'
+  // checkstyle {
+  //   configFile = rootProject.file('config/checkstyle.xml')
+  //   configProperties = [samedir: rootProject.file('config')]
+  //   toolVersion = '7.8.1'
+  // }
+  // // Do not check generated files for programming style.
+  // checkstyleMain {
+  //   exclude '**/parser/*Scanner.java'
+  //   exclude '**/parser/*ScannerToken.java'
+  //   exclude '**/parser/*Parser.java'
+  // }
 }
 
 check.dependsOn(subprojects.check)
@@ -40,6 +39,15 @@ configure(subprojects.findAll {it.name != 'gralog-core'}) {
   }
 }
 
+def currentOS = org.gradle.internal.os.OperatingSystem.current()
+def platform
+if (currentOS.isWindows()) {
+  platform = 'win'
+} else if (currentOS.isLinux()) {
+  platform = 'linux'
+} else if (currentOS.isMacOsX()) {
+  platform = 'mac'
+}
 //If you want to include libraries for every module, do it here
 subprojects {
   // All subprojects use junit and hamcrest for their tests.
@@ -49,7 +57,12 @@ subprojects {
     compile 'org.reflections:reflections:0.9.11'
     compile 'uk.com.robust-it:cloning:1.9.10'
     compile group: 'net.objecthunter', name: 'exp4j', version: '0.4.8'
-    compile group: 'org.openjfx', name: 'javafx-controls', version: '11'
+    compile "org.openjfx:javafx-base:11:${platform}"
+    compile "org.openjfx:javafx-graphics:11:${platform}"
+    compile "org.openjfx:javafx-controls:11:${platform}"
+    compile "org.openjfx:javafx-fxml:11:${platform}"
+    compile "org.openjfx:javafx-web:11:${platform}"
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'junit:junit:4.12'
   }
 
@@ -98,12 +111,13 @@ project(':gralog-fx') {
   dependencies {
     gralog project(':gralog-core')
     gralog project(':gralog-finite-game')
+    gralog project(':gralog-first-order-logic')
     gralog project(':gralog-dockfx')
   }
   // This subproject contains the main class.
   jar {
     manifest {
-      attributes 'Main-Class': 'gralog.gralogfx.MainWindow'
+      attributes 'Main-Class': 'gralog.gralogfx.RunGralog'
     }
   }
 }
@@ -145,8 +159,8 @@ project(':gralog-finite-game') {
 
 project(':gralog-first-order-logic') {
   dependencies {
-    gralog project(':gralog-fx')
     gralog project(':gralog-core')
+    gralog project(':gralog-finite-game')
     compile 'com.github.vbmacher:java-cup-runtime:11b'
   }
   declareParserTasks(

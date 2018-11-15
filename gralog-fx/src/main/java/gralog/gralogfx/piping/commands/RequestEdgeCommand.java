@@ -41,7 +41,7 @@ public class RequestEdgeCommand extends CommandForGralogToExecute {
         this.piping.state = Piping.State.InProgress;
         Edge e = (Edge)this.piping.getSelectedObject();
         this.setResponse(Integer.toString(e.getId()));
-        System.out.println("all done!");
+
 
         
         

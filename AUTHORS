@@ -1,5 +1,11 @@
-Gralog was originally written by Viktor Engelmann.
+Idea and previous implementation: Stephan Kreutzer and Sebstin Ordyniak.
+
+This implementation of Gralog was originally written by Viktor Engelmann.
 
 Other contributors are:
 
+Adrian Alic
 Christoph Dittmann
+Michelle Döring
+Meike Hatzel
+Felix Herron

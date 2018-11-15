@@ -15,7 +15,7 @@ public class PreGralogErrorCommand extends CommandForGralogToExecute {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        System.out.println("errorcommand");
+
         this.fail();
         this.error = new PreGralogException("error: <" +externalCommandSegments[2] + ">");
 

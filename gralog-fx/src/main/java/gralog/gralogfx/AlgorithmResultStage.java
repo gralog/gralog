@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
@@ -6,6 +6,7 @@ import gralog.algorithm.Algorithm;
 import gralog.algorithm.AlgorithmParameters;
 import gralog.gralogfx.panels.ObjectInspector;
 import gralog.structure.Structure;
+import java.util.ArrayList;
 
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -41,7 +42,10 @@ public class AlgorithmResultStage extends Stage {
         objectInspector = new ObjectInspector();
 
         try {
-            objectInspector.setObject(result, structurePane);
+            ArrayList<Object> myList = new ArrayList<Object>();
+            myList.add(result);
+            objectInspector.setObject(myList);
+            // objectInspector.setObject(result, structurePane);
         } catch (Exception ex) {
         }
         closeButton = new Button("Close");

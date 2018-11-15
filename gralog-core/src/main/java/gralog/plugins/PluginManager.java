@@ -1,38 +1,47 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.plugins;
 
-import gralog.structure.*;
-import gralog.algorithm.*;
-import gralog.generator.*;
-import gralog.exportfilter.*;
-import gralog.importfilter.*;
+import gralog.algorithm.Algorithm;
+import gralog.algorithm.AlgorithmManager;
+import gralog.exportfilter.ExportFilter;
+import gralog.exportfilter.ExportFilterManager;
+import gralog.generator.Generator;
+import gralog.generator.GeneratorManager;
+import gralog.importfilter.ImportFilter;
+import gralog.importfilter.ImportFilterManager;
+import gralog.structure.Structure;
+import gralog.structure.StructureManager;
 
 import java.io.File;
-import java.net.URLClassLoader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.lang.reflect.*;
-import java.util.*;
 
 /**
  *
  */
 public final class PluginManager {
 
+    private static final HashMap<String, Constructor> CLASS_REGISTER = new HashMap<String, Constructor>();
+
     private PluginManager() {
     }
-
-    private static final HashMap<String, Constructor> CLASS_REGISTER = new HashMap<String, Constructor>();
 
     /**
      * Registers all classes in the current jar file. Requires that the program
      * is running from a jar file.
      *
      * @throws Exception Throws if there are duplicate XML names or if a class
-     * does not satisfy the requirements imposed by the manager class (for
-     * example, it is an export class without an "export" method).
+     *                   does not satisfy the requirements imposed by the manager class (for
+     *                   example, it is an export class without an "export" method).
      */
     public static void initialize() throws Exception {
         File f = new File(PluginManager.class.getProtectionDomain().getCodeSource().getLocation().toURI());
@@ -61,9 +70,9 @@ public final class PluginManager {
      *
      * @param c The class to register.
      * @throws Exception Throws if the class name or the XML name has already
-     * been registered or if the class does not satisfy the requirements imposed
-     * by the manager class (for example, it is an export class without an
-     * "export" method).
+     *                   been registered or if the class does not satisfy the requirements imposed
+     *                   by the manager class (for example, it is an export class without an
+     *                   "export" method).
      */
     public static void registerClass(Class<?> c) throws Exception {
         String xmlAlias = null;
@@ -79,15 +88,15 @@ public final class PluginManager {
      * abstract classes.
      *
      * @param classname The name of the class to register.
-     * @param xmlAlias The XML name of the class to register.
-     * @param aClass The class to register.
+     * @param xmlAlias  The XML name of the class to register.
+     * @param aClass    The class to register.
      * @throws Exception Throws if the class name or the XML name has already
-     * been registered or if the class does not satisfy the requirements imposed
-     * by the manager class (for example, it is an export class without an
-     * "export" method).
+     *                   been registered or if the class does not satisfy the requirements imposed
+     *                   by the manager class (for example, it is an export class without an
+     *                   "export" method).
      */
     public static void registerClass(String classname, String xmlAlias,
-        Class<?> aClass) throws Exception {
+                                     Class<?> aClass) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))
             return;
 
@@ -98,7 +107,7 @@ public final class PluginManager {
                 throw new Exception("class name \"" + xmlAlias + "\" already exists!");
 
         try {
-            Constructor ctor = aClass.getConstructor(new Class[] {});
+            Constructor ctor = aClass.getConstructor(new Class[]{});
             // Register the Class
             CLASS_REGISTER.put(classname, ctor);
             if (xmlAlias != null)
@@ -135,12 +144,12 @@ public final class PluginManager {
         File plugin = new File(pathToPlugin);
 
         // Add the plugin to the classpath
-        URLClassLoader sysloader = new URLClassLoader(new URL[] {plugin.toURL()}, ClassLoader.getSystemClassLoader());
+        URLClassLoader sysloader = new URLClassLoader(new URL[]{plugin.toURL()}, ClassLoader.getSystemClassLoader());
 
         // Load the classes
         Collection<Class<?>> classes = new ArrayList<>();
         try (JarFile jar = new JarFile(pathToPlugin)) {
-            for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
+            for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements(); ) {
                 JarEntry entry = entries.nextElement();
                 String file = entry.getName();
                 if (file.endsWith(".class")) {
@@ -150,9 +159,9 @@ public final class PluginManager {
                     try {
                         Class<?> c = Class.forName(classname, false, sysloader);
                         classes.add(c);
-                    }catch (NoClassDefFoundError e) {
-                        System.out.println("ncdf " +classname);
-                    }catch (ClassNotFoundException e) {
+                    } catch (NoClassDefFoundError e) {
+                        System.out.println("ncdf " + classname);
+                    } catch (ClassNotFoundException e) {
                         System.out.println("cnf " + classname);
                     }
                 }

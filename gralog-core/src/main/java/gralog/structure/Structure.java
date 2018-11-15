@@ -1,33 +1,53 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
 import gralog.math.BezierCubic;
 import gralog.math.BezierQuadratic;
 import gralog.math.BezierUtilities;
-import gralog.plugins.XmlName;
 import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
+import gralog.plugins.XmlName;
 import gralog.events.*;
 import gralog.preferences.Configuration;
-import gralog.rendering.*;
+import gralog.rendering.GralogGraphicsContext;
+import gralog.rendering.Vector2D;
+import gralog.structure.controlpoints.ControlPoint;
 
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+
 
 import gralog.structure.controlpoints.ControlPoint;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import org.w3c.dom.*;
-import java.util.concurrent.ThreadLocalRandom;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.OutputKeys;
+import javax.xml.transform.stream.StreamResult;
 
 /**
  *
@@ -38,14 +58,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     extends XmlMarshallable implements IMovable {
 
     private final Set<StructureListener> listeners = new HashSet<>();
-
-    protected HashMap<Integer, V> vertices;
-    protected HashMap<Integer, E> edges;
-
     public TreeSet<Interval> vertexIdHoles;
     public TreeSet<Interval> edgeIdHoles;
-
-
+    protected HashMap<Integer, V> vertices;
+    protected HashMap<Integer, E> edges;
     //File IO
     private boolean isOpenFile = false;
     private String structureFilePath = "";
@@ -55,7 +71,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         public int a;
         public int b;
         @Override
-        public String toString() {
+        public String toString(){
             return "("+ a + ", " + b + ")";
         }
     }
@@ -67,7 +83,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             /**
              * Returns a positive value if number1 is larger than number 2, a
              * negative number if number1 is less than number2, and 0 if they
-             * are equal. 
+             * are equal.
              */
             public int compare(Interval first, Interval second) {
                 return first.a - second.a;
@@ -77,25 +93,24 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             /**
              * Returns a positive value if number1 is larger than number 2, a
              * negative number if number1 is less than number2, and 0 if they
-             * are equal. 
+             * are equal.
              */
             public int compare(Interval first, Interval second) {
                 return first.a - second.a;
             }
         });
-        vertexIdHoles.add(new Interval(0,Integer.MAX_VALUE));
-        edgeIdHoles.add(new Interval(0,Integer.MAX_VALUE));
+        vertexIdHoles.add(new Interval(0, Integer.MAX_VALUE));
+        edgeIdHoles.add(new Interval(0, Integer.MAX_VALUE));
     }
 
-    static protected String pythonifyClass(Class c) {
-        System.out.println("class: " + c.toString() + " equality " + (c==Integer.class) + " " +(c==Double.class) + " "+(c==Boolean.class) + " "+ (c == double.class));
+    protected static String pythonifyClass(Class c) {
         if (c == String.class) {
             return "string";
         }
         if (c == Integer.class || c == int.class) {
             return "int";
         }
-        if (c == Double.class || c==double.class) {
+        if (c == Double.class || c == double.class) {
             return "float";
         }
         if (c == Boolean.class || c == boolean.class) {
@@ -104,22 +119,28 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return "notAPythonifiableClass";
     }
 
+
+
+    
+
     public boolean isEmpty() {
         return vertices.size() + edges.size() == 0;
     }
+
     /**
      * @return An unmodifiable set of vertices.
      */
     //public Set<V> getVertices() { return Collections.unmodifiableSet(vertices); }
-
-    public Collection<V> getVertices() { return vertices.values(); }
+    public Collection<V> getVertices() {
+        return vertices.values();
+    }
 
     /**
      * @return A pseudo-randommly selected vertrex.
      */
-    public Edge getRandomEdge() { 
+    public Edge getRandomEdge() {
         ArrayList<Edge> edges = new ArrayList<Edge>(this.getEdges());
-        int randomEdgeIndex = ThreadLocalRandom.current().nextInt(0, edges.size() );
+        int randomEdgeIndex = ThreadLocalRandom.current().nextInt(0, edges.size());
         Edge edge = edges.get(randomEdgeIndex);
         return edge;
     }
@@ -127,20 +148,31 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     /**
      * @return A pseudo-randommly selected vertrex.
      */
-    public Vertex getRandomVertex() { 
+    public Vertex getRandomVertex() {
         ArrayList<Vertex> vertices = new ArrayList<Vertex>(this.getVertices());
-        int randomVertexIndex = ThreadLocalRandom.current().nextInt(0, vertices.size() );
+        int randomVertexIndex = ThreadLocalRandom.current().nextInt(0, vertices.size());
         Vertex vertex = vertices.get(randomVertexIndex);
         return vertex;
     }
+
     /**
      * Overrides vertices. Only for internal use
      */
-    public void __SET_VERTICES_T(HashMap<Integer, V> verticesNew) { vertices = verticesNew; }
-    public HashMap<Integer, V> __GET_VERTICES_T() { return vertices; }
+    public void setVerticesT(HashMap<Integer, V> verticesNew) {
+        vertices = verticesNew;
+    }
 
-    public void __SET_EDGES_T(HashMap<Integer, E> edgesNew) { edges = edgesNew; }
-    public HashMap<Integer, E> __GET_EDGES_T() { return edges; }
+    public HashMap<Integer, V> getVerticesT() {
+        return vertices;
+    }
+
+    public void setEdgesT(HashMap<Integer, E> edgesNew) {
+        edges = edgesNew;
+    }
+
+    public HashMap<Integer, E> getEdgesT() {
+        return edges;
+    }
 
     /**
      * @return An unmodifiable set of edges.
@@ -155,29 +187,52 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         result.addAll(getEdges());
         return result;
     }
+
     public void render(GralogGraphicsContext gc, Highlights highlights) {
-        for (Edge e : getEdges()) {
+
+        List<Edge> currEdges = new ArrayList<Edge>();
+        Object[] getEdges = getEdges().toArray();
+        int len = getEdges.length;
+        for (int i = 0; i < len; i++) {
+            try {
+                currEdges.add((Edge) getEdges[i]);
+            } catch (Exception e) {
+                System.out.println("maybe it decreased?");
+            }
+        }
+        for (Edge e : currEdges) {
             e.render(gc, highlights);
-            for(ControlPoint c : e.controlPoints) {
-                if(highlights.isSelected(e)) {
+            for (ControlPoint c : e.controlPoints) {
+                if (highlights.isSelected(e)) {
                     c.active = true;
                     c.render(gc, highlights);
-                    if(e.getEdgeType() == Edge.EdgeType.BEZIER) {
+                    if (e.getEdgeType() == Edge.EdgeType.BEZIER) {
                         c.renderBezierHelpers(gc, highlights); //looks better
                     }
-                }else {
+                } else {
                     c.active = false;
                 }
             }
         }
 
-        for (Vertex v : getVertices()) {
+        ArrayList<Vertex> currVertices = new ArrayList<Vertex>();
+        Object[] getVertices = getVertices().toArray();
+        len = getVertices.length;
+        for (int i = 0; i < len; i++) {
+            try {
+                currVertices.add((Vertex) getVertices[i]);
+            } catch (Exception e) {
+                System.out.println("maybe it decreased?");
+            }
+        }
+
+        for (Vertex v : currVertices) {
             v.render(gc, highlights);
-            if(highlights.getSelection().size() == 1
+            if (highlights.getSelection().size() == 1
                     && highlights.isSelected(v)) {
                 v.controls.active = true;
                 v.controls.render(gc);
-            }else {
+            } else {
                 v.controls.active = false;
             }
 
@@ -227,31 +282,28 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public abstract V createVertex(Configuration config);
 
-
     /**
      * Adds a vertex to the structure, and uses the given id, given it is
-     it is stil available. if not, it uses the next free id.
+     * it is stil available. if not, it uses the next free id.
      *
      * @param config The configuration of the vertex
-     * @param id The id of which v will soon hopefully be the proud owner
+     * @param id     The id of which v will soon hopefully be the proud owner
      */
-    public V addVertex(Configuration config,int id) {
-        System.out.println("creating vertex with id : " + id);
+    public V addVertex(Configuration config, int id) {
         // v.id = pollNextFreeVertexID();
         V v = createVertex(config);
         if (this.getVertexById(id) != null) {
             //send warning to console that the id has already been assigned
-            System.out.println("warning! Id has already been assigned!");
             v.setId(pollNextFreeVertexID());
-            vertices.put(v.getId(),v);
+            vertices.put(v.getId(), v);
             return v;
         }
-        Interval me = new Interval(id,id);
+        Interval me = new Interval(id, id);
         Interval smallestGreaterThanOrEqual = this.vertexIdHoles.ceiling(me);
-        Interval newInterval = new Interval(0,0);
-        if (smallestGreaterThanOrEqual != null) { //if the next biggest 
+        Interval newInterval = new Interval(0, 0);
+        if (smallestGreaterThanOrEqual != null) { //if the next biggest
             //interval starts with the id we want to add
-            newInterval.a = id+1;
+            newInterval.a = id + 1;
             newInterval.b = smallestGreaterThanOrEqual.b;
             this.vertexIdHoles.remove(smallestGreaterThanOrEqual);
             if (newInterval.a < newInterval.b) {
@@ -259,20 +311,22 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
         }
         v.setId(id);
-        vertices.put(id,v);
+        vertices.put(id, v);
         return v;
     }
+
     public V addVertex() {
         return addVertex((Configuration) null);
     }
 
     /**
      * Don't use this method. Adding vertices this way is deprecated.
+     *
      * @param v
      */
     @Deprecated
     public void addVertex(V v) {
-        if(!vertices.containsKey(v.id)) {
+        if (!vertices.containsKey(v.id)) {
             v.id = pollNextFreeVertexID();
             vertices.put(v.id, v);
         }
@@ -281,6 +335,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     /**
      * Adds a vertex to the structure. Has no effect if the vertex already
      * exists in the structure.
+     *
      * @param config The config with which the vertex will be initialized
      * @return The created vertex
      */
@@ -310,22 +365,25 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         v.label = label;
         return v;
     }
+
     /**
      * Adds a set of vertices to the structure.
      *
      * @param vs The vertices to be added.
      */
     public void addVertices(Collection<V> vs, boolean autoGenerateIDs) {
-        if(autoGenerateIDs) {
-            for(V v : vs) {
+        if (autoGenerateIDs) {
+            for (V v : vs) {
                 v.id = pollNextFreeVertexID();
             }
         }
         //vertices.addAll(vs);
     }
-    public void addVertices(Collection <V> vs) {
+
+    public void addVertices(Collection<V> vs) {
         addVertices(vs, true);
     }
+
     /**
      * Clear the structure. Removes all vertices and all edges.
      */
@@ -333,8 +391,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         vertices.clear();
         edges.clear();
     }
-
-
 
     public Edge getEdgeByEndVertices(Vertex sourceVertex, Vertex targetVertex) {
 
@@ -350,23 +406,20 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             int targetId = e.getTarget().getId();
             
 
+
             if (targetId == inputTargetId && sourceId == inputSourceId) {
                 return e;
-            }
-            else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)) {
+            } else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)) {
                 return e;
             }
         }
         return null;
     }
 
-
-
-
-
-    /** preliminary method (to be updated with edge id's) for removing an edge
-    * very inefficient
-    */
+    /**
+     * preliminary method (to be updated with edge id's) for removing an edge
+     * very inefficient
+     */
     public Edge getEdgeByVertexIds(int inputSourceId, int inputTargetId) {
 
         Vertex sourceVertex = this.getVertexById(inputSourceId);
@@ -377,21 +430,15 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         for (Edge e : sourceVertex.getIncidentEdges()) {
 
-            System.out.println("iterating with edge: " + e.toString() +
-                    " with input: " + Integer.toString(inputSourceId) +
-                    " and target: " + Integer.toString(inputTargetId));
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
             
 
+
             if (targetId == inputTargetId && sourceId == inputSourceId) {
 
-                System.out.println("ok we found edge with target: " +
-                        targetId + "=" + inputTargetId + " and source: " +
-                        sourceId + "=" + inputSourceId);
                 return e;
-            }
-            else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)) {
+            } else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId)) {
                 return e;
             }
         }
@@ -399,31 +446,24 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     /*!!!!!!
-    * 
+    *
     DEPRECATED method for local vertex id's. To be perhaps undeprecated...*/
     @Deprecated
-    public Edge getEdgeByVertexIdsAndId(int inputSourceId, int inputTargetId,int inputEdgeId) {
+    public Edge getEdgeByVertexIdsAndId(int inputSourceId, int inputTargetId, int inputEdgeId) {
 
         Vertex sourceVertex = this.getVertexById(inputSourceId);
         Vertex targetVertex = this.getVertexById(inputTargetId);
-        System.out.println("commencing edge search");
         if (sourceVertex == null || targetVertex == null) {
             return null;
         }
         for (Edge e : sourceVertex.getIncidentEdges()) {
-            System.out.println("iterating on edge : " + e);
-            
+
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
             int edgeId = e.getId();
-            System.out.println("we're looking at id pairs: " + targetId
-                    + "," + inputTargetId + " and " + sourceId + ","
-                    + inputSourceId + " and " + edgeId + "," + inputEdgeId);;
             if (targetId == inputTargetId && sourceId == inputSourceId && edgeId == inputEdgeId) {
-                System.out.println("ok we found edge with target: " + targetId + "="
-                        + inputTargetId + " and source: " + sourceId + "=" + inputSourceId);
                 return e;
-            }else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId) && edgeId == inputEdgeId) {
+            } else if (!e.isDirected && (targetId == inputSourceId) && (sourceId == inputTargetId) && edgeId == inputEdgeId) {
                 return e;
             }
         }
@@ -438,6 +478,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     /**
      * Find the vertex with a given ID. Lookup speed is O(1), since
      * vertices are implemented as a HashMap.
+     *
      * @param id The id of the vertex
      * @return Returns the Vertex or null if no vertex has the ID
      */
@@ -448,6 +489,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     /**
      * Removes vertex from the structure for a given ID. You can remove by
      * Object as well
+     *
      * @param id The id of the vertex
      * @return True if the vertex was removed, false if either no entry could be found
      * or the associated vertex was null to begin with (see HashMap.remove() for further details)
@@ -455,16 +497,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public boolean removeVertexByID(int id) {
         return vertices.remove(id) != null;
     }
+
     /**
      * Removes a vertex and its incident edges from the structure.
      *
      * @param v The vertex to be removed.
      */
     public void removeVertex(Vertex v) {
-        System.out.println("saying i want to disconnect bitch plzzzz");
         Set<Edge> deletedEdges = new HashSet<>(v.incidentEdges);
 
-        for(Edge e : deletedEdges) {
+        for (Edge e : deletedEdges) {
             Vertex other;
             removeEdge(e);
             // e.getSource().disconnectEdge(e);
@@ -474,37 +516,33 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         vertices.remove(v.id);
 
         Interval deleteThisInterval = null;
-        if(vertexIdHoles.size() == 0) {
+        if (vertexIdHoles.size() == 0) {
             vertexIdHoles.add(new Interval(v.id, v.id));
-        }else {
-            for(Interval hole : vertexIdHoles) {
+        } else {
+            for (Interval hole : vertexIdHoles) {
                 //find hole with[,]..v.id..[a,b]
-                if(hole.a > v.id + 1) {
+                if (hole.a > v.id + 1) {
                     //find the hole smaller than [a,b]
                     Interval minInterval = vertexIdHoles.lower(hole);
-                    if(minInterval == null) {
+                    if (minInterval == null) {
                         vertexIdHoles.add(new Interval(v.id, v.id));
                         return;
                     }
                     int min = minInterval.b;
-                    System.out.println("id: " + v.id + " _ min: " + min);
-                    if(min < v.id - 1) {
+                    if (min < v.id - 1) {
                         vertexIdHoles.add(new Interval(v.id, v.id));
                         return;
-                    }else if(min == v.id - 1) {
+                    } else if (min == v.id - 1) {
                         minInterval.b += 1;
                         return;
-                    }else {
+                    } else {
                         System.out.println("vertex hole indexing error");
                     }
-                }
-                //if v.id is exactly below the hole, extend it
-                //[,]..v.id,[a,b] -> [,]..[v.id,b]
-                else if(hole.a == v.id + 1) {
+                } else if (hole.a == v.id + 1) { //if v.id is exactly below the hole, extend it [,]..v.id,[a,b] -> [,]..[v.id,b]
                     hole.a--;
                     //in case the extension makes hole lie next to a different interval, merge
                     Interval lower = vertexIdHoles.lower(hole);
-                    if(lower != null && lower.b == hole.a - 1) {
+                    if (lower != null && lower.b == hole.a - 1) {
                         //merge
                         lower.b = hole.b;
                         deleteThisInterval = hole;
@@ -513,20 +551,19 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 }
             }
             //did two intervals merge
-            if(deleteThisInterval != null) {
+            if (deleteThisInterval != null) {
                 vertexIdHoles.remove(deleteThisInterval);
-            }
-            //if not, for loop exited without finding a hole that's greater
-            //than v.id. Get last hole and decide if to extend or create new interval
-            else {
-                if(vertexIdHoles.last().b == v.id - 1) {
+            } else { //if not, for loop exited without finding a hole that's greater than v.id.
+                // Get last hole and decide if to extend or create new interval
+                if (vertexIdHoles.last().b == v.id - 1) {
                     vertexIdHoles.last().b += 1;
-                }else {
+                } else {
                     vertexIdHoles.add(new Interval(v.id, v.id));
                 }
             }
         }
     }
+
     //TODO: implement
     public void removeVertices(Collection<V> v) {
         //vertices.removeAll(v);
@@ -554,27 +591,24 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @return The new edge.
      */
     public E createEdge(int id, Configuration config) {
-        System.out.println("user chosen id: " + id);
         E edge = createEdge(config);
-        if (this.edges.get(id) != null) {
-            // return (E)null;
-            //send warning message that the id had already been assigned
-        }
+//        if (this.edges.get(id) != null) {
+//            // return (E)null;
+//            //send warning message that the id had already been assigned
+//        }
         if (id != -1) {
-
             if (this.getEdgeById(id) != null) {
-                System.out.println("already existeeth");
                 //send warning to console that the id has already been assigned
                 edge.setId(pollNextFreeEdgeID());
-                edges.put(edge.getId(),edge);
-            }else {
-                Interval me = new Interval(id,id);
+                edges.put(edge.getId(), edge);
+            } else {
+                Interval me = new Interval(id, id);
                 Interval smallestGreaterThanOrEqual = this.edgeIdHoles.ceiling(me);
-                Interval newInterval = new Interval(0,0);
+                Interval newInterval = new Interval(0, 0);
 
-                if (smallestGreaterThanOrEqual != null) { //if the next biggest 
+                if (smallestGreaterThanOrEqual != null) { //if the next biggest
                     //interval starts with the id we want to add
-                    newInterval.a = id+1;
+                    newInterval.a = id + 1;
                     newInterval.b = smallestGreaterThanOrEqual.b;
                     this.edgeIdHoles.remove(smallestGreaterThanOrEqual);
                     if (newInterval.a < newInterval.b) {
@@ -582,15 +616,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     }
                 }
                 edge.setId(id);
-                edges.put(id,edge);
+                edges.put(id, edge);
             }
-        }else {
+        } else {
             int nextFreeId = this.pollNextFreeEdgeID();
-            System.out.println("next free id: " + nextFreeId);
-            edge.setId(nextFreeId);    
+            edge.setId(nextFreeId);
         }
-        
-        System.out.println("setting id to " + edge.getId());
+
         return edge;
     }
 
@@ -600,6 +632,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         return addEdge(e);
     }
+
     /**
      * Add an edge to the structure. Has no effect if the edge already exists in
      * the structure.
@@ -608,67 +641,57 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public boolean addEdge(E e) {
         //correct siblings first
-        System.out.println("tha sinister methooooddd");
         e.siblings.clear();
-        int nonLoopEdges = 0;
+        int nonLoopEdges = 0; // # other edges edge with the same ends {edge.target,edge.source} = {e.target,e.source},
+        // non-loops
 
-        for(Edge edge : e.getSource().getIncidentEdges()) {
-            
-            if(edge == e) {
+        for (Edge edge : e.getSource().getIncidentEdges()) {
+            if (edge == e) {
                 continue;
             }
-            if(edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()) {
+            if (edge.getTarget() == e.getTarget() || edge.getSource() == e.getTarget()) {
 
-                if(edge.getSource() != edge.getTarget()) {
+                if (edge.getSource() != edge.getTarget()) {
                     nonLoopEdges++;
-                }
-                //if vertex has loop, don't add another loop e
-                else if(e.getSource() == e.getTarget()) {
+                } else if (e.getSource() == e.getTarget()) { //if vertex has loop, don't add another loop e
                     removeEdge(e);
                     return false;
                 }
             }
         }
 
-        //max amount of edges.
-        //TODO: Maybe make that an option
-        if(nonLoopEdges >= 4 && e.getSource() != e.getTarget()) {
-            System.out.println("wubhoo : " + e.getSource() + e.getTarget());
-            removeEdge(e);
-            return false;
-        }else if (e.getSource() == e.getTarget()) {
-            System.out.println("putin " + e.getSource() + e.getTarget());
-            edges.put(e.getId(),e);
-        }else {
-            for(Edge edge : e.getSource().getIncidentEdges()) {
-                if(e.isSiblingTo(edge)) {
+        if (e.getSource() == e.getTarget()) {
+            edges.put(e.getId(), e);
+        } else {
+            for (Edge edge : e.getSource().getIncidentEdges()) {
+                if (e.isSiblingTo(edge)) {
                     e.siblings.add(edge);
                 }
             }
 
             //very special case: if the two outer edges of a 3-edge multi edge connection are
             //oriented the opposite way of the middle one (do that for all sibling lists)
-            if(e.siblings.size() == 3) {
-                if(!e.siblings.get(0).sameOrientationAs(e.siblings.get(1)) && !e.siblings.get(1).sameOrientationAs(e)) {
+            if(e.siblings.size() == 3){
+                if(!e.siblings.get(0).sameOrientationAs(e.siblings.get(1)) && !e.siblings.get(1).sameOrientationAs(e)){
                     Collections.swap(e.siblings, 1, 2);
                 }
             }
             System.out.println("skippadop : " + e.getSource() + e.getTarget());
 
-            for(Edge edge : e.getSource().getIncidentEdges()) {
-                if(edge == e) {
+            for (Edge edge : e.getSource().getIncidentEdges()) {
+                if (edge == e) {
                     continue;
                 }
-                if(e.isSiblingTo(edge)) {
+                if (e.isSiblingTo(edge)) {
                     edge.siblings = e.siblings;
                 }
             }
 
-            edges.put(e.getId(),e);
+            edges.put(e.getId(), e);
 
         }
 
-        
+
         // System.out.println("we are : " + e + " am ende : " + e.getSource() + e.getTarget());
         // System.out.println("we be addin the edge up in this boi");
         return true;
@@ -681,10 +704,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public void addEdges(Collection<E> es) {
 
-        for(E e : es) {
-            int id= pollNextFreeEdgeID();
+        for (E e : es) {
+            int id = pollNextFreeEdgeID();
             e.setId(id);
-            edges.put(e.getId(),e);
+            edges.put(e.getId(), e);
         }
     }
 
@@ -699,37 +722,33 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public E addEdge(V source, V target) {
         return addEdge(source, target, -1, null);
     }
+
     public E addEdge(V source, V target, Configuration config) {
         return addEdge(source, target, -1, config);
     }
+
     public E addEdge(V source, V target, int id) {
         return addEdge(source, target, id, null);
     }
 
     public E addEdge(V source, V target, int id, Configuration config) {
         E e = createEdge(id, config);
-        System.out.println("after adding" + e.getSource() + e.getTarget());
-        
-        if(addEdge(e, source, target)) {
-            System.out.println("are we try8ing to add null bois???" + e.getSource() + target);
-            System.out.println("connecting tha edge in a secky deck");
-            System.out.println("source: " + e.getSource() + " and targ : " + e.getTarget());
-            return e;    
+
+        if (addEdge(e, source, target)) {
+            return e;
         }
         return null;
     }
-
-
-
 
     public void removeEdge(int id) {
 
         Edge e = this.getEdgeById(id);
         if (e != null) {
-            this.removeEdge(e,true);
+            this.removeEdge(e, true);
         }
 
     }
+
     /**
      * Removes an edge from the structure. Does not affect vertices, incident or
      * not.
@@ -738,57 +757,55 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @return boolean whether the edge was successfully removed
      */
     public void removeEdge(Edge edge, boolean removeSiblingsEntries) {
-        if (edges.get(edge.getId()) == null) {//tryna delete an edge that already exists!
+        if (edges.get(edge.getId()) == null) { //tried to delete an edge that already exists!
             return;
         }
       
 
-       
-        
+
         // edge.getSource().disconnectEdge(edge);
         // edge.getTarget().disconnectEdge(edge);
         edge.setSource(null);
         edge.setTarget(null);
-        if(removeSiblingsEntries) {
-            for (int i = 0; i < edge.siblings.size(); i++)
-            {
-                if(edge != edge.siblings.get(i)) {
+        if (removeSiblingsEntries) {
+            for (int i = 0; i < edge.siblings.size(); i++) {
+                if (edge != edge.siblings.get(i)) {
                     edge.siblings.get(i).siblings.remove(edge);
                 }
             }
         }
-        
+
         edges.remove(edge.getId());
 
         
 
         Interval deleteThisInterval = null;
-        if(this.edgeIdHoles.size() == 0) {
+        if (this.edgeIdHoles.size() == 0) {
             this.edgeIdHoles.add(new Interval(edge.getId(), edge.getId()));
-        }else {
+        } else {
             int id = edge.getId();
-            Interval me = new Interval(edge.getId(),id);
+            Interval me = new Interval(edge.getId(), id);
             Interval justAbove = this.edgeIdHoles.ceiling(me);
             Interval justBelow = this.edgeIdHoles.floor(me);
             // System.out.println("justabove: " + justAbove + " justBelow: " + justBelow);
 
             if (justAbove == null) {
                 //this means justBelow cannot be null
-                if (justBelow.b == id-1) {
-                    Interval newJustBelow = new Interval(justBelow.a,id);
+                if (justBelow.b == id - 1) {
+                    Interval newJustBelow = new Interval(justBelow.a, id);
                     this.edgeIdHoles.remove(justBelow);
                     this.edgeIdHoles.add(newJustBelow);
-                }else {
+                } else {
                     this.edgeIdHoles.add(me);
                 }
                 return;
-            }else {
+            } else {
                 if (justBelow == null) {
-                    if (justAbove.a == id+1) {
-                        Interval newJustAbove = new Interval(id,justAbove.b);
+                    if (justAbove.a == id + 1) {
+                        Interval newJustAbove = new Interval(id, justAbove.b);
                         this.edgeIdHoles.remove(justAbove);
                         this.edgeIdHoles.add(newJustAbove);
-                    }else {
+                    } else {
                         this.edgeIdHoles.add(me);
                     }
                     return;
@@ -796,28 +813,27 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
 
 
-
-            if (justAbove.a == id+1) {
-                if (justBelow.b == id -1) {
+            if (justAbove.a == id + 1) {
+                if (justBelow.b == id - 1) {
                     //case 1: [x,id-1] [id+1,y]
-                    Interval combinedInterval = new Interval(justBelow.a,justAbove.b);
+                    Interval combinedInterval = new Interval(justBelow.a, justAbove.b);
                     this.edgeIdHoles.remove(justAbove);
                     this.edgeIdHoles.remove(justBelow);
                     this.edgeIdHoles.add(combinedInterval);
-                }else {
-                    Interval newJustAbove = new Interval(id,justAbove.b);
+                } else {
+                    Interval newJustAbove = new Interval(id, justAbove.b);
                     this.edgeIdHoles.remove(justAbove);
                     this.edgeIdHoles.add(newJustAbove);
                 }
                 return;
-            }else {
-                if (justBelow.b == id -1) {
-                    Interval newJustBelow = new Interval(justBelow.a,id);
+            } else {
+                if (justBelow.b == id - 1) {
+                    Interval newJustBelow = new Interval(justBelow.a, id);
                     this.edgeIdHoles.remove(justBelow);
                     this.edgeIdHoles.add(newJustBelow);
                     return;
                 }
-                
+
             }
 
             this.edgeIdHoles.add(me);
@@ -825,6 +841,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
 
     }
+
     public void removeEdge(Edge e) {
         removeEdge(e, true);
     }
@@ -839,18 +856,18 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      */
     public void insertForeignSelection(Set<Object> selection, double offset) {
         // fill lists`
-        for(Object o : selection) {
-            if(o instanceof Vertex) {
-                V v = ((V)o);
+        for (Object o : selection) {
+            if (o instanceof Vertex) {
+                V v = ((V) o);
                 v.setId(pollNextFreeVertexID());
                 v.move(Vector2D.one().multiply(offset));
                 this.vertices.put(v.getId(), v);
             }
         }
-        for(Object o : selection) {
-            if(o instanceof Edge) {
-                ((E)o).setId(pollNextFreeEdgeID());
-                this.edges.put(((E)o).getId(), (E)o);
+        for (Object o : selection) {
+            if (o instanceof Edge) {
+                ((E) o).setId(pollNextFreeEdgeID());
+                this.edges.put(((E) o).getId(), (E) o);
             }
         }
 
@@ -861,11 +878,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         HashMap<Integer, V> idToVertex = new HashMap<>();
         HashSet<Interval> edgeIDs = new HashSet<>();
 
-        for(Object o : selection) {
+        for (Object o : selection) {
             if (o instanceof Vertex) {
 
-                for(Edge e : ((V) o).getOutgoingEdges()) {
-                    if(selection.contains(e.getTarget())) {
+                for (Edge e : ((V) o).getOutgoingEdges()) {
+                    if (selection.contains(e.getTarget())) {
                         edgeIDs.add(new Interval(e.getSource().id, e.getTarget().id));
                     }
                 }
@@ -885,7 +902,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
         }
 
-        for(Interval edge : edgeIDs) {
+        for (Interval edge : edgeIDs) {
             //TODO: instead of addEdge consider directly adding edges, since duplication occurs only
             //with graphs that already fulfill the desired properties
             Edge tmp = addEdge(idToVertex.get(edge.a), idToVertex.get(edge.b));
@@ -894,10 +911,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         return result;
     }
+
     /**
-     * @return True if the given two vertices are adjacent.
      * @param a The first vertex.
      * @param b The second vertex.
+     * @return True if the given two vertices are adjacent.
      */
     public boolean adjacent(V a, V b) {
         for (Edge e : this.getEdges())
@@ -906,7 +924,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return false;
     }
 
-    public Set<Edge> edgesBetweenVertices(V a,V b) {
+    public Set<Edge> edgesBetweenVertices(V a, V b) {
         Set<Edge> edges = new HashSet<Edge>();
         for (Edge e : a.getIncidentEdges()) {
             if ((e.getSource() == a && e.getTarget() == b) || ((!e.isDirected()) && e.getSource() == b && e.getTarget() == a)) {
@@ -921,15 +939,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * filled on a single interval [0, n)
      */
     public int pollNextFreeEdgeID() {
-        System.out.println("polling for edge id");
-        if(edgeIdHoles.size() != 0) {
+        if (edgeIdHoles.size() != 0) {
             Interval hole = edgeIdHoles.first();
             hole.a++;
-            if(hole.a > hole.b) {
+            if (hole.a > hole.b) {
                 edgeIdHoles.remove(hole);
             }
             return hole.a - 1;
-        }else {
+        } else {
             return 0;
         }
     }
@@ -939,18 +956,18 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * filled on a single interval [0, n)
      */
     public int pollNextFreeVertexID() {
-        System.out.println("polling for v id");
-        if(vertexIdHoles.size() != 0) {
+        if (vertexIdHoles.size() != 0) {
             Interval hole = vertexIdHoles.first();
             hole.a++;
-            if(hole.a > hole.b) {
+            if (hole.a > hole.b) {
                 vertexIdHoles.remove(hole);
             }
             return hole.a - 1;
-        }else {
+        } else {
             return 0;
         }
     }
+
     /**
      * Return an edge or vertex that lies at the given coordinates. If multiple
      * objects are stacked at the given location, then vertices win over edges.
@@ -965,7 +982,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         Vector2D p = new Vector2D(x, y);
         for (Vertex v : getVertices()) {
             IMovable temp = v.findObject(x, y);
-            if(temp != null) {
+            if (temp != null) {
                 return temp;
             }
         }
@@ -980,14 +997,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return null;
     }
 
-
-    
+    //TODO: write comprehensive, more general SAT colision test
 
     /**
      * Returns an array of movable objects that lie within bounds of a given rectangle.
      * TODO: Implement an overloaded findObjects that returns only filtered movable obj.
+     *
      * @param from one corner of the rectangle
-     * @param to the corner diagonal to the first one
+     * @param to   the corner diagonal to the first one
      * @return A collection of movables that are within bounds of the given rectangle
      */
     public Set<IMovable> findObjects(Point2D from, Point2D to) {
@@ -1008,30 +1025,30 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 Math.min(px, qx), Math.min(py, qy),
                 Math.abs(cx), Math.abs(cy));
 
-        if(Math.abs(cx) < 0.01 || Math.abs(cy) < 0.01) {
+        if (Math.abs(cx) < 0.01 || Math.abs(cy) < 0.01) {
             return objects;
         }
         for (Vertex v : getVertices()) {
             double vx = v.coordinates.getX();
             double vy = v.coordinates.getY();
-            if(insideSelection(qx, qy, cx, cy, vx, vy)) {
+            if (insideSelection(qx, qy, cx, cy, vx, vy)) {
                 objects.add(v);
             }
         }
 
         for (Edge e : this.getEdges()) {
 
-            if(e.isLoop()) {
+            if (e.isLoop()) {
                 continue;
             }
-            if(e.getControlPointCount() >= 1) {
-                if(rectContainsVector(rect, e.getStartingPointSource()) ||
-                        rectContainsVector(rect, e.getStartingPointTarget())) {
+            if (e.getControlPointCount() >= 1) {
+                if (rectContainsVector(rect, e.getStartingPointSource())
+                        || rectContainsVector(rect, e.getStartingPointTarget())) {
                     objects.add(e);
                     continue;
                 }
-                if(e.getEdgeType() == Edge.EdgeType.BEZIER) {
-                    if(e.getControlPointCount() == 1) {
+                if (e.getEdgeType() == Edge.EdgeType.BEZIER) {
+                    if (e.getControlPointCount() == 1) {
 
                         BezierQuadratic curve = BezierQuadratic.createFromEdge(e);
 
@@ -1040,14 +1057,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         var intersectionsYF = BezierUtilities.yIntersectionQuadraticBezier(py, curve);
                         var intersectionsYT = BezierUtilities.yIntersectionQuadraticBezier(qy, curve);
 
-                        if(     checkContainsAnyX(intersectionsYF, rect) ||
-                                checkContainsAnyX(intersectionsYT, rect) ||
-                                checkContainsAnyY(intersectionsXF, rect) ||
-                                checkContainsAnyY(intersectionsXT, rect)) {
+                        if (checkContainsAnyX(intersectionsYF, rect)
+                                || checkContainsAnyX(intersectionsYT, rect)
+                                || checkContainsAnyY(intersectionsXF, rect)
+                                || checkContainsAnyY(intersectionsXT, rect)) {
                             objects.add(e);
                         }
                     }
-                    if(e.getControlPointCount() == 2) {
+                    if (e.getControlPointCount() == 2) {
 
                         BezierCubic curve = BezierCubic.createFromEdge(e);
 
@@ -1056,16 +1073,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         var intersectionsYF = BezierUtilities.yIntersectionCubicBezier(py, curve);
                         var intersectionsYT = BezierUtilities.yIntersectionCubicBezier(qy, curve);
 
-                        if(     checkContainsAnyX(intersectionsYF, rect) ||
-                                checkContainsAnyX(intersectionsYT, rect) ||
-                                checkContainsAnyY(intersectionsXF, rect) ||
-                                checkContainsAnyY(intersectionsXT, rect)) {
+                        if (checkContainsAnyX(intersectionsYF, rect)
+                                || checkContainsAnyX(intersectionsYT, rect)
+                                || checkContainsAnyY(intersectionsXF, rect)
+                                || checkContainsAnyY(intersectionsXT, rect)) {
                             objects.add(e);
                         }
                     }
-                }else if(e.getEdgeType() == Edge.EdgeType.SHARP) {
+                } else if (e.getEdgeType() == Edge.EdgeType.SHARP) {
                     continue; // TODO:
-                }else if(e.getEdgeType() == Edge.EdgeType.ROUND) {
+                } else if (e.getEdgeType() == Edge.EdgeType.ROUND) {
                     continue; // TODO:
                 }
                 continue;
@@ -1076,13 +1093,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             Vector2D source = e.getSource().coordinates.plus(perpendicularToDiff);
             Vector2D target = e.getTarget().coordinates.plus(perpendicularToDiff);
 
-            if(separatingAxisTest(vecFrom, vecTo, source, target)) {
+            if (separatingAxisTest(vecFrom, vecTo, source, target)) {
                 continue;
             }
-            Vector2D sel1 = new Vector2D(from.getX(), from.getY())  .minus(source);
-            Vector2D sel2 = new Vector2D(to.getX(), from.getY())    .minus(source);
-            Vector2D sel3 = new Vector2D(from.getX(), to.getY())    .minus(source);
-            Vector2D sel4 = new Vector2D(to.getX(), to.getY())    .minus(source);
+            Vector2D sel1 = new Vector2D(from.getX(), from.getY()).minus(source);
+            Vector2D sel2 = new Vector2D(to.getX(), from.getY()).minus(source);
+            Vector2D sel3 = new Vector2D(from.getX(), to.getY()).minus(source);
+            Vector2D sel4 = new Vector2D(to.getX(), to.getY()).minus(source);
 
             Vector2D dir = target.minus(source);
             double lsquared = dir.length() * dir.length();
@@ -1092,11 +1109,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             Vector2D proj3 = dir.multiply(dir.multiply(sel3) / lsquared).minus(sel3);
             Vector2D proj4 = dir.multiply(dir.multiply(sel4) / lsquared).minus(sel4);
 
-            if(areNegativelyProportional(proj1, proj2)) {
+            if (areNegativelyProportional(proj1, proj2)) {
                 objects.add(e);
-            }else if(areNegativelyProportional(proj1, proj3)) {
+            } else if (areNegativelyProportional(proj1, proj3)) {
                 objects.add(e);
-            }else if(areNegativelyProportional(proj1, proj4)) {
+            } else if (areNegativelyProportional(proj1, proj4)) {
                 objects.add(e);
             }
 
@@ -1107,50 +1124,54 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     private static boolean rectContainsVector(Rectangle2D rect, Vector2D c) {
         return rect.contains(c.getX(), c.getY());
     }
+
     private static boolean checkContainsAnyX(Vector2D[] vectors, Rectangle2D rect) {
-        for(int i = 0; i < vectors.length; i++) {
-            if(vectors[i] != null) {
-                if(rect.getMinX() < vectors[i].getX() &&
-                        rect.getMaxX() > vectors[i].getX()) {
+        for (int i = 0; i < vectors.length; i++) {
+            if (vectors[i] != null) {
+                if (rect.getMinX() < vectors[i].getX()
+                        && rect.getMaxX() > vectors[i].getX()) {
                     return true;
                 }
             }
         }
         return false;
     }
+
     private static boolean checkContainsAnyY(Vector2D[] vectors, Rectangle2D rect) {
-        for(int i = 0; i < vectors.length; i++) {
-            if(vectors[i] != null) {
-                if(rect.getMinY() < vectors[i].getY() &&
-                        rect.getMaxY() > vectors[i].getY()) {
+        for (int i = 0; i < vectors.length; i++) {
+            if (vectors[i] != null) {
+                if (rect.getMinY() < vectors[i].getY()
+                        && rect.getMaxY() > vectors[i].getY()) {
                     return true;
                 }
             }
         }
         return false;
     }
+
 
     //TODO: write comprehensive, more general SAT colision test
     /** Returns true if projections are separate
      */
     private boolean separatingAxisTest(Vector2D rectFrom, Vector2D rectTo, Vector2D edgeFrom, Vector2D edgeTo) {
         //x axis
-        if(Math.max(rectFrom.getX(), rectTo.getX()) < Math.min(edgeFrom.getX(), edgeTo.getX())) {
+        if (Math.max(rectFrom.getX(), rectTo.getX()) < Math.min(edgeFrom.getX(), edgeTo.getX())) {
             return true;
         }
-        if(Math.min(rectFrom.getX(), rectTo.getX()) > Math.max(edgeFrom.getX(), edgeTo.getX())) {
+        if (Math.min(rectFrom.getX(), rectTo.getX()) > Math.max(edgeFrom.getX(), edgeTo.getX())) {
             return true;
         }
         //y axis
-        if(Math.max(rectFrom.getY(), rectTo.getY()) < Math.min(edgeFrom.getY(), edgeTo.getY())) {
+        if (Math.max(rectFrom.getY(), rectTo.getY()) < Math.min(edgeFrom.getY(), edgeTo.getY())) {
             return true;
         }
-        if(Math.min(rectFrom.getY(), rectTo.getY()) > Math.max(edgeFrom.getY(), edgeTo.getY())) {
+        if (Math.min(rectFrom.getY(), rectTo.getY()) > Math.max(edgeFrom.getY(), edgeTo.getY())) {
             return true;
         }
 
         return false;
     }
+
     private boolean areNegativelyProportional(Vector2D a, Vector2D b) {
         double ax = a.getX();
         double ay = a.getY();
@@ -1158,20 +1179,21 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         double bx = b.getX();
         double by = b.getY();
 
-        if(ax != 0) {
+        if (ax != 0) {
             return Math.signum(ax) != Math.signum(bx);
-        }else {
+        } else {
             return Math.signum(ay) != Math.signum(by);
         }
     }
+
     /* checking if x coordinate is in bounds of the rect (for x and y respectively)
      * |q-v|<|c|  and  sgn(c)|q-v|>0
      */
     private boolean insideSelection(double qx, double qy, double cx, double cy, double vx, double vy) {
-        return  Math.signum(cx) * (qx - vx) <= Math.abs(cx) &&
-                Math.signum(cy) * (qy - vy) <= Math.abs(cy) &&
-                Math.signum(cx) * (qx - vx) >= 0 &&
-                Math.signum(cy) * (qy - vy) >= 0;
+        return Math.signum(cx) * (qx - vx) <= Math.abs(cx)
+                && Math.signum(cy) * (qy - vy) <= Math.abs(cy)
+                && Math.signum(cx) * (qx - vx) >= 0
+                && Math.signum(cy) * (qy - vy) >= 0;
     }
 
     /**
@@ -1181,24 +1203,24 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     public void collapseEdges(Set<Object> selection) {
         HashSet<Edge> representativeEdges = new HashSet<>();
         //linear time
-        for(Object edge : selection) {
-            if(edge instanceof Edge) {
+        for (Object edge : selection) {
+            if (edge instanceof Edge) {
                 Edge e = (Edge) edge;
-                if(!e.isLoop()) {
+                if (!e.isLoop()) {
                     boolean nonRelated = true;
                     //edges can only be related to siblings. Iterate over all siblings
                     //and check if one of them is already declared a representative
-                    for(Edge sibling : e.siblings) {
+                    for (Edge sibling : e.siblings) {
                         nonRelated &= !representativeEdges.contains(sibling);
                     }
-                    if(nonRelated) {
+                    if (nonRelated) {
                         representativeEdges.add(e);
                     }
 
                 }
             }
         }
-        for(Edge representative : representativeEdges) {
+        for (Edge representative : representativeEdges) {
             representative.collapse(this);
 
         }
@@ -1211,17 +1233,18 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         Set<Vertex> vertices = new HashSet<>();
         double sum = 0;
         double count = 0;
-        for(Object o : selection) {
-            if(o instanceof Vertex) {
-                vertices.add((Vertex)o);
-                sum += ((Vertex)o).coordinates.getY();
+        for (Object o : selection) {
+            if (o instanceof Vertex) {
+                vertices.add((Vertex) o);
+                sum += ((Vertex) o).coordinates.getY();
                 count++;
             }
         }
-        for(Vertex v : vertices) {
-            v.coordinates = new Vector2D(v.coordinates.getX(), sum/count);
+        for (Vertex v : vertices) {
+            v.setCoordinates(v.coordinates.getX(), sum / count);
         }
     }
+
     /**
      * Aligns all selected vertices along the y coordinate of the first
      * selected element
@@ -1234,27 +1257,28 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         Set<Vertex> vertices = new HashSet<>();
         double sum = 0;
         double count = 0;
-        for(Object o : selection) {
-            if(o instanceof Vertex) {
-                vertices.add((Vertex)o);
-                sum += ((Vertex)o).coordinates.getX();
+        for (Object o : selection) {
+            if (o instanceof Vertex) {
+                vertices.add((Vertex) o);
+                sum += ((Vertex) o).coordinates.getX();
                 count++;
             }
         }
-        for(Vertex v : vertices) {
-            v.coordinates = new Vector2D(sum/count, v.coordinates.getY());
+        for (Vertex v : vertices) {
+            v.setCoordinates(sum / count, v.coordinates.getY());
         }
     }
+
     @Override
     public Element toXml(Document doc) throws Exception {
-        Element snode = doc.createElement("graph");//super.toXml(doc);
+        Element snode = doc.createElement("graph"); //super.toXml(doc);
         if (this.getClass().getAnnotation(XmlName.class).name().equals("graph")) {
-        	snode.setAttribute("edgedefault", "undirected");
+            snode.setAttribute("edgedefault", "undirected");
         } else {
-        	snode.setAttribute("edgedefault", "directed");
+            snode.setAttribute("edgedefault", "directed");
         }
-        snode.setAttribute("type", this.getClass().getAnnotation(XmlName.class).name());//super.xmlName());
-        
+        snode.setAttribute("type", this.getClass().getAnnotation(XmlName.class).name()); //super.xmlName());
+
         HashMap<Vertex, String> ids = new HashMap<>();
         Integer i = 1;
         for (Vertex v : getVertices()) {
@@ -1273,10 +1297,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         return snode;
     }
-    
-    public int[][] toIncM() {	//TODO: write function ToIncidenceMatrix()
-    	int[][] M = new int[1][1];
-    	return M;
+
+    public int[][] toIncM() {    //TODO: write function ToIncidenceMatrix()
+        int[][] matrixM = new int[1][1];
+        return matrixM;
     }
 
     public void writeToFile(String filename) throws Exception {
@@ -1298,7 +1322,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty(" {http://xml.apache.org/xslt}indent-amount", "2");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
         DOMSource source = new DOMSource(doc);
         transformer.transform(source, stream);
     }
@@ -1333,9 +1357,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return strObject;
 
     }
-    
-    public String incToString() throws Exception {	//TODO: Write Function IncidenceMatrix to String
-    	return "";
+
+    public String incToString() throws Exception {    //TODO: Write Function IncidenceMatrix to String
+        return "";
     }
 
     public String tgfToString() throws Exception {
@@ -1395,16 +1419,14 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             e.fromXml(loadedFrom.get(e), vertexRegister);
 
             e.setId(this.pollNextFreeEdgeID());
-            edges.put(e.getId(),(E) e);
+            edges.put(e.getId(), (E) e);
         }
-        System.out.println(edges);
     }
 
     public static Structure loadFromFile(String fileName) throws Exception {
         return loadFromStream(new FileInputStream(fileName));
     }
-
-    public static Structure loadFromStream(InputStream stream) throws Exception {
+public static Structure loadFromStream(InputStream stream) throws Exception {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(stream);
@@ -1419,26 +1441,22 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             if (childNode.getNodeType() != Node.ELEMENT_NODE)
                 continue;
             Element child = (Element) childNode;
-            String className = child.getTagName();		// catch additional
-                                                        // tag name(should be type) = buechiautomat/automaton if existent
+            String className = child.getTagName();        // catch additional
+            // tag name(should be type) = buechiautomat/automaton if existent
             if (child.hasAttribute("type")) {
-            	className = child.getAttribute("type");
+                className = child.getAttribute("type");
             } else {
-            	if (child.hasAttribute("edgedefault")) {
-            		if (child.getAttribute("edgedefault").equals("directed")) {
-            			className = "digraph";
-            		}
-            	}
+                if (child.hasAttribute("edgedefault")) {
+                    if (child.getAttribute("edgedefault").equals("directed")) {
+                        className = "digraph";
+                    }
+                }
             }
-            System.out.println(className);
             Object result = PluginManager.instantiateClass(className);
             if (result == null)
                 continue;
-            System.out.println("After " + result);
             if (result instanceof Structure) {
-                System.out.println("isa structure");
                 ((Structure) result).fromXml(child);
-                System.out.println("After: " + result);
                 return (Structure) result;
             } 
         }

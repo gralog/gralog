@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
@@ -13,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
+import java.util.ArrayList;
+
 
 /**
  *
@@ -59,7 +61,9 @@ public class GeneratorStage extends Stage {
 
         objectInspector = new ObjectInspector();
         try {
-            objectInspector.setObject(params, null, (b) -> runButton.setDisable(!b));
+            ArrayList<Object> myList = new ArrayList<Object>();
+            myList.add(params);
+            objectInspector.setObject(myList, (b) -> runButton.setDisable(!b));
         } catch (Exception ex) {
         }
 

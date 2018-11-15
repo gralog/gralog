@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx.views;
 
@@ -12,6 +12,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
 
 import javafx.scene.Node;
 
@@ -73,9 +74,7 @@ public final class ViewManager {
         File plugin = new File(pathToPlugin);
 
         // Add the plugin to the classpath
-
-        URLClassLoader sysloader = new URLClassLoader(new URL[] {plugin.toURL()}, ClassLoader.getSystemClassLoader());
-
+        var sysloader = ClassLoader.getSystemClassLoader();
         // Load the classes
         Collection<Class<?>> classes = new ArrayList<>();
         try (JarFile jar = new JarFile(pathToPlugin)) {
@@ -124,7 +123,6 @@ public final class ViewManager {
                 if (!c.isAnnotationPresent(ViewDescription.class))
                     throw new Exception("class " + c.getName() + " has no @ViewDescription annotation");
                 ViewDescription descr = c.getAnnotation(ViewDescription.class);
-
                 // Register it
                 VIEW_REGISTER.put(descr.forClass(), ctor);
             }

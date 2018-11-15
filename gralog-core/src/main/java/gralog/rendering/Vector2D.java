@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.rendering;
 
@@ -17,10 +17,12 @@ public class Vector2D implements Serializable {
         this.x = x;
         this.y = y;
     }
+
     public Vector2D(Vector2D v) {
         this.x = v.getX();
         this.y = v.getY();
     }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -39,12 +41,12 @@ public class Vector2D implements Serializable {
             return false;
         final Vector2D other = (Vector2D) obj;
         return Double.doubleToLongBits(this.x) == Double.doubleToLongBits(other.x)
-            && Double.doubleToLongBits(this.y) == Double.doubleToLongBits(other.y);
+                && Double.doubleToLongBits(this.y) == Double.doubleToLongBits(other.y);
     }
 
     @Override
     public String toString() {
-        return "Vector2D {" + x + "," + y + '}';
+        return "Vector2D{" + x + "," + y + '}';
     }
 
     public double getX() {
@@ -73,18 +75,23 @@ public class Vector2D implements Serializable {
     public Vector2D orthogonal() {
         return new Vector2D(-this.y, this.x);
     }
+
     public Vector2D orthogonal(int sign) {
         return new Vector2D(sign * this.y, -sign * this.x);
     }
+
     public Vector2D plus(Vector2D other) {
         return new Vector2D(this.x + other.x, this.y + other.y);
     }
+
     public Vector2D plus(double x, double y) {
         return new Vector2D(this.x + x, this.y + y);
     }
+
     public Vector2D minus(double x, double y) {
         return new Vector2D(this.x - x, this.y - y);
     }
+
     public Vector2D minus(Vector2D other) {
         return new Vector2D(this.x - other.x, this.y - other.y);
     }
@@ -142,8 +149,9 @@ public class Vector2D implements Serializable {
     public static Vector2D getVectorAtAngle(double angle, double length) {
         return new Vector2D(Math.cos(Math.toRadians(angle)), Math.sin(Math.toRadians(angle))).multiply(length);
     }
+
     public static Vector2D closestPointOnLine(double px, double py, double l1x,
-        double l1y, double l2x, double l2y) {
+                                              double l1y, double l2x, double l2y) {
         Vector2D p = new Vector2D(px, py);
         Vector2D l1 = new Vector2D(l1x, l1y);
         Vector2D l2 = new Vector2D(l2x, l2y);
@@ -160,7 +168,7 @@ public class Vector2D implements Serializable {
     }
 
     public static double distancePointToLine(double px, double py, double l1x,
-        double l1y, double l2x, double l2y) {
+                                             double l1y, double l2x, double l2y) {
         Vector2D p = new Vector2D(px, py);
         Vector2D l1 = new Vector2D(l1x, l1y);
         Vector2D l2 = new Vector2D(l2x, l2y);
@@ -182,9 +190,11 @@ public class Vector2D implements Serializable {
             return l2.minus(p).length();
         return perpendicular.minus(p).length();
     }
-    public static double distancePointToLine(double px, double py, Vector2D a, Vector2D b) {
+    public static double distancePointToLine(double px, double py, Vector2D a, Vector2D b){
         return distancePointToLine(px, py, a.getX(), a.getY(), b.getX(), b.getY());
     }
+
+
 
     private static double snap(double gridSize, double value) {
         double newCoord = value + gridSize / 2d;
@@ -210,9 +220,10 @@ public class Vector2D implements Serializable {
     }
 
     public static Vector2D zero() {
-        return new Vector2D(0,0);
+        return new Vector2D(0, 0);
     }
+
     public static Vector2D one() {
-        return new Vector2D(1,1);
+        return new Vector2D(1, 1);
     }
 }

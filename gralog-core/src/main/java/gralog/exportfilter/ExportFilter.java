@@ -1,11 +1,14 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.exportfilter;
 
-import gralog.structure.*;
-import java.lang.reflect.*;
-import java.io.OutputStreamWriter;
+import gralog.structure.Edge;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
+
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -20,7 +23,7 @@ public abstract class ExportFilter {
     }
 
     public void exportGraph(Structure structure, String fileName,
-        ExportFilterParameters params) throws Exception {
+                            ExportFilterParameters params) throws Exception {
         FileOutputStream stream = new FileOutputStream(fileName);
         try (OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8")) {
             exportGraph(structure, writer, params);
@@ -28,7 +31,7 @@ public abstract class ExportFilter {
     }
 
     public void exportGraph(Structure structure, OutputStreamWriter stream,
-        ExportFilterParameters params) throws Exception {
+                            ExportFilterParameters params) throws Exception {
         Method[] methods = this.getClass().getMethods();
         for (Method method : methods) {
             if (!method.getName().equals("export"))
@@ -43,12 +46,12 @@ public abstract class ExportFilter {
     }
 
     public Map<String, Vertex> getVertexNames(Structure structure,
-        ExportFilterParameters params) throws Exception {
+                                              ExportFilterParameters params) throws Exception {
         throw new Exception("class " + this.getClass().getName() + " has no method \"getVertexNames\"");
     }
 
     public Map<String, Edge> getEdgeNames(Structure structure,
-        ExportFilterParameters params) throws Exception {
+                                          ExportFilterParameters params) throws Exception {
         throw new Exception("class " + this.getClass().getName() + " has no method \"getEdgeNames\"");
     }
 

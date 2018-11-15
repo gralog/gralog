@@ -55,7 +55,7 @@ public class Console extends HBox implements GralogWindow {
     private boolean outputAdded = false;
     public static final int LINEHEIGHT = 20;
 
-    private ArrayList<ConsoleField> nonUpdatedHeights = new ArrayList<ConsoleField>();
+    private ArrayList<ConsoleField> nonUpdatedHeights = new ArrayList<>();
 
 
     private String currentlyEntered = "";
@@ -84,7 +84,7 @@ public class Console extends HBox implements GralogWindow {
         input.setFont(Font.font("Monospaced", FontWeight.NORMAL, 11));
 
         dialogfx = new Dialogfx();
-        dialog = new Dialog();
+        dialog = new Dialog(ObjectListDisplay.vertexList, ObjectListDisplay.edgeList);
         parser = new DialogParser();
 
 
@@ -138,7 +138,7 @@ public class Console extends HBox implements GralogWindow {
         outputElements = new VBox();
         output.setContent(outputElements);
         outputElements.getStyleClass().add("consoleScrollViewStyle");
-        outputElements.setSpacing(5.0);
+        outputElements.setSpacing(3.0);
 
         output.vvalueProperty().addListener(
             (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
@@ -217,7 +217,8 @@ public class Console extends HBox implements GralogWindow {
         }
         System.out.println("heightNumber: " + heightNumber);
 
-        return (heightNumber * LINEHEIGHT + 10);
+        return (Math.max(0, heightNumber - 1) * LINEHEIGHT + 20);
+
     }
 
     
@@ -389,18 +390,17 @@ public class Console extends HBox implements GralogWindow {
     public void finalizeConsoleFieldAdd(ConsoleField t) {
 
         int height = estimateHeight(t.getText());
-        System.out.println("estimated: " + height);
-        t.setMaxHeight(height);
-        t.setMinHeight(height);
-        
+
+        t.setMaxHeight(height*0.8);
+        t.setMinHeight(height*0.8);
+
         t.setMaxWidth(output.getWidth()*1.0);
 
         nonUpdatedHeights.add(t);
         System.out.println("numba of items in nonUpdatedHeights: " + nonUpdatedHeights.size());
         
 
-        t.getStyleClass().add("consoleTextStyle");  
-        System.out.println("styleclass: " + t.getStyleClass());;  
+        t.getStyleClass().add("consoleTextStyle");
         // t.setPrefHeight(20);
         // t.setWrapText(true);
         // t.setBackground(Background.EMPTY);
@@ -441,8 +441,11 @@ public class Console extends HBox implements GralogWindow {
 
     }
 
-    public void errorOutput(String text) {
-        
+    public void errorOutput(String text){
+        if(text.isEmpty()){
+            System.out.println("error output is empty");
+            return;
+        }
         System.out.println("error output" + text);
 
         ConsoleField t = new ConsoleField(text);

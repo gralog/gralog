@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.npcompleteness.generator;
 
@@ -58,28 +58,25 @@ public class SatToHamiltonCycle extends Generator {
         HashMap<PropositionalLogicFormula, Vertex> clauseNodes = new HashMap<>();
         int clausej = 0;
         for (PropositionalLogicFormula clause : clauses) {
-            Vertex cnode = result.createVertex();
-            cnode.coordinates = new Vector2D(5d + 5d * clausej, -2d);
+            Vertex cnode = result.addVertex();
+            cnode.setCoordinates(5d + 5d * clausej, -2d);
             cnode.label = clause.toString();
-            result.addVertex(cnode);
             clauseNodes.put(clause, cnode);
             clausej++;
         }
 
-        Vertex start = result.createVertex(); // start node
-        start.coordinates = new Vector2D(3d + (5d * clauses.size()) / 2d, 1d);
+        Vertex start = result.addVertex(); // start node
+        start.setCoordinates(3d + (5d * clauses.size()) / 2d, 1d);
         start.label = "start";
-        result.addVertex(start);
         Set<Vertex> lastRow = new HashSet<>();
         lastRow.add(start);
 
         // create rows for the variables
         int i = 0;
         for (String var : vars) {
-            Vertex pos = result.createVertex(); // node for positive assignment to var
-            pos.coordinates = new Vector2D(1d, 5 * i + 3d);
+            Vertex pos = result.addVertex(); // node for positive assignment to var
+            pos.setCoordinates(1d, 5 * i + 3d);
             pos.label = var;
-            result.addVertex(pos);
 
             Vertex last = pos;
             int j = -1;
@@ -96,17 +93,15 @@ public class SatToHamiltonCycle extends Generator {
                     continue;
 
                 // create 2 nodes for occurence of var in clause
-                Vertex a = result.createVertex();
-                a.coordinates = new Vector2D(4d + 5 * j, 5 * i + 3d);
+                Vertex a = result.addVertex();
+                a.setCoordinates(4d + 5 * j, 5 * i + 3d);
                 result.addEdge(result.createEdge(last, a));
                 result.addEdge(result.createEdge(a, last));
-                result.addVertex(a);
 
-                Vertex b = result.createVertex();
-                b.coordinates = new Vector2D(4d + 5 * j + 2, 5 * i + 3d);
+                Vertex b = result.addVertex();
+                b.setCoordinates(4d + 5 * j + 2, 5 * i + 3d);
                 result.addEdge(result.createEdge(b, a));
                 result.addEdge(result.createEdge(a, b));
-                result.addVertex(b);
 
                 // connect them to the node for the clause (edges may go in
                 // both directions, if clause contains x and !x
@@ -136,10 +131,9 @@ public class SatToHamiltonCycle extends Generator {
                 last = b;
             }
 
-            Vertex neg = result.createVertex(); // node for negative assignment to var
-            neg.coordinates = new Vector2D(4d + 5 * clauses.size(), 5 * i + 3d);
+            Vertex neg = result.addVertex(); // node for negative assignment to var
+            neg.setCoordinates(4d + 5 * clauses.size(), 5 * i + 3d);
             neg.label = "¬" + var;
-            result.addVertex(neg);
 
             result.addEdge(result.createEdge(last, neg));
             result.addEdge(result.createEdge(neg, last));
@@ -156,10 +150,9 @@ public class SatToHamiltonCycle extends Generator {
             i++;
         }
 
-        Vertex end = result.createVertex(); // the end-node
-        end.coordinates = new Vector2D(3d + (5d * clauses.size()) / 2d, 5d * vars.size());
+        Vertex end = result.addVertex(); // the end-node
+        end.setCoordinates(3d + (5d * clauses.size()) / 2d, 5d * vars.size());
         end.label = "end";
-        result.addVertex(end);
         for (Vertex l : lastRow) {
             result.addEdge(result.createEdge(l, end));
         }

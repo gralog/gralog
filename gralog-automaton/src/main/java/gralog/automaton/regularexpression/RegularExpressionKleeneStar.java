@@ -1,10 +1,14 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.regularexpression;
 
-import gralog.automaton.*;
+import gralog.automaton.Automaton;
+import gralog.automaton.State;
+import gralog.automaton.Transition;
 import gralog.rendering.Vector2D;
-import gralog.structure.*;
+import gralog.structure.EdgeIntermediatePoint;
+import gralog.structure.Vertex;
+
 
 /**
  *
@@ -19,8 +23,9 @@ public class RegularExpressionKleeneStar extends RegularExpression {
 
     @Override
     public String toString() {
-        if (regexp instanceof RegularExpressionLetter)
+        if (regexp instanceof RegularExpressionLetter) {
             return regexp.toString() + "*";
+        }
         return "(" + regexp.toString() + ")*";
     }
 
@@ -38,13 +43,13 @@ public class RegularExpressionKleeneStar extends RegularExpression {
         a.move(aOffset);
 
         // create new, common start- and final-state
-        State s = a.createVertex();
+        State s = a.addVertex();
         s.startState = true;
-        s.coordinates = new Vector2D(0d, aMaxY / 2d + scale);
+        s.setCoordinates(0d, aMaxY / 2d + scale);
 
-        State t = a.createVertex();
+        State t = a.addVertex();
         t.finalState = true;
-        t.coordinates = new Vector2D(
+        t.setCoordinates(
             aMaxX + 2d * scale,
             aMaxY / 2d + scale
         );
@@ -78,8 +83,6 @@ public class RegularExpressionKleeneStar extends RegularExpression {
             ((State) v).startState = false;
         }
 
-        a.addVertex(s);
-        a.addVertex(t);
         return a;
     }
 }

@@ -4,7 +4,6 @@ import com.rits.cloning.Cloner;
 import gralog.structure.Structure;
 
 import java.util.HashMap;
-import java.util.Stack;
 
 /**
  * Holds copies of structures in a stack. Use Record/Revert/Redo
@@ -44,8 +43,8 @@ public class Undo {
             Structure reference = stack.revertPop();
             if(reference != null) {
                 reference = cloner.deepClone(reference);
-                structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
-                structure.__SET_EDGES_T(reference.__GET_EDGES_T());
+                structure.setVerticesT(reference.getVerticesT());
+                structure.setEdgesT(reference.getEdgesT());
             }
         }
     }
@@ -68,8 +67,8 @@ public class Undo {
             Structure reference = stack.last();
             if(reference != null) {
                 reference = cloner.deepClone(reference);
-                structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
-                structure.__SET_EDGES_T(reference.__GET_EDGES_T())  ;
+                structure.setVerticesT(reference.getVerticesT());
+                structure.setEdgesT(reference.getEdgesT())  ;
             }
         }
     }

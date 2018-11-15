@@ -1,12 +1,13 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton;
 
 import gralog.plugins.XmlName;
 import gralog.preferences.Configuration;
-import gralog.rendering.*;
-import gralog.structure.*;
-
+import gralog.rendering.GralogColor;
+import gralog.rendering.GralogGraphicsContext;
+import gralog.structure.Highlights;
+import gralog.structure.Vertex;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -36,7 +37,7 @@ public class State extends Vertex {
     }
 
     /**
-     * Initializes lots of variables from a given configuration
+     * Initializes lots of variables from a given configuration.
      * @param config
      */
     @Override
@@ -64,18 +65,24 @@ public class State extends Vertex {
         String id = super.fromXml(vnode);
         startState = (vnode.getAttribute("initial").equals("true"));
         finalState = (vnode.getAttribute("final").equals("true"));
-        if (vnode.hasAttribute("initialmarkangle"))
+        if (vnode.hasAttribute("initialmarkangle")) {
             initialMarkAngle = Double.parseDouble(vnode.getAttribute("initialmarkangle"));
-        if (vnode.hasAttribute("initialmarklength"))
+        }
+        if (vnode.hasAttribute("initialmarklength")) {
             initialMarkLength = Double.parseDouble(vnode.getAttribute("initialmarklength"));
-        if (vnode.hasAttribute("initialmarkwidth"))
+        }
+        if (vnode.hasAttribute("initialmarkwidth")) {
             initialMarkWidth = Double.parseDouble(vnode.getAttribute("initialmarkwidth"));
-        if (vnode.hasAttribute("initialmarkheadangle"))
+        }
+        if (vnode.hasAttribute("initialmarkheadangle")) {
             initialMarkHeadAngle = Double.parseDouble(vnode.getAttribute("initialmarkheadangle"));
-        if (vnode.hasAttribute("initialmarkheadlength"))
+        }
+        if (vnode.hasAttribute("initialmarkheadlength")) {
             initialMarkHeadLength = Double.parseDouble(vnode.getAttribute("initialmarkheadlength"));
-        if (vnode.hasAttribute("initialmarkcolor"))
+        }
+        if (vnode.hasAttribute("initialmarkcolor")) {
             initialMarkColor = GralogColor.parseColor(vnode.getAttribute("initialmarkcolor"));
+        }
 
         return id;
     }

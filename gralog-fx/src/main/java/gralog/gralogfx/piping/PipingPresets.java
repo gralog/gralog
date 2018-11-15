@@ -18,7 +18,6 @@ public class PipingPresets {
 	    
 	    String hex;
 	    for (GralogColor.Color c : GralogColor.Color.values()) {
-	    	System.out.println("color: " + c);
 	    	if (c.name().equalsIgnoreCase(colorName)) {
 	    		return Integer.toString(c.getValue());
 	    	}
