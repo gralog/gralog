@@ -10,14 +10,14 @@ public class GetVertexCommand extends CommandForGralogToExecute {
     Vertex vertex;
   
 
-	public GetVertexCommand(String[] externalCommandSegments,Structure structure){
+	public GetVertexCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         
 
-        try{
+        try {
             this.vertex = PipingMessageHandler.extractVertex(externalCommandSegments,structure);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.setResponse(null);
             this.error = e;
@@ -27,16 +27,16 @@ public class GetVertexCommand extends CommandForGralogToExecute {
 
 	}
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
 
         
-        try{
+        try {
             String pipification = this.vertex.gralogPipify();
 
             this.setResponse(pipification);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.error = e;
 

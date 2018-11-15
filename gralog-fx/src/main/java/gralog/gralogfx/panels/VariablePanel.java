@@ -25,12 +25,12 @@ import java.util.ArrayList;
 
 public class VariablePanel extends AnchorPane {
 
-    private static class Variable{
+    private static class Variable {
 
         SimpleStringProperty name;
         DoubleProperty value;
 
-        public Variable(String name, double value){
+        public Variable(String name, double value) {
             this.name.setValue(name);
             this.value.setValue(value);
         }
@@ -38,7 +38,7 @@ public class VariablePanel extends AnchorPane {
 
     private ObservableList<Variable> variables;
 
-    public VariablePanel(){
+    public VariablePanel() {
         variables = FXCollections.observableList(new ArrayList<>());
 
         var table = new TableView<Variable>();
@@ -105,7 +105,7 @@ public class VariablePanel extends AnchorPane {
         AnchorPane.setLeftAnchor(table, 0d);
         AnchorPane.setRightAnchor(table, 0d);
     }
-    public double getVariable(String name){
+    public double getVariable(String name) {
         return 0;
     }
 
@@ -113,7 +113,7 @@ public class VariablePanel extends AnchorPane {
      * Either updates or creates a new variable.
      * @param name
      */
-    public void setVariable(String name){
+    public void setVariable(String name) {
         variables.add(new Variable(name, 2));
     }
 }

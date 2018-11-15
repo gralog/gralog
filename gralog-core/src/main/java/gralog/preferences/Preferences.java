@@ -25,12 +25,13 @@ public final class Preferences {
     private static final java.util.Properties PROPERTIES = new java.util.Properties();
     private static final String PREFERENCE_PATH = buildPreferencePath();
 
-    private Preferences() {
-    }
-
     public static Properties getProperties() {
         return PROPERTIES;
     }
+
+    private Preferences() {
+    }
+
 
     private static String buildPreferencePath() {
         String path;

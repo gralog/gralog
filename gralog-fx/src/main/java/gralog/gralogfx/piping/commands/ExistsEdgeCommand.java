@@ -9,14 +9,14 @@ public class ExistsEdgeCommand extends CommandForGralogToExecute {
     boolean thereIsAnEdge = true;
 
 
-	public ExistsEdgeCommand(String[] externalCommandSegments,Structure structure){
+	public ExistsEdgeCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-        try{
+        try {
             this.anyEdge = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
-        }catch(NonExistantEdgeException e){
+        }catch(NonExistantEdgeException e) {
             this.thereIsAnEdge = false;
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.setResponse(null);
             this.error = e;
@@ -27,7 +27,7 @@ public class ExistsEdgeCommand extends CommandForGralogToExecute {
 	}
 
 
-	public void handle(){
+	public void handle() {
 
         this.setResponse(Boolean.toString(this.thereIsAnEdge));
 

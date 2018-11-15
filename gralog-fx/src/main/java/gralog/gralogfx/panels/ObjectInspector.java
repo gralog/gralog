@@ -25,16 +25,16 @@ import javafx.scene.control.Button;
 /**
  *
  */
-public class ObjectInspector extends AnchorPane implements GralogWindow{
+public class ObjectInspector extends AnchorPane implements GralogWindow {
 
     private View view;
     private Tabs tabView;
 
-    public ObjectInspector(){
+    public ObjectInspector() {
 
     }
 
-    public ObjectInspector (Tabs tabView){
+    public ObjectInspector (Tabs tabView) {
         this.tabView = tabView;
         this.tabView.subscribe(this);
     }
@@ -58,18 +58,17 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
         }
 
         Object obj = list.iterator().next(); //default
-        for(Object tmp : list){ //maybe find something that's not a control point
-            if(!(tmp instanceof ControlPoint) && tmp != null){
+        for(Object tmp : list) { //maybe find something that's not a control point
+            if(!(tmp instanceof ControlPoint) && tmp != null) {
                 obj = tmp;
                 break;
             }
         }
         
 
-        if(obj == null){
+        if(obj == null) {
             return;
         }
-
         view = ViewManager.instantiateView(obj.getClass());
 
 
@@ -104,15 +103,14 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
     }
 
     @Deprecated
-    public void setObject(Object obj, StructurePane pane){
+    public void setObject(Object obj, StructurePane pane) {
         //has been replaced with setObject(Collection<?> list)
     }
     @Deprecated
-    public void setObject(Object obj, StructurePane pane, Consumer<Boolean> submitPossible){
+    public void setObject(Object obj, StructurePane pane, Consumer<Boolean> submitPossible) {
         //has been replaced with setObject(Collection<?> list)
-
     }
-    public Node getNode(){
+    public Node getNode() {
         return null;
     }
     /**
@@ -125,17 +123,15 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
 
     @Override
     public void notifyStructureChange(Structure structure) {
-        System.out.println("StructureChange");
-    	//not relevant
+        //not relevant
     }
 
 
     @Override
     public void notifyHighlightChange(Highlights highlights) {
-    	System.out.println("HighlightChange");
-    	try{
+        try {
             setObject(highlights.getSelection());
-        }catch(Exception e){
+        }catch(Exception e) {
             ExceptionBox xBox = new ExceptionBox();
             xBox.showAndWait(e);
         }

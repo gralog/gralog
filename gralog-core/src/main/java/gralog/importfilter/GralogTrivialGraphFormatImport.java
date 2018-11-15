@@ -18,10 +18,10 @@ import java.util.StringTokenizer;
  *
  */
 @ImportFilterDescription(
-        name = "Gralog Trivial Graph Format",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
-        fileExtension = "tgf"
+    name = "Gralog Trivial Graph Format",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
+    fileExtension = "tgf"
 )
 public class GralogTrivialGraphFormatImport extends ImportFilter {
 

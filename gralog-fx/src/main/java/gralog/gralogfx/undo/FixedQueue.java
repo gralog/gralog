@@ -11,15 +11,15 @@ public class FixedQueue<T> {
 
     private T[] x;
 
-    public int size(){
+    public int size() {
         return size;
     }
 
-    public int count(){
+    public int count() {
         return count;
     }
 
-    public FixedQueue(int size){
+    public FixedQueue(int size) {
         this.size = size;
         this.x = (T[])new Object[size];
     }
@@ -28,35 +28,35 @@ public class FixedQueue<T> {
      * Reverts the pop-operation (you can revert n times if you popped
      * n consecutive times). Every push discards the reversion
      */
-    public T revertPop(){
-        if(poppedInRow > 0){
+    public T revertPop() {
+        if(poppedInRow > 0) {
             count++;
             poppedInRow--;
             return x[(startIndex + count - 1) % size];
         }
-        else{
+        else {
             return null;
         }
     }
 
-    public void push(T obj){
+    public void push(T obj) {
         this.x[(startIndex + count) % size] = obj;
-        if(count == size){
+        if(count == size) {
             startIndex++;
-        }else{
+        }else {
             count++;
         }
         poppedInRow = 0;
     }
 
-    public T pop(){
+    public T pop() {
         if(count == 0) { return null; }
         count--;
         poppedInRow++;
         return x[(startIndex + count) % size];
     }
 
-    public T last(){
+    public T last() {
         if(count == 0) { return null; }
         return x[(startIndex + count - 1) % size];
     }

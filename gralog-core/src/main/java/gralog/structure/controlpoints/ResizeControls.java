@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class ResizeControls implements IMovable, Serializable {
     public static final double CLICK_RADIUS = 0.1;
     public boolean active;
+
     public Vertex v;
     RControl[] cs = new RControl[4];
     public ResizeControls(Vertex v) {
@@ -55,6 +56,7 @@ public class ResizeControls implements IMovable, Serializable {
         }
         return null;
     }
+
 
     public void render(GralogGraphicsContext gc) {
         Vector2D pos = cs[0].position;

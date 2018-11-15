@@ -15,15 +15,15 @@ public class SetVertexCoordinatesCommand extends CommandForGralogToExecute {
 
 
 
-    public SetVertexCoordinatesCommand(String[] externalCommandSegments,Structure structure){
+    public SetVertexCoordinatesCommand(String[] externalCommandSegments,Structure structure) {
         this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
         String stringX;
         String stringY;
 
-        try{    
+        try {    
             this.vertexId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -31,7 +31,7 @@ public class SetVertexCoordinatesCommand extends CommandForGralogToExecute {
 
         this.vertex = this.structure.getVertexById(this.vertexId);
 
-        if (this.vertex == null){
+        if (this.vertex == null) {
             this.fail();
             this.error = new NonExistantVertexException("vertex with id " + Integer.toString(this.vertexId) + " does not exist");
             return;
@@ -40,23 +40,23 @@ public class SetVertexCoordinatesCommand extends CommandForGralogToExecute {
         
 
         // this.generateLabel(externalCommandSegments);
-        try{    
+        try {    
             stringX = PipingMessageHandler.extractNthPositionString(externalCommandSegments,3);
             stringY = PipingMessageHandler.extractNthPositionString(externalCommandSegments,4);
             
-        }catch(Exception e){
+        }catch(Exception e) {
             this.error = e;
             this.fail();
             return;
         }
-        try{
+        try {
             Double.parseDouble(stringX);
-        }catch(Exception e){
+        }catch(Exception e) {
             stringX = null;
         }
-        try{
+        try {
             Double.parseDouble(stringY);
-        }catch(Exception e){
+        }catch(Exception e) {
             stringY = null;
         }
         Vector2D coordinates = this.vertex.getCoordinates();
@@ -67,7 +67,7 @@ public class SetVertexCoordinatesCommand extends CommandForGralogToExecute {
     
 
 
-    public void handle(){
+    public void handle() {
 
         
 

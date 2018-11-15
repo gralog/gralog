@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 
+
+
 /**
  * A vertex with a circle shape.
  */
@@ -101,6 +103,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     /**
      * Copies a vertex information from a given vertex object. Not the ID.
+     *
      */
     public <V extends Vertex> void copy(V v) {
         //this.id = v.id;
@@ -116,7 +119,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         this.strokeColor = new GralogColor(v.strokeColor);
         this.fillColor = new GralogColor(v.fillColor);
 
-        // this.setCoordinates(v.coordinates);
+
         this.setCoordinates(v.coordinates);
         this.listeners = new HashSet<>(v.listeners);
 
@@ -136,6 +139,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
                 + ", coordinates=" + coordinates + '}';
     }
 
+    
 
     public String gralogPipify() {
         Class<?> c = this.getClass();

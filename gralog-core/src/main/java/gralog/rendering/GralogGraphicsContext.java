@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 /**
  * This class offers abstract drawing and drawing utility methods.
- * <p>
+ *
  * Utilities include drawing tooltips and transparent rectangles for selection boxes.
  */
 public abstract class GralogGraphicsContext {

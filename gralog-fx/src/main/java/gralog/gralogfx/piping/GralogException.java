@@ -4,7 +4,7 @@ public class GralogException extends Exception {
         super(message);
     }
     @Override
-    public String toString(){
+    public String toString() {
     	return this.getClass().getSimpleName() + ":\n" + this.getMessage();
     }
 }

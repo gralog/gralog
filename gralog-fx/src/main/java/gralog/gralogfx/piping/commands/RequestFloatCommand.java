@@ -16,7 +16,7 @@ public class RequestFloatCommand extends CommandForGralogToExecute {
     private Piping piping;
   
 
-	public RequestFloatCommand(String[] externalCommandSegments,Structure structure,Piping piping){
+	public RequestFloatCommand(String[] externalCommandSegments,Structure structure,Piping piping) {
 		
         this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
@@ -26,16 +26,16 @@ public class RequestFloatCommand extends CommandForGralogToExecute {
 
 	}
 
-	public void handle(){
+	public void handle() {
 
         // this.selectionFunction.get();
         this.piping.state = Piping.State.WaitingForConsoleInput;
         this.piping.sendMessageToConsole.accept("Float requested!",Piping.MessageToConsoleFlag.Request);
-        try{
+        try {
             this.piping.redrawMyStructurePanes();
             this.piping.setClassSelectionIsWaitingFor(Double.class);
             this.waitForSelection.await();
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
         this.piping.state = Piping.State.InProgress;

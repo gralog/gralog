@@ -159,7 +159,7 @@ public class MainWindow extends Application {
 
         ObjectInspector objectInspector = new ObjectInspector(tabs);
         objectListDisplay = new ObjectListDisplay();
-            variablePanel = new VariablePanel();
+        variablePanel = new VariablePanel();
 
         tabs.objectListDisplay = objectListDisplay;
 
@@ -413,7 +413,7 @@ public class MainWindow extends Application {
             // }else{
             //     pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
 
-            // }e
+            // }
 
 
         } catch(Exception e){

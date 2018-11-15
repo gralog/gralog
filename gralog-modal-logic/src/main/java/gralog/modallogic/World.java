@@ -17,11 +17,11 @@ public class World extends Vertex {
     public String propositions = "";
 
 
-    public World(){
+    public World() {
         super();
     }
 
-    public World(Configuration config){
+    public World(Configuration config) {
         super(config);
     }
 

@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 public class DialogTest {
 
+
     ArrayList<String> parameters = new ArrayList<String>();
     Structure c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
     Highlights highlights = new Highlights();

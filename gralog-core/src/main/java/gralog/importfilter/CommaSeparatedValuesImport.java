@@ -53,7 +53,7 @@ public class CommaSeparatedValuesImport extends ImportFilter {
                 String sfrom = tokenizer.nextToken();
                 String sto = tokenizer.nextToken();
 
-                for (String vertstring : new String[]{sfrom, sto}) {
+                for (String vertstring : new String[] {sfrom, sto}) {
                     if (!nodeIndex.containsKey(vertstring)) {
                         Vertex newnode = result.createVertex();
                         nodeIndex.put(vertstring, newnode);

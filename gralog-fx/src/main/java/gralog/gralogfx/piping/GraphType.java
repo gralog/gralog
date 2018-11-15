@@ -4,7 +4,7 @@ package gralog.gralogfx.piping;
 
 
 
-public enum GraphType{
+public enum GraphType {
 	Null,
     Tikz,
     Xml,

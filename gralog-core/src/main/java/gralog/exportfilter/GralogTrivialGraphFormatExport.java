@@ -16,14 +16,35 @@ import java.util.Set;
  *
  */
 @ExportFilterDescription(
-        name = "Gralog Trivial Graph Format",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
-        fileExtension = "gtgf"
+    name = "Gralog Trivial Graph Format",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
+    fileExtension = "gtgf"
 )
 public class GralogTrivialGraphFormatExport extends ExportFilter {
 
-    public static String exportToString(Structure structure) {
+    public void export(Structure structure, OutputStreamWriter stream,
+        ExportFilterParameters params) throws Exception {
+        HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
+        Integer i;
+        String linefeed = System.getProperty("line.separator");
+
+        Collection<Vertex> V = structure.getVertices();
+        for (Vertex v : V) {
+            i = v.getId();
+            nodeIndex.put(v, i);
+            stream.write(i + linefeed);
+        }
+
+        stream.write("#" + linefeed);
+
+        Set<Edge> E = (Set<Edge>)structure.getEdges();
+        for (Edge e : E)
+            stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + " " + Integer.toString(e.getId()) + linefeed);
+        stream.write("#" + linefeed);
+    }
+
+    public static String exportToString(Structure structure){
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
         Integer i;
         String separator = System.getProperty("line.separator");
@@ -51,28 +72,6 @@ public class GralogTrivialGraphFormatExport extends ExportFilter {
         // stream.write("#" + linefeed);
         retString += "#" + separator;
         return retString;
-    }
-
-    public void export(Structure structure, OutputStreamWriter stream,
-                       ExportFilterParameters params) throws Exception {
-        HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
-        Integer i;
-        String linefeed = System.getProperty("line.separator");
-
-        Collection<Vertex> vertices = structure.getVertices();
-        for (Vertex v : vertices) {
-            i = v.getId();
-            nodeIndex.put(v, i);
-            stream.write(i + linefeed);
-        }
-
-        stream.write("#" + linefeed);
-
-        Set<Edge> edges = (Set<Edge>) structure.getEdges();
-        for (Edge e : edges)
-            stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString()
-                    + " " + Integer.toString(e.getId()) + linefeed);
-        stream.write("#" + linefeed);
     }
 
     @Override

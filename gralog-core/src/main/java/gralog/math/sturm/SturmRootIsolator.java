@@ -14,7 +14,7 @@ import java.util.Queue;
 /**
  * This class implements algorithms for isolating the roots of univariate polynomials by
  * using Sturm Sequence Method based algorithms.
- * <p>
+ *
  * A recent benchmark comparing performance of several root solvers on multiple kinds of high-order polynomials
  * using the descartes method can be found below
  *
@@ -33,7 +33,7 @@ public final class SturmRootIsolator {
      * Returns an array of root approximations of a polynomial. The method first
      * constructs isolating intervals by using Sturm sequences and then applies
      * Newton approximation to robustly find every root of the polynomial.
-     * <p>
+     *
      * If you want to use your own subdivision algorithm, use the overloaded
      * method that accepts a list of intervals. You might want to implement your
      * own Interval class as well
@@ -47,7 +47,7 @@ public final class SturmRootIsolator {
     /**
      * Returns an array of root approximations of a polynomial by applying Newton
      * to each given isolation interval.
-     * <p>
+     *
      * You can find intervals with a number of methods e.g. Sturm Sequences,
      * Descartes method, cone testing etc..
      *
@@ -77,7 +77,7 @@ public final class SturmRootIsolator {
 
     /**
      * Warning:
-     * <p>
+     *
      * This algorithm only finds roots where the derivative is negative!
      */
     public static double findRootDN(Polynomial p, double from, double to) {

@@ -15,7 +15,7 @@ public class Polynomial {
 
     /**
      * ax^5+.....+f
-     * <p>
+     *
      * Coefficient to largest monomial first.
      */
     public Polynomial(double... params) {

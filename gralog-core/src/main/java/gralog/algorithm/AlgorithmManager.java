@@ -15,13 +15,14 @@ import static gralog.plugins.PluginManager.instantiateClass;
  */
 public final class AlgorithmManager {
 
-    // for algorithms and export, have different maps for each class they are applicable to
-    private static final HashMap<Class, HashMap<String, String>> ALGORITHM_NAMES
-            = new HashMap<>();
-    private static final HashMap<Class, HashMap<String, AlgorithmDescription>> ALGORITHM_DESCRIPTIONS
-            = new HashMap<>();
     private AlgorithmManager() {
     }
+
+    // for algorithms and export, have different maps for each class they are applicable to
+    private static final HashMap<Class, HashMap<String, String>> ALGORITHM_NAMES
+        = new HashMap<>();
+    private static final HashMap<Class, HashMap<String, AlgorithmDescription>> ALGORITHM_DESCRIPTIONS
+        = new HashMap<>();
 
     public static void registerAlgorithmClass(Class<?> aClass, String className) throws Exception {
         if (Modifier.isAbstract(aClass.getModifiers()))

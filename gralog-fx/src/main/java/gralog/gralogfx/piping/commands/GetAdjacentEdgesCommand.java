@@ -16,15 +16,15 @@ public class GetAdjacentEdgesCommand extends CommandForGralogToExecute {
 
 
 
-	public GetAdjacentEdgesCommand(String[] externalCommandSegments,Structure structure){
+	public GetAdjacentEdgesCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
-        try{    
+        try {    
             Edge e = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
             this.sourceVertex = e.getSource();
             this.targetVertex = e.getTarget();
-        }catch(Exception e){
+        }catch(Exception e) {
             this.error = e;
             this.fail();
             return;
@@ -35,7 +35,7 @@ public class GetAdjacentEdgesCommand extends CommandForGralogToExecute {
 
 	
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
        
@@ -50,7 +50,7 @@ public class GetAdjacentEdgesCommand extends CommandForGralogToExecute {
         for (Edge e : neighbouringEdges){
             edgeString = edgeString + PipingMessageHandler.universalEdgeToTuple(e)+ "#";
         }
-        if (edgeString.length() > 0 && null != edgeString){
+        if (edgeString.length() > 0 && null != edgeString) {
             edgeString = edgeString.substring(0,edgeString.length()-1);
         }
 

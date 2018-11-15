@@ -17,10 +17,10 @@ import java.util.HashMap;
  *
  */
 @ExportFilterDescription(
-        name = "TikZ ist kein Zeichenprogramm",
-        text = "",
-        url = "http://www.texample.net/tikz/",
-        fileExtension = "tikz"
+    name = "TikZ ist kein Zeichenprogramm",
+    text = "",
+    url = "http://www.texample.net/tikz/",
+    fileExtension = "tikz"
 )
 public class TikZExport extends ExportFilter {
 

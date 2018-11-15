@@ -138,9 +138,9 @@ public final class BezierUtilities {
 
     /**
      * This method implements an algorithm on point projections for cubic bezier curves.
-     * <p>
+     *
      * The algorithm is outlined in
-     * <p>
+     *
      * Xiao-Diao Chen, Yin Zhou, Zhenyu Shu, Hua Su, Jean-Claude Paul.
      * "Improved Algebraic Algorithm On Point Projection For Bézier Curves",
      * (IMSCCS 2007), Iowa, United States.
@@ -151,6 +151,7 @@ public final class BezierUtilities {
      * @param p2 2nd bezier control point.
      * @param p3 BezierCubic-curve ending point.
      * @return Returns the vector on the given bezier curve with minimal distance to m.
+     *
      * @see <a href=https://hal.inria.fr/inria-00518379/PDF/Xiao-DiaoChen2007c.pdf>
      * https://hal.inria.fr/inria-00518379/PDF/Xiao-DiaoChen2007c.pdf</a>
      * @see <a href=https://ieeexplore.ieee.org/document/4392595/>alternative IEEE link</a>
@@ -326,13 +327,9 @@ public final class BezierUtilities {
         }
         return new Vector2D(minx, miny);
     }
-
-    /**
-     * Encapsulates results of a projection operation
-     */
     public static class ProjectionResults {
         public boolean successful;
         public Vector2D result;
-    }
 
+    }
 }

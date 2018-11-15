@@ -37,9 +37,9 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.setStroke(Color.rgb(c.r, c.g, c.b));
         gc.setLineWidth(width * pane.zoomFactor * pane.screenResolutionX / 2.54);
         //TODO: pool line drawing
-        if(type == LineType.DOTTED){
+        if(type == LineType.DOTTED) {
             gc.setLineDashes(0.03 * pane.zoomFactor * pane.screenResolutionX / 2.54, 0.15 * pane.zoomFactor * pane.screenResolutionX / 2.54);
-        }else if(type == LineType.DASHED){
+        }else if(type == LineType.DASHED) {
             gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
         }
 
@@ -48,11 +48,11 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
 
     }
 
-    public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color){
+    public void arrow(Vector2D dir, Vector2D pos, Arrow arrowType, double scale, GralogColor color) {
         arrow(dir, pos, arrowType, scale, color, (2.54 / 96));
     }
     @Override
-    public void polygon(double[] x, double[] y, int count, GralogColor c){
+    public void polygon(double[] x, double[] y, int count, GralogColor c) {
         gc.setFill(Color.rgb(c.r, c.g, c.b));
         for (int i = 0; i < count; i++)
         {
@@ -62,7 +62,7 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.fillPolygon(x, y, count);
     }
     @Override
-    public void lines(double[] x, double[] y, int count, GralogColor c, double lineWidth){
+    public void lines(double[] x, double[] y, int count, GralogColor c, double lineWidth) {
         gc.setLineCap(StrokeLineCap.ROUND);
         gc.setStroke(Color.rgb(c.r, c.g, c.b));
         gc.setLineWidth(lineWidth * pane.zoomFactor * (pane.screenResolutionX / 2.54));
@@ -86,9 +86,9 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.setFill(Color.rgb(c.r, c.g, c.b));
         gc.setStroke(Color.rgb(c.r, c.g, c.b));
 
-        if(type == LineType.DOTTED){
+        if(type == LineType.DOTTED) {
             gc.setLineDashes(0.03 * pane.zoomFactor * pane.screenResolutionX / 2.54, 0.15 * pane.zoomFactor * pane.screenResolutionX / 2.54);
-        }else if(type == LineType.DASHED){
+        }else if(type == LineType.DASHED) {
             gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
         }
         gc.setLineWidth(width * pane.zoomFactor * pane.screenResolutionX / 2.54);
@@ -99,7 +99,7 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.closePath();
         gc.setLineDashes(0);
     }
-    public void drawBezier(Bezier curve, GralogColor color, double width, LineType type){
+    public void drawBezier(Bezier curve, GralogColor color, double width, LineType type) {
         Vector2D a = pane.modelToScreen(curve.source);
         Vector2D b = pane.modelToScreen(curve.target);
         Vector2D ctrl1 = pane.modelToScreen(curve.ctrl1);
@@ -107,9 +107,9 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
 
         gc.setStroke(Color.rgb(color.r, color.g, color.b));
         //setting line type
-        if(type == LineType.DOTTED){
+        if(type == LineType.DOTTED) {
             gc.setLineDashes(0.03 * pane.zoomFactor * pane.screenResolutionX / 2.54, 0.15 * pane.zoomFactor * pane.screenResolutionX / 2.54);
-        }else if(type == LineType.DASHED){
+        }else if(type == LineType.DASHED) {
             gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
         }
         gc.setLineWidth(width * pane.zoomFactor * pane.screenResolutionX / 2.54);
@@ -120,16 +120,16 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         gc.closePath();
         gc.setLineDashes(0);
     }
-    public void drawQuadratic(Bezier curve, GralogColor color, double width, LineType type){
+    public void drawQuadratic(Bezier curve, GralogColor color, double width, LineType type) {
         Vector2D a = pane.modelToScreen(curve.source);
         Vector2D b = pane.modelToScreen(curve.target);
         Vector2D ctrl1 = pane.modelToScreen(curve.ctrl1);
 
         gc.setStroke(Color.rgb(color.r, color.g, color.b));
         //setting line type
-        if(type == LineType.DOTTED){
+        if(type == LineType.DOTTED) {
             gc.setLineDashes(0.03 * pane.zoomFactor * pane.screenResolutionX / 2.54, 0.15 * pane.zoomFactor * pane.screenResolutionX / 2.54);
-        }else if(type == LineType.DASHED){
+        }else if(type == LineType.DASHED) {
             gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
         }
         gc.setLineWidth(width * pane.zoomFactor * pane.screenResolutionX / 2.54);
@@ -172,9 +172,9 @@ public class JavaFXGraphicsContext extends GralogGraphicsContext {
         Point2D p2 = pane.modelToScreen(new Point2D(x2, y2));
         GralogColor color = GralogColor.BLACK;
 
-        if(type == LineType.DOTTED){
+        if(type == LineType.DOTTED) {
             gc.setLineDashes(0.08 * pane.zoomFactor * pane.screenResolutionX / 2.54);
-        }else if(type == LineType.DASHED){
+        }else if(type == LineType.DASHED) {
             gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);gc.setLineDashes(0.2 * pane.zoomFactor * pane.screenResolutionX / 2.54);
         }
 

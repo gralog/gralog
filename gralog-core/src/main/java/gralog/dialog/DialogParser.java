@@ -138,13 +138,12 @@ public class DialogParser {
         this.dialogState = dialogState;
     } // maybe make dialogState public
 
+    /*   CHECKING FORM    */
+
     private boolean hasValueForm(String s) {
         // color or number or "PLAIN" or "DOTTED" or "DASHED"
         return (isColorValue(s) || s.matches("-?\\d*((\\.|,)\\d+)?")); // ... or is digit
     }
-
-
-    /*   CHECKING FORM    */
 
     private boolean isInt(String s) {
         return s.matches("\\d+");
@@ -166,14 +165,13 @@ public class DialogParser {
         return (GralogColor.isColor(colorValueCandidate));
     }
 
+    /*         TRANSITIONS         */
+
     private void transition(DialogState dialogState) {
         this.dialogState = dialogState;
         i++;
         System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
-
-    /*         TRANSITIONS         */
-
     private void transition(DialogState dialogState, String addedParameter) {
         this.dialogState = dialogState;
         parameters.add(addedParameter);
@@ -212,7 +210,10 @@ public class DialogParser {
         System.out.println("Changed to dialogState = [" + dialogState + "]");
     }
 
-    @SuppressWarnings("checkstyle:methodlength")
+
+    /*          PARSE                */
+
+
     public void parse(String text) {
         System.out.println(ANSI_GREEN + "parse: got string: " + text + ANSI_RESET); //debugging
         dialogAction = NONE;
@@ -236,7 +237,8 @@ public class DialogParser {
             tmpText2 = tmpText.substring(0, tmpText.indexOf('=') + 1).toUpperCase()
                     + tmpText.substring(tmpText.indexOf('=') + 1).replaceAll(" ", "");
 
-        } else {
+        }
+        else {
             tmpText2 = tmpText.toUpperCase();
         }
         String[] inputWords = tmpText2.split(" ");

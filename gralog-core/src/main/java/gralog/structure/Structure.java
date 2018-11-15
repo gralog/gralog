@@ -2,14 +2,13 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
-import gralog.events.StructureEvent;
-import gralog.events.StructureListener;
 import gralog.math.BezierCubic;
 import gralog.math.BezierQuadratic;
 import gralog.math.BezierUtilities;
 import gralog.plugins.PluginManager;
 import gralog.plugins.XmlMarshallable;
 import gralog.plugins.XmlName;
+import gralog.events.*;
 import gralog.preferences.Configuration;
 import gralog.rendering.GralogGraphicsContext;
 import gralog.rendering.Vector2D;
@@ -30,7 +29,10 @@ import java.util.List;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.xml.transform.stream.StreamResult;
 
+
+import gralog.structure.controlpoints.ControlPoint;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
@@ -38,7 +40,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
+import java.util.concurrent.ThreadLocalRandom;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -53,7 +55,7 @@ import javax.xml.transform.stream.StreamResult;
 
 @XmlName(name = "graph")
 public abstract class Structure<V extends Vertex, E extends Edge>
-        extends XmlMarshallable implements IMovable {
+    extends XmlMarshallable implements IMovable {
 
     private final Set<StructureListener> listeners = new HashSet<>();
     public TreeSet<Interval> vertexIdHoles;
@@ -63,6 +65,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     //File IO
     private boolean isOpenFile = false;
     private String structureFilePath = "";
+
+    protected static class Interval {
+        Interval(int a, int b) { this.a = a; this.b = b;}
+        public int a;
+        public int b;
+        @Override
+        public String toString(){
+            return "("+ a + ", " + b + ")";
+        }
+    }
 
     public Structure() {
         vertices = new HashMap<>();
@@ -107,75 +119,9 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return "notAPythonifiableClass";
     }
 
-    private static boolean rectContainsVector(Rectangle2D rect, Vector2D c) {
-        return rect.contains(c.getX(), c.getY());
-    }
 
-    private static boolean checkContainsAnyX(Vector2D[] vectors, Rectangle2D rect) {
-        for (int i = 0; i < vectors.length; i++) {
-            if (vectors[i] != null) {
-                if (rect.getMinX() < vectors[i].getX()
-                        && rect.getMaxX() > vectors[i].getX()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
-    private static boolean checkContainsAnyY(Vector2D[] vectors, Rectangle2D rect) {
-        for (int i = 0; i < vectors.length; i++) {
-            if (vectors[i] != null) {
-                if (rect.getMinY() < vectors[i].getY()
-                        && rect.getMaxY() > vectors[i].getY()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public static Structure loadFromFile(String fileName) throws Exception {
-        return loadFromStream(new FileInputStream(fileName));
-    }
-
-    public static Structure loadFromStream(InputStream stream) throws Exception {
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(stream);
-        doc.getDocumentElement().normalize();
-        Element root = doc.getDocumentElement();
-        if (!root.getTagName().equalsIgnoreCase("graphml"))
-            throw new Exception("Not a GraphML file");
-
-        NodeList children = root.getChildNodes();
-        for (int i = children.getLength() - 1; i >= 0; --i) {
-            Node childNode = children.item(i);
-            if (childNode.getNodeType() != Node.ELEMENT_NODE)
-                continue;
-            Element child = (Element) childNode;
-            String className = child.getTagName();        // catch additional
-            // tag name(should be type) = buechiautomat/automaton if existent
-            if (child.hasAttribute("type")) {
-                className = child.getAttribute("type");
-            } else {
-                if (child.hasAttribute("edgedefault")) {
-                    if (child.getAttribute("edgedefault").equals("directed")) {
-                        className = "digraph";
-                    }
-                }
-            }
-            Object result = PluginManager.instantiateClass(className);
-            if (result == null)
-                continue;
-            if (result instanceof Structure) {
-                ((Structure) result).fromXml(child);
-                return (Structure) result;
-            }
-        }
-
-        return null;
-    }
+    
 
     public boolean isEmpty() {
         return vertices.size() + edges.size() == 0;
@@ -458,6 +404,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
+            
 
 
             if (targetId == inputTargetId && sourceId == inputSourceId) {
@@ -485,6 +432,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
             int sourceId = e.getSource().getId();
             int targetId = e.getTarget().getId();
+            
 
 
             if (targetId == inputTargetId && sourceId == inputSourceId) {
@@ -723,11 +671,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
             //very special case: if the two outer edges of a 3-edge multi edge connection are
             //oriented the opposite way of the middle one (do that for all sibling lists)
-            if (e.siblings.size() == 3) {
-                if (!e.siblings.get(0).sameSourceAs(e.siblings.get(1)) && !e.siblings.get(1).sameSourceAs(e)) {
+            if(e.siblings.size() == 3){
+                if(!e.siblings.get(0).sameOrientationAs(e.siblings.get(1)) && !e.siblings.get(1).sameOrientationAs(e)){
                     Collections.swap(e.siblings, 1, 2);
                 }
             }
+            System.out.println("skippadop : " + e.getSource() + e.getTarget());
 
             for (Edge edge : e.getSource().getIncidentEdges()) {
                 if (edge == e) {
@@ -811,6 +760,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         if (edges.get(edge.getId()) == null) { //tried to delete an edge that already exists!
             return;
         }
+      
 
 
         // edge.getSource().disconnectEdge(edge);
@@ -827,6 +777,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         edges.remove(edge.getId());
 
+        
 
         Interval deleteThisInterval = null;
         if (this.edgeIdHoles.size() == 0) {
@@ -836,6 +787,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             Interval me = new Interval(edge.getId(), id);
             Interval justAbove = this.edgeIdHoles.ceiling(me);
             Interval justBelow = this.edgeIdHoles.floor(me);
+            // System.out.println("justabove: " + justAbove + " justBelow: " + justBelow);
 
             if (justAbove == null) {
                 //this means justBelow cannot be null
@@ -894,11 +846,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         removeEdge(e, true);
     }
 
+
     /**
      * Inserts a list of edges/vertices in the structure. The objects are allowed
      * to have arbitrary IDs (and are thus suited for e.g. pasting a deep-copied
      * selection from clipboard)
-     * <p>
+     *
      * Also slightly offsets vertices
      */
     public void insertForeignSelection(Set<Object> selection, double offset) {
@@ -1168,8 +1121,37 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return objects;
     }
 
-    /**
-     * Returns true if projections are separate
+    private static boolean rectContainsVector(Rectangle2D rect, Vector2D c) {
+        return rect.contains(c.getX(), c.getY());
+    }
+
+    private static boolean checkContainsAnyX(Vector2D[] vectors, Rectangle2D rect) {
+        for (int i = 0; i < vectors.length; i++) {
+            if (vectors[i] != null) {
+                if (rect.getMinX() < vectors[i].getX()
+                        && rect.getMaxX() > vectors[i].getX()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean checkContainsAnyY(Vector2D[] vectors, Rectangle2D rect) {
+        for (int i = 0; i < vectors.length; i++) {
+            if (vectors[i] != null) {
+                if (rect.getMinY() < vectors[i].getY()
+                        && rect.getMaxY() > vectors[i].getY()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    //TODO: write comprehensive, more general SAT colision test
+    /** Returns true if projections are separate
      */
     private boolean separatingAxisTest(Vector2D rectFrom, Vector2D rectTo, Vector2D edgeFrom, Vector2D edgeTo) {
         //x axis
@@ -1359,11 +1341,13 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         doc.appendChild(root);
 
 
+
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
 
         DOMSource source = new DOMSource(root);
         StreamResult result = new StreamResult(new StringWriter());
+
 
 
         transformer.transform(source, result);
@@ -1392,10 +1376,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         doc.appendChild(root);
 
 
+
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
         DOMSource source = new DOMSource(root);
         StreamResult result = new StreamResult(new StringWriter());
+
 
 
         transformer.transform(source, result);
@@ -1437,16 +1423,58 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
     }
 
+    public static Structure loadFromFile(String fileName) throws Exception {
+        return loadFromStream(new FileInputStream(fileName));
+    }
+public static Structure loadFromStream(InputStream stream) throws Exception {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document doc = dBuilder.parse(stream);
+        doc.getDocumentElement().normalize();
+        Element root = doc.getDocumentElement();
+        if (!root.getTagName().equalsIgnoreCase("graphml"))
+            throw new Exception("Not a GraphML file");
+
+        NodeList children = root.getChildNodes();
+        for (int i = children.getLength() - 1; i >= 0; --i) {
+            Node childNode = children.item(i);
+            if (childNode.getNodeType() != Node.ELEMENT_NODE)
+                continue;
+            Element child = (Element) childNode;
+            String className = child.getTagName();        // catch additional
+            // tag name(should be type) = buechiautomat/automaton if existent
+            if (child.hasAttribute("type")) {
+                className = child.getAttribute("type");
+            } else {
+                if (child.hasAttribute("edgedefault")) {
+                    if (child.getAttribute("edgedefault").equals("directed")) {
+                        className = "digraph";
+                    }
+                }
+            }
+            Object result = PluginManager.instantiateClass(className);
+            if (result == null)
+                continue;
+            if (result instanceof Structure) {
+                ((Structure) result).fromXml(child);
+                return (Structure) result;
+            } 
+        }
+
+        return null;
+    }
+
     /**
      * Was the structure opened from a file or does this structure reference
      * a file? (e.g.: was it saved as...?)
-     * <p>
+     *
      * You can set the file reference here.
      */
     public void setFileReference(boolean hasReference, String ref) {
         isOpenFile = hasReference;
         structureFilePath = ref;
     }
+
 
     /**
      * @return A string containing the path of the referenced file. Empty if
@@ -1480,20 +1508,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         if (!this.getClass().isAnnotationPresent(StructureDescription.class))
             throw new Exception("class " + this.getClass().getName() + " has no @StructureDescription Annotation");
         return this.getClass().getAnnotation(StructureDescription.class);
-    }
-
-    protected static class Interval {
-        public int a;
-        public int b;
-        Interval(int a, int b) {
-            this.a = a;
-            this.b = b;
-        }
-
-        @Override
-        public String toString() {
-            return "(" + a + ", " + b + ")";
-        }
     }
 
 

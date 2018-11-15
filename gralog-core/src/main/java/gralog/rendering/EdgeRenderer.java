@@ -3,6 +3,8 @@
 
 package gralog.rendering;
 
+import static gralog.rendering.GralogGraphicsContext.LineType;
+
 import gralog.structure.Edge;
 import gralog.structure.controlpoints.ControlPoint;
 
@@ -11,9 +13,9 @@ import java.util.List;
 
 /**
  * This class is responsible for drawing Edges
- * <p>
+ *
  * Can be used to draw different kinds of edges
- * <p>
+ *
  * EdgeRenderer uses GralogGraphicsContext to draw the curve.
  */
 public final class EdgeRenderer {

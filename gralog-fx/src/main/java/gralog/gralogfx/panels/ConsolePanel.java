@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 
 public class ConsolePanel extends AnchorPane {
 
-    public ConsolePanel(Runnable onExecute){
+    public ConsolePanel(Runnable onExecute) {
         HBox hbox = new HBox();
         hbox.prefWidthProperty().bind(this.widthProperty());
         prefWidthProperty().bind(this.widthProperty());
@@ -30,7 +30,7 @@ public class ConsolePanel extends AnchorPane {
         hbox.setStyle("-fx-background-color: white;");
     }
 
-    private Button createButton(String label){
+    private Button createButton(String label) {
         Button b = new Button(label);
         b.setPrefWidth(200);
         return b;

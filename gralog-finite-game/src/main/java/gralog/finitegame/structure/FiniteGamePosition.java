@@ -15,11 +15,11 @@ public class FiniteGamePosition extends Vertex {
 
     public Boolean player1Position = true;
 
-    public FiniteGamePosition(){
+    public FiniteGamePosition() {
         super();
     }
 
-    public FiniteGamePosition(Configuration config){
+    public FiniteGamePosition(Configuration config) {
         super(config);
     }
 

@@ -15,10 +15,10 @@ import java.util.Set;
  *
  */
 @ExportFilterDescription(
-        name = "Library of Efficient Data types and Algorithms (LEDA)",
-        text = "",
-        url = "http://www.algorithmic-solutions.info/leda_guide/graphs/leda_native_graph_fileformat.html",
-        fileExtension = "lgr"
+    name = "Library of Efficient Data types and Algorithms (LEDA)",
+    text = "",
+    url = "http://www.algorithmic-solutions.info/leda_guide/graphs/leda_native_graph_fileformat.html",
+    fileExtension = "lgr"
 )
 public class LEDAExport extends ExportFilter {
 

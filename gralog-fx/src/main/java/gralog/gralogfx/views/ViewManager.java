@@ -88,9 +88,9 @@ public final class ViewManager {
                     try {
                         Class<?> c = Class.forName(classname, false, sysloader);
                         classes.add(c);
-                    }catch (NoClassDefFoundError e){
+                    }catch (NoClassDefFoundError e) {
                         System.out.println("ncdf " +classname);
-                    }catch (ClassNotFoundException e){
+                    }catch (ClassNotFoundException e) {
                         System.out.println("cnf " + classname);
                     }
                 }
@@ -116,7 +116,7 @@ public final class ViewManager {
             if (isNode && isView) {
 
                 // okay, it is a view. (try to) register it
-                Constructor<? extends View> ctor = (Constructor<? extends View>) c.getConstructor(new Class[]{});
+                Constructor<? extends View> ctor = (Constructor<? extends View>) c.getConstructor(new Class[] {});
                 if (ctor == null)
                     throw new Exception("class \"" + c.getName() + "\" has no empty constructor");
 

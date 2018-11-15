@@ -37,8 +37,8 @@ public class GralogColor implements Serializable {
 
     public GralogColor(int rgb) {
         this((short) ((rgb >> 16) & 0xFF),
-                (short) ((rgb >> 8) & 0xFF),
-                (short) (rgb & 0xFF));
+            (short) ((rgb >> 8) & 0xFF),
+            (short) (rgb & 0xFF));
     }
 
     public GralogColor(GralogColor c) {
@@ -47,12 +47,7 @@ public class GralogColor implements Serializable {
         this.b = c.b;
     }
 
-    public static boolean isColor(String s) { // checks if s is a color from enum Color
-        for (Color c : Color.values())
-            if (c.name().equalsIgnoreCase(s))
-                return true;
-        return false;
-    }
+
 
     public static GralogColor parseColor(String htmlString) {
         int colorCode = 0;
@@ -136,6 +131,13 @@ public class GralogColor implements Serializable {
                 + hex.charAt(b >> 4 & 0x0F) + hex.charAt(b & 0x0F);
     }
 
+    public static boolean isColor(String s) { // checks if s is a color from enum Color
+        for (Color c : Color.values())
+            if (c.name().equalsIgnoreCase(s))
+                return true;
+        return false;
+    }
+
     public String name() {
         for (Color c : Color.values()) {
             if (c.value == (((r & 0x0FF) << 16) | ((g & 0x0FF) << 8) | (b & 0x0FF))) {
@@ -148,6 +150,7 @@ public class GralogColor implements Serializable {
     public GralogColor inverse() {
         return new GralogColor((short) (255 - r), (short) (255 - g), (short) (255 - b));
     }
+
     public enum Color {
         WHITE(0xFFFFFF),
         BLACK(0x000000),

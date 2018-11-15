@@ -14,12 +14,12 @@ public class GetAllEdgesBetweenCommand extends CommandForGralogToExecute {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
         
-        try{
+        try {
             this.sourceVertex = PipingMessageHandler.extractSourceFromEdge(externalCommandSegments,structure);
             this.targetVertex = PipingMessageHandler.extractTargetFromEdge(externalCommandSegments,structure);
             this.edgeString = PipingMessageHandler.extractNthPositionString(externalCommandSegments,2);
-        }catch(NonExistantEdgeException e){
-        }catch(Exception e){
+        }catch(NonExistantEdgeException e) {
+        }catch(Exception e) {
             this.fail();
             this.setResponse(null);
             this.error = e;
@@ -31,13 +31,13 @@ public class GetAllEdgesBetweenCommand extends CommandForGralogToExecute {
 	}
 
 
-	public void handle(){
+	public void handle() {
 
-        if (this.sourceVertex == null && this.targetVertex == null){
+        if (this.sourceVertex == null && this.targetVertex == null) {
             this.setResponse(null);
             return;
         }
-        if (this.sourceVertex == null || this.targetVertex == null){
+        if (this.sourceVertex == null || this.targetVertex == null) {
             this.error = new NonExistantVertexException("The edge: " + this.edgeString + " exhibits wonky behaviour");
             this.fail();
             return;
@@ -60,7 +60,6 @@ public class GetAllEdgesBetweenCommand extends CommandForGralogToExecute {
             
         // e.isDirected = (externalCommandSegments[3].equals("true"));
        
-
 
 
         return;

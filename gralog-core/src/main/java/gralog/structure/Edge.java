@@ -37,7 +37,11 @@ import java.util.Set;
 @XmlName(name = "edge")
 public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
-
+    public enum EdgeType {
+        SHARP,
+        ROUND, // TODO: choosing this in object inspector makes the edge invisible
+        BEZIER
+    }
     public static double edgeSelectionOffset = 0.02;
     public static double multiEdgeOffset = 0.2;
     //inspector visible
@@ -48,9 +52,12 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     @DataField(display = true)
     public Boolean isDirected = true;
     public Arrow arrowType = Arrow.TYPE2;
+
     public Double endPointDistance = 0d;   //how much distance is between endpoint and target
     public Double startPointDistance = 0d; //how much distance is between start point and source
+
     public double arrowHeadLength = 0.2d; // cm
+
     public double arrowHeadAngle = 40d; // degrees
     // @InspectorName(name = "thickness")
     @DataField(display = true)
@@ -66,8 +73,6 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     public ArrayList<ControlPoint> controlPoints = new ArrayList<>();
     @DataField(display = true, readOnly = true)
     Integer id = -1; //if not -1, then don't change the id
-
-    //end
     Set<EdgeListener> listeners = new HashSet<>();
     private Vertex source = null;
     private Vertex target = null;
@@ -97,9 +102,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         thickness = config.getValue("Edge_thickness", Double::parseDouble, 0.025);
     }
 
-    public EdgeType getEdgeType() {
-        return edgeType;
-    }
+
 
     public void setEdgeType(EdgeType e) {
         if (e == EdgeType.BEZIER && controlPoints.size() > 2) {
@@ -128,6 +131,9 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         this.edgeType = e;
     }
 
+    public EdgeType getEdgeType() {
+        return edgeType;
+    }
     public int getControlPointCount() {
         return controlPoints.size();
     }
@@ -256,7 +262,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         Edge e = null;
         for (int i = 0; i < siblings.size(); i++) {
             e = siblings.get(i);
-            if (e != this && !e.sameSourceAs(this)) {
+            if(e != this && !e.sameOrientationAs(this)){
                 break;
             }
             e = null;
@@ -355,8 +361,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         //offset both edges orthogonally, offsets differently when both face same direction
         if (siblings.size() == 2) {
             offset = 0.5 * multiEdgeOffset;
-            if (index == 1) {
-                if (siblings.get(0).sameSourceAs(this)) {
+            if(index == 1){
+                if(siblings.get(0).sameOrientationAs(this)){
                     offset *= -1;
                 }
             }
@@ -367,8 +373,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
                 offset = 0;
             } else if (index == 0) {
                 offset = multiEdgeOffset;
-            } else if (index == 2) {
-                offset = (siblings.get(0).sameSourceAs(this) ? -1 : 1) * multiEdgeOffset;
+            }else if(index == 2){
+                offset = (siblings.get(0).sameOrientationAs(this) ? -1 : 1) * multiEdgeOffset;
             }
         }
         if (siblings.size() == 4) {
@@ -385,7 +391,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
                     offset = offsetMultiplier * correctedOffsetCounter * multiEdgeOffset;
                     break;
                 }
-                if (siblings.get(i).sameSourceAs(this)) {
+                if(siblings.get(i).sameOrientationAs(this)){
                     sameOrientationCount++;
                 }
 
@@ -394,7 +400,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         return offset;
     }
 
-    public boolean sameSourceAs(Edge other) {
+    public boolean sameOrientationAs(Edge other) {
         return getSource() == other.getSource();
     }
 
@@ -556,6 +562,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         return source == v || target == v;
     }
 
+
     public double length() {
         Vector2D from = this.source.coordinates;
         Vector2D to = this.target.coordinates;
@@ -669,12 +676,5 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
         return ret;
 
-    }
-
-
-    public enum EdgeType {
-        SHARP,
-        ROUND, // TODO: choosing this in object inspector makes the edge invisible
-        BEZIER
     }
 }

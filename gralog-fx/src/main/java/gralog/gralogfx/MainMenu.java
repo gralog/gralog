@@ -166,10 +166,10 @@ public class MainMenu {
         Menu menuEdit = new Menu("Edit");
         final String os = System.getProperty("os.name").toUpperCase();
         final KeyCodeCombination undo, redo;
-        if(os.contains("MAC")){
+        if(os.contains("MAC")) {
             undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN);
             redo = new KeyCodeCombination(KeyCode.Y, KeyCombination.META_DOWN);
-        }else{
+        }else {
             undo = new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN);
             redo = new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN);
         }
@@ -195,7 +195,7 @@ public class MainMenu {
         return menuAlgorithms;
     }
 
-    private Menu createStructurePaneMenu(){
+    private Menu createStructurePaneMenu() {
         menuStructurePane = new Menu("Structure");
         return menuStructurePane;
     }
@@ -260,7 +260,7 @@ public class MainMenu {
     private void updateAlgorithms() {
         menuAlgorithms.getItems().clear();
 
-        if (currentStructure == null){
+        if (currentStructure == null) {
             return;
         }
 
@@ -269,14 +269,14 @@ public class MainMenu {
                 createMenuItem(str, handlers.onRunAlgorithm));
     }
 
-    private void updateStructureVariables(){
+    private void updateStructureVariables() {
         menuStructurePane.getItems().clear();
 
-        if(currentPane == null){
+        if(currentPane == null) {
             return;
         }
 
-        for(int i = 0; i < StructurePane.menuVariables.length; i++){
+        for(int i = 0; i < StructurePane.menuVariables.length; i++) {
             MenuPrefVariable ff = StructurePane.menuVariables[i];
             Field f = StructurePane.menuVariableFields[i];
 
@@ -286,7 +286,7 @@ public class MainMenu {
         }
     }
 
-    private void dummy(Field f, StructurePane ref){
+    private void dummy(Field f, StructurePane ref) {
         //TODO: use this to start a process (like a window) that lets the user change the field
         System.out.printf(">> Request to change variable [%s] of Structure [%s]\n",
                 f.getName(),

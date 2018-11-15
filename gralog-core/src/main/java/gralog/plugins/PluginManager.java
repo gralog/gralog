@@ -177,12 +177,12 @@ public final class PluginManager {
      * Removes all registered classes. After calling this method, the static
      * state of this class will be nearly the same as when you started the
      * program.
-     * <p>
+     *
      * However, jar files loaded with loadPlugin() will not be unloaded,
      * although all their classes will become unknown to PluginManager. It will
      * also not clear the state of ExportFilterManager etc., even though
      * PluginManager changes their state when registering classes.
-     * <p>
+     *
      * When you call this method, you most likely also want to call the clear()
      * methods of the resource managing classes like ExportFilterManager.
      */

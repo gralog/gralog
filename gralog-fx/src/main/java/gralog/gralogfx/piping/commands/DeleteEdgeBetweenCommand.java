@@ -13,13 +13,13 @@ public class DeleteEdgeBetweenCommand extends CommandForGralogToExecute {
     Vertex sourceVertex;
     Vertex targetVertex;
 
-    public DeleteEdgeBetweenCommand(String[] externalCommandSegments,Structure structure){
+    public DeleteEdgeBetweenCommand(String[] externalCommandSegments,Structure structure) {
         this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
         
-        try{    
+        try {    
             this.sourceId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -27,9 +27,9 @@ public class DeleteEdgeBetweenCommand extends CommandForGralogToExecute {
 
         this.externalCommandSegments = externalCommandSegments;
 
-        try{    
+        try {    
             this.targetId = Integer.parseInt(externalCommandSegments[3]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -37,7 +37,7 @@ public class DeleteEdgeBetweenCommand extends CommandForGralogToExecute {
 
         this.sourceVertex = this.structure.getVertexById(this.sourceId);
 
-        if (this.sourceVertex == null){
+        if (this.sourceVertex == null) {
             this.fail();
             this.error = new NonExistantVertexException("source vertex with id " + Integer.toString(this.sourceId) + " does not exist");
             return;
@@ -45,7 +45,7 @@ public class DeleteEdgeBetweenCommand extends CommandForGralogToExecute {
 
         this.targetVertex = this.structure.getVertexById(this.targetId);
 
-        if (this.targetVertex == null){
+        if (this.targetVertex == null) {
             this.fail();
             this.error = new NonExistantVertexException("target vertex with id " + Integer.toString(this.targetId) + " does not exist");
             return;
@@ -58,19 +58,19 @@ public class DeleteEdgeBetweenCommand extends CommandForGralogToExecute {
     }
 
 
-    public void handle(){
+    public void handle() {
 
         
         Set<Edge> intersection = this.structure.edgesBetweenVertices(this.sourceVertex,this.targetVertex);
 
         Iterator it = intersection.iterator();
         Edge edgeToDelete = it.hasNext() ? intersection.iterator().next() : null;
-        for (Edge e : intersection){
-            if (edgeToDelete.getId() < e.getId()){
+        for (Edge e : intersection) {
+            if (edgeToDelete.getId() < e.getId()) {
                 edgeToDelete = e;
             }
         }
-        if (edgeToDelete != null){
+        if (edgeToDelete != null) {
             this.structure.removeEdge(edgeToDelete);    
         }
         

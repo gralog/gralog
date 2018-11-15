@@ -16,9 +16,7 @@ import java.util.Set;
 
 public abstract class RenderingShape implements Serializable {
 
-    /*
-     * PossibleShapes needed to check in the console dialog if a property is a shape.
-     * */
+
 
     //used to restrict the size box, can cause performance problems otherwise
     protected static final double MAX_WIDTH = 300;
@@ -38,14 +36,11 @@ public abstract class RenderingShape implements Serializable {
     /**
      * Provides a rough measure of the size of a shape via a Rectangle,
      * applicable height every subclass of shape
-     * <p>
+     *
      * Two shapes with the same SizeBoxes should have roughly the same
      * actual size in the final render.
      */
     public SizeBox sizeBox;
-
-//coool look at this//
-
     /**
      * Creates a RenderingShape with sensible default values, so that the final size of
      * the rendered shape has similar dimensions as the rectangle of the given

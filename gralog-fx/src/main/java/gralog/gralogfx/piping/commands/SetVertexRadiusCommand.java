@@ -12,13 +12,13 @@ public class SetVertexRadiusCommand extends CommandForGralogToExecute {
 
 
 
-	public SetVertexRadiusCommand(String[] externalCommandSegments,Structure structure){
+	public SetVertexRadiusCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
         
-		try{    
+		try {    
             this.changeId = Integer.parseInt(externalCommandSegments[2]);
-        }catch(NumberFormatException e){
+        }catch(NumberFormatException e) {
             this.error = e;
             this.fail();
             return;
@@ -26,14 +26,14 @@ public class SetVertexRadiusCommand extends CommandForGralogToExecute {
     }  
 	
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
        
         
         this.vertex = this.structure.getVertexById(this.changeId);
 
-        if (this.vertex == null){
+        if (this.vertex == null) {
             this.fail();
 
         	this.error = new NonExistantVertexException("vertex does not exist");

@@ -30,7 +30,7 @@ public abstract class Algorithm {
             if (paramTypes.length != 4)
                 continue;
 
-            algoResult = method.invoke(this, new Object[]{structure, params, selection, onprogress});
+            algoResult = method.invoke(this, new Object[] {structure, params, selection, onprogress});
             break;
         }
         return algoResult;

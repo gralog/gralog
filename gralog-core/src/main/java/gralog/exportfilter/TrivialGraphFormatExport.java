@@ -16,10 +16,10 @@ import java.util.Set;
  *
  */
 @ExportFilterDescription(
-        name = "Trivial Graph Format",
-        text = "",
-        url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
-        fileExtension = "tgf"
+    name = "Trivial Graph Format",
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
+    fileExtension = "tgf"
 )
 public class TrivialGraphFormatExport extends ExportFilter {
 

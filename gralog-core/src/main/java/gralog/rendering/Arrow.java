@@ -10,7 +10,11 @@ import java.io.Serializable;
  * x-length should be 1, so that scaling the arrow across all types becomes consistent.
  */
 public class Arrow implements Serializable {
-    public static final Arrow TYPE1 = new Arrow(
+    public enum LineFlag {
+        POLY,
+        LINE
+    }
+ static final Arrow TYPE1 = new Arrow(
             new double[]{0, -0.5, -1.0, -0.8, -1.0, -0.5},
             new double[]{0, 0.14, 0.35, 0.0, -0.35, -0.14},
             6,
@@ -22,6 +26,7 @@ public class Arrow implements Serializable {
             7,
             -0.1,
             LineFlag.LINE);
+
     public double[] xPoints;
     public double[] yPoints;
     public int count;
@@ -33,10 +38,5 @@ public class Arrow implements Serializable {
         this.count = count;
         this.endPoint = endPoint;
         this.flag = flag;
-    }
-
-    public enum LineFlag {
-        POLY,
-        LINE
     }
 }
