@@ -20,34 +20,33 @@ import java.util.function.Consumer;
 public class StringAlgorithmParametersListView extends GridPaneView<StringAlgorithmParametersList> {
 
     @Override
-    public void setObject(StringAlgorithmParametersList param,
+    public void setObject(StringAlgorithmParametersList params,
         Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
-        if (param == null)
+        if (params == null)
             return;
 
-        for (int i = 0; i < param.parameters.size(); i++) {
-            TextField valueField = new TextField(param.parameters.get(i));
+        for (int i = 0; i < params.parameters.size(); i++) {
+            TextField valueField = new TextField(params.parameters.get(i));
             valueField.setPrefWidth(1000);
 
             Text hint = new Text();
 
-            syntaxCheck(param, valueField, hint, submitPossible);
+            syntaxCheck(params, valueField, hint, submitPossible);
 
             // THIS SHOULD WORK!!!
 
-//            AtomicReference<String> parameter = new AtomicReference<>(param.parameters.get(i));
-//            valueField.textProperty().addListener(e -> {
-//                parameter = valueField.getText();
-//                syntaxCheck(param, valueField, hint, submitPossible);
-//            });
-//            add(new Label(param.getLabel() + ": "), 0, 0);
-//            add(valueField, 1, 0);
-//            add(hint, 0, 1, 2, 1);
-//
-//            String explanation = param.getExplanation();
-//            if (!explanation.isEmpty())
-//                add(new Text(explanation), 0, 2, 2, 1);
+
+            params.parameters.set(i, valueField.getText());
+            syntaxCheck(params, valueField, hint, submitPossible);
+
+            add(new Label(params.labels.get(i) + ": "), 0, 0);
+            add(valueField, 1, 0);
+            add(hint, 0, 1, 2, 1);
+
+            String explanation = params.explanations.get(i);
+            if (!explanation.isEmpty())
+                add(new Text(explanation), 0, 2, 2, 1);
         }
     }
 
