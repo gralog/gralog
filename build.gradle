@@ -37,7 +37,10 @@ task (zipAll,
         type: Zip){
   archiveName = 'gralog-all.zip'
   from projectDir
-  exclude 'build/distributions/**'
+  exclude 'build/distributions/**', '*TODO*',
+          'anw*', 'install-linux/gralog',
+          'build/libs', 'build/tmp', 'gradlew', 'gradlew.bat', '**/*aux', '**/*log', '**/*out',
+          '**/auto/**'
 }
 
 task (zipJars,
