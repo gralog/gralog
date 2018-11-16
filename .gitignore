@@ -3,6 +3,8 @@
 **/parser/*ScannerToken.java
 **/parser/*Parser.java
 
+install/gradle
+
 # gradle
 /.gradle
 /build
