@@ -2,6 +2,7 @@ defaultTasks 'run'
 
 apply plugin: 'java'
 
+
 subprojects {
   repositories {
     mavenCentral()
@@ -30,6 +31,27 @@ clean.dependsOn(subprojects.clean)
 test.dependsOn(subprojects.test)
 
 task run
+
+task (zipAll,
+        dependsOn: build,
+        type: Zip){
+  archiveName = 'gralog-all.zip'
+  from projectDir
+  exclude 'build/distributions/**'
+}
+
+task (zipJars,
+        dependsOn: build,
+        type: Zip){
+  archiveName = 'gralog-bin.zip'
+  from projectDir
+  exclude 'build/distributions/**', 'gralog*/**', 'config/**', 'gradle/**', 'lib/**', '*TODO*',
+          'anw*', 'build.gradle', 'settings.gradle', '.*/**', 'install-linux/gralog', 'build/test-results',
+          'build/libs', 'build/tmp', 'build/dist/gralog', 'gradlew', 'gradlew.bat', '**/*aux', '**/*log', '**/*out',
+          '**/auto/**'
+
+}
+
 
 // gralog-core provides some helper classes for the unit tests,
 // so every other subproject depends on this.
@@ -315,3 +337,4 @@ class CupJFlex extends DefaultTask {
     ant.flex(file: [ project.file('src/main/java'), workingDir, jflexFile() ].join('/'))
   }
 }
+
