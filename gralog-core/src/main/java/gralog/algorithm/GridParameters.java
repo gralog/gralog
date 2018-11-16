@@ -18,10 +18,10 @@ public class GridParameters extends StringAlgorithmParametersList {
         this.labels = Arrays.asList("length", "width");
 
         IntSyntaxChecker sc = new IntSyntaxChecker(1,Integer.MAX_VALUE);
-        List<SyntaxChecker> syntaxCheckers = Arrays.asList(sc,sc);
+        this.syntaxCheckers = Arrays.asList(sc,sc);
 
 
-        List<String> explanations = Arrays.asList("The length should be a positive integer.",
+        this.explanations = Arrays.asList("The length should be a positive integer.",
                 "The width should be a positive integer.");
 
 

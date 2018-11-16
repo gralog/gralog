@@ -11,7 +11,7 @@ import java.util.List;
 public class StringAlgorithmParametersList extends AlgorithmParameters {
     public List<String> labels, explanations;
     public List<String> parameters;
-    private List<SyntaxChecker> syntaxCheckers;
+    protected List<SyntaxChecker> syntaxCheckers;
 
     public StringAlgorithmParametersList(List<String> initialValues) {
 
@@ -93,7 +93,7 @@ public class StringAlgorithmParametersList extends AlgorithmParameters {
             SyntaxChecker sc = syntaxCheckers.get(i);
             String param = parameters.get(i);
             result = sc.check(param);
-            result.hint = param;
+            result.hint = "";
             if (!result.syntaxCorrect)
                 return result;
         }
