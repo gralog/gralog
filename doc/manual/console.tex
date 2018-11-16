@@ -36,15 +36,14 @@ All lists can be created out of the default list of all
 vertices and the internal list of all currently selected vertices. The
 latter can be made with the mouse in the obvious way or you can write
 in the command line:
-\begin{tcolorbox}
-  select all vertices,
+\\\begin{tcolorbox}
+  select all vertices
 \end{tcolorbox}
 \noindent
 to select all vertices. By the way, in a similar way, all vertices are
 deselected:
-
-\begin{tcolorbox}
-deselect all vertices.
+\\\begin{tcolorbox}
+deselect all vertices
 \end{tcolorbox}
 
 Now use the selection to create a new list. The corresponding command
@@ -52,8 +51,7 @@ is \texttt{filter}: one filters the elements from an existing list
 according to certain criteria and saves them into another list. If the
 other list already exists, the new elements are appended to it (even
 if they are already contained in the target list). 
-
-\begin{tcolorbox}
+\\\begin{tcolorbox}
   filter all selected where no condition to VL1
 \end{tcolorbox}
 
@@ -67,8 +65,7 @@ Now we created a new list \texttt{VL1} containing all vertices of the
 graph. Let us now create a new list that contains only vertices with a
 certain property, say those whose colour is blue. We can now use
 \texttt{VL1} as a source of vertices.
-
-\begin{tcolorbox}
+\\\begin{tcolorbox}
   filter VL1 where fill color blue to VLblue
 \end{tcolorbox}
 
@@ -78,23 +75,19 @@ color is red. Note in the following example that instead of the
 keyword \texttt{where} one can write \texttt{such that} or
 \texttt{st}. Note also that instead of \texttt{fill color} it is
 possible to use just \texttt{fill}:
-
-\begin{tcolorbox}
+\\\begin{tcolorbox}
   filter VL1 st fill red to VLred
 \end{tcolorbox}
 
 The full specification of the filter command is as follows. Note that
 Gralog does not distinguish between the upper and the lower cases.
-
-
-\begin{tcolorbox}[colback=lightpink]
+\\\begin{tcolorbox}[colback=lightpink]
   FILTER <what> WHERE|ST|(SUCH THAT) <parameters> TO <list identifier>
   [ignored trash]
 \end{tcolorbox}
  
 \noindent where
-
-\begin{tcolorbox}[colback=lightpink]
+\\\begin{tcolorbox}[colback=lightpink]
   \begin{tabular}[H]{rl}
     <what> := &ALL VERTICES | ALL EDGES\\
               &| [ALL ]? SELECTED VERTICES | [ALL ]? SELECTED EDGES\\
@@ -121,8 +114,7 @@ Gralog does not distinguish between the upper and the lower cases.
 \end{tcolorbox}
 
 In other words, we can write something like
-
-\begin{tcolorbox}
+\\\begin{tcolorbox}
   FILTER sourceList ST FILL RED STROKE BLUE SHAPE ELLIPSE DEGREE > 3 TO targetList
 \end{tcolorbox}
 
@@ -138,8 +130,7 @@ choose \texttt{NO CONDITION}. In that case even if other parameters
 are given, they are not taken into account and the whole source list
 is given. This can be in particular used to duplicate every element in
 a list:
-
-\begin{tcolorbox}
+\\\begin{tcolorbox}
   FILTER sourceList ST NO CONDITION TO newList
 
   FILTER sourceList ST NO CONDITION TO newList
@@ -238,8 +229,7 @@ Table~\ref{tab:parsAndVals} explains which values the parameters can have.
 Before connecting lists of vertices (recall Example~\ref{ex:running})
 we probably want to sort them, so that we know what vertex has
 number~$i$. The lists can be sorted by
-
-\begin{tcolorbox}[colback=lightpink]
+\\\begin{tcolorbox}[colback=lightpink]
   SORT <list id> <parameter>
 \end{tcolorbox}%
 where \texttt{parameter} is one of \texttt{LEFTRIGHT},
@@ -255,8 +245,7 @@ are equal, the vertices keep their relative order.
 \subsection{Operations on lists (before connecting)}
 
 The following operations are currently supported:
-
-\begin{tcolorbox}[colback=lightpink]
+\\\begin{tcolorbox}[colback=lightpink]
   \begin{tabular}[H]{p{7cm}|p{8cm}}
     \textbf{operation}    & \textbf{meaning}\\
     DELETE <list id> & deletes the list, but not the elements of the list from the graph\\
@@ -281,20 +270,19 @@ The following operations are currently supported:
 \subsection{Connecting lists of vertices}
 
 One can either connect one list of vertices to another, which, however, can be the same list, or connect vertices of one list in a certain way. The first is done by the command
-
-\begin{tcolorbox}[colback=lightpink]
+\\\begin{tcolorbox}[colback=lightpink]
   CONNECT <list1> <list2> =<formula> | BICLIQUE | MATCHING
 \end{tcolorbox}
 
 The easier case is to use a standard way of connection, for example,
-
-\begin{tcolorbox}[colback=palegreen]
+\\\begin{tcolorbox}[colback=palegreen]
   CONNECT upper lower MATCHING
 \end{tcolorbox}
 which produces a matching connecting the $i$th vertex of
 \texttt{list1} to the $i$th vertex of \texttt{list2}
 
+
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "main"
+%%% TeX-master: "gralog"
 %%% End:

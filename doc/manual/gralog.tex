@@ -70,7 +70,7 @@
     enlarge left by=0mm,
     boxsep=5pt,
     arc=0pt,outer arc=0pt,
-    after={\par\vspace{\baselineskip}\noindent},
+    after={},
   }
   \renewcommand{\arraystretch}{2}
 \usepackage{color}
@@ -84,8 +84,6 @@
 \usepackage{hyperref}
 
 \hypersetup{colorlinks=true,linkcolor=darkblue,citecolor=darkblue}
-
-
 
 \lstset{frame=tb,
   language=Java,
@@ -105,7 +103,7 @@
 }
 \lstset{language=Python}
 
-\title{Gralog Console Manual}
+\title{Gralog Manual}
 
 \author{Felix Herron\\\texttt{felix.herron@tu-berlin.de}
   \and Roman Rabinovich\\ \texttt{roman.rabinovich@tu-berlin.de}
@@ -144,39 +142,36 @@ EPM and code examples for how to use these.
 \section{Documentation and Installation}
 
 You can download Gralog from \url{https://github.com/gralog/gralog}.
-
 First, make sure that Java version at least 10 is installed on your
 machine.
 
-On Linux and Mac OS you can install it by
-
-\begin{tcolorbox}
-  cd install
-  ./install-linux.sh
+On Linux and Mac OS you can install Gralog by
+\\\begin{tcolorbox}
+  cd install\\
+  ./install-nix.sh
 \end{tcolorbox}
 
 Call
-\begin{tcolorbox}
-  ./install-linux.sh -h
+\\\begin{tcolorbox}
+  ./install-nix.sh -h
 \end{tcolorbox}
 to get help on the installer options. If the installation script
 didn't work for some reason, read below how to install Gralog manually.
 
 If option \texttt{-c} is given, the installer compiles Gralog in
 directory \texttt{~/gralog} (which is created if necessary) or in the directory you give the script as a parameter:
-
-\begin{tcolorbox}
-  ./install-linux.sh -d /path/to/gralog
+\\\begin{tcolorbox}
+  ./install-nix.sh -d /path/to/gralog
 \end{tcolorbox}
 
-If run with option \texttt{-l}, a symbolic link to the script starting Gralog is created in
+If run with option \texttt{-l} (i.e., \emph{ell}), a symbolic link to the script starting Gralog is created in
 \texttt{/usr/bin}. For this, the installer asks the user for the administrator
 password.
 
 By default (without option \texttt{-n}), the installer tries to
 install Python modules \emph{networkx} and \emph{python-igraph} with
 \emph{pip}. They are needed to be able to use Gralog's Python module
-\texttt{Gralog.py}, which allows the user to write Python scripts
+\emph{Gralog.py}, which allows the user to write Python scripts
 working with graphs and conveniently visualise and debug them using
 Gralog.
 
@@ -196,15 +191,14 @@ writing rights for, the installer asks for the administrator password.
 
 On Windows Gralog is not tested yet. You can try to install it by
 running
-
-\begin{tcolorbox}
+\\\begin{tcolorbox}
   gradlew.bat
 \end{tcolorbox}
 in the Gralog root directory. This compiles Gralog if necessary and
-runs it. The \texttt{jar} file is
+runs it. The \emph{jar} file is
 \texttt{./build/dist/gralog-fx.jar}. Similarly, on Linux and Mac OS
 one can call
-\begin{tcolorbox}
+\\\begin{tcolorbox}
   ./gradlew
 \end{tcolorbox}
 
@@ -220,7 +214,35 @@ will find it.
 
 
 The documentation can be found in directory \texttt{doc/}. The main
-manual file is \texttt{gralog.pdf}. 
+manual file is \emph{gralog.pdf}.
+
+\subsection{Manual installation}
+
+On Windows or if \texttt{install-nix.sh} didn't work, it should be not
+difficult to install Gralog manually.
+
+The binaries can be found in \texttt{build/dist}. If you want to
+compile Gralog yourself, please, download the full version with sources
+(\texttt{gralog-all.zip}, not just (\texttt{gralog-bin.zip}) and run
+
+\begin{tcolorbox}
+  ./gradlew
+\end{tcolorbox}
+on a *nix system and
+
+\begin{tcolorbox}
+  ./gradlew.bat
+\end{tcolorbox}
+on Windows.
+
+Now you can just run \texttt{build/dist/gralog-fx.jar}. (You can move
+the contents of \texttt{build/dist/} wherever you want, but keep it
+all together.) However, this still
+does not allow one to work with the Python plugin. To install the plugin,
+please, make sure you have installed Python with modules
+\texttt{networkx} and \texttt{python-igraph}. Then copy the file
+\texttt{gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py}
+to some place where your Python will see it.
 
 
 
