@@ -1,8 +1,0 @@
-A summary of algorithms and their usability:
-
-Assign labels: works
-bfs-tree: works, although the final product is suspiciously-unusable. perhaps to be replaced with a standing piping program? perhaps it should ask for a starting vertex?
-col2: does some weird funky stuff but i'm not sure if it's right lol it's just bizarre
-coloring: works
-dominating set: appears to work, should perhaps be renamed "min-dominating set" or something?
-fake directed tree decomposition: does not work, i'm not sure what it is supposed to do. There's a paper linked but I don't feel like reading it right now
