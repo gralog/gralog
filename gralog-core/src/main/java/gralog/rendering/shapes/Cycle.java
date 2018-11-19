@@ -17,20 +17,18 @@ public class Cycle extends RenderingShape {
         return new Cycle(new SizeBox(radius, radius));
     }
 
-    public void setWidth(double radius) {
-        sizeBox.width = Math.min(radius, MAX_WIDTH);
-        sizeBox.height = Math.min(radius, MAX_HEIGHT);
-    }
-
-    public void setHeight(double radius) {
-        sizeBox.width = Math.min(radius, MAX_WIDTH);
+    public void setRadius (double radius) {
+    	sizeBox.width = Math.min(radius, MAX_WIDTH);
         sizeBox.height = Math.min(radius, MAX_HEIGHT);
     }
 
     @Override
     public void render(GralogGraphicsContext gc, Vector2D center, String label, GralogColor strokeColor, GralogColor fillColor) {
-        gc.circle(center, (sizeBox.width - strokeWidth) / 2, strokeColor);
-//        gc.fillOval(center, sizeBox.width - 2 * strokeWidth, sizeBox.height - 2 * strokeWidth, fillColor);
+    	gc.strokeOval(center, sizeBox.width - strokeWidth,
+    			sizeBox.width - strokeWidth, strokeWidth, strokeColor);
+        gc.fillOval(center, sizeBox.width - 2 * strokeWidth,
+                sizeBox.width - 2 * strokeWidth, fillColor);
+
         super.render(gc, center, label, strokeColor, fillColor);
     }
 
