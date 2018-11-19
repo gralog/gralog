@@ -46,8 +46,8 @@ public class ObjectInspector extends AnchorPane implements GralogWindow {
 
     public void setObject(Collection<?> list, Consumer<Boolean> submitPossible)
             throws Exception {
-
-        this.getChildren().clear();
+    	System.out.println("setObject");
+        this.getChildren().clear();		//delete all entries from before
 
         ScrollPane sp = new ScrollPane();
         sp.setStyle("-fx-background-color:transparent;");
@@ -69,7 +69,9 @@ public class ObjectInspector extends AnchorPane implements GralogWindow {
         if(obj == null) {
             return;
         }
+
         view = ViewManager.instantiateView(obj.getClass());
+        System.out.println(view.getClass().getName());
 
 
         if (view == null)
@@ -97,7 +99,8 @@ public class ObjectInspector extends AnchorPane implements GralogWindow {
         AnchorPane.setRightAnchor(sp, 4.0);
         AnchorPane.setBottomAnchor(sp, 4.0);
         AnchorPane.setLeftAnchor(sp, 4.0);
-
+        
+        System.out.println("Children:    " + this.getChildren());
         this.getChildren().add(sp);
 
     }

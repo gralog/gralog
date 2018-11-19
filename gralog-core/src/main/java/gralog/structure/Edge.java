@@ -254,7 +254,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
     @Override
     public void move(Vector2D offset) {
-
+    	for (ControlPoint c : controlPoints)
+    		c.move(offset);
     }
 
     public void collapse(Structure structure) {
