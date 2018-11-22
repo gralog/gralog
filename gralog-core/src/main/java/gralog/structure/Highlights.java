@@ -1,10 +1,14 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
-import java.lang.reflect.Type;
-import java.util.*;
-import java.util.concurrent.ConcurrentSkipListSet;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Manages highlights and annotations of vertices and edges.
@@ -14,35 +18,47 @@ public class Highlights {
     private final LinkedHashSet<Object> selection = new LinkedHashSet<>();
     private final Map<Object, String> annotations = new HashMap<>();
     private Object lastAdded;
+
     public void select(Object o) {
         lastAdded = o;
         selection.add(o);
     }
-    public Object lastAdded(){
+
+    public Object lastAdded() {
         return lastAdded;
     }
-    public void selectAll(Collection<?> elems)   { selection.addAll(elems); }
-    public void deselectAll(Collection<?> elems) { selection.removeAll(elems); }
+
+    public void selectAll(Collection<?> elems) {
+        selection.addAll(elems);
+    }
+
+    public void deselectAll(Collection<?> elems) {
+        selection.removeAll(elems);
+    }
 
     public void clearSelection() {
         selection.clear();
         lastAdded = null;
     }
-    public void remove(Object o){
+
+    public void remove(Object o) {
         selection.remove(o);
     }
-    public void removeAll(List o){
+
+    public void removeAll(List o) {
         selection.removeAll(o);
     }
-    public void filterType(Class<?> t){
+
+    public void filterType(Class<?> t) {
         List<Object> l = new LinkedList<>();
-        for(Object o : selection){
-            if(!(t.isInstance(o))){
+        for (Object o : selection) {
+            if (!(t.isInstance(o))) {
                 l.add(o);
             }
         }
         selection.removeAll(l);
     }
+
     public LinkedHashSet<Object> getSelection() {
         return selection;
     }
@@ -66,7 +82,7 @@ public class Highlights {
      * Annotates the given vertex or edge with the given string. Overrides the
      * old annotation for this vertex/edge if present.
      *
-     * @param o A vertex or an edge.
+     * @param o          A vertex or an edge.
      * @param annotation The annotation.
      */
     public void annotate(Object o, String annotation) {

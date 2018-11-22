@@ -16,7 +16,7 @@ public class RequestVertexCommand extends CommandForGralogToExecute {
     private Piping piping;
   
 
-	public RequestVertexCommand(String[] externalCommandSegments,Structure structure,Piping piping){
+	public RequestVertexCommand(String[] externalCommandSegments,Structure structure,Piping piping) {
 		
         this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
@@ -26,17 +26,17 @@ public class RequestVertexCommand extends CommandForGralogToExecute {
 
 	}
 
-	public void handle(){
+	public void handle() {
 
         this.selectionFunction.get();
         this.piping.state = Piping.State.WaitingForSelection;
         this.piping.sendMessageToConsole.accept("Vertex requested!",Piping.MessageToConsoleFlag.Request);
         
-        try{
+        try {
             this.piping.redrawMyStructurePanes();
             this.piping.setClassSelectionIsWaitingFor(Vertex.class);
             this.waitForSelection.await();
-        }catch(Exception e){
+        }catch(Exception e) {
             e.printStackTrace();
         }
         this.piping.state = Piping.State.InProgress;

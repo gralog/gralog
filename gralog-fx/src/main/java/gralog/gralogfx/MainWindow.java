@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 //test
@@ -355,10 +355,10 @@ public class MainWindow extends Application {
         // fileChooser.getExtensionFilters().add(
         //     new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
         // );
-        // List<File> list = fileChooser.showOpenMultipleDialog(stage);
-        // if (list != null && !list.isEmpty()) {
-        //     setLastDirectory(list.get(0));
-        //     for (File file : list)
+        // List<File> vertexList = fileChooser.showOpenMultipleDialog(stage);
+        // if (vertexList != null && !vertexList.isEmpty()) {
+        //     setLastDirectory(vertexList.get(0));
+        //     for (File file : vertexList)
         //         doLoadPlugin(file.getAbsolutePath());
         // }
 
@@ -413,7 +413,7 @@ public class MainWindow extends Application {
             // }else{
             //     pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
 
-            // }e
+            // }
 
 
         } catch(Exception e){
@@ -431,7 +431,7 @@ public class MainWindow extends Application {
     }
 
     public String getLastFileName(){
-
+// todo: should be: if it exists in Preferences, return it, otherwise return the empty string
         String fileName = Preferences.getFile("MainWindow_lastPipingFile",
                 "/Users/f002nb9/Documents/f002nb9/kroozing/" +
                         "gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
@@ -551,7 +551,7 @@ public class MainWindow extends Application {
                     new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
             );
 
-            // add export-filters to list of extensions
+            // add export-filters to vertexList of extensions
             for (String format : ExportFilterManager.getExportFilters(structure.getClass())) {
                 ExportFilterDescription descr = ExportFilterManager.getExportFilterDescription(structure.getClass(), format);
                 ExtensionFilter filter = new FileChooser.ExtensionFilter(
@@ -600,7 +600,7 @@ public class MainWindow extends Application {
             new FileChooser.ExtensionFilter("Graph Markup Language (*.graphml)", "*.graphml")
         );
 
-        // add export-filters to list of extensions
+        // add export-filters to vertexList of extensions
         for (String format : ImportFilterManager.getImportFilterClasses()) {
             ImportFilterDescription descr = ImportFilterManager.getImportFilterDescription(format);
             ExtensionFilter filter = new FileChooser.ExtensionFilter(

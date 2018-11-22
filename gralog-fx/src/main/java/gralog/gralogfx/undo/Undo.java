@@ -4,7 +4,6 @@ import com.rits.cloning.Cloner;
 import gralog.structure.Structure;
 
 import java.util.HashMap;
-import java.util.Stack;
 
 /**
  * Holds copies of structures in a stack. Use Record/Revert/Redo
@@ -16,7 +15,7 @@ public class Undo {
     private static HashMap<Structure, FixedQueue<Structure>> structureStack;
     private static Cloner cloner;
 
-    static{
+    static {
         structureStack = new HashMap<>();
         cloner = new com.rits.cloning.Cloner();
     }
@@ -26,26 +25,26 @@ public class Undo {
      * Now you can come back to this checkpoint by calling Revert
      * @param structure The structure to save to the Undo-stack
      */
-    public static void Record(Structure structure){
-        if(!structureStack.containsKey(structure)){
+    public static void Record(Structure structure) {
+        if(!structureStack.containsKey(structure)) {
             structureStack.put(structure, new FixedQueue<>(MAX_NR));
         }
         FixedQueue<Structure> stack = structureStack.get(structure);
         stack.push(cloner.deepClone(structure));
     }
 
-    public static void Redo(Structure structure){
-        if(!structureStack.containsKey(structure)){
+    public static void Redo(Structure structure) {
+        if(!structureStack.containsKey(structure)) {
             return;
         }
 
         FixedQueue<Structure> stack = structureStack.get(structure);
-        if(stack.count() != 0 || (stack.count() == 0 && stack.poppedInRow > 0)){
+        if(stack.count() != 0 || (stack.count() == 0 && stack.poppedInRow > 0)) {
             Structure reference = stack.revertPop();
-            if(reference != null){
+            if(reference != null) {
                 reference = cloner.deepClone(reference);
-                structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
-                structure.__SET_EDGES_T(reference.__GET_EDGES_T());
+                structure.setVerticesT(reference.getVerticesT());
+                structure.setEdgesT(reference.getEdgesT());
             }
         }
     }
@@ -56,20 +55,20 @@ public class Undo {
      * If no saved checkpoint, nothing happens
      * @param structure The structure to revert back
      */
-    public static void Revert(Structure structure){
-        if(!structureStack.containsKey(structure)){
+    public static void Revert(Structure structure) {
+        if(!structureStack.containsKey(structure)) {
             // no saved checkpoints
             return;
         }
 
         FixedQueue<Structure> stack = structureStack.get(structure);
-        if(stack.count() > 1){ // don't pop the last item. Only pop when at least 2 items
+        if(stack.count() > 1) { // don't pop the last item. Only pop when at least 2 items
             stack.pop();
             Structure reference = stack.last();
-            if(reference != null){
+            if(reference != null) {
                 reference = cloner.deepClone(reference);
-                structure.__SET_VERTICES_T(reference.__GET_VERTICES_T());
-                structure.__SET_EDGES_T(reference.__GET_EDGES_T())  ;
+                structure.setVerticesT(reference.getVerticesT());
+                structure.setEdgesT(reference.getEdgesT())  ;
             }
         }
     }

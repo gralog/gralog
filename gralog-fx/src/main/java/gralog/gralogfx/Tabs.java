@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx;
 
@@ -45,7 +45,7 @@ public class Tabs {
             .addListener(e -> onChangeTab());
     }
 
-    public void initializeTab(){
+    public void initializeTab() {
         DirectedGraph x = new DirectedGraph();
         Configuration confg = new Configuration(Preferences.getProperties());
         /*
@@ -103,8 +103,8 @@ public class Tabs {
      * Closes the tab at index i
      * @param index
      */
-    public void closeTab(int index){
-        if(panes.isEmpty()){
+    public void closeTab(int index) {
+        if(panes.isEmpty()) {
             return;
         }
         tabPane.getTabs().remove(tabsArray.get(index));
@@ -137,9 +137,9 @@ public class Tabs {
         return null;
     }
 
-    public List<Structure> getAllStructures(){
+    public List<Structure> getAllStructures() {
         List<Structure> structures = new ArrayList<Structure>();
-        for (Tab tab : tabPane.getTabs()){
+        for (Tab tab : tabPane.getTabs()) {
             StructurePane currentStructurePane = (StructurePane) tab.getContent();
             structures.add(currentStructurePane.getStructure());
         }
@@ -151,32 +151,32 @@ public class Tabs {
     }
 
     private void onChangeTab() {
-        if(getCurrentStructurePane() != null){
+        if(getCurrentStructurePane() != null) {
             this.requestRedraw();
             onStructureChange(getCurrentStructurePane().structure);
         }
     }
 
-    private void onHighlightsChange(Highlights highlights){
-        for(GralogWindow window : subscribers){
+    private void onHighlightsChange(Highlights highlights) {
+        for(GralogWindow window : subscribers) {
             window.notifyHighlightChange(highlights);
         }
     }
-    private void onStructureChange(Structure structure){
-        for(GralogWindow window : subscribers){
+    private void onStructureChange(Structure structure) {
+        for(GralogWindow window : subscribers) {
             window.notifyStructureChange(structure);
         }
     }
 
-    public void subscribe(GralogWindow win){
+    public void subscribe(GralogWindow win) {
         subscribers.add(win);
     }
-    public void unsubscribe(GralogWindow win){
+    public void unsubscribe(GralogWindow win) {
         subscribers.add(win);
     }
 
-    public void requestRedraw(){
-        if(getCurrentStructurePane() != null){
+    public void requestRedraw() {
+        if(getCurrentStructurePane() != null) {
             getCurrentStructurePane().requestRedraw();
         }
     }
@@ -186,8 +186,8 @@ public class Tabs {
      * were successfully closed, the Runnable afterClose will
      * be ran.
      */
-    public void requestClose(Runnable afterClose){
-        if(panes.isEmpty()){
+    public void requestClose(Runnable afterClose) {
+        if(panes.isEmpty()) {
             afterClose.run();
         }
         requestClosePerPaneProxy(afterClose);
@@ -201,10 +201,10 @@ public class Tabs {
      * will be able to close itself AFTER the tab before was done properly closing.
      * @param afterClose This runnable will execute after all tabs were correctly closed.
      */
-    private void requestClosePerPaneProxy(Runnable afterClose){
-        if(panes.isEmpty()){
+    private void requestClosePerPaneProxy(Runnable afterClose) {
+        if(panes.isEmpty()) {
             afterClose.run();
-        }else{
+        }else {
             tabPane.getSelectionModel().select(tabsArray.get(0));
             panes.get(0).requestClose(() -> {
                 closeTab(0);
@@ -215,7 +215,7 @@ public class Tabs {
     /**
      * Requests to close all structure panes.
      */
-    public void requestClose(){
+    public void requestClose() {
         requestClose(() -> {});
     }
 

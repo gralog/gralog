@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx.views;
 
@@ -88,10 +88,10 @@ public final class ViewManager {
                     try {
                         Class<?> c = Class.forName(classname, false, sysloader);
                         classes.add(c);
-                    }catch (NoClassDefFoundError e){
-                        System.out.println("ncdf " +classname);
-                    }catch (ClassNotFoundException e){
-                        System.out.println("cnf " + classname);
+                    }catch (NoClassDefFoundError e) {
+                        System.err.println("ncdf " +classname);
+                    }catch (ClassNotFoundException e) {
+                        System.err.println("cnf " + classname);
                     }
                 }
             }
@@ -116,7 +116,7 @@ public final class ViewManager {
             if (isNode && isView) {
 
                 // okay, it is a view. (try to) register it
-                Constructor<? extends View> ctor = (Constructor<? extends View>) c.getConstructor(new Class[]{});
+                Constructor<? extends View> ctor = (Constructor<? extends View>) c.getConstructor(new Class[] {});
                 if (ctor == null)
                     throw new Exception("class \"" + c.getName() + "\" has no empty constructor");
 

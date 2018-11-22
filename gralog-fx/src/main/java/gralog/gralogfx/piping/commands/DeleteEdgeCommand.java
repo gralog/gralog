@@ -9,14 +9,14 @@ public class DeleteEdgeCommand extends CommandForGralogToExecute {
     Edge edgeToDelete;
 
 
-	public DeleteEdgeCommand(String[] externalCommandSegments,Structure structure){
+	public DeleteEdgeCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-        try{
+        try {
             this.edgeToDelete = PipingMessageHandler.extractEdge(externalCommandSegments,structure);
-        }catch(NonExistantEdgeException e){
+        }catch(NonExistantEdgeException e) {
             this.setConsoleMessage("(non-fatal) " + e.toString());
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.setResponse(null);
             this.error = e;
@@ -27,14 +27,14 @@ public class DeleteEdgeCommand extends CommandForGralogToExecute {
 	}
 
 
-	public void handle(){
+	public void handle() {
 
         
 
         // Edge e = structure.createEdge(this.sourceVertex,this.targetVertex);
             
         // e.isDirected = (externalCommandSegments[3].equals("true"));
-        if (this.edgeToDelete != null){
+        if (this.edgeToDelete != null) {
             this.structure.removeEdge(this.edgeToDelete);
         }
 

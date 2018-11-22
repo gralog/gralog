@@ -1,0 +1,262 @@
+\documentclass{article}
+
+\usepackage[T1]{fontenc}
+
+\usepackage[margin=1.0in]{geometry}
+\usepackage{longtable}
+
+\usepackage{amsmath}
+
+\newcounter{example}
+\newenvironment{example}[1][]{\refstepcounter{example}\par\medskip
+   \noindent \textit{Example~\theexample. #1} \rmfamily}{\medskip}
+
+\usepackage{bbm}
+\usepackage{booktabs}
+
+\newcommand{\fabs}[1]{\mid {#1} \mid}
+
+\newcommand{\bet}[1]{\llbracket {#1} \rrbracket^{\beta} }
+\usepackage{stmaryrd}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{wrapfig}
+\usepackage{makecell}
+
+% \usepackage{mathabx}
+\usepackage{amssymb,forest}
+
+\usepackage{float}
+\usepackage{MnSymbol}
+\newlength\q
+\newlength\smallCol
+\newlength\argsLen
+\setlength\q{\dimexpr .5\textwidth -2\tabcolsep}
+\setlength\smallCol{\dimexpr .15\textwidth}
+\setlength\argsLen{\dimexpr .2\textwidth}
+
+
+\newcommand{\lto}{\mathbin{\to}}
+\usepackage{booktabs}
+\usepackage{enumitem} 
+\usepackage{array}% for extended column definitions
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{tabto}
+\newcommand{\ov}[2]{\ensuremath{\overset{\cdot {#2} \cdot}{#1}}}
+\newcommand{\imp}{\rightarrow}
+
+\usepackage{xstring}
+\usepackage[german]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{lipsum}
+\usepackage{listings}
+
+\newcommand{\tcr}[1]{\textcolor{red}{#1}}
+
+\definecolor{palegreen}{rgb}{0.9,1,0.9}
+\usepackage[most]{tcolorbox}
+\tcbset{
+    frame code={}
+    center title,
+    left=0pt,
+    right=0pt,
+    top=0pt,
+    bottom=0pt,
+    colback=palegreen,
+    colframe=white,
+    width=\dimexpr\textwidth\relax,
+    enlarge left by=0mm,
+    boxsep=5pt,
+    arc=0pt,outer arc=0pt,
+    after={},
+  }
+  \renewcommand{\arraystretch}{2}
+\usepackage{color}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{lightpink}{rgb}{1.0,0.9,0.9}
+\definecolor{darkblue}{rgb}{0,0,0.4}
+
+\usepackage{hyperref}
+
+\hypersetup{colorlinks=true,linkcolor=darkblue,citecolor=darkblue}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+\lstset{language=Python}
+
+\title{Gralog Manual}
+
+\author{Felix Herron\\\texttt{felix.herron@tu-berlin.de}
+  \and Roman Rabinovich\\ \texttt{roman.rabinovich@tu-berlin.de}
+\and Adrian Alic\\ \texttt{adrian.alic@campus.tu-berlin.de}}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+
+\begin{abstract}
+Gralog is a visual tool for working with graphs, logics, games,
+transition systems and other structures based on undirected and
+directed graphs. It can create, load, save and edit graphs in
+various formats.
+
+The key focus of Gralog is its simplicity of use and a short time of
+learning how to use it.
+
+A special property of Gralog is that it helps the developer to write
+programmes for graphs in any language capable of working with
+pipes. Gralog visualises the run of the programme and can keep track
+of values of user defined variables.
+
+The interaction between Gralog and the external programme is
+performed by a simple, but powerful protocol. In the first version
+we implemented a library for Python that simplifies the interaction
+and abstracts away the use of pipes. This paper describes the
+protocol and the library, the External Programming Module (EPM). This
+includes documentation of methods and classes pertaining to the
+EPM and code examples for how to use these.
+\end{abstract}
+
+\section{Documentation and Installation}
+
+You can download Gralog from \url{https://github.com/gralog/gralog}.
+First, make sure that Java version at least 10 is installed on your
+machine.
+
+On Linux and Mac OS you can install Gralog by
+\\\begin{tcolorbox}
+  cd install\\
+  ./install-nix.sh
+\end{tcolorbox}
+
+Call
+\\\begin{tcolorbox}
+  ./install-nix.sh -h
+\end{tcolorbox}
+to get help on the installer options. If the installation script
+didn't work for some reason, read below how to install Gralog manually.
+
+If option \texttt{-c} is given, the installer compiles Gralog in
+directory \texttt{~/gralog} (which is created if necessary) or in the directory you give the script as a parameter:
+\\\begin{tcolorbox}
+  ./install-nix.sh -d /path/to/gralog
+\end{tcolorbox}
+
+If run with option \texttt{-l} (i.e., \emph{ell}), a symbolic link to the script starting Gralog is created in
+\texttt{/usr/bin}. For this, the installer asks the user for the administrator
+password.
+
+By default (without option \texttt{-n}), the installer tries to
+install Python modules \emph{networkx} and \emph{python-igraph} with
+\emph{pip}. They are needed to be able to use Gralog's Python module
+\emph{Gralog.py}, which allows the user to write Python scripts
+working with graphs and conveniently visualise and debug them using
+Gralog.
+
+If \emph{pip} is not installed, the installer tries to install it. By
+default, \emph{pip} will try to install the modules locally. (This
+corresponds to calling \texttt{pip install --user <module>}.) If you
+want a system-wide installation of those modules, call the installer
+with option \texttt{-s}. This will demand administrator rights.
+
+If
+Python is not installed, the installation stops at this point
+(however, Python is installed by default on Linux machines and on
+Macs). If on your machine by default, \emph{networkx} and
+\emph{python-igraph} must be installed to a directory you do not have
+writing rights for, the installer asks for the administrator password.
+
+
+On Windows Gralog is not tested yet. You can try to install it by
+running
+\\\begin{tcolorbox}
+  gradlew.bat
+\end{tcolorbox}
+in the Gralog root directory. This compiles Gralog if necessary and
+runs it. The \emph{jar} file is
+\texttt{./build/dist/gralog-fx.jar}. Similarly, on Linux and Mac OS
+one can call
+\\\begin{tcolorbox}
+  ./gradlew
+\end{tcolorbox}
+
+On Windows and on newer Macs it is possible to call the jar file by
+just clicking on it.
+
+To use the python part on Windows, you have to install Python and the
+libraries \emph{networkx} and \emph{python-igraph} yourself. Then copy
+the file
+\texttt{./gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py}
+to the directory with your Python script or somewhere where Python
+will find it.
+
+
+The documentation can be found in directory \texttt{doc/}. The main
+manual file is \emph{gralog.pdf}.
+
+\subsection{Manual installation}
+
+On Windows or if \texttt{install-nix.sh} didn't work, it should be not
+difficult to install Gralog manually.
+
+The binaries can be found in \texttt{build/dist}. If you want to
+compile Gralog yourself, please, download the full version with sources
+(\texttt{gralog-all.zip}, not just (\texttt{gralog-bin.zip}) and run
+
+\begin{tcolorbox}
+  ./gradlew
+\end{tcolorbox}
+on a *nix system and
+
+\begin{tcolorbox}
+  ./gradlew.bat
+\end{tcolorbox}
+on Windows.
+
+Now you can just run \texttt{build/dist/gralog-fx.jar}. (You can move
+the contents of \texttt{build/dist/} wherever you want, but keep it
+all together.) However, this still
+does not allow one to work with the Python plugin. To install the plugin,
+please, make sure you have installed Python with modules
+\texttt{networkx} and \texttt{python-igraph}. Then copy the file
+\texttt{gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py}
+to some place where your Python will see it.
+
+
+
+
+\input{console}
+\input{external}
+
+
+
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

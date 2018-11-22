@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.modallogic;
 
@@ -17,11 +17,11 @@ public class World extends Vertex {
     public String propositions = "";
 
 
-    public World(){
+    public World() {
         super();
     }
 
-    public World(Configuration config){
+    public World(Configuration config) {
         super(config);
     }
 

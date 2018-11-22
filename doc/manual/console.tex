@@ -1,0 +1,288 @@
+\section{Working with the console}
+
+The console is a tool to work with graphs by entering commands rather
+than by clicking the mouse buttons. This is especially convenient if
+you want to create large subgraphs with a regular pattern.
+
+By default, the console is the frame below the main frame with the
+graph. Here, in the bottom line, you can enter commands just like in a
+terminal.
+
+\subsection{Lists}
+
+The objects you work with are \emph{lists:} lists of vertices and
+lists of edges. We concentrate on vertex lists in this manual, edge
+lists behave similarly. Where appropriate, we point out the
+differences.
+
+The lists are used to connect them later.
+
+
+\begin{example}[Running example]
+  For example, if one wants to create a perfect matching with $50$
+  edges, one way to do that in Gralog is to create two disjoint lists
+  of vertices and then connect them by drawing an edge from vertex $i$
+  in the first list to vertex $i$ in the second list. Well, for a
+  matching we would use a generator (see
+  Section~\ref{sec:generators}), but what if we want to add edges such
+  that already exiting $100$ vertices build a matching?
+  \label{ex:running}
+\end{example}
+
+
+\subsection{Creating lists, (de)selecting elements}
+
+All lists can be created out of the default list of all
+vertices and the internal list of all currently selected vertices. The
+latter can be made with the mouse in the obvious way or you can write
+in the command line:
+\\\begin{tcolorbox}
+  select all vertices
+\end{tcolorbox}
+\noindent
+to select all vertices. By the way, in a similar way, all vertices are
+deselected:
+\\\begin{tcolorbox}
+deselect all vertices
+\end{tcolorbox}
+
+Now use the selection to create a new list. The corresponding command
+is \texttt{filter}: one filters the elements from an existing list
+according to certain criteria and saves them into another list. If the
+other list already exists, the new elements are appended to it (even
+if they are already contained in the target list). 
+\\\begin{tcolorbox}
+  filter all selected where no condition to VL1
+\end{tcolorbox}
+
+When creating list ids as \texttt{VL1}, keep in mind that the names
+must be unique, in particular, it is impossible that a vertex list and
+an edge list have the same name.
+
+\subsection{Filter}
+
+Now we created a new list \texttt{VL1} containing all vertices of the
+graph. Let us now create a new list that contains only vertices with a
+certain property, say those whose colour is blue. We can now use
+\texttt{VL1} as a source of vertices.
+\\\begin{tcolorbox}
+  filter VL1 where fill color blue to VLblue
+\end{tcolorbox}
+
+Now the list \texttt{VLblue} contains all vertices with fill color
+\texttt{blue}. Ne create a new list containing all vertices whose fill
+color is red. Note in the following example that instead of the
+keyword \texttt{where} one can write \texttt{such that} or
+\texttt{st}. Note also that instead of \texttt{fill color} it is
+possible to use just \texttt{fill}:
+\\\begin{tcolorbox}
+  filter VL1 st fill red to VLred
+\end{tcolorbox}
+
+The full specification of the filter command is as follows. Note that
+Gralog does not distinguish between the upper and the lower cases.
+\\\begin{tcolorbox}[colback=lightpink]
+  FILTER <what> WHERE|ST|(SUCH THAT) <parameters> TO <list identifier>
+  [ignored trash]
+\end{tcolorbox}
+ 
+\noindent where
+\\\begin{tcolorbox}[colback=lightpink]
+  \begin{tabular}[H]{rl}
+    <what> := &ALL VERTICES | ALL EDGES\\
+              &| [ALL ]? SELECTED VERTICES | [ALL ]? SELECTED EDGES\\
+              & | <list id> \\[0.3cm]
+    <parameters> := &<parameters> <parameters> | <boolean parameter>\\
+              & | <fixed range parameter> <value>\\
+              &| <numerical parameter> <cmp> <value> \\[0.3cm]
+%                    & | FORMULA <integer expression(i)>\\
+    <fixed range parameter> := & SHAPE | TYPE | EDGE TYPE | EDGETYPE \\[0.3cm]
+    <numerical parameter> := & <integer parameter> | <float
+                               parameter> | <string parameter>\\[0.3cm]
+    <integer parameter> := & ID | DEGREE | INDEGREE |
+                             OUTDEGREE\\[0.3cm]
+    <float parameter> := & FILL | FILL COLOR | STROKE | STROKE
+                       COLOR\\
+                     &| THICKNESS | WIDTH | HEIGHT | SIZE |
+                       WEIGHT\\[0.3cm]
+    <string parameter> := &LABEL CONTAINS\\
+    <boolean parameter> := &NO CONDITION | HAS SELFLOOP | DIRECTED | HAS
+                             LABEL\\
+              &| LABEL EMPTY | NO LABEL \\
+                     &| BUTTERFLY // not implemented yet
+  \end{tabular}
+\end{tcolorbox}
+
+In other words, we can write something like
+\\\begin{tcolorbox}
+  FILTER sourceList ST FILL RED STROKE BLUE SHAPE ELLIPSE DEGREE > 3 TO targetList
+\end{tcolorbox}
+
+Let us look at the grammar closer. In \texttt{<what>} there is no
+difference between \texttt{ALL SELECTED VERTICES} and \texttt{SELECTED
+VERTICES}, the result will be the same. The \texttt{<list id>} is the
+name of a list we defined previously, it can be a list of vertices or
+a list of edges.
+
+The order of parameters in the parameter list is arbitrary. The list
+of parameters cannot be empty. If you do not want any specifications,
+choose \texttt{NO CONDITION}. In that case even if other parameters
+are given, they are not taken into account and the whole source list
+is given. This can be in particular used to duplicate every element in
+a list:
+\\\begin{tcolorbox}
+  FILTER sourceList ST NO CONDITION TO newList
+
+  FILTER sourceList ST NO CONDITION TO newList
+\end{tcolorbox}
+
+In this case \texttt{newList} will contain every element of
+\texttt{sourceList} twice. By the way, being in the command line, one
+can press $\uparrow$ (the arrow up key) to call previous commands.
+
+Table~\ref{tab:parsAndVals} explains which values the parameters can have.
+
+\begin{table}
+  \centering
+  \begin{tabular}{p{3cm}|p{5cm}|p{1.8cm}|p{5cm}}
+    \textbf{parameter} &  \textbf{possible values} & \textbf{applicable to}  & \textbf{meaning}\\
+    \hline
+    \texttt{SHAPE}     &  ELLIPSE, RECTANGLE, DIAMOND & vertices& ellipse,
+                                                                  rectangle, diamond\\
+                       &  SQUARE, CYCLE & vertices & not implemented yet\\
+    \hline
+    \texttt{STROKE} or \texttt{STROKE COLOR} (synonyms)
+                       &  WHITE, BLACK, BLUE, GREEN, RED, GRAY, \mbox{YELLOW},
+                         CYAN, MAGENTA, SILVER, MAROON, OLIVE,
+                         DARK\_GREEN, PURPLE, TEAL, NAVY, ORANGE
+                                                   & both & the colour of the
+                                                            border; other
+                                                            colours are
+                                                            possible as
+                                                            properties of
+                                                            vertices, but not
+                                                            supported by the
+                                                            filter
+                                                            command\\
+    \hline
+    \texttt{EDGE TYPE} & SHARP, ROUND, BEZIER & edges & sharp or rounded
+                                                        corners or a
+                                                        B\'{e}zier curve\\
+    \hline
+    \texttt{FILL} or \texttt{FILL COLOR} (synonyms)
+                       & as for \texttt{STROKE} & vertices & the fill color,
+                                                             otherwise as for
+                                                             \texttt{STROKE}\\
+    \hline
+    \texttt{WIDTH}     & float                 & vertices & \tcr{???}\\
+    \hline
+    \texttt{THICKNESS} & float                 & both\tcr{?} & \textcolor{red}{???}\\
+    \hline
+    \texttt{HEIGHT}     & float                & vertices  & \textcolor{red}{???}\\
+    \hline
+    \texttt{SIZE} & float                      & vertices \tcr{?}  & \textcolor{red}{???}\\
+    \hline
+    \texttt{WEIGHT} & float                      & edges  &
+                                                            \textcolor{red}{???}\\
+    \hline
+    \texttt{ID}      & non-negative integer   & both & the internal unique id of
+                                                       the vertex or of the edge\\
+    \hline
+    \texttt{DEGREE}    & non-negative integer & vertices & the degree of
+                                                           the vertex;
+                                                           only
+                                                           undirected
+                                                           edges count\\
+    \hline
+    \texttt{INDEGREE}    & non-negative integer & vertices & the in-degree of
+                                                             the vertex;
+                                                             only
+                                                             directed
+                                                             edges count\\
+    \hline
+    \texttt{OUTDEGREE}    & non-negative integer & vertices & the out-degree of
+                                                              the vertex;
+                                                              only
+                                                              directed
+                                                              edges count\\
+    \hline
+    \texttt{HAS SELFLOOP}  & no value & vertices & true if the vertex
+                                                   has a self-loop\\
+    \hline
+    \texttt{NO SELFLOOP}  & no value & vertices & true if the vertex
+                                                  has no self-loop\\
+    \hline
+    \texttt{LABEL EMPTY} or \texttt{NO LABEL} (synonyms)
+                       & no value & vertices & true if the label is
+                                               empty\\
+    \hline
+    \texttt{LABEL CONTAINS} & string & vertices & true if the label
+                                                  contains the given string\\
+    \hline
+  \end{tabular}
+  \caption{Parameters and their values}
+  \label{tab:parsAndVals}
+\end{table}
+
+\subsection{Sorting the lists}
+
+Before connecting lists of vertices (recall Example~\ref{ex:running})
+we probably want to sort them, so that we know what vertex has
+number~$i$. The lists can be sorted by
+\\\begin{tcolorbox}[colback=lightpink]
+  SORT <list id> <parameter>
+\end{tcolorbox}%
+where \texttt{parameter} is one of \texttt{LEFTRIGHT},
+\texttt{RIGHTLEFT}, \texttt{TOPDOWN}, \texttt{BOTTOMUP}, \texttt{ID
+  ASC}, \texttt{ID DECS}, \texttt{LABEL ASC}, \texttt{LABEL DESC}. The
+former four parameters imply a sorting according to the corresponding
+coordinate of vertices on the screen, \texttt{ID ASC} sorts by the id
+in  the ascending order, \texttt{ID DESC} sorts by the id
+in  the descending order and \texttt{LABEL} sorts alphabetically
+(ascending or descending) by the label. If the labels of two vertices
+are equal, the vertices keep their relative order.
+
+\subsection{Operations on lists (before connecting)}
+
+The following operations are currently supported:
+\\\begin{tcolorbox}[colback=lightpink]
+  \begin{tabular}[H]{p{7cm}|p{8cm}}
+    \textbf{operation}    & \textbf{meaning}\\
+    DELETE <list id> & deletes the list, but not the elements of the list from the graph\\
+
+    UNION <source1> <source2> TO <target> & creates the union of \texttt{source1} and \texttt{source2} and stores the result in \texttt{target}\\
+
+    INTERSECTION <list1 id> <list2 id> TO <list3 id> &creates the intersection of \texttt{source1} and \texttt{source2} and stores the result in \texttt{target}\\
+    
+    DIFFERENCE <source1> <source2> TO <target> & creates the difference of \texttt{source1} and \texttt{source2} and stores the result in \texttt{target}\\
+    
+    SYMMETRIC DIFFERENCE <source1> <source2> TO <target>  & creates the symmetric difference of \texttt{source1} and \texttt{source2} and stores the result in \texttt{target}\\
+    
+    COMPLEMENT <list id> TO <target>  & creates the complement of \texttt{list id} and stores the result in \texttt{target}.\\
+    
+    CONTRACT <vertex list id> | <edge list id> | SELECTED & builds a minor of the graph by contracting the subgraph induced by the elements of the list or by the selected elements (if \texttt{SELECTED} is specified and some elements are selected) to a single vertex. Works for all kinds of graphs. Not implemented yet.\\
+    BUTTERFLY CONTRACT <edge list id> & builds a butterfly minor of the graph by butterfly contracting all butterfly contractable edges. On undirected edges the operation has no effect. Not implemented yet.\\
+
+    SUBDIVIDE <edge list id> <$n$> & subdivides every edge from the list $n$ times where $n$ must be a natural number. Directed edges are replaced by directed paths of length $n+1$. Not implemented yet.
+  \end{tabular}
+\end{tcolorbox}
+
+\subsection{Connecting lists of vertices}
+
+One can either connect one list of vertices to another, which, however, can be the same list, or connect vertices of one list in a certain way. The first is done by the command
+\\\begin{tcolorbox}[colback=lightpink]
+  CONNECT <list1> <list2> =<formula> | BICLIQUE | MATCHING
+\end{tcolorbox}
+
+The easier case is to use a standard way of connection, for example,
+\\\begin{tcolorbox}[colback=palegreen]
+  CONNECT upper lower MATCHING
+\end{tcolorbox}
+which produces a matching connecting the $i$th vertex of
+\texttt{list1} to the $i$th vertex of \texttt{list2}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "gralog"
+%%% End:

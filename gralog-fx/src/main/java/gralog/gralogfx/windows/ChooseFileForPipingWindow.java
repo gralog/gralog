@@ -48,16 +48,16 @@ public class ChooseFileForPipingWindow extends Stage {
         Pane generalPage = new Pane();
         Pane structurePage = new Pane();
 
-        try{
+        try {
             URL fileChooserWindow = getClass().getClassLoader().getResource("fxml/pipingFileChooserLayout.fxml");
       
-            if(fileChooserWindow == null){
+            if(fileChooserWindow == null) {
                 System.err.println("The preference-fxml URL is null. Does the file exist?");
-            }else{
+            }else {
                 root = FXMLLoader.load(fileChooserWindow);
 
             }
-        }catch(IOException e){
+        }catch(IOException e) {
             e.printStackTrace();
         }
        
@@ -97,19 +97,19 @@ public class ChooseFileForPipingWindow extends Stage {
         centerOnScreen();
     }
 
-    private Button findButton(Parent root, String name){
-        for(Parent p : getChildrenRecursively(root)){
-            if(p instanceof Button && p.getId().equals(name)){
+    private Button findButton(Parent root, String name) {
+        for(Parent p : getChildrenRecursively(root)) {
+            if(p instanceof Button && p.getId().equals(name)) {
                 return (Button)p;
             }
         }
         return null;
     }
 
-    private TextField findTextField(Parent root, String name){
+    private TextField findTextField(Parent root, String name) {
 
-        for(Parent p : getChildrenRecursively(root)){
-            if(p instanceof TextField && p.getId().equals(name)){
+        for(Parent p : getChildrenRecursively(root)) {
+            if(p instanceof TextField && p.getId().equals(name)) {
                 return (TextField)p;
             }
         }
@@ -124,23 +124,23 @@ public class ChooseFileForPipingWindow extends Stage {
      * preference file has a key k then the value from k gets loaded
      * into the TextField.
      */
-    private void loadPreferences(Parent root){
-        for(Node node : getChildrenRecursively(root)){
+    private void loadPreferences(Parent root) {
+        for(Node node : getChildrenRecursively(root)) {
             String id = node.getId();
-            if(id != null && !id.isEmpty()){
-                if(node instanceof CheckBox){
+            if(id != null && !id.isEmpty()) {
+                if(node instanceof CheckBox) {
                     Boolean b = Preferences.getBoolean(node.getId(), false);
                     ((CheckBox)node).setSelected(b);
                 }
-                if(node instanceof TextField){
+                if(node instanceof TextField) {
                     Double d = Preferences.getDouble(node.getId(), 0);
                     ((TextField)node).setText(d.toString());
                 }
-                if(node instanceof ColorPicker){
+                if(node instanceof ColorPicker) {
                     GralogColor c = Preferences.getColor(node.getId(), GralogColor.BLACK);
                     ((ColorPicker)node).setValue(Color.rgb(c.r, c.g, c.b));
                 }
-                if(node instanceof Button){
+                if(node instanceof Button) {
                     Button button = (Button)node;
                     this.pipingFile = Preferences.getFile(node.getId(),null);
                     String simpleName = this.pipingFile.getName();
@@ -160,25 +160,25 @@ public class ChooseFileForPipingWindow extends Stage {
      * of the given root nodes
      * @param root
      */
-    private void savePreferences(Parent... root){
-        for(int i = 0; i < root.length; i++){
-            for(Node node : getChildrenRecursively(root[i])){
+    private void savePreferences(Parent... root) {
+        for(int i = 0; i < root.length; i++) {
+            for(Node node : getChildrenRecursively(root[i])) {
                 String id = node.getId();
-                if(id != null && !id.isEmpty()){
-                    if(node instanceof CheckBox){
+                if(id != null && !id.isEmpty()) {
+                    if(node instanceof CheckBox) {
                         Boolean b = ((CheckBox)node).isSelected();
                         Preferences.setBoolean(node.getId(), b);
                     }
-                    if(node instanceof TextField){
+                    if(node instanceof TextField) {
                         Double d = Double.parseDouble(((TextField)node).getText());
                         Preferences.setDouble(node.getId(),  d);
                     }
-                    if(node instanceof ColorPicker){
+                    if(node instanceof ColorPicker) {
                         GralogColor c = GralogColor.parseColorAlpha(((ColorPicker)node).getValue().toString());
                         Preferences.setColor(node.getId(), c);
                     }
-                    if(node instanceof Button){
-                        if (this.newPipingFile != null){
+                    if(node instanceof Button) {
+                        if (this.newPipingFile != null) {
                             this.pipingFile = this.newPipingFile;
                         }
                         Preferences.setFile(node.getId(),this.pipingFile);
@@ -194,15 +194,15 @@ public class ChooseFileForPipingWindow extends Stage {
     /**
      * Gets all nodes below the given one
      */
-    private LinkedList<Parent> getChildrenRecursively(Parent root){
+    private LinkedList<Parent> getChildrenRecursively(Parent root) {
         LinkedList<Parent> result = new LinkedList<>();
-        for(Node x : root.getChildrenUnmodifiable()){
-            if(x instanceof Parent){
+        for(Node x : root.getChildrenUnmodifiable()) {
+            if(x instanceof Parent) {
                 result.add((Parent)x);
                 result.addAll(getChildrenRecursively((Parent)x));
             }
         }
-        if (root instanceof TitledPane){
+        if (root instanceof TitledPane) {
             TitledPane aP = (TitledPane)root;
             Parent p = (Parent)aP.getContent();
          
@@ -217,7 +217,7 @@ public class ChooseFileForPipingWindow extends Stage {
      * Sets up the toggle buttons of the preference window to be
      * combined into a ToggleGroup
      */
-    private void setupToggleGroups(Scene mainScene, Node generalPage, Node structurePage){
+    private void setupToggleGroups(Scene mainScene, Node generalPage, Node structurePage) {
 
         ToggleGroup tgroup = new ToggleGroup();
 
@@ -229,13 +229,13 @@ public class ChooseFileForPipingWindow extends Stage {
         Pane container = (Pane) mainScene.lookup("#container");
 
         tgroup.selectedToggleProperty().addListener((e, oldVal, newVal) -> {
-            if(newVal == null){
+            if(newVal == null) {
                 oldVal.setSelected(true);
-            }else{
+            }else {
                 container.getChildren().clear();
-                if(newVal == generalButton){
+                if(newVal == generalButton) {
                     container.getChildren().add(generalPage);
-                }else if(newVal == structureButton){
+                }else if(newVal == structureButton) {
                     container.getChildren().addAll(structurePage);
                 }
             }

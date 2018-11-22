@@ -1,13 +1,15 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.generator;
 
 import gralog.algorithm.AlgorithmParameters;
 import gralog.algorithm.StringAlgorithmParameter;
-import gralog.generator.*;
-import gralog.automaton.*;
-import gralog.automaton.regularexpression.*;
-import gralog.automaton.regularexpression.parser.*;
+import gralog.automaton.Automaton;
+import gralog.automaton.regularexpression.RegularExpression;
+import gralog.automaton.regularexpression.parser.RegularExpressionParser;
+import gralog.automaton.regularexpression.parser.RegularExpressionSyntaxChecker;
+import gralog.generator.Generator;
+import gralog.generator.GeneratorDescription;
 import gralog.preferences.Preferences;
 import gralog.structure.Structure;
 

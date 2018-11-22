@@ -11,15 +11,15 @@ public class NotRecognizedCommand extends CommandForGralogToExecute {
 
 
 
-	public NotRecognizedCommand(String[] externalCommandSegments,Structure structure){
+	public NotRecognizedCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
         String externalCommand = "";
-        for (String s : externalCommandSegments){
+        for (String s : externalCommandSegments) {
             externalCommand += s + " ";
         }
-        if (externalCommand.length() > 0){
+        if (externalCommand.length() > 0) {
             externalCommand = externalCommand.substring(0,externalCommand.length()-1);
         }
         this.fail();
@@ -28,7 +28,7 @@ public class NotRecognizedCommand extends CommandForGralogToExecute {
 	}
 
 
-	public void handle(){
+	public void handle() {
         return;
 	}
 

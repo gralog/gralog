@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.firstorderlogic.formula;
 
@@ -45,8 +45,8 @@ public abstract class FirstOrderFormula {
     public static String variableAssignmentToString(
         Map<String, Vertex> assignment) {
         if (assignment.isEmpty())
-            return "{ }";
-        return "{ " + assignment.entrySet().stream()
+            return " { }";
+        return " { " + assignment.entrySet().stream()
             .map((e) -> e.getKey() + "↦" + e.getValue().label)
             .collect(Collectors.joining(", "))
             + " }";

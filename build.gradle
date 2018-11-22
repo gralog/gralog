@@ -10,20 +10,20 @@ subprojects {
 
   apply plugin: 'java'
 
-  // Set up the style checker that checks indentation, naming
-  // conventions, etc.
-  apply plugin: 'checkstyle'
-  checkstyle {
-    configFile = rootProject.file('config/checkstyle.xml')
-    configProperties = [samedir: rootProject.file('config')]
-    toolVersion = '7.2'
-  }
-  // Do not check generated files for programming style.
-  checkstyleMain {
-    exclude '**/parser/*Scanner.java'
-    exclude '**/parser/*ScannerToken.java'
-    exclude '**/parser/*Parser.java'
-  }
+  // // Set up the style checker that checks indentation, naming
+  // // conventions, etc.
+  // apply plugin: 'checkstyle'
+  // checkstyle {
+  //   configFile = rootProject.file('config/checkstyle.xml')
+  //   configProperties = [samedir: rootProject.file('config')]
+  //   toolVersion = '7.8.1'
+  // }
+  // // Do not check generated files for programming style.
+  // checkstyleMain {
+  //   exclude '**/parser/*Scanner.java'
+  //   exclude '**/parser/*ScannerToken.java'
+  //   exclude '**/parser/*Parser.java'
+  // }
 }
 
 check.dependsOn(subprojects.check)
@@ -31,6 +31,30 @@ clean.dependsOn(subprojects.clean)
 test.dependsOn(subprojects.test)
 
 task run
+
+task (zipAll,
+        dependsOn: build,
+        type: Zip){
+  archiveName = 'gralog-all.zip'
+  from projectDir
+  exclude 'build/distributions/**', '*TODO*',
+          'anw*', 'install-linux/gralog',
+          'build/libs', 'build/tmp', 'gradlew', 'gradlew.bat', '**/*aux', '**/*log', '**/*out',
+          '**/auto/**'
+}
+
+task (zipJars,
+        dependsOn: build,
+        type: Zip){
+  archiveName = 'gralog-bin.zip'
+  from projectDir
+  exclude 'build/distributions/**', 'gralog*/**', 'config/**', 'gradle/**', 'lib/**', '*TODO*',
+          'anw*', 'build.gradle', 'settings.gradle', '.*/**', 'install-linux/gralog', 'build/test-results',
+          'build/libs', 'build/tmp', 'build/dist/gralog', 'gradlew', 'gradlew.bat', '**/*aux', '**/*log', '**/*out',
+          '**/auto/**'
+
+}
+
 
 // gralog-core provides some helper classes for the unit tests,
 // so every other subproject depends on this.
@@ -40,6 +64,15 @@ configure(subprojects.findAll {it.name != 'gralog-core'}) {
   }
 }
 
+def currentOS = org.gradle.internal.os.OperatingSystem.current()
+def platform
+if (currentOS.isWindows()) {
+  platform = 'win'
+} else if (currentOS.isLinux()) {
+  platform = 'linux'
+} else if (currentOS.isMacOsX()) {
+  platform = 'mac'
+}
 //If you want to include libraries for every module, do it here
 subprojects {
   // All subprojects use junit and hamcrest for their tests.
@@ -49,6 +82,11 @@ subprojects {
     compile 'org.reflections:reflections:0.9.11'
     compile 'uk.com.robust-it:cloning:1.9.10'
     compile group: 'net.objecthunter', name: 'exp4j', version: '0.4.8'
+    compile "org.openjfx:javafx-base:11:${platform}"
+    compile "org.openjfx:javafx-graphics:11:${platform}"
+    compile "org.openjfx:javafx-controls:11:${platform}"
+    compile "org.openjfx:javafx-fxml:11:${platform}"
+    compile "org.openjfx:javafx-web:11:${platform}"
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'junit:junit:4.12'
   }
@@ -104,7 +142,7 @@ project(':gralog-fx') {
   // This subproject contains the main class.
   jar {
     manifest {
-      attributes 'Main-Class': 'gralog.gralogfx.MainWindow'
+      attributes 'Main-Class': 'gralog.gralogfx.RunGralog'
     }
   }
 }
@@ -302,3 +340,4 @@ class CupJFlex extends DefaultTask {
     ant.flex(file: [ project.file('src/main/java'), workingDir, jflexFile() ].join('/'))
   }
 }
+

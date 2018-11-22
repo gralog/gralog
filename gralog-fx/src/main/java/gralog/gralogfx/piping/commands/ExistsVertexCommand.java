@@ -9,14 +9,14 @@ public class ExistsVertexCommand extends CommandForGralogToExecute {
     boolean thereIsAVertex = true;
 
 
-	public ExistsVertexCommand(String[] externalCommandSegments,Structure structure){
+	public ExistsVertexCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
-        try{
+        try {
             this.anyVertex = PipingMessageHandler.extractVertex(externalCommandSegments,structure);
-        }catch(NonExistantEdgeException e){
+        }catch(NonExistantEdgeException e) {
             this.thereIsAVertex = false;
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.setResponse(null);
             this.error = e;
@@ -27,7 +27,7 @@ public class ExistsVertexCommand extends CommandForGralogToExecute {
 	}
 
 
-	public void handle(){
+	public void handle() {
 
         this.setResponse(Boolean.toString(this.thereIsAVertex));
 

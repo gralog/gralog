@@ -12,28 +12,28 @@ public class AddVertexCommand extends CommandForGralogToExecute {
 	double x;
 	double y;
 
-	public AddVertexCommand(String[] externalCommandSegments,Structure structure){
+	public AddVertexCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
 		int lenCommand = externalCommandSegments.length;
-		if (lenCommand == 3 || lenCommand == 5){
-			try{
+		if (lenCommand == 3 || lenCommand == 5) {
+			try {
 				this.newVertexId =Integer.parseInt(PipingMessageHandler.extractNthPositionString(externalCommandSegments,2));
-			}catch(Exception e){
+			}catch(Exception e) {
 				this.error = e;
 				this.fail();
 				return;
 			}
 		}
-		if (lenCommand > 3){
-			try{
+		if (lenCommand > 3) {
+			try {
 				this.x =Double.parseDouble(PipingMessageHandler.extractNthPositionString(externalCommandSegments,lenCommand-2));
 				this.y =Double.parseDouble(PipingMessageHandler.extractNthPositionString(externalCommandSegments,lenCommand-1));
-			}catch(Exception e){
+			}catch(Exception e) {
 				this.error = e;
 				this.fail();
 				return;
 			}
-		}else{
+		}else {
 			this.x = ThreadLocalRandom.current().nextDouble(0, 10+1);
             this.y = ThreadLocalRandom.current().nextDouble(0, 10+1);
 		}
@@ -45,15 +45,15 @@ public class AddVertexCommand extends CommandForGralogToExecute {
 
 
 
-	public void handle(){
+	public void handle() {
 		//////for later implementation
-		// if (!this.stringId.equals(-1)){
+		// if (!this.stringId.equals(-1)) {
 		// 	this.vertex = this.structure.createVertex(Integer.parseInt(this.stringId));
 		// }
 
 		if (this.newVertexId == -1 || false){
 			this.vertex = this.structure.addVertex();
-		}else{
+		}else {
 			this.vertex = this.structure.addVertex(null,this.newVertexId);
 		}
 

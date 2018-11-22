@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.modalmucalculus.structure;
 
@@ -14,11 +14,11 @@ public class ParityGamePosition extends FiniteGamePosition {
 
     public Integer priority = Integer.MAX_VALUE;
 
-    public ParityGamePosition(){
+    public ParityGamePosition() {
         super();
     }
 
-    public ParityGamePosition(Configuration config){
+    public ParityGamePosition(Configuration config) {
         super(config);
     }
 

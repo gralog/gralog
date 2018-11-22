@@ -1,8 +1,11 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.exportfilter;
 
-import gralog.structure.*;
+import gralog.structure.DirectedGraph;
+import gralog.structure.Edge;
+import gralog.structure.Vertex;
+
 import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,7 +23,7 @@ import java.util.Set;
 public class LEDAExport extends ExportFilter {
 
     public void export(DirectedGraph structure, OutputStreamWriter stream,
-        ExportFilterParameters params) throws Exception {
+                       ExportFilterParameters params) throws Exception {
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
         String linefeed = System.getProperty("line.separator");
 
@@ -31,20 +34,20 @@ public class LEDAExport extends ExportFilter {
         stream.write("# -1 = directed, -2 = undirected" + linefeed + linefeed);
 
         stream.write("# nodes" + linefeed);
-        Collection<Vertex> V = structure.getVertices();
-        stream.write("" + V.size() + linefeed);
+        Collection<Vertex> vertices = structure.getVertices();
+        stream.write("" + vertices.size() + linefeed);
         int idx = 0;
-        for (Vertex v : V) {
+        for (Vertex v : vertices) {
             stream.write("|{}|" + linefeed);
             nodeIndex.put(v, ++idx);
         }
         stream.write(linefeed);
 
         stream.write("# edges" + linefeed);
-        Set<Edge> E = structure.getEdges();
-        int m = E.size();
+        Set<Edge> edges = structure.getEdges();
+        int m = edges.size();
         stream.write("" + m + linefeed);
-        for (Edge e : E)
+        for (Edge e : edges)
             stream.write(nodeIndex.get(e.getSource()) + " " + nodeIndex.get(e.getTarget()) + " 0 |{}|" + linefeed);
         stream.write(linefeed);
     }

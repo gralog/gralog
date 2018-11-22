@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.firstorderlogic.algorithm;
 
@@ -38,15 +38,15 @@ public class ModelCheckingGameFOLogic extends Algorithm {
             FirstOrderSyntaxChecker.explanation());
     }
 
-    /* public void getUniqueGamePositions(FiniteGame game){
+    /* public void getUniqueGamePositions(FiniteGame game) {
        Set<FiniteGamePosition> gp=game.getVertices();
-       for(FiniteGamePosition v: (Set<FiniteGamePosition>)gp){
-           for(FiniteGamePosition w: gp){
-               if(v!=w){
-                   if(v.Label.equals(w.Label)){
+       for(FiniteGamePosition v: (Set<FiniteGamePosition>)gp) {
+           for(FiniteGamePosition w: gp) {
+               if(v!=w) {
+                   if(v.Label.equals(w.Label)) {
                        Set<Edge> incidentEdges=w.getIncidentEdges();
-                       for(Edge e: incidentEdges){
-                           if(e.getSource()!=w){
+                       for(Edge e: incidentEdges) {
+                           if(e.getSource()!=w) {
                                Vertex temp=e.getSource();
                                game.AddEdge(game.CreateEdge(temp,v) );
                            }

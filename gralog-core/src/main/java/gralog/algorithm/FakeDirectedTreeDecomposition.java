@@ -1,18 +1,20 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
+
+import gralog.progresshandler.ProgressHandler;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
+import gralog.treedecomposition.Bag;
+import gralog.treedecomposition.TreeDecomposition;
 
 import java.util.Collection;
 import java.util.Set;
 
-import gralog.progresshandler.ProgressHandler;
-import gralog.structure.*;
-import gralog.treedecomposition.*;
-
 @AlgorithmDescription(
-    name = "Fake Directed Tree Decomposition",
-    text = "Creates a (fake) directed tree decomposition",
-    url = "http://dx.doi.org/10.1006/jctb.2000.2031"
+        name = "Fake Directed Tree Decomposition",
+        text = "Creates a (fake) directed tree decomposition",
+        url = "http://dx.doi.org/10.1006/jctb.2000.2031"
 )
 public class FakeDirectedTreeDecomposition extends Algorithm {
 
@@ -22,13 +24,13 @@ public class FakeDirectedTreeDecomposition extends Algorithm {
     }
 
     protected Bag fakeTreeDecomposition(Structure s, int depth, int width,
-        int children) {
+                                        int children) {
         Bag result = new Bag();
-        Collection<Vertex> V = s.getVertices();
+        Collection<Vertex> setV = s.getVertices();
 
         for (int i = 0; i < width; i++) {
-            int idx = (int) (Math.random() * ((Collection) V).size());
-            for (Vertex v : V)
+            int idx = (int) (Math.random() * ((Collection) setV).size());
+            for (Vertex v : setV)
                 if (--idx < 0) {
                     result.nodes.add(v);
                     break;
@@ -43,7 +45,7 @@ public class FakeDirectedTreeDecomposition extends Algorithm {
     }
 
     public Object run(Structure s, AlgorithmParameters ap, Set<Object> selection,
-        ProgressHandler onprogress) throws Exception {
+                      ProgressHandler onprogress) throws Exception {
         // DirectedTreeDecompositionParameters p = (DirectedTreeDecompositionParameters)ap;
 
         TreeDecomposition dtdecomp = new TreeDecomposition();

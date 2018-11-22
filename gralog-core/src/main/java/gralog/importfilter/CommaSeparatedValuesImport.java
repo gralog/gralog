@@ -1,24 +1,25 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.importfilter;
 
-import gralog.rendering.Vector2D;
-import gralog.structure.*;
+import gralog.structure.DirectedGraph;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
 
-import java.util.HashMap;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 /**
  *
  */
 @ImportFilterDescription(
-    name = "Comma Separated Values",
-    text = "",
-    url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
-    fileExtension = "csv")
+        name = "Comma Separated Values",
+        text = "",
+        url = "https://en.wikipedia.org/wiki/Trivial_Graph_Format",
+        fileExtension = "csv")
 public class CommaSeparatedValuesImport extends ImportFilter {
 
     String cellSeparator = ",";
@@ -26,7 +27,7 @@ public class CommaSeparatedValuesImport extends ImportFilter {
 
     @Override
     public Structure importGraph(InputStream stream,
-        ImportFilterParameters params) throws Exception {
+                                 ImportFilterParameters params) throws Exception {
         DirectedGraph result = new DirectedGraph();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, "UTF-8"))) {
             String s = br.readLine();
@@ -52,7 +53,7 @@ public class CommaSeparatedValuesImport extends ImportFilter {
                 String sfrom = tokenizer.nextToken();
                 String sto = tokenizer.nextToken();
 
-                for (String vertstring : new String[]{sfrom, sto}) {
+                for (String vertstring : new String[] {sfrom, sto}) {
                     if (!nodeIndex.containsKey(vertstring)) {
                         Vertex newnode = result.createVertex();
                         nodeIndex.put(vertstring, newnode);
@@ -68,8 +69,8 @@ public class CommaSeparatedValuesImport extends ImportFilter {
 
             for (Vertex newnode : nodeIndex.values()) {
                 newnode.setCoordinates(
-                    Math.random() * 3d * nodeIndex.size(),
-                    Math.random() * 3d * nodeIndex.size());
+                        Math.random() * 3d * nodeIndex.size(),
+                        Math.random() * 3d * nodeIndex.size());
                 result.addVertex(newnode);
             }
         }

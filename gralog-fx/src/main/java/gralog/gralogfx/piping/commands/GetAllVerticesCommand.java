@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public class GetAllVerticesCommand extends CommandForGralogToExecute {
 	
-	public GetAllVerticesCommand(String[] externalCommandSegments,Structure structure){
+	public GetAllVerticesCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
@@ -17,7 +17,7 @@ public class GetAllVerticesCommand extends CommandForGralogToExecute {
 
 	
 
-	public void handle(){
+	public void handle() {
 
         // int changeId;
        
@@ -27,10 +27,10 @@ public class GetAllVerticesCommand extends CommandForGralogToExecute {
         Collection<Vertex> allNodes = this.structure.getVertices();
 
         String vertexString = "";
-        for (Vertex v : allNodes){
+        for (Vertex v : allNodes) {
             vertexString = vertexString + Integer.toString(v.getId())+ "#";
         }
-        if (vertexString.length() > 0 && null != vertexString){
+        if (vertexString.length() > 0 && null != vertexString) {
             vertexString = vertexString.substring(0,vertexString.length()-1);
         }
 

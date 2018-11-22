@@ -18,15 +18,14 @@ public class GetGraphCommand extends CommandForGralogToExecute {
 
 
 
-	public GetGraphCommand(String[] externalCommandSegments,Structure structure){
+	public GetGraphCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
         
         this.format = PipingMessageHandler.properGraphFormats(externalCommandSegments[2]);
 
-
-        if (this.format == GraphType.Null){
+        if (this.format == GraphType.Null) {
             this.fail();
             this.error = new MessageFormatException("this.format.toString()" + " ain't no proper graph format");
             
@@ -38,7 +37,7 @@ public class GetGraphCommand extends CommandForGralogToExecute {
 
 	
 
-	public void handle(){
+	public void handle() {
 
         /*Gralog messages are in the format:
 
@@ -59,19 +58,19 @@ public class GetGraphCommand extends CommandForGralogToExecute {
         /* let it be known that xml comes without whitespace between elements*/
 
 
-        if (this.format == GraphType.Xml){
-            try{
+        if (this.format == GraphType.Xml) {
+            try {
                 String xml = this.structure.xmlToString();
                 this.setResponse(xml);
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.setResponse(e.toString());
             }
             
             return;
         }
 
-        if (this.format == GraphType.Tgf){
-            try{
+        if (this.format == GraphType.Tgf) {
+            try {
                 //String tgf = TrivialGraphFormatExport.exportToString(this.structure);
                 // tgf = PipingPresets.multiLineIfyGraphString(tgf);
                 // this.setResponse(tgf);
@@ -89,16 +88,15 @@ public class GetGraphCommand extends CommandForGralogToExecute {
                 this.setResponse(tgf);
 
 
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.setResponse(e.toString());
             }
             
             return;
         }
 
-        if (this.format == GraphType.GTgf){
-            try{
-
+        if (this.format == GraphType.GTgf) {
+            try {
                 //String tgf = TrivialGraphFormatExport.exportToString(this.structure);
                 // tgf = PipingPresets.multiLineIfyGraphString(tgf);
                 // this.setResponse(tgf);
@@ -116,15 +114,15 @@ public class GetGraphCommand extends CommandForGralogToExecute {
                 this.setResponse(tgf);
 
 
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.setResponse(e.toString());
             }
             
             return;
         }
 
-        if (this.format == GraphType.Tikz){
-            try{
+        if (this.format == GraphType.Tikz) {
+            try {
                 String tgf = "";
 
                 ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -138,7 +136,7 @@ public class GetGraphCommand extends CommandForGralogToExecute {
 
                 tikz = PipingPresets.multiLineIfyGraphString(tikz);
                 this.setResponse(tikz);
-            }catch(Exception e){
+            }catch(Exception e) {
                 this.setResponse(e.toString());
             }
             

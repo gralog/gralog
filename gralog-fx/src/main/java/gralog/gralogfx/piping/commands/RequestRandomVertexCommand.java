@@ -11,7 +11,7 @@ public class RequestRandomVertexCommand extends CommandForGralogToExecute {
     Vertex vertex;
   
 
-	public RequestRandomVertexCommand(String[] externalCommandSegments,Structure structure){
+	public RequestRandomVertexCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         
@@ -21,18 +21,18 @@ public class RequestRandomVertexCommand extends CommandForGralogToExecute {
 
 	}
 
-	public void handle(){
+	public void handle() {
 
-        try{
+        try {
             this.vertex = this.structure.getRandomVertex();
-            if (this.vertex != null){
+            if (this.vertex != null) {
                 this.setResponse(Integer.toString(this.vertex.getId()));
                 return;
             }
             this.fail();
             this.error = new NonExistantVertexException("Unable to pick a random vertex because there are no vertices in the graph@!");
             this.setResponse(null);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.error = e;
             this.setResponse(null);

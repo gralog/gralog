@@ -32,7 +32,7 @@ import java.util.List;
 import javafx.scene.control.Button;
 
 
-public abstract class CommandForGralogToExecute{
+public abstract class CommandForGralogToExecute {
 	// String name;
 
 	Structure structure;
@@ -45,37 +45,37 @@ public abstract class CommandForGralogToExecute{
 
 	private String response = null;
 
-	// public void CommandForGralogToExecute(String[] externalCommandSegments){
+	// public void CommandForGralogToExecute(String[] externalCommandSegments) {
 	// 	this.externalCommandSegments = externalCommandSegments;
 	// }
 
-	void setResponse(String response){
+	void setResponse(String response) {
 		this.response = response;
 	}
 
-	public String getResponse(){
+	public String getResponse() {
 		return this.response;
 	}
 
-	public Boolean didFail(){
+	public Boolean didFail() {
 		return this.failed;
 	}
 
-	public void fail(){
+	public void fail() {
 		this.failed=true;
 	}
 
-	public Exception getError(){
+	public Exception getError() {
 		return this.error;
 	}
 
-	public void setConsoleMessage(Exception e){
+	public void setConsoleMessage(Exception e) {
 		this.consoleMessage = e.toString() + "\n";
 	}
-	public void setConsoleMessage(String msg){
+	public void setConsoleMessage(String msg) {
 		this.consoleMessage = msg;
 	}
-	public String getConsoleMessage(){
+	public String getConsoleMessage() {
 		return this.consoleMessage;
 	}
 
@@ -83,7 +83,7 @@ public abstract class CommandForGralogToExecute{
 
 	public abstract void handle();
 
-	public void setStructure(Structure s){
+	public void setStructure(Structure s) {
 		this.structure = s;
 	}
 

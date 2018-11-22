@@ -1,10 +1,14 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
+
 package gralog.exportfilter;
 
 import gralog.rendering.GralogColor;
 import gralog.rendering.Vector2D;
-import gralog.structure.*;
+import gralog.structure.Edge;
+import gralog.structure.EdgeIntermediatePoint;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -21,8 +25,8 @@ import java.util.HashMap;
 public class TikZExport extends ExportFilter {
 
     public void export(Structure<Vertex, Edge> structure,
-        OutputStreamWriter stream,
-        ExportFilterParameters params) throws Exception {
+                       OutputStreamWriter stream,
+                       ExportFilterParameters params) throws Exception {
         IndentedWriter out = new IndentedWriter(stream, 4);
 
         out.writeLine("%\\documentclass{article}");
@@ -38,33 +42,38 @@ public class TikZExport extends ExportFilter {
         out.increaseIndent();
         out.writeLine("\\tikzset{>=Stealth}");
         out.writeLine("\\tikzstyle{every path}=[->,thick]");
-        out.writeLine("\\tikzstyle{every node}=[circle,fill=white,draw=black,text=black,thin,minimum size=16pt,inner sep=1.5pt]");
+        out.writeLine("\\tikzstyle{every node}=[circle,fill=white,draw=black,"
+                + "text=black,thin,minimum size=16pt,inner sep=1.5pt]");
         out.writeLine("");
 
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
-        
+
         for (Vertex v : structure.getVertices()) {
-        	nodeIndex.put(v, v.id);
-        	final String label = v.label.isEmpty() ? "" : "$" + v.label + "$";
-          
-        	//String properties = "ellipse, minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height;
-        	
-        	String properties = v.shape.getClass().getSimpleName().toLowerCase() + ", minimum width = " + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height + "cm";
-        	out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
-    		properties = properties + ", fill=gralog-fill-color";
-/*        	if (!v.fillColor.equals(GralogColor.WHITE)) {
-  //      		out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
-    //    		properties = properties + ", fill=gralog-fill-color";
-        	}*/ if (!v.strokeColor.equals(GralogColor.BLACK)) {
-        		out.writeLine("\\definecolor{gralog-stroke-color}{HTML}{" + v.strokeColor.toHtmlString().substring(1) + "}");
-        		properties = properties + ", draw=gralog-stroke-color";
-        	}
-        	properties = properties + ", line width=" + v.strokeWidth + "cm";
-          
-        	out.writeLine("\\node [" + properties + "] " + "(n" + v.id + ") at ("
-        			+ v.coordinates.getX() + "cm,"
-        			+ (-v.coordinates.getY()) + "cm) {" + label + "};");
-                  
+            nodeIndex.put(v, v.id);
+            final String label = v.label.isEmpty() ? "" : "$" + v.label + "$";
+
+            //String properties = "ellipse, minimum width = " + v.shape.sizeBox.width
+            // + "cm, minimum height = " + v.shape.sizeBox.height;
+
+            String properties = v.shape.getClass().getSimpleName().toLowerCase() + ", minimum width = "
+                    + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height + "cm";
+            out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+            properties = properties + ", fill=gralog-fill-color";
+/*        if (!v.fillColor.equals(GralogColor.WHITE)) {
+  //          out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+    //        properties = properties + ", fill=gralog-fill-color";
+        }*/
+            if (!v.strokeColor.equals(GralogColor.BLACK)) {
+                out.writeLine("\\definecolor{gralog-stroke-color}{HTML}{"
+                        + v.strokeColor.toHtmlString().substring(1) + "}");
+                properties = properties + ", draw=gralog-stroke-color";
+            }
+            properties = properties + ", line width=" + v.strokeWidth + "cm";
+
+            out.writeLine("\\node [" + properties + "] " + "(n" + v.id + ") at ("
+                    + v.coordinates.getX() + "cm,"
+                    + (-v.coordinates.getY()) + "cm) {" + label + "};");
+
 //          ++i;
         }
 

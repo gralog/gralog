@@ -1,11 +1,17 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.automaton.export;
 
-import gralog.structure.*;
-import gralog.automaton.*;
-import gralog.exportfilter.*;
+
+import gralog.automaton.Automaton;
+import gralog.automaton.State;
+import gralog.automaton.Transition;
+import gralog.exportfilter.ExportFilter;
+import gralog.exportfilter.ExportFilterDescription;
+import gralog.exportfilter.ExportFilterParameters;
+import gralog.exportfilter.IndentedWriter;
 import gralog.rendering.Vector2D;
+import gralog.structure.EdgeIntermediatePoint;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -25,30 +31,32 @@ public class TikZExport extends ExportFilter {
         ExportFilterParameters params) throws Exception {
         IndentedWriter out = new IndentedWriter(stream, 4);
 
-        out.writeLine("%\\documentclass{article}");
-        out.writeLine("%\\usepackage{pgf}");
-        out.writeLine("%\\usepackage{tikz}");
-        out.writeLine("%\\usepackage{amsmath, amssymb}");
-        out.writeLine("%\\usetikzlibrary{arrows.meta,automata}");
-        out.writeLine("%\\usepackage[utf8]{inputenc}");
+        out.writeLine("%\\documentclass {article}");
+        out.writeLine("%\\usepackage {pgf}");
+        out.writeLine("%\\usepackage {tikz}");
+        out.writeLine("%\\usepackage {amsmath, amssymb}");
+        out.writeLine("%\\usetikzlibrary {arrows.meta,automata}");
+        out.writeLine("%\\usepackage[utf8] {inputenc}");
 
-        out.writeLine("%\\begin{document}");
+        out.writeLine("%\\begin {document}");
         out.increaseIndent();
-        out.writeLine("\\begin{tikzpicture}[scale=0.8,auto]");
+        out.writeLine("\\begin {tikzpicture}[scale=0.8,auto]");
         out.increaseIndent();
-        out.writeLine("\\tikzset{>=Stealth}");
-        out.writeLine("\\tikzstyle{every path}=[->,thick]");
-        out.writeLine("\\tikzstyle{every state}=[circle,fill=white,draw=black,text=black,thin]");
+        out.writeLine("\\tikzset {>=Stealth}");
+        out.writeLine("\\tikzstyle {every path}=[->,thick]");
+        out.writeLine("\\tikzstyle {every state}=[circle,fill=white,draw=black,text=black,thin]");
 
         HashMap<State, Integer> nodeIndex = new HashMap<>();
         int i = 1;
         for (State s : structure.getVertices()) {
             nodeIndex.put(s, i);
             out.write("\\node[state");
-            if (s.finalState)
+            if (s.finalState) {
                 out.writeNoIndent(",accepting");
-            if (s.startState)
+            }
+            if (s.startState) {
                 out.writeNoIndent(",initial");
+            }
             final String label = s.label.isEmpty() ? "" : "$" + s.label + "$";
             out.writeLineNoIndent("] (q" + i + ") at ("
                 + s.coordinates.getX() + "cm,"
@@ -69,8 +77,9 @@ public class TikZExport extends ExportFilter {
                 Double segmentlength = betw.minus(from).length();
 
                 out.writeNoIndent(" --");
-                if (distance < halfLength && halfLength <= distance + segmentlength)
+                if (distance < halfLength && halfLength <= distance + segmentlength) {
                     out.writeNoIndent(" node {$" + (t.symbol.isEmpty() ? "\\varepsilon" : t.symbol) + "$}");
+                }
                 out.writeNoIndent(" (" + c.getX() + "cm," + (-c.getY()) + "cm)");
 
                 distance += segmentlength;
@@ -78,14 +87,15 @@ public class TikZExport extends ExportFilter {
             }
 
             out.writeNoIndent(" --");
-            if (distance < halfLength)
+            if (distance < halfLength) {
                 out.writeNoIndent(" node {$" + (t.symbol.isEmpty() ? "\\varepsilon" : t.symbol) + "$}");
+            }
             out.writeLineNoIndent(" (q" + nodeIndex.get(t.getTarget()) + ");");
         }
 
         out.decreaseIndent();
-        out.writeLine("\\end{tikzpicture}");
+        out.writeLine("\\end {tikzpicture}");
         out.decreaseIndent();
-        out.writeLine("%\\end{document}");
+        out.writeLine("%\\end {document}");
     }
 }

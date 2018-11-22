@@ -1,14 +1,16 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.exportfilter;
 
-import gralog.structure.*;
+import gralog.structure.Edge;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
 
+import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Set;
-import java.io.OutputStreamWriter;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -49,9 +51,9 @@ public class GralogTrivialGraphFormatExport extends ExportFilter {
 
         String retString = "";
 
-        Collection<Vertex> V = structure.getVertices();
-        for (Vertex v : V) {
-            i=v.getId();
+        Collection<Vertex> vertices = structure.getVertices();
+        for (Vertex v : vertices) {
+            i = v.getId();
             nodeIndex.put(v, i);
             retString += Integer.toString(i) + separator;
         }
@@ -60,10 +62,12 @@ public class GralogTrivialGraphFormatExport extends ExportFilter {
 
         // stream.write("#" + linefeed);
 
-        Set<Edge> E = (Set<Edge>)structure.getEdges();
-        for (Edge e : E){
-            retString += nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + " " + Integer.toString(e.getId()) + separator;
-            // stream.write(nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString() + linefeed);
+        Set<Edge> edges = (Set<Edge>) structure.getEdges();
+        for (Edge e : edges) {
+            retString += nodeIndex.get(e.getSource()).toString() + " " + nodeIndex.get(e.getTarget()).toString()
+                    + " " + Integer.toString(e.getId()) + separator;
+            // stream.write(nodeIndex.get(e.getSource()).toString() + " "
+            // + nodeIndex.get(e.getTarget()).toString() + linefeed);
         }
         // stream.write("#" + linefeed);
         retString += "#" + separator;
@@ -72,29 +76,30 @@ public class GralogTrivialGraphFormatExport extends ExportFilter {
 
     @Override
     public Map<String, Vertex> getVertexNames(Structure structure,
-        ExportFilterParameters params) throws Exception {
+                                              ExportFilterParameters params) throws Exception {
         Map<String, Vertex> result = new HashMap<>();
         Integer i = 1;
-        Collection<Vertex> V = structure.getVertices();
-        for (Vertex v : V)
+        Collection<Vertex> vertices = structure.getVertices();
+        for (Vertex v : vertices)
             result.put("" + Integer.toString(v.getId()), v);
         return result;
     }
 
     @Override
     public Map<String, Edge> getEdgeNames(Structure structure,
-        ExportFilterParameters params) throws Exception {
+                                          ExportFilterParameters params) throws Exception {
         Map<String, Edge> result = new HashMap<>();
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
 
         Integer i = 1;
-        Collection<Vertex> V = structure.getVertices();
-        for (Vertex v : V)
+        Collection<Vertex> vertices = structure.getVertices();
+        for (Vertex v : vertices)
             nodeIndex.put(v, v.getId());
 
-        Set<Edge> E = (Set<Edge>)structure.getEdges();
-        for (Edge e : E)
-            result.put("id:"+Integer.toString(e.getId())+"; "+nodeIndex.get(e.getSource()) + ":" + nodeIndex.get(e.getTarget()), e);
+        Set<Edge> edges = (Set<Edge>) structure.getEdges();
+        for (Edge e : edges)
+            result.put("id:" + Integer.toString(e.getId()) + "; " + nodeIndex.get(e.getSource()) + ":"
+                    + nodeIndex.get(e.getTarget()), e);
 
         return result;
     }

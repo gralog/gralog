@@ -11,25 +11,25 @@ public class RequestRandomEdgeCommand extends CommandForGralogToExecute {
     Edge edge;
   
 
-	public RequestRandomEdgeCommand(String[] externalCommandSegments,Structure structure){
+	public RequestRandomEdgeCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
 		this.structure = structure;
         
 
 	}
 
-	public void handle(){
+	public void handle() {
 
-        try{
+        try {
             this.edge = this.structure.getRandomEdge();
-            if (this.edge != null){
+            if (this.edge != null) {
                 this.setResponse(Integer.toString(this.edge.getId()));
                 return;
             }
             this.fail();
             this.error = new NonExistantEdgeException("Unable to pick a random edge because there are no edges in the graph@!");
             this.setResponse(null);
-        }catch(Exception e){
+        }catch(Exception e) {
             this.fail();
             this.error = e;
             this.setResponse(null);

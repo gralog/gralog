@@ -11,14 +11,14 @@ public class MessageCommand extends CommandForGralogToExecute {
 
 
 
-	public MessageCommand(String[] externalCommandSegments,Structure structure){
+	public MessageCommand(String[] externalCommandSegments,Structure structure) {
 		this.externalCommandSegments = externalCommandSegments;
         this.structure = structure;
 
 	}
 
 
-	public void handle(){
+	public void handle() {
         return;
 	}
 

@@ -1,25 +1,32 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
-import java.util.*;
+import gralog.progresshandler.ProgressHandler;
+import gralog.structure.Edge;
+import gralog.structure.Structure;
+import gralog.structure.Vertex;
 
-import gralog.structure.*;
-import gralog.progresshandler.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Stack;
+import java.util.Collection;
 
 /**
  *
  */
 @AlgorithmDescription(
-    name = "Strongly Connected Components",
-    text = "Finds the strongly connected components of a (mixed) graph",
-    url = "https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm"
+        name = "Strongly Connected Components",
+        text = "Finds the strongly connected components of a (mixed) graph",
+        url = "https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm"
 )
 public class StronglyConnectedComponents extends Algorithm {
 
     public static void tarjanStrongComponents(Structure s,
-        HashMap<Vertex, Integer> componentOfVertex,
-        ArrayList<ArrayList<Vertex>> verticesInComponent) {
+                                              HashMap<Vertex, Integer> componentOfVertex,
+                                              ArrayList<ArrayList<Vertex>> verticesInComponent) {
         int numScc = 0;
         int index = 0;
         Stack<Vertex> tarStack = new Stack<>();
@@ -32,8 +39,8 @@ public class StronglyConnectedComponents extends Algorithm {
         HashMap<Vertex, ArrayList<Vertex>> children = new HashMap<>(); // children in dfs tree
         HashMap<Vertex, Integer> childIterationPos = new HashMap<>(); // children-iteration position
 
-        Collection<Vertex> V = s.getVertices();
-        for (Vertex v : V) {
+        Collection<Vertex> vertices = s.getVertices();
+        for (Vertex v : vertices) {
             if (dfs.containsKey(v)) // already processed
                 continue;
 
@@ -105,7 +112,7 @@ public class StronglyConnectedComponents extends Algorithm {
     }
 
     public Object run(Structure s, AlgorithmParameters ap, Set<Object> selection,
-        ProgressHandler onprogress) throws Exception {
+                      ProgressHandler onprogress) throws Exception {
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
         tarjanStrongComponents(s, componentOfVertex, verticesInComponent);

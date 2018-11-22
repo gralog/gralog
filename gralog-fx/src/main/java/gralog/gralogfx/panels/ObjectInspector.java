@@ -1,4 +1,4 @@
-/* This file is part of Gralog, Copyright (c) 2016-2017 LaS group, TU Berlin.
+/* This file is part of Gralog, Copyright (c) 2016-2018 LaS group, TU Berlin.
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.gralogfx.panels;
 
@@ -25,16 +25,16 @@ import javafx.scene.control.Button;
 /**
  *
  */
-public class ObjectInspector extends AnchorPane implements GralogWindow{
+public class ObjectInspector extends AnchorPane implements GralogWindow {
 
     private View view;
     private Tabs tabView;
 
-    public ObjectInspector(){
+    public ObjectInspector() {
 
     }
 
-    public ObjectInspector (Tabs tabView){
+    public ObjectInspector (Tabs tabView) {
         this.tabView = tabView;
         this.tabView.subscribe(this);
     }
@@ -46,8 +46,8 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
 
     public void setObject(Collection<?> list, Consumer<Boolean> submitPossible)
             throws Exception {
-
-        this.getChildren().clear();
+    	System.out.println("setObject");
+        this.getChildren().clear();		//delete all entries from before
 
         ScrollPane sp = new ScrollPane();
         sp.setStyle("-fx-background-color:transparent;");
@@ -58,19 +58,20 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
         }
 
         Object obj = list.iterator().next(); //default
-        for(Object tmp : list){ //maybe find something that's not a control point
-            if(!(tmp instanceof ControlPoint) && tmp != null){
+        for(Object tmp : list) { //maybe find something that's not a control point
+            if(!(tmp instanceof ControlPoint) && tmp != null) {
                 obj = tmp;
                 break;
             }
         }
         
 
-        if(obj == null){
+        if(obj == null) {
             return;
         }
 
         view = ViewManager.instantiateView(obj.getClass());
+        System.out.println(view.getClass().getName());
 
 
         if (view == null)
@@ -98,21 +99,21 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
         AnchorPane.setRightAnchor(sp, 4.0);
         AnchorPane.setBottomAnchor(sp, 4.0);
         AnchorPane.setLeftAnchor(sp, 4.0);
-
+        
+        System.out.println("Children:    " + this.getChildren());
         this.getChildren().add(sp);
 
     }
 
     @Deprecated
-    public void setObject(Object obj, StructurePane pane){
+    public void setObject(Object obj, StructurePane pane) {
         //has been replaced with setObject(Collection<?> list)
     }
     @Deprecated
-    public void setObject(Object obj, StructurePane pane, Consumer<Boolean> submitPossible){
+    public void setObject(Object obj, StructurePane pane, Consumer<Boolean> submitPossible) {
         //has been replaced with setObject(Collection<?> list)
-
     }
-    public Node getNode(){
+    public Node getNode() {
         return null;
     }
     /**
@@ -131,9 +132,9 @@ public class ObjectInspector extends AnchorPane implements GralogWindow{
 
     @Override
     public void notifyHighlightChange(Highlights highlights) {
-        try{
+        try {
             setObject(highlights.getSelection());
-        }catch(Exception e){
+        }catch(Exception e) {
             ExceptionBox xBox = new ExceptionBox();
             xBox.showAndWait(e);
         }
