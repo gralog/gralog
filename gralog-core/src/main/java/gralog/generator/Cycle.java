@@ -2,11 +2,18 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.generator;
 
+import java.util.Arrays;
+import java.util.List;
+
 import gralog.algorithm.AlgorithmParameters;
 import gralog.algorithm.StringAlgorithmParameter;
+import gralog.algorithm.CycleParameters;
+import gralog.algorithm.GridParameters;
+import gralog.algorithm.PathParameters;
 import gralog.parser.IntSyntaxChecker;
 import gralog.preferences.Preferences;
 import gralog.structure.DirectedGraph;
+import gralog.structure.UndirectedGraph;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 
@@ -22,20 +29,32 @@ public class Cycle extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
-        return new StringAlgorithmParameter(
-                "Number of vertices",
-                Preferences.getInteger(this.getClass(), "vertices", 5).toString(),
-                new IntSyntaxChecker(1, Integer.MAX_VALUE),
-                "");
+        String n = Preferences.getInteger(this.getClass(), "vertices", 5).toString();
+        String directed = Preferences.getBoolean(this.getClass(), "directed?", true).toString();
+        List<String> initialValues = Arrays.asList(n,directed);
+        return new CycleParameters(initialValues);
+    	
+//    	return new StringAlgorithmParameter(
+//                "Number of vertices",
+//                Preferences.getInteger(this.getClass(), "vertices", 5).toString(),
+//                new IntSyntaxChecker(1, Integer.MAX_VALUE),
+//                "");
     }
 
     @Override
     public Structure generate(AlgorithmParameters p) {
-        int n = Integer.parseInt(((StringAlgorithmParameter) p).parameter);
-        Preferences.setInteger(this.getClass(), "vertices", n);
+    	int n = Integer.parseInt(((CycleParameters)p).parameters.get(0));
+        Preferences.setInteger(this.getClass(), "pathVertexNumber", n);
+        boolean directed = Boolean.parseBoolean(((CycleParameters)p).parameters.get(1));
+        Preferences.setBoolean(this.getClass(), "directed", directed);
 
-        DirectedGraph result = new DirectedGraph();
-
+        Structure result;
+        
+        if (directed)
+        	result = new DirectedGraph();
+        else 
+        	result = new UndirectedGraph();
+        
         Vertex first = result.addVertex();
 
         first.setCoordinates(
