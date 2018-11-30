@@ -170,13 +170,13 @@ public class DialogParser {
     private void transition(DialogState dialogState) {
         this.dialogState = dialogState;
         i++;
-        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
+//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
     private void transition(DialogState dialogState, String addedParameter) {
         this.dialogState = dialogState;
         parameters.add(addedParameter);
         i++;
-        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
+//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
 
     private void transition(DialogState dialogState, DialogAction dialogAction, String addedParameter) {
@@ -184,14 +184,14 @@ public class DialogParser {
         parameters.add(addedParameter);
         this.dialogAction = dialogAction;
         i++;
-        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
+//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
 
     private void transition(DialogState dialogState, DialogAction dialogAction) {
         this.dialogState = dialogState;
         this.dialogAction = dialogAction;
         i++;
-        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
+//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
 
     private void transition(DialogState dialogState, DialogAction dialogAction,
@@ -201,13 +201,13 @@ public class DialogParser {
         this.dialogAction = dialogAction;
         this.errorMsg = errorMsg;
         i++;
-        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
+//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
 
     private void transitionErr(DialogState dialogState, String errorMsg) {
         this.dialogState = dialogState;
         this.errorMsg = errorMsg;
-        System.out.println("Changed to dialogState = [" + dialogState + "]");
+//        System.out.println("Changed to dialogState = [" + dialogState + "]");
     }
 
 
@@ -215,11 +215,10 @@ public class DialogParser {
 
 
     public void parse(String text) {
-        System.out.println(ANSI_GREEN + "parse: got string: " + text + ANSI_RESET); //debugging
         dialogAction = NONE;
         errorMsg = "";
         if (text.isEmpty()) { // TODO: make an exception
-            System.out.println("Something went wrong: Console got an empty string as input.");
+            System.err.println("Something went wrong: Console got an empty string as input.");
             return;
         }
         // trim
@@ -257,9 +256,6 @@ public class DialogParser {
 
         i = 0;
         while (i <= inputWords.length) {
-            System.out.println(ANSI_GREEN + "DialogParser: i=" + i
-                    + "; dialogState=" + this.dialogState
-                    + "; inputWords.length=" + inputWords.length + ANSI_RESET);
             if (this.dialogState == DONE) {
                 if (i == inputWords.length)
                     return;
