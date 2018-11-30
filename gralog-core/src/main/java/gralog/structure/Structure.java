@@ -197,7 +197,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             try {
                 currEdges.add((Edge) getEdges[i]);
             } catch (Exception e) {
-                System.out.println("maybe it decreased?");
+                System.err.println("maybe it decreased?");
             }
         }
         for (Edge e : currEdges) {
@@ -222,7 +222,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             try {
                 currVertices.add((Vertex) getVertices[i]);
             } catch (Exception e) {
-                System.out.println("maybe it decreased?");
+                System.err.println("maybe it decreased?");
             }
         }
 
@@ -536,7 +536,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                         minInterval.b += 1;
                         return;
                     } else {
-                        System.out.println("vertex hole indexing error");
+                        System.err.println("vertex hole indexing error");
                     }
                 } else if (hole.a == v.id + 1) { //if v.id is exactly below the hole, extend it [,]..v.id,[a,b] -> [,]..[v.id,b]
                     hole.a--;
@@ -567,7 +567,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     //TODO: implement
     public void removeVertices(Collection<V> v) {
         //vertices.removeAll(v);
-        System.out.println("not implemented");
+        System.err.println("not implemented");
     }
 
     /**
@@ -676,7 +676,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     Collections.swap(e.siblings, 1, 2);
                 }
             }
-            System.out.println("skippadop : " + e.getSource() + e.getTarget());
+//            System.out.println("skippadop : " + e.getSource() + e.getTarget());
 
             for (Edge edge : e.getSource().getIncidentEdges()) {
                 if (edge == e) {
