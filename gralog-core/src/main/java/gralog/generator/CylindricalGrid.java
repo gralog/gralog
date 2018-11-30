@@ -49,8 +49,8 @@ public class CylindricalGrid extends Generator {
             Vertex temp = result.addVertex();
             first.add(temp);
             temp.setCoordinates(
-                    Math.sin(0 * 2 * Math.PI / length) * 2 * (j + 2),
-                    Math.cos(0 * 2 * Math.PI / length) * 2 * (j + 2)
+                    Math.sin(0 * 2 * Math.PI / width) * 2 * (j + 2),
+                    Math.cos(0 * 2 * Math.PI / width) * 2 * (j + 2)
             );
             if (j > 0)
                 result.addEdge(first.get(j - 1), temp);
@@ -64,8 +64,8 @@ public class CylindricalGrid extends Generator {
                 Vertex temp = result.addVertex();
                 next.add(temp);
                 temp.setCoordinates(
-                        Math.sin(i * 2 * Math.PI / length) * 2 * (j + 2),
-                        Math.cos(i * 2 * Math.PI / length) * 2 * (j + 2)
+                        Math.sin(i * 2 * Math.PI / width) * 2 * (j + 2),
+                        Math.cos(i * 2 * Math.PI / width) * 2 * (j + 2)
                 );
                 if (lasttemp != null)
                     if (i % 2 == 0)
