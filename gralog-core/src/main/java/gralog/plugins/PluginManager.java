@@ -160,9 +160,9 @@ public final class PluginManager {
                         Class<?> c = Class.forName(classname, false, sysloader);
                         classes.add(c);
                     } catch (NoClassDefFoundError e) {
-                        System.out.println("ncdf " + classname);
+                        System.err.println("ncdf " + classname);
                     } catch (ClassNotFoundException e) {
-                        System.out.println("cnf " + classname);
+                        System.err.println("cnf " + classname);
                     }
                 }
             }
