@@ -589,6 +589,12 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
                 enode.appendChild(e);
         }
 
+        for (var p : controlPoints){
+            Element e = p.toXml(doc);
+            if (e != null)
+                enode.appendChild(e);
+        }
+
         return enode;
     }
 
@@ -627,6 +633,12 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
                 p.fromXml(child);
                 this.intermediatePoints.add(p);
             }
+            if (obj instanceof ControlPoint) {
+                ControlPoint p = (ControlPoint) obj;
+                p.fromXml(child);
+                this.controlPoints.add(p);
+            }
+
         }
     }
 
