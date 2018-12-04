@@ -9,6 +9,7 @@ import gralog.structure.Edge;
 import gralog.structure.EdgeIntermediatePoint;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
+import gralog.structure.controlpoints.ControlPoint;
 
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
@@ -34,16 +35,21 @@ public class TikZExport extends ExportFilter {
         out.writeLine("%\\usepackage{tikz}");
         out.writeLine("%\\usepackage{amsmath, amssymb}");
         out.writeLine("%\\usetikzlibrary{arrows.meta}");
+        out.writeLine("%\\usetikzlibrary{arrows}");
+        out.writeLine("%\\usetikzlibrary{calc}");
+        out.writeLine("%\\usetikzlibrary{shapes}");
         out.writeLine("%\\usepackage[utf8]{inputenc}");
 
         out.writeLine("%\\begin{document}");
         out.increaseIndent();
-        out.writeLine("\\begin{tikzpicture}[scale=0.6,auto]");
+        out.writeLine("\\begin{tikzpicture}[auto]");
         out.increaseIndent();
         out.writeLine("\\tikzset{>=Stealth}");
         out.writeLine("\\tikzstyle{every path}=[->,thick]");
         out.writeLine("\\tikzstyle{every node}=[circle,fill=white,draw=black,"
-                + "text=black,thin,minimum size=16pt,inner sep=1.5pt]");
+                + "text=black,thin,minimum size=5pt,inner sep=1.5pt]");
+        out.writeLine("\\tikzset{quadratic bezier/.style={ to path={(\\tikztostart) .. controls($#1!1/3!(\\tikztostart)$)");
+        out.writeLine("and ($#1!1/3!(\\tikztotarget)$).. (\\tikztotarget)}}}");
         out.writeLine("");
 
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
@@ -83,29 +89,53 @@ public class TikZExport extends ExportFilter {
             double halfLength = e.length() / 2.0;
             Vector2D from = e.getSource().coordinates;
             double distance = 0.0;
-
+            // Tikz implements quadratic Bezier curves as cubic curves where both
+            // middle control points coincide, which leads to wrong curves.
+            // Hence the quadratic case (one control point) is a special case.
+            String controlPointCoord = "";
+            if (e.controlPoints.size() == 1 && e.edgeType == Edge.EdgeType.BEZIER) {
+                ControlPoint c = e.controlPoints.get(0);
+                controlPointCoord = "crtl" + nodeIndex.get(e.getSource());
+                out.writeLine("\\coordinate (" + controlPointCoord + ")  at ("
+                        + c.position.getX() + "," + -c.position.getY() + ");");
+            }
             if (e.isDirected)
                 out.write("\\draw");
             else
                 out.write("\\draw [-]");
 
             out.writeNoIndent(" (n" + nodeIndex.get(e.getSource()) + ")");
-            for (EdgeIntermediatePoint c : e.intermediatePoints) {
-                Vector2D betw = new Vector2D(c.getX(), c.getY());
-                double segmentlength = betw.minus(from).length();
+
+
+            if (e.edgeType == Edge.EdgeType.BEZIER) {
+                if (e.controlPoints.size() == 1) {
+                    out.writeNoIndent(" .. controls($("
+                            + controlPointCoord + ")!1/3!(n"
+                            + nodeIndex.get(e.getSource())
+                            + ")$)"
+                            + " and ($("
+                            + controlPointCoord
+                            + ")!1/3!(n"
+                            + nodeIndex.get(e.getTarget())
+                            + "1)$)..");
+                } else if (e.controlPoints.size() == 2){
+                    out.writeNoIndent(" .. controls ("
+                            + e.controlPoints.get(0).position.getX()
+                            + ",-" + e.controlPoints.get(0).position.getY() + ") and ("
+                            + e.controlPoints.get(1).position.getX()
+                            + ",-" + e.controlPoints.get(1).position.getY() + ") .. ");
+                } else{
+                    out.writeNoIndent(" to");
+                }
+            } else {
+                for (ControlPoint c : e.controlPoints) {
+                    out.writeNoIndent(" to (" + c.position.getX() + "cm," + (-c.position.getY()) + "cm)");
+                }
 
                 out.writeNoIndent(" to");
-                if (distance < halfLength && halfLength <= distance + segmentlength && !e.label.isEmpty())
-                    out.writeNoIndent(" node [draw=none,fill=none] {$" + e.label + "$}");
-                out.writeNoIndent(" (" + c.getX() + "cm," + (-c.getY()) + "cm)");
-
-                distance += segmentlength;
-                from = betw;
             }
-
-            out.writeNoIndent(" to");
-            if (distance < halfLength && !e.label.isEmpty())
-                out.writeNoIndent(" node [draw=none,fill=none] {$" + e.label + "$}");
+            if (!e.label.isEmpty())
+                out.writeNoIndent(" node [draw=none,fill=none,midway,sloped] {$" + e.label + "$}");
             out.writeLineNoIndent(" (n" + nodeIndex.get(e.getTarget()) + ");");
         }
 
