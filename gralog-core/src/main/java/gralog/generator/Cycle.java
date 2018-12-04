@@ -30,8 +30,8 @@ public class Cycle extends Generator {
     @Override
     public AlgorithmParameters getParameters() {
         String n = Preferences.getInteger(this.getClass(), "vertices", 5).toString();
-        String directed = Preferences.getBoolean(this.getClass(), "directed?", true).toString();
-        System.out.println(directed);
+        String directed = Preferences.getBoolean(this.getClass(), "directed", true).toString();
+        //System.out.println(directed);
         List<String> initialValues = Arrays.asList(n,directed);
         return new CycleParameters(initialValues);
     	
@@ -45,7 +45,7 @@ public class Cycle extends Generator {
     @Override
     public Structure generate(AlgorithmParameters p) {
     	int n = Integer.parseInt(((CycleParameters)p).parameters.get(0));
-        Preferences.setInteger(this.getClass(), "pathVertexNumber", n);
+        Preferences.setInteger(this.getClass(), "vertices", n);
         boolean directed = Boolean.parseBoolean(((CycleParameters)p).parameters.get(1));
         Preferences.setBoolean(this.getClass(), "directed", directed);
 
