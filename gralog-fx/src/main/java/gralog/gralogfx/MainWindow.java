@@ -112,6 +112,7 @@ public class MainWindow extends Application {
         handlers.onLoadLastPlugin = this::onLoadLastPlugin;
         handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
+        handlers.onCloseTab = this::onCloseTab;
 
         handlers.onCut = this::onCut;
         handlers.onCopy = this::onCopy;
@@ -728,6 +729,10 @@ public class MainWindow extends Application {
         if(s != null){
             s.redoStructure();
         }
+    }
+    
+    private void onCloseTab() {
+    	tabs.closeTab(tabs.getTabIndex(tabs.getCurrentTab()));
     }
 
     public void algorithmCompleted(StructurePane structurePane,

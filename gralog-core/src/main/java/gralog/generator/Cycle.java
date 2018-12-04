@@ -31,6 +31,7 @@ public class Cycle extends Generator {
     public AlgorithmParameters getParameters() {
         String n = Preferences.getInteger(this.getClass(), "vertices", 5).toString();
         String directed = Preferences.getBoolean(this.getClass(), "directed?", true).toString();
+        System.out.println(directed);
         List<String> initialValues = Arrays.asList(n,directed);
         return new CycleParameters(initialValues);
     	

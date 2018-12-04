@@ -39,7 +39,7 @@ public class MultipleParameterView extends GridPaneView<Object> {
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
-
+        System.out.println("View");
         setVgap(5);
 
         //this.setPrefWidth(280);
