@@ -21,7 +21,7 @@ import java.util.*;
         text = "Generates a random graph according to the Erdős–Rényi model",
         url = "https://en.wikipedia.org/wiki/Erd%C5%91s%E2%80%93R%C3%A9nyi_model"
 )
-public class randomGraph extends Generator {
+public class RandomGraph extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
@@ -35,6 +35,9 @@ public class randomGraph extends Generator {
 
     }
 
+    /*
+    *
+     */
     @Override
     public Structure generate(AlgorithmParameters param) {
         int n = Integer.parseInt(((RandomGraphParameters)param).parameters.get(0));
@@ -59,16 +62,21 @@ public class randomGraph extends Generator {
                     Math.cos(i * 2 * Math.PI / n) * 0.5 * n + 3.5
             );
         }
-        Iterator<Vertex> vIt = result.getVertices().iterator();
-        while (vIt.hasNext()) {
-            Vertex v = vIt.next();
-            vIt.forEachRemaining(w -> {
-                    int precision = 10000;
-                    Random r = new Random();
-                    double random = precision*p / 2;
-                    if (random < precision/2)
-                        result.addEdge(v,w);
-            });
+
+        ArrayList<Vertex> vertices = new ArrayList<>(result.getVertices());
+
+        int PRECISION = 10000;
+        Random r = new Random();
+
+        for (int i = 0; i < vertices.size(); i++) {
+            int j = 0;
+            if (!directed)
+                j = i +1;
+            for (; j < vertices.size(); j++) {
+                int next_random = r.nextInt(PRECISION);
+                if (next_random < PRECISION * p)
+                    result.addEdge(vertices.get(i), vertices.get(j));
+            }
         }
         return result;
     }

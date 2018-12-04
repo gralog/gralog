@@ -213,9 +213,7 @@ public class Console extends HBox implements GralogWindow {
             fText.setFont(Font.font ("Verdana", 12));
 
             heightNumber += (int)(fText.getLayoutBounds().getWidth()/(this.output.getWidth()-2));
-            System.out.println("adding: " + (int)(fText.getLayoutBounds().getWidth()/this.output.getWidth()) + " ie: " + fText.getLayoutBounds().getWidth() + " / " + this.output.getWidth());
         }
-        System.out.println("heightNumber: " + heightNumber);
 
         return (Math.max(0, heightNumber - 1) * LINEHEIGHT + 20);
 
@@ -242,11 +240,8 @@ public class Console extends HBox implements GralogWindow {
         }
 
         parser.parse(text);
-        System.out.println("text = [" + text + "], currentPane = [" + currentPane + "]");
         ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
         ArrayList<String> parameters = parser.getParameters();
-
-        System.out.println(ANSI_GREEN + "console: dialogState=" + parser.getDialogState() + ANSI_RESET);
 
         // the input was "filter [all] selected"
         // if only vertices or only edges are selected, guess this, don't let the user write it
@@ -274,7 +269,6 @@ public class Console extends HBox implements GralogWindow {
                     return;
                 }
                 String remainingText = text.substring(text.indexOf('d')+1); // more text was entered
-                System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "], err = " + parser.getErrorMsg() );
                 parser.parse(remainingText);
             }
             if (existsSelectedEdge & ! existsSelectedVertex) {
@@ -286,7 +280,6 @@ public class Console extends HBox implements GralogWindow {
                     return;
                 }
                 String remainingText = text.substring(text.indexOf('d')+1); // more text was entered
-                System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "]");
                 parser.parse(remainingText);
             }
             if (!existsSelectedEdge & !existsSelectedVertex) {
@@ -319,7 +312,6 @@ public class Console extends HBox implements GralogWindow {
                 case DESELECT_ALL_EDGES:        dialogfx.deselectAllEdges(currentPane);
                                                 break;
                 case FILTER:
-                                                System.out.println("Calling dialog.filter with parameters=" + parameters);
                                                 dialog.filter(parser.getParameters(),
                                                                 currentPane.getStructure(),
                                                                 currentPane.getHighlights());
@@ -391,14 +383,13 @@ public class Console extends HBox implements GralogWindow {
 
         int height = estimateHeight(t.getText());
 
-        t.setMaxHeight(height*0.8);
-        t.setMinHeight(height*0.8);
+        t.setMaxHeight(height*1);
+        t.setMinHeight(height*1);
 
         t.setMaxWidth(output.getWidth()*1.0);
 
         nonUpdatedHeights.add(t);
-        System.out.println("numba of items in nonUpdatedHeights: " + nonUpdatedHeights.size());
-        
+
 
         t.getStyleClass().add("consoleTextStyle");
         // t.setPrefHeight(20);
@@ -425,8 +416,7 @@ public class Console extends HBox implements GralogWindow {
 
 
         text = text.trim();
-        System.out.println("outputting " + text);
-        
+
 
         ConsoleField t = new ConsoleField(text);
 

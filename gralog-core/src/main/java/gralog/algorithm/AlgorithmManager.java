@@ -32,7 +32,7 @@ public final class AlgorithmManager {
         try {
             methods = aClass.getMethods();
         } catch (NoClassDefFoundError e) {
-            System.out.println("WARNING: algorithm class def not found..." + className);
+            System.err.println("WARNING: algorithm class def not found..." + className);
 
             return;
         }

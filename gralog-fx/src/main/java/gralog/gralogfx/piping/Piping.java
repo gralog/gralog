@@ -158,6 +158,7 @@ public class Piping extends Thread {
             
         String line;
         String[] execStr = {fileName,initMessage};
+
         CountDownLatch execd = new CountDownLatch(1);
         
         try {
@@ -513,7 +514,7 @@ public class Piping extends Thread {
 
                     }
 
-                    CommandForGralogToExecute currentCommand;
+                    gralog.gralogfx.piping.CommandForGralogToExecute currentCommand;
                     try {
                         // currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])),this);
                         int localStructureIndex = Integer.parseInt(PipingMessageHandler.extractNthPositionString(externalCommandSegments,1));
@@ -522,7 +523,7 @@ public class Piping extends Thread {
                         // mostRecentlyUsedStructurePane = currentCommand.getStructurePane();
                     }catch(Exception e) {
                         e.printStackTrace();
-                        currentCommand = new NotRecognizedCommand(externalCommandSegments,(Structure)null);
+                        currentCommand = new gralog.gralogfx.piping.NotRecognizedCommand(externalCommandSegments,(Structure)null);
                     }
                     
                     if (!currentCommand.didFail()) {

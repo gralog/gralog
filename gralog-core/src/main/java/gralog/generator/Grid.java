@@ -4,8 +4,6 @@ package gralog.generator;
 
 import gralog.algorithm.AlgorithmParameters;
 import gralog.algorithm.GridParameters;
-import gralog.algorithm.StringAlgorithmParameter;
-import gralog.parser.IntSyntaxChecker;
 import gralog.preferences.Preferences;
 import gralog.structure.Structure;
 import gralog.structure.UndirectedGraph;

@@ -165,7 +165,6 @@ public class Dialog {
     }
 
     public void sort(ArrayList<String> parameters) {
-        System.out.println("Entring sort: parameters = [" + parameters + "]");
         String listname = parameters.get(0);
         if (!existsVertexList(listname)) {
             errorMsg = "No such list, cannot sort.\n";
@@ -325,7 +324,6 @@ public class Dialog {
     // try to convert a string parameter s with key paramKey to Integer
     private Integer parseInt(String s, String paramKey) {
         Integer result = -1;
-        System.out.println("parseInt: s = [" + s + "], paramKey = [" + paramKey + "]");
         try {
             result = Integer.valueOf(s);
         } catch (NumberFormatException e) {
@@ -719,7 +717,6 @@ public class Dialog {
     private void printVertexList(String listName) {
         GralogList vertexList = findVertexList(listName);
         if (vertexList == null) {
-            System.out.println("List " + listName + " doesn't exist.");
             return;
         }
         System.out.print(ANSI_GREEN + "List " + listName + ": " + ANSI_RESET);
@@ -776,7 +773,6 @@ public class Dialog {
     // (2) is: see description in gralog-core/.../dialog/actions.txt
     // (3) is: as (1), but if the identifier is not found in the list of already defined identifiers: create one
     public void filter(ArrayList<String> parameters, Structure structure, Highlights highlights) {
-        System.out.println(ANSI_GREEN + "Entering filter. parameters = [" + parameters + "]" + ANSI_RESET);
 
         if (parameters.get(1).equals("VERTICES") || existsVertexList(parameters.get(0))) { // vertex list
 
@@ -815,14 +811,6 @@ public class Dialog {
             // clean parameters
             parameters.clear();
 
-
-            // debug only
-            System.out.println("Did filterVertices.\nsourceList: ");
-            printVertexIdList(sourceVertexList);
-            System.out.println("\nto: ");
-            printVertexIdList(targetVertexList);
-            System.out.println("\nvertexListS: ");
-            printAllVertexList();
             return;
         }
         if (parameters.get(1).equals("EDGES") || existsEdgeList(parameters.get(0))) { // edge list
@@ -861,11 +849,6 @@ public class Dialog {
             // clean parameters
             parameters.clear();
 
-            // debug only
-            System.out.println("Did filterEdges.\nsourceList: ");
-            printEdgeIdList(sourceEdgeList);
-            System.out.println("\nto: ");
-            printEdgeIdList(targetEdgeList);
             return;
         }
 

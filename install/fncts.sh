@@ -10,7 +10,8 @@ read_arguments()
     COMPILE=0 # compile Gralog before installing or not (default: install precompiled binaries)
     DO_INSTALL_PYTHON=1 # install Python part
                         # (Gralog.py and graph packages networkx and igraph used in Gralog.py)
-    PYTHON_LIB_DIR="$(python -m site --user-site)" # 
+    PYTHON_LIB_DIR="$(python -m site --user-site)" #
+    PYTHON_TO_SYSTEM=0
 
     
     # end defaults
@@ -39,6 +40,10 @@ read_arguments()
 	esac
 	shift 		
     done
+
+    if ! [ "$PATH" == *_"$PYTHON_LIB_DIR"_* ]; then
+	export PATH="$PATH":"$PYTHON_LIB_DIR"
+    fi
     print_arguments
 }
 
@@ -51,6 +56,7 @@ print_arguments()
     echo "Compile before installing:" $COMPILE
     echo "Install python packages: " $DO_INSTALL_PYTHON
     echo "Install Gralog.py to: " $PYTHON_LIB_DIR
+    echo "PATH: " $PATH
     echo
 }
 
@@ -188,7 +194,7 @@ install_python_part()
 	    echo "Installed pip."
 	fi
 	
-	if [ "$PYTHON_TO_SYSTEM" ]; then
+	if [ $PYTHON_TO_SYSTEM = 1 ]; then
 	    echo "Installing python module \"python-igraph\" to a system directory..."
 	    sudo pip install python-igraph
 	    echo "\"python-igraph\" installed."
@@ -208,7 +214,7 @@ install_python_part()
 
 	cd ../..
 	
-	if [ "$PYTHON_TO_SYSTEM" ]; then
+	if [ $PYTHON_TO_SYSTEM = 1 ]; then
 	    if [ -L "$PYTHON_LIB_DIR/Gralog.py" ]; then
 		sudo unlink $PYTHON_LIB_DIR/Gralog.py
 	    fi

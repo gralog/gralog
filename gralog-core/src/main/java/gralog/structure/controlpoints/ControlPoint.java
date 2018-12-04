@@ -4,15 +4,19 @@
 package gralog.structure.controlpoints;
 
 import gralog.plugins.XmlMarshallable;
+import gralog.plugins.XmlName;
 import gralog.rendering.GralogColor;
 import gralog.rendering.GralogGraphicsContext;
 import gralog.rendering.Vector2D;
 import gralog.structure.Edge;
 import gralog.structure.Highlights;
 import gralog.structure.IMovable;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.io.Serializable;
 
+@XmlName(name = "controlpoint")
 public class ControlPoint extends XmlMarshallable implements IMovable, Serializable {
 
     protected static final double DRAW_RADIUS = 0.05;
@@ -58,4 +62,19 @@ public class ControlPoint extends XmlMarshallable implements IMovable, Serializa
         Vector2D pos = getPosition();
         return Math.pow(x - pos.getX(), 2) + Math.pow(y - pos.getY(), 2) < CLICK_RADIUS * CLICK_RADIUS; //squared
     }
+
+    @Override
+    public Element toXml(Document doc) throws Exception {
+        Element enode = super.toXml(doc);
+        enode.setAttribute("x", Double.toString(position.getX()));
+        enode.setAttribute("y", Double.toString(position.getY()));
+        return enode;
+    }
+
+    public void fromXml(Element enode) {
+        double x = Double.parseDouble(enode.getAttribute("x"));
+        double y = Double.parseDouble(enode.getAttribute("y"));
+        position = new Vector2D(x, y);
+    }
+
 }

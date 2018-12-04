@@ -3,6 +3,7 @@
 package gralog.generator;
 
 import gralog.algorithm.GridParameters;
+import gralog.algorithm.RandomGraphParameters;
 import gralog.algorithm.StringAlgorithmParameter;
 import gralog.algorithm.StringAlgorithmParametersList;
 import gralog.structure.DirectedGraph;
@@ -42,6 +43,19 @@ public class GeneratorTest {
         assertEquals(length*width,result.getVertices().size());
         assertEquals(length*width+(length-1)*width,result.getEdges().size());
     }
+
+    @Test
+    public void testRandomgraph() throws Exception {
+
+        int n = 8;
+        double p = 0.2;
+        boolean directed = true;
+        Structure result = (new RandomGraph()).generate(new RandomGraphParameters(Arrays.asList(Integer.toString(n),
+                Double.toString(p), Boolean.toString(directed))));
+        assertTrue(result instanceof DirectedGraph);
+        assertEquals(n,result.getVertices().size());
+    }
+
 
     @Test
     public void testGrid() throws Exception {
