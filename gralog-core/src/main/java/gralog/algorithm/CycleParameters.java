@@ -16,14 +16,15 @@ public class CycleParameters extends StringAlgorithmParametersList {
     public CycleParameters(List<String> initialValues) {
         super(initialValues);
 
-        this.labels = Arrays.asList("number of vertices", "directed?");
+        this.labels = Arrays.asList("cycleVertexNumber", "directed");
 
         IntSyntaxChecker isc = new IntSyntaxChecker(1,Integer.MAX_VALUE);
         List<SyntaxChecker> syntaxCheckers = Arrays.asList(isc,null);
+        this.syntaxCheckers = syntaxCheckers;
 
 
-        List<String> explanations = Arrays.asList("The number of vertices in a cycle should be at least 1.", "");
-
+        List<String> explanations = Arrays.asList("", "");
+        this.explanations = explanations;
 
 
     }

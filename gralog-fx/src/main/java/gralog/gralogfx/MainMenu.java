@@ -136,7 +136,7 @@ public class MainMenu {
         load         = new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN);
         quitGralog   = new KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN);
 
-        menuFileNew = new Menu("New" );
+        menuFileNew = new Menu("New");
         menuFileGenerators = new Menu("Generators");
 
         menuFileSave = createMenuItem("Save graph", handlers.onSave,save);
@@ -189,7 +189,7 @@ public class MainMenu {
                         new KeyCodeCombination(KeyCode.V, KeyCombination.ALT_DOWN)),
                 new SeparatorMenuItem(),
                 createMenuItem("Close Tab", handlers.onCloseTab,
-                		new KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN)) 
+                		new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN)) 
         );
         return menuEdit;
     }

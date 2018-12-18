@@ -732,8 +732,12 @@ public class MainWindow extends Application {
     }
     
     private void onCloseTab() {
-    	tabs.closeTab(tabs.getTabIndex(tabs.getCurrentTab()));
+    	Tab tab = tabs.getCurrentTab();
+    	if (tab!=null) {
+    		tabs.closeTab(tabs.getTabIndex(tabs.getCurrentTab()));
+    	}
     }
+    
 
     public void algorithmCompleted(StructurePane structurePane,
         AlgorithmThread algoThread) {

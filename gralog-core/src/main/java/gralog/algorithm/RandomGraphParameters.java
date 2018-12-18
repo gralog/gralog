@@ -16,7 +16,7 @@ public class RandomGraphParameters extends StringAlgorithmParametersList {
     public RandomGraphParameters(List<String> initialValues) {
         super(initialValues);
 
-        this.labels = Arrays.asList("number of vertices", "probability of an edge", "directed?");
+        this.labels = Arrays.asList("number of vertices", "probability of an edge", "directed");
 
         IntSyntaxChecker isc = new IntSyntaxChecker(1,Integer.MAX_VALUE);
         DoubleSyntaxChecker dsc = new DoubleSyntaxChecker(0.0, 1.0);

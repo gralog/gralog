@@ -5,6 +5,7 @@ package gralog.gralogfx.views;
 import gralog.algorithm.StringAlgorithmParametersList;
 import gralog.parser.SyntaxChecker;
 import javafx.geometry.Insets;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
@@ -23,23 +24,43 @@ public class StringAlgorithmParametersListView extends GridPaneView<StringAlgori
         this.getChildren().clear();
         if (params == null)
             return;
-
+        
+      
         setVgap(5.0);
         for (int i = 0; i < params.parameters.size(); i++) {
-            TextField valueField = new TextField(params.parameters.get(i));
-            valueField.setPrefWidth(1000);
+        	if (params.parameters.get(i).equals("true") || params.parameters.get(i).equals("false")) {
+        		CheckBox valueField = new CheckBox();
+                if (params.parameters.get(i).equals("true")){
+                    valueField.setSelected(true);
+                }
+                int finalI = i;
+                valueField.selectedProperty().addListener(e -> {
+                	if (valueField.isSelected()) {
+                		params.parameters.set(finalI, "true");
+                	}
+                	else {
+                		params.parameters.set(finalI, "false");
+                	}
+                });
 
-            Text hint = new Text();
+        		add(new Label(params.labels.get(i) + ": "), 0, 3*i);
+        		add(valueField, 1, 3*i);
+        	}
+        	else {
+        		TextField valueField = new TextField(params.parameters.get(i));
+        		valueField.setPrefWidth(1000);
 
-            int finalI = i;
-            valueField.textProperty().addListener(e -> {
-                params.parameters.set(finalI, valueField.getText());
-                syntaxCheck(params, valueField, hint, submitPossible);
-            });
+        		Text hint = new Text();
 
-            add(new Label(params.labels.get(i) + ": "), 0, 3*i);
-            add(valueField, 1, 3*i);
-
+        		int finalI = i;
+        		valueField.textProperty().addListener(e -> {
+        			params.parameters.set(finalI, valueField.getText());
+        			syntaxCheck(params, valueField, hint, submitPossible);
+        		});
+        	
+        		add(new Label(params.labels.get(i) + ": "), 0, 3*i);
+        		add(valueField, 1, 3*i);
+        	}
 
             String explanation = params.explanations.get(i);
             Text explanationText = new Text(explanation);

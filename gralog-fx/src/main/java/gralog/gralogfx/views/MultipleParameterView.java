@@ -49,7 +49,7 @@ public class MultipleParameterView extends GridPaneView<Object> {
                 Class<?> c = displayObject.getClass();
 
                 for (Field f : c.getDeclaredFields()) {
-
+                	System.out.println(f.getType());
                     f.setAccessible(true);
                     
 
