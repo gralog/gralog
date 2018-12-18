@@ -190,6 +190,7 @@ public class MainMenu {
                 new SeparatorMenuItem(),
                 createMenuItem("Close Tab", handlers.onCloseTab,
                 		new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN)) 
+
         );
         return menuEdit;
     }

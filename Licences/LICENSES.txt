@@ -5,3 +5,4 @@
 5. Eclipse Public license - v 1.0 (junit, jgrapht): ./Licenses/Eclipse.txt
 6. CUP Parser Generator Copyright Notice, License, and Disclaimer (vbmacher): ./Licenses/Cup.txt
 7. Jflex: ./Licenses/Jflex.txt
+8. Creative Commons Attribution-ShareAlike 3.0 Unported (quadratic Bezier curves in Tikz export): ./Licenses/cc-by-sa-3.0.txt. From: https://tex.stackexchange.com/questions/432273/how-are-quadratic-bezier-curves-drawn-by-tikz, answer by Krym (https://tex.stackexchange.com/users/9335/kpym).
