@@ -248,6 +248,10 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     public int getDegree() {
         return incidentEdges.size();
     }
+    
+    public double getRadius() {
+    	return radius;
+    }
 
     public int getId() {
         return this.id;

@@ -1,13 +1,33 @@
 \documentclass{article}
 \usepackage{pgf}
 \usepackage{tikz}
-\usetikzlibrary{shapes}
 \usepackage{amsmath, amssymb}
 \usetikzlibrary{arrows.meta}
+\usetikzlibrary{arrows}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes}
 \usepackage[utf8]{inputenc}
 
 
 \begin{document}
-\input{tikztest_node.tikz}
+    \begin{tikzpicture}[auto]
+        \tikzset{>=Stealth}
+        \tikzstyle{every path}=[->,thick]
+        \tikzstyle{every node}=[ellipse,fill=white,draw=black,text=black,thin,minimum width=0.8cm,minimum height=0.8cm,inner sep=1.5pt]
+        \tikzset{quadratic bezier/.style={ to path={(\tikztostart) .. controls($#1!1/3!(\tikztostart)$)
+        and ($#1!1/3!(\tikztotarget)$).. (\tikztotarget)}}}
 
+        \definecolor{g-fillcolor}{HTML}{E64D4D}
+        \node [rectangle, fill=g-fillcolor, line width=0.026cm] (n0) at (12.441cm,-1.884cm) {$55$};
+        \node [diamond, line width=0.026cm] (n1) at (3.313cm,-2.413cm) {};
+        \node [line width=0.026cm] (n2) at (3.445cm,-6.726cm) {};
+        \definecolor{g-strokecolor}{HTML}{001A80}
+        \node [ellipse, draw=g-strokecolor, line width=0.026cm] (n3) at (10.827cm,-7.44cm) {};
+
+        \draw (n1) to (7.652cm,0.497cm) to (n0);
+        \draw (n3) .. controls (7.176,-5.668) and (3.842,-9.795) ..  (n2);
+        \coordinate (crtl0)  at (15.06,-4.715);
+        \draw [-] (n0) .. controls($(crtl0)!1/3!(n0)$) and ($(crtl0)!1/3!(n3)$).. (n3);
+        \draw (n2) to (n1);
+    \end{tikzpicture}
 \end{document}

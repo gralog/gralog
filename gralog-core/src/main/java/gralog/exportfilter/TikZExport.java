@@ -4,6 +4,7 @@
 package gralog.exportfilter;
 
 import gralog.rendering.GralogColor;
+import gralog.rendering.GralogGraphicsContext;
 import gralog.rendering.Vector2D;
 import gralog.structure.Edge;
 import gralog.structure.EdgeIntermediatePoint;
@@ -14,6 +15,7 @@ import gralog.structure.controlpoints.ControlPoint;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 
+
 /**
  *
  */
@@ -21,7 +23,7 @@ import java.util.HashMap;
     name = "TikZ ist kein Zeichenprogramm",
     text = "",
     url = "http://www.texample.net/tikz/",
-    fileExtension = "tikz"
+    fileExtension = "tex"
 )
 public class TikZExport extends ExportFilter {
 
@@ -30,55 +32,67 @@ public class TikZExport extends ExportFilter {
                        ExportFilterParameters params) throws Exception {
         IndentedWriter out = new IndentedWriter(stream, 4);
 
-        out.writeLine("%\\documentclass{article}");
-        out.writeLine("%\\usepackage{pgf}");
-        out.writeLine("%\\usepackage{tikz}");
-        out.writeLine("%\\usepackage{amsmath, amssymb}");
-        out.writeLine("%\\usetikzlibrary{arrows.meta}");
-        out.writeLine("%\\usetikzlibrary{arrows}");
-        out.writeLine("%\\usetikzlibrary{calc}");
-        out.writeLine("%\\usetikzlibrary{shapes}");
-        out.writeLine("%\\usepackage[utf8]{inputenc}");
-
-        out.writeLine("%\\begin{document}");
+        out.writeLine("\\documentclass[crop,tikz, border=5pt]{standalone}");
+        out.writeLine("\\usepackage{pgf}");
+        out.writeLine("\\usepackage{tikz}");
+        out.writeLine("\\usepackage{amsmath, amssymb}");
+        out.writeLine("\\usetikzlibrary{arrows.meta}");
+        out.writeLine("\\usetikzlibrary{arrows}");
+        out.writeLine("\\usetikzlibrary{calc}");
+        out.writeLine("\\usetikzlibrary{shapes}");
+        out.writeLine("\\usepackage[utf8]{inputenc}");
+        out.writeLine("");
+        out.writeLine("");
+        
+        
+        out.writeLine("\\begin{document}");
         out.increaseIndent();
         out.writeLine("\\begin{tikzpicture}[auto]");
         out.increaseIndent();
         out.writeLine("\\tikzset{>=Stealth}");
         out.writeLine("\\tikzstyle{every path}=[->,thick]");
-        out.writeLine("\\tikzstyle{every node}=[circle,fill=white,draw=black,"
-                + "text=black,thin,minimum size=5pt,inner sep=1.5pt]");
+        out.writeLine("\\tikzstyle{every node}=[ellipse,fill=white,draw=black,"
+                + "text=black,thin,minimum width=0.8,minimum height=0.8,inner sep=1.5pt]");
         out.writeLine("\\tikzset{quadratic bezier/.style={ to path={(\\tikztostart) .. controls($#1!1/3!(\\tikztostart)$)");
         out.writeLine("and ($#1!1/3!(\\tikztotarget)$).. (\\tikztotarget)}}}");
         out.writeLine("");
 
         HashMap<Vertex, Integer> nodeIndex = new HashMap<>();
-
+        String gfillcolor = "";
+        String gstrokecolor = "";
         for (Vertex v : structure.getVertices()) {
             nodeIndex.put(v, v.id);
             final String label = v.label.isEmpty() ? "" : "$" + v.label + "$";
 
-            //String properties = "ellipse, minimum width = " + v.shape.sizeBox.width
-            // + "cm, minimum height = " + v.shape.sizeBox.height;
-
-            String properties = v.shape.getClass().getSimpleName().toLowerCase() + ", minimum width = "
-                    + v.shape.sizeBox.width + "cm, minimum height = " + v.shape.sizeBox.height + "cm";
-            out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
-            properties = properties + ", fill=gralog-fill-color";
-/*        if (!v.fillColor.equals(GralogColor.WHITE)) {
-  //          out.writeLine("\\definecolor{gralog-fill-color}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
-    //        properties = properties + ", fill=gralog-fill-color";
-        }*/
-            if (!v.strokeColor.equals(GralogColor.BLACK)) {
-                out.writeLine("\\definecolor{gralog-stroke-color}{HTML}{"
-                        + v.strokeColor.toHtmlString().substring(1) + "}");
-                properties = properties + ", draw=gralog-stroke-color";
+            String properties = "";
+            if (!v.shape.getClass().getSimpleName().toLowerCase().equals("ellipse")) {
+            	properties = properties + v.shape.getClass().getSimpleName().toLowerCase() + ", ";
             }
-            properties = properties + ", line width=" + v.strokeWidth + "cm";
+            if (!v.shape.sizeBox.width.equals(1.0)) {
+            	properties = properties + "minimum width = " + Math.round(1000.0 * v.shape.sizeBox.width) / 1000.0 + ", ";
+            }
+            if (!v.shape.sizeBox.height.equals(1.0)) {
+            	properties = properties + "minimum height = " + Math.round(1000.0 * v.shape.sizeBox.height) / 1000.0 + ", ";
+            }
+            if (!v.fillColor.equals(GralogColor.WHITE)) {
+            	if (!gfillcolor.equals(v.fillColor.toHtmlString().substring(1))) {
+            		out.writeLine("\\definecolor{g-fillcolor}{HTML}{" + v.fillColor.toHtmlString().substring(1) + "}");
+            		gfillcolor = v.fillColor.toHtmlString().substring(1);
+            	}
+            	properties = properties + "fill=g-fillcolor, ";
+        	}
+            if (!v.strokeColor.equals(GralogColor.BLACK)) {
+            	if (!gstrokecolor.equals(v.fillColor.toHtmlString().substring(1))) {
+                	out.writeLine("\\definecolor{g-strokecolor}{HTML}{" + v.strokeColor.toHtmlString().substring(1) + "}");
+            		gstrokecolor = v.strokeColor.toHtmlString().substring(1);
+            	}
+                properties = properties + "draw=g-strokecolor, ";
+            }
+            properties = properties + "line width=" + Math.round(1000.0 * v.strokeWidth) / 1000.0 + "";
 
             out.writeLine("\\node [" + properties + "] " + "(n" + v.id + ") at ("
-                    + v.coordinates.getX() + "cm,"
-                    + (-v.coordinates.getY()) + "cm) {" + label + "};");
+                    + Math.round(1000.0 * v.coordinates.getX()) / 1000.0 + ","
+                    + (-Math.round(1000.0 * v.coordinates.getY()) / 1000.0) + ") {" + label + "};");
 
 //          ++i;
         }
@@ -97,15 +111,23 @@ public class TikZExport extends ExportFilter {
                 ControlPoint c = e.controlPoints.get(0);
                 controlPointCoord = "crtl" + nodeIndex.get(e.getSource());
                 out.writeLine("\\coordinate (" + controlPointCoord + ")  at ("
-                        + c.position.getX() + "," + -c.position.getY() + ");");
+                        + Math.round(1000.0 * c.position.getX()) / 1000.0 + "," + -Math.round(1000.0 * c.position.getY()) / 1000.0 + ");");
             }
-            if (e.isDirected)
-                out.write("\\draw");
-            else
-                out.write("\\draw [-]");
-
+            String properties = "";
+            if (!e.isDirected)
+                properties = properties + "-";
+            if (!e.color.equals(GralogColor.BLACK)) {
+            	if (!gfillcolor.equals(e.color.toHtmlString().substring(1))) {
+            		out.writeLine("\\definecolor{g-fillcolor}{HTML}{" + e.color.toHtmlString().substring(1) + "}");
+            		gfillcolor = e.color.toHtmlString().substring(1);
+            	}
+            	properties = properties + ", g-fillcolor";
+        	}
+            if (!e.type.equals(GralogGraphicsContext.LineType.PLAIN)) {
+            	properties = properties + ", "+e.type.toString().toLowerCase();
+            }
+            out.write("\\draw [" + properties + "]");
             out.writeNoIndent(" (n" + nodeIndex.get(e.getSource()) + ")");
-
 
             if (e.edgeType == Edge.EdgeType.BEZIER) {
                 if (e.controlPoints.size() == 1) {
@@ -117,19 +139,19 @@ public class TikZExport extends ExportFilter {
                             + controlPointCoord
                             + ")!1/3!(n"
                             + nodeIndex.get(e.getTarget())
-                            + "1)$)..");
+                            + ")$)..");
                 } else if (e.controlPoints.size() == 2){
                     out.writeNoIndent(" .. controls ("
-                            + e.controlPoints.get(0).position.getX()
-                            + ",-" + e.controlPoints.get(0).position.getY() + ") and ("
-                            + e.controlPoints.get(1).position.getX()
-                            + ",-" + e.controlPoints.get(1).position.getY() + ") .. ");
+                            + Math.round(1000.0 * e.controlPoints.get(0).position.getX()) / 1000.0
+                            + ",-" + Math.round(1000.0 * e.controlPoints.get(0).position.getY()) / 1000.0 + ") and ("
+                            + Math.round(1000.0 * e.controlPoints.get(1).position.getX()) / 1000.0
+                            + ",-" + Math.round(1000.0 * e.controlPoints.get(1).position.getY()) / 1000.0 + ") .. ");
                 } else{
                     out.writeNoIndent(" to");
                 }
             } else {
                 for (ControlPoint c : e.controlPoints) {
-                    out.writeNoIndent(" to (" + c.position.getX() + "cm," + (-c.position.getY()) + "cm)");
+                    out.writeNoIndent(" to (" + Math.round(1000.0 * c.position.getX()) / 1000.0 + "," + (-Math.round(1000.0 * c.position.getY()) / 1000.0) + ")");
                 }
 
                 out.writeNoIndent(" to");
@@ -142,6 +164,6 @@ public class TikZExport extends ExportFilter {
         out.decreaseIndent();
         out.writeLine("\\end{tikzpicture}");
         out.decreaseIndent();
-        out.writeLine("%\\end{document}");
+        out.writeLine("\\end{document}");
     }
 }

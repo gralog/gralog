@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<graphml>
+  <graph edgedefault="directed" type="digraph">
+    <node fillcolor="#FFFFFF" id="n1" label="" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="4.926666666666667" y="10.985625"/>
+    <node fillcolor="#FFFFFF" id="n2" label="" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="12.361458333333335" y="10.985625"/>
+    <node fillcolor="#FFFFFF" id="n3" label="" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="9.292291666666667" y="15.668750000000003"/>
+    <node fillcolor="#FFFFFF" id="n4" label="" radius="0.7" shapeheight="1.0" shapewidth="1.0" strokecolor="#000000" strokewidth="0.026458333333333334" textheight="0.4" x="9.027708333333335" y="6.725833333333334"/>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n3" target="n1" thickness="0.025" weight="1.0">
+      <controlpoint x="2.069166666666667" y="16.092083333333335"/>
+      <controlpoint x="5.535208333333334" y="17.838333333333335"/>
+    </edge>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n1" target="n4" thickness="0.025" weight="1.0">
+      <controlpoint x="3.3656250000000005" y="5.667500000000002"/>
+    </edge>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n2" target="n3" thickness="0.025" weight="1.0">
+      <controlpoint x="15.959791666666668" y="12.573125"/>
+      <controlpoint x="16.277291666666674" y="15.72166666666667"/>
+      <controlpoint x="14.795625" y="17.944166666666664"/>
+    </edge>
+    <edge arrowheadlength="0.2" color="#000000" isdirected="true" label="" source="n4" target="n2" thickness="0.025" weight="1.0">
+      <controlpoint x="14.345833333333333" y="6.249583333333334"/>
+    </edge>
+  </graph>
+</graphml>

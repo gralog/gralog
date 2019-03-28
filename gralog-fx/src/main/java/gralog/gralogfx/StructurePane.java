@@ -115,6 +115,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
     //context menu
     private ContextMenu vertexMenu;
+    private ContextMenu canvasMenu;
 
     private ObjectListDisplay objectListDisplay;
 
@@ -233,9 +234,39 @@ public class StructurePane extends StackPane implements StructureListener {
             createListFromSelection();
         });
         vertexMenu.getItems().addAll(addList, new SeparatorMenuItem(), addLoop, copy, delete);
-
+        
+        canvasMenu = new ContextMenu();
+        MenuItem center = new MenuItem("Center view");
+        center.setAccelerator(new MultipleKeyCombination(KeyCode.CONTROL,KeyCode.ALT, KeyCode.C));
+        center.setOnAction(e -> {
+        	centerView();
+        });
+        canvasMenu.getItems().add(center);
     }
 
+    public void centerView() {
+    	//TODO:	center the view - right now: center is located upper left corner
+    	double sumX = 0;
+        double sumY = 0;
+        for (Vertex v : structure.getVertices()) {
+        	sumX += v.getCoordinates().getX();
+        	sumY += v.getCoordinates().getY();
+        }
+        double n = structure.getVertices().size();
+        offsetX = 1/n*sumX;
+        offsetY = 1/n*sumY;
+        System.out.println("LALALA"+offsetX+"   "+screenResolutionX);
+        this.requestRedraw();
+
+		double screenResolutionX = 96d; // dpi
+		double screenResolutionY = 96d; // dpi
+		double offsetX = -1d;
+		double offsetY = -1d;
+		double zoomFactor = 1d;
+		blockVertexCreationOnRelease=true;
+
+    }
+    
     public void setObjectListDisplay(ObjectListDisplay obj) {
         objectListDisplay = obj;
     }
@@ -301,6 +332,7 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     public void requestRedraw() {
+    	System.out.println("REQUEST Redraw");
         needsRepaintLock.lock();
         try {
             if (!needsRepaint) {
@@ -543,7 +575,6 @@ public class StructurePane extends StackPane implements StructureListener {
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
         IMovable selected = structure.findObject(lastMouseX, lastMouseY);
-
         //group selection handling for primary mouse button
         if(e.isPrimaryButtonDown()) {
 
@@ -601,6 +632,7 @@ public class StructurePane extends StackPane implements StructureListener {
             }
         }
         vertexMenu.hide();
+        //canvasMenu.hide();
         this.requestRedraw();
     }
     private void onMouseReleased(MouseEvent e) {
@@ -611,7 +643,7 @@ public class StructurePane extends StackPane implements StructureListener {
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
         IMovable selected = structure.findObject(lastMouseX, lastMouseY);
-
+        
         //Start: handle response to piping wanting a user selected vertex
         if (!wasDraggingPrimary) {
             if (this.getPiping() != null && this.getPiping().getPipingState() == Piping.State.WaitingForSelection && selected != null) {
@@ -621,8 +653,11 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         //End
 
-
-        if (dragging != null) {
+        if (canvasMenu.isShowing()) {
+        	blockVertexCreationOnRelease = true;
+        	canvasMenu.hide();
+        }
+        else if (dragging != null) {
             Undo.Record(structure);
             if(hasGrid && snapToGrid) {
                 structure.snapToGrid(gridSize);
@@ -666,6 +701,8 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     vertexMenu.show(canvas, e.getScreenX(), e.getScreenY());
                 }
+            } else {
+            	canvasMenu.show(canvas, e.getScreenX(), e.getScreenY());
             }
         }
 

@@ -115,8 +115,18 @@ public final class EdgeRenderer {
             gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates,
                     GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
         }
+        if (e.isDirected()) {
+        	//TODO: still open
+        	double corr = e.arrowType.endPoint * e.arrowHeadLength;
+            if (isSelected) {
+            	gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates.minus(corr,corr), GralogColor.RED, e.thickness, e.type);
+                gc.arrow(e.getTarget().coordinates.minus(e.getSource().coordinates), e.getTarget().getCoordinates(), e.arrowType, e.arrowHeadLength, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset);
+            }
 
-        gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates, e.color, e.thickness, e.type);
+            gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates, e.color, e.thickness, e.type);
+            gc.arrow(e.getTarget().getCoordinates().minus(e.getSource().coordinates), e.getTarget().coordinates.minus(e.getTarget().getRadius(),e.getTarget().getRadius()), e.arrowType, e.arrowHeadLength, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset);
+
+        }
     }
 
     private static void drawStraightEdge(Edge e, GralogGraphicsContext gc, boolean isSelected) {
