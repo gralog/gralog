@@ -342,7 +342,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
     private void renderLoop(GralogGraphicsContext gc, Highlights highlights) {
     	System.out.println("RENDER Loop");
-    	EdgeRenderer.drawBezierEdge(this, gc, highlights.isSelected(this));
+    	EdgeRenderer.drawBezierEdge(this, gc, highlights.isSelected(this), label);
     	Vector2D  offset1 = new Vector2D(-2,-3);
     	Vector2D  offset2 = new Vector2D(2,-3);
 		this.addControlPoint(this.getSource().coordinates.plus(offset1), null);
@@ -389,9 +389,9 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         }
 
         if (edgeType == EdgeType.BEZIER) {
-            EdgeRenderer.drawBezierEdge(this, gc, highlights.isSelected(this));
+            EdgeRenderer.drawBezierEdge(this, gc, highlights.isSelected(this), label);
         } else if (edgeType == EdgeType.SHARP) {
-            EdgeRenderer.drawSharpEdge(this, gc, highlights.isSelected(this));
+            EdgeRenderer.drawSharpEdge(this, gc, highlights.isSelected(this), label);
         }
 
     }

@@ -30,11 +30,11 @@ public final class EdgeRenderer {
      * @param isSelected The color of the curve
      */
 
-    public static void drawBezierEdge(Edge e, GralogGraphicsContext gc, boolean isSelected) {
+    public static void drawBezierEdge(Edge e, GralogGraphicsContext gc, boolean isSelected, String label) {
         List<ControlPoint> controlPoints = e.controlPoints;
 
         if (controlPoints.isEmpty() || controlPoints.size() > 2) {
-            drawStraightEdge(e, gc, isSelected);
+            drawStraightEdge(e, gc, isSelected, label);
             return;
         }
 
@@ -92,11 +92,11 @@ public final class EdgeRenderer {
      * @param e  Has all the necessary information to render the curve
      * @param gc The graphics context used to draw the curve
      */
-    public static void drawSharpEdge(Edge e, GralogGraphicsContext gc, boolean isSelected) {
+    public static void drawSharpEdge(Edge e, GralogGraphicsContext gc, boolean isSelected, String label) {
         List<ControlPoint> ctrl = e.controlPoints;
 
         if (ctrl.isEmpty()) {
-            drawStraightEdge(e, gc, isSelected);
+            drawStraightEdge(e, gc, isSelected, label);
             return;
         }
 
@@ -116,20 +116,20 @@ public final class EdgeRenderer {
                     GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
         }
         if (e.isDirected()) {
-        	//TODO: still open
+        	//TODO: I'm on it - Michelle
         	double corr = e.arrowType.endPoint * e.arrowHeadLength;
             if (isSelected) {
             	gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates.minus(corr,corr), GralogColor.RED, e.thickness, e.type);
-                gc.arrow(e.getTarget().coordinates.minus(e.getSource().coordinates), e.getTarget().getCoordinates(), e.arrowType, e.arrowHeadLength, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset);
-            }
+                gc.arrow(e.getTarget().getCoordinates().minus(e.getSource().getCoordinates()), e.getTarget().coordinates.minus(e.getTarget().radius*0.5,e.getTarget().radius*0.5), e.arrowType, e.arrowHeadLength, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset);
+            } //e.getTarget().coordinates.minus(corr,corr).minus(ctrl.get(ctrl.size()-1).getPosition())
 
             gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates, e.color, e.thickness, e.type);
-            gc.arrow(e.getTarget().getCoordinates().minus(e.getSource().coordinates), e.getTarget().coordinates.minus(e.getTarget().getRadius(),e.getTarget().getRadius()), e.arrowType, e.arrowHeadLength, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset);
+            gc.arrow(e.getTarget().getCoordinates().minus(e.getSource().coordinates), e.getTarget().coordinates.minus(e.getTarget().getRadius(),e.getTarget().getRadius()), e.arrowType, e.arrowHeadLength, GralogColor.BLACK, e.thickness + Edge.edgeSelectionOffset);
 
         }
     }
 
-    private static void drawStraightEdge(Edge e, GralogGraphicsContext gc, boolean isSelected) {
+    private static void drawStraightEdge(Edge e, GralogGraphicsContext gc, boolean isSelected, String label) {
         double offset = e.getOffset();
 
         Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
@@ -157,5 +157,7 @@ public final class EdgeRenderer {
                 gc.line(sourceOffset, intersection, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
             gc.line(sourceOffset, intersection, e.color, e.thickness, e.type);
         }
+        Vector2D center = sourceOffset.plus(intersection.minus(sourceOffset).multiply(0.5)).plus(e.thickness*10,e.thickness*10);
+        gc.putText(center, label, e.thickness*10, GralogColor.BLACK);
     }
 }
