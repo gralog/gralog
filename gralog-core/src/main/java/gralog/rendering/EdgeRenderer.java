@@ -63,7 +63,7 @@ public final class EdgeRenderer {
 
         corr = e.isDirected ? corr : 0;
 
-        curve.target = curve.target.minus(targetToCtrl2.multiply(corr)); //correction for the arrow
+        //curve.target = curve.target.minus(targetToCtrl2.multiply(corr)); //correction for the arrow
 
         if (controlPoints.size() == 1) {
             if (isSelected) {
@@ -116,24 +116,24 @@ public final class EdgeRenderer {
                     GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
         }
         if (e.isDirected()) {
-        	//TODO: I'm on it - Michelle
         	double corr = e.arrowType.endPoint * e.arrowHeadLength;
-            if (isSelected) {
-            	gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates.minus(corr,corr), GralogColor.RED, e.thickness, e.type);
-                gc.arrow(e.getTarget().getCoordinates().minus(e.getSource().getCoordinates()), e.getTarget().coordinates.minus(e.getTarget().radius*0.5,e.getTarget().radius*0.5), e.arrowType, e.arrowHeadLength, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset);
-            } //e.getTarget().coordinates.minus(corr,corr).minus(ctrl.get(ctrl.size()-1).getPosition())
+        	Vector2D intersection = e.getTarget().shape.getIntersection(ctrl.get(ctrl.size() -1).getPosition(), e.getTarget().getCoordinates(), e.getTarget().getCoordinates()).minus(e.thickness*0.7,e.thickness*0.7) ;
+        	//intersection = intersection.minus(diff.normalized().multiply(e.endPointDistance)); // option to put little distance btween arrow and vertex
+        	if (isSelected) {
+        		gc.line(ctrl.get(ctrl.size() - 1).getPosition(), intersection, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
+                gc.arrow(e.getTarget().getCoordinates().minus(ctrl.get(ctrl.size() -1).getPosition()), intersection, e.arrowType, e.arrowHeadLength, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset);
+            }
 
-            gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates, e.color, e.thickness, e.type);
-            gc.arrow(e.getTarget().getCoordinates().minus(e.getSource().coordinates), e.getTarget().coordinates.minus(e.getTarget().getRadius(),e.getTarget().getRadius()), e.arrowType, e.arrowHeadLength, GralogColor.BLACK, e.thickness + Edge.edgeSelectionOffset);
-
+            gc.line(ctrl.get(ctrl.size() - 1).getPosition(), intersection, e.color, e.thickness, e.type);
+            gc.arrow(e.getTarget().getCoordinates().minus(ctrl.get(ctrl.size() -1).getPosition()), intersection, e.arrowType, e.arrowHeadLength, e.color);
         }
     }
 
     private static void drawStraightEdge(Edge e, GralogGraphicsContext gc, boolean isSelected, String label) {
-        double offset = e.getOffset();
+        double offset = e.getOffset();	// = 0 iff no multiegde |M
 
         Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
-        Vector2D perpendicularToEdge = diff.orthogonal(1).normalized().multiply(offset);
+        Vector2D perpendicularToEdge = diff.orthogonal(1).normalized().multiply(offset); 
 
         Vector2D sourceOffset = e.getSource().coordinates.plus(perpendicularToEdge);
         Vector2D targetOffset = e.getTarget().coordinates.plus(perpendicularToEdge);
@@ -142,16 +142,16 @@ public final class EdgeRenderer {
         if (Double.isNaN(intersection.getX()) || Double.isNaN(intersection.getY())) {
             intersection = targetOffset.minus(diff.normalized().multiply(e.getTarget().shape.sizeBox.width / 2));
         }
-        intersection = intersection.minus(diff.normalized().multiply(e.endPointDistance)); //no idea why I divide
+        //intersection = intersection.minus(diff.normalized().multiply(e.endPointDistance)); // option to put little distance btween arrow and vertex
         if (e.isDirected) {
-            Vector2D adjust = intersection.plus(diff.normalized().multiply(e.arrowType.endPoint * e.arrowHeadLength));
+            Vector2D adjust = intersection.minus(e.thickness,e.thickness);
             if (isSelected) {
                 gc.line(sourceOffset, adjust, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
-                gc.arrow(diff, intersection, e.arrowType, e.arrowHeadLength, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset);
+                gc.arrow(diff, adjust, e.arrowType, e.arrowHeadLength, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset);
             }
 
             gc.line(sourceOffset, adjust, e.color, e.thickness, e.type);
-            gc.arrow(diff, intersection, e.arrowType, e.arrowHeadLength, e.color);
+            gc.arrow(diff, adjust, e.arrowType, e.arrowHeadLength, e.color);
         } else {
             if (isSelected)
                 gc.line(sourceOffset, intersection, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
