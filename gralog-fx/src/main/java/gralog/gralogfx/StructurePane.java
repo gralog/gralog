@@ -580,6 +580,7 @@ public class StructurePane extends StackPane implements StructureListener {
 
             //if selection hit something, select
             if (selected != null) {
+            	canvasMenu.hide();
                 //only clear selection if mouse press was not on a bezier control point
                 if(selected instanceof ControlPoint) {
                     //select only the edge and the bezier control point.
@@ -628,11 +629,12 @@ public class StructurePane extends StackPane implements StructureListener {
         }else if(e.isSecondaryButtonDown()) {
             //start an edge if secondary mouse down on a vertex
             if(selected instanceof Vertex) {
+            	canvasMenu.hide();
                 currentEdgeStartingPoint = selected;
             }
         }
         vertexMenu.hide();
-        //canvasMenu.hide();
+        
         this.requestRedraw();
     }
     private void onMouseReleased(MouseEvent e) {

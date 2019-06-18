@@ -38,8 +38,8 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     public int id;
     @DataField(display = true)
     public String label = "";
-    @DataField(display = true)
-    public double radius = 0.7;     // cm
+    @DataField(display = true, readOnly = true)
+    public double radius = 0.7;     // cm for what?!
 
     //the position of the loop center on the circle
     ///note: -90 is on top because the coordinate system is flipped horizontally

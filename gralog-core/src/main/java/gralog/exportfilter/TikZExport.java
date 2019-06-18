@@ -52,7 +52,7 @@ public class TikZExport extends ExportFilter {
         out.writeLine("\\tikzset{>=Stealth}");
         out.writeLine("\\tikzstyle{every path}=[->,thick]");
         out.writeLine("\\tikzstyle{every node}=[ellipse,fill=white,draw=black,"
-                + "text=black,thin,minimum width=0.8,minimum height=0.8,inner sep=1.5pt]");
+                + "text=black,thin,minimum width=3,minimum height=3,inner sep=5pt]");
         out.writeLine("\\tikzset{quadratic bezier/.style={ to path={(\\tikztostart) .. controls($#1!1/3!(\\tikztostart)$)");
         out.writeLine("and ($#1!1/3!(\\tikztotarget)$).. (\\tikztotarget)}}}");
         out.writeLine("");
