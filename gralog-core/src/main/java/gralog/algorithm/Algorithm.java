@@ -3,6 +3,7 @@
 package gralog.algorithm;
 
 import gralog.progresshandler.ProgressHandler;
+import gralog.structure.Highlights;
 import gralog.structure.Structure;
 
 import java.lang.reflect.Method;
@@ -15,7 +16,7 @@ public abstract class Algorithm {
 
     //public Object Run(Structure structure, AlgorithmParameters params, ProgressHandler onprogress);
     // null means it has no parameters
-    public AlgorithmParameters getParameters(Structure structure) {
+    public AlgorithmParameters getParameters(Structure structure, Highlights highlights) {
         return null;
     }
 
