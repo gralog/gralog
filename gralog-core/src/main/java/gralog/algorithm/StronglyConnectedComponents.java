@@ -2,17 +2,14 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
+import gralog.preferences.Preferences;
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Edge;
+import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
-import java.util.Collection;
+import java.util.*;
 
 /**
  *
@@ -111,8 +108,21 @@ public class StronglyConnectedComponents extends Algorithm {
         } // for (Vertex i : V)
     }
 
-    public Object run(Structure s, AlgorithmParameters ap, Set<Object> selection,
+    @Override
+    public AlgorithmParameters getParameters(Structure structure, Highlights highlights) {
+        ArrayList<Object> obtainedObjects = highlights.getFilteredByType(Vertex.class);
+        ArrayList<Vertex> staringVertices = new ArrayList<>();
+        for (Object o : obtainedObjects){
+            staringVertices.add((Vertex)o);
+        }
+
+        return new StronglyConnectedComponentsParameters(staringVertices);
+    }
+
+
+    public Object run(Structure s, StronglyConnectedComponentsParameters parameters, Set<Object> selection,
                       ProgressHandler onprogress) throws Exception {
+        ArrayList<Vertex> startingVertices = parameters.vertices;
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
         tarjanStrongComponents(s, componentOfVertex, verticesInComponent);
