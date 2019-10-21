@@ -3,12 +3,7 @@
 package gralog.structure;
 
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Manages highlights and annotations of vertices and edges.
@@ -49,6 +44,8 @@ public class Highlights {
         selection.removeAll(o);
     }
 
+    /**
+     * Removes all objects from the selection that have specified type.*/
     public void filterType(Class<?> t) {
         List<Object> l = new LinkedList<>();
         for (Object o : selection) {
@@ -57,6 +54,16 @@ public class Highlights {
             }
         }
         selection.removeAll(l);
+    }
+
+    public ArrayList<Object> getFilteredByType(Class<?> t){
+        ArrayList<Object> list = new ArrayList<>();
+        for (Object o: selection){
+            if (t.isInstance(o)){
+                list.add(o);
+            }
+        }
+        return list;
     }
 
     public LinkedHashSet<Object> getSelection() {
