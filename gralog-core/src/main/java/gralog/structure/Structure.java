@@ -1084,8 +1084,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     }
                 } else if (e.getEdgeType() == Edge.EdgeType.SHARP) {
                     continue; // TODO:
-                } else if (e.getEdgeType() == Edge.EdgeType.ROUND) {
-                    continue; // TODO:
+                //} else if (e.getEdgeType() == Edge.EdgeType.ROUND) {
+                //    continue; // TODO:
                 }
                 continue;
             }
@@ -1271,6 +1271,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         }
     }
 
+    
     @Override
     public Element toXml(Document doc) throws Exception {
         Element snode = doc.createElement("graph"); //super.toXml(doc);

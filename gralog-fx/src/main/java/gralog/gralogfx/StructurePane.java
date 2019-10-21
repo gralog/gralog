@@ -316,6 +316,10 @@ public class StructurePane extends StackPane implements StructureListener {
         Undo.Redo(structure);
         this.requestRedraw();
     }
+    
+    public void recordStructure() {
+    	Undo.Record(structure);
+    }
 
     public Structure getStructure() {
         return structure;
@@ -659,8 +663,8 @@ public class StructurePane extends StackPane implements StructureListener {
         	blockVertexCreationOnRelease = true;
         	canvasMenu.hide();
         }
-        else if (dragging != null) {
-            Undo.Record(structure);
+        if (dragging != null) {
+            //Undo.Record(structure);
             if(hasGrid && snapToGrid) {
                 structure.snapToGrid(gridSize);
                 this.requestRedraw();
@@ -703,7 +707,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     vertexMenu.show(canvas, e.getScreenX(), e.getScreenY());
                 }
-            } else {
+            } else if (!wasDraggingSecondary) {
             	canvasMenu.show(canvas, e.getScreenX(), e.getScreenY());
             }
         }

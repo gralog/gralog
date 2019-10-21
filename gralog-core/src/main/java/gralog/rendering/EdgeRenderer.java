@@ -131,7 +131,7 @@ public final class EdgeRenderer {
         }
         if (e.isDirected()) {
         	double corr = e.arrowType.endPoint * e.arrowHeadLength;
-        	Vector2D intersection = e.getTarget().shape.getIntersection(ctrl.get(ctrl.size() -1).getPosition(), e.getTarget().getCoordinates(), e.getTarget().getCoordinates()).minus(e.thickness*0.7,e.thickness*0.7) ;
+        	Vector2D intersection = e.getTarget().shape.getIntersection(ctrl.get(ctrl.size() -1).getPosition(), e.getTarget().getCoordinates(), e.getTarget().getCoordinates().minus(e.thickness*2,e.thickness*2));//.minus(e.thickness*0.7,e.thickness*0.7) ;
         	//intersection = intersection.minus(diff.normalized().multiply(e.endPointDistance)); // option to put little distance btween arrow and vertex
         	if (isSelected) {
         		gc.line(ctrl.get(ctrl.size() - 1).getPosition(), intersection, GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
@@ -139,9 +139,9 @@ public final class EdgeRenderer {
             }
 
             gc.line(ctrl.get(ctrl.size() - 1).getPosition(), intersection, e.color, e.thickness, e.type);
-            gc.arrow(e.getTarget().getCoordinates().minus(ctrl.get(ctrl.size() -1).getPosition()), intersection, e.arrowType, e.arrowHeadLength, e.color);
+            gc.arrow(e.getTarget().getCoordinates().minus(ctrl.get(ctrl.size() -1).getPosition()), intersection, e.arrowType, e.arrowHeadLength, e.color, e.thickness + Edge.edgeSelectionOffset);
         } else {
-        	Vector2D intersection = e.getTarget().shape.getIntersection(ctrl.get(ctrl.size() -1).getPosition(), e.getTarget().getCoordinates(), e.getTarget().getCoordinates()).minus(e.thickness*0.7,e.thickness*0.7) ;
+        	Vector2D intersection = e.getTarget().shape.getIntersection(ctrl.get(ctrl.size() -1).getPosition(), e.getTarget().getCoordinates(), e.getTarget().getCoordinates()).minus(e.thickness*2,e.thickness*2) ;
         	gc.line(ctrl.get(ctrl.size() - 1).getPosition(), intersection, e.color, e.thickness, e.type);
         }
         

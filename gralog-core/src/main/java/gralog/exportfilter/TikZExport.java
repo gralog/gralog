@@ -50,9 +50,9 @@ public class TikZExport extends ExportFilter {
         out.writeLine("\\begin{tikzpicture}[auto]");
         out.increaseIndent();
         out.writeLine("\\tikzset{>=Stealth}");
-        out.writeLine("\\tikzstyle{every path}=[->,thick]");
+        out.writeLine("\\tikzstyle{every path}=[->]");
         out.writeLine("\\tikzstyle{every node}=[ellipse,fill=white,draw=black,"
-                + "text=black,thin,minimum width=3,minimum height=3,inner sep=5pt]");
+                + "text=black,thin,minimum width=20,minimum height=20, line width=0.26]");
         out.writeLine("\\tikzset{quadratic bezier/.style={ to path={(\\tikztostart) .. controls($#1!1/3!(\\tikztostart)$)");
         out.writeLine("and ($#1!1/3!(\\tikztotarget)$).. (\\tikztotarget)}}}");
         out.writeLine("");
@@ -69,10 +69,13 @@ public class TikZExport extends ExportFilter {
             	properties = properties + v.shape.getClass().getSimpleName().toLowerCase() + ", ";
             }
             if (!v.shape.sizeBox.width.equals(1.0)) {
-            	properties = properties + "minimum width = " + Math.round(1000.0 * v.shape.sizeBox.width) / 1000.0 + ", ";
+            	properties = properties + "minimum width = " + Math.round(1000.0 * v.shape.sizeBox.width) / 100.0 + ", ";
             }
             if (!v.shape.sizeBox.height.equals(1.0)) {
-            	properties = properties + "minimum height = " + Math.round(1000.0 * v.shape.sizeBox.height) / 1000.0 + ", ";
+            	properties = properties + "minimum height = " + Math.round(1000.0 * v.shape.sizeBox.height) / 100.0 + ", ";
+            }
+            if (!v.strokeWidth.equals(2.54 / 96)) {
+            	properties = properties + "line width=" + Math.round(1000.0 * v.strokeWidth) / 100.0 + ", ";
             }
             if (!v.fillColor.equals(GralogColor.WHITE)) {
             	if (!gfillcolor.equals(v.fillColor.toHtmlString().substring(1))) {
@@ -88,8 +91,9 @@ public class TikZExport extends ExportFilter {
             	}
                 properties = properties + "draw=g-strokecolor, ";
             }
-            properties = properties + "line width=" + Math.round(1000.0 * v.strokeWidth) / 1000.0 + "";
-
+            if(properties.length()>0) {
+            	properties = properties.substring(0, properties.length()-2);
+            }
             out.writeLine("\\node [" + properties + "] " + "(n" + v.id + ") at ("
                     + Math.round(1000.0 * v.coordinates.getX()) / 1000.0 + ","
                     + (-Math.round(1000.0 * v.coordinates.getY()) / 1000.0) + ") {" + label + "};");
@@ -115,16 +119,22 @@ public class TikZExport extends ExportFilter {
             }
             String properties = "";
             if (!e.isDirected)
-                properties = properties + "-";
+                properties = properties + "-, ";
             if (!e.color.equals(GralogColor.BLACK)) {
             	if (!gfillcolor.equals(e.color.toHtmlString().substring(1))) {
             		out.writeLine("\\definecolor{g-fillcolor}{HTML}{" + e.color.toHtmlString().substring(1) + "}");
             		gfillcolor = e.color.toHtmlString().substring(1);
             	}
-            	properties = properties + ", g-fillcolor";
+            	properties = properties + "g-fillcolor, ";
         	}
             if (!e.type.equals(GralogGraphicsContext.LineType.PLAIN)) {
-            	properties = properties + ", "+e.type.toString().toLowerCase();
+            	properties = properties + e.type.toString().toLowerCase() + ", ";
+            }
+            if (!e.thickness.equals(2.54/96)) {
+            	properties = properties + "line width=" + Math.round(1000.0 * e.thickness) / 100.0 + ", ";
+            }
+            if(properties.length()>0) {
+            	properties = properties.substring(0, properties.length()-2);
             }
             out.write("\\draw [" + properties + "]");
             out.writeNoIndent(" (n" + nodeIndex.get(e.getSource()) + ")");

@@ -39,7 +39,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
     public enum EdgeType {
         SHARP,
-        ROUND, // TODO: choosing this in object inspector makes the edge invisible
+        //ROUND, // TODO: choosing this in object inspector makes the edge invisible
         BEZIER
     }
     public static double edgeSelectionOffset = 0.02;
@@ -158,8 +158,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         	this.edgeType = EdgeType.BEZIER;
     	} else if (e.equals(EdgeType.SHARP.name())) {
     		this.edgeType = EdgeType.SHARP;
-        } else if (e.equals(EdgeType.ROUND.name())) {
-    		this.edgeType = EdgeType.ROUND;
+        //} else if (e.equals(EdgeType.ROUND.name())) {
+    	//	this.edgeType = EdgeType.ROUND;
         }
     }
 
@@ -596,8 +596,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
             return source.shape.getEdgePoint(sourceToCtrl1.theta(), source.coordinates);
         } else if (edgeType == EdgeType.SHARP) {
             return source.coordinates;
-        } else if (edgeType == EdgeType.ROUND) {
-            return source.coordinates;
+        //} else if (edgeType == EdgeType.ROUND) {
+        //    return source.coordinates;
         } else {
             return source.coordinates;
         }
@@ -620,8 +620,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
             return x;
         } else if (edgeType == EdgeType.SHARP) {
             return target.coordinates;
-        } else if (edgeType == EdgeType.ROUND) {
-            return target.coordinates;
+        //} else if (edgeType == EdgeType.ROUND) {
+        //    return target.coordinates;
         } else {
             return target.coordinates;
         }
@@ -639,7 +639,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         double result = 0.0;
         return result + to.minus(from).length();
     }
-
+    
     public Element toXml(Document doc, HashMap<Vertex, String> ids) throws Exception {
         Element enode = super.toXml(doc);
         enode.setAttribute("source", ids.get(source));
