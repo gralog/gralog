@@ -795,9 +795,10 @@ public class MainWindow extends Application {
             // Prepare
             StructurePane structurePane = tabs.getCurrentStructurePane();
             Structure structure = structurePane.structure;
+            Highlights highlights = structurePane.highlights;
             Algorithm algo = AlgorithmManager.instantiateAlgorithm(structure.getClass(), algorithmName);
 
-            AlgorithmParameters params = algo.getParameters(structure);
+            AlgorithmParameters params = algo.getParameters(structure, highlights);
 
 
             if (params != null) {
