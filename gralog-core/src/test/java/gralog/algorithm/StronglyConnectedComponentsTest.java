@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static gralog.structure.StructureMatchers.equalsVertexSet;
 import static org.junit.Assert.*;
@@ -27,7 +28,10 @@ public class StronglyConnectedComponentsTest {
 
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
-        StronglyConnectedComponents.tarjanStrongComponents(structure, componentOfVertex, verticesInComponent);
+        StronglyConnectedComponents.tarjanStrongComponents(structure,
+                componentOfVertex,
+                verticesInComponent,
+                new HashSet<>());
         assertSame("Number of components", verticesInComponent.size(), 2);
         assertThat("First component",
                 verticesInComponent.get(componentOfVertex.get(w)),
@@ -50,7 +54,10 @@ public class StronglyConnectedComponentsTest {
 
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
-        StronglyConnectedComponents.tarjanStrongComponents(structure, componentOfVertex, verticesInComponent);
+        StronglyConnectedComponents.tarjanStrongComponents(structure,
+                componentOfVertex,
+                verticesInComponent,
+                new HashSet<>());
         assertSame("Number of components", verticesInComponent.size(), 1);
         assertThat("First component",
                 verticesInComponent.get(0),
@@ -68,7 +75,10 @@ public class StronglyConnectedComponentsTest {
 
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
-        StronglyConnectedComponents.tarjanStrongComponents(structure, componentOfVertex, verticesInComponent);
+        StronglyConnectedComponents.tarjanStrongComponents(structure,
+                componentOfVertex,
+                verticesInComponent,
+                new HashSet<>());
         assertSame("Number of components", verticesInComponent.size(), 2);
         assertThat("First component",
                 verticesInComponent.get(componentOfVertex.get(w)),
@@ -94,7 +104,10 @@ public class StronglyConnectedComponentsTest {
 
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
-        StronglyConnectedComponents.tarjanStrongComponents(structure, componentOfVertex, verticesInComponent);
+        StronglyConnectedComponents.tarjanStrongComponents(structure,
+                componentOfVertex,
+                verticesInComponent,
+                new HashSet<>());
         assertSame("Number of components", verticesInComponent.size(), 1);
         assertThat("First component",
                 verticesInComponent.get(0),

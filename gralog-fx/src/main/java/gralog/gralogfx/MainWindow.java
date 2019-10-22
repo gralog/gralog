@@ -773,8 +773,13 @@ public class MainWindow extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText((String) algoResult);
                 alert.showAndWait();
-            } else if (algoResult instanceof VertexColoring){
-                ((VertexColoring) algoResult).setColors(structurePane.structure);
+            } else if (algoResult instanceof VertexToInteger){
+                Structure structure = structurePane.structure;
+                VertexToInteger vertexToInteger = (VertexToInteger) algoResult;
+                VertexColoring vertexColoring =
+                        new VertexColoring(vertexToInteger.vertexToInteger, null);
+                vertexColoring.setColors();
+                structurePane.requestRedraw();
             } else {
                 AlgorithmResultStage resultStage = new AlgorithmResultStage(
                     algoThread.algo,

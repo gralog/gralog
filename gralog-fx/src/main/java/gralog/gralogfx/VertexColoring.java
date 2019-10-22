@@ -12,7 +12,7 @@ public class VertexColoring {
     public HashMap<Integer, GralogColor.Color> coloringFX;
     public HashMap<Vertex, Integer> coloring;
 
-    public void Coloring(HashMap<Vertex, Integer> coloring, HashMap<Integer, GralogColor.Color> coloringFX){
+    public VertexColoring(HashMap<Vertex, Integer> coloring, HashMap<Integer, GralogColor.Color> coloringFX){
         if (! (coloring == null))
             this.coloring = coloring;
         else
@@ -23,7 +23,7 @@ public class VertexColoring {
             this.coloringFX = GralogColor.IntegerToColor();
     }
 
-    public void setColors(Structure structure) {
+    public void setColors() {
         int number = 0;
         for (Vertex v : coloring.keySet()) {
             number = coloring.get(v);

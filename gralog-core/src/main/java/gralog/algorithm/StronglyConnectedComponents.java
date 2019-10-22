@@ -4,10 +4,7 @@ package gralog.algorithm;
 
 import gralog.preferences.Preferences;
 import gralog.progresshandler.ProgressHandler;
-import gralog.structure.Edge;
-import gralog.structure.Highlights;
-import gralog.structure.Structure;
-import gralog.structure.Vertex;
+import gralog.structure.*;
 
 import java.util.*;
 
@@ -23,7 +20,7 @@ public class StronglyConnectedComponents extends Algorithm {
 
     public static void tarjanStrongComponents(Structure s,
                                               HashMap<Vertex, Integer> componentOfVertex,
-                                              ArrayList<ArrayList<Vertex>> verticesInComponent,
+                                              HashSet<HashSet<Vertex>> verticesInComponent,
                                               HashSet<Vertex> removedVertices) {
         int numScc = 0;
         int index = 0;
@@ -63,6 +60,7 @@ public class StronglyConnectedComponents extends Algorithm {
             onStack.add(v);
             Vertex current = v;
 
+
             while (current != null) {
                 Integer currentChildIdx = childIterationPos.get(current);
                 if (currentChildIdx < children.get(current).size()) { // <current> has more children
@@ -94,7 +92,7 @@ public class StronglyConnectedComponents extends Algorithm {
                 } else { // collect current scc and go up one recursive call
                     if (lowlink.get(current).equals(dfs.get(current))) {
                         Vertex top = null;
-                        ArrayList<Vertex> scc = new ArrayList<>();
+                        HashSet<Vertex> scc = new HashSet<>();
                         while (top != current) {
                             top = tarStack.pop();
                             onStack.remove(top);
@@ -130,8 +128,8 @@ public class StronglyConnectedComponents extends Algorithm {
                       ProgressHandler onprogress) throws Exception {
         HashSet<Vertex> removedVertices = new HashSet<>(parameters.vertices);
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
-        ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
-        tarjanStrongComponents(s, componentOfVertex, verticesInComponent, removedVertices);
-        return new HashSet<>(verticesInComponent);
+        HashSet<HashSet<Vertex>> components = new HashSet<>();
+        tarjanStrongComponents(s, componentOfVertex, components, removedVertices);
+        return new VertexToInteger(componentOfVertex);
     }
 }
