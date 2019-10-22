@@ -19,7 +19,7 @@ import java.util.*;
 public class Col2 extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return new Col2Parameters();
     }
 

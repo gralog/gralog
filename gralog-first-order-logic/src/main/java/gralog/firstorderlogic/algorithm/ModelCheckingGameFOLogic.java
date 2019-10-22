@@ -30,7 +30,7 @@ import gralog.rendering.Vector2D;
 public class ModelCheckingGameFOLogic extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return new StringAlgorithmParameter(
             "Formula",
             Preferences.getString(this.getClass(), "formula", "!x. ?y. E(y,x) ∨ E(x,z)"),

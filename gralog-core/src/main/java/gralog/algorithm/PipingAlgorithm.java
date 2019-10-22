@@ -34,7 +34,7 @@ import javafx.scene.layout.HBox;
 public class PipingAlgorithm extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return null;
     }
 

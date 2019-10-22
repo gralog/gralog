@@ -5,6 +5,7 @@ package gralog.algorithm;
 import gralog.progresshandler.ProgressHandler;
 import gralog.rendering.Vector2D;
 import gralog.structure.Edge;
+import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 
@@ -29,7 +30,7 @@ public class SpringEmbedder extends Algorithm {
     }
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return new SpringEmbedderParameters();
     }
 

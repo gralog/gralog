@@ -1084,7 +1084,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     }
                 } else if (e.getEdgeType() == Edge.EdgeType.SHARP) {
                     continue; // TODO:
-                //} else if (e.getEdgeType() == Edge.EdgeType.ROUND) {
+                //} else isf (e.getEdgeType() == Edge.EdgeType.ROUND) {
                 //    continue; // TODO:
                 }
                 continue;

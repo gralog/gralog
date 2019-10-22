@@ -3,11 +3,13 @@
 package gralog.algorithm;
 
 import gralog.progresshandler.ProgressHandler;
+import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import gralog.treedecomposition.Bag;
 import gralog.treedecomposition.TreeDecomposition;
 
+import javax.swing.text.Highlighter;
 import java.util.Collection;
 import java.util.Set;
 
@@ -19,7 +21,7 @@ import java.util.Set;
 public class FakeDirectedTreeDecomposition extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return null; // new DirectedTreeDecompositionParameters();
     }
 
