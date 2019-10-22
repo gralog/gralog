@@ -1,4 +1,6 @@
-package gralog.gralogfx.piping;
+package gralog.gralogfx.piping.commands;
+import gralog.gralogfx.piping.NonExistantEdgeException;
+import gralog.gralogfx.piping.PipingMessageHandler;
 import gralog.structure.*;
 
 public class ExistsVertexCommand extends CommandForGralogToExecute {

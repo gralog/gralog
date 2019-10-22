@@ -760,8 +760,8 @@ public class MainWindow extends Application {
                 boolean isSelection = true;
                 for (Object o : (Set) algoResult)
                     if (!(o instanceof Vertex)
-                        && !(o instanceof Edge)
-                        && !(o instanceof EdgeIntermediatePoint))
+                            && !(o instanceof Edge)
+                            && !(o instanceof EdgeIntermediatePoint))
                         isSelection = false;
                 if (isSelection) {
                     structurePane.selectAll((Set) algoResult);
@@ -773,6 +773,8 @@ public class MainWindow extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText((String) algoResult);
                 alert.showAndWait();
+            } else if (algoResult instanceof VertexColoring){
+                ((VertexColoring) algoResult).setColors(structurePane.structure);
             } else {
                 AlgorithmResultStage resultStage = new AlgorithmResultStage(
                     algoThread.algo,
@@ -802,10 +804,13 @@ public class MainWindow extends Application {
 
 
             if (params != null) {
-                AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
-                algostage.showAndWait();
-                if (!algostage.dialogResult)
-                    return;
+                // ImplicitParameters do not demand a new window to ask for input
+                if (!ImplicitParameters.class.isInstance(params)) {
+                    AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
+                    algostage.showAndWait();
+                    if (!algostage.dialogResult)
+                        return;
+                }
             }
 
             // Run

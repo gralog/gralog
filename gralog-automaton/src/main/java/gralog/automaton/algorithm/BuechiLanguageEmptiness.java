@@ -16,6 +16,7 @@ import gralog.structure.Vertex;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -37,7 +38,8 @@ public class BuechiLanguageEmptiness extends Algorithm {
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
 
-        StronglyConnectedComponents.tarjanStrongComponents(s, componentOfVertex, verticesInComponent);
+        HashSet<Vertex> removedVertices = new HashSet<>(); // no removed vertices: the empty set
+        StronglyConnectedComponents.tarjanStrongComponents(s, componentOfVertex, verticesInComponent, removedVertices);
 
         HashMap<State, HashMap<Vertex, Vertex>> startStateReach = new HashMap();
         HashMap<State, HashMap<Vertex, Edge>> startStateReachEdges = new HashMap();

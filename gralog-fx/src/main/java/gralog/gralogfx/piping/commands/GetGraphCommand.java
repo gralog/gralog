@@ -1,4 +1,8 @@
-package gralog.gralogfx.piping;
+package gralog.gralogfx.piping.commands;
+import gralog.gralogfx.piping.GraphType;
+import gralog.gralogfx.piping.MessageFormatException;
+import gralog.gralogfx.piping.PipingMessageHandler;
+import gralog.gralogfx.piping.PipingPresets;
 import gralog.structure.*;
 import gralog.rendering.*;
 import java.util.Set;

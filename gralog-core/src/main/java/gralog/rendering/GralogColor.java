@@ -3,6 +3,7 @@
 package gralog.rendering;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  *
@@ -180,5 +181,17 @@ public class GralogColor implements Serializable {
         public int getValue() {
             return this.value;
         }
+    }
+
+    public static int numberNamedColors(){
+        return Color.values().length;
+    }
+
+    public static HashMap<Integer, Color> IntegerToColor(){
+        int i = 0;
+        HashMap<Integer, Color> int_to_color = new HashMap<>();
+        for (Color c : Color.values())
+            int_to_color.put(i++,c);
+        return int_to_color;
     }
 }

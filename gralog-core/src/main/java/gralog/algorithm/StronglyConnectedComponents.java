@@ -23,7 +23,8 @@ public class StronglyConnectedComponents extends Algorithm {
 
     public static void tarjanStrongComponents(Structure s,
                                               HashMap<Vertex, Integer> componentOfVertex,
-                                              ArrayList<ArrayList<Vertex>> verticesInComponent) {
+                                              ArrayList<ArrayList<Vertex>> verticesInComponent,
+                                              HashSet<Vertex> removedVertices) {
         int numScc = 0;
         int index = 0;
         Stack<Vertex> tarStack = new Stack<>();
@@ -37,6 +38,7 @@ public class StronglyConnectedComponents extends Algorithm {
         HashMap<Vertex, Integer> childIterationPos = new HashMap<>(); // children-iteration position
 
         Collection<Vertex> vertices = s.getVertices();
+        vertices.removeAll(removedVertices);
         for (Vertex v : vertices) {
             if (dfs.containsKey(v)) // already processed
                 continue;
@@ -48,9 +50,11 @@ public class StronglyConnectedComponents extends Algorithm {
             ArrayList<Vertex> vChildren = new ArrayList<>();
             for (Edge e : v.getIncidentEdges())
                 if (e.getSource() == v)
-                    vChildren.add(e.getTarget());
+                    if (!removedVertices.contains(e.getTarget()))
+                        vChildren.add(e.getTarget());
                 else if (!e.isDirected)
-                    vChildren.add(e.getSource());
+                    if (!removedVertices.contains(e.getSource()))
+                        vChildren.add(e.getSource());
             children.put(v, vChildren);
             childIterationPos.put(v, 0); // iteration starts at id 0
 
@@ -70,9 +74,11 @@ public class StronglyConnectedComponents extends Algorithm {
                         ArrayList<Vertex> grandChildren = new ArrayList<>();
                         for (Edge e : child.getIncidentEdges())
                             if (e.getSource() == child)
-                                grandChildren.add(e.getTarget());
+                                if (!removedVertices.contains(e.getTarget()))
+                                    grandChildren.add(e.getTarget());
                             else if (!e.isDirected)
-                                grandChildren.add(e.getSource());
+                                if (!removedVertices.contains(e.getSource()))
+                                    grandChildren.add(e.getSource());
                         children.put(child, grandChildren);
 
                         childIterationPos.put(child, 0); // iteration (on child's children) starts at id 0
@@ -122,10 +128,10 @@ public class StronglyConnectedComponents extends Algorithm {
 
     public Object run(Structure s, StronglyConnectedComponentsParameters parameters, Set<Object> selection,
                       ProgressHandler onprogress) throws Exception {
-        ArrayList<Vertex> startingVertices = parameters.vertices;
+        HashSet<Vertex> removedVertices = new HashSet<>(parameters.vertices);
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
-        tarjanStrongComponents(s, componentOfVertex, verticesInComponent);
-        return new HashSet<>(verticesInComponent.get(0));
+        tarjanStrongComponents(s, componentOfVertex, verticesInComponent, removedVertices);
+        return new HashSet<>(verticesInComponent);
     }
 }

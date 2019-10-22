@@ -85,7 +85,7 @@ public class Piping extends Thread {
     public Supplier<String> receiveUserMessageFromConsole;
     private boolean pauseWasPressed = false;
     public boolean windowDoesCloseNow = false;
-    protected BiConsumer sendMessageToConsole;
+    public BiConsumer sendMessageToConsole;
     private Class classSelectionIsWaitingFor = null;
     private IMovable selectedObject;
     private String consoleInputText;
@@ -339,7 +339,7 @@ public class Piping extends Thread {
     //     return this.exec("ack");
     // }
 
-    protected void redrawMyStructurePanes() {
+    public void redrawMyStructurePanes() {
         for (StructurePane sp : this.idStructurePaneMap.valueSet()) {
             sp.requestRedraw();
         }
@@ -514,7 +514,7 @@ public class Piping extends Thread {
 
                     }
 
-                    gralog.gralogfx.piping.CommandForGralogToExecute currentCommand;
+                    gralog.gralogfx.piping.commands.CommandForGralogToExecute currentCommand;
                     try {
                         // currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])),this);
                         int localStructureIndex = Integer.parseInt(PipingMessageHandler.extractNthPositionString(externalCommandSegments,1));
@@ -523,7 +523,7 @@ public class Piping extends Thread {
                         // mostRecentlyUsedStructurePane = currentCommand.getStructurePane();
                     }catch(Exception e) {
                         e.printStackTrace();
-                        currentCommand = new gralog.gralogfx.piping.NotRecognizedCommand(externalCommandSegments,(Structure)null);
+                        currentCommand = new gralog.gralogfx.piping.commands.NotRecognizedCommand(externalCommandSegments,(Structure)null);
                     }
                     
                     if (!currentCommand.didFail()) {

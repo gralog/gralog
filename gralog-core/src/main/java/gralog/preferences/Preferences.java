@@ -154,7 +154,7 @@ public final class Preferences {
 
     /*
      **********
-     * FYLE *
+     * FILE *
      **********
      * */
 

@@ -123,8 +123,8 @@ public class StructureTest {
         for (Vertex u : structure.getVertices()) {
             u.setCoordinates((double) i, (double) i);
             u.radius = i;
-            u.strokeWidth = i;
-            u.textHeight = i;
+            u.strokeWidth = (double) i;
+            u.textHeight = (double) i;
             u.fillColor = new GralogColor(i, i, i);
             u.strokeColor = new GralogColor(i, i, i);
         }

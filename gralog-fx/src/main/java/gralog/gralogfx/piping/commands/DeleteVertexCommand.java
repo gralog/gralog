@@ -1,4 +1,4 @@
-package gralog.gralogfx.piping;
+package gralog.gralogfx.piping.commands;
 import gralog.structure.*;
 import gralog.rendering.*;
 
