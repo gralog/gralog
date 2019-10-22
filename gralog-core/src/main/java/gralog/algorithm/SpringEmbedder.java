@@ -8,10 +8,9 @@ import gralog.structure.Edge;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
+import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -81,13 +80,21 @@ public class SpringEmbedder extends Algorithm {
          */
         // init
         Collection<Vertex> vertices = s.getVertices();
+        // To make sure that no two vertices have the same position
+        HashSet<Integer> savedCoords = new HashSet<>();
         for (Vertex a : vertices) {
             Vector2D coordinates = new Vector2D(
                     Math.random() * dimensionLimits.getX(),
                     Math.random() * dimensionLimits.getY()
             );
+            while (savedCoords.contains(coordinates.hashCode()))
+                coordinates = new Vector2D(
+                        Math.random() * dimensionLimits.getX(),
+                        Math.random() * dimensionLimits.getY()
+                );
+            savedCoords.add(coordinates.hashCode());
             a.coordinates = coordinates;
-            // should make sure that no two vertices have the same position
+
 
             tractions.add(new Vector2D(0d, 0d));
         }
