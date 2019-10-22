@@ -255,7 +255,6 @@ public class StructurePane extends StackPane implements StructureListener {
         double n = structure.getVertices().size();
         offsetX = 1/n*sumX;
         offsetY = 1/n*sumY;
-        System.out.println("LALALA"+offsetX+"   "+screenResolutionX);
         this.requestRedraw();
 
 		double screenResolutionX = 96d; // dpi
@@ -336,7 +335,6 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     public void requestRedraw() {
-    	System.out.println("REQUEST Redraw");
         needsRepaintLock.lock();
         try {
             if (!needsRepaint) {
