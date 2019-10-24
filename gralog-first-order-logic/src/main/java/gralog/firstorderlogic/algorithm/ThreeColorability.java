@@ -13,9 +13,9 @@ import java.util.*;
 
 @AlgorithmDescription(
     name = "3-colorability",
-    text = "Test the current graph for 3-colorability unsing a python plugin witha call to pycosat",
-    url = "")
-public class Colorability extends Algorithm {
+    text = "",
+    url = "https://en.wikipedia.org/wiki/Graph_coloring")
+public class ThreeColorability extends Algorithm {
 
     public static StringBuilder convertToBase3(long n, int nVertices) {
         StringBuilder ans = new StringBuilder();
