@@ -101,10 +101,14 @@ public class Coloring extends Algorithm {
         defaultColors.add(new GralogColor(0x000000)); // black
         defaultColors.add(new GralogColor(0xFFFFFF)); // white
 
-        if (k <= defaultColors.size())
+        if (k <= defaultColors.size()) {
             for (Vertex v : s.getVertices())
                 v.fillColor = defaultColors.get(result.get(v));
-
+        }
+        else{
+            for (Vertex v : s.getVertices())
+                v.label = result.get(v).toString();
+        }
         return null;
     }
 }
