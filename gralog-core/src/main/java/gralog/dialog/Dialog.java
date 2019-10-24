@@ -885,9 +885,9 @@ public class Dialog {
 class ComparatorLEFTRIGHT implements Comparator<Vertex> {
     @Override
     public int compare(Vertex v, Vertex w) {
-        if (v.coordinates.getX() > w.coordinates.getX())
+        if (v.getCoordinates().getX() > w.getCoordinates().getX())
             return 1;
-        if (v.coordinates.getX() < w.coordinates.getX())
+        if (v.getCoordinates().getX() < w.getCoordinates().getX())
             return -1;
         return 0;
     }
@@ -907,10 +907,10 @@ class ComparatorLEFTRIGHT implements Comparator<Vertex> {
 class ComparatorRIGHTLEFT implements Comparator<Vertex> {
     @Override
     public int compare(Vertex v, Vertex w) {
-        if (v.coordinates.getX() < w.coordinates.getX()) {
+        if (v.getCoordinates().getX() < w.getCoordinates().getX()) {
             return 1;
         }
-        if (v.coordinates.getX() > w.coordinates.getX()) {
+        if (v.getCoordinates().getX() > w.getCoordinates().getX()) {
             return -1;
         }
         return 0;
@@ -931,9 +931,9 @@ class ComparatorRIGHTLEFT implements Comparator<Vertex> {
 class ComparatorTOPDOWN implements Comparator<Vertex> {
     @Override
     public int compare(Vertex v, Vertex w) {
-        if (v.coordinates.getY() > w.coordinates.getY())
+        if (v.getCoordinates().getY() > w.getCoordinates().getY())
             return 1;
-        if (v.coordinates.getY() < w.coordinates.getY())
+        if (v.getCoordinates().getY() < w.getCoordinates().getY())
             return -1;
         return 0;
     }
@@ -954,9 +954,9 @@ class ComparatorTOPDOWN implements Comparator<Vertex> {
 class ComparatorBOTTOMUP implements Comparator<Vertex> {
     @Override
     public int compare(Vertex v, Vertex w) {
-        if (v.coordinates.getY() < w.coordinates.getY())
+        if (v.getCoordinates().getY() < w.getCoordinates().getY())
             return 1;
-        if (v.coordinates.getY() > w.coordinates.getY())
+        if (v.getCoordinates().getY() > w.getCoordinates().getY())
             return -1;
         return 0;
     }

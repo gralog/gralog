@@ -104,7 +104,7 @@ public class FirstOrderForall extends FirstOrderFormula {
         Vertex oldvalue = varassign.get(variable);
         FiniteGamePosition parent = new FiniteGamePosition();
 
-        parent.coordinates = coor;
+        parent.setCoordinates(coor);
         parent.label = toString() + ", "
             + FirstOrderFormula.variableAssignmentToString(varassign);
         // "forall", so this is a player 1 position.

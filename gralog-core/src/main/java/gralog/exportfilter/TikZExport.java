@@ -95,8 +95,8 @@ public class TikZExport extends ExportFilter {
             	properties = properties.substring(0, properties.length()-2);
             }
             out.writeLine("\\node [" + properties + "] " + "(n" + v.id + ") at ("
-                    + Math.round(1000.0 * v.coordinates.getX()) / 1000.0 + ","
-                    + (-Math.round(1000.0 * v.coordinates.getY()) / 1000.0) + ") {" + label + "};");
+                    + Math.round(1000.0 * v.getCoordinates().getX()) / 1000.0 + ","
+                    + (-Math.round(1000.0 * v.getCoordinates().getY()) / 1000.0) + ") {" + label + "};");
 
 //          ++i;
         }
@@ -105,7 +105,7 @@ public class TikZExport extends ExportFilter {
 
         for (Edge e : structure.getEdges()) {
             double halfLength = e.length() / 2.0;
-            Vector2D from = e.getSource().coordinates;
+            Vector2D from = e.getSource().getCoordinates();
             double distance = 0.0;
             // Tikz implements quadratic Bezier curves as cubic curves where both
             // middle control points coincide, which leads to wrong curves.

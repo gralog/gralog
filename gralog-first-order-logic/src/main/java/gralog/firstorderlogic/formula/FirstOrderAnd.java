@@ -68,7 +68,7 @@ public class FirstOrderAnd extends FirstOrderFormula {
         Vector2D coor) {
         FiniteGamePosition parent = new FiniteGamePosition();
 
-        parent.coordinates = coor;
+        parent.setCoordinates(coor);
         parent.label = toString() + ", "
             + FirstOrderFormula.variableAssignmentToString(varassign);
         // "and", so this is a player 1 position.

@@ -61,7 +61,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     @DataField(display = true)
     public RenderingShape shape = Ellipse.create(1.4, 1.4);
 
-    public Vector2D coordinates = new Vector2D(0.0, 0.0);
+    private Vector2D coordinates = new Vector2D(0.0, 0.0);
 
     public ResizeControls controls;
 
@@ -120,7 +120,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         this.fillColor = new GralogColor(v.fillColor);
 
 
-        this.setCoordinates(v.coordinates);
+        this.setCoordinates(v.getCoordinates());
         this.listeners = new HashSet<>(v.listeners);
 
         this.incidentEdges = new HashSet<>(v.incidentEdges);

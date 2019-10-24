@@ -84,7 +84,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
         Vector2D coor) {
         FiniteGamePosition parent = new FiniteGamePosition();
 
-        parent.coordinates = coor;
+        parent.setCoordinates(coor);
         parent.label = toString() + ", "
             + FirstOrderFormula.variableAssignmentToString(varassign);
 

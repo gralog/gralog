@@ -60,9 +60,9 @@ public class ModalMuCalculusOr extends ModalMuCalculusFormula {
             ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x + scale*(lw + 0.5d));
             node.setCoordinates(
-                (index.get((World) v).get(left).coordinates.getX()
-                + index.get((World) v).get(right).coordinates.getX()) / 2d,
-                scale * size.getY() * v.coordinates.getY() + pos.getY()
+                (index.get((World) v).get(left).getCoordinates().getX()
+                + index.get((World) v).get(right).getCoordinates().getX()) / 2d,
+                scale * size.getY() * v.getCoordinates().getY() + pos.getY()
             );
             node.label = "∨";
             node.player1Position = true;

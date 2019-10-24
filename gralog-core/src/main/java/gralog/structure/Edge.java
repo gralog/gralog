@@ -199,8 +199,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         ControlPoint c = new ControlPoint(position, this);
 
         if (controlPoints.size() == 1) {
-            double c1Dist = c.getPosition().minus(target.coordinates).length();
-            double c2Dist = controlPoints.get(0).getPosition().minus(target.coordinates).length();
+            double c1Dist = c.getPosition().minus(target.getCoordinates()).length();
+            double c2Dist = controlPoints.get(0).getPosition().minus(target.getCoordinates()).length();
             //distance is not the correct metric
             //TODO: project on edge and use x order
             controlPoints.add(c1Dist > c2Dist ? 0 : 1, c);
@@ -344,8 +344,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     	EdgeRenderer.drawBezierEdge(this, gc, highlights.isSelected(this), label);
     	Vector2D  offset1 = new Vector2D(-2,-3);
     	Vector2D  offset2 = new Vector2D(2,-3);
-		this.addControlPoint(this.getSource().coordinates.plus(offset1), null);
-		this.addControlPoint(this.getSource().coordinates.plus(offset2), null);
+		this.addControlPoint(this.getSource().getCoordinates().plus(offset1), null);
+		this.addControlPoint(this.getSource().getCoordinates().plus(offset2), null);
     	/**GralogColor edgeColor = highlights.isSelected(this) ? GralogColor.RED : this.color;
 
 
@@ -471,8 +471,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
         double r = source.radius;
         System.out.println("CONTAIN Loop "+angleStart+"  "+angleEnd+"  "+r);
-        Vector2D intersection = source.shape.getEdgePoint(angleStart, source.coordinates);
-        Vector2D intersection2 = source.shape.getEdgePoint(angleEnd, source.coordinates);
+        Vector2D intersection = source.shape.getEdgePoint(angleStart, source.getCoordinates());
+        Vector2D intersection2 = source.shape.getEdgePoint(angleEnd, source.getCoordinates());
         System.out.println("CONTAIN Loop "+intersection+"  "+intersection2);
         Vector2D tangentToIntersection = Vector2D.getVectorAtAngle(angleEnd, 1).multiply(-1);
 
@@ -490,11 +490,11 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     }
     
     private int containsCoordinateFlat(double x, double y) {
-        Vector2D diff = target.coordinates.minus(source.coordinates);
+        Vector2D diff = target.getCoordinates().minus(source.getCoordinates());
         Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(getOffset());
 
-        Vector2D sourceOffset = source.coordinates.plus(perpendicularToDiff);
-        Vector2D targetOffset = target.coordinates.plus(perpendicularToDiff);
+        Vector2D sourceOffset = source.getCoordinates().plus(perpendicularToDiff);
+        Vector2D targetOffset = target.getCoordinates().plus(perpendicularToDiff);
 
         double fromX = sourceOffset.getX();
         double fromY = sourceOffset.getY();
@@ -526,7 +526,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         if (controlPoints.size() == 0) {
             return containsCoordinateFlat(x, y);
         }
-        double dist = Vector2D.distancePointToLine(x, y, source.coordinates, controlPoints.get(0).getPosition());
+        double dist = Vector2D.distancePointToLine(x, y, source.getCoordinates(), controlPoints.get(0).getPosition());
 
         if (dist < multiEdgeOffset * 0.5) {
             return 0;
@@ -539,7 +539,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
             }
         }
         Vector2D last = controlPoints.get(controlPoints.size() - 1).getPosition();
-        dist = Vector2D.distancePointToLine(x, y, last, target.coordinates);
+        dist = Vector2D.distancePointToLine(x, y, last, target.getCoordinates());
 
         return dist < multiEdgeOffset * 0.5 ? controlPoints.size() : -1;
     }
@@ -555,8 +555,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         //corrections are always negative if the arrow model tip is at the origin
         double corr = arrowType.endPoint * arrowHeadLength;
 
-        Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
-        Vector2D targetToCtrl2 = ctrl2.minus(target.coordinates).normalized();
+        Vector2D sourceToCtrl1 = ctrl1.minus(source.getCoordinates()).normalized();
+        Vector2D targetToCtrl2 = ctrl2.minus(target.getCoordinates()).normalized();
 
         if (!isDirected) {
             corr = 0;
@@ -583,45 +583,45 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
     public Vector2D getStartingPointSource() {
         if (controlPoints.size() == 0) {
-            return source.coordinates;
+            return source.getCoordinates();
         }
 
         if (edgeType == EdgeType.BEZIER) {
 
             Vector2D ctrl1 = controlPoints.get(0).getPosition();
-            Vector2D sourceToCtrl1 = ctrl1.minus(source.coordinates).normalized();
+            Vector2D sourceToCtrl1 = ctrl1.minus(source.getCoordinates()).normalized();
 
-            return source.shape.getEdgePoint(sourceToCtrl1.theta(), source.coordinates);
+            return source.shape.getEdgePoint(sourceToCtrl1.theta(), source.getCoordinates());
         } else if (edgeType == EdgeType.SHARP) {
-            return source.coordinates;
+            return source.getCoordinates();
         //} else if (edgeType == EdgeType.ROUND) {
-        //    return source.coordinates;
+        //    return source.getCoordinates();
         } else {
-            return source.coordinates;
+            return source.getCoordinates();
         }
     }
 
     public Vector2D getStartingPointTarget() {
         if (controlPoints.size() == 0) {
-            return target.coordinates;
+            return target.getCoordinates();
         }
         if (edgeType == EdgeType.BEZIER) {
 
             Vector2D ctrl2 = controlPoints.get(controlPoints.size() - 1).getPosition();
-            Vector2D targetToCtrl1 = ctrl2.minus(target.coordinates).normalized();
+            Vector2D targetToCtrl1 = ctrl2.minus(target.getCoordinates()).normalized();
             double corr = arrowType.endPoint * arrowHeadLength;
             if (isDirected) {
                 corr = 0;
             }
-            var x = target.shape.getEdgePoint(targetToCtrl1.theta(), target.coordinates);
+            var x = target.shape.getEdgePoint(targetToCtrl1.theta(), target.getCoordinates());
             x = x.plus(targetToCtrl1.multiply(corr));
             return x;
         } else if (edgeType == EdgeType.SHARP) {
-            return target.coordinates;
+            return target.getCoordinates();
         //} else if (edgeType == EdgeType.ROUND) {
-        //    return target.coordinates;
+        //    return target.getCoordinates();
         } else {
-            return target.coordinates;
+            return target.getCoordinates();
         }
     }
 
@@ -631,8 +631,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
 
 
     public double length() {
-        Vector2D from = this.source.coordinates;
-        Vector2D to = this.target.coordinates;
+        Vector2D from = this.source.getCoordinates();
+        Vector2D to = this.target.getCoordinates();
         //TODO: implement length for control points
         double result = 0.0;
         return result + to.minus(from).length();

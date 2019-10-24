@@ -608,7 +608,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     dragging = highlights.getSelection();
                     if(dragging.size() == 1 && selected instanceof Vertex) {
-                        singleVertexDragPosition = ((Vertex)selected).coordinates.minus(lastMouseX, lastMouseY);
+                        singleVertexDragPosition = ((Vertex)selected).getCoordinates().minus(lastMouseX, lastMouseY);
                     }
                     if(selected instanceof Edge) {
                         holdingEdge = (Edge) selected;
@@ -777,7 +777,7 @@ public class StructurePane extends StackPane implements StructureListener {
                                     mousePositionModel.getX(),
                                     mousePositionModel.getY()));
                             if(initialThetaDrag == -1) {
-                                Vector2D parentPosition = c.parent.v.coordinates;
+                                Vector2D parentPosition = c.parent.v.getCoordinates();
                                 Vector2D rPosition = c.position;
                                 initialThetaDrag = rPosition.minus(parentPosition).theta();
                             }
@@ -805,7 +805,7 @@ public class StructurePane extends StackPane implements StructureListener {
                         //only align when the difference between initial relative dragging point
                         //and current relative position is small enough
                         if(o instanceof Vertex) {
-                            Vector2D rel = ((Vertex)o).coordinates.minus(
+                            Vector2D rel = ((Vertex)o).getCoordinates().minus(
                                     mousePositionModel.getX(), mousePositionModel.getY());
                             if(singleVertexDragPosition == null)
                                 continue;
@@ -833,7 +833,7 @@ public class StructurePane extends StackPane implements StructureListener {
             if(currentEdgeStartingPoint != null) {
                 drawingEdge = true;
                 Vertex v = (Vertex) currentEdgeStartingPoint;
-                Point2D vScreenCords = modelToScreen(new Point2D(v.coordinates.getX(), v.coordinates.getY()));
+                Point2D vScreenCords = modelToScreen(new Point2D(v.getCoordinates().getX(), v.getCoordinates().getY()));
                 this.requestRedraw(vScreenCords, new Point2D(e.getX(), e.getY()));
             }
             //drag pane with right drag
@@ -998,7 +998,7 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     private void tryAlignToDiagonal(ResizeControls.RControl c, double thetaForce) {
-        Vector2D parentPosition = c.parent.v.coordinates;
+        Vector2D parentPosition = c.parent.v.getCoordinates();
         Vector2D rPosition = c.position;
         var size = c.parent.v.shape.sizeBox;
         var diff = rPosition.minus(parentPosition);
@@ -1059,19 +1059,19 @@ public class StructurePane extends StackPane implements StructureListener {
             if(x == vertex) {
                 continue;
             }
-            if(x.coordinates.minus(vertex.coordinates).length() < radius) {
-                final double xdiff = x.coordinates.getX() - vertex.coordinates.getX();
+            if(x.getCoordinates().minus(vertex.getCoordinates()).length() < radius) {
+                final double xdiff = x.getCoordinates().getX() - vertex.getCoordinates().getX();
 
                 if(!xAligned && Math.abs(xdiff) < maxDelta) {
-                    horizontalP1 = modelToScreen(new Point2D(x.coordinates.getX(), x.coordinates.getY()));
-                    horizontalP2 = modelToScreen(new Point2D(x.coordinates.getX(), vertex.coordinates.getY()));
-                    vertex.setCoordinates(x.coordinates.getX(), vertex.coordinates.getY());
+                    horizontalP1 = modelToScreen(new Point2D(x.getCoordinates().getX(), x.getCoordinates().getY()));
+                    horizontalP2 = modelToScreen(new Point2D(x.getCoordinates().getX(), vertex.getCoordinates().getY()));
+                    vertex.setCoordinates(x.getCoordinates().getX(), vertex.getCoordinates().getY());
                     xAligned = true;
                 }
-                else if(!yAligned && Math.abs(x.coordinates.getY() - vertex.coordinates.getY()) < maxDelta) {
-                    verticalP1 = modelToScreen(new Point2D(x.coordinates.getX(), x.coordinates.getY()));
-                    verticalP2 = modelToScreen(new Point2D(vertex.coordinates.getX(), x.coordinates.getY()));
-                    vertex.setCoordinates(vertex.coordinates.getX(), x.coordinates.getY());
+                else if(!yAligned && Math.abs(x.getCoordinates().getY() - vertex.getCoordinates().getY()) < maxDelta) {
+                    verticalP1 = modelToScreen(new Point2D(x.getCoordinates().getX(), x.getCoordinates().getY()));
+                    verticalP2 = modelToScreen(new Point2D(vertex.getCoordinates().getX(), x.getCoordinates().getY()));
+                    vertex.setCoordinates(vertex.getCoordinates().getX(), x.getCoordinates().getY());
                     yAligned = true;
                 }
                 if(xAligned && yAligned) {

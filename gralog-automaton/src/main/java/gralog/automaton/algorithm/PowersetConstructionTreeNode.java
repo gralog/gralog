@@ -73,11 +73,11 @@ public class PowersetConstructionTreeNode {
 
             temp.setCoordinates(0d, 0d);
             for (State v : statesSubset) {
-                temp.coordinates = temp.coordinates.plus(v.coordinates);
+                temp.setCoordinates(temp.getCoordinates().plus(v.getCoordinates()));
             }
 
             if (statesSubset.size() > 0) {
-                temp.coordinates = temp.coordinates.multiply(1d / statesSubset.size());
+                temp.setCoordinates(temp.getCoordinates().multiply(1d / statesSubset.size()));
             }
 
             resultAutomaton.addVertex(temp);

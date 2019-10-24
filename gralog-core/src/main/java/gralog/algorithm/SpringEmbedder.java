@@ -93,7 +93,7 @@ public class SpringEmbedder extends Algorithm {
                         Math.random() * dimensionLimits.getY()
                 );
             savedCoords.add(coordinates.hashCode());
-            a.coordinates = coordinates;
+            a.setCoordinates(coordinates);
 
 
             tractions.add(new Vector2D(0d, 0d));
@@ -120,9 +120,9 @@ public class SpringEmbedder extends Algorithm {
                         continue;
 
                     // force on a by vertex b
-                    traction = traction.plus(coulomb(a.coordinates, b.coordinates, p));
+                    traction = traction.plus(coulomb(a.getCoordinates(), b.getCoordinates(), p));
                     if (s.adjacent(a, b))
-                        traction = traction.plus(hooke(a.coordinates, b.coordinates, p));
+                        traction = traction.plus(hooke(a.getCoordinates(), b.getCoordinates(), p));
                 }
 
                 tractions.set(i, traction);
@@ -132,14 +132,14 @@ public class SpringEmbedder extends Algorithm {
             // execute movement
             i = 0;
             for (Vertex a : vertices) {
-                Vector2D oldCoordinates = a.coordinates;
+                Vector2D oldCoordinates = a.getCoordinates();
                 Vector2D newCoordinates = new Vector2D(
                         Math.max(0.0d,
                                 Math.min(dimensionLimits.getX(), oldCoordinates.getX()) + p.delta * tractions.get(i).getX()),
                         Math.max(0.0d,
                                 Math.min(dimensionLimits.getY(), oldCoordinates.getY()) + p.delta * tractions.get(i).getY())
                 );
-                a.coordinates = newCoordinates;
+                a.setCoordinates(newCoordinates);
 
                 // for the loop condition
                 double currentMovement

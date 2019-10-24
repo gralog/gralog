@@ -50,16 +50,16 @@ public final class EdgeRenderer {
         //correction so that the arrow and line don't overlap at the end
         //corrections are always negative if the arrow model tip is at the origin
         double corr = e.arrowType.endPoint * e.arrowHeadLength;
-        Vector2D sourceToCtrl1 = curve.ctrl1.minus(e.getSource().coordinates).normalized();
-        Vector2D targetToCtrl2 = curve.ctrl2.minus(e.getTarget().coordinates).normalized();
+        Vector2D sourceToCtrl1 = curve.ctrl1.minus(e.getSource().getCoordinates()).normalized();
+        Vector2D targetToCtrl2 = curve.ctrl2.minus(e.getTarget().getCoordinates()).normalized();
 
 
-        curve.source = e.getSource().shape.getEdgePoint(sourceToCtrl1.measureAngleX(), e.getSource().coordinates);
-        curve.target = e.getTarget().shape.getEdgePoint(targetToCtrl2.measureAngleX(), e.getTarget().coordinates);
+        curve.source = e.getSource().shape.getEdgePoint(sourceToCtrl1.measureAngleX(), e.getSource().getCoordinates());
+        curve.target = e.getTarget().shape.getEdgePoint(targetToCtrl2.measureAngleX(), e.getTarget().getCoordinates());
 
         //move away from the center of the target by the specified endPointDistance
-        curve.target = curve.target.plus(curve.target.minus(e.getTarget().coordinates).multiply(e.thickness)); //endPointDistance));
-        curve.source = curve.source.plus(curve.source.minus(e.getSource().coordinates).multiply(e.thickness)); //startPointDistance));
+        curve.target = curve.target.plus(curve.target.minus(e.getTarget().getCoordinates()).multiply(e.thickness)); //endPointDistance));
+        curve.source = curve.source.plus(curve.source.minus(e.getSource().getCoordinates()).multiply(e.thickness)); //startPointDistance));
 
         corr = e.isDirected ? corr : 0;
 
@@ -115,8 +115,8 @@ public final class EdgeRenderer {
         }
 
         if (isSelected)
-            gc.line(e.getSource().coordinates, ctrl.get(0).getPosition(), GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
-        gc.line(e.getSource().coordinates, ctrl.get(0).getPosition(), e.color, e.thickness, e.type);
+            gc.line(e.getSource().getCoordinates(), ctrl.get(0).getPosition(), GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
+        gc.line(e.getSource().getCoordinates(), ctrl.get(0).getPosition(), e.color, e.thickness, e.type);
 
         for (int i = 1; i < ctrl.size(); i++) {
             if (isSelected) {
@@ -126,7 +126,7 @@ public final class EdgeRenderer {
             gc.line(ctrl.get(i - 1).getPosition(), ctrl.get(i).getPosition(), e.color, e.thickness, e.type);
         }
         if (isSelected) {
-            gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().coordinates,
+            gc.line(ctrl.get(ctrl.size() - 1).getPosition(), e.getTarget().getCoordinates(),
                     GralogColor.RED, e.thickness + Edge.edgeSelectionOffset, e.type);
         }
         if (e.isDirected()) {
@@ -157,14 +157,14 @@ public final class EdgeRenderer {
     private static void drawStraightEdge(Edge e, GralogGraphicsContext gc, boolean isSelected, String label) {
         double offset = e.getOffset();	// = 0 iff no multiegdes
 
-        Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
+        Vector2D diff = e.getTarget().getCoordinates().minus(e.getSource().getCoordinates());
         Vector2D perpendicularToEdge = diff.orthogonal(1).normalized().multiply(offset); // = 0 iff no multiedges
 
-        Vector2D sourceOffset = e.getSource().coordinates.plus(perpendicularToEdge);
-        Vector2D targetOffset = e.getTarget().coordinates.plus(perpendicularToEdge);
+        Vector2D sourceOffset = e.getSource().getCoordinates().plus(perpendicularToEdge);
+        Vector2D targetOffset = e.getTarget().getCoordinates().plus(perpendicularToEdge);
 
-        Vector2D intersectionTarget = e.getTarget().shape.getIntersection(sourceOffset, targetOffset, e.getTarget().coordinates);
-        Vector2D intersectionSource = e.getSource().shape.getIntersection(targetOffset, sourceOffset, e.getSource().coordinates);
+        Vector2D intersectionTarget = e.getTarget().shape.getIntersection(sourceOffset, targetOffset, e.getTarget().getCoordinates());
+        Vector2D intersectionSource = e.getSource().shape.getIntersection(targetOffset, sourceOffset, e.getSource().getCoordinates());
         
         if (Double.isNaN(intersectionTarget.getX()) || Double.isNaN(intersectionTarget.getY())) {
             intersectionTarget = targetOffset.minus(diff.normalized().multiply(e.getTarget().shape.sizeBox.width / 2));

@@ -94,8 +94,8 @@ public class State extends Vertex {
         //TODO: make it look good
 
         if (this.finalState) {
-            gc.circle(coordinates, radius - 3 * strokeWidth, strokeColor);
-            gc.circle(coordinates, radius - 4 * strokeWidth, fillColor);
+            gc.circle(getCoordinates(), radius - 3 * strokeWidth, strokeColor);
+            gc.circle(getCoordinates(), radius - 4 * strokeWidth, fillColor);
         }
         /*
         if (startState) {

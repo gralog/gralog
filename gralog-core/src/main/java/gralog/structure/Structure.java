@@ -1031,8 +1031,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             return objects;
         }
         for (Vertex v : getVertices()) {
-            double vx = v.coordinates.getX();
-            double vy = v.coordinates.getY();
+            double vx = v.getCoordinates().getX();
+            double vy = v.getCoordinates().getY();
             if (insideSelection(qx, qy, cx, cy, vx, vy)) {
                 objects.add(v);
             }
@@ -1090,10 +1090,10 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                 continue;
             }
 
-            Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
+            Vector2D diff = e.getTarget().getCoordinates().minus(e.getSource().getCoordinates());
             Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(e.getOffset());
-            Vector2D source = e.getSource().coordinates.plus(perpendicularToDiff);
-            Vector2D target = e.getTarget().coordinates.plus(perpendicularToDiff);
+            Vector2D source = e.getSource().getCoordinates().plus(perpendicularToDiff);
+            Vector2D target = e.getTarget().getCoordinates().plus(perpendicularToDiff);
 
             if (separatingAxisTest(vecFrom, vecTo, source, target)) {
                 continue;
@@ -1238,12 +1238,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         for (Object o : selection) {
             if (o instanceof Vertex) {
                 vertices.add((Vertex) o);
-                sum += ((Vertex) o).coordinates.getY();
+                sum += ((Vertex) o).getCoordinates().getY();
                 count++;
             }
         }
         for (Vertex v : vertices) {
-            v.setCoordinates(v.coordinates.getX(), sum / count);
+            v.setCoordinates(v.getCoordinates().getX(), sum / count);
         }
     }
 
@@ -1262,12 +1262,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         for (Object o : selection) {
             if (o instanceof Vertex) {
                 vertices.add((Vertex) o);
-                sum += ((Vertex) o).coordinates.getX();
+                sum += ((Vertex) o).getCoordinates().getX();
                 count++;
             }
         }
         for (Vertex v : vertices) {
-            v.setCoordinates(sum / count, v.coordinates.getY());
+            v.setCoordinates(sum / count, v.getCoordinates().getY());
         }
     }
 

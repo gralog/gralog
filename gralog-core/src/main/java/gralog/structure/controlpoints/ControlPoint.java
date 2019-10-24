@@ -52,9 +52,9 @@ public class ControlPoint extends XmlMarshallable implements IMovable, Serializa
     }
 
     public void renderBezierHelpers(GralogGraphicsContext gc, Highlights highlights) {
-        gc.line(parent.getSource().coordinates, getPosition(),
+        gc.line(parent.getSource().getCoordinates(), getPosition(),
                 GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
-        gc.line(parent.getTarget().coordinates, getPosition(),
+        gc.line(parent.getTarget().getCoordinates(), getPosition(),
                 GralogColor.BLACK, 0.02, GralogGraphicsContext.LineType.DASHED);
     }
 
