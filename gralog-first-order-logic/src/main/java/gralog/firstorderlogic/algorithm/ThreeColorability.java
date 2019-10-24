@@ -12,8 +12,8 @@ import gralog.rendering.GralogColor;
 import java.util.*;
 
 @AlgorithmDescription(
-    name = "Colorability",
-    text = "",
+    name = "3-colorability",
+    text = "Test the current graph for 3-colorability unsing a python plugin witha call to pycosat",
     url = "")
 public class Colorability extends Algorithm {
 
