@@ -384,7 +384,7 @@ public class MainWindow extends Application {
                         Alert alert = new Alert(AlertType.INFORMATION);
                         alert.setTitle("No Structure Pane");
                         alert.setHeaderText(null);
-                        alert.setContentText("Youmust have an open graph to pipe it bro");
+                        alert.setContentText("You must have an open graph to pipe it.");
                         alert.showAndWait();
                     }
                 );
