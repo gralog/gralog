@@ -373,11 +373,6 @@ public class MainWindow extends Application {
         // }
 
         try{
-//<<<<<<< HEAD
-            // this.waitForPause = new CountDownLatch(1);
-
-
-
             if (this.tabs.getCurrentStructurePane() == null){
                 Platform.runLater(
                     () -> {
