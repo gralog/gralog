@@ -794,6 +794,7 @@ public class MainWindow extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText((String) algoResult);
                 alert.showAndWait();
+                structurePane.requestRedraw();
             } else if (algoResult instanceof VertexToInteger){
                 Structure structure = structurePane.structure;
                 VertexToInteger vertexToInteger = (VertexToInteger) algoResult;
