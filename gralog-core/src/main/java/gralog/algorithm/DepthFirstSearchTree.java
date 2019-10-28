@@ -45,13 +45,10 @@ public class DepthFirstSearchTree extends Algorithm {
                       ProgressHandler onprogress) {
         HashMap<Vertex, Vertex> predecessor = new HashMap<>();
         HashMap<Vertex, Edge> edgeFromPredecessor = new HashMap<>();
-        Vertex v = null;
-        if (selection != null)
-            for (Object o : selection)
-                if (o instanceof Vertex)
-                    v = (Vertex) o;
+        Vertex v = selectedUniqueVertex(selection);
         if (v == null)
-            v = (Vertex) ((s.getVertices().toArray())[0]);
+            return "Please, select exactly one vertex to start DFS from.";
+
         predecessor.put(v, null);
         edgeFromPredecessor.put(v, null);
         depthFirstSearch(v, predecessor, edgeFromPredecessor);

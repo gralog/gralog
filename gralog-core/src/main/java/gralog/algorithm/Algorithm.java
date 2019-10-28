@@ -5,6 +5,7 @@ package gralog.algorithm;
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
+import gralog.structure.Vertex;
 
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -42,5 +43,27 @@ public abstract class Algorithm {
             throw new Exception("class " + this.getClass().getName() + " has no @AlgorithmDescription Annotation");
         return this.getClass().getAnnotation(AlgorithmDescription.class);
     }
+
+    /**
+     * If there is a unique vertex among the selected objects, return it.
+     * Otherwise return null.
+     * @param selection
+     * @return
+     */
+    protected static Vertex selectedUniqueVertex(Set<Object> selection){
+        boolean foundSelectedVertices = false;
+        Vertex v = null;
+        for (Object o: selection)
+            if (o instanceof Vertex) {
+                if (foundSelectedVertices)
+                    return null;
+                else{
+                    foundSelectedVertices = true;
+                    v = (Vertex) o;
+                }
+            }
+        return v;
+    }
+
 
 }

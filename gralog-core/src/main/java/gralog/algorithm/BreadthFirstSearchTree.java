@@ -50,26 +50,6 @@ public class BreadthFirstSearchTree extends Algorithm {
         }
     }
 
-    /**
-     * If there is a unique vertex among the selected objects, return it.
-     * Otherwise return null.
-     * @param selection
-     * @return
-     */
-    private Vertex selectedUniqueVertex(Set<Object> selection){
-        boolean foundSelectedVertices = false;
-        Vertex v = null;
-        for (Object o: selection)
-            if (o instanceof Vertex) {
-                if (foundSelectedVertices)
-                    return null;
-                else{
-                    foundSelectedVertices = true;
-                    v = (Vertex) o;
-                }
-            }
-        return v;
-    }
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
                       ProgressHandler onprogress) {

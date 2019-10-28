@@ -5,10 +5,7 @@ package gralog.algorithm;
 import gralog.structure.*;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 import static gralog.structure.StructureMatchers.equalsVertexSet;
 import static org.junit.Assert.*;
@@ -27,18 +24,19 @@ public class StronglyConnectedComponentsTest {
         structure.addEdge(v, w);
 
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
-        ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
+        HashSet<HashSet<Vertex>> verticesInComponent = new HashSet<>();
         StronglyConnectedComponents.tarjanStrongComponents(structure,
                 componentOfVertex,
                 verticesInComponent,
                 new HashSet<>());
         assertSame("Number of components", verticesInComponent.size(), 2);
-        assertThat("First component",
-                verticesInComponent.get(componentOfVertex.get(w)),
-                equalsVertexSet(Arrays.asList(w)));
-        assertThat("Second component",
-                verticesInComponent.get(componentOfVertex.get(v)),
-                equalsVertexSet(Arrays.asList(v)));
+        Iterator<HashSet<Vertex>> iterator = verticesInComponent.iterator();
+        HashSet<Vertex> first = iterator.next();
+        HashSet<Vertex> sec = iterator.next();
+        assertEquals(1, first.size());
+        assertEquals(1, sec.size());
+        assert first.contains(v) || sec.contains(v);
+        assert first.contains(w) || sec.contains(w);
         assertNotEquals("Components of v and w",
                 componentOfVertex.get(v),
                 componentOfVertex.get(w));
@@ -53,15 +51,17 @@ public class StronglyConnectedComponentsTest {
         structure.addEdge(v, w);
 
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
-        ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
+        HashSet<HashSet<Vertex>> verticesInComponent = new HashSet<>();
         StronglyConnectedComponents.tarjanStrongComponents(structure,
                 componentOfVertex,
                 verticesInComponent,
                 new HashSet<>());
         assertSame("Number of components", verticesInComponent.size(), 1);
-        assertThat("First component",
-                verticesInComponent.get(0),
-                equalsVertexSet(structure.getVertices()));
+        Iterator<HashSet<Vertex>> iterator = verticesInComponent.iterator();
+        HashSet<Vertex> first = iterator.next();
+        assertEquals(2, first.size());
+        assert first.contains(v);
+        assert first.contains(w);
         assertEquals("Components of v and w", componentOfVertex.get(v), componentOfVertex.get(w));
         assertEquals("Components of v", componentOfVertex.get(v), Integer.valueOf(0));
     }
@@ -74,18 +74,19 @@ public class StronglyConnectedComponentsTest {
         Vertex w = structure.addVertex("w");
 
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
-        ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
+        HashSet<HashSet<Vertex>> verticesInComponent = new HashSet<>();
         StronglyConnectedComponents.tarjanStrongComponents(structure,
                 componentOfVertex,
                 verticesInComponent,
                 new HashSet<>());
         assertSame("Number of components", verticesInComponent.size(), 2);
-        assertThat("First component",
-                verticesInComponent.get(componentOfVertex.get(w)),
-                equalsVertexSet(Arrays.asList(w)));
-        assertThat("Second component",
-                verticesInComponent.get(componentOfVertex.get(v)),
-                equalsVertexSet(Arrays.asList(v)));
+        Iterator<HashSet<Vertex>> iterator = verticesInComponent.iterator();
+        HashSet<Vertex> first = iterator.next();
+        HashSet<Vertex> sec = iterator.next();
+        assertEquals(1, first.size());
+        assertEquals(1, sec.size());
+        assert first.contains(v) || sec.contains(v);
+        assert first.contains(w) || sec.contains(w);
         assertNotEquals("Components of v and w",
                 componentOfVertex.get(v),
                 componentOfVertex.get(w));
@@ -103,14 +104,14 @@ public class StronglyConnectedComponentsTest {
         structure.addEdge(u, v);
 
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
-        ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
+        HashSet<HashSet<Vertex>> verticesInComponent = new HashSet<>();
         StronglyConnectedComponents.tarjanStrongComponents(structure,
                 componentOfVertex,
                 verticesInComponent,
                 new HashSet<>());
         assertSame("Number of components", verticesInComponent.size(), 1);
         assertThat("First component",
-                verticesInComponent.get(0),
+                verticesInComponent.toArray()[0],
                 equalsVertexSet(structure.getVertices()));
     }
 }

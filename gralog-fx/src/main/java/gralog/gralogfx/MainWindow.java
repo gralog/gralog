@@ -23,6 +23,7 @@ import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
 import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -31,9 +32,11 @@ import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
@@ -120,6 +123,15 @@ public class MainWindow extends Application {
         handlers.onUndo = this::onUndo;
         handlers.onRedo = this::onRedo;
 
+        System.out.println("!!!!!!!!" + System.getProperty("user.dir"));
+//        File file = new File("/gralog.png");
+        Image img = new Image(("file:gralog.png"));
+
+        if (img == null)
+            System.out.println("img null");
+        else
+            System.out.println("img get url: " + img.getUrl());
+        stage.getIcons().add(new Image(getClass().getResource("gralog.png").toExternalForm()));
         // pipeline = new Piping();
         pipelines = new ArrayList<>();
         //controls

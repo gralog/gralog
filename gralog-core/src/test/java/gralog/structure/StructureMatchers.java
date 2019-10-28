@@ -32,7 +32,7 @@ public final class StructureMatchers {
                         && v.strokeWidth == w.strokeWidth
                         && v.textHeight == w.textHeight
                         && v.strokeColor.equals(w.strokeColor)
-                        && v.coordinates.equals(w.coordinates);
+                        && v.getCoordinates().equals(w.getCoordinates());
             }
 
             @Override
