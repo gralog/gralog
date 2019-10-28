@@ -23,10 +23,12 @@ import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
 import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 
-import java.awt.*;
+import java.awt.Toolkit;
+import java.awt.Taskbar;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.lang.reflect.*;
 import java.net.URISyntaxException;
@@ -37,6 +39,7 @@ import java.util.List;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
@@ -46,6 +49,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.Alert.AlertType;
+
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -57,6 +62,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import org.dockfx.*;
+
+import static gralog.gralogfx.panels.Console.ANSI_RESET;
+import static gralog.gralogfx.panels.Console2.ANSI_RED;
+
 /**
  * The gralog main window.
  */
@@ -123,15 +132,20 @@ public class MainWindow extends Application {
         handlers.onUndo = this::onUndo;
         handlers.onRedo = this::onRedo;
 
-        System.out.println("!!!!!!!!" + System.getProperty("user.dir"));
+//        System.out.println("!!!!!!!!" + System.getProperty("user.dir"));
 //        File file = new File("/gralog.png");
-        Image img = new Image(("file:gralog.png"));
+//        Image img = new Image(("gralog-32x32.png"));
+//
+//        if (img == null)
+//            System.out.println("img null");
+//        else
+//            System.out.println("img get url: " + img.getUrl());
+//        Image img = new Image("muell.png");
+//        System.out.println("img get url: " + img.getUrl());
+//        stage.getIcons().add(img);
 
-        if (img == null)
-            System.out.println("img null");
-        else
-            System.out.println("img get url: " + img.getUrl());
-        stage.getIcons().add(new Image(getClass().getResource("gralog.png").toExternalForm()));
+
+
         // pipeline = new Piping();
         pipelines = new ArrayList<>();
         //controls
@@ -877,6 +891,39 @@ public class MainWindow extends Application {
         primaryStage.setTitle("Gralog");
         primaryStage.setScene(scene);
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());
+
+        // set the icon for the title bar
+        try {
+            Image img = new Image(getClass().getResourceAsStream("/gralog-logo.png"));
+            stage.getIcons().add(img);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        };
+
+        // set the icon for the system tray/taskbar. from https://stackoverflow.com/a/56924202
+        final Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
+        final JFrame jFrame = new JFrame();
+
+        try {
+            final URL imageResource = MainWindow.class.getClassLoader().getResource("gralog-logo.png");
+            final java.awt.Image image = defaultToolkit.getImage(imageResource);
+            final Taskbar taskbar = Taskbar.getTaskbar();
+            //set icon for mac os (and other systems which do support this method)
+            taskbar.setIconImage(image);
+            jFrame.setIconImage(image);
+            jFrame.getContentPane().add(new JLabel("Hello World"));
+            jFrame.setDefaultCloseOperation(jFrame.EXIT_ON_CLOSE);
+            jFrame.pack();
+            jFrame.setVisible(true);
+        } catch (final UnsupportedOperationException e) {
+            System.out.println("The os does not support: 'taskbar.setIconImage'");
+        } catch (final SecurityException e) {
+            System.out.println("There was a security exception for: 'taskbar.setIconImage'");
+        } catch (final Exception e){
+            e.printStackTrace();
+        }
+
 
         //TODO: implement hot keys here
 
