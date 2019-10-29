@@ -117,9 +117,9 @@ public class FirstOrderExists extends FirstOrderFormula {
             GameGraphResult gp = subformula1.constructGameGraph(
                 s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY() + yOffset));
             yOffset += gp.height + 1;
-            Vertex w = game.addVertex();
-            game.addVertex(gp.position);
-            game.addEdge(game.createEdge(parent, gp.position));
+            FiniteGamePosition w = game.addVertex();
+            w.copy(gp.position);
+            game.addEdge(parent, w);
             // Set label for this vertex.
             gp.position.label = subformula1.toString() + ", "
                 + FirstOrderFormula.variableAssignmentToString(varassign);

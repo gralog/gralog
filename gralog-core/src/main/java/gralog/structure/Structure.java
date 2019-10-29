@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
+import gralog.DeepCopy;
 import gralog.math.BezierCubic;
 import gralog.math.BezierQuadratic;
 import gralog.math.BezierUtilities;
@@ -32,7 +33,6 @@ import java.util.TreeSet;
 import javax.xml.transform.stream.StreamResult;
 
 
-import gralog.structure.controlpoints.ControlPoint;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
@@ -40,14 +40,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import java.util.concurrent.ThreadLocalRandom;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 /**
  *
@@ -315,6 +313,49 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return v;
     }
 
+    /**
+     * Adds another structure s to this structure (this) identifying thisVertex from this structure with thatVertex from s.
+     * The identified vertex has the properties of thatVertex (only properties from Vertex and Edge, not from their descendants).
+     * Structure s remains unchanged (the objects from s are copied to this).
+     * If the same structure is given as s, produces a copy an merges it into this structure.
+     * @param s Another structure
+     * @param thisVertex A vertex from this structure
+     * @param thatVertex A vertex from that structure
+     */
+    public void mergeGraph(Structure<V,E> s, V thisVertex, V thatVertex){
+        Structure<V,E> sCopy = (Structure<V, E>) DeepCopy.copy(s);
+
+        // this handles also the ids
+        this.addVertices(sCopy.getVertices());
+        this.addEdges(sCopy.getEdges());
+
+        V thatVertexCopy = sCopy.getVertexById(thatVertex.getId());
+        // reconnect edges incident with thisVertex to thatVertexCopy
+        for (E e : getEdges()){
+            if (e.isLoop() && e.getSource() == thisVertex){
+                e.setSource(thatVertexCopy);
+                e.setTarget(thatVertexCopy);
+                thatVertex.incidentEdges.add(e);
+                thatVertexCopy.outgoingEdges.add(e);
+                thatVertexCopy.incomingEdges.add(e);
+                continue;
+            }
+            if (e.getSource() == thisVertex) {
+                e.setSource(thatVertexCopy);
+                thatVertexCopy.incidentEdges.add(e);
+                thatVertexCopy.outgoingEdges.add(e);
+            }
+            if (e.getTarget() == thisVertex) {
+                e.setTarget(thatVertexCopy);
+                thatVertexCopy.incidentEdges.add(e);
+                thatVertexCopy.incomingEdges.add(e);
+            }
+        }
+
+        removeVertex(thisVertex);
+    }
+
+
     public V addVertex() {
         return addVertex((Configuration) null);
     }
@@ -367,22 +408,17 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     /**
-     * Adds a set of vertices to the structure.
+     * Adds a set of vertices to the structure. Incident edges are not added.Vertex IDs are generated automatically.
      *
      * @param vs The vertices to be added.
      */
-    public void addVertices(Collection<V> vs, boolean autoGenerateIDs) {
-        if (autoGenerateIDs) {
-            for (V v : vs) {
-                v.id = pollNextFreeVertexID();
-            }
+    public void addVertices(Collection<V> vs) {
+        for (V v : vs) {
+            v.id = pollNextFreeVertexID();
+            vertices.put(v.id, v);
         }
-        //vertices.addAll(vs);
     }
 
-    public void addVertices(Collection<V> vs) {
-        addVertices(vs, true);
-    }
 
     /**
      * Clear the structure. Removes all vertices and all edges.
@@ -482,7 +518,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param id The id of the vertex
      * @return Returns the Vertex or null if no vertex has the ID
      */
-    public Vertex getVertexById(int id) {
+    public V getVertexById(int id) {
         return vertices.get(id);
     }
 
@@ -698,16 +734,19 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     /**
-     * Adds a set of edges to the structure.
+     * Adds a set of edges to the structure if their ends are contained in the structure. Edges whose at least one vertex
+     * is not in the structure are not addded. IDs are generated automatically.
      *
      * @param es The edges to be added.
      */
     public void addEdges(Collection<E> es) {
 
         for (E e : es) {
-            int id = pollNextFreeEdgeID();
-            e.setId(id);
-            edges.put(e.getId(), e);
+            if (vertices.containsKey(e.getSource().id) && vertices.containsKey(e.getTarget().id)) {
+                int id = pollNextFreeEdgeID();
+                e.setId(id);
+                edges.put(e.getId(), e);
+            }
         }
     }
 
@@ -953,7 +992,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     /**
      * Returns the next free available ID, so that all vertices' ids are continuously
-     * filled on a single interval [0, n)
+     * filled on a single interval [0, n). Updates vertexIdHoles.
      */
     public int pollNextFreeVertexID() {
         if (vertexIdHoles.size() != 0) {

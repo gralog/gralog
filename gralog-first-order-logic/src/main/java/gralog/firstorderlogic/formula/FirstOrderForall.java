@@ -102,14 +102,14 @@ public class FirstOrderForall extends FirstOrderFormula {
         HashMap<String, Vertex> varassign, FiniteGame game,
         Vector2D coor) {
         Vertex oldvalue = varassign.get(variable);
-        FiniteGamePosition parent = new FiniteGamePosition();
+        FiniteGamePosition parent = game.addVertex();
 
         parent.setCoordinates(coor);
         parent.label = toString() + ", "
             + FirstOrderFormula.variableAssignmentToString(varassign);
         // "forall", so this is a player 1 position.
         parent.player1Position = true;
-        game.addVertex(parent);
+
 
         Collection<Vertex> V = s.getVertices();
         int yOffset = 0;
@@ -118,8 +118,9 @@ public class FirstOrderForall extends FirstOrderFormula {
             GameGraphResult gp = subformula1.constructGameGraph(
                 s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY() + yOffset));
             yOffset += gp.height + 1;
-            game.addVertex(gp.position);
-            game.addEdge(game.createEdge(parent, gp.position));
+            FiniteGamePosition w = game.addVertex();
+            w.copy(gp.position);
+            game.addEdge(parent, w);
             // Set label for this vertex.
             gp.position.label = subformula1.toString() + ", "
                 + FirstOrderFormula.variableAssignmentToString(varassign);
