@@ -322,7 +322,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param thisVertex A vertex from this structure
      * @param thatVertex A vertex from that structure
      */
-    public void mergeGraph(Structure<V,E> s, V thisVertex, V thatVertex){
+    public void mergeStructure(Structure<V,E> s, V thisVertex, V thatVertex){
         Structure<V,E> sCopy = (Structure<V, E>) DeepCopy.copy(s);
 
         // this handles also the ids
