@@ -23,7 +23,7 @@ import gralog.rendering.Vector2D;
  *
  */
 @AlgorithmDescription(
-    name = "Model Checking Game for first Order Logic",
+    name = "Model Checking Game for First Order Logic",
     text = "",
     url = "https://en.wikipedia.org/wiki/Game_semantics#Classical_logic"
 )

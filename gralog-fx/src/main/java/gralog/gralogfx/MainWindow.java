@@ -912,11 +912,11 @@ public class MainWindow extends Application {
             final Taskbar taskbar = Taskbar.getTaskbar();
             //set icon for mac os (and other systems which do support this method)
             taskbar.setIconImage(image);
-            jFrame.setIconImage(image);
-            jFrame.getContentPane().add(new JLabel("Hello World"));
-            jFrame.setDefaultCloseOperation(jFrame.EXIT_ON_CLOSE);
-            jFrame.pack();
-            jFrame.setVisible(true);
+//            jFrame.setIconImage(image);
+//            jFrame.getContentPane().add(new JLabel("Hello World"));
+//            jFrame.setDefaultCloseOperation(jFrame.EXIT_ON_CLOSE);
+//            jFrame.pack();
+//            jFrame.setVisible(true);
         } catch (final UnsupportedOperationException e) {
             System.out.println("The os does not support: 'taskbar.setIconImage'");
         } catch (final SecurityException e) {

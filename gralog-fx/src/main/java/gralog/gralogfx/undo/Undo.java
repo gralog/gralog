@@ -26,7 +26,6 @@ public class Undo {
      * @param structure The structure to save to the Undo-stack
      */
     public static void Record(Structure structure) {
-    	System.out.println("RECOIRD");
         if(!structureStack.containsKey(structure)) {
             structureStack.put(structure, new FixedQueue<>(MAX_NR));
         }
@@ -35,7 +34,6 @@ public class Undo {
     }
 
     public static void Redo(Structure structure) {
-    	System.out.println("REDO lalalalalala"+structureStack);
         if(!structureStack.containsKey(structure)) {
             return;
         }
@@ -58,7 +56,6 @@ public class Undo {
      * @param structure The structure to revert back
      */
     public static void Revert(Structure structure) {
-    	System.out.println("REVERT");
         if(!structureStack.containsKey(structure)) {
             // no saved checkpoints
             return;

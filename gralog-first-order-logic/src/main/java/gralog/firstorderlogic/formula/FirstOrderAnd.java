@@ -77,17 +77,12 @@ public class FirstOrderAnd extends FirstOrderFormula {
 
         GameGraphResult c1 = subformula1.constructGameGraph(
             s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY()));
-        FiniteGamePosition w1 = game.addVertex();
-        w1.copy(c1.position);
-
-        game.addEdge(parent, w1);
+        game.addEdge(parent, c1.position);
 
         GameGraphResult c2 = subformula2.constructGameGraph(
             s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY() + c1.height + 1));
         FiniteGamePosition w2 = game.addVertex();
-        w2.copy(c2.position);
-        FiniteGamePosition w = game.addVertex();
-        game.addEdge(parent, w2);
+        game.addEdge(parent, c2.position);
 
         return new GameGraphResult(parent, c1.height + c2.height + 1);
     }

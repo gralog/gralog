@@ -118,9 +118,7 @@ public class FirstOrderForall extends FirstOrderFormula {
             GameGraphResult gp = subformula1.constructGameGraph(
                 s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY() + yOffset));
             yOffset += gp.height + 1;
-            FiniteGamePosition w = game.addVertex();
-            w.copy(gp.position);
-            game.addEdge(parent, w);
+            game.addEdge(parent, gp.position);
             // Set label for this vertex.
             gp.position.label = subformula1.toString() + ", "
                 + FirstOrderFormula.variableAssignmentToString(varassign);
