@@ -818,10 +818,6 @@ class Graph:
 	def setGraph(self,graphFormat,graphString = "hello_world"):
 		graphFormat = graphFormat.lower();
 		line = "setGraph#"+str(self.id).rstrip() + "#" + graphFormat.rstrip()+"#";
-		#@Michelle: format entspricht z.B. XML oder TGF oder sowas. du muesst das also gemaess deines Formats entsprechend eingeben
-		#kommentiere die folgende Zeile aus und fuege deinen Kram hinzu...
-		#line = line + XML_NACH_MICHELLE
-		# XML_NACH_MICHELLE = "hello_world";
 
 		if graphFormat == "gtgf" or graphFormat == "tgf":
 			line += "$$\n";
@@ -831,7 +827,7 @@ class Graph:
 
 		print line;
 		sys.stdout.flush();
-		##TODO: implement this somehow haha
+		##TODO: implement this
 
 	####end setter functions
 

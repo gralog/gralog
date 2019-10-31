@@ -42,8 +42,7 @@ public class PipingAlgorithm extends Algorithm {
         Set<Object> selection, ProgressHandler onprogress) throws
         Exception {
         String[] commands
-        	= {"/home/michelle/gralog/gralog/gralog-layout/layout_python.py", structure.xmlToString()};
-            //= {"/Users/f002nb9/Documents/f002nb9/kroozing/gralog/Test.py", structure.xmlToString()};
+        	= {"gralog-layout/python/layout_python.py", structure.xmlToString()};
         System.out.println("Gralog says: starting.");
         String output = this.exec(commands);
         System.out.println("Finished exec.");

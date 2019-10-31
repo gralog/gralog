@@ -448,15 +448,14 @@ public class MainWindow extends Application {
 
 
         String fileName = Preferences.getFile("MainWindow_pipingFile",
-                "/home/michelle/gralog/gralog/gralog-layout/DFS.py").getPath();
+                "gralog/gralog-layout/DFS.py").getPath();
         return fileName;
     }
 
     public String getLastFileName(){
 // TODO: should be: if it exists in Preferences, return it, otherwise return the empty string
         String fileName = Preferences.getFile("MainWindow_lastPipingFile",
-                "/Users/f002nb9/Documents/f002nb9/kroozing/" +
-                        "gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
+                "gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
     
         return fileName;
     }
