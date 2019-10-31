@@ -67,9 +67,10 @@ public class ModelCheckingGameFOLogic extends Algorithm {
         Collection<Vertex> V = s.getVertices();
         int i = 0;
         for (Vertex v : V) {
-            v.label = String.valueOf(i);
+            v.label = String.valueOf(v.id) + ":" + v.label;
             i++;
         }
+
         HashMap<String, Vertex> varassign = new HashMap<>();
         FiniteGame gp = new FiniteGame();
         Vector2D ob = new Vector2D(5.0, 5.0);

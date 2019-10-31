@@ -43,7 +43,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
         switch (parameters.size()) {
             case 1:
                 Vertex v = varassign.get(parameters.get(0));
-                return relation.equals(v.label);
+                return v.label.matches(".*\\b" + relation + "\\b.*");
 
             case 2:
 
@@ -93,9 +93,8 @@ public class FirstOrderRelation extends FirstOrderFormula {
 
         Boolean res = false;
         if (parameters.size() == 1){
-            Vertex v = varassign.get(0);
-            System.out.println("\u001B[31m" + "relation: " + relation + ANSI_RESET);
-            if (v.label.matches("\\b" + relation + "\\b"))
+            Vertex v = varassign.get(parameters.get(0));
+            if (v.label.matches(".*\\b" + relation + "\\b.*"))
                 res = true;
             else
                 res = false;

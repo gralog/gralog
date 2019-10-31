@@ -50,12 +50,11 @@ public abstract class FirstOrderFormula {
     public abstract boolean evaluate(Structure s,
         HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
 
-    public static String variableAssignmentToString(
-        Map<String, Vertex> assignment) {
+    public static String variableAssignmentToString(Map<String, Vertex> assignment) {
         if (assignment.isEmpty())
             return " { }";
         return " { " + assignment.entrySet().stream()
-            .map((e) -> e.getKey() + "↦" + e.getValue().label)
+            .map((e) -> e.getKey() + "↦" + e.getValue().id)
             .collect(Collectors.joining(", "))
             + " }";
     }
