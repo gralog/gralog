@@ -8,6 +8,9 @@ import gralog.progresshandler.ProgressHandler;
 import java.util.Set;
 import java.util.HashSet;
 
+import static gralog.algorithm.ShortestPath.ANSI_RED;
+import static gralog.algorithm.ShortestPath.ANSI_RESET;
+
 /**
  *
  */
@@ -19,7 +22,7 @@ import java.util.HashSet;
 public class IndependentSet extends Algorithm {
 
     protected boolean findIndependentSet(UndirectedGraph s, int k,
-        Set<Vertex> independentset, Set<Vertex> candidates) {
+        Set<Vertex> independentSet, Set<Vertex> candidates) {
         if (k < 1)
             return true;
         if (candidates.isEmpty())
@@ -32,16 +35,16 @@ public class IndependentSet extends Algorithm {
                 candidateNeigh.add(e.getTarget());
             }
 
-            // nextCandidates = candidates \ N[candidate]
+            // nextCandidates = candidates \ N[independentSet]
             Set<Vertex> nextCandidates = new HashSet<>();
             for (Vertex u : candidates)
                 if (!candidateNeigh.contains(u))
                     nextCandidates.add(u);
 
-            independentset.add(candidate);
-            if (findIndependentSet(s, k - 1, independentset, nextCandidates))
+            independentSet.add(candidate);
+            if (findIndependentSet(s, k - 1, independentSet, nextCandidates))
                 return true;
-            independentset.remove(candidate);
+            independentSet.remove(candidate);
         }
 
         return false;
@@ -56,11 +59,14 @@ public class IndependentSet extends Algorithm {
                 V.add(v);
 
             Set<Vertex> independentSet = new HashSet<>();
-            if (!findIndependentSet(s, k, independentSet, V))
+            if (!findIndependentSet(s, k, independentSet, V)) {
+                System.out.println("finished");
                 break;
-
+            }
             result.clear();
             result.addAll(independentSet);
+
+            System.out.println(ANSI_RED + independentSet + ANSI_RESET);
         }
         return result;
     }
