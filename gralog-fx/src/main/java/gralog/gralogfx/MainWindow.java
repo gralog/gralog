@@ -6,6 +6,7 @@ package gralog.gralogfx;
 import gralog.dialog.GralogList;
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
+import gralog.gralogfx.undo.Undo;
 import javafx.event.EventHandler;
 
 import gralog.plugins.*;
@@ -795,11 +796,11 @@ public class MainWindow extends Application {
                 alert.showAndWait();
                 structurePane.requestRedraw();
             } else if (algoResult instanceof VertexToInteger){
-                Structure structure = structurePane.structure;
                 VertexToInteger vertexToInteger = (VertexToInteger) algoResult;
                 VertexColoring vertexColoring =
                         new VertexColoring(vertexToInteger.vertexToInteger, null);
                 vertexColoring.setColors();
+                mainConsole.gPrint(algoResult.toString());
                 structurePane.requestRedraw();
             } else {
                 AlgorithmResultStage resultStage = new AlgorithmResultStage(
@@ -839,6 +840,9 @@ public class MainWindow extends Application {
                 }
             }
 
+            // save the state for the case the algortihm changes the structure
+            Undo.Record(structure);
+
             // Run
             AlgorithmThread algoThread = new AlgorithmThread(
                 algo, structure, params, structurePane.highlights.getSelection(),
@@ -848,6 +852,7 @@ public class MainWindow extends Application {
             }));
             this.setStatus("Running Algorithm \"" + algorithmName + "\"...");
             algoThread.start();
+
         } catch (InvocationTargetException ex) {
             this.setStatus("");
             ex.printStackTrace();
