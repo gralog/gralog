@@ -153,7 +153,6 @@ public class GralogColor implements Serializable {
     }
 
     public enum Color {
-        WHITE(0xFFFFFF),
         BLACK(0x000000),
         BLUE(0x0000FF),
         GREEN(0x00FF00),
@@ -170,7 +169,8 @@ public class GralogColor implements Serializable {
         TEAL(0x008080),
         NAVY(0x000080),
         ORANGE(0xFF4500),
-        PUCE(0xCC8899);
+        PUCE(0xCC8899),
+        WHITE(0xFFFFFF);
 
         int value;
 
