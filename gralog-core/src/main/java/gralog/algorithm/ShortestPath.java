@@ -21,6 +21,10 @@ import java.util.Set;
 )
 public class ShortestPath extends Algorithm {
 
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
+
     public static void dijkstraShortestPath(Structure s, Vertex start,
                                             Vertex target,
                                             HashMap<Vertex, Vertex> predecessor,
@@ -77,38 +81,37 @@ public class ShortestPath extends Algorithm {
 
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
                       ProgressHandler onprogress) throws Exception {
-        for (Edge e : (Set<Edge>) s.getEdges())
+        if (s.getVertices().size() == 0)
+            return ("The structure should not be empty.");
+        for (Edge e : (Set<Edge>) s.getEdges()) {
             if (e.weight < 0d)
-                throw new Exception("Dijkstra's Algorithm requires positive edge weights");
+                return ("Dijkstra's Algorithm requires non-negative edge weights");
+        }
+
+
+        Vertex v = selectedUniqueVertex(selection);
+        if (v == null)
+            return "Please, select exactly one vertex: then all shortest paths to all other vertices will be computed.";
+
+
+        // deselect all edges
+        HashSet<Object> selectedEdges = new HashSet<>();
+        for (Object o : selection)
+            if (o instanceof Edge)
+                selectedEdges.add(o);
+        selection.removeAll(selectedEdges);
 
         HashMap<Vertex, Vertex> predecessor = new HashMap<>();
         HashMap<Vertex, Edge> edgeFromPredecessor = new HashMap<>();
         HashMap<Vertex, Double> distances = new HashMap<>();
 
-        Vertex v1 = null, v2 = null;
-        if (selection != null)
-            for (Object o : selection)
-                if (o instanceof Vertex) {
-                    if (v1 == null)
-                        v1 = (Vertex) o;
-                    else
-                        v2 = (Vertex) o;
-                    if (v2 != null)
-                        break;
-                }
 
-        if (v1 == null)
-            v1 = (Vertex) ((s.getVertices().toArray())[0]);
+        ShortestPath.dijkstraShortestPath(s, v, predecessor, edgeFromPredecessor, distances);
 
-        ShortestPath.dijkstraShortestPath(s, v1, v2, predecessor, edgeFromPredecessor, distances);
+        selectedEdges.clear();
+        edgeFromPredecessor.remove(v);
+        selectedEdges.addAll(edgeFromPredecessor.values());
 
-        HashSet<Edge> selectedEdges = new HashSet<>();
-        if (v2 == null)
-            selectedEdges.addAll(edgeFromPredecessor.values());
-        else
-            for (Vertex r = v2; r != v1; r = predecessor.get(r))
-                selectedEdges.add(edgeFromPredecessor.get(r));
-        selectedEdges.remove(null);
 
         return selectedEdges;
     }
