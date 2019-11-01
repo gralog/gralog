@@ -2,11 +2,16 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
+import gralog.DeepCopy;
 import gralog.preferences.Preferences;
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.*;
 
+import java.sql.SQLOutput;
 import java.util.*;
+
+import static gralog.algorithm.ShortestPath.ANSI_RED;
+import static gralog.algorithm.ShortestPath.ANSI_RESET;
 
 /**
  *
@@ -18,6 +23,17 @@ import java.util.*;
 )
 public class StronglyConnectedComponents extends Algorithm {
 
+    /**
+     * Computes strongly connected components of the structure represented by a coloring Vertex -> Integer and
+     * a set of vertex sets of the components. Hereby the vertices given in the parameter removedVertices are ignored
+     * as if they were removed.
+     * @param s The structure
+     * @param componentOfVertex (used for output) A mapping Vertex -> Integer. If not empty,
+     *                          the existent entries are not removed.
+     * @param verticesInComponent (used for output) A set of vertex sets of components. If not empty,
+     *      *                          the existent entries are not removed.
+     * @param removedVertices vertices to be ignored
+     */
     public static void tarjanStrongComponents(Structure s,
                                               HashMap<Vertex, Integer> componentOfVertex,
                                               HashSet<HashSet<Vertex>> verticesInComponent,
@@ -35,14 +51,16 @@ public class StronglyConnectedComponents extends Algorithm {
         HashMap<Vertex, Integer> childIterationPos = new HashMap<>(); // children-iteration position
 
         Collection<Vertex> vertices = s.getVertices();
-        vertices.removeAll(removedVertices);
         for (Vertex v : vertices) {
+            if (removedVertices.contains(v))
+                continue;
             if (dfs.containsKey(v)) // already processed
                 continue;
 
             dfs.put(v, index);
             lowlink.put(v, index);
             index++;
+
 
             ArrayList<Vertex> vChildren = new ArrayList<>();
             for (Edge e : v.getIncidentEdges())
@@ -59,7 +77,6 @@ public class StronglyConnectedComponents extends Algorithm {
             parent.put(v, null);
             onStack.add(v);
             Vertex current = v;
-
 
             while (current != null) {
                 Integer currentChildIdx = childIterationPos.get(current);
@@ -130,6 +147,9 @@ public class StronglyConnectedComponents extends Algorithm {
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
         HashSet<HashSet<Vertex>> components = new HashSet<>();
         tarjanStrongComponents(s, componentOfVertex, components, removedVertices);
-        return new VertexToInteger(componentOfVertex);
+        if (removedVertices.size() > 0)
+            return new VertexToInteger(componentOfVertex, true);
+        else
+            return new VertexToInteger(componentOfVertex, false);
     }
 }
