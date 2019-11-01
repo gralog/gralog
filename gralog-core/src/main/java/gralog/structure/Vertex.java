@@ -131,12 +131,13 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     @Override
     public String toString() {
-        return "Vertex{" + "label=" + label + ", radius=" + radius
-                + ", fillColor=" + fillColor
-                + ", strokeWidth=" + strokeWidth
-                + ", textHeight=" + textHeight
-                + ", strokeColor=" + strokeColor
-                + ", coordinates=" + coordinates + '}';
+        return "Vertex:" + getId();
+//        return "Vertex{" + "label=" + label + ", radius=" + radius
+//                + ", fillColor=" + fillColor
+//                + ", strokeWidth=" + strokeWidth
+//                + ", textHeight=" + textHeight
+//                + ", strokeColor=" + strokeColor
+//                + ", coordinates=" + coordinates + '}';
     }
 
     
