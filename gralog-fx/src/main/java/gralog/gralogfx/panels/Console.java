@@ -433,11 +433,8 @@ public class Console extends HBox implements GralogWindow {
 
     public void errorOutput(String text){
         if(text.isEmpty()){
-            System.out.println("error output is empty");
             return;
         }
-        System.out.println("error output" + text);
-
         ConsoleField t = new ConsoleField(text);
         t.getStyleClass().add("errorStyle"); 
 

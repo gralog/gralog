@@ -325,9 +325,7 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     }
 
     public IMovable findObject(double x, double y) {
-    	System.out.println("Edge findObject");
         for (ControlPoint c : controlPoints) {
-        	System.out.println("findOvject-Edge"+c);
             if (c.active && c.containsCoordinate(x, y)) {
                 return c;
             }
@@ -444,7 +442,6 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     }
 
     public boolean containsCoordinate(double x, double y) {
-    	System.out.println("CONTAIN");
         if (controlPoints.size() == 0) {
             if (isLoop()) {
             	return containsCoordinateBezier(x,y);
@@ -470,10 +467,8 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
         double angleEnd = source.loopAnchor + source.loopAngle;
 
         double r = source.radius;
-        System.out.println("CONTAIN Loop "+angleStart+"  "+angleEnd+"  "+r);
         Vector2D intersection = source.shape.getEdgePoint(angleStart, source.getCoordinates());
         Vector2D intersection2 = source.shape.getEdgePoint(angleEnd, source.getCoordinates());
-        System.out.println("CONTAIN Loop "+intersection+"  "+intersection2);
         Vector2D tangentToIntersection = Vector2D.getVectorAtAngle(angleEnd, 1).multiply(-1);
 
         //the correction retreats the endpoint of the bezier curve orthogonally from the vertex surface
