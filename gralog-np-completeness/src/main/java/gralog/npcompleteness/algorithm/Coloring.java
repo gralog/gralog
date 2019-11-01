@@ -109,6 +109,6 @@ public class Coloring extends Algorithm {
             for (Vertex v : s.getVertices())
                 v.label = result.get(v).toString();
         }
-        return null;
+        return k + " colors";
     }
 }
