@@ -64,7 +64,7 @@ def graph2cnf(g):
     
     for v in g.getVertices():
 
-        # at lest one colour
+        # at least one colour
         cnf.append([R(v), B(v), G(v)])
 #        gPrint("[R(v), B(v), G(v)] = " + str([R(v), B(v), G(v)]))
 
