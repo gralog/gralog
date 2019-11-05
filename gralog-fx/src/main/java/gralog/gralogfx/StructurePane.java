@@ -210,7 +210,7 @@ public class StructurePane extends StackPane implements StructureListener {
         vertexMenu = new ContextMenu();
 
         MenuItem copy = new MenuItem("Copy");
-        copy.setAccelerator(new MultipleKeyCombination(KeyCode.CONTROL, KeyCode.C));
+        copy.setAccelerator(new MultipleKeyCombination(KeyCode.COMPOSE, KeyCode.C));
         copy.setOnAction(e -> {
             copySelectionToClipboard();
         });
@@ -245,7 +245,6 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     public void centerView() {
-    	//TODO:	center the view - right now: center is located upper left corner
     	double sumX = 0;
         double sumY = 0;
         for (Vertex v : structure.getVertices()) {
@@ -253,8 +252,9 @@ public class StructurePane extends StackPane implements StructureListener {
         	sumY += v.getCoordinates().getY();
         }
         double n = structure.getVertices().size();
-        offsetX = 1/n*sumX;
-        offsetY = 1/n*sumY;
+
+        offsetX = 1/n*sumX -  screenResolutionX / 2.54 / 2 / zoomFactor;
+        offsetY = 1/n*sumY -  screenResolutionY / 2.54 / 3 / zoomFactor;
         this.requestRedraw();
 
 		double screenResolutionX = 96d; // dpi
