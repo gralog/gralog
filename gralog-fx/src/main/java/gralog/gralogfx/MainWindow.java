@@ -7,6 +7,7 @@ import gralog.dialog.GralogList;
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
 import gralog.gralogfx.undo.Undo;
+import gralog.rendering.GralogColor;
 import javafx.event.EventHandler;
 
 import gralog.plugins.*;
@@ -133,17 +134,6 @@ public class MainWindow extends Application {
         handlers.onUndo = this::onUndo;
         handlers.onRedo = this::onRedo;
 
-//        System.out.println("!!!!!!!!" + System.getProperty("user.dir"));
-//        File file = new File("/gralog.png");
-//        Image img = new Image(("gralog-32x32.png"));
-//
-//        if (img == null)
-//            System.out.println("img null");
-//        else
-//            System.out.println("img get url: " + img.getUrl());
-//        Image img = new Image("muell.png");
-//        System.out.println("img get url: " + img.getUrl());
-//        stage.getIcons().add(img);
 
 
 
@@ -377,27 +367,6 @@ public class MainWindow extends Application {
 
     public void onLoadPlugin(String fileName) {
         Preferences.setFile("MainWindow_lastPipingFile",new File(fileName));
-        // FileChooser fileChooser = new FileChooser();
-        // fileChooser.setInitialDirectory(new File(getLastDirectory()));
-        // fileChooser.setTitle("Load Plugins");
-        // fileChooser.getExtensionFilters().add(
-        //     new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
-        // );
-        // List<File> vertexList = fileChooser.showOpenMultipleDialog(stage);
-        // if (vertexList != null && !vertexList.isEmpty()) {
-        //     setLastDirectory(vertexList.get(0));
-        //     for (File file : vertexList)
-        //         doLoadPlugin(file.getAbsolutePath());
-        // }
-
-        // try {
-        //     String s = null;
-        //     System.out.println(s.substring(0,1));
-        // } catch (Exception ex) {
-        //     ExceptionBox exbox = new ExceptionBox();
-        //     Exception hello = new Exception("hello world");
-        //     exbox.showAndWait(hello);
-        // }
 
         try{
             if (this.tabs.getCurrentStructurePane() == null){
@@ -414,30 +383,9 @@ public class MainWindow extends Application {
                 return;
             }
 
-
-
             Piping newPiping = this.tabs.getCurrentStructurePane().
                     makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
             this.pipelines.add(newPiping);
-            
-            
-
-            // pipeline.run(this::initGraph);
-            // if (!externalProcessInitResponse.equals("useCurrentGraph")){
-            //     System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
-            //     Structure temp = StructureManager.instantiateStructure(externalProcessInitResponse);
-            //     System.out.println("intsantiaed structuer with id: ");
-            //     System.out.println(temp.getId());
-            //     tabs.addTab("new " + externalProcessInitResponse,temp);
-
-            //     tabs.getAllStructures();
-                
-            //     pipeline.run(temp,tabs.getCurrentStructurePane());
-            // }else{
-            //     pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
-
-            // }
-
 
         } catch(Exception e){
             e.printStackTrace();
@@ -784,6 +732,13 @@ public class MainWindow extends Application {
                             && !(o instanceof Edge)
                             && !(o instanceof EdgeIntermediatePoint))
                         isSelection = false;
+                if (isSelection)
+                    for (Object o : (Set) algoResult) {
+                        if (o instanceof Vertex)
+                            ((Vertex) o).fillColor = GralogColor.BLUE;
+                        if (o instanceof Edge)
+                            ((Edge) o).color = GralogColor.BLUE;
+                    }
                 if (isSelection) {
                     structurePane.selectAll((Set) algoResult);
                     structurePane.requestRedraw();
@@ -916,11 +871,6 @@ public class MainWindow extends Application {
             final Taskbar taskbar = Taskbar.getTaskbar();
             //set icon for mac os (and other systems which do support this method)
             taskbar.setIconImage(image);
-//            jFrame.setIconImage(image);
-//            jFrame.getContentPane().add(new JLabel("Hello World"));
-//            jFrame.setDefaultCloseOperation(jFrame.EXIT_ON_CLOSE);
-//            jFrame.pack();
-//            jFrame.setVisible(true);
         } catch (final UnsupportedOperationException e) {
             System.out.println("The os does not support: 'taskbar.setIconImage'");
         } catch (final SecurityException e) {
