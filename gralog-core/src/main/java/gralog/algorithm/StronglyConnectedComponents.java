@@ -14,15 +14,53 @@ import static gralog.algorithm.ShortestPath.ANSI_RED;
 import static gralog.algorithm.ShortestPath.ANSI_RESET;
 
 /**
- *
+ * On undirected graphs, computes connected components, on directed graphs, computes strongly connected
+ * components via Tarjan's algorithm.
  */
 @AlgorithmDescription(
-        name = "Strongly Connected Components",
-        text = "Finds the strongly connected components of a (mixed) graph",
+        name = "(Strongly) Connected Components",
+        text = "Finds the (strongly) connected components of a (mixed) graph",
         url = "https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm"
 )
 public class StronglyConnectedComponents extends Algorithm {
 
+    /**
+     * Finds the component of v.
+     * @param s
+     * @param v
+     * @param componentOfVertex
+     * @param comp
+     * @param removedVertices
+     */
+    private static void component(UndirectedGraph s, Vertex v, int numComponent,
+                                  HashMap<Vertex, Integer> componentOfVertex,
+                                  HashSet<Vertex> comp,
+                                  HashSet<Vertex> removedVertices) {
+        componentOfVertex.put(v, numComponent);
+        comp.add(v);
+        for (Vertex w : v.getNeighbours()){
+            if (removedVertices.contains(w))
+                continue;
+            component(s, w, numComponent, componentOfVertex, comp, removedVertices);
+        }
+    }
+    public static void components(UndirectedGraph s,
+                                  HashMap<Vertex, Integer> componentOfVertex,
+                                  HashSet<HashSet<Vertex>> verticesInComponent,
+                                  HashSet<Vertex> removedVertices){
+        Collection<Vertex> vertices = s.getVertices();
+        int numComponent = 0;
+        for (Vertex v : vertices){
+            if (removedVertices.contains(v))
+                continue;
+            if (componentOfVertex.containsKey(v)) // already visited
+                continue;
+            HashSet<Vertex> comp = new HashSet<>();
+            component(s, v, numComponent, componentOfVertex, comp, removedVertices);
+            numComponent++;
+            verticesInComponent.add(comp);
+        }
+    }
     /**
      * Computes strongly connected components of the structure represented by a coloring Vertex -> Integer and
      * a set of vertex sets of the components. Hereby the vertices given in the parameter removedVertices are ignored

@@ -18,6 +18,16 @@ import java.util.HashSet;
 )
 public class IndependentSet extends Algorithm {
 
+    /**
+     * Recursively decides if s has an independent set of size k given a partial
+     * independent set independenSet and a set of candidates with
+     * N[independenSet] \cap candidates = \emptyset.
+     * @param s
+     * @param k
+     * @param independentSet
+     * @param candidates
+     * @return
+     */
     protected boolean findIndependentSet(UndirectedGraph s, int k,
         Set<Vertex> independentSet, Set<Vertex> candidates) {
         if (k < 1)
@@ -26,13 +36,13 @@ public class IndependentSet extends Algorithm {
             return false;
 
         for (Vertex candidate : candidates) {
-            Set<Vertex> candidateNeigh = new HashSet<>();
+            Set<Vertex> candidateNeigh = new HashSet<>(); // N[candidate]
             for (Edge e : candidate.getIncidentEdges()) {
                 candidateNeigh.add(e.getSource());
                 candidateNeigh.add(e.getTarget());
             }
 
-            // nextCandidates = candidates \ N[independentSet]
+            // nextCandidates = candidates \ N[candidate]
             Set<Vertex> nextCandidates = new HashSet<>();
             for (Vertex u : candidates)
                 if (!candidateNeigh.contains(u))
