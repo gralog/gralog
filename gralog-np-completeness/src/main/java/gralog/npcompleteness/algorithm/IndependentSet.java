@@ -8,9 +8,6 @@ import gralog.progresshandler.ProgressHandler;
 import java.util.Set;
 import java.util.HashSet;
 
-import static gralog.algorithm.ShortestPath.ANSI_RED;
-import static gralog.algorithm.ShortestPath.ANSI_RESET;
-
 /**
  *
  */
@@ -60,13 +57,10 @@ public class IndependentSet extends Algorithm {
 
             Set<Vertex> independentSet = new HashSet<>();
             if (!findIndependentSet(s, k, independentSet, V)) {
-                System.out.println("finished");
                 break;
             }
             result.clear();
             result.addAll(independentSet);
-
-            System.out.println(ANSI_RED + independentSet + ANSI_RESET);
         }
         return result;
     }

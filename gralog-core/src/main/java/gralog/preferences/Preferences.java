@@ -65,7 +65,7 @@ public final class Preferences {
     }
 
     private static void createDefaultPrefs(String path) {
-        System.out.println("No config was found - add default prefs");
+        System.out.println("No config was found - add default preferences");
         InputStream def = Preferences.class.getClassLoader().getResourceAsStream("default_preferences.txt");
 
         try {

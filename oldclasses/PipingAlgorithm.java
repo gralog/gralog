@@ -47,26 +47,6 @@ public class PipingAlgorithm extends Algorithm {
         String output = this.exec(commands);
         System.out.println("Finished exec.");
 
-        // Platform.runLater(
-        //     () -> {
-        //         Label label2 = new Label("Name Runlater:");
-        //         TextField textField2 = new TextField ();
-        //         HBox hb2 = new HBox();
-        //         hb2.getChildren().addAll(label2, textField2);
-        //         hb2.setSpacing(10);
-        //         // hb2.show();
-        //     }
-        // );
-
-        // Label label1 = new Label("Name Reg:");
-        // TextField textField = new TextField ();
-        // HBox hb = new HBox();
-        // hb.getChildren().addAll(label1, textField);
-        // hb.setSpacing(10);
-
-       
-
-
         Platform.runLater(
             () -> {
                 Alert alert = new Alert(AlertType.INFORMATION);
@@ -98,19 +78,14 @@ public class PipingAlgorithm extends Algorithm {
             PrintStream out = new PrintStream(p.getOutputStream());
             out.println("Take this!");
             
-            System.out.println("wub");
-            out.println("And this!");
-            out.println("smorgesbord!");
             out.println("x");
             out.flush();
             while ((line = bri.readLine()) != null) {
                 result = result + line + ".\n";
-                System.out.println("reading up tha pythonzzz" + line);
             }
             bri.close();
             while ((line = bre.readLine()) != null) {
                 System.out.println(line);
-                System.out.println("wubadubdub");
             }
             bre.close();
             p.waitFor();

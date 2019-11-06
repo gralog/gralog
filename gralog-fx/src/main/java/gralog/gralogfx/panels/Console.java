@@ -184,7 +184,6 @@ public class Console extends HBox implements GralogWindow {
                 }
             }
             for (Text t : texts) {
-                System.out.println("t: " + t);;
                 t.setWrappingWidth((Double)newVal);
             }
         });
@@ -229,7 +228,6 @@ public class Console extends HBox implements GralogWindow {
     }
 
     public void onSpace(String text, StructurePane currentPane) {
-        System.out.println("space!");
     }
 
     public void onEnter(String text, StructurePane currentPane) {
@@ -491,7 +489,6 @@ public class Console extends HBox implements GralogWindow {
         }else if(flag == MessageToConsoleFlag.Warning) {
             this.warningPrint(msg);
         }else {
-            System.out.println("Unknown flag?");
             this.outsideMessage(msg);
         }
     }

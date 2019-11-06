@@ -26,7 +26,6 @@ import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 import gralog.gralogfx.piping.Piping;
 import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
-import java.util.function.Function;
 import java.util.function.BiFunction;
 import java.util.function.BiConsumer;
 import java.util.concurrent.CountDownLatch;
@@ -36,7 +35,6 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import gralog.structure.controlpoints.ControlPoint;
 import gralog.structure.controlpoints.ResizeControls;
@@ -106,8 +104,6 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     private Piping pipeline;
-
-    // private List<SpaceEvent> spaceListeners = new ArrayList<SpaceEvent>();
 
     Structure<Vertex, Edge> structure;
     Canvas canvas;
@@ -257,6 +253,7 @@ public class StructurePane extends StackPane implements StructureListener {
         offsetY = 1/n*sumY -  screenResolutionY / 2.54 / 3 / zoomFactor;
         this.requestRedraw();
 
+        //TODO: zoom such that the whole structure can be seen
 		double screenResolutionX = 96d; // dpi
 		double screenResolutionY = 96d; // dpi
 		double offsetX = -1d;
@@ -351,12 +348,6 @@ public class StructurePane extends StackPane implements StructureListener {
         CountDownLatch waitForPause = new CountDownLatch(1);
         CountDownLatch waitForVertexSelection = new CountDownLatch(1);
 
-        // List<BiFunction> functions = new ArrayList<BiFunction>(
-        // this::initGraph,this::handlePlannedPause,
-        // this::handlePlannedVertexSelection,
-        // this::sendOutsideMessageToConsole);
-
-        
         Piping pipeline = new Piping(initGraph,
                 this,waitForPause,
                 this::handlePlannedPause,
@@ -365,7 +356,6 @@ public class StructurePane extends StackPane implements StructureListener {
                 sendOutsideMessageToConsole);
 
         this.setPiping(pipeline);
-        // pipeline.subscribe(this.pluginControlPanel);
 
         /* at the moment this is hardcorded but it will soon be made dynamic!!!*/
 
@@ -374,11 +364,6 @@ public class StructurePane extends StackPane implements StructureListener {
             return null;
         }
 
-        // if (externalCommandSegments[0].equals("error") ||
-        // (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)) {
-        //     System.out.println("error: " + externalProcessInitResponse);
-        //     return;
-        // }
         pipingUnderway = true;
         pipeline.setFirstMessage(null);
         pipeline.start();
@@ -421,7 +406,6 @@ public class StructurePane extends StackPane implements StructureListener {
     }
     private void setMouseEvents() {
         canvas.setOnMouseClicked(e -> {
-            //System.out.println(screenToModel(new Point2D(e.getX(), e.getY())));
         });
         canvas.setOnMousePressed(this::onMousePressed);
         canvas.setOnMouseReleased(this::onMouseReleased);
@@ -489,9 +473,6 @@ public class StructurePane extends StackPane implements StructureListener {
                     }else {
                         System.out.println("piping is null or unit!" + myPiping);
                     }
-                    // System.out.println("space pressed and my scrutrue id is; "
-                    // + this.tabs.getCurrentStructurePane().getStructure().getId());
-                    // pipeline.execWithAck();
                     break;
             }
         });
@@ -537,7 +518,6 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     public boolean handlePlannedPause() {
-        // this.pluginControlPanel.doVarStuff();
         this.pipingUnderway = false;
         Platform.runLater(()-> {
             PluginControlPanel.notifyPlannedPauseRequested(getPiping().trackedVarArgs);
@@ -556,13 +536,7 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     public boolean handlePlannedVertexSelection() {
-        // this.pluginControlPanel.doVarStuff();
-        // this.pipingUnderway = false;
-        // Platform.runLater(()-> {
-        //     this.pluginControlPanel.notifyPlannedPauseRequested(currentPiping.trackedVarArgs);
-        // });
-
-        //todo: this haha
+        //todo: this
 
         return true;
     }

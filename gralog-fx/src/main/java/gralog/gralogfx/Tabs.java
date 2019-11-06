@@ -32,6 +32,7 @@ public class Tabs {
     private final ArrayList<Tab> tabsArray = new ArrayList<>();
 
     public ObjectListDisplay objectListDisplay;
+
     /**
      * @param onChangeTab Handler to be called when a new tab is selected or a
      * tab is closed.
@@ -78,7 +79,6 @@ public class Tabs {
         t.setContent(structurePane);
         t.setOnCloseRequest(e -> {
             int idx = panes.indexOf(structurePane);
-            System.out.println(idx);
 
             panes.get(idx).requestClose(() ->
                     closeTab(idx));

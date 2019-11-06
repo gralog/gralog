@@ -712,7 +712,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     Collections.swap(e.siblings, 1, 2);
                 }
             }
-//            System.out.println("skippadop : " + e.getSource() + e.getTarget());
+
 
             for (Edge edge : e.getSource().getIncidentEdges()) {
                 if (edge == e) {
@@ -727,9 +727,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         }
 
-
-        // System.out.println("we are : " + e + " am ende : " + e.getSource() + e.getTarget());
-        // System.out.println("we be addin the edge up in this boi");
         return true;
     }
 
@@ -826,7 +823,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             Interval me = new Interval(edge.getId(), id);
             Interval justAbove = this.edgeIdHoles.ceiling(me);
             Interval justBelow = this.edgeIdHoles.floor(me);
-            // System.out.println("justabove: " + justAbove + " justBelow: " + justBelow);
+
 
             if (justAbove == null) {
                 //this means justBelow cannot be null

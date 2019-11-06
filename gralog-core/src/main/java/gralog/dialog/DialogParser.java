@@ -170,13 +170,11 @@ public class DialogParser {
     private void transition(DialogState dialogState) {
         this.dialogState = dialogState;
         i++;
-//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
     private void transition(DialogState dialogState, String addedParameter) {
         this.dialogState = dialogState;
         parameters.add(addedParameter);
         i++;
-//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
 
     private void transition(DialogState dialogState, DialogAction dialogAction, String addedParameter) {
@@ -184,14 +182,12 @@ public class DialogParser {
         parameters.add(addedParameter);
         this.dialogAction = dialogAction;
         i++;
-//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
 
     private void transition(DialogState dialogState, DialogAction dialogAction) {
         this.dialogState = dialogState;
         this.dialogAction = dialogAction;
         i++;
-//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
 
     private void transition(DialogState dialogState, DialogAction dialogAction,
@@ -201,13 +197,11 @@ public class DialogParser {
         this.dialogAction = dialogAction;
         this.errorMsg = errorMsg;
         i++;
-//        System.out.println("Changed to dialogState = [" + dialogState + "], err = " + errorMsg);
     }
 
     private void transitionErr(DialogState dialogState, String errorMsg) {
         this.dialogState = dialogState;
         this.errorMsg = errorMsg;
-//        System.out.println("Changed to dialogState = [" + dialogState + "]");
     }
 
 

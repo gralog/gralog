@@ -540,7 +540,6 @@ public class Edge extends XmlMarshallable implements IMovable, Serializable {
     }
 
     private boolean containsCoordinateBezier(double x, double y) {
-    	System.out.println("CONTAIN Bezier");
         Vector2D m = new Vector2D(x, y);
 
         Vector2D ctrl1 = controlPoints.get(0).getPosition();

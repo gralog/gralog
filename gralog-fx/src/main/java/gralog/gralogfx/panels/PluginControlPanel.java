@@ -66,7 +66,6 @@ public class PluginControlPanel extends ScrollPane implements PipingWindow {
                         
                     }
                     sourceVarBox();
-                    // System.out.println("after readding I've got: " + vbox.getChildren().get(3));
                 }else {
                     
                     varBox.getChildren().clear();

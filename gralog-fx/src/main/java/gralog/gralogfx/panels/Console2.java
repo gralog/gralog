@@ -137,7 +137,6 @@ public class Console2 extends VBox implements GralogWindow {
                     return;
                 }
                 String remainingText = text.substring(text.indexOf('d')+1); // more text was entered
-                System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "]");
                 parser.parse(remainingText);
             }
             if (!existsSelectedEdge & !existsSelectedVertex) {
