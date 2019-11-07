@@ -38,8 +38,8 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     public int id;
     @DataField(display = true)
     public String label = "";
-    @DataField(display = true)
-    public double radius = 0.7;     // cm
+    @DataField(display = true, readOnly = true)
+    public double radius = 0.7;     // cm for what?!
 
     //the position of the loop center on the circle
     ///note: -90 is on top because the coordinate system is flipped horizontally
@@ -49,8 +49,8 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     @DataField(display = false)
     public double loopAngle = 20;   // degrees
 
-    public double strokeWidth = 2.54 / 96; // cm
-    public double textHeight = 0.4d; // cm; the height of the label text
+    public Double strokeWidth = 2.54 / 96; // cm
+    public Double textHeight = 0.4d; // cm; the height of the label text
 
     @DataField(display = true)
     public GralogColor fillColor = GralogColor.WHITE;
@@ -61,7 +61,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
     @DataField(display = true)
     public RenderingShape shape = Ellipse.create(1.4, 1.4);
 
-    public Vector2D coordinates = new Vector2D(0.0, 0.0);
+    private Vector2D coordinates = new Vector2D(0.0, 0.0);
 
     public ResizeControls controls;
 
@@ -120,7 +120,7 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
         this.fillColor = new GralogColor(v.fillColor);
 
 
-        this.setCoordinates(v.coordinates);
+        this.setCoordinates(v.getCoordinates());
         this.listeners = new HashSet<>(v.listeners);
 
         this.incidentEdges = new HashSet<>(v.incidentEdges);
@@ -131,12 +131,13 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     @Override
     public String toString() {
-        return "Vertex{" + "label=" + label + ", radius=" + radius
-                + ", fillColor=" + fillColor
-                + ", strokeWidth=" + strokeWidth
-                + ", textHeight=" + textHeight
-                + ", strokeColor=" + strokeColor
-                + ", coordinates=" + coordinates + '}';
+        return "Vertex:" + getId();
+//        return "Vertex{" + "label=" + label + ", radius=" + radius
+//                + ", fillColor=" + fillColor
+//                + ", strokeWidth=" + strokeWidth
+//                + ", textHeight=" + textHeight
+//                + ", strokeColor=" + strokeColor
+//                + ", coordinates=" + coordinates + '}';
     }
 
     
@@ -247,6 +248,10 @@ public class Vertex extends XmlMarshallable implements IMovable, Serializable {
 
     public int getDegree() {
         return incidentEdges.size();
+    }
+    
+    public double getRadius() {
+    	return radius;
     }
 
     public int getId() {

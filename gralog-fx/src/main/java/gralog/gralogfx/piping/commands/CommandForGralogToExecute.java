@@ -1,7 +1,7 @@
 /*
  * @author felix
  */
-package gralog.gralogfx.piping;
+package gralog.gralogfx.piping.commands;
 import java.util.concurrent.ThreadLocalRandom;
 import gralog.events.*;
 import gralog.rendering.*;
@@ -35,11 +35,11 @@ import javafx.scene.control.Button;
 public abstract class CommandForGralogToExecute {
 	// String name;
 
-	Structure structure;
+	public Structure structure;
 
-	String[] externalCommandSegments;
+	protected String[] externalCommandSegments;
 	private Boolean failed = false;
-	Exception error;
+	protected Exception error;
 	private String consoleMessage = null;
 
 
@@ -49,7 +49,7 @@ public abstract class CommandForGralogToExecute {
 	// 	this.externalCommandSegments = externalCommandSegments;
 	// }
 
-	void setResponse(String response) {
+	protected void setResponse(String response) {
 		this.response = response;
 	}
 

@@ -2,6 +2,7 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.structure;
 
+import gralog.DeepCopy;
 import gralog.math.BezierCubic;
 import gralog.math.BezierQuadratic;
 import gralog.math.BezierUtilities;
@@ -32,7 +33,6 @@ import java.util.TreeSet;
 import javax.xml.transform.stream.StreamResult;
 
 
-import gralog.structure.controlpoints.ControlPoint;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 
@@ -40,14 +40,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import java.util.concurrent.ThreadLocalRandom;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 /**
  *
@@ -315,6 +313,49 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         return v;
     }
 
+    /**
+     * Adds another structure s to this structure (this) identifying thisVertex from this structure with thatVertex from s.
+     * The identified vertex has the properties of thatVertex (only properties from Vertex and Edge, not from their descendants).
+     * Structure s remains unchanged (the objects from s are copied to this).
+     * If the same structure is given as s, produces a copy an merges it into this structure.
+     * @param s Another structure
+     * @param thisVertex A vertex from this structure
+     * @param thatVertex A vertex from that structure
+     */
+    public void mergeStructure(Structure<V,E> s, V thisVertex, V thatVertex){
+        Structure<V,E> sCopy = (Structure<V, E>) DeepCopy.copy(s);
+
+        // this handles also the ids
+        this.addVertices(sCopy.getVertices());
+        this.addEdges(sCopy.getEdges());
+
+        V thatVertexCopy = sCopy.getVertexById(thatVertex.getId());
+        // reconnect edges incident with thisVertex to thatVertexCopy
+        for (E e : getEdges()){
+            if (e.isLoop() && e.getSource() == thisVertex){
+                e.setSource(thatVertexCopy);
+                e.setTarget(thatVertexCopy);
+                thatVertex.incidentEdges.add(e);
+                thatVertexCopy.outgoingEdges.add(e);
+                thatVertexCopy.incomingEdges.add(e);
+                continue;
+            }
+            if (e.getSource() == thisVertex) {
+                e.setSource(thatVertexCopy);
+                thatVertexCopy.incidentEdges.add(e);
+                thatVertexCopy.outgoingEdges.add(e);
+            }
+            if (e.getTarget() == thisVertex) {
+                e.setTarget(thatVertexCopy);
+                thatVertexCopy.incidentEdges.add(e);
+                thatVertexCopy.incomingEdges.add(e);
+            }
+        }
+
+        removeVertex(thisVertex);
+    }
+
+
     public V addVertex() {
         return addVertex((Configuration) null);
     }
@@ -367,22 +408,17 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     /**
-     * Adds a set of vertices to the structure.
+     * Adds a set of vertices to the structure. Incident edges are not added.Vertex IDs are generated automatically.
      *
      * @param vs The vertices to be added.
      */
-    public void addVertices(Collection<V> vs, boolean autoGenerateIDs) {
-        if (autoGenerateIDs) {
-            for (V v : vs) {
-                v.id = pollNextFreeVertexID();
-            }
+    public void addVertices(Collection<V> vs) {
+        for (V v : vs) {
+            v.id = pollNextFreeVertexID();
+            vertices.put(v.id, v);
         }
-        //vertices.addAll(vs);
     }
 
-    public void addVertices(Collection<V> vs) {
-        addVertices(vs, true);
-    }
 
     /**
      * Clear the structure. Removes all vertices and all edges.
@@ -482,7 +518,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
      * @param id The id of the vertex
      * @return Returns the Vertex or null if no vertex has the ID
      */
-    public Vertex getVertexById(int id) {
+    public V getVertexById(int id) {
         return vertices.get(id);
     }
 
@@ -678,6 +714,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             }
 //            System.out.println("skippadop : " + e.getSource() + e.getTarget());
 
+
             for (Edge edge : e.getSource().getIncidentEdges()) {
                 if (edge == e) {
                     continue;
@@ -691,23 +728,23 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
         }
 
-
-        // System.out.println("we are : " + e + " am ende : " + e.getSource() + e.getTarget());
-        // System.out.println("we be addin the edge up in this boi");
         return true;
     }
 
     /**
-     * Adds a set of edges to the structure.
+     * Adds a set of edges to the structure if their ends are contained in the structure. Edges whose at least one vertex
+     * is not in the structure are not addded. IDs are generated automatically.
      *
      * @param es The edges to be added.
      */
     public void addEdges(Collection<E> es) {
 
         for (E e : es) {
-            int id = pollNextFreeEdgeID();
-            e.setId(id);
-            edges.put(e.getId(), e);
+            if (vertices.containsKey(e.getSource().id) && vertices.containsKey(e.getTarget().id)) {
+                int id = pollNextFreeEdgeID();
+                e.setId(id);
+                edges.put(e.getId(), e);
+            }
         }
     }
 
@@ -732,7 +769,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     public E addEdge(V source, V target, int id, Configuration config) {
-        E e = createEdge(id, config);
+    	E e = createEdge(id, config);
 
         if (addEdge(e, source, target)) {
             return e;
@@ -788,6 +825,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             Interval justAbove = this.edgeIdHoles.ceiling(me);
             Interval justBelow = this.edgeIdHoles.floor(me);
             // System.out.println("justabove: " + justAbove + " justBelow: " + justBelow);
+
 
             if (justAbove == null) {
                 //this means justBelow cannot be null
@@ -953,7 +991,7 @@ public abstract class Structure<V extends Vertex, E extends Edge>
 
     /**
      * Returns the next free available ID, so that all vertices' ids are continuously
-     * filled on a single interval [0, n)
+     * filled on a single interval [0, n). Updates vertexIdHoles.
      */
     public int pollNextFreeVertexID() {
         if (vertexIdHoles.size() != 0) {
@@ -1029,8 +1067,8 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             return objects;
         }
         for (Vertex v : getVertices()) {
-            double vx = v.coordinates.getX();
-            double vy = v.coordinates.getY();
+            double vx = v.getCoordinates().getX();
+            double vy = v.getCoordinates().getY();
             if (insideSelection(qx, qy, cx, cy, vx, vy)) {
                 objects.add(v);
             }
@@ -1082,16 +1120,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     }
                 } else if (e.getEdgeType() == Edge.EdgeType.SHARP) {
                     continue; // TODO:
-                } else if (e.getEdgeType() == Edge.EdgeType.ROUND) {
-                    continue; // TODO:
+                //} else isf (e.getEdgeType() == Edge.EdgeType.ROUND) {
+                //    continue; // TODO:
                 }
                 continue;
             }
 
-            Vector2D diff = e.getTarget().coordinates.minus(e.getSource().coordinates);
+            Vector2D diff = e.getTarget().getCoordinates().minus(e.getSource().getCoordinates());
             Vector2D perpendicularToDiff = diff.orthogonal(1).normalized().multiply(e.getOffset());
-            Vector2D source = e.getSource().coordinates.plus(perpendicularToDiff);
-            Vector2D target = e.getTarget().coordinates.plus(perpendicularToDiff);
+            Vector2D source = e.getSource().getCoordinates().plus(perpendicularToDiff);
+            Vector2D target = e.getTarget().getCoordinates().plus(perpendicularToDiff);
 
             if (separatingAxisTest(vecFrom, vecTo, source, target)) {
                 continue;
@@ -1236,12 +1274,12 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         for (Object o : selection) {
             if (o instanceof Vertex) {
                 vertices.add((Vertex) o);
-                sum += ((Vertex) o).coordinates.getY();
+                sum += ((Vertex) o).getCoordinates().getY();
                 count++;
             }
         }
         for (Vertex v : vertices) {
-            v.setCoordinates(v.coordinates.getX(), sum / count);
+            v.setCoordinates(v.getCoordinates().getX(), sum / count);
         }
     }
 
@@ -1260,15 +1298,16 @@ public abstract class Structure<V extends Vertex, E extends Edge>
         for (Object o : selection) {
             if (o instanceof Vertex) {
                 vertices.add((Vertex) o);
-                sum += ((Vertex) o).coordinates.getX();
+                sum += ((Vertex) o).getCoordinates().getX();
                 count++;
             }
         }
         for (Vertex v : vertices) {
-            v.setCoordinates(sum / count, v.coordinates.getY());
+            v.setCoordinates(sum / count, v.getCoordinates().getY());
         }
     }
 
+    
     @Override
     public Element toXml(Document doc) throws Exception {
         Element snode = doc.createElement("graph"); //super.toXml(doc);

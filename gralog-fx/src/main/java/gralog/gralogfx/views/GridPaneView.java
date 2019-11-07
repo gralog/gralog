@@ -18,8 +18,10 @@ public abstract class GridPaneView<T> extends GridPane implements View<T> {
     }
 
     public void requestRedraw() {
-        if (structurePane != null)
+        if (structurePane != null) {
             structurePane.requestRedraw();
+        	structurePane.recordStructure();
+        }
     }
 
     @Override

@@ -26,7 +26,6 @@ import gralog.rendering.*;
 import gralog.gralogfx.events.*;
 import gralog.gralogfx.piping.Piping;
 import gralog.gralogfx.piping.Piping.MessageToConsoleFlag;
-import java.util.function.Function;
 import java.util.function.BiFunction;
 import java.util.function.BiConsumer;
 import java.util.concurrent.CountDownLatch;
@@ -36,7 +35,6 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import gralog.structure.controlpoints.ControlPoint;
 import gralog.structure.controlpoints.ResizeControls;
@@ -107,14 +105,13 @@ public class StructurePane extends StackPane implements StructureListener {
 
     private Piping pipeline;
 
-    // private List<SpaceEvent> spaceListeners = new ArrayList<SpaceEvent>();
-
     Structure<Vertex, Edge> structure;
     Canvas canvas;
     Highlights highlights = new Highlights();
 
     //context menu
     private ContextMenu vertexMenu;
+    private ContextMenu canvasMenu;
 
     private ObjectListDisplay objectListDisplay;
 
@@ -209,7 +206,7 @@ public class StructurePane extends StackPane implements StructureListener {
         vertexMenu = new ContextMenu();
 
         MenuItem copy = new MenuItem("Copy");
-        copy.setAccelerator(new MultipleKeyCombination(KeyCode.CONTROL, KeyCode.C));
+        copy.setAccelerator(new MultipleKeyCombination(KeyCode.COMPOSE, KeyCode.C));
         copy.setOnAction(e -> {
             copySelectionToClipboard();
         });
@@ -233,9 +230,39 @@ public class StructurePane extends StackPane implements StructureListener {
             createListFromSelection();
         });
         vertexMenu.getItems().addAll(addList, new SeparatorMenuItem(), addLoop, copy, delete);
-
+        
+        canvasMenu = new ContextMenu();
+        MenuItem center = new MenuItem("Center view");
+        center.setAccelerator(new MultipleKeyCombination(KeyCode.CONTROL,KeyCode.ALT, KeyCode.C));
+        center.setOnAction(e -> {
+        	centerView();
+        });
+        canvasMenu.getItems().add(center);
     }
 
+    public void centerView() {
+    	double sumX = 0;
+        double sumY = 0;
+        for (Vertex v : structure.getVertices()) {
+        	sumX += v.getCoordinates().getX();
+        	sumY += v.getCoordinates().getY();
+        }
+        double n = structure.getVertices().size();
+
+        offsetX = 1/n*sumX -  screenResolutionX / 2.54 / 2 / zoomFactor;
+        offsetY = 1/n*sumY -  screenResolutionY / 2.54 / 3 / zoomFactor;
+        this.requestRedraw();
+
+        //TODO: zoom such that the whole structure can be seen
+		double screenResolutionX = 96d; // dpi
+		double screenResolutionY = 96d; // dpi
+		double offsetX = -1d;
+		double offsetY = -1d;
+		double zoomFactor = 1d;
+		blockVertexCreationOnRelease=true;
+
+    }
+    
     public void setObjectListDisplay(ObjectListDisplay obj) {
         objectListDisplay = obj;
     }
@@ -285,6 +312,10 @@ public class StructurePane extends StackPane implements StructureListener {
         Undo.Redo(structure);
         this.requestRedraw();
     }
+    
+    public void recordStructure() {
+    	Undo.Record(structure);
+    }
 
     public Structure getStructure() {
         return structure;
@@ -317,12 +348,6 @@ public class StructurePane extends StackPane implements StructureListener {
         CountDownLatch waitForPause = new CountDownLatch(1);
         CountDownLatch waitForVertexSelection = new CountDownLatch(1);
 
-        // List<BiFunction> functions = new ArrayList<BiFunction>(
-        // this::initGraph,this::handlePlannedPause,
-        // this::handlePlannedVertexSelection,
-        // this::sendOutsideMessageToConsole);
-
-        
         Piping pipeline = new Piping(initGraph,
                 this,waitForPause,
                 this::handlePlannedPause,
@@ -331,7 +356,6 @@ public class StructurePane extends StackPane implements StructureListener {
                 sendOutsideMessageToConsole);
 
         this.setPiping(pipeline);
-        // pipeline.subscribe(this.pluginControlPanel);
 
         /* at the moment this is hardcorded but it will soon be made dynamic!!!*/
 
@@ -340,11 +364,6 @@ public class StructurePane extends StackPane implements StructureListener {
             return null;
         }
 
-        // if (externalCommandSegments[0].equals("error") ||
-        // (externalProcessInitResponse.equals("useCurrentGraph") && getCurrentStructure() == null)) {
-        //     System.out.println("error: " + externalProcessInitResponse);
-        //     return;
-        // }
         pipingUnderway = true;
         pipeline.setFirstMessage(null);
         pipeline.start();
@@ -387,7 +406,6 @@ public class StructurePane extends StackPane implements StructureListener {
     }
     private void setMouseEvents() {
         canvas.setOnMouseClicked(e -> {
-            //System.out.println(screenToModel(new Point2D(e.getX(), e.getY())));
         });
         canvas.setOnMousePressed(this::onMousePressed);
         canvas.setOnMouseReleased(this::onMouseReleased);
@@ -455,9 +473,6 @@ public class StructurePane extends StackPane implements StructureListener {
                     }else {
                         System.out.println("piping is null or unit!" + myPiping);
                     }
-                    // System.out.println("space pressed and my scrutrue id is; "
-                    // + this.tabs.getCurrentStructurePane().getStructure().getId());
-                    // pipeline.execWithAck();
                     break;
             }
         });
@@ -503,7 +518,6 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     public boolean handlePlannedPause() {
-        // this.pluginControlPanel.doVarStuff();
         this.pipingUnderway = false;
         Platform.runLater(()-> {
             PluginControlPanel.notifyPlannedPauseRequested(getPiping().trackedVarArgs);
@@ -522,13 +536,7 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     public boolean handlePlannedVertexSelection() {
-        // this.pluginControlPanel.doVarStuff();
-        // this.pipingUnderway = false;
-        // Platform.runLater(()-> {
-        //     this.pluginControlPanel.notifyPlannedPauseRequested(currentPiping.trackedVarArgs);
-        // });
-
-        //todo: this haha
+        //todo: this
 
         return true;
     }
@@ -543,12 +551,12 @@ public class StructurePane extends StackPane implements StructureListener {
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
         IMovable selected = structure.findObject(lastMouseX, lastMouseY);
-
         //group selection handling for primary mouse button
         if(e.isPrimaryButtonDown()) {
 
             //if selection hit something, select
             if (selected != null) {
+            	canvasMenu.hide();
                 //only clear selection if mouse press was not on a bezier control point
                 if(selected instanceof ControlPoint) {
                     //select only the edge and the bezier control point.
@@ -574,7 +582,7 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     dragging = highlights.getSelection();
                     if(dragging.size() == 1 && selected instanceof Vertex) {
-                        singleVertexDragPosition = ((Vertex)selected).coordinates.minus(lastMouseX, lastMouseY);
+                        singleVertexDragPosition = ((Vertex)selected).getCoordinates().minus(lastMouseX, lastMouseY);
                     }
                     if(selected instanceof Edge) {
                         holdingEdge = (Edge) selected;
@@ -597,10 +605,12 @@ public class StructurePane extends StackPane implements StructureListener {
         }else if(e.isSecondaryButtonDown()) {
             //start an edge if secondary mouse down on a vertex
             if(selected instanceof Vertex) {
+            	canvasMenu.hide();
                 currentEdgeStartingPoint = selected;
             }
         }
         vertexMenu.hide();
+        
         this.requestRedraw();
     }
     private void onMouseReleased(MouseEvent e) {
@@ -611,7 +621,7 @@ public class StructurePane extends StackPane implements StructureListener {
         lastMouseX = mousePositionModel.getX();
         lastMouseY = mousePositionModel.getY();
         IMovable selected = structure.findObject(lastMouseX, lastMouseY);
-
+        
         //Start: handle response to piping wanting a user selected vertex
         if (!wasDraggingPrimary) {
             if (this.getPiping() != null && this.getPiping().getPipingState() == Piping.State.WaitingForSelection && selected != null) {
@@ -621,9 +631,12 @@ public class StructurePane extends StackPane implements StructureListener {
         }
         //End
 
-
+        if (canvasMenu.isShowing()) {
+        	blockVertexCreationOnRelease = true;
+        	canvasMenu.hide();
+        }
         if (dragging != null) {
-            Undo.Record(structure);
+            //Undo.Record(structure);
             if(hasGrid && snapToGrid) {
                 structure.snapToGrid(gridSize);
                 this.requestRedraw();
@@ -666,6 +679,8 @@ public class StructurePane extends StackPane implements StructureListener {
                     }
                     vertexMenu.show(canvas, e.getScreenX(), e.getScreenY());
                 }
+            } else if (!wasDraggingSecondary) {
+            	canvasMenu.show(canvas, e.getScreenX(), e.getScreenY());
             }
         }
 
@@ -736,7 +751,7 @@ public class StructurePane extends StackPane implements StructureListener {
                                     mousePositionModel.getX(),
                                     mousePositionModel.getY()));
                             if(initialThetaDrag == -1) {
-                                Vector2D parentPosition = c.parent.v.coordinates;
+                                Vector2D parentPosition = c.parent.v.getCoordinates();
                                 Vector2D rPosition = c.position;
                                 initialThetaDrag = rPosition.minus(parentPosition).theta();
                             }
@@ -764,7 +779,7 @@ public class StructurePane extends StackPane implements StructureListener {
                         //only align when the difference between initial relative dragging point
                         //and current relative position is small enough
                         if(o instanceof Vertex) {
-                            Vector2D rel = ((Vertex)o).coordinates.minus(
+                            Vector2D rel = ((Vertex)o).getCoordinates().minus(
                                     mousePositionModel.getX(), mousePositionModel.getY());
                             if(singleVertexDragPosition == null)
                                 continue;
@@ -792,7 +807,7 @@ public class StructurePane extends StackPane implements StructureListener {
             if(currentEdgeStartingPoint != null) {
                 drawingEdge = true;
                 Vertex v = (Vertex) currentEdgeStartingPoint;
-                Point2D vScreenCords = modelToScreen(new Point2D(v.coordinates.getX(), v.coordinates.getY()));
+                Point2D vScreenCords = modelToScreen(new Point2D(v.getCoordinates().getX(), v.getCoordinates().getY()));
                 this.requestRedraw(vScreenCords, new Point2D(e.getX(), e.getY()));
             }
             //drag pane with right drag
@@ -957,7 +972,7 @@ public class StructurePane extends StackPane implements StructureListener {
     }
 
     private void tryAlignToDiagonal(ResizeControls.RControl c, double thetaForce) {
-        Vector2D parentPosition = c.parent.v.coordinates;
+        Vector2D parentPosition = c.parent.v.getCoordinates();
         Vector2D rPosition = c.position;
         var size = c.parent.v.shape.sizeBox;
         var diff = rPosition.minus(parentPosition);
@@ -1018,19 +1033,19 @@ public class StructurePane extends StackPane implements StructureListener {
             if(x == vertex) {
                 continue;
             }
-            if(x.coordinates.minus(vertex.coordinates).length() < radius) {
-                final double xdiff = x.coordinates.getX() - vertex.coordinates.getX();
+            if(x.getCoordinates().minus(vertex.getCoordinates()).length() < radius) {
+                final double xdiff = x.getCoordinates().getX() - vertex.getCoordinates().getX();
 
                 if(!xAligned && Math.abs(xdiff) < maxDelta) {
-                    horizontalP1 = modelToScreen(new Point2D(x.coordinates.getX(), x.coordinates.getY()));
-                    horizontalP2 = modelToScreen(new Point2D(x.coordinates.getX(), vertex.coordinates.getY()));
-                    vertex.setCoordinates(x.coordinates.getX(), vertex.coordinates.getY());
+                    horizontalP1 = modelToScreen(new Point2D(x.getCoordinates().getX(), x.getCoordinates().getY()));
+                    horizontalP2 = modelToScreen(new Point2D(x.getCoordinates().getX(), vertex.getCoordinates().getY()));
+                    vertex.setCoordinates(x.getCoordinates().getX(), vertex.getCoordinates().getY());
                     xAligned = true;
                 }
-                else if(!yAligned && Math.abs(x.coordinates.getY() - vertex.coordinates.getY()) < maxDelta) {
-                    verticalP1 = modelToScreen(new Point2D(x.coordinates.getX(), x.coordinates.getY()));
-                    verticalP2 = modelToScreen(new Point2D(vertex.coordinates.getX(), x.coordinates.getY()));
-                    vertex.setCoordinates(vertex.coordinates.getX(), x.coordinates.getY());
+                else if(!yAligned && Math.abs(x.getCoordinates().getY() - vertex.getCoordinates().getY()) < maxDelta) {
+                    verticalP1 = modelToScreen(new Point2D(x.getCoordinates().getX(), x.getCoordinates().getY()));
+                    verticalP2 = modelToScreen(new Point2D(vertex.getCoordinates().getX(), x.getCoordinates().getY()));
+                    vertex.setCoordinates(vertex.getCoordinates().getX(), x.getCoordinates().getY());
                     yAligned = true;
                 }
                 if(xAligned && yAligned) {

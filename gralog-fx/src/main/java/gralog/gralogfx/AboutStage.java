@@ -31,7 +31,7 @@ public class AboutStage extends Stage {
         webEngine.loadContent(
             "<b>Gralog</b><br/>"
             + "Graphs, Algorithms, Logic and Games<br/>"
-            + "©2015-2016 Technische Universität Berlin<br/>"
+            + "©2015-2019 Technische Universität Berlin<br/>"
             + "Lehrstuhl für Logik und Semantik"
         );
 

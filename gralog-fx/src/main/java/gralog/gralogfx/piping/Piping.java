@@ -6,43 +6,24 @@
  * @also felix
  */
 package gralog.gralogfx.piping;
-import java.util.concurrent.ThreadLocalRandom;
-import gralog.events.*;
-import gralog.rendering.*;
 import gralog.gralogfx.panels.PipingWindow;
 
 
 import gralog.structure.*;
-import gralog.algorithm.*;
-import gralog.progresshandler.*;
 import gralog.gralogfx.*;
-import java.util.HashSet;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.concurrent.CountDownLatch;
-import java.util.function.Consumer;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.concurrent.locks.*;
 
-import java.util.Arrays;
-
-import java.util.HashMap;
-
-import java.util.Set;
 
 import java.io.*;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.TextField;
-// import javafx.scene.control.HBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.control.Button;
-// import gralog.gralog-core.src.main.java.gralog.rendering.*;
 
 
 
@@ -85,7 +66,7 @@ public class Piping extends Thread {
     public Supplier<String> receiveUserMessageFromConsole;
     private boolean pauseWasPressed = false;
     public boolean windowDoesCloseNow = false;
-    protected BiConsumer sendMessageToConsole;
+    public BiConsumer sendMessageToConsole;
     private Class classSelectionIsWaitingFor = null;
     private IMovable selectedObject;
     private String consoleInputText;
@@ -279,25 +260,6 @@ public class Piping extends Thread {
         this.currentSkipValue = Integer.MAX_VALUE;
     }
 
-    // public void run(BiFunction<String,Piping,StructurePane> newGraphMethod) throws
-    //     Exception {
-    //     // String[] commands
-    //         // = {fileName, structure.xmlToString()};
-    //     System.out.println("Gralog says: starting.");
-    //     // this.structure = structure;
-    //     // this.pane = pane;
-    //     // System.out.println("running, it has pane: " + this.pane);
-    //     this.newGraphMethod = newGraphMethod;
-    //     this.resetInitialPipingSkipVals();
-    //     // newGraphMethod.apply(("hello world".split(" ")));
-
-    //     System.out.println("starting exec");
-    //     String exitMessage = this.exec(null);
-        
-    //     System.out.println("exec finished");
-    //     return;
-        
-    // }
 
     public void killSelf() {
         this.windowDoesCloseNow = true;
@@ -305,7 +267,6 @@ public class Piping extends Thread {
     }
    
     public Integer extractRankFromPause(String[] externalCommandSegments) {
-        // System.out.println("where the rank would be : " + externalCommandSegments[1]);
         try {
             Integer rank = Integer.parseInt(externalCommandSegments[1]);
             return rank;
@@ -331,15 +292,8 @@ public class Piping extends Thread {
     }
   
 
-    // public String execWithAck() {
-        
-    //     if (this.state != State.Paused) {
-    //         return "error: not paused, therefore ack in jest";
-    //     }
-    //     return this.exec("ack");
-    // }
 
-    protected void redrawMyStructurePanes() {
+    public void redrawMyStructurePanes() {
         for (StructurePane sp : this.idStructurePaneMap.valueSet()) {
             sp.requestRedraw();
         }
@@ -405,7 +359,6 @@ public class Piping extends Thread {
 
             
             while ((line = this.getNextLine()) != null){//while python has not yet terminated
-                // System.out.println("current count: " + this.waitForPauseToBeHandled.getCount());
                 if (this.windowDoesCloseNow) {
                     return;
                 }
@@ -481,7 +434,6 @@ public class Piping extends Thread {
                                 this.pairLocalIdAndStructurePane(this.nextStructurePaneId,thisPane);
 
                                 this.state = State.InProgress;
-                                // System.out.println("about to return my structure with id: " + this.pane.getStructure().getId());
                                 out.println(this.nextStructurePaneId);
                                 this.nextStructurePaneId += 1;
                                 graphWasInstantiated.countDown();
@@ -514,7 +466,7 @@ public class Piping extends Thread {
 
                     }
 
-                    gralog.gralogfx.piping.CommandForGralogToExecute currentCommand;
+                    gralog.gralogfx.piping.commands.CommandForGralogToExecute currentCommand;
                     try {
                         // currentCommand = PipingMessageHandler.handleCommand(externalCommandSegments,this.getStructureWithId(Integer.parseInt(externalCommandSegments[1])),this);
                         int localStructureIndex = Integer.parseInt(PipingMessageHandler.extractNthPositionString(externalCommandSegments,1));
@@ -523,7 +475,7 @@ public class Piping extends Thread {
                         // mostRecentlyUsedStructurePane = currentCommand.getStructurePane();
                     }catch(Exception e) {
                         e.printStackTrace();
-                        currentCommand = new gralog.gralogfx.piping.NotRecognizedCommand(externalCommandSegments,(Structure)null);
+                        currentCommand = new gralog.gralogfx.piping.commands.NotRecognizedCommand(externalCommandSegments,(Structure)null);
                     }
                     
                     if (!currentCommand.didFail()) {
@@ -593,7 +545,6 @@ public class Piping extends Thread {
 
     public void makeNull() {
         this.state = State.Null;
-        System.out.println("makingue null");
         for (int i: idStructurePaneMap.keySet()) {
             this.getStructurePaneWithId(i).setPiping(null);
         }

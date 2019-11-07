@@ -50,17 +50,15 @@ public class BreadthFirstSearchTree extends Algorithm {
         }
     }
 
+
     public Object run(Structure s, AlgorithmParameters p, Set<Object> selection,
                       ProgressHandler onprogress) {
         HashMap<Vertex, Vertex> predecessor = new HashMap<>();
         HashMap<Vertex, Edge> edgeFromPredecessor = new HashMap<>();
-        Vertex v = null;
-        if (selection != null)
-            for (Object o : selection)
-                if (o instanceof Vertex)
-                    v = (Vertex) o;
+        Vertex v = selectedUniqueVertex(selection);
+
         if (v == null)
-            v = (Vertex) ((s.getVertices().toArray())[0]);
+            return "Please, select exactly one vertex to start BFS from.";
         breadthFirstSearch(v, predecessor, edgeFromPredecessor);
 
         HashSet<Edge> tree = new HashSet<>();

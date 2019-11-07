@@ -2,7 +2,11 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.generator;
 
+import java.util.Arrays;
+import java.util.List;
+
 import gralog.algorithm.AlgorithmParameters;
+import gralog.algorithm.CycleParameters;
 import gralog.algorithm.PathParameters;
 import gralog.algorithm.StringAlgorithmParameter;
 import gralog.algorithm.RandomGraphParameters;
@@ -26,11 +30,11 @@ public class Path extends Generator {
 
     @Override
     public AlgorithmParameters getParameters() {
-        return new StringAlgorithmParameter(
-                "Number of vertices",
-                Preferences.getInteger(this.getClass(), "vertices", 5).toString(), //this defValue plays no role
-                new IntSyntaxChecker(1, Integer.MAX_VALUE),
-                "");
+        String n = Preferences.getInteger(this.getClass(), "Number of vertices", 5).toString();
+        String directed = Preferences.getBoolean(this.getClass(), "directed", true).toString();
+        List<String> initialValues = Arrays.asList(n,directed);
+        return new PathParameters(initialValues);
+
     }
 
     @Override

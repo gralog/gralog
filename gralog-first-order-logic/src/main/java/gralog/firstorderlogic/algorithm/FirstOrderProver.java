@@ -25,7 +25,7 @@ import java.util.Set;
 public class FirstOrderProver extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return new FirstOrderProverParameters(Preferences.getString(
             this.getClass(), "formula", "!x. ?y. E(x,y)"));
     }

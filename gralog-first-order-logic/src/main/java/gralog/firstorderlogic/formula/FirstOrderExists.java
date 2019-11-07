@@ -101,14 +101,14 @@ public class FirstOrderExists extends FirstOrderFormula {
         HashMap<String, Vertex> varassign, FiniteGame game,
         Vector2D coor) {
         Vertex oldvalue = varassign.get(variable);
-        FiniteGamePosition parent = new FiniteGamePosition();
+        FiniteGamePosition parent = game.addVertex();
 
-        parent.coordinates = coor;
+        parent.setCoordinates(coor);
         parent.label = toString() + ", "
             + FirstOrderFormula.variableAssignmentToString(varassign);
         // "exists", so this is a player 0 position.
         parent.player1Position = false;
-        game.addVertex(parent);
+
 
         Collection<Vertex> V = s.getVertices();
         int yOffset = 0;
@@ -117,8 +117,7 @@ public class FirstOrderExists extends FirstOrderFormula {
             GameGraphResult gp = subformula1.constructGameGraph(
                 s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY() + yOffset));
             yOffset += gp.height + 1;
-            game.addVertex(gp.position);
-            game.addEdge(game.createEdge(parent, gp.position));
+            game.addEdge(parent, gp.position);
             // Set label for this vertex.
             gp.position.label = subformula1.toString() + ", "
                 + FirstOrderFormula.variableAssignmentToString(varassign);

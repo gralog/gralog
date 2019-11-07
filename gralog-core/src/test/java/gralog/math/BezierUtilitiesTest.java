@@ -19,16 +19,10 @@ public class BezierUtilitiesTest {
         b.c2 = ctrl2;
         b.c3 = target;
 
-        System.out.println("X-Collision at 1.5");
         var intersections = BezierUtilities.xIntersectionCubicBezier(1.5, b);
 
-        System.out.println("\n\nY-Collision at 1");
-        System.out.println(ctrl2);
         BezierUtilities.yIntersectionCubicBezier(0.9, b);
 
-        for (Vector2D v : intersections) {
-            System.out.println(v);
-        }
 
     }
 

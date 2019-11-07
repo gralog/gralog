@@ -18,15 +18,25 @@ import java.util.HashSet;
 )
 public class IndependentSet extends Algorithm {
 
+    /**
+     * Recursively decides if s has an independent set of size k given a partial
+     * independent set independenSet and a set of candidates with
+     * N[independenSet] \cap candidates = \emptyset.
+     * @param s
+     * @param k
+     * @param independentSet
+     * @param candidates
+     * @return
+     */
     protected boolean findIndependentSet(UndirectedGraph s, int k,
-        Set<Vertex> independentset, Set<Vertex> candidates) {
+        Set<Vertex> independentSet, Set<Vertex> candidates) {
         if (k < 1)
             return true;
         if (candidates.isEmpty())
             return false;
 
         for (Vertex candidate : candidates) {
-            Set<Vertex> candidateNeigh = new HashSet<>();
+            Set<Vertex> candidateNeigh = new HashSet<>(); // N[candidate]
             for (Edge e : candidate.getIncidentEdges()) {
                 candidateNeigh.add(e.getSource());
                 candidateNeigh.add(e.getTarget());
@@ -38,10 +48,10 @@ public class IndependentSet extends Algorithm {
                 if (!candidateNeigh.contains(u))
                     nextCandidates.add(u);
 
-            independentset.add(candidate);
-            if (findIndependentSet(s, k - 1, independentset, nextCandidates))
+            independentSet.add(candidate);
+            if (findIndependentSet(s, k - 1, independentSet, nextCandidates))
                 return true;
-            independentset.remove(candidate);
+            independentSet.remove(candidate);
         }
 
         return false;
@@ -56,9 +66,9 @@ public class IndependentSet extends Algorithm {
                 V.add(v);
 
             Set<Vertex> independentSet = new HashSet<>();
-            if (!findIndependentSet(s, k, independentSet, V))
+            if (!findIndependentSet(s, k, independentSet, V)) {
                 break;
-
+            }
             result.clear();
             result.addAll(independentSet);
         }

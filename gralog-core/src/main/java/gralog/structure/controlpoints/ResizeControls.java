@@ -22,7 +22,7 @@ public class ResizeControls implements IMovable, Serializable {
     }
 
     public void setCoordinates() {
-        Vector2D center = v.coordinates;
+        Vector2D center = v.getCoordinates();
         double width = v.shape.sizeBox.width;
         double height = v.shape.sizeBox.height;
         cs[0] = new RControl(0, this, center.getX() - width / 2, center.getY() - height / 2);
@@ -103,7 +103,7 @@ public class ResizeControls implements IMovable, Serializable {
         }
 
         public Vector2D parentCenter() {
-            return parent.v.coordinates;
+            return parent.v.getCoordinates();
         }
 
         public RControl getNextSibling() {

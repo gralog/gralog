@@ -34,12 +34,11 @@ import javax.sound.sampled.Line;
  */
 @ViewDescription(forClass = AlgorithmParameters.class)
 public class MultipleParameterView extends GridPaneView<Object> {
-    private static final double LABEL_WIDTH = 100;
+    private static final double LABEL_WIDTH = 200;
     private static final double MAX_FIELD_WIDTH = 150;
     @Override
     public void setObject(Object displayObject, Consumer<Boolean> submitPossible) {
         this.getChildren().clear();
-
         setVgap(5);
 
         //this.setPrefWidth(280);
@@ -49,12 +48,12 @@ public class MultipleParameterView extends GridPaneView<Object> {
                 Class<?> c = displayObject.getClass();
 
                 for (Field f : c.getDeclaredFields()) {
-
                     f.setAccessible(true);
                     
 
                     String name = f.getName();
                     Label nameLabel = new Label(name);
+                    nameLabel.setMaxWidth(LABEL_WIDTH);
                     nameLabel.setPrefWidth(LABEL_WIDTH);
 
                     Object value = f.get(displayObject);

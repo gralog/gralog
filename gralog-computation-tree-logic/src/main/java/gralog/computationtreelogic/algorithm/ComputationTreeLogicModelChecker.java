@@ -14,6 +14,7 @@ import gralog.modallogic.KripkeStructure;
 import gralog.modallogic.World;
 import gralog.preferences.Preferences;
 import gralog.progresshandler.ProgressHandler;
+import gralog.structure.Highlights;
 import gralog.structure.Structure;
 
 import java.util.HashSet;
@@ -30,7 +31,7 @@ import java.util.Set;
 public class ComputationTreeLogicModelChecker extends Algorithm {
 
     @Override
-    public gralog.algorithm.AlgorithmParameters getParameters(Structure s) {
+    public gralog.algorithm.AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return new StringAlgorithmParameter(
             "Formula",
             Preferences.getString(this.getClass(), "formula", "A X (P \\wedge Q)"),

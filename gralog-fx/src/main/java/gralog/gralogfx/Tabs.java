@@ -32,6 +32,7 @@ public class Tabs {
     private final ArrayList<Tab> tabsArray = new ArrayList<>();
 
     public ObjectListDisplay objectListDisplay;
+
     /**
      * @param onChangeTab Handler to be called when a new tab is selected or a
      * tab is closed.
@@ -123,7 +124,7 @@ public class Tabs {
         if (tab != null)
             tab.setText(name);
     }
-
+    
     /**
      * Returns the StructurePane object managed by the current tab or null if no
      * tab exists.
@@ -146,10 +147,14 @@ public class Tabs {
         return structures;
     }
 
-    private Tab getCurrentTab() {
+    public Tab getCurrentTab() {
         return tabPane.getSelectionModel().getSelectedItem();
     }
 
+    public int getTabIndex(Tab tab) {
+    	return panes.indexOf(tab.getContent());
+    }
+    
     private void onChangeTab() {
         if(getCurrentStructurePane() != null) {
             this.requestRedraw();

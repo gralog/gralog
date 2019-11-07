@@ -10,6 +10,9 @@ import java.util.*;
 import gralog.finitegame.structure.*;
 import gralog.rendering.Vector2D;
 
+import static gralog.dialog.DialogParser.ANSI_RESET;
+
+
 /**
  * A relation in first-order logic.
  *
@@ -40,7 +43,7 @@ public class FirstOrderRelation extends FirstOrderFormula {
         switch (parameters.size()) {
             case 1:
                 Vertex v = varassign.get(parameters.get(0));
-                return relation.equals(v.label);
+                return v.label.matches(".*\\b" + relation + "\\b.*");
 
             case 2:
 
@@ -82,24 +85,33 @@ public class FirstOrderRelation extends FirstOrderFormula {
     public GameGraphResult constructGameGraph(Structure s,
         HashMap<String, Vertex> varassign, FiniteGame game,
         Vector2D coor) {
-        FiniteGamePosition parent = new FiniteGamePosition();
+        FiniteGamePosition parent = game.addVertex();
 
-        parent.coordinates = coor;
+        parent.setCoordinates(coor);
         parent.label = toString() + ", "
             + FirstOrderFormula.variableAssignmentToString(varassign);
 
         Boolean res = false;
-        Vertex from = varassign.get(parameters.get(0));
-        Vertex to = varassign.get(parameters.get(1));
+        if (parameters.size() == 1){
+            Vertex v = varassign.get(parameters.get(0));
+            if (v.label.matches(".*\\b" + relation + "\\b.*"))
+                res = true;
+            else
+                res = false;
+        }
+        else {
+            Vertex from = varassign.get(parameters.get(0));
+            Vertex to = varassign.get(parameters.get(1));
 
-        Set<Edge> E = from.getIncidentEdges();
-        for (Edge e : E) {
-            if (e.getSource() == from && e.getTarget() == to // same direction
-                || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) {
-                // opposite direction, but undirected edge
-                if (relation.equals("E") // generic query - matches any edge!
-                    || relation.equals(e.label)) { // specific query - matches current edge?
-                    res = true;
+            Set<Edge> E = from.getIncidentEdges();
+            for (Edge e : E) {
+                if (e.getSource() == from && e.getTarget() == to // same direction
+                        || (!e.isDirected) && e.getSource() == to && e.getTarget() == from) {
+                    // opposite direction, but undirected edge
+                    if (relation.equals("E") // generic query - matches any edge!
+                            || relation.equals(e.label)) { // specific query - matches current edge?
+                        res = true;
+                    }
                 }
             }
         }

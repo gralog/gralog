@@ -3,6 +3,7 @@
 package gralog.rendering;
 
 import java.io.Serializable;
+import java.util.HashMap;
 
 /**
  *
@@ -152,7 +153,6 @@ public class GralogColor implements Serializable {
     }
 
     public enum Color {
-        WHITE(0xFFFFFF),
         BLACK(0x000000),
         BLUE(0x0000FF),
         GREEN(0x00FF00),
@@ -169,7 +169,8 @@ public class GralogColor implements Serializable {
         TEAL(0x008080),
         NAVY(0x000080),
         ORANGE(0xFF4500),
-        PUCE(0xCC8899);
+        PUCE(0xCC8899),
+        WHITE(0xFFFFFF);
 
         int value;
 
@@ -180,5 +181,17 @@ public class GralogColor implements Serializable {
         public int getValue() {
             return this.value;
         }
+    }
+
+    public static int numberNamedColors(){
+        return Color.values().length;
+    }
+
+    public static HashMap<Integer, Color> IntegerToColor(){
+        int i = 0;
+        HashMap<Integer, Color> int_to_color = new HashMap<>();
+        for (Color c : Color.values())
+            int_to_color.put(i++,c);
+        return int_to_color;
     }
 }

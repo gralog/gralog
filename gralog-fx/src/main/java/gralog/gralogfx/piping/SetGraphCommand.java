@@ -1,13 +1,8 @@
 package gralog.gralogfx.piping;
+import gralog.gralogfx.piping.commands.CommandForGralogToExecute;
 import gralog.structure.*;
-import gralog.rendering.*;
-import java.util.Set;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
-import gralog.exportfilter.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import gralog.gralogfx.StructurePane;
 import java.util.Arrays;
 import gralog.importfilter.TrivialGraphFormatImport;
@@ -21,7 +16,6 @@ public class SetGraphCommand extends CommandForGralogToExecute {
     String graphString;
     StructurePane currentStructurePane;
     int localStructureId;
-    // String neighbourString;
     Piping piping;
 
 
@@ -57,8 +51,6 @@ public class SetGraphCommand extends CommandForGralogToExecute {
 
 	public void handle() {
 
-        /* for testing*/
-        
         /*Gralog messages are in the format:
 
         $$
@@ -73,8 +65,6 @@ public class SetGraphCommand extends CommandForGralogToExecute {
         In other words, if a message is going to have multiple lines, there is 
         a $$ in front of the first line, then a $ at the end before the last line
         */
-
-        /* let it be known that xml comes without whitespace between elements*/
 
         if (this.format == GraphType.Xml) {
 
@@ -125,10 +115,6 @@ public class SetGraphCommand extends CommandForGralogToExecute {
                 this.doFail(e);
                 return;
             }
-            // this.currentStructurePane.setStructure(structureFromTGF);
-            // System.out.println("id: " + localStructureId);
-            // System.out.println("structure: " + structureFromTGF);
-            // System.out.println("ol structure: " + this.structure);
             this.piping.pairLocalIdAndStructure(localStructureId,structureFromTGF);
         }else if (this.format == GraphType.Tikz) {
             //parse the tikz, possibly in a multi-line manner
@@ -172,18 +158,12 @@ public class SetGraphCommand extends CommandForGralogToExecute {
         }else {
             this.error = new MessageFormatException("The format " + this.format.toString() + " ain't no proper graph format!");
         }
-        
 
         // int changeId;
 
         this.setResponse(null);
 
-
         return ;
-
-
-
-        // return v;
 	}
 
     public void doFail(Exception e) {

@@ -1,0 +1,8 @@
+1. GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007: ./Licenses/COPYING
+2. Apache License 2.0 (exp4j): ./Licenses/Apache-2.0.txt
+3. GNU GENERAL PUBLIC LICENSE Version 2, June 1991 (javafx): ./Licenses/GPLv2.txt
+4. BSD License. Copyright 2012-2018 hamcrest.org (hamcrest): ./Licenses/BSD.txt 
+5. Eclipse Public license - v 1.0 (junit, jgrapht): ./Licenses/Eclipse.txt
+6. CUP Parser Generator Copyright Notice, License, and Disclaimer (vbmacher): ./Licenses/Cup.txt
+7. Jflex: ./Licenses/Jflex.txt
+8. Creative Commons Attribution-ShareAlike 3.0 Unported (quadratic Bezier curves in Tikz export): ./Licenses/cc-by-sa-3.0.txt. From: https://tex.stackexchange.com/questions/432273/how-are-quadratic-bezier-curves-drawn-by-tikz, answer by Krym (https://tex.stackexchange.com/users/9335/kpym).

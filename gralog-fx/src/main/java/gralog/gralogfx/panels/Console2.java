@@ -97,12 +97,8 @@ public class Console2 extends VBox implements GralogWindow {
         }
 
         parser.parse(text);
-        System.out.println(ANSI_RED + "\nconsole: parsed" + ANSI_RESET);
-        System.out.println("text = [" + text + "], currentPane = [" + currentPane + "]");
-        ActionType type = parser.getType(); // draw smth: FX, change graph: CORE
+        ActionType type = parser.getType();
         ArrayList<String> parameters = parser.getParameters();
-
-        System.out.println(ANSI_RED + "console: dialogState=" + parser.getDialogState() + ANSI_RESET);
 
         // the input was "filter [all] selected"
         // if only vertices or only edges are selected, guess this, don't let the user write it
@@ -130,7 +126,6 @@ public class Console2 extends VBox implements GralogWindow {
                     return;
                 }
                 String remainingText = text.substring(text.indexOf('d')+1); // more text was entered
-                System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "], err = " + parser.getErrorMsg() );
                 parser.parse(remainingText);
             }
             if (existsSelectedEdge & ! existsSelectedVertex) {
@@ -142,7 +137,6 @@ public class Console2 extends VBox implements GralogWindow {
                     return;
                 }
                 String remainingText = text.substring(text.indexOf('d')+1); // more text was entered
-                System.out.println("calling parse again, dialogState = " + parser.getDialogState() + ", text = [" + remainingText + "]");
                 parser.parse(remainingText);
             }
             if (!existsSelectedEdge & !existsSelectedVertex) {
@@ -151,8 +145,6 @@ public class Console2 extends VBox implements GralogWindow {
                 parser.setDialogAction(NONE);
             }
         }
-
-        System.out.println("HERE! dialogAction = " + parser.getDialogAction());
 
         output(parser.getErrorMsg());
         parser.setErrorMsg("");
@@ -172,7 +164,6 @@ public class Console2 extends VBox implements GralogWindow {
                 case DESELECT_ALL_EDGES:        dialogfx.deselectAllEdges(currentPane);
                                                 break;
                 case FILTER:
-                                                System.out.println("Calling dialog.filter with parameters=" + parameters);
                                                 dialog.filter(parser.getParameters(),
                                                                 currentPane.getStructure(),
                                                                 currentPane.getHighlights());

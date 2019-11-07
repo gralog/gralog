@@ -44,32 +44,32 @@ public class FiniteGamePosition extends Vertex {
             super.render(gc, highlights);
         } else {
             if (highlights.isSelected(this))
-                gc.fillRectangle(coordinates.getX() - radius - 0.07, // outer
-                    coordinates.getY() - radius - 0.07,
-                    coordinates.getX() + radius + 0.07,
-                    coordinates.getY() + radius + 0.07,
+                gc.fillRectangle(getCoordinates().getX() - radius - 0.07, // outer
+                    getCoordinates().getY() - radius - 0.07,
+                    getCoordinates().getX() + radius + 0.07,
+                    getCoordinates().getY() + radius + 0.07,
                     GralogColor.RED);
 
-            gc.fillRectangle(coordinates.getX() - radius, // outer
-                coordinates.getY() - radius,
-                coordinates.getX() + radius,
-                coordinates.getY() + radius,
+            gc.fillRectangle(getCoordinates().getX() - radius, // outer
+                getCoordinates().getY() - radius,
+                getCoordinates().getX() + radius,
+                getCoordinates().getY() + radius,
                 strokeColor);
-            gc.fillRectangle(coordinates.getX() - radius + strokeWidth, // inner
-                coordinates.getY() - radius + strokeWidth,
-                coordinates.getX() + radius - strokeWidth,
-                coordinates.getY() + radius - strokeWidth,
+            gc.fillRectangle(getCoordinates().getX() - radius + strokeWidth, // inner
+                getCoordinates().getY() - radius + strokeWidth,
+                getCoordinates().getX() + radius - strokeWidth,
+                getCoordinates().getY() + radius - strokeWidth,
                 fillColor);
-            gc.putText(coordinates, label,
+            gc.putText(getCoordinates(), label,
                 textHeight, fillColor.inverse());
         }
     }
 
     @Override
     public boolean containsCoordinate(double x, double y) {
-        return (coordinates.get(0) - radius <= x)
-            && (x <= coordinates.get(0) + radius)
-            && (coordinates.get(1) - radius <= y)
-            && (y <= coordinates.get(1) + radius);
+        return (getCoordinates().get(0) - radius <= x)
+            && (x <= getCoordinates().get(0) + radius)
+            && (getCoordinates().get(1) - radius <= y)
+            && (y <= getCoordinates().get(1) + radius);
     }
 }

@@ -14,10 +14,14 @@ import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Edge;
 import gralog.structure.Vertex;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
+
+/**
+ *
+ *
+ *
+ */
 
 /**
  *
@@ -35,9 +39,10 @@ public class BuechiLanguageEmptiness extends Algorithm {
 
     public String languageEmptiness(BuechiAutomaton s) {
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
-        ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
+        HashSet<HashSet<Vertex>> verticesInComponent = new HashSet<>();
 
-        StronglyConnectedComponents.tarjanStrongComponents(s, componentOfVertex, verticesInComponent);
+        HashSet<Vertex> removedVertices = new HashSet<>(); // no removed vertices: the empty set
+        StronglyConnectedComponents.tarjanStrongComponents(s, componentOfVertex, verticesInComponent, removedVertices);
 
         HashMap<State, HashMap<Vertex, Vertex>> startStateReach = new HashMap();
         HashMap<State, HashMap<Vertex, Edge>> startStateReachEdges = new HashMap();
@@ -53,7 +58,7 @@ public class BuechiLanguageEmptiness extends Algorithm {
             }
         }
 
-        for (ArrayList<Vertex> component : verticesInComponent) {
+        for (HashSet<Vertex> component : verticesInComponent) {
             // only proceed with components that contain a final state
             State componentFinalState = null;
             for (Vertex v : component) {
@@ -72,7 +77,8 @@ public class BuechiLanguageEmptiness extends Algorithm {
             if (component.size() > 1) {
                 componentHasCycle = true;
             } else {
-                Vertex v = component.get(0);
+                Iterator<Vertex> itr = component.iterator();
+                Vertex v = itr.next(); // the only vertex
                 for (Edge e : v.getIncidentEdges()) {
                     if (e.getSource() == v && e.getTarget() == v) {
                         componentHasCycle = true;

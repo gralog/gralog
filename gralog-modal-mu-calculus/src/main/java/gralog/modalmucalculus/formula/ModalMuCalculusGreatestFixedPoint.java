@@ -62,8 +62,8 @@ public class ModalMuCalculusGreatestFixedPoint extends ModalMuCalculusFormula {
             ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
             node.setCoordinates(
-                index.get((World) v).get(formula).coordinates.getX(),
-                scale * size.getY() * v.coordinates.getY() + pos.getY()
+                index.get((World) v).get(formula).getCoordinates().getX(),
+                scale * size.getY() * v.getCoordinates().getY() + pos.getY()
             );
             node.priority = myPriority;
             node.label = "ν" + variable;

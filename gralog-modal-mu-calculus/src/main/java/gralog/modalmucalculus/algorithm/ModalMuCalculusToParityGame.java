@@ -28,7 +28,7 @@ import java.util.Set;
 public class ModalMuCalculusToParityGame extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return new StringAlgorithmParameter(
             "Formula",
             Preferences.getString(this.getClass(), "formula", "νX. μY. (P  ∧ □X) ∨ □Y"),

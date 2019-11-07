@@ -72,26 +72,21 @@ public class FirstOrderOr extends FirstOrderFormula {
     public GameGraphResult constructGameGraph(Structure s,
         HashMap<String, Vertex> varassign, FiniteGame game,
         Vector2D coor) {
-        FiniteGamePosition parent = new FiniteGamePosition();
+        FiniteGamePosition parent = game.addVertex();
 
-        parent.coordinates = coor;
+        parent.setCoordinates(coor);
         parent.label = toString() + ", "
             + FirstOrderFormula.variableAssignmentToString(varassign);
         // "or", so this is a player 0 position.
         parent.player1Position = false;
-        game.addVertex(parent);
 
         GameGraphResult c1 = subformula1.constructGameGraph(
             s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY()));
-        game.addVertex(c1.position);
-
-        game.addEdge(game.createEdge(parent, c1.position));
+        game.addEdge(parent, c1.position);
 
         GameGraphResult c2 = subformula2.constructGameGraph(
             s, varassign, game, new Vector2D(coor.getX() + X_OFFSET, coor.getY() + c1.height + 1));
-        game.addVertex(c2.position);
-
-        game.addEdge(game.createEdge(parent, c2.position));
+        game.addEdge(parent, c2.position);
 
         return new GameGraphResult(parent, c1.height + c2.height + 1);
     }

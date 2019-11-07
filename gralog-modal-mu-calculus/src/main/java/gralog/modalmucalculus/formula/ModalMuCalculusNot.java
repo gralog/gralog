@@ -50,9 +50,9 @@ public class ModalMuCalculusNot extends ModalMuCalculusFormula {
 
         for (Vertex v : s.getVertices()) {
             ParityGamePosition node = p.createVertex();
-            node.coordinates = pos.plus(new Vector2D(
-                scale * size.getX() * v.coordinates.getX(),
-                scale * size.getY() * v.coordinates.getY()));
+            node.setCoordinates(pos.plus(new Vector2D(
+                scale * size.getX() * v.getCoordinates().getX(),
+                scale * size.getY() * v.getCoordinates().getY())));
             node.label = prop.proposition;
             node.player1Position = ((World) v).satisfiesProposition(prop.proposition);
             p.addVertex(node);

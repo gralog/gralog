@@ -1,4 +1,6 @@
-package gralog.gralogfx.piping;
+package gralog.gralogfx.piping.commands;
+import gralog.gralogfx.piping.NonExistantVertexException;
+import gralog.gralogfx.piping.PipingMessageHandler;
 import gralog.structure.*;
 import gralog.rendering.*;
 import java.util.Set;

@@ -1,7 +1,9 @@
 package gralog.gralogfx.dialog;
 
+import gralog.algorithm.CycleParameters;
 import gralog.algorithm.GridParameters;
 import gralog.algorithm.StringAlgorithmParameter;
+import gralog.algorithm.StringAlgorithmParametersList;
 import gralog.dialog.Dialog;
 import gralog.dialog.DialogAction;
 import gralog.dialog.DialogParser;
@@ -13,10 +15,12 @@ import gralog.generator.Wheel;
 import gralog.gralogfx.StructurePane;
 import gralog.plugins.PluginManager;
 import gralog.structure.Structure;
+import javafx.scene.image.Image;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,7 +54,8 @@ public class DialogConsoleParserTest {
 
         // generate some graphs
 
-        c20 = (new Cycle()).generate(new StringAlgorithmParameter("", "20"));
+        c20 = (new Cycle()).generate(
+                new CycleParameters(Arrays.asList("20","undirected")));
         List<String> parameters = Arrays.asList("6","5");
         cylGrid = (new CylindricalGrid()).generate(new GridParameters(parameters));
         grid5x5 = (new Grid()).generate(new GridParameters(parameters));
@@ -239,6 +244,7 @@ public class DialogConsoleParserTest {
 
 
     }
+
 
     private Structure getGraph(String fileName) {
         try {

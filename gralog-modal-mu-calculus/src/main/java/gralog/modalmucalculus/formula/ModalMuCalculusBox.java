@@ -62,8 +62,8 @@ public class ModalMuCalculusBox extends ModalMuCalculusFormula {
             ParityGamePosition node = p.createVertex();
             //node.Coordinates.add(scale * w * v.Coordinates.get(0) + x);
             node.setCoordinates(
-                index.get((World) v).get(subformula).coordinates.getX(),
-                scale * size.getY() * v.coordinates.getY() + pos.getY()
+                index.get((World) v).get(subformula).getCoordinates().getX(),
+                scale * size.getY() * v.getCoordinates().getY() + pos.getY()
             );
             node.label = transitiontype == null ? "☐" : ("[" + transitiontype + "]");
             node.player1Position = false;

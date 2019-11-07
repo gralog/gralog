@@ -12,7 +12,7 @@ import java.util.HashSet;
  *
  */
 @AlgorithmDescription(
-    name = "Clique",
+    name = "Maximum Clique",
     text = "Finds a maximum Clique",
     url = "https://en.wikipedia.org/wiki/Clique_problem")
 public class Clique extends Algorithm {

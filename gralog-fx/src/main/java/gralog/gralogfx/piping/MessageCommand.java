@@ -1,4 +1,5 @@
 package gralog.gralogfx.piping;
+import gralog.gralogfx.piping.commands.CommandForGralogToExecute;
 import gralog.structure.*;
 import gralog.rendering.*;
 

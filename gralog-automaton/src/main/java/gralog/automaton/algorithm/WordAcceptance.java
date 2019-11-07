@@ -11,6 +11,7 @@ import gralog.automaton.State;
 import gralog.automaton.Transition;
 import gralog.progresshandler.ProgressHandler;
 import gralog.structure.Edge;
+import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 import java.util.HashSet;
@@ -27,7 +28,7 @@ import java.util.Set;
 public class WordAcceptance extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return new StringAlgorithmParameter("Word", "");
     }
 

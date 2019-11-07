@@ -59,8 +59,8 @@ public class TikZExport extends ExportFilter {
             }
             final String label = s.label.isEmpty() ? "" : "$" + s.label + "$";
             out.writeLineNoIndent("] (q" + i + ") at ("
-                + s.coordinates.getX() + "cm,"
-                + (-s.coordinates.getY()) + "cm) {" + label + "};");
+                + s.getCoordinates().getX() + "cm,"
+                + (-s.getCoordinates().getY()) + "cm) {" + label + "};");
             ++i;
         }
 
@@ -68,7 +68,7 @@ public class TikZExport extends ExportFilter {
 
         for (Transition t : structure.getEdges()) {
             double halfLength = t.length() / 2.0;
-            Vector2D from = t.getSource().coordinates;
+            Vector2D from = t.getSource().getCoordinates();
             double distance = 0.0;
 
             out.write("\\draw (q" + nodeIndex.get(t.getSource()) + ")");

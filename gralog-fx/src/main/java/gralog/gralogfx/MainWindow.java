@@ -6,6 +6,8 @@ package gralog.gralogfx;
 import gralog.dialog.GralogList;
 import gralog.gralogfx.input.MultipleKeyCombination;
 import gralog.gralogfx.panels.*;
+import gralog.gralogfx.undo.Undo;
+import gralog.rendering.GralogColor;
 import javafx.event.EventHandler;
 
 import gralog.plugins.*;
@@ -23,17 +25,23 @@ import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
 import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 
+import java.awt.Toolkit;
+import java.awt.Taskbar;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.lang.reflect.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.WindowEvent;
 import javafx.scene.Scene;
@@ -43,6 +51,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.control.Alert.AlertType;
+
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -54,6 +64,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import org.dockfx.*;
+
+import static gralog.gralogfx.panels.Console.ANSI_RESET;
+import static gralog.gralogfx.panels.Console2.ANSI_RED;
+
 /**
  * The gralog main window.
  */
@@ -112,12 +126,16 @@ public class MainWindow extends Application {
         handlers.onLoadLastPlugin = this::onLoadLastPlugin;
         handlers.onExit = () -> stage.getOnCloseRequest().handle(null);
         handlers.onRunAlgorithm = this::onRunAlgorithm;
+        handlers.onCloseTab = this::onCloseTab;
 
         handlers.onCut = this::onCut;
         handlers.onCopy = this::onCopy;
         handlers.onPaste = this::onPaste;
         handlers.onUndo = this::onUndo;
         handlers.onRedo = this::onRedo;
+
+
+
 
         // pipeline = new Piping();
         pipelines = new ArrayList<>();
@@ -349,41 +367,15 @@ public class MainWindow extends Application {
 
     public void onLoadPlugin(String fileName) {
         Preferences.setFile("MainWindow_lastPipingFile",new File(fileName));
-        // FileChooser fileChooser = new FileChooser();
-        // fileChooser.setInitialDirectory(new File(getLastDirectory()));
-        // fileChooser.setTitle("Load Plugins");
-        // fileChooser.getExtensionFilters().add(
-        //     new FileChooser.ExtensionFilter("Jar Files (*.jar)", "*.jar")
-        // );
-        // List<File> vertexList = fileChooser.showOpenMultipleDialog(stage);
-        // if (vertexList != null && !vertexList.isEmpty()) {
-        //     setLastDirectory(vertexList.get(0));
-        //     for (File file : vertexList)
-        //         doLoadPlugin(file.getAbsolutePath());
-        // }
-
-        // try {
-        //     String s = null;
-        //     System.out.println(s.substring(0,1));
-        // } catch (Exception ex) {
-        //     ExceptionBox exbox = new ExceptionBox();
-        //     Exception hello = new Exception("hello world");
-        //     exbox.showAndWait(hello);
-        // }
 
         try{
-//<<<<<<< HEAD
-            // this.waitForPause = new CountDownLatch(1);
-
-
-
             if (this.tabs.getCurrentStructurePane() == null){
                 Platform.runLater(
                     () -> {
                         Alert alert = new Alert(AlertType.INFORMATION);
                         alert.setTitle("No Structure Pane");
                         alert.setHeaderText(null);
-                        alert.setContentText("Youmust have an open graph to pipe it bro");
+                        alert.setContentText("You must have an open graph to pipe it.");
                         alert.showAndWait();
                     }
                 );
@@ -391,30 +383,9 @@ public class MainWindow extends Application {
                 return;
             }
 
-
-
             Piping newPiping = this.tabs.getCurrentStructurePane().
                     makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
             this.pipelines.add(newPiping);
-            
-            
-
-            // pipeline.run(this::initGraph);
-            // if (!externalProcessInitResponse.equals("useCurrentGraph")){
-            //     System.out.println("trying to make a grpah with type : " + externalProcessInitResponse);
-            //     Structure temp = StructureManager.instantiateStructure(externalProcessInitResponse);
-            //     System.out.println("intsantiaed structuer with id: ");
-            //     System.out.println(temp.getId());
-            //     tabs.addTab("new " + externalProcessInitResponse,temp);
-
-            //     tabs.getAllStructures();
-                
-            //     pipeline.run(temp,tabs.getCurrentStructurePane());
-            // }else{
-            //     pipeline.run(getCurrentStructure(),tabs.getCurrentStructurePane());
-
-            // }
-
 
         } catch(Exception e){
             e.printStackTrace();
@@ -426,15 +397,14 @@ public class MainWindow extends Application {
 
 
         String fileName = Preferences.getFile("MainWindow_pipingFile",
-                "/home/michelle/gralog/gralog/gralog-layout/DFS.py").getPath();
+                "gralog/gralog-layout/DFS.py").getPath();
         return fileName;
     }
 
     public String getLastFileName(){
-// todo: should be: if it exists in Preferences, return it, otherwise return the empty string
+// TODO: should be: if it exists in Preferences, return it, otherwise return the empty string
         String fileName = Preferences.getFile("MainWindow_lastPipingFile",
-                "/Users/f002nb9/Documents/f002nb9/kroozing/" +
-                        "gralog/gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
+                "gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
     
         return fileName;
     }
@@ -729,6 +699,14 @@ public class MainWindow extends Application {
             s.redoStructure();
         }
     }
+    
+    private void onCloseTab() {
+    	Tab tab = tabs.getCurrentTab();
+    	if (tab!=null) {
+    		tabs.closeTab(tabs.getTabIndex(tabs.getCurrentTab()));
+    	}
+    }
+    
 
     public void algorithmCompleted(StructurePane structurePane,
         AlgorithmThread algoThread) {
@@ -751,9 +729,16 @@ public class MainWindow extends Application {
                 boolean isSelection = true;
                 for (Object o : (Set) algoResult)
                     if (!(o instanceof Vertex)
-                        && !(o instanceof Edge)
-                        && !(o instanceof EdgeIntermediatePoint))
+                            && !(o instanceof Edge)
+                            && !(o instanceof EdgeIntermediatePoint))
                         isSelection = false;
+                if (isSelection)
+                    for (Object o : (Set) algoResult) {
+                        if (o instanceof Vertex)
+                            ((Vertex) o).fillColor = GralogColor.BLUE;
+                        if (o instanceof Edge)
+                            ((Edge) o).color = GralogColor.BLUE;
+                    }
                 if (isSelection) {
                     structurePane.selectAll((Set) algoResult);
                     structurePane.requestRedraw();
@@ -764,6 +749,14 @@ public class MainWindow extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText((String) algoResult);
                 alert.showAndWait();
+                structurePane.requestRedraw();
+            } else if (algoResult instanceof VertexToInteger){
+                VertexToInteger vertexToInteger = (VertexToInteger) algoResult;
+                VertexColoring vertexColoring =
+                        new VertexColoring(vertexToInteger.vertexToInteger, null);
+                vertexColoring.setColors();
+                mainConsole.gPrint(algoResult.toString());
+                structurePane.requestRedraw();
             } else {
                 AlgorithmResultStage resultStage = new AlgorithmResultStage(
                     algoThread.algo,
@@ -786,17 +779,24 @@ public class MainWindow extends Application {
             // Prepare
             StructurePane structurePane = tabs.getCurrentStructurePane();
             Structure structure = structurePane.structure;
+            Highlights highlights = structurePane.highlights;
             Algorithm algo = AlgorithmManager.instantiateAlgorithm(structure.getClass(), algorithmName);
 
-            AlgorithmParameters params = algo.getParameters(structure);
+            AlgorithmParameters params = algo.getParameters(structure, highlights);
 
 
             if (params != null) {
-                AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
-                algostage.showAndWait();
-                if (!algostage.dialogResult)
-                    return;
+                // ImplicitParameters do not demand a new window to ask for input
+                if (!ImplicitParameters.class.isInstance(params)) {
+                    AlgorithmStage algostage = new AlgorithmStage(algo, structure, params, this);
+                    algostage.showAndWait();
+                    if (!algostage.dialogResult)
+                        return;
+                }
             }
+
+            // save the state for the case the algortihm changes the structure
+            Undo.Record(structure);
 
             // Run
             AlgorithmThread algoThread = new AlgorithmThread(
@@ -807,6 +807,7 @@ public class MainWindow extends Application {
             }));
             this.setStatus("Running Algorithm \"" + algorithmName + "\"...");
             algoThread.start();
+
         } catch (InvocationTargetException ex) {
             this.setStatus("");
             ex.printStackTrace();
@@ -850,6 +851,34 @@ public class MainWindow extends Application {
         primaryStage.setTitle("Gralog");
         primaryStage.setScene(scene);
         primaryStage.addEventHandler(WindowEvent.WINDOW_SHOWN, e -> windowShown());
+
+        // set the icon for the title bar
+        try {
+            Image img = new Image(getClass().getResourceAsStream("/gralog-logo.png"));
+            stage.getIcons().add(img);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        };
+
+        // set the icon for the system tray/taskbar. from https://stackoverflow.com/a/56924202
+        final Toolkit defaultToolkit = Toolkit.getDefaultToolkit();
+        final JFrame jFrame = new JFrame();
+
+        try {
+            final URL imageResource = MainWindow.class.getClassLoader().getResource("gralog-logo.png");
+            final java.awt.Image image = defaultToolkit.getImage(imageResource);
+            final Taskbar taskbar = Taskbar.getTaskbar();
+            //set icon for mac os (and other systems which do support this method)
+            taskbar.setIconImage(image);
+        } catch (final UnsupportedOperationException e) {
+            System.out.println("The os does not support: 'taskbar.setIconImage'");
+        } catch (final SecurityException e) {
+            System.out.println("There was a security exception for: 'taskbar.setIconImage'");
+        } catch (final Exception e){
+            e.printStackTrace();
+        }
+
 
         //TODO: implement hot keys here
 

@@ -64,7 +64,8 @@ public class DominatingSet extends Algorithm {
         for (int k = 1;; k++) {
             Set<Vertex> V = new HashSet<>();
             for (Vertex v : s.getVertices())
-                V.add(v);
+                if (!selection.contains(v))
+                    V.add(v);
 
             Set<Vertex> domSet = new HashSet<>();
             if (findDominatingSet(s, k, domSet, V))

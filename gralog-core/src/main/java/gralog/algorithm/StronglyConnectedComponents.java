@@ -2,31 +2,80 @@
  * License: https://www.gnu.org/licenses/gpl.html GPL version 3 or later. */
 package gralog.algorithm;
 
+import gralog.DeepCopy;
+import gralog.preferences.Preferences;
 import gralog.progresshandler.ProgressHandler;
-import gralog.structure.Edge;
-import gralog.structure.Structure;
-import gralog.structure.Vertex;
+import gralog.structure.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Stack;
-import java.util.Collection;
+import java.sql.SQLOutput;
+import java.util.*;
+
+import static gralog.algorithm.ShortestPath.ANSI_RED;
+import static gralog.algorithm.ShortestPath.ANSI_RESET;
 
 /**
- *
+ * On undirected graphs, computes connected components, on directed graphs, computes strongly connected
+ * components via Tarjan's algorithm.
  */
 @AlgorithmDescription(
-        name = "Strongly Connected Components",
-        text = "Finds the strongly connected components of a (mixed) graph",
+        name = "(Strongly) Connected Components",
+        text = "Finds the (strongly) connected components of a (mixed) graph",
         url = "https://en.wikipedia.org/wiki/Tarjan%27s_strongly_connected_components_algorithm"
 )
 public class StronglyConnectedComponents extends Algorithm {
 
+    /**
+     * Finds the component of v.
+     * @param s
+     * @param v
+     * @param componentOfVertex
+     * @param comp
+     * @param removedVertices
+     */
+    private static void component(UndirectedGraph s, Vertex v, int numComponent,
+                                  HashMap<Vertex, Integer> componentOfVertex,
+                                  HashSet<Vertex> comp,
+                                  HashSet<Vertex> removedVertices) {
+        componentOfVertex.put(v, numComponent);
+        comp.add(v);
+        for (Vertex w : v.getNeighbours()){
+            if (removedVertices.contains(w))
+                continue;
+            component(s, w, numComponent, componentOfVertex, comp, removedVertices);
+        }
+    }
+    public static void components(UndirectedGraph s,
+                                  HashMap<Vertex, Integer> componentOfVertex,
+                                  HashSet<HashSet<Vertex>> verticesInComponent,
+                                  HashSet<Vertex> removedVertices){
+        Collection<Vertex> vertices = s.getVertices();
+        int numComponent = 0;
+        for (Vertex v : vertices){
+            if (removedVertices.contains(v))
+                continue;
+            if (componentOfVertex.containsKey(v)) // already visited
+                continue;
+            HashSet<Vertex> comp = new HashSet<>();
+            component(s, v, numComponent, componentOfVertex, comp, removedVertices);
+            numComponent++;
+            verticesInComponent.add(comp);
+        }
+    }
+    /**
+     * Computes strongly connected components of the structure represented by a coloring Vertex -> Integer and
+     * a set of vertex sets of the components. Hereby the vertices given in the parameter removedVertices are ignored
+     * as if they were removed.
+     * @param s The structure
+     * @param componentOfVertex (used for output) A mapping Vertex -> Integer. If not empty,
+     *                          the existent entries are not removed.
+     * @param verticesInComponent (used for output) A set of vertex sets of components. If not empty,
+     *      *                          the existent entries are not removed.
+     * @param removedVertices vertices to be ignored
+     */
     public static void tarjanStrongComponents(Structure s,
                                               HashMap<Vertex, Integer> componentOfVertex,
-                                              ArrayList<ArrayList<Vertex>> verticesInComponent) {
+                                              HashSet<HashSet<Vertex>> verticesInComponent,
+                                              HashSet<Vertex> removedVertices) {
         int numScc = 0;
         int index = 0;
         Stack<Vertex> tarStack = new Stack<>();
@@ -41,6 +90,8 @@ public class StronglyConnectedComponents extends Algorithm {
 
         Collection<Vertex> vertices = s.getVertices();
         for (Vertex v : vertices) {
+            if (removedVertices.contains(v))
+                continue;
             if (dfs.containsKey(v)) // already processed
                 continue;
 
@@ -48,12 +99,15 @@ public class StronglyConnectedComponents extends Algorithm {
             lowlink.put(v, index);
             index++;
 
+
             ArrayList<Vertex> vChildren = new ArrayList<>();
             for (Edge e : v.getIncidentEdges())
                 if (e.getSource() == v)
-                    vChildren.add(e.getTarget());
+                    if (!removedVertices.contains(e.getTarget()))
+                        vChildren.add(e.getTarget());
                 else if (!e.isDirected)
-                    vChildren.add(e.getSource());
+                    if (!removedVertices.contains(e.getSource()))
+                        vChildren.add(e.getSource());
             children.put(v, vChildren);
             childIterationPos.put(v, 0); // iteration starts at id 0
 
@@ -73,9 +127,11 @@ public class StronglyConnectedComponents extends Algorithm {
                         ArrayList<Vertex> grandChildren = new ArrayList<>();
                         for (Edge e : child.getIncidentEdges())
                             if (e.getSource() == child)
-                                grandChildren.add(e.getTarget());
+                                if (!removedVertices.contains(e.getTarget()))
+                                    grandChildren.add(e.getTarget());
                             else if (!e.isDirected)
-                                grandChildren.add(e.getSource());
+                                if (!removedVertices.contains(e.getSource()))
+                                    grandChildren.add(e.getSource());
                         children.put(child, grandChildren);
 
                         childIterationPos.put(child, 0); // iteration (on child's children) starts at id 0
@@ -91,7 +147,7 @@ public class StronglyConnectedComponents extends Algorithm {
                 } else { // collect current scc and go up one recursive call
                     if (lowlink.get(current).equals(dfs.get(current))) {
                         Vertex top = null;
-                        ArrayList<Vertex> scc = new ArrayList<>();
+                        HashSet<Vertex> scc = new HashSet<>();
                         while (top != current) {
                             top = tarStack.pop();
                             onStack.remove(top);
@@ -111,11 +167,27 @@ public class StronglyConnectedComponents extends Algorithm {
         } // for (Vertex i : V)
     }
 
-    public Object run(Structure s, AlgorithmParameters ap, Set<Object> selection,
+    @Override
+    public AlgorithmParameters getParameters(Structure structure, Highlights highlights) {
+        ArrayList<Object> obtainedObjects = highlights.getFilteredByType(Vertex.class);
+        ArrayList<Vertex> staringVertices = new ArrayList<>();
+        for (Object o : obtainedObjects){
+            staringVertices.add((Vertex)o);
+        }
+
+        return new StronglyConnectedComponentsParameters(staringVertices);
+    }
+
+
+    public Object run(Structure s, StronglyConnectedComponentsParameters parameters, Set<Object> selection,
                       ProgressHandler onprogress) throws Exception {
+        HashSet<Vertex> removedVertices = new HashSet<>(parameters.vertices);
         HashMap<Vertex, Integer> componentOfVertex = new HashMap<>();
-        ArrayList<ArrayList<Vertex>> verticesInComponent = new ArrayList<>();
-        tarjanStrongComponents(s, componentOfVertex, verticesInComponent);
-        return new HashSet<>(verticesInComponent.get(0));
+        HashSet<HashSet<Vertex>> components = new HashSet<>();
+        tarjanStrongComponents(s, componentOfVertex, components, removedVertices);
+        if (removedVertices.size() > 0)
+            return new VertexToInteger(componentOfVertex, true);
+        else
+            return new VertexToInteger(componentOfVertex, false);
     }
 }

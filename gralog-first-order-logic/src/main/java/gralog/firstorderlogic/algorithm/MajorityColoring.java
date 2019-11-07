@@ -9,14 +9,19 @@ import gralog.structure.*;
 import gralog.algorithm.*;
 import gralog.progresshandler.*;
 import gralog.rendering.GralogColor;
+import javafx.scene.control.Alert;
+
 import java.util.*;
 
 @AlgorithmDescription(
-    name = "Colorability",
-    text = "",
-    url = "")
-public class Colorability extends Algorithm {
+    name = "Majority colorings",
+    text = "Finds a coloring with 3 colors (if possible) in a digraph such that at most half of direct successors of a vertex have ot's color.",
+    url = "https://arxiv.org/abs/1608.03040")
+public class MajorityColoring extends Algorithm {
 
+    /*
+    * Converts an integer into the base-3 representation and fills leading places with zeros until arity nVertices.
+     */
     public static StringBuilder convertToBase3(long n, int nVertices) {
         StringBuilder ans = new StringBuilder();
         while (n > 0) {
@@ -33,16 +38,16 @@ public class Colorability extends Algorithm {
     }
 
     boolean check(StringBuilder str, DirectedGraph s) {
-        Collection<Vertex> ver = s.getVertices();
-        Set<Edge> edge = s.getEdges();
-        for (Vertex i : ver) {
-            int x = Integer.parseInt(i.label);
+        Collection<Vertex> vertices = s.getVertices();
+        Set<Edge> edges = s.getEdges();
+        for (Vertex vertex : vertices) {
+            int x = Integer.parseInt(vertex.label);
             int cnt = 0;
             int size = 0;
-            for (Vertex j : ver) {
-                for (Edge e : edge) {
-                    if (e.getSource() == i && e.getTarget() == j) {
-                        int y = Integer.parseInt(j.label);
+            for (Vertex w : vertices) {
+                for (Edge edge : edges) {
+                    if (edge.getSource() == vertex && edge.getTarget() == w) {
+                        int y = Integer.parseInt(w.label);
                         if (str.charAt(x) == str.charAt(y)) {
 
                             cnt = cnt + 1;
@@ -68,11 +73,18 @@ public class Colorability extends Algorithm {
         Collection<Vertex> vertices = s.getVertices();
         int nVertices = vertices.size();
         int k = 0;
+        // save labels
+        HashMap<Vertex, String> label= new HashMap<>();
+        for (Vertex vertex : vertices)
+            label.put(vertex, vertex.label);
+
+        // misuse labels
         for (Vertex v : vertices) {
             v.label = Integer.toString(k);
             k++;
         }
 
+        // iterate over all 3-subsets of the vertex set
         for (long i = 1; i <= Math.pow(3, nVertices); i++) {
             StringBuilder str = convertToBase3(i, nVertices);
             if (check(str, s)) {
@@ -96,12 +108,21 @@ public class Colorability extends Algorithm {
                 if (onprogress != null) {
                     onprogress.onProgress(s);
                 }
+
+                // reset all labels to previous values
+                for (Vertex vertex : vertices)
+                    vertex.setLabel(label.get(vertex));
+
                 return "Arrangement possible";
             }
         }
         if (onprogress != null) {
             onprogress.onProgress(s);
         }
+        // reset all labels to previous values
+        for (Vertex vertex : vertices)
+            vertex.label = label.get(vertex);
+
         return "Contradiction found!!";
     }
 }

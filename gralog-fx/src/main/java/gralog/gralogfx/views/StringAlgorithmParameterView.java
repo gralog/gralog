@@ -23,7 +23,8 @@ public class StringAlgorithmParameterView extends GridPaneView<StringAlgorithmPa
             return;
 
         TextField valueField = new TextField(param.parameter);
-        valueField.setPrefWidth(1000);
+        valueField.setPrefWidth(100);
+        valueField.setMaxWidth(1000);
 
         Text hint = new Text();
 

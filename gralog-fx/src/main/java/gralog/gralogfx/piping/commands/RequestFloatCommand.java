@@ -1,4 +1,6 @@
-package gralog.gralogfx.piping;
+package gralog.gralogfx.piping.commands;
+import gralog.gralogfx.piping.Piping;
+import gralog.gralogfx.piping.commands.CommandForGralogToExecute;
 import gralog.structure.*;
 import gralog.rendering.*;
 import java.util.Arrays;

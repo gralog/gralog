@@ -4,6 +4,7 @@ package gralog.algorithm;
 
 import gralog.preferences.Preferences;
 import gralog.progresshandler.ProgressHandler;
+import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
 
@@ -21,7 +22,7 @@ import java.util.Set;
 public class AssignLabels extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return new StringAlgorithmParameter(
                 "Prefix",
                 Preferences.getString(this.getClass(), "prefix", ""),

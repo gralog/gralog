@@ -31,6 +31,14 @@ public abstract class FirstOrderFormula {
     public abstract Subformula evaluateProver(Structure s,
         HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
 
+    /**
+     * Constructs the game graph and stores it in game. Returns an object containing the root position and its height.
+     * @param s The structure
+     * @param varassign The variable assignment used to construct the label of the root.
+     * @param game The game to be constructed.
+     * @param coor Coordinates of the root.
+     * @return An object containing the root position and its height.
+     */
     public abstract GameGraphResult constructGameGraph(Structure s,
         HashMap<String, Vertex> varassign, FiniteGame game,
         Vector2D coor);
@@ -42,12 +50,11 @@ public abstract class FirstOrderFormula {
     public abstract boolean evaluate(Structure s,
         HashMap<String, Vertex> varassign, ProgressHandler onprogress) throws Exception;
 
-    public static String variableAssignmentToString(
-        Map<String, Vertex> assignment) {
+    public static String variableAssignmentToString(Map<String, Vertex> assignment) {
         if (assignment.isEmpty())
             return " { }";
         return " { " + assignment.entrySet().stream()
-            .map((e) -> e.getKey() + "↦" + e.getValue().label)
+            .map((e) -> e.getKey() + "↦" + e.getValue().id)
             .collect(Collectors.joining(", "))
             + " }";
     }

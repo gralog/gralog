@@ -54,6 +54,7 @@ public class MainMenu {
         MenuAction onUndo, onRedo, onCut, onCopy, onPaste, onDelete;
         MenuAction onAlignHorizontally, onAlignVertically;
         MenuAction onAboutGralog, onAboutGraph;
+        MenuAction onCloseTab;
 
         MenuStringAction onNew, onGenerate, onRunAlgorithm;
     }
@@ -125,7 +126,7 @@ public class MainMenu {
 
     private Menu createFileMenu() {
         Menu menuFile = new Menu("File");
-        final KeyCodeCombination newStructure, generate, save, saveAs, open, loadLast, load, quitGralog;
+        final KeyCodeCombination newStructure, generate, save, saveAs, open, loadLast, load, quitGralog, tabClose;
         newStructure = new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN);
         generate     = new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN);
         save         = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
@@ -135,7 +136,7 @@ public class MainMenu {
         load         = new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN);
         quitGralog   = new KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN);
 
-        menuFileNew = new Menu("New" );
+        menuFileNew = new Menu("New");
         menuFileGenerators = new Menu("Generators");
 
         menuFileSave = createMenuItem("Save graph", handlers.onSave,save);
@@ -185,7 +186,11 @@ public class MainMenu {
                 createMenuItem("Align Horizontally", handlers.onAlignHorizontally,
                         new KeyCodeCombination(KeyCode.H, KeyCombination.ALT_DOWN)),
                 createMenuItem("Align Vertically", handlers.onAlignVertically,
-                        new KeyCodeCombination(KeyCode.V, KeyCombination.ALT_DOWN))
+                        new KeyCodeCombination(KeyCode.V, KeyCombination.ALT_DOWN)),
+                new SeparatorMenuItem(),
+                createMenuItem("Close Tab", handlers.onCloseTab,
+                		new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN)) 
+
         );
         return menuEdit;
     }

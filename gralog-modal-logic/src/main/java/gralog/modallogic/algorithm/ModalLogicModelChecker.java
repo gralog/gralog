@@ -25,7 +25,7 @@ import java.util.Set;
 public class ModalLogicModelChecker extends Algorithm {
 
     @Override
-    public AlgorithmParameters getParameters(Structure s) {
+    public AlgorithmParameters getParameters(Structure s, Highlights highlights) {
         return new StringAlgorithmParameter(
             "Formula",
             Preferences.getString(this.getClass(), "formula", "□(P ∧ Q)"),
