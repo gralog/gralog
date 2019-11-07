@@ -663,13 +663,6 @@ public class Dialog {
         }
     }
 
-        }
-    }
-
-
-    public boolean existsVertexList(String s) {
-        return findVertexList(s) != null;
-    }
 
     public boolean existsVertexList(String s) {
         return findVertexList(s) != null;
