@@ -8,6 +8,8 @@ Interactively explore graphs, algorithms, logics and games.
 Build
 -----
 
+For a detailed explanation, read doc/manual/gralog.pdf.
+
 This is a gradle project.  You can build and run Gralog by following these steps:
 
 1. Install the Java Development Kit (JDK) 10 or later.
