@@ -96,6 +96,10 @@ public class HamiltonianCycle extends Algorithm {
 
     public Object run(Structure s, AlgorithmParameters p,
                       Set<Object> selection, ProgressHandler onprogress) throws Exception {
-        return findHamiltonianCycle(s);
+        Set<Edge> result = findHamiltonianCycle(s);
+        if (result.isEmpty())
+            return ("There is no Hamiltonian cycle in this graph.");
+        else
+            return result;
     }
 }
