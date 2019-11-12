@@ -5,6 +5,16 @@ Gralog
 
 Interactively explore graphs, algorithms, logics and games.
 
+Run
+-----
+
+A compiled version is in build/dist. Just launch `gralog-fx.jar`. Note that the other files should remain in the same directory. On Windows and macOS it should be possible by (double) clicking on gralog-fx.jar. On Linux, if clicking does not work, try 
+
+`java -jar <path/to/>gralog-fx.jar`.
+
+If you want to use Gralog with Python, you should install the necessary Python libraries first. Please, read doc/manual/gralog.pdf for details.
+
+
 Build
 -----
 
