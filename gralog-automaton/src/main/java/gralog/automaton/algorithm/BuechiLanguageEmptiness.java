@@ -23,12 +23,6 @@ import java.util.Map.Entry;
  *
  */
 
-/**
- *
- *
- *
- */
-
 @AlgorithmDescription(
     name = "Language-Emptiness",
     text = "Tests whether the language defined by the Büchi Automaton is empty or not.",

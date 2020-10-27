@@ -712,7 +712,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
                     Collections.swap(e.siblings, 1, 2);
                 }
             }
-//            System.out.println("skippadop : " + e.getSource() + e.getTarget());
 
 
             for (Edge edge : e.getSource().getIncidentEdges()) {
@@ -769,6 +768,11 @@ public abstract class Structure<V extends Vertex, E extends Edge>
     }
 
     public E addEdge(V source, V target, int id, Configuration config) {
+        /*
+         * Add a new edge with source source, target target, id id and config config.
+         * If no edge is added (e.g., a new selfloop is not addded), returns null, otherwise
+         * the added new edge.
+         * */
     	E e = createEdge(id, config);
 
         if (addEdge(e, source, target)) {
@@ -824,7 +828,6 @@ public abstract class Structure<V extends Vertex, E extends Edge>
             Interval me = new Interval(edge.getId(), id);
             Interval justAbove = this.edgeIdHoles.ceiling(me);
             Interval justBelow = this.edgeIdHoles.floor(me);
-            // System.out.println("justabove: " + justAbove + " justBelow: " + justBelow);
 
 
             if (justAbove == null) {

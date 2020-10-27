@@ -131,6 +131,24 @@ public class Dialog {
         errorMsg = "No such list exists: " + parameters.get(0) + ".\n";
     }
 
+    public void removeall(ArrayList<String> parameters, Structure structure){
+        if (existsVertexList(parameters.get(0))) {
+            ArrayList<Vertex> vertices = findVertexList(parameters.get(0));
+            for (Vertex vertex : vertices)
+                structure.removeVertex(vertex);
+            allCollectionVertex.remove(findVertexList(parameters.get(0))); // also remove the list
+        }
+        if (existsEdgeList(parameters.get(0))) {
+            ArrayList<Edge> edges = findEdgeList(parameters.get(0));
+            for (Edge edge : edges)
+                structure.removeEdge(edge);
+            allCollectionEdge.remove(findEdgeList(parameters.get(0))); // also remove the list
+            return;
+        }
+        errorMsg = "No such list exists: " + parameters.get(0) + ".\n";
+
+    }
+
     private void addComplementVertexList(ArrayList<Vertex> sourceList, ArrayList<Vertex> allVertices, ArrayList<Vertex> targetList) {
         for (Vertex v : allVertices)
             if (!sourceList.contains(v))
@@ -208,6 +226,7 @@ public class Dialog {
             targetList.addAll(sourceList);
             return;
         }
+
         for (Edge e : sourceList) {
             if (targetList.contains(e))
                 continue;
@@ -347,7 +366,7 @@ public class Dialog {
             boolean filteredOut = false;
             for (String property : propertyValue.keySet()) {
                 switch (property) {
-                    case "STROKE":
+                    case "STROKE": case "COLOR":
                         if (!v.strokeColor.name().equals(propertyValue.get(property)))
                             filteredOut = true;
                         break;
@@ -814,7 +833,6 @@ public class Dialog {
             return;
         }
         if (parameters.get(1).equals("EDGES") || existsEdgeList(parameters.get(0))) { // edge list
-
             // check error
             if (parameters.get(1).equals("EDGES") && existsVertexList(parameters.get(0))) {
                 errorMsg = "List " + parameters.get(parameters.size() - 1) + " already exists as a vertex list. Choose another name.\n";
@@ -842,7 +860,6 @@ public class Dialog {
                 parameters.remove(0);
             } else
                 parameters.remove(0);
-
             // filter
             filterEdges(sourceEdgeList, targetEdgeList, parameters);
 

@@ -161,7 +161,10 @@ public class Piping extends Thread {
         }catch(IOException e) {
             // e.printStackTrace();
 
-            this.sendMessageToConsole.accept("The file was unable to be run. Perhaps it needs to be given permission?",MessageToConsoleFlag.Error);
+            this.sendMessageToConsole.accept(e.getMessage(), MessageToConsoleFlag.Error);
+            this.sendMessageToConsole.accept("Cannot execute \'" + fileName + "\'. Possible reasons: file not found or no permission.",MessageToConsoleFlag.Error);
+
+
             return false;
         }
         this.state=State.Inintialized;

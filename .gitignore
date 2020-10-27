@@ -31,3 +31,6 @@ install/gradle
 .idea/
 .idea/*
 /bin/
+plugins/python/Gralog.pyc
+
+graphs/

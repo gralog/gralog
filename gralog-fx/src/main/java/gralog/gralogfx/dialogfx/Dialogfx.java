@@ -1,6 +1,10 @@
 package gralog.gralogfx.dialogfx;
 
 import gralog.gralogfx.StructurePane;
+import gralog.gralogfx.piping.commands.SetVertexShapeCommand;
+import gralog.rendering.GralogColor;
+import gralog.rendering.GralogGraphicsContext;
+import gralog.rendering.shapes.*;
 import gralog.structure.Edge;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
@@ -100,4 +104,279 @@ public class Dialogfx {
     }
 
 
+    public void setDirected(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        Structure structure = currentPane.getStructure();
+        if (dialog.existsVertexList(parameters.get(0))) {
+            dialog.setErrorMsg("Choose a list of edges, not of vertices.");
+            return;
+        }
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            for (Object e : dialog.findEdgeList(parameters.get(0))) {
+                Edge ee = (Edge) e;
+                ee.setDirectedness(true);
+            }
+            currentPane.requestRedraw();
+        }
+        else{
+            dialog.setErrorMsg("No such list of edges found.");
+            return;
+        }
+    }
+
+    public void setUndirected(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        Structure structure = currentPane.getStructure();
+        if (dialog.existsVertexList(parameters.get(0))) {
+            dialog.setErrorMsg("Choose a list of edges, not of vertices.");
+            return;
+        }
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            for (Object e : dialog.findEdgeList(parameters.get(0))) {
+                Edge ee = (Edge) e;
+                ee.setDirectedness(false);
+            }
+            currentPane.requestRedraw();
+        }
+        else{
+            dialog.setErrorMsg("No such list of edges found.");
+            return;
+        }
+    }
+
+
+    public void setColor(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+
+        if (dialog.existsVertexList(parameters.get(0))) {
+            dialog.setErrorMsg("\'Set color\' is only defined for edges. For vertices, say \'set fill [color]\' or \'set stroke [color]\'.");
+            return;
+        }
+
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            for (Object e : dialog.findEdgeList((parameters.get(0)))) {
+                Edge ee = (Edge) e;
+                ee.color = new GralogColor (GralogColor.stringToColor(parameters.get(1)));
+            }
+            currentPane.requestRedraw();
+        }
+        else{
+            dialog.setErrorMsg("No such list of edges found.");
+            return;
+        }
+    }
+
+
+    public void setLabel(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsVertexList(parameters.get(0))) {
+            for (Object v : dialog.findVertexList(parameters.get(0))){
+                Vertex vv = (Vertex) v;
+                vv.setLabel(parameters.get(1));
+            }
+            currentPane.requestRedraw();
+            return;
+        }
+
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            for (Object e : dialog.findEdgeList(parameters.get(0))){
+                Edge ee = (Edge) e;
+                ee.setLabel(parameters.get(1));
+            }
+            currentPane.requestRedraw();
+            return;
+        }
+
+        dialog.setErrorMsg("No such list found.");
+        return;
+    }
+
+    public void setType(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsVertexList(parameters.get(0))) {
+            dialog.setErrorMsg("Choose a list of edges, not of vertices.");
+            return;
+        }
+
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            GralogGraphicsContext.LineType type = null;
+            switch (parameters.get(1)) {
+                case "PLAIN":   type = GralogGraphicsContext.LineType.PLAIN;
+                                break;
+                case "DOTTED":  type = GralogGraphicsContext.LineType.DOTTED;
+                                break;
+                case "DASHED":  type = GralogGraphicsContext.LineType.DASHED;
+                                break;
+            }
+            for (Object e : dialog.findEdgeList(parameters.get(0))){
+                Edge ee = (Edge) e;
+                ee.type = type;
+            }
+            currentPane.requestRedraw();
+            return;
+        }
+
+        dialog.setErrorMsg("No such list of edges found.");
+        return;
+    }
+
+    public void setEdgeType(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsVertexList(parameters.get(0))) {
+            dialog.setErrorMsg("Choose a list of edges, not of vertices.");
+            return;
+        }
+
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            Edge.EdgeType type = null;
+            switch (parameters.get(1)) {
+                case "SHARP":   type = Edge.EdgeType.SHARP;
+                    break;
+                case "BEZIER":  type = Edge.EdgeType.BEZIER;
+                    break;
+            }
+            for (Object e : dialog.findEdgeList(parameters.get(0))){
+                Edge ee = (Edge) e;
+                ee.setEdgeType(type);
+            }
+            currentPane.requestRedraw();
+            return;
+        }
+
+        dialog.setErrorMsg("No such list of edges found.");
+        return;
+    }
+
+    public void setThickness(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsVertexList(parameters.get(0))) {
+            dialog.setErrorMsg("Choose a list of edges, not of vertices.");
+            return;
+        }
+
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            for (Object e : dialog.findEdgeList(parameters.get(0))){
+                Edge ee = (Edge) e;
+                ee.thickness = Double.parseDouble(parameters.get(1));
+            }
+            currentPane.requestRedraw();
+            return;
+        }
+        dialog.setErrorMsg("No such list of edges found.");
+        return;
+    }
+
+    public void setWeight(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsVertexList(parameters.get(0))) {
+            dialog.setErrorMsg("Choose a list of edges, not of vertices.");
+            return;
+        }
+
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            for (Object e : dialog.findEdgeList(parameters.get(0))){
+                Edge ee = (Edge) e;
+                ee.weight = Double.parseDouble(parameters.get(1));
+            }
+            currentPane.requestRedraw();
+            return;
+        }
+        dialog.setErrorMsg("No such list of edges found.");
+        return;
+    }
+
+
+    public void setFillColor(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            dialog.setErrorMsg("\'Set fill [color]\' is only defined for vertices. For edges, say \'set <list> color\'.");
+            return;
+        }
+
+        if (dialog.existsVertexList(parameters.get(0))) {
+            for (Object v : dialog.findVertexList(parameters.get(0))) {
+                Vertex vv = (Vertex) v;
+                vv.fillColor = new GralogColor (GralogColor.stringToColor(parameters.get(1)));
+            }
+            currentPane.requestRedraw();
+        }
+        else{
+            dialog.setErrorMsg("No such list of vertices found.");
+            return;
+        }
+    }
+
+    public void setStrokeColor(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            dialog.setErrorMsg("\'Set stroke [color]\' is only defined for vertices. For edges, say \'set <list> color\'.");
+            return;
+        }
+
+        if (dialog.existsVertexList(parameters.get(0))) {
+            for (Object v : dialog.findVertexList(parameters.get(0))) {
+                Vertex vv = (Vertex) v;
+                vv.strokeColor = new GralogColor (GralogColor.stringToColor(parameters.get(1)));
+            }
+            currentPane.requestRedraw();
+        }
+        else{
+            dialog.setErrorMsg("No such list of vertices found.");
+            return;
+        }
+    }
+
+    public void setShape(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            dialog.setErrorMsg("Choose a list of vertices, not of edegs.");
+            return;
+        }
+
+        if (dialog.existsVertexList(parameters.get(0))) {
+            GralogGraphicsContext.LineType type = null;
+            for (Object v : dialog.findVertexList(parameters.get(0))){
+                Vertex vv = (Vertex) v;
+                switch (parameters.get(1)) {
+                    case "ELLIPSE":   vv.shape = new Ellipse (vv.shape.sizeBox);
+                        break;
+                    case "CYCLE":  vv.shape = new Cycle(vv.shape.sizeBox);
+                        break;
+                    case "DIAMOND":  vv.shape = new Diamond(vv.shape.sizeBox);
+                        break;
+                    case "RECTANGLE": vv.shape = new Rectangle(vv.shape.sizeBox);
+                        break;
+                }
+            }
+            currentPane.requestRedraw();
+            return;
+        }
+        dialog.setErrorMsg("No such list of edges found.");
+        return;
+    }
+
+    public void setWidth(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            dialog.setErrorMsg("Choose a list of vertices, not of edges.");
+            return;
+        }
+
+        if (dialog.existsVertexList(parameters.get(0))) {
+            for (Object v : dialog.findVertexList(parameters.get(0))){
+                Vertex vv = (Vertex) v;
+                vv.shape.setWidth(Double.parseDouble(parameters.get(1)));
+            }
+            currentPane.requestRedraw();
+            return;
+        }
+        dialog.setErrorMsg("No such list of vertices found.");
+        return;
+    }
+
+    public void setHeight(ArrayList<String> parameters, StructurePane currentPane, Dialog dialog) {
+        if (dialog.existsEdgeList(parameters.get(0))) {
+            dialog.setErrorMsg("Choose a list of vertices, not of edges.");
+            return;
+        }
+
+        if (dialog.existsVertexList(parameters.get(0))) {
+            for (Object v : dialog.findVertexList(parameters.get(0))){
+                Vertex vv = (Vertex) v;
+                vv.shape.setHeight(Double.parseDouble(parameters.get(1)));
+            }
+            currentPane.requestRedraw();
+            return;
+        }
+        dialog.setErrorMsg("No such list of vertices found.");
+        return;
+    }
 }

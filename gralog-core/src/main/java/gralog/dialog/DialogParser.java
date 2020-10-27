@@ -20,42 +20,7 @@ import static gralog.dialog.DialogAction.SELECT_ALL_VERTICES;
 import static gralog.dialog.DialogAction.DESELECT_ALL_VERTICES;
 import static gralog.dialog.DialogAction.SELECT_ALL_EDGES;
 import static gralog.dialog.DialogAction.DESELECT_ALL_EDGES;
-
-
-import static gralog.dialog.DialogState.DESELECT_ALL;
-import static gralog.dialog.DialogState.FILTER;
-import static gralog.dialog.DialogState.SELECT_ALL;
-import static gralog.dialog.DialogState.DONE;
-import static gralog.dialog.DialogState.SELECT;
-import static gralog.dialog.DialogState.DESELECT;
-import static gralog.dialog.DialogState.FILTER_ALL;
-import static gralog.dialog.DialogState.FILTER_WHAT;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE;
-import static gralog.dialog.DialogState.FILTER_WHAT_SUCH;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_NO;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_PARAM;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_INTPARAM;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_FLOATPARAM;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_COLOR;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_SHAPE;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_EDGETYPE;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_FILL;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_STROKE;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_EDGE;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_HAS;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_HASNT;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_COND;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_COND_TO;
-import static gralog.dialog.DialogState.FILTER_SELECTED;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_LABEL;
-import static gralog.dialog.DialogState.FILTER_WHAT_WHERE_LABEL_CONTAINS;
-import static gralog.dialog.DialogState.SORT_WHAT;
-import static gralog.dialog.DialogState.SORT_WHAT_ID;
-import static gralog.dialog.DialogState.TWOLISTSOP_WHAT;
-import static gralog.dialog.DialogState.TWOLISTSOP_WHAT_WHAT;
-import static gralog.dialog.DialogState.COMPLEMENT_WHAT;
-import static gralog.dialog.DialogState.CONNECT_WHAT;
-import static gralog.dialog.DialogState.CONNECT_WHAT_WHAT;
+import static gralog.dialog.DialogState.*;
 
 
 public class DialogParser {
@@ -63,12 +28,12 @@ public class DialogParser {
     public static final String ANSI_GREEN = "\u001B[32m"; // for debugging
     public static final String ANSI_RESET = "\u001B[0m";
     private static String[] forbiddenIds = {"ALL", "SELECT", "SELECTED", "FILTER", "WHERE", "ST", "SUCH", "THAT",
-        "TO", "VERTICES", "EDGES", "DELETE", "FILL", "COLOR", "STROKE", "THICKNESS", "WIDTH", "HEIGHT",
+        "TO", "VERTICES", "EDGES", "DELETE", "REMOVE", "FILL", "COLOR", "STROKE", "THICKNESS", "WIDTH", "HEIGHT",
         "SIZE", "ID", "SHAPE", "WEIGHT", "TYPE", "EDGETYPE", "DEGREE", "INDEGREE", "OUTDEGREE", "BUTTERFLY",
         "HAS", "HASNT", "SELFLOOP", "DIRECTED",
-        "DELETE", "UNION", "INTERSECTION", "DIFFERENCE", "SYMMETRIC", "COMPLEMENT",
+        "UNION", "INTERSECTION", "DIFFERENCE", "SYMMETRIC", "COMPLEMENT",
         "CONNECT",
-        "ADD", "REMOVE", "DELETE", "CONTRACT", "EDGE",
+        "ADD", "CONTRACT", "EDGE",
         "GENERATE", "WHEEL", "GRID", "CLIQUE", "CYCLE", "PATH", "TORUS", "COMPLETE", "TREE", "CYLINDRICAL",
         "NO", "CONDITION", "LABEL", "X", "Q", "EXIT", "ABORT", "CANCEL",
         "SORT", "LEFTRIGHT", "RIGHTLEFT", "TOPDOWN", "BOTTOMUP",
@@ -204,7 +169,6 @@ public class DialogParser {
         this.errorMsg = errorMsg;
     }
 
-
     /*          PARSE                */
 
 
@@ -235,6 +199,15 @@ public class DialogParser {
             tmpText2 = tmpText.toUpperCase();
         }
         String[] inputWords = tmpText2.split(" ");
+
+        // special case: if text contains "label", then the next word should not be capitalised. restore it in this case
+        for (int i = 0; i < inputWords.length; i++){
+            if (inputWords[i].equals("LABEL")
+                    && i < inputWords.length-1){ // not the last word
+                String[] againInputWords = text.split(" ");
+                inputWords[i+1] = againInputWords[i+1];
+            }
+        }
 
         if (inputWords[0].equals("Q")
                 || inputWords[0].equals("EXIT")
@@ -288,6 +261,9 @@ public class DialogParser {
                     case "DELETE":
                         transition(DialogState.DELETE);
                         break;
+                    case "REMOVE":
+                        transition(DialogState.REMOVE);
+                        break;
                     case "COMPLEMENT":
                         transition(DialogState.COMPLEMENT);
                         break;
@@ -303,10 +279,250 @@ public class DialogParser {
                     case "LAYOUT":
                         transition(DialogState.LAYOUT);
                         break;
+                    case "SET":
+                        transition(DialogState.SET);
+                        break;
                     default:
                         errorMsg = "Parse error. Please, try again. (Quit: Q)";
                         return;
                 }
+            }
+
+            if (this.dialogState == DialogState.SET) {
+                if (i == inputWords.length) {
+                    errorMsg = "Choose a list id.";
+                    return;
+                }
+                if (hasIdForm(inputWords[i])){
+                    transition(DialogState.SET_WHAT, inputWords[i]);
+                    continue;
+                }
+                errorMsg = "Choose a list id.";
+                return;
+
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT) {
+                if (i == inputWords.length) {
+                    errorMsg = "Choose property to set. Format: "
+                            + "DIRECTED | UNDIRECTED | COLOR | LABEL | TYPE | EDGETYPE | THICKNESS | WEIGHT | FILL [COLOR] | STROKE [COLOR] | SHAPE | WIDTH | HEIGHT";
+                    return;
+                }
+                if (inputWords[i].equals("DIRECTED")){
+                    transition(DONE, DialogAction.SET_DIRECTED);
+                    return;
+                }
+                if (inputWords[i].equals("UNDIRECTED")){
+                    transition(DONE, DialogAction.SET_UNDIRECTED);
+                    return;
+                }
+
+                if (inputWords[i].equals("COLOR")){
+                    transition(DialogState.SET_WHAT_COLOR);
+                    continue;
+                }
+                if (inputWords[i].equals("LABEL")){
+                    transition(DialogState.SET_WHAT_LABEL);
+                    continue;
+                }
+                if (inputWords[i].equals("TYPE")){
+                    transition(DialogState.SET_WHAT_TYPE);
+                    continue;
+                }
+                if (inputWords[i].equals("EDGETYPE")){
+                    transition(DialogState.SET_WHAT_EDGETYPE);
+                    continue;
+                }
+                if (inputWords[i].equals("THICKNESS")){
+                    transition(DialogState.SET_WHAT_THICKNESS);
+                    continue;
+                }
+                if (inputWords[i].equals("WEIGHT")){
+                    transition(DialogState.SET_WHAT_WEIGHT);
+                    continue;
+                }
+                if (inputWords[i].equals("FILL")){
+                    transition(DialogState.SET_WHAT_FILL);
+                    continue;
+                }
+                if (inputWords[i].equals("STROKE")){
+                    transition(DialogState.SET_WHAT_STROKE);
+                    continue;
+                }
+                if (inputWords[i].equals("SHAPE")){
+                    transition(DialogState.SET_WHAT_SHAPE);
+                    continue;
+                }
+                if (inputWords[i].equals("WIDTH")){
+                    transition(DialogState.SET_WHAT_WIDTH);
+                    continue;
+                }
+                if (inputWords[i].equals("HEIGHT")){
+                    transition(DialogState.SET_WHAT_HEIGHT);
+                    continue;
+                }
+
+                errorMsg = "Choose property to set. Format: "
+                        + "DIRECTED | UNDIRECTED | COLOR | LABEL | TYPE | EDGETYPE | THICKNESS | WEIGHT | FILL [COLOR] | STROKE [COLOR] | SHAPE | WIDTH | HEIGHT";
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_COLOR) {
+                if (i == inputWords.length) {
+                    errorMsg = "Choose a color. Available colors:" + GralogColor.availableColors();
+                    return;
+                }
+                if (isColorValue(inputWords[i])) {
+                    transition(DONE, DialogAction.SET_COLOR, inputWords[i]);
+                    return;
+                }
+                errorMsg = "Choose a color. Available colors: " + GralogColor.availableColors();
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_LABEL) {
+                if (i == inputWords.length) {
+                    errorMsg = "Choose a label.";
+                    return;
+                }
+                transition(DONE, DialogAction.SET_LABEL, inputWords[i]);
+                return;
+            }
+            if (this.dialogState == DialogState.SET_WHAT_TYPE) {
+                if (i == inputWords.length) {
+                    errorMsg = "Choose a type: PLAIN, DOTTED or DASHED.";
+                    return;
+                }
+                if (inputWords[i].equals("PLAIN") || inputWords[i].equals("DOTTED") || inputWords[i].equals("DASHED")) {
+                    transition(DONE, DialogAction.SET_TYPE, inputWords[i]);
+                    return;
+                }
+                errorMsg = "Choose a type: PLAIN, DOTTED or DASHED.";
+                return;
+            }
+            if (this.dialogState == DialogState.SET_WHAT_EDGETYPE) {
+                if (i == inputWords.length) {
+                    errorMsg = "Choose a type: BEZIER or SHARP.";
+                    return;
+                }
+                if (inputWords[i].equals("BEZIER") || inputWords[i].equals("SHARP")) {
+                    transition(DONE, DialogAction.SET_EDGETYPE, inputWords[i]);
+                    return;
+                }
+                errorMsg = "Choose a type: BEZIER or SHARP.";
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_THICKNESS) {
+                if (i == inputWords.length) {
+                    errorMsg = "What should the thickness be? (Enter a real number.)";
+                    return;
+                }
+                if (isFloat(inputWords[i])) {
+                    transition(DONE, DialogAction.SET_THICKNESS, inputWords[i]);
+                    return;
+                }
+                errorMsg = "What should the thickness be? (Enter a real number.)";
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_WEIGHT) {
+                if (i == inputWords.length) {
+                    errorMsg = "What should the weight be? (Enter a real number.)";
+                    return;
+                }
+                if (isFloat(inputWords[i])) {
+                    transition(DONE, DialogAction.SET_WEIGHT, inputWords[i]);
+                    return;
+                }
+                errorMsg = "What should the weight be? (Enter a real number.)";
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_FILL) {
+                if (i == inputWords.length) {
+                    errorMsg = "Choose a fill color. (E.g., Red, Blue,...)";
+                    return;
+                }
+                if (inputWords[i].equals("COLOR")) {
+                    transition(SET_WHAT_FILL); // swallow "COLOR", go to the same state
+                    continue;
+                }
+                if (isColorValue(inputWords[i])){
+                    transition(DONE, DialogAction.SET_FILL, inputWords[i]);
+                    return;
+                }
+                errorMsg = "Choose a fill color. (E.g., Red, Blue,...)";
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_STROKE) {
+                if (i == inputWords.length) {
+                    errorMsg = "Choose a stroke color. (E.g., Red, Blue,...)";
+                    return;
+                }
+                if (inputWords[i].equals("COLOR")) {
+                    transition(SET_WHAT_STROKE); // swallow "COLOR", go to the same state
+                    continue;
+                }
+                if (isColorValue(inputWords[i])){
+                    transition(DONE, DialogAction.SET_STROKE, inputWords[i]);
+                    return;
+                }
+                errorMsg = "Choose a fill color. (E.g., Red, Blue,...)";
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_COLOR){
+                if (i == inputWords.length){
+                    errorMsg = "Choose a color. (E.g., Red, Blue,...)";
+                    return;
+                }
+                if (isColorValue(inputWords[i])){
+                    transition(DONE, DialogAction.SET_COLOR, inputWords[i]);
+                    return;
+                }
+                errorMsg = "Choose a color. (E.g., Red, Blue,...)";
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_SHAPE) {
+                if (i == inputWords.length) {
+                    errorMsg = "Choose a shape: CYCLE | ELLIPSE | DIAMOND | RECTANGLE";
+                    return;
+                }
+                if (isShape(inputWords[i])) {
+                    transition(DONE, DialogAction.SET_SHAPE, inputWords[i]);
+                    return;
+                }
+                errorMsg = "Choose a shape: CYCLE | ELLIPSE | DIAMOND | RECTANGLE";
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_WIDTH) {
+                if (i == inputWords.length) {
+                    errorMsg = "What should be the width? (Enter a real number.)";
+                    return;
+                }
+                if (isFloat(inputWords[i])) {
+                    transition(DONE, DialogAction.SET_WIDTH, inputWords[i]);
+                    return;
+                }
+                errorMsg = "What should be the width? (Enter a real number.)";
+                return;
+            }
+
+            if (this.dialogState == DialogState.SET_WHAT_HEIGHT) {
+                if (i == inputWords.length) {
+                    errorMsg = "What should be the height? (Enter a real number.)";
+                    return;
+                }
+                if (isFloat(inputWords[i])) {
+                    transition(DONE, DialogAction.SET_HEIGHT, inputWords[i]);
+                    return;
+                }
+                errorMsg = "What should be the height? (Enter a real number.)";
+                return;
             }
 
             if (this.dialogState == DialogState.LAYOUT) {
@@ -490,6 +706,19 @@ public class DialogParser {
                     return;
                 } else {
                     errorMsg = "Specify an exsisting list to be deleted. (Quit: Q).";
+                    return;
+                }
+            }
+            if (this.dialogState == DialogState.REMOVE) {
+                if (i == inputWords.length) {
+                    errorMsg = "Specify an exsisting list to remove elements from. (Quit: Q).";
+                    return;
+                }
+                if (hasIdForm(inputWords[i])) {
+                    transition(DONE, DialogAction.REMOVE, inputWords[i]);
+                    return;
+                } else {
+                    errorMsg = "Specify an exsisting list to remove elements from. (Quit: Q).";
                     return;
                 }
             }
@@ -697,12 +926,12 @@ public class DialogParser {
                     return;
                 }
                 if (inputWords[i].equals("VERTICES")) {
-                    transition(DONE, SELECT_ALL_VERTICES);
+                    transition(DONE, DialogAction.SELECT_ALL_VERTICES);
                     parameters.clear();
                     return;
                 }
                 if (inputWords[i].equals("EDGES")) {
-                    transition(DONE, SELECT_ALL_EDGES);
+                    transition(DONE, DialogAction.SELECT_ALL_EDGES);
                     parameters.clear();
                     return;
                 }
@@ -717,12 +946,12 @@ public class DialogParser {
                     return;
                 }
                 if (inputWords[i].equals("VERTICES")) {
-                    transition(DONE, DESELECT_ALL_VERTICES);
+                    transition(DONE, DialogAction.DESELECT_ALL_VERTICES);
                     parameters.clear();
                     return;
                 }
                 if (inputWords[i].equals("EDGES")) {
-                    transition(DONE, DESELECT_ALL_EDGES);
+                    transition(DONE, DialogAction.DESELECT_ALL_EDGES);
                     parameters.clear();
                     return;
                 }
@@ -854,8 +1083,8 @@ public class DialogParser {
                     continue;
                 }
                 if (inputWords[i].equals("COLOR")) {
-                    errorMsg = "Do you mean \"fill color\" or \"stroke color\"?\n";
-                    return;
+                    transition(FILTER_WHAT_WHERE_COLOR, "COLOR");
+                    continue;
                 }
                 if (inputWords[i].equals("THICKNESS")) {
                     transition(FILTER_WHAT_WHERE_FLOATPARAM, "THICKNESS");
@@ -1202,7 +1431,7 @@ public class DialogParser {
 
     private enum PossibleShapes {
         // TODO: SQUARE,
-        // TODO: CYCLE,
+        CYCLE,
         ELLIPSE,
         RECTANGLE,
         DIAMOND

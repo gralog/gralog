@@ -5,12 +5,12 @@ read_arguments()
 
     # defaults
 
-    DEST_DIR="$HOME/gralog/" # where to install Gralog
+    DEST_DIR="$(echo ~${SUDO_USER})/gralog/" # where to install Gralog, default: user home direcory
     DO_MAKE_LINK=0 # make Gralog be available from comand line
     COMPILE=0 # compile Gralog before installing or not (default: install precompiled binaries)
     DO_INSTALL_PYTHON=1 # install Python part
                         # (Gralog.py and graph packages networkx and igraph used in Gralog.py)
-    PYTHON_LIB_DIR="$(python -m site --user-site)" #
+    PYTHON_LIB_DIR="$(python3 -m site --user-site)" #
     PYTHON_TO_SYSTEM=0
 
     
@@ -135,7 +135,6 @@ install_gralog()
 	exit 1
     fi
     cd build/dist
-    
 
     # wrapping jar and libraries
 
@@ -149,6 +148,7 @@ install_gralog()
     # copying Gralog to DEST_DIR
 
     if [ "$DEST_DIR_WRITABLE" ]; then
+	whoami
 	cp config.xml "$DEST_DIR"
 	cp -r libs "$DEST_DIR"
 	cp gralog-fx.jar "$DEST_DIR"
@@ -219,13 +219,13 @@ install_python_part()
 		sudo unlink $PYTHON_LIB_DIR/Gralog.py
 	    fi
 	    echo Installing Gralog.py to $PYTHON_LIB_DIR
-	    sudo cp -f gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py "$PYTHON_LIB_DIR"/Gralog.py
+	    sudo cp -fp gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py "$PYTHON_LIB_DIR"/Gralog.py
 	else
 	    if [ -L "$PYTHON_LIB_DIR/Gralog.py" ]; then
 		unlink $PYTHON_LIB_DIR/Gralog.py
 	    fi
 	    echo Installing Gralog.py to $PYTHON_LIB_DIR
-	    cp -f gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py "$PYTHON_LIB_DIR"/Gralog.py
+	    cp -fp gralog-fx/src/main/java/gralog/gralogfx/piping/scripts/Gralog.py "$PYTHON_LIB_DIR"/Gralog.py
 	fi
     fi
 }

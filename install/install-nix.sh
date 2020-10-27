@@ -36,6 +36,8 @@ read_arguments "$@"
 
 # Creating and setting DEST_DIR if necessary
 
+echo DEST_DIR: $DEST_DIR
+
 if  [ -d "$DEST_DIR" ]; then
     echo Installing Gralog to "$DEST_DIR"
     if [ -w "$DEST_DIR" ]; then

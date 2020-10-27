@@ -3,6 +3,7 @@ package gralog.dialog;
 import gralog.algorithm.StringAlgorithmParameter;
 import gralog.generator.Cycle;
 import gralog.rendering.GralogColor;
+import gralog.structure.Edge;
 import gralog.structure.Highlights;
 import gralog.structure.Structure;
 import gralog.structure.Vertex;
@@ -148,6 +149,20 @@ public class DialogTest {
         assertEquals(1, dialog.findVertexList("VL1").size());
         parameters.clear();
 
+        // filter all edges color Red
+        parameters.add("ALL");
+        parameters.add("EDGES");
+        parameters.add("COLOR");
+        parameters.add("Red");
+        parameters.add("EL1");
+        for (Object e : c20.getEdges()){
+            Edge ee = (Edge) e;
+            ee.color = GralogColor.RED;
+        }
+        dialog.filter(parameters, c20, highlights);
+        assertEquals(1, dialog.findEdgeList("EL1").get(0).getId());
+        assertEquals(20, dialog.findVertexList("EL1").size());
+        parameters.clear();
 
     }
 

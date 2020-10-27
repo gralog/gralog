@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import sys
-
 from Gralog import *
 from Queue import *
 

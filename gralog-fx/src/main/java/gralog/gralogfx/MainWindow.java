@@ -25,6 +25,8 @@ import gralog.gralogfx.views.ViewManager;
 import gralog.preferences.Preferences;
 import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 
+import gralog.gralogfx.MainMenu.*;
+
 import java.awt.Toolkit;
 import java.awt.Taskbar;
 import java.io.FileInputStream;
@@ -120,6 +122,7 @@ public class MainWindow extends Application {
         handlers.onOpen = this::onOpen;
         handlers.onSave = this::onSave;
         handlers.onSaveAs = this::onSaveAs;
+        handlers.onExportTikz = this::onExportTikZ;
         handlers.onDirectInput = this::onDirectInput;
         handlers.onLoadPluginFromSpecifiedFilepath = this::onLoadPluginFromSpecifiedFilepath;
         handlers.onLoadPluginWithPromptForFile = this::onLoadPluginWithPromptForFile;
@@ -262,6 +265,8 @@ public class MainWindow extends Application {
                         }
                     );
                 }
+                else
+                    mainConsole.notificationPrint("Terminated the current external program");
             }
         };
         
@@ -366,7 +371,9 @@ public class MainWindow extends Application {
     }
 
     public void onLoadPlugin(String fileName) {
+
         Preferences.setFile("MainWindow_lastPipingFile",new File(fileName));
+        MainMenu.enableLoadsLastPlugin();
 
         try{
             if (this.tabs.getCurrentStructurePane() == null){
@@ -382,6 +389,7 @@ public class MainWindow extends Application {
 
                 return;
             }
+
 
             Piping newPiping = this.tabs.getCurrentStructurePane().
                     makeANewPiping(fileName,this::initGraph,this::sendOutsideMessageToConsole);
@@ -401,15 +409,22 @@ public class MainWindow extends Application {
         return fileName;
     }
 
-    public String getLastFileName(){
-// TODO: should be: if it exists in Preferences, return it, otherwise return the empty string
-        String fileName = Preferences.getFile("MainWindow_lastPipingFile",
-                "gralog-fx/src/main/java/gralog/gralogfx/piping/FelixTest.py").getPath();
-    
-        return fileName;
+    /**
+     * Returns the path from the last executed external program if the file it is stored in can be found, otherwise "".
+     * @return
+     */
+    public static String getLastFileName(){
+        File f = Preferences.getFile("MainWindow_lastPipingFile","");
+        if (f == null)
+            return "";
+        return f.getPath();
     }
 
     public StructurePane initGraph(String graphType,Piping pipelineThatCalled){
+        if (graphType.equals("internal")) {
+            System.out.println("GOT INTERNAL");
+            return null;
+        }
         if (!graphType.equals("useCurrentGraph")){
             Structure temp;
             try{
@@ -512,6 +527,12 @@ public class MainWindow extends Application {
     public void onSaveAs() {
         onSaveAs(getCurrentStructure(), stage, tabs, this);
     }
+
+    public void onExportTikZ() {
+        onExportTikZ(getCurrentStructure(), stage, tabs, this);
+    }
+
+
     public static void onSaveAs(Structure structure, Stage stage, Tabs tabs, Application app) {
         try {
 
@@ -560,6 +581,58 @@ public class MainWindow extends Application {
             ExceptionBox exbox = new ExceptionBox();
             exbox.showAndWait(ex);
         }
+    }
+
+    protected static String getExtension(String filename){
+        // unclean way of getting file extension
+        int idx = filename.lastIndexOf('.');
+        return idx > 0 ? filename.substring(idx + 1) : "";
+    }
+
+    public static void onExportTikZ(Structure structure, Stage stage, Tabs tabs, Application application){
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(new File(getLastDirectory()));
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("TikZ (*.tex)", "*.tex")
+            );
+            fileChooser.setTitle("Export to TikZ");
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                setLastDirectory(file);
+                String extension = getExtension(file.getName());
+                if (!extension.equals("tex")){
+                    Alert alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Changing fiel extention");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The file extension should be \'tex\', it is appended to the filename.");
+                    alert.showAndWait();
+                }
+
+                ExportFilter exportFilter = ExportFilterManager
+                        .instantiateExportFilterByExtension(structure.getClass(), extension);
+                if (exportFilter != null) {
+                    // configure export filter
+                    ExportFilterParameters params = exportFilter.getParameters(structure);
+                    if (params != null) {
+                        ExportFilterStage exportStage = new ExportFilterStage(exportFilter, params, application);
+                        exportStage.showAndWait();
+                        if (!exportStage.dialogResult)
+                            return;
+                    }
+                    exportFilter.exportGraph(structure, file.getAbsolutePath(), params);
+                } else {
+                    structure.writeToFile(file.getAbsolutePath());
+                }
+                tabs.setCurrentTabName(file.getName());
+            }
+        }
+        catch (Exception e) {
+            ExceptionBox exbox = new ExceptionBox();
+            exbox.showAndWait(e);
+        }
+
+
     }
 
     public void onOpen() {
@@ -715,7 +788,7 @@ public class MainWindow extends Application {
                 throw algoThread.exception;
 
             Object algoResult = algoThread.result;
-            this.setStatus("");
+            this.setStatus("Algorithm finished");
 
             // Show result if it is not null.
             if (algoResult == null) {
@@ -795,7 +868,7 @@ public class MainWindow extends Application {
                 }
             }
 
-            // save the state for the case the algortihm changes the structure
+            // save the state for the case the algorithm changes the structure
             Undo.Record(structure);
 
             // Run

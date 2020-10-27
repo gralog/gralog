@@ -9,6 +9,7 @@ import gralog.gralogfx.windows.ChooseFileForPipingWindow;
 import gralog.preferences.MenuPrefVariable;
 import gralog.structure.Structure;
 import gralog.structure.StructureManager;
+
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -17,7 +18,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
+import org.apache.commons.io.FilenameUtils;
+
 import java.lang.reflect.Field;
+
+import static gralog.gralogfx.MainWindow.getLastFileName;
 
 /**
  * The main menu of the main window.
@@ -50,7 +55,7 @@ public class MainMenu {
      */
     public static class Handlers {
 
-        MenuAction onOpen, onSaveAs, onSave, onDirectInput, onLoadPluginWithPromptForFile,onLoadPluginFromSpecifiedFilepath, onLoadLastPlugin, onExit;
+        MenuAction onOpen, onSaveAs, onExportTikz, onSave, onDirectInput, onLoadPluginWithPromptForFile,onLoadPluginFromSpecifiedFilepath, onLoadLastPlugin, onExit;
         MenuAction onUndo, onRedo, onCut, onCopy, onPaste, onDelete;
         MenuAction onAlignHorizontally, onAlignVertically;
         MenuAction onAboutGralog, onAboutGraph;
@@ -65,8 +70,9 @@ public class MainMenu {
     // is no structure available.
     private MenuItem menuFileSave;
     private MenuItem menuFileSaveAs;
+    private MenuItem menuExportTikz;
     private MenuItem loadPluginFromSpecifiedFilepath;
-    private MenuItem loadLastPlugin;
+    private static MenuItem loadLastPlugin;
     private MenuItem loadPluginWithPromptForFile;
     
 
@@ -126,11 +132,12 @@ public class MainMenu {
 
     private Menu createFileMenu() {
         Menu menuFile = new Menu("File");
-        final KeyCodeCombination newStructure, generate, save, saveAs, open, loadLast, load, quitGralog, tabClose;
+        final KeyCodeCombination newStructure, generate, save, saveAs, exportTikz, open, loadLast, load, quitGralog, tabClose;
         newStructure = new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN);
         generate     = new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN);
         save         = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
         saveAs       = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN);
+        exportTikz   = new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN);
         open         = new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN);
         loadLast     = new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN);
         load         = new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN);
@@ -139,27 +146,45 @@ public class MainMenu {
         menuFileNew = new Menu("New");
         menuFileGenerators = new Menu("Generators");
 
+        // "Save", "SaveAs", "ExportTikz" is initially disabled because we do not have a structure.
         menuFileSave = createMenuItem("Save graph", handlers.onSave,save);
         menuFileSave.setDisable(true);
 
-        // "Save" is initially disabled because we do not have a structure.
         menuFileSaveAs = createMenuItem("Save graph as...", handlers.onSaveAs,saveAs);
         menuFileSaveAs.setDisable(true);
+
+        menuExportTikz = createMenuItem("Exprot to TikZ", handlers.onExportTikz, exportTikz);
+        menuExportTikz.setDisable(true);
+
+        String lastExternalProgramFileName = getLastFileName(); // returns "" if no such file exists
+        if (lastExternalProgramFileName == "") {
+            loadLastPlugin = createMenuItem("Load last program", handlers.onLoadLastPlugin, loadLast);
+            loadLastPlugin.setDisable(true);
+        }
+        else
+            loadLastPlugin = createMenuItem("Load last program (" + FilenameUtils.getBaseName(lastExternalProgramFileName) + ")" ,
+                    handlers.onLoadLastPlugin,loadLast);
+
+
+
         menuFile.getItems().addAll(
             menuFileNew, menuFileGenerators, new SeparatorMenuItem(),
             createMenuItem("Open graph...", handlers.onOpen,open),
             createMenuItem("Direct input...", handlers.onDirectInput),
                 menuFileSave,
                 menuFileSaveAs,
+                menuExportTikz,
             new SeparatorMenuItem(),
-            createMenuItem("Load spec'd program", handlers.onLoadPluginFromSpecifiedFilepath),
+//            createMenuItem("Load spec'd program", handlers.onLoadPluginFromSpecifiedFilepath),
             createMenuItem("Load external program...", handlers.onLoadPluginWithPromptForFile,load),
-            createMenuItem("Load last program", handlers.onLoadLastPlugin,loadLast),
+            loadLastPlugin,
+
             new SeparatorMenuItem(),
             createMenuItem("Preferences", PreferenceWindow::new),
             new SeparatorMenuItem(),
             createMenuItem("Exit", handlers.onExit,quitGralog));
-
+        if (lastExternalProgramFileName == "")
+            loadLastPlugin.setDisable(true);
         return menuFile;
     }
 
@@ -311,8 +336,14 @@ public class MainMenu {
         this.currentStructure = s;
         menuFileSave.setDisable(s == null || !s.hasFileReference());
         menuFileSaveAs.setDisable(s == null);
+        menuExportTikz.setDisable(s == null);
 
         updateAlgorithms();
         updateStructureVariables();
+    }
+
+    public static void  enableLoadsLastPlugin(){
+        loadLastPlugin.setDisable(false);
+        loadLastPlugin.setText("Load lasy program (" + FilenameUtils.getBaseName(getLastFileName()) + ")" );
     }
 }

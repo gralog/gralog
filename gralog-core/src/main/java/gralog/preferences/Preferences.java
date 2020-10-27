@@ -158,9 +158,19 @@ public final class Preferences {
      **********
      * */
 
+    /**
+     * Returns the file with filename from the preferences file with key == key. If the key is not found, returns the
+     * defaultValue. If the file is not found, returns null.
+     * @param key The key for the preferences file as specified in the definition of PROPERTIES
+     * @param defaultValue The default file.
+     * @return A file or null
+     */
     public static File getFile(String key, String defaultValue) {
-        String fileName = PROPERTIES.getProperty(key, defaultValue);
-        File f = new File(PROPERTIES.getProperty(key, defaultValue)); // todo:
+        File f = new File(PROPERTIES.getProperty(key, defaultValue));
+        if (!f.exists())
+            return null;
+
+        // todo:
         // in tests (PreferenceWindowtest), the key "MainWindow_pipingFile" does not exist
         // and an error occurs for new File(null)
         return f;

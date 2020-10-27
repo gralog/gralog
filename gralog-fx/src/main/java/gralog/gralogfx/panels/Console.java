@@ -309,8 +309,7 @@ public class Console extends HBox implements GralogWindow {
                                                 break;
                 case DESELECT_ALL_EDGES:        dialogfx.deselectAllEdges(currentPane);
                                                 break;
-                case FILTER:
-                                                dialog.filter(parser.getParameters(),
+                case FILTER:                    dialog.filter(parser.getParameters(),
                                                                 currentPane.getStructure(),
                                                                 currentPane.getHighlights());
                                                 break;
@@ -320,6 +319,7 @@ public class Console extends HBox implements GralogWindow {
                                                 break;
                 case DELETE:                    dialog.delete(parameters);
                                                 break;
+                case REMOVE:                    dialog.removeall(parameters, currentPane.getStructure());
                 case COMPLEMENT:                dialog.complement(parameters,currentPane.getStructure());
                                                 currentPane.requestRedraw();
                                                 break;
@@ -361,6 +361,32 @@ public class Console extends HBox implements GralogWindow {
                                                 break;
                 case FIND_GRAPH_ELEMENT:        dialogfx.findGraphElement(parameters,
                                                                           currentPane);
+                                                break;
+                case SET_DIRECTED:              dialogfx.setDirected(parameters, currentPane, dialog);
+                                                break;
+                case SET_UNDIRECTED:            dialogfx.setUndirected(parameters, currentPane, dialog);
+                                                break;
+                case SET_COLOR:                 dialogfx.setColor(parameters, currentPane, dialog);
+                                                break;
+                case SET_LABEL:                 dialogfx.setLabel(parameters, currentPane, dialog);
+                                                break;
+                case SET_TYPE:                  dialogfx.setType(parameters, currentPane, dialog);
+                                                break;
+                case SET_EDGETYPE:              dialogfx.setEdgeType(parameters, currentPane, dialog);
+                                                break;
+                case SET_THICKNESS:             dialogfx.setThickness(parameters, currentPane, dialog);
+                                                break;
+                case SET_WEIGHT:                dialogfx.setWeight(parameters, currentPane, dialog);
+                                                break;
+                case SET_FILL:                  dialogfx.setFillColor(parameters, currentPane, dialog);
+                                                break;
+                case SET_STROKE:                dialogfx.setStrokeColor(parameters, currentPane, dialog);
+                                                break;
+                case SET_SHAPE:                 dialogfx.setShape(parameters, currentPane, dialog);
+                                                break;
+                case SET_WIDTH:                 dialogfx.setWidth(parameters, currentPane, dialog);
+                                                break;
+                case SET_HEIGHT:                dialogfx.setHeight(parameters, currentPane, dialog);
                                                 break;
                 case NONE:                      return;
             }
@@ -477,7 +503,7 @@ public class Console extends HBox implements GralogWindow {
 
 
     public void outsideMessage(String msg,MessageToConsoleFlag flag) {
-        msg = msg.trim();
+        //msg = msg.trim();
         if (flag == MessageToConsoleFlag.Error) {
             this.errorOutput(msg);
         }else if(flag == MessageToConsoleFlag.GPrint) {

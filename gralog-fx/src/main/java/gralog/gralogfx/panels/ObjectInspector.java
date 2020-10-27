@@ -71,7 +71,6 @@ public class ObjectInspector extends AnchorPane implements GralogWindow {
         }
 
         view = ViewManager.instantiateView(obj.getClass());
-        System.out.println(view.getClass().getName());
 
         if (view == null)
             return;
@@ -98,8 +97,7 @@ public class ObjectInspector extends AnchorPane implements GralogWindow {
         AnchorPane.setRightAnchor(sp, 4.0);
         AnchorPane.setBottomAnchor(sp, 4.0);
         AnchorPane.setLeftAnchor(sp, 4.0);
-        
-        System.out.println("Children:    " + this.getChildren());
+
         this.getChildren().add(sp);
 
     }

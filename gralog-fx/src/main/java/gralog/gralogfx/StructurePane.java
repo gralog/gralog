@@ -357,6 +357,9 @@ public class StructurePane extends StackPane implements StructureListener {
 
         this.setPiping(pipeline);
 
+        // save the structure for the case, the algorithm changes it
+        Undo.Record(structure);
+
         /* at the moment this is hardcorded but it will soon be made dynamic!!!*/
 
         Boolean initSuccess = pipeline.externalProcessInit(fileName,"hello world");

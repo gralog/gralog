@@ -15,9 +15,24 @@ public class GralogColor implements Serializable {
     public static final GralogColor GREEN = new GralogColor(0x00FF00);
     public static final GralogColor BLUE = new GralogColor(0x0000FF);
     public static final GralogColor WHITE = new GralogColor(0xFFFFFF);
+    public static final GralogColor GRAY = new GralogColor(0x808080);
+    public static final GralogColor YELLOW = new GralogColor(0xFFFF00);
+    public static final GralogColor CYAN = new GralogColor(0x00FFFF);
+    public static final GralogColor MAGENTA = new GralogColor(0xFF00FF);
+    public static final GralogColor SILVER = new GralogColor(0xC0C0C0);
+    public static final GralogColor MAROON = new GralogColor(0x800000);
+    public static final GralogColor OLIVE = new GralogColor(0x808000);
+    public static final GralogColor DARK_GREEN = new GralogColor(0x008000);
+    public static final GralogColor PURPLE = new GralogColor(0x800080);
+    public static final GralogColor TEAL = new GralogColor(0x008080);
+    public static final GralogColor NAVY = new GralogColor(0x000080);
+    public static final GralogColor ORANGE = new GralogColor(0xFF4500);
+    public static final GralogColor PUCE = new GralogColor(0xCC8899);
+
     public final short r;
     public final short g;
     public final short b;
+
 
     public GralogColor(String hex) {
         this(Integer.parseInt(hex, 16));
@@ -41,6 +56,11 @@ public class GralogColor implements Serializable {
             (short) ((rgb >> 8) & 0xFF),
             (short) (rgb & 0xFF));
     }
+
+    public GralogColor(Color c){
+        this(c.value);
+    }
+
 
     public GralogColor(GralogColor c) {
         this.r = c.r;
@@ -139,6 +159,15 @@ public class GralogColor implements Serializable {
         return false;
     }
 
+    // returns null if isColor returns false
+    public static Color stringToColor(String s){
+        for (Color c : Color.values()) {
+            if (c.name().equalsIgnoreCase(s))
+                return c;
+        }
+        return null;
+    }
+
     public String name() {
         for (Color c : Color.values()) {
             if (c.value == (((r & 0x0FF) << 16) | ((g & 0x0FF) << 8) | (b & 0x0FF))) {
@@ -150,6 +179,13 @@ public class GralogColor implements Serializable {
 
     public GralogColor inverse() {
         return new GralogColor((short) (255 - r), (short) (255 - g), (short) (255 - b));
+    }
+
+    public static String availableColors(){
+        String availableColors = new String();
+        for (GralogColor.Color c : GralogColor.Color.values())
+            availableColors += " " + c.name();
+        return availableColors;
     }
 
     public enum Color {
