@@ -1,9 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
-import math
-import pycosat
 from Gralog import *
+import math
+try:
+    import pycosat
+except:
+    gPrint("Module pycosat needed to run this script. You may install it via python -m pip --user pycosat.")
+    exit()
 
 # The formula for a given graph G is
 #

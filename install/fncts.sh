@@ -5,7 +5,7 @@ read_arguments()
 
     # defaults
 
-    DEST_DIR="$(echo ~${SUDO_USER})/gralog/" # where to install Gralog, default: user home direcory
+    DEST_DIR="/home/$(whoami)/gralog/" # where to install Gralog, default: user home direcory
     DO_MAKE_LINK=0 # make Gralog be available from comand line
     COMPILE=0 # compile Gralog before installing or not (default: install precompiled binaries)
     DO_INSTALL_PYTHON=1 # install Python part
@@ -148,12 +148,16 @@ install_gralog()
     # copying Gralog to DEST_DIR
 
     if [ "$DEST_DIR_WRITABLE" ]; then
-	whoami
+	echo "WRITABLE"
+	echo "$DEST_DIR"
+	mkdir "$DEST_DIR"
 	cp config.xml "$DEST_DIR"
 	cp -r libs "$DEST_DIR"
 	cp gralog-fx.jar "$DEST_DIR"
 	cp gralog "$DEST_DIR"
     else
+	echo "UNWRITABLE"
+	sudo mkdir -p "$DEST_DIR"
 	sudo cp config.xml "$DEST_DIR"
 	sudo cp -r libs "$DEST_DIR"
 	sudo cp gralog-fx.jar "$DEST_DIR"
@@ -167,7 +171,7 @@ install_gralog()
 	  sudo unlink /usr/bin/gralog 
       fi
       echo "$DEST_DIR"gralog
-      sudo ln -s "$DEST_DIR"/gralog /usr/bin/gralog
+      sudo ln -s "$DEST_DIR"gralog /usr/bin/gralog
       echo Done.
     fi
 }
@@ -183,6 +187,7 @@ install_python_part()
     
 	if [ ! "$(type -p pip)" ]; then
 	    echo "Installing pip..."
+	    command -v foo >/dev/null 2>&1 || { echo >&2 "Please, install pip (or curl, which will be used toinstall pip) prior to installing Gralog. Aborting."; exit 1; }
 	    curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 	    python get-pip.py
 	fi

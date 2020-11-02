@@ -18,11 +18,13 @@ def graph2z3(g):
     B = {}
 
     for v in g.getVertices():
-        R[v] = Bool('R_%i' % v.id)
-        G[v] = Bool('G_%i' % v.id)
-        B[v] = Bool('B_%i' % v.id)
+        v = v.getId()
+        R[v] = Bool('R_%i' % v)
+        G[v] = Bool('G_%i' % v)
+        B[v] = Bool('B_%i' % v)
 
     for v in g.getVertices():
+        v = v.getId()
         s.add(Or(R[v], G[v], B[v]))
 
         s.add(Or(Not(R[v]), Not(G[v])))
@@ -30,9 +32,9 @@ def graph2z3(g):
         s.add(Or(Not(B[v]), Not(G[v])))
 
     for e in g.getEdges():
-        u = e.getSource()
-        v = e.getTarget()
-        if u.id > v.id:
+        u = e.getSource().getId()
+        v = e.getTarget().getId()
+        if u > v:
             continue
         s.add(Or(Not(R[u]), Not(R[v])))
         s.add(Or(Not(G[u]), Not(G[v])))
@@ -68,13 +70,13 @@ else:
     exit()
 
 for v in g.getVertices():
-    if is_true(m[R[v]]):
+    if is_true(m[R[v.getId()]]):
         v.setColor("Red")
         continue
-    if is_true(m[G[v]]):
+    if is_true(m[G[v.getId()]]):
         v.setColor("Green")
         continue
-    if is_true(m[B[v]]):
+    if is_true(m[B[v.getId()]]):
         v.setColor("Blue")
         continue
     gPrint("Error: vertex " + str(v) + " has no colour, terminating.")
