@@ -5,12 +5,14 @@ from random import randint
 import os
 try:
         import networkx as nx
+        break
 except:
         print("gPrint#-1#" + "netwrokx not installed for " + sys.executable)
         sys.stdout.flush()
 
 try:
         import igraph as ig
+        break
 except:
         print("gPrint#-1#" + "igraph not installed for " + sys.executable)
 import xml.etree.cElementTree as ET
