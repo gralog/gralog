@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import sys
 from random import randint
@@ -7,14 +7,14 @@ try:
         import networkx as nx
         break
 except:
-        print("gPrint#-1#" + "netwrokx not installed for " + sys.executable)
+        print("gPrint#-1#" + "Warning: netwrokx not installed for " + sys.executable)
         sys.stdout.flush()
 
 try:
         import igraph as ig
         break
 except:
-        print("gPrint#-1#" + "igraph not installed for " + sys.executable)
+        print("gPrint#-1#" + "Warning: igraph not installed for " + sys.executable)
 import xml.etree.cElementTree as ET
 import math
 
