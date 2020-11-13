@@ -90,6 +90,10 @@ subprojects {
     compile 'commons-io:commons-io:2.6'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile 'junit:junit:4.12'
+
+
+    compile group: 'org.javatuples', name: 'javatuples', version: '1.2'
+    compile group: 'org.projectlombok', name: 'lombok', version: '1.18.16'
   }
 
   // Dependencies marked as "gralog" are considered to be internal and
